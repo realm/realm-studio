@@ -1,10 +1,11 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import { enableLiveReload } from 'electron-compile';
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow: Electron.BrowserWindow | null = null;
+let chooserWindow: Electron.BrowserWindow | null = null;
+let studioWindows: Electron.BrowserWindow[] = [];
 
 const isDevMode = process.execPath.match(/[\\/]electron/);
 
@@ -12,40 +13,85 @@ if (isDevMode) {
   enableLiveReload({ strategy: 'react-hmr' });
 }
 
-const createWindow = async () => {
+const createStudioWindow = async () => {
   // Create the browser window.
-  mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    resizable: false,
-    minimizable: false,
-    maximizable: false,
-    movable: true,
-    titleBarStyle: 'hidden-inset'
+  let studioWindow = new BrowserWindow({
+    width: 1200,
+    height: 780,
+    movable: true
   });
 
   // and load the index.html of the app.
-  mainWindow.loadURL(`file://${__dirname}/chooser.html`);
+  studioWindow.loadURL(`file://${__dirname}/app.html`);
 
   // Open the DevTools.
   if (isDevMode) {
     await installExtension(REACT_DEVELOPER_TOOLS);
-    mainWindow.webContents.openDevTools();
+    studioWindow.webContents.openDevTools();
   }
 
   // Emitted when the window is closed.
-  mainWindow.on('closed', () => {
+  studioWindow.on('closed', () => {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
-    mainWindow = null;
+    studioWindow = null;
+  });
+};
+
+const createChooserWindow = async () => {
+  // Create the browser window.
+  chooserWindow = new BrowserWindow({
+    width: 700,
+    height: 400,
+    resizable: false,
+    movable: true,
+    titleBarStyle: 'hidden',
+    transparent: true
+  });
+
+  // and load the index.html of the app.
+  chooserWindow.loadURL(`file://${__dirname}/chooser.html`);
+
+  // Open the DevTools.
+  if (isDevMode) {
+    await installExtension(REACT_DEVELOPER_TOOLS);
+    chooserWindow.webContents.openDevTools();
+  }
+
+  // Emitted when the window is closed.
+  chooserWindow.on('closed', () => {
+    // Dereference the window object, usually you would store windows
+    // in an array if your app supports multi windows, this is the time
+    // when you should delete the corresponding element.
+    chooserWindow = null;
+  });
+
+  ipcMain.on('open-realm-files', function () {
+    dialog.showOpenDialog({
+      properties: ['openFile', 'multiSelections']
+    });
+  });
+
+  ipcMain.on('create-realm-file', function () {
+    dialog.showSaveDialog({ title: 'Create a Realm File' }, function (filename: string) {
+      // const regexForFileExtension = /(?:\.([^.]+))?$/;
+      // const extension: string | null | undefined = regexForFileExtension.exec(filename)[1];
+      // if (!(extension && extension === "realm")) {
+      // }
+      console.log(filename);
+    });
+  });
+
+  ipcMain.on('connect-to-realm-server', () => {
+    createStudioWindow();
   });
 };
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+app.on('ready', createChooserWindow);
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
@@ -59,7 +105,7 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
+  if (chooserWindow === null) {
     createWindow();
   }
 });
