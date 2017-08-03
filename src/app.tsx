@@ -14,8 +14,10 @@ for (let index = 0; index < 40; index++) {
   ));
 }
 
+export type Product = {productId: number, price: number, name: string};
+
 export interface AppState {
-  products: Realm.Results<any>;
+  products: Realm.Results<Product>;
 }
 
 export class App extends React.Component<undefined, AppState> {
@@ -48,13 +50,13 @@ export class App extends React.Component<undefined, AppState> {
         url: `realm://localhost:9080/products`
       }
     });
-    const products = realm.objects('Product');
+    const products = realm.objects<Product>('Product');
     console.log(products);
     this.setState({
       products: products
     });
     realm.addListener('change', () => {
-      const products = realm.objects('Product');
+      const products = realm.objects<Product>('Product');
       this.setState({
         products: products
       });
