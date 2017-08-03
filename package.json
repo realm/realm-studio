@@ -5,9 +5,9 @@
   "description": "My Electron application description",
   "main": "src/main.ts",
   "scripts": {
-    "start": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
+    "start": "./node_modules/.bin/electron-forge start",
+    "package": "./node_modules/.bin/electron-forge package",
+    "make": "./node_modules/.bin/electron-forge make",
     "lint": "tslint --project tsconfig.json --type-check --force"
   },
   "keywords": [],
@@ -53,6 +53,7 @@
     "bootstrap": "^4.0.0-alpha.6",
     "electron-compile": "^6.4.1",
     "electron-devtools-installer": "^2.2.0",
+    "electron-forge": "^3.1.1",
     "faker": "^4.1.0",
     "react": "^15.6.1",
     "react-data-grid": "^2.0.55",
