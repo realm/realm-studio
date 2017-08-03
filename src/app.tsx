@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as faker from 'faker';
 import * as Realm from 'realm';
-import * as ReactDataGrid from 'react-data-grid';
 
 const sideRows: any = [];
 for (let index = 0; index < 40; index++) {
@@ -14,7 +13,7 @@ for (let index = 0; index < 40; index++) {
   ));
 }
 
-export type Product = {productId: number, price: number, name: string};
+export type Product = { productId: number, price: number, name: string };
 
 export interface AppState {
   products: Realm.Results<Product>;
@@ -32,24 +31,31 @@ export class App extends React.Component<undefined, AppState> {
   componentDidMount() {
     const self = this;
     if (Realm.Sync.User.current) {
-      self.observe(Realm.Sync.User.current);
+      self.prepareRealm(Realm.Sync.User.current);
     } else {
-      Realm.Sync.User.login('http://localhost:9080', 'admin.user@realm.io', 'ilovesushi', (err, user) => {
+      Realm.Sync.User.login('http://192.241.226.174:9080/', 'af@realm.io', 'test', (err, user) => {
         if (err) { alert(err.toString()); }
         else {
-          self.observe(user);
+          this.prepareRealm(user);
         }
       });
     }
   }
 
-  observe(user: Realm.Sync.User) {
-    const realm = new Realm({
-      sync: {
-        user: user,
-        url: `realm://localhost:9080/products`
+  prepareRealm(user: Realm.Sync.User) {
+    const syncConfig: Realm.Sync.SyncConfiguration = {
+      url: `realm://192.241.226.174:9080/products`,
+      user: user
+    };
+    Realm.openAsync({ sync: syncConfig }, (err: any, realm: Realm) => {
+      if (err) { alert(err.toString()); }
+      else {
+        this.observe(realm);
       }
     });
+  }
+
+  observe(realm: Realm) {
     const products = realm.objects<Product>('Product');
     console.log(products);
     this.setState({

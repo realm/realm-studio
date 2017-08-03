@@ -60,7 +60,7 @@
     "react-hot-loader": "^3.0.0-beta.6",
     "react-transition-group": "^1.2.0",
     "reactstrap": "^4.8.0",
-    "realm": "^1.10.1",
+    "realm": "rc",
     "tslib": "^1.7.1"
   },
   "devDependencies": {
