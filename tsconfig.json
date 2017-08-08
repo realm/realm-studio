@@ -1,29 +1,20 @@
 {
-  "compilerOptions": {
-    "removeComments": false,
-    "preserveConstEnums": true,
-    "sourceMap": true,
-    "declaration": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "strictNullChecks": false,
-    "noUnusedLocals": true,
-    "noImplicitThis": true,
-    "noUnusedParameters": true,
-    "importHelpers": true,
-    "noEmitHelpers": true,
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "pretty": true,
-    "target": "es2015",
-    "jsx": "react"
-  },
-  "formatCodeOptions": {
-    "indentSize": 2,
-    "tabSize": 2
-  },
-  "exclude": [
-    "node_modules"
-  ]
+    "compilerOptions": {
+        "target": "es2015",
+        "module": "commonjs",
+        "allowJs": true,
+        "strict": true,
+        "typeRoots": ["node_modules/@types"],
+        "outDir": "build",
+        "sourceMap": true,
+        "jsx": "react"
+    },
+    "incude": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "build",
+        "dist"
+    ]
 }

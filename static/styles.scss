@@ -1,0 +1,88 @@
+@import 'reset';
+
+body {
+  font: {
+    family: -apple-system, BlinkMacSystemFont, Helvetica, sans-serif;;
+    size: 12px;
+    weight: 400;
+  }
+}
+
+#app {
+  #browser {
+    display:block;
+    position:absolute;
+    top:0;
+    left:0;
+    bottom:0;
+    right:0;
+
+    #sidebar {
+      width: 199px;
+      border-right: 1px solid #E8E9ED;
+
+      .header {
+        padding: 14px 12px 13px;
+        color: #9A9BA5;
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+        border-bottom: 1px solid #E8E9ED;
+      }
+
+      li {
+        color: #3A3A3A;
+        padding: 10px 12px;
+
+        .badge {
+          color: #F7F7F7;
+          background: #777;
+          padding: 3px 7px;
+          border-radius: 10px;
+          margin: -2px 0 0 0;
+          font-weight: 500;
+        }
+      }
+
+      li.selected {
+        color: #FFF;
+        background: #116CD6;
+
+        .badge {
+          background: #FFF;
+          color: #116CD6;
+        }
+      }
+    }
+
+    #content {
+      background: #FFF;
+
+      .ReactVirtualized__Grid {
+        border-bottom: 1px solid #E8E9ED;
+      }
+
+      .cell,
+      .headerCell {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        border-right: 1px solid #E8E9ED;
+        padding: 0 .5em
+      }
+
+      .cell {
+        border-bottom: 1px solid #E8E9ED;
+      }
+
+      .propertyName {
+        font-weight: 600;
+      }
+
+      .propertyType {
+        color: #808080;
+        font-size: 11px;
+      }
+    }
+  }
+}
