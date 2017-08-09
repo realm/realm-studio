@@ -33,12 +33,15 @@
   "dependencies": {
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
+    "react-draggable": "^2.2.6",
+    "react-virtualized": "^9.9.0",
     "realm": "^1.10.0"
   },
   "devDependencies": {
     "@types/node": "^8.0.8",
     "@types/react": "^15.0.34",
     "@types/react-dom": "^15.5.1",
+    "@types/react-virtualized": "^9.7.3",
     "electron": "^1.6.11",
     "electron-builder": "^19.6.3",
     "node-sass": "^4.5.3",

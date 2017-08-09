@@ -37,7 +37,8 @@ export default class Application {
     var window = this.windowManager.createWindow(path);
 
     window.once('ready-to-show', () => {
-      window.show()
+      window.show();
+      window.webContents.send('open-file', { path: path });
     });
   }
 
