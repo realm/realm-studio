@@ -1,148 +1,148 @@
-import * as electron from 'electron';
-import Application from './application';
+import * as electron from "electron";
+import Application from "./application";
 
 export default class MainMenu {
   private menu = electron.Menu.buildFromTemplate(this.menuTemplate());
 
-  set() {
+  public set() {
     electron.Menu.setApplicationMenu(this.menu);
   }
 
   private menuTemplate(): Electron.MenuItemConstructorOptions[] {
     const template: Electron.MenuItemConstructorOptions[] = [
       {
-        label: 'File',
+        label: "File",
         submenu: [
           {
-            label: 'Open...',
-            accelerator: 'CmdOrCtrl+O',
+            label: "Open...",
+            accelerator: "CmdOrCtrl+O",
             click: () => {
               Application.sharedApplication.showOpenDialog();
-            }
+            },
           },
           {
-            type: 'separator'
+            type: "separator",
           },
           {
-            role: 'close'
-          }
-        ]
+            role: "close",
+          },
+        ],
       },
       {
-        label: 'Edit',
+        label: "Edit",
         submenu: [
           {
-            role: 'undo'
+            role: "undo",
           },
           {
-            role: 'redo'
+            role: "redo",
           },
           {
-            type: 'separator'
+            type: "separator",
           },
           {
-            role: 'cut'
+            role: "cut",
           },
           {
-            role: 'copy'
+            role: "copy",
           },
           {
-            role: 'paste'
+            role: "paste",
           },
           {
-            role: 'delete'
+            role: "delete",
           },
           {
-            role: 'selectall'
-          }
-        ]
+            role: "selectall",
+          },
+        ],
       },
       {
-        label: 'View',
+        label: "View",
         submenu: [
           {
-            role: 'reload'
+            role: "reload",
           },
           {
-            role: 'toggledevtools'
+            role: "toggledevtools",
           },
           {
-            type: 'separator'
+            type: "separator",
           },
           {
-            role: 'resetzoom'
+            role: "resetzoom",
           },
           {
-            role: 'zoomin'
+            role: "zoomin",
           },
           {
-            role: 'zoomout'
+            role: "zoomout",
           },
           {
-            type: 'separator'
+            type: "separator",
           },
           {
-            role: 'togglefullscreen'
-          }
-        ]
+            role: "togglefullscreen",
+          },
+        ],
       },
       {
-        role: 'window',
+        role: "window",
         submenu: [
           {
-            role: 'minimize'
+            role: "minimize",
           },
           {
-            role: 'zoom'
-          }
-        ]
+            role: "zoom",
+          },
+        ],
       },
       {
-        role: 'help',
+        role: "help",
         submenu: [
           {
-            label: 'Learn More...',
+            label: "Learn More...",
             click: () => {
-              electron.shell.openExternal('https://github.com/realm/realm-browser-js')
-            }
-          }
-        ]
-      }
-    ]
+              electron.shell.openExternal("https://github.com/realm/realm-browser-js");
+            },
+          },
+        ],
+      },
+    ];
 
-    if (process.platform === 'darwin') {
+    if (process.platform === "darwin") {
       template.unshift({
         label: electron.app.getName(),
         submenu: [
           {
-            role: 'about'
+            role: "about",
           },
           {
-            type: 'separator'
+            type: "separator",
           },
           {
-            role: 'services',
-            submenu: []
+            role: "services",
+            submenu: [],
           },
           {
-            type: 'separator'
+            type: "separator",
           },
           {
-            role: 'hide'
+            role: "hide",
           },
           {
-            role: 'hideothers'
+            role: "hideothers",
           },
           {
-            role: 'unhide'
+            role: "unhide",
           },
           {
-            type: 'separator'
+            type: "separator",
           },
           {
-            role: 'quit'
-          }
-        ]
+            role: "quit",
+          },
+        ],
       });
     }
 

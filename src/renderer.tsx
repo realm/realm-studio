@@ -1,19 +1,20 @@
-import * as electron from 'electron'
-import * as React from 'react'
-import * as ReactDOM from 'react-dom'
-import Browser from './ui/browser/browser'
+
+import * as electron from "electron";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import Browser from "./ui/browser/browser";
 
 // FIXME: see https://github.com/realm/realm-js/issues/818
-var userDataPath = electron.remote.app.getPath("userData");
+const userDataPath = electron.remote.app.getPath("userData");
 process.chdir(userDataPath);
-import * as Realm from 'realm'
+import * as Realm from "realm";
 
 // We might want to keep a strong referencce to realm when using sync
-var realmRef: Realm
+let realmRef: Realm;
 
 electron.ipcRenderer.on("open-file", (event: Event, args: { path: string }) => {
   const configuration: Realm.Configuration = {
-    path: args.path
+    path: args.path,
   };
 
   openWithConfiguration(configuration);
@@ -26,10 +27,10 @@ electron.ipcRenderer.on("open-url", (event: Event, args: { url: string, username
     if (user) {
       const configuration: Realm.Configuration = {
         sync: {
-          user: user,
+          user,
           url: args.url,
-          validate_ssl: false
-        }
+          validate_ssl: false,
+        },
       };
 
       openWithConfiguration(configuration);
@@ -52,7 +53,7 @@ function openWithConfiguration(configuration: Realm.Configuration) {
     if (realm) {
       ReactDOM.render(
         <Browser realm={realm} />,
-        document.getElementById("app")
+        document.getElementById("app"),
       );
     } else {
        // TODO: display errors properly

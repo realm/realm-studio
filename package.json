@@ -4,7 +4,7 @@
   "description": "A tool for everything Realm.",
   "author": "Realm Inc.",
   "repository": "https://github.com/realm/realm-studio",
-  "license": "Apache 2.0",
+  "license": "Apache-2.0",
   "main": "./build/main.js",
   "build": {
     "productName": "Realm Studio",
@@ -25,6 +25,7 @@
   },
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
+    "lint": "tslint --project tsconfig.json --type-check --force",
     "build": "tsc && node-sass ./static/styles.scss ./build/styles.css",
     "start": "electron ./build/main.js",
     "pack": "electron-builder --dir",
@@ -45,6 +46,7 @@
     "electron": "^1.6.11",
     "electron-builder": "^19.6.3",
     "node-sass": "^4.5.3",
+    "tslint": "^5.6.0",
     "typescript": "^2.4.2"
   }
 }

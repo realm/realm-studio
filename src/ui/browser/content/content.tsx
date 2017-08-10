@@ -1,9 +1,10 @@
-import * as React from 'react';
-import * as Realm from 'realm';
-import { AutoSizer, MultiGrid } from 'react-virtualized'
+import * as React from "react";
+import { AutoSizer, MultiGrid } from "react-virtualized";
+import * as Realm from "realm";
 
 // Can't get it working with TS, see https://github.com/mzabriskie/react-draggable/issues/246
-const Draggable: any = require('react-draggable');
+// tslint:disable-next-line:no-var-requires
+const Draggable: any = require("react-draggable");
 
 interface IContentProps extends React.Props<{}> {
   realm: Realm;
@@ -27,18 +28,56 @@ export default class Content extends React.Component<IContentProps, IContentStat
     this.propertyNames = Object.keys(this.props.type.properties);
 
     this.state = {
-      columnWidths: []
+      columnWidths: [],
     };
   }
 
-  componentWillReceiveProps(nextProps: IContentProps) {
+  public componentWillReceiveProps(nextProps: IContentProps) {
     this.objects = nextProps.realm.objects(nextProps.type.name);
     this.propertyNames = Object.keys(nextProps.type.properties);
 
     this.state = {
-      columnWidths: []
+      columnWidths: [],
     };
     this.grid.recomputeGridSize();
+  }
+
+  public render() {
+    const numberOfRows = this.objects.length + 1; // + header row
+    const numberOfColumns = Object.keys(this.props.type.properties).length;
+
+    return (
+      <div className="RealmBrowser__content">
+        <AutoSizer>
+          {({ height, width }) => (
+            <MultiGrid
+              ref={(grid: MultiGrid) => { this.grid = grid; }}
+              cellRenderer={(params) => {
+                if (params.rowIndex === 0) {
+                  return this.renderHeaderCell(params);
+                } else {
+                  params.rowIndex -= 1;
+                  return this.renderCell(params);
+                }
+              }}
+              width={width}
+              height={height}
+              columnCount={numberOfColumns}
+              columnWidth={(params) => this.getColumWidth(params.index)}
+              fixedRowCount={1}
+              fixedColumnCount={0}
+              style={{}}
+              styleBottomLeftGrid={{}}
+              styleBottomRightGrid={{}}
+              styleTopLeftGrid={{}}
+              styleTopRightGrid={{}}
+              rowCount={numberOfRows}
+              rowHeight={(params) => params.index === 0 ? 40 : 26}
+            />
+          )}
+        </AutoSizer>
+      </div>
+    );
   }
 
   private propertyAtIndex(index: number): Realm.ObjectSchemaProperty {
@@ -59,7 +98,7 @@ export default class Content extends React.Component<IContentProps, IContentStat
 
   private objectValue(rowIndex: number, columnIndex: number): string {
     const property = this.propertyAtIndex(columnIndex);
-    const propertyName = this.propertyNames[columnIndex]
+    const propertyName = this.propertyNames[columnIndex];
     const object = this.objects[rowIndex] as any;
 
     // FIXME: Electron and it's garbage collector don't like ArrayBuffer
@@ -80,7 +119,7 @@ export default class Content extends React.Component<IContentProps, IContentStat
         return `<${property.objectType}>`;
       case "list":
         const numberOfObjects = Object.keys(value).length;
-        return `${numberOfObjects} object${numberOfObjects != 1 ? 's' : ""}`;
+        return `${numberOfObjects} object${numberOfObjects !== 1 ? "s" : ""}`;
       default:
         return value.toString();
     }
@@ -108,11 +147,11 @@ export default class Content extends React.Component<IContentProps, IContentStat
   }
 
   private setColumnWidth(index: number, width: number) {
-    var columnWidths = this.state.columnWidths;
+    const columnWidths = this.state.columnWidths;
     columnWidths[index] = Math.max(width, 50);
 
     this.setState({
-      columnWidths: columnWidths
+      columnWidths,
     });
 
     this.grid.recomputeGridSize();
@@ -127,7 +166,7 @@ export default class Content extends React.Component<IContentProps, IContentStat
         <div className="propertyName">{propertyName}</div>
         <div className="propertyType">{this.propertyTypeStringForProperty(property)}</div>
         <Draggable
-          axis='x'
+          axis="x"
           position={{ x: this.getColumWidth(params.columnIndex) - 10, y: 0 }}
           onDrag={(event: any, data: any) => this.setColumnWidth(params.columnIndex, data.x + 10)}
         >
@@ -139,48 +178,9 @@ export default class Content extends React.Component<IContentProps, IContentStat
 
   private renderCell(params: any) {
     return (
-      <div key={params.key} style={params.style} className={`cell${params.rowIndex % 2 == 1 ? " alternate" : ""}`}>
+      <div key={params.key} style={params.style} className={`cell${params.rowIndex % 2 === 1 ? " alternate" : ""}`}>
         {this.objectValue(params.rowIndex, params.columnIndex)}
       </div>
     );
   }
-
-  render() {
-    const numberOfColumns = Object.keys(this.props.type.properties).length;
-    const numberOfRows = this.objects.length + 1; // + header row
-
-    return (
-      <div className="RealmBrowser__content">
-        <AutoSizer>
-          {({ height, width }) => (
-            <MultiGrid
-              ref={(grid: MultiGrid) => { this.grid = grid; }}
-              cellRenderer={(params) => {
-                if (params.rowIndex == 0) {
-                  return this.renderHeaderCell(params)
-                } else {
-                  params.rowIndex -= 1;
-                  return this.renderCell(params);
-                }
-              }}
-              width={width}
-              height={height}
-              columnCount={numberOfColumns}
-              columnWidth={(params) => this.getColumWidth(params.index)}
-              fixedRowCount={1}
-              fixedColumnCount={0}
-              style={{}}
-              styleBottomLeftGrid={{}}
-              styleBottomRightGrid={{}}
-              styleTopLeftGrid={{}}
-              styleTopRightGrid={{}}
-              rowCount={numberOfRows}
-              rowHeight={(params) => params.index == 0 ? 40 : 26}
-            />
-          )}
-        </AutoSizer>
-      </div>
-    );
-  }
 }
-

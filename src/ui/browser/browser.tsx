@@ -1,10 +1,10 @@
-import * as React from 'react';
-import * as Realm from 'realm';
-import Sidebar from './sidebar/sidebar';
-import Content from './content/content';
+import * as React from "react";
+import * as Realm from "realm";
+import Content from "./content/content";
+import Sidebar from "./sidebar/sidebar";
 
 interface IBrowserProps {
-  realm: Realm
+  realm: Realm;
 }
 
 interface IBrowserState {
@@ -18,17 +18,17 @@ export default class Browser extends React.Component<IBrowserProps, IBrowserStat
     super(props);
 
     this.state = {
-      selectedIndex: 0
+      selectedIndex: 0,
     };
   }
 
-  sidebarSelectionChanged(index: number) {
+  public sidebarSelectionChanged(index: number) {
     this.setState({
-      selectedIndex: index
+      selectedIndex: index,
     });
   }
 
-  render () {
+  public render() {
     const selectedIndex = this.state.selectedIndex;
     const selectedType = this.props.realm.schema[selectedIndex];
 

@@ -1,29 +1,29 @@
-import * as React from 'react';
-import * as Realm from 'realm';
-import SidebarItem from './sidebar-cell';
+import * as React from "react";
+import * as Realm from "realm";
+import SidebarItem from "./sidebar-cell";
 
 interface ISidebarProps extends React.Props<{}> {
-  realm: Realm // TODO: need to move all realm-related logic somewhere
+  realm: Realm; // TODO: need to move all realm-related logic somewhere
   selectedIndex: number;
   onSelectionChange: (index: number) => void;
 }
 
 export default class Sidebar extends React.Component<ISidebarProps, {}> {
-  componentDidMount() {
-    this.props.realm.addListener('change', this.forceUpdate.bind(this));
+  public componentDidMount() {
+    this.props.realm.addListener("change", this.forceUpdate.bind(this));
   }
 
-  componentWillUnmount() {
-    this.props.realm.removeListener('change', this.forceUpdate.bind(this));
+  public componentWillUnmount() {
+    this.props.realm.removeListener("change", this.forceUpdate.bind(this));
   }
 
-  render() {
+  public render() {
     const realm = this.props.realm;
 
     const types = realm.schema.map((objectSchema) => {
       return {
         name: objectSchema.name,
-        numberOfObjects: realm.objects(objectSchema.name).length
+        numberOfObjects: realm.objects(objectSchema.name).length,
       };
     });
 
