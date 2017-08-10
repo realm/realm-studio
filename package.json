@@ -1,76 +1,52 @@
 {
   "name": "realm-studio",
-  "productName": "Realm Studio",
-  "version": "1.0.0",
-  "description": "My Electron application description",
-  "main": "src/main.ts",
-  "scripts": {
-    "start": "./node_modules/.bin/electron-forge start",
-    "package": "./node_modules/.bin/electron-forge package",
-    "make": "./node_modules/.bin/electron-forge make",
-    "lint": "tslint --project tsconfig.json --type-check --force"
-  },
-  "keywords": [],
-  "author": "maximilianalexander",
-  "license": "MIT",
-  "config": {
-    "forge": {
-      "make_targets": {
-        "win32": [
-          "squirrel"
-        ],
-        "darwin": [
-          "zip"
-        ],
-        "linux": [
-          "deb",
-          "rpm"
-        ]
-      },
-      "electronPackagerConfig": {},
-      "electronWinstallerConfig": {
-        "name": "my_project"
-      },
-      "electronInstallerDebian": {},
-      "electronInstallerRedhat": {},
-      "github_repository": {
-        "owner": "",
-        "name": ""
-      },
-      "windowsStoreConfig": {
-        "packageName": "",
-        "name": "myproject"
-      }
+  "version": "0.0.1",
+  "description": "A tool for everything Realm.",
+  "author": "Realm Inc.",
+  "repository": "https://github.com/realm/realm-studio",
+  "license": "Apache-2.0",
+  "main": "./build/main.js",
+  "build": {
+    "productName": "Realm Studio",
+    "appId": "io.realm.realm-studio",
+    "directories": {
+      "buildResources": "./resources"
+    },
+    "files": [
+      "./build/**/*",
+      "./static/**/*",
+      "./node_modules/**/*",
+      "./package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "target": "dir"
     }
   },
+  "scripts": {
+    "postinstall": "electron-builder install-app-deps",
+    "lint": "tslint --project tsconfig.json --type-check --force",
+    "build": "tsc && node-sass ./static/styles.scss ./build/styles.css",
+    "start": "electron ./build/main.js",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
   "dependencies": {
-    "@types/electron": "^1.6.10",
-    "@types/electron-devtools-installer": "^2.0.2",
-    "@types/faker": "^4.1.0",
-    "@types/react": "^15.0.38",
-    "@types/react-dom": "^15.5.1",
-    "@types/reactstrap": "4.3.8",
-    "bootstrap": "^4.0.0-alpha.6",
-    "electron-compile": "^6.4.1",
-    "electron-devtools-installer": "^2.2.0",
-    "electron-forge": "^3.1.1",
-    "faker": "^4.1.0",
     "react": "^15.6.1",
-    "react-data-grid": "^2.0.55",
     "react-dom": "^15.6.1",
-    "react-hot-loader": "^3.0.0-beta.6",
-    "react-transition-group": "^1.2.0",
-    "reactstrap": "^4.8.0",
-    "realm": "rc",
-    "tslib": "^1.7.1"
+    "react-draggable": "^2.2.6",
+    "react-virtualized": "^9.9.0",
+    "realm": "^1.10.0"
   },
   "devDependencies": {
-    "@types/react-data-grid": "^2.0.2",
-    "babel-plugin-transform-async-to-generator": "^6.24.1",
-    "babel-preset-env": "^1.6.0",
-    "babel-preset-react": "^6.24.1",
-    "electron-prebuilt-compile": "1.6.11",
-    "tslint": "^5.1.0",
-    "typescript": "~2.4.2"
+    "@types/node": "^8.0.8",
+    "@types/react": "^15.0.34",
+    "@types/react-dom": "^15.5.1",
+    "@types/react-virtualized": "^9.7.3",
+    "electron": "^1.6.11",
+    "electron-builder": "^19.6.3",
+    "node-sass": "^4.5.3",
+    "tslint": "^5.6.0",
+    "typescript": "^2.4.2"
   }
 }
