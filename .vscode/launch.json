@@ -9,7 +9,6 @@
       "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
       "program": "${workspaceRoot}/build/main.js",
       "preLaunchTask": "build",
-      "protocol": "legacy",
       "outFiles": [
         "${workspaceRoot}/build/**/*.js"
       ],
