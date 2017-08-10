@@ -40,23 +40,20 @@ electron.ipcRenderer.on("open-url", (event: Event, args: { url: string, username
   });
 });
 
-function openWithConfiguration(configuration: Realm.Configuration) {
+async function openWithConfiguration(configuration: Realm.Configuration) {
   // TODOL this shouldn't happen so we may consider to throw an exception instead
   if (realmRef) {
     realmRef.close();
   }
 
-  Realm.openAsync(configuration, (error: any, realm: Realm) => {
-    realmRef = realm;
+  try {
+    realmRef = await Realm.open(configuration);
 
-    if (realm) {
-      ReactDOM.render(
-        <Browser realm={realm} />,
-        document.getElementById("app"),
-      );
-    } else {
-       // TODO: display errors properly
-      alert(error);
-    }
-  });
+    ReactDOM.render(
+      <Browser realm={realmRef} />,
+      document.getElementById("app"),
+    );
+  } catch (e) {
+    alert(e);
+  }
 }
