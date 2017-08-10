@@ -37,8 +37,7 @@ export default class Sidebar extends React.Component<ISidebarProps, {}> {
             <li
               key={index}
               className={index === selectedIndex ? "selected" : undefined}
-              onClick={() => this.props.onSelectionChange(index)}
-            >
+              onClick={() => this.props.onSelectionChange(index)}>
               <SidebarItem name={type.name} numberOfObjects={type.numberOfObjects} />
             </li>)}
         </ul>
