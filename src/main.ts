@@ -1,3 +1,3 @@
-import Application from './main/application';
+import Application from "./main/application";
 
 Application.sharedApplication.run();

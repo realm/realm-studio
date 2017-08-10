@@ -1,17 +1,17 @@
-import { BrowserWindow } from 'electron';
-import * as path from 'path';
-import * as url from 'url';
+import { BrowserWindow } from "electron";
+import * as path from "path";
+import * as url from "url";
 
 export default class WindowManager {
-  public windows: Electron.BrowserWindow[] = []
+  public windows: Electron.BrowserWindow[] = [];
 
-  createWindow(representedPath: string) {
-    let window = new BrowserWindow({
+  public createWindow(representedPath: string) {
+    const window = new BrowserWindow({
       title: path.basename(representedPath),
       width: 800,
       height: 600,
-      vibrancy: 'light',
-      show: false
+      vibrancy: "light",
+      show: false,
     });
 
     if (process.platform === "darwin") {
@@ -20,24 +20,24 @@ export default class WindowManager {
 
     window.loadURL(url.format({
       pathname: path.join(__dirname, "../../static/index.html"),
-      protocol: 'file:',
+      protocol: "file:",
       query: { path: representedPath },
-      slashes: true
+      slashes: true,
     }));
 
-    window.on('page-title-updated', (event) => {
+    window.on("page-title-updated", (event) => {
       event.preventDefault();
-    })
+    });
 
-    window.on('closed', () => {
-      let index = this.windows.indexOf(window)
+    window.on("closed", () => {
+      const index = this.windows.indexOf(window);
       if (index > -1) {
         this.windows.splice(index, 1);
       }
     });
 
-    this.windows.push(window)
+    this.windows.push(window);
 
-    return window
+    return window;
   }
 }
