@@ -12,7 +12,8 @@ export default class Application {
     electron.app.on("ready", () => {
       this.mainMenu.set();
       this.showOpenDialog();
-      // electron.app.focus();
+
+      electron.app.focus();
     });
     electron.app.on("activate", () => {
       if (this.windowManager.windows.length === 0) {
@@ -38,6 +39,7 @@ export default class Application {
 
     window.once("ready-to-show", () => {
       window.show();
+      window.webContents.send("open-file", { path });
     });
   }
 
