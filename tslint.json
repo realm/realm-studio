@@ -2,8 +2,6 @@
     "extends": "tslint:recommended",
     "rules": {
         "indent": [true, "spaces", 2],
-        "max-classes-per-file": [false],
-        "no-console": [false],
         "object-literal-sort-keys": false
     }
 }
