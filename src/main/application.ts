@@ -10,12 +10,14 @@ import {
   WindowType,
 } from "../windows/WindowType";
 import MainMenu from "./main-menu";
+import Updater from "./updater";
 import WindowManager from "./window-manager";
 
 export default class Application {
   public static sharedApplication = new Application();
 
   private mainMenu = new MainMenu();
+  private updater = new Updater();
   private windowManager = new WindowManager();
 
   private actions: { [action: string]: (event: Electron.IpcMessageEvent, ...args: any[]) => void } = {
@@ -48,6 +50,8 @@ export default class Application {
     if (electron.app.isReady()) {
       this.onReady();
     }
+    
+    this.updater.checkForUpdates(true);
   }
 
   public destroy() {
@@ -109,6 +113,10 @@ export default class Application {
     window.once("ready-to-show", () => {
       window.show();
     });
+  }
+
+  public checkForUpdates() {
+    this.updater.checkForUpdates();
   }
 
   private addAppListeners() {
