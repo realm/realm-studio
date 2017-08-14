@@ -21,7 +21,7 @@ node('osx_vegas') {
   stage('Publish') {
     withCredentials([[$class: 'StringBinding', credentialsId: 'github-release-token', variable: 'GH_TOKEN']]) {
       sh '''
-        npm run release
+        ./node_modules/.bin/build --publish onTagOrDraft
       '''
     }
   }

@@ -31,8 +31,7 @@
     "lint": "tslint --project tsconfig.json --type-check --force",
     "build": "tsc && node-sass ./static/styles.scss ./build/styles.css",
     "start": "electron ./build/main.js",
-    "dist": "electron-builder --dir",
-    "release": "build --publish onTagOrDraft"
+    "dist": "electron-builder --dir"
   },
   "dependencies": {
     "react": "^15.6.1",
