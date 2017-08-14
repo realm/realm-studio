@@ -19,10 +19,12 @@ node('osx_vegas') {
   }
 
   stage('Publish') {
-    withCredentials([[$class: 'StringBinding', credentialsId: 'github-release-token', variable: 'GH_TOKEN']]) {
-      sh '''
-        ./node_modules/.bin/build --publish onTagOrDraft
-      '''
+    if (env.BRANCH_NAME == "master") {
+      withCredentials([[$class: 'StringBinding', credentialsId: 'github-release-token', variable: 'GH_TOKEN']]) {
+        sh '''
+          ./node_modules/.bin/build --publish onTagOrDraft
+        '''
+      }
     }
   }
 }
