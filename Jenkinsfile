@@ -27,7 +27,7 @@ node('osx_vegas') {
       sh './node_modules/.bin/build --publish never'
     }
 
-    archiveArtifacts "dist/${getPackageVersion()}-${getPackageVersion()}.dmg"
+    archiveArtifacts "dist/${getPackageBuildProductName()}-${getPackageVersion()}.dmg"
   }
 }
 
