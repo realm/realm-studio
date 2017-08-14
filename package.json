@@ -32,7 +32,7 @@
     "build": "tsc && node-sass ./static/styles.scss ./build/styles.css",
     "start": "electron ./build/main.js",
     "dist": "electron-builder --dir",
-    "release": "build"
+    "release": "build --publish onTagOrDraft"
   },
   "dependencies": {
     "react": "^15.6.1",
