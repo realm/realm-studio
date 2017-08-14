@@ -19,8 +19,10 @@ node('osx_vegas') {
   }
 
   stage('Publish') {
-    sh '''
-      npm run release
-    '''
+    withCredentials([[$class: 'StringBinding', credentialsId: 'github-release-token', variable: 'GH_TOKEN']]) {
+      sh '''
+        npm run release
+      '''
+    }
   }
 }
