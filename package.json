@@ -1,6 +1,6 @@
 {
   "name": "realm-studio",
-  "version": "0.0.1",
+  "version": "0.0.1-alpha.2",
   "description": "A tool for everything Realm.",
   "author": "Realm Inc.",
   "repository": "https://github.com/realm/realm-studio",
@@ -19,8 +19,11 @@
       "./package.json"
     ],
     "mac": {
-      "category": "public.app-category.developer-tools",
-      "target": "dir"
+      "category": "public.app-category.developer-tools"
+    },
+    "publish": {
+      "provider": "github",
+      "private": true
     }
   },
   "scripts": {
@@ -28,8 +31,7 @@
     "lint": "tslint --project tsconfig.json --type-check --force",
     "build": "tsc && node-sass ./static/styles.scss ./build/styles.css",
     "start": "electron ./build/main.js",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "dist": "electron-builder --dir"
   },
   "dependencies": {
     "react": "^15.6.1",
