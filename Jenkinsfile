@@ -31,7 +31,7 @@ node('osx_vegas') {
       }
     }
 
-    archiveArtifacts "dist/${getPackageBuildProductName()}-${getPackageVersion()}.dmg"
+    archiveArtifacts "dist/*.zip"
   }
 }
 
