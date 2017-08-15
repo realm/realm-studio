@@ -21,10 +21,17 @@
     "mac": {
       "category": "public.app-category.developer-tools"
     },
-    "publish": {
-      "provider": "github",
-      "private": true
-    }
+    "publish": [
+      {
+        "provider": "github",
+        "private": true
+      },
+      {
+        "provider": "s3",
+        "bucket": "static.realm.io",
+        "path": "/downloads/realm-studio"
+      }
+    ]
   },
   "scripts": {
     "postinstall": "electron-builder install-app-deps",

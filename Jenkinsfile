@@ -20,7 +20,10 @@ node('osx_vegas') {
 
   stage('Publish') {
     if (env.BRANCH_NAME == "master") {
-      withCredentials([[$class: 'StringBinding', credentialsId: 'github-release-token', variable: 'GH_TOKEN']]) {
+      withCredentials([
+        [$class: 'StringBinding', credentialsId: 'github-release-token', variable: 'GH_TOKEN'],
+        [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-ci-user', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']
+      ]) {
         sh './node_modules/.bin/electron-builder --publish onTagOrDraft'
       }
     } else {
