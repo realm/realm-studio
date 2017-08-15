@@ -21,10 +21,10 @@ node('osx_vegas') {
   stage('Publish') {
     if (env.BRANCH_NAME == "master") {
       withCredentials([[$class: 'StringBinding', credentialsId: 'github-release-token', variable: 'GH_TOKEN']]) {
-        sh './node_modules/.bin/build --publish onTagOrDraft'
+        sh './node_modules/.bin/electron-builder --publish onTagOrDraft'
       }
     } else {
-      sh './node_modules/.bin/build --publish never'
+      sh './node_modules/.bin/electron-builder --publish never'
     }
 
     archiveArtifacts "dist/${getPackageBuildProductName()}-${getPackageVersion()}.dmg"
