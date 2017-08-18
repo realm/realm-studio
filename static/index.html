@@ -2,11 +2,14 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Realm Browser</title>
-    <link rel="stylesheet" type="text/css" href="../build/styles.css">
+    <title>Realm Studio</title>
   </head>
   <body>
     <div id="app"></div>
+    <script>
+    // This will be emitted to (and run from) the build directory by the WebPack file-loader
+    // which is why this require will resolve to the renderer bundle correctly.
+    require('./renderer.bundle.js');
+    </script>
   </body>
-  <script>require('../build/renderer.js');</script>
 </html>

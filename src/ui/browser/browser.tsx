@@ -3,6 +3,8 @@ import * as Realm from "realm";
 import Content from "./content/content";
 import Sidebar from "./sidebar/sidebar";
 
+import "./browser.scss";
+
 interface IBrowserProps {
   realm: Realm;
 }
@@ -11,7 +13,7 @@ interface IBrowserState {
   selectedIndex: number;
 }
 
-export default class Browser extends React.Component<IBrowserProps, IBrowserState> {
+export class Browser extends React.Component<IBrowserProps, IBrowserState> {
   private types: Realm.ObjectSchema[];
 
   constructor(props: IBrowserProps) {

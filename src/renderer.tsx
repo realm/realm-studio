@@ -1,59 +1,43 @@
 import * as electron from "electron";
+import * as querystring from "querystring";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import Browser from "./ui/browser/browser";
+
+import { WindowType } from "./windows";
+import { RealmBrowserWindow } from "./windows/RealmBrowserWindow";
+
+import "realm-studio-styles/index.scss";
 
 // FIXME: see https://github.com/realm/realm-js/issues/818
 const userDataPath = electron.remote.app.getPath("userData");
 process.chdir(userDataPath);
-import * as Realm from "realm";
 
-// We might want to keep a strong referencce to realm when using sync
-let realmRef: Realm;
+const appElement = document.getElementById("app");
 
-electron.ipcRenderer.on("open-file", (event: Event, args: { path: string }) => {
-  const configuration: Realm.Configuration = {
-    path: args.path,
-  };
-
-  openWithConfiguration(configuration);
-});
-
-electron.ipcRenderer.on("open-url", (event: Event, args: { url: string, username: string, password: string }) => {
-  const authURL = args.url;
-
-  Realm.Sync.User.login(authURL, args.username, args.password, (error: any, user: Realm.Sync.User) => {
-    if (user) {
-      const configuration: Realm.Configuration = {
-        sync: {
-          user,
-          url: args.url,
-          validate_ssl: false,
-        },
-      };
-
-      openWithConfiguration(configuration);
-    } else {
-      // TODO: display errors properly
-      alert(error);
-    }
-  });
-});
-
-async function openWithConfiguration(configuration: Realm.Configuration) {
-  // TODOL this shouldn't happen so we may consider to throw an exception instead
-  if (realmRef) {
-    realmRef.close();
+function getWindowElement(windowType: WindowType): React.ReactElement<{}> {
+  if (windowType === WindowType.RealmBrowserWindow) {
+    return <RealmBrowserWindow />;
+  } else {
+    throw new Error(`Unexpected window type: ${windowType}`);
   }
+}
 
-  try {
-    realmRef = await Realm.open(configuration);
+function renderWindowElement(windowType: WindowType) {
+  const windowElement = getWindowElement(windowType);
+  ReactDOM.render(windowElement, appElement);
+}
 
-    ReactDOM.render(
-      <Browser realm={realmRef} />,
-      document.getElementById("app"),
-    );
-  } catch (e) {
-    alert(e);
+// Differentiate into some type of window
+const query = querystring.parse(location.search);
+if (typeof(query.windowType) === "string") {
+  const windowType = query.windowType as WindowType;
+  renderWindowElement(windowType);
+  if (module.hot) {
+    module.hot.accept("./windows", () => {
+      console.log("Windows updated!");
+      renderWindowElement(windowType);
+    });
   }
+} else {
+  throw new Error("Missing a windowType in the query string");
 }
