@@ -1,5 +1,5 @@
 import * as React from "react";
-import { AutoSizer, MultiGrid } from "react-virtualized";
+import { AutoSizer, Dimensions as IAutoSizerDimensions, MultiGrid } from "react-virtualized";
 import * as Realm from "realm";
 
 // Can't get it working with TS, see https://github.com/mzabriskie/react-draggable/issues/246
@@ -49,7 +49,7 @@ export default class Content extends React.Component<IContentProps, IContentStat
     return (
       <div className="RealmBrowser__content">
         <AutoSizer>
-          {({ height, width }) => (
+          {({ height, width }: IAutoSizerDimensions) => (
             <MultiGrid
               ref={(grid: MultiGrid) => { this.grid = grid; }}
               cellRenderer={(params) => {
