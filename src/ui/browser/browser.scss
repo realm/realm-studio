@@ -1,8 +1,14 @@
+@import "./browser-variables.scss";
+
 @mixin subtleTransition() {
   transition: all .3s ease-in;
 }
 
 .RealmBrowser {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+
   .ReactVirtualized__Grid {
     outline: none;
   }

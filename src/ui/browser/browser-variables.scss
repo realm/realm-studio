@@ -1,10 +1,12 @@
+@import "~realm-studio-styles/variables.scss";
+
 $realm-browser-colors: (
-  lighter-gray: #f9f9fb,
-  light-gray: #e8e9ed,
-  dark-gray: #9a9ba5,
-  darkest: #000,
-  lightest: #fff,
-  brand-primary: green
+  lighter-gray: mix($white, $color-dove, 50%),
+  light-gray: $color-dove,
+  dark-gray: $color-elephant,
+  darkest: $black,
+  lightest: $white,
+  brand-primary: $brand-primary
 ) !default;
 
 //***** Colors *****
