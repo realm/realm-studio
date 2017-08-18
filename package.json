@@ -29,9 +29,11 @@
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
     "lint": "tslint --project tsconfig.json --type-check --force",
-    "build": "tsc && node-sass ./static/styles.scss ./build/styles.css",
     "start": "electron ./build/main.js",
     "dist": "electron-builder --dir"
+    "build": "NODE_ENV=production webpack",
+    "webpack:main": "webpack --config=webpack.main.config.js",
+    "webpack:renderer": "webpack-dev-server --config=webpack.renderer.config.js"
   },
   "dependencies": {
     "react": "^15.6.1",
@@ -47,9 +49,20 @@
     "@types/react-virtualized": "^9.7.3",
     "electron": "^1.6.11",
     "electron-builder": "^19.6.3",
+    "@types/webpack-env": "^1.13.0",
+    "awesome-typescript-loader": "^3.2.3",
+    "css-loader": "^0.28.4",
+    "file-loader": "^0.11.2",
+    "lodash": "^4.17.4",
     "node-sass": "^4.5.3",
+    "null-loader": "^0.1.1",
+    "sass-loader": "^6.0.6",
     "source-map-support": "^0.4.15",
+    "style-loader": "^0.18.2",
     "tslint": "^5.6.0",
-    "typescript": "^2.4.2"
+    "typescript": "^2.4.2",
+    "webpack": "^3.5.4",
+    "webpack-dev-server": "^2.7.1",
+    "webpack-node-externals": "^1.6.0"
   }
 }
