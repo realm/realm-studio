@@ -28,7 +28,8 @@
   },
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
-    "lint": "tslint --project tsconfig.json --type-check --force",
+    "lint": "npm run lint:ts && npm run lint:sass && echo 'Everything looks good!'",
+    "lint:ts": "tslint --project tsconfig.json --type-check 'src/**/*.ts' 'src/**/*.tsx'",
     "lint:sass": "sass-lint -c .sass-lint.yml 'src/**/*.scss' -v",
     "build": "NODE_ENV=production webpack",
     "electron": "electron ./build/main.bundle.js",
