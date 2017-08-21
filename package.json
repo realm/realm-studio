@@ -29,6 +29,7 @@
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
     "lint": "tslint --project tsconfig.json --type-check --force",
+    "lint:sass": "sass-lint -c .sass-lint.yml 'src/**/*.scss' -v",
     "build": "NODE_ENV=production webpack",
     "electron": "electron ./build/main.bundle.js",
     "dev": "NODE_ENV=develop concurrently --names \"WEBPACK:M,WEBPACK:R,ELECTRON\" \"npm run webpack:main -- --watch\" \"npm run webpack:renderer\" \"npm run electron\"",
@@ -59,6 +60,7 @@
     "lodash": "^4.17.4",
     "node-sass": "^4.5.3",
     "null-loader": "^0.1.1",
+    "sass-lint": "^1.10.2",
     "sass-loader": "^6.0.6",
     "source-map-support": "^0.4.15",
     "style-loader": "^0.18.2",
