@@ -1,16 +1,22 @@
 {
   "compilerOptions": {
-    "target": "es2015",
+    "target": "es5",
     "module": "commonjs",
+
     "allowJs": true,
+    "jsx": "react",
+    "lib": [
+      "dom",
+      "es5",
+      "es6"
+    ],
+    "noImplicitAny": true,
+    "removeComments": true,
+    "sourceMap": true,
     "strict": true,
     "typeRoots": [
       "node_modules/@types"
-    ],
-    "sourceMap": true,
-    "jsx": "react",
-    "noImplicitAny": true,
-    "removeComments": true
+    ]
   },
   "exclude": [
     "node_modules",

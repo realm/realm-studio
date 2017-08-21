@@ -4,11 +4,24 @@ const webpack = require('webpack');
 const { CheckerPlugin } = require("awesome-typescript-loader");
 
 const isProduction = process.env.NODE_ENV === "production";
+console.log("Running in", isProduction ? "production" : "development", "mode");
 
 const BUILD_PATH = path.resolve(__dirname, "build");
 
+const devDependencies = Object.keys(require("./package.json").devDependencies);
+const devDependenciesWhitelist = devDependencies.map((module) => {
+  // The the base "module" or "module/..", not "module something else"
+  return new RegExp(`^${module}(?:$|\/.*)`);
+});
+
 const externals = [
-  nodeExternals()
+  nodeExternals({
+    // Anyting related to webpack, we want to keep in the bundle
+    whitelist: devDependenciesWhitelist/*[
+      "webpack/hot/dev-server",
+      /^webpack-dev-server\/client/
+    ]*/
+  })
 ];
 
 const node = {
