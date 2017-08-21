@@ -43,12 +43,5 @@ module.exports = _.merge({}, baseConfig, {
     filename: "renderer.bundle.js",
     publicPath: isProduction ? "" : "http://localhost:8080/"
   },
-  plugins: baseConfig.plugins.concat(isProduction ? [
-    // Plugins for production
-  ] : [
-    // Plugins for development
-    new webpack.NamedModulesPlugin(),
-    new webpack.HotModuleReplacementPlugin()
-  ]),
   target: "electron-renderer"
 });

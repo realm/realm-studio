@@ -44,7 +44,7 @@ const baseConfig = {
   },
   node,
   output: {
-    path: path.resolve(__dirname, "build")
+    path: path.resolve(__dirname, "build"),
   },
   plugins: [
     // @see https://github.com/s-panferov/awesome-typescript-loader#configuration on why CheckerPlugin is needed
@@ -52,7 +52,13 @@ const baseConfig = {
     new webpack.DefinePlugin({
       "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV)
     })
-  ],
+  ].concat(isProduction ? [
+    // Plugins for production
+  ] : [
+    // Plugins for development
+    new webpack.NamedModulesPlugin(),
+    new webpack.HotModuleReplacementPlugin()
+  ]),
   resolve
 };
 
