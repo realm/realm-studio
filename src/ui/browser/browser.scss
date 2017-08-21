@@ -1,6 +1,6 @@
-@import "./browser-variables.scss";
+@import "./browser-variables";
 
-@mixin subtleTransition() {
+@mixin subtle-transition {
   transition: all .3s ease-in;
 }
 
@@ -49,25 +49,25 @@
       cursor: pointer;
       padding: $realm-browser-sidebar-model-padding;
 
+      &.selected {
+        @include subtle-transition;
+        background: $realm-browser-sidebar-model-selected-bg;
+        color: $realm-browser-sidebar-model-selected-color;
+
+        .badge {
+          background: $realm-browser-sidebar-badge-selected-bg;
+          color: $realm-browser-sidebar-badge-selected-color;
+        }
+      }
+
       .badge {
         background: $realm-browser-sidebar-badge-bg;
-        border-radius: .5*$spacer;
+        border-radius: $spacer * .5;
         color: $realm-browser-sidebar-badge-color;
         font-size: .75rem;
         font-weight: bold;
         line-height: 1;
-        padding: .2*$spacer .4*$spacer;
-      }
-    }
-
-    li.selected {
-      @include subtleTransition();
-      background: $realm-browser-sidebar-model-selected-bg;
-      color: $realm-browser-sidebar-model-selected-color;
-
-      .badge {
-        background: $realm-browser-sidebar-badge-selected-bg;
-        color: $realm-browser-sidebar-badge-selected-color;
+        padding: $spacer * .2 $spacer * .4;
       }
     }
   }
