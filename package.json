@@ -5,7 +5,7 @@
   "author": "Realm Inc.",
   "repository": "https://github.com/realm/realm-studio",
   "license": "Apache-2.0",
-  "main": "./build/main.js",
+  "main": "./build/main.bundle.js",
   "build": {
     "productName": "Realm Studio",
     "appId": "io.realm.realm-studio",
