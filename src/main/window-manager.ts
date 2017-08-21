@@ -1,7 +1,8 @@
 import { BrowserWindow } from "electron";
 import * as path from "path";
 import * as url from "url";
-import { WindowType } from "../windows";
+
+import { WindowType } from "../windows/WindowType";
 
 export default class WindowManager {
   public windows: Electron.BrowserWindow[] = [];

@@ -3,7 +3,6 @@ import * as querystring from "querystring";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { WindowType } from "./windows";
 import { RealmBrowserWindow } from "./windows/RealmBrowserWindow";
 
 import "realm-studio-styles/index.scss";

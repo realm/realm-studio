@@ -1,6 +1,6 @@
 import * as electron from "electron";
 
-import { WindowType } from "../windows";
+import { WindowType } from "../windows/WindowType";
 import MainMenu from "./main-menu";
 import WindowManager from "./window-manager";
 
@@ -37,7 +37,7 @@ export default class Application {
   }
 
   public openFile(path: string) {
-    const window = this.windowManager.createWindow(path, WindowType.RealmBrowserWindow);
+    const window = this.windowManager.createWindow(path, WindowType.RealmBrowser);
 
     window.once("ready-to-show", () => {
       window.show();
