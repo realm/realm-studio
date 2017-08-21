@@ -4,6 +4,16 @@ import * as url from "url";
 
 import { WindowType } from "../windows/WindowType";
 
+const isProduction = process.env.NODE_ENV === "production";
+
+function getRendererHtmlPath() {
+  const indexPath = isProduction ?
+                    require("../../static/index.html") :
+                    require("../../static/index.development.html");
+  // __dirname is the directory of the bundle
+  return path.resolve(__dirname, indexPath);
+}
+
 export default class WindowManager {
   public windows: Electron.BrowserWindow[] = [];
 
@@ -29,11 +39,8 @@ export default class WindowManager {
       window.setRepresentedFilename(representedPath);
     }
 
-    const isProduction = process.env.NODE_ENV === "production";
-    const index = isProduction ? require("../../static/index.html") : require("../../static/index.development.html");
-
     window.loadURL(url.format({
-      pathname: path.resolve(__dirname, index),
+      pathname: getRendererHtmlPath(),
       protocol: "file:",
       query: {
         path: representedPath,
