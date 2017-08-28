@@ -1,10 +1,12 @@
+@import "~realm-studio-styles/variables";
+
 $realm-browser-colors: (
-  lighter-gray: #f9f9fb,
-  light-gray: #e8e9ed,
-  dark-gray: #9a9ba5,
-  darkest: #000,
-  lightest: #fff,
-  brand-primary: green
+  lighter-gray: mix($white, $color-dove, 50%),
+  light-gray: $color-dove,
+  dark-gray: $color-elephant,
+  darkest: $black,
+  lightest: $white,
+  brand-primary: $brand-primary
 ) !default;
 
 //***** Colors *****
@@ -16,7 +18,7 @@ $realm-browser-sidebar-header-color: map-get($realm-browser-colors, dark-gray) !
 $realm-browser-sidebar-header-border: $realm-browser-sidebar-border !default;
 $realm-browser-sidebar-model-color: map-get($realm-browser-colors, darkest) !default;
 $realm-browser-sidebar-badge-color: map-get($realm-browser-colors, brand-primary) !default;
-$realm-browser-sidebar-badge-bg: rgba(map-get($realm-browser-colors, brand-primary), 0.15) !default;
+$realm-browser-sidebar-badge-bg: rgba(map-get($realm-browser-colors, brand-primary), .15) !default;
 $realm-browser-sidebar-model-selected-color: map-get($realm-browser-colors, lightest) !default;
 $realm-browser-sidebar-model-selected-bg: map-get($realm-browser-colors, brand-primary) !default;
 $realm-browser-sidebar-badge-selected-color: $realm-browser-sidebar-badge-color !default;

@@ -5,7 +5,7 @@
   "author": "Realm Inc.",
   "repository": "https://github.com/realm/realm-studio",
   "license": "Apache-2.0",
-  "main": "./build/main.js",
+  "main": "./build/main.bundle.js",
   "build": {
     "productName": "Realm Studio",
     "appId": "io.realm.realm-studio",
@@ -28,10 +28,16 @@
   },
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
-    "lint": "tslint --project tsconfig.json --type-check --force",
-    "build": "tsc && node-sass ./static/styles.scss ./build/styles.css",
-    "start": "electron ./build/main.js",
-    "dist": "electron-builder --dir"
+    "lint": "npm run lint:ts && npm run lint:sass && echo 'Everything looks good!'",
+    "lint:ts": "tslint --project tsconfig.json --type-check 'src/**/*.ts' 'src/**/*.tsx'",
+    "lint:sass": "sass-lint -c .sass-lint.yml 'src/**/*.scss' -v",
+    "build": "NODE_ENV=production webpack",
+    "electron": "electron ./build/main.bundle.js",
+    "dev": "rm -rf ./build && NODE_ENV=develop concurrently --names \"WEBPACK:M,WEBPACK:R,ELECTRON\" \"npm run webpack:main\" \"npm run webpack:renderer\" \"npm run wait-for-bundle && npm run electron\"",
+    "dist": "rm -rf ./build && npm run build && electron-builder --dir",
+    "wait-for-bundle": "node ./webpack.wait-for-bundle.js",
+    "webpack:main": "webpack --config=webpack.main.config.js",
+    "webpack:renderer": "webpack-dev-server --config=webpack.renderer.config.js"
   },
   "dependencies": {
     "react": "^15.6.1",
@@ -45,10 +51,26 @@
     "@types/react": "^15.0.34",
     "@types/react-dom": "^15.5.1",
     "@types/react-virtualized": "^9.7.3",
-    "electron": "^1.6.11",
-    "electron-builder": "^19.6.3",
+    "@types/source-map-support": "^0.4.0",
+    "@types/webpack-env": "^1.13.0",
+    "awesome-typescript-loader": "^3.2.3",
+    "concurrently": "^3.5.0",
+    "css-loader": "^0.28.4",
+    "electron": "^1.7.5",
+    "electron-builder": "^19.22.1",
+    "file-loader": "^0.11.2",
+    "lodash": "^4.17.4",
     "node-sass": "^4.5.3",
+    "null-loader": "^0.1.1",
+    "react-hot-loader": "^3.0.0-beta.7",
+    "sass-lint": "^1.10.2",
+    "sass-loader": "^6.0.6",
+    "source-map-support": "^0.4.15",
+    "style-loader": "^0.18.2",
     "tslint": "^5.6.0",
-    "typescript": "^2.4.2"
+    "typescript": "^2.4.2",
+    "webpack": "^3.5.4",
+    "webpack-dev-server": "^2.7.1",
+    "webpack-node-externals": "^1.6.0"
   }
 }

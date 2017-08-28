@@ -1,20 +1,26 @@
 {
-    "compilerOptions": {
-        "target": "es2015",
-        "module": "commonjs",
-        "allowJs": true,
-        "strict": true,
-        "typeRoots": ["node_modules/@types"],
-        "outDir": "build",
-        "sourceMap": true,
-        "jsx": "react"
-    },
-    "incude": [
-        "src/**/*"
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+
+    "allowJs": true,
+    "jsx": "react",
+    "lib": [
+      "dom",
+      "es5",
+      "es6"
     ],
-    "exclude": [
-        "node_modules",
-        "build",
-        "dist"
+    "noImplicitAny": true,
+    "removeComments": true,
+    "sourceMap": true,
+    "strict": true,
+    "typeRoots": [
+      "node_modules/@types"
     ]
+  },
+  "exclude": [
+    "node_modules",
+    "build",
+    "dist"
+  ]
 }

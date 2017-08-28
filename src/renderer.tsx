@@ -1,59 +1,43 @@
 import * as electron from "electron";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import Browser from "./ui/browser/browser";
+
+import { CurrentWindow } from "./windows";
+
+import "realm-studio-styles/index.scss";
+
+const isProduction = process.env.NODE_ENV === "production";
 
 // FIXME: see https://github.com/realm/realm-js/issues/818
 const userDataPath = electron.remote.app.getPath("userData");
 process.chdir(userDataPath);
-import * as Realm from "realm";
 
-// We might want to keep a strong referencce to realm when using sync
-let realmRef: Realm;
+const appElement = document.getElementById("app");
 
-electron.ipcRenderer.on("open-file", (event: Event, args: { path: string }) => {
-  const configuration: Realm.Configuration = {
-    path: args.path,
-  };
+if (isProduction) {
+  ReactDOM.render(
+    <CurrentWindow />
+  , appElement);
+} else {
+  // The react-hot-loader is a dev-dependency, why we cannot use a regular import in the top of this file
+  // tslint:disable-next-line:no-var-requires
+  const { AppContainer } = require("react-hot-loader");
 
-  openWithConfiguration(configuration);
-});
+  ReactDOM.render(
+    <AppContainer>
+      <CurrentWindow />
+    </AppContainer>
+  , appElement);
 
-electron.ipcRenderer.on("open-url", (event: Event, args: { url: string, username: string, password: string }) => {
-  const authURL = args.url;
-
-  Realm.Sync.User.login(authURL, args.username, args.password, (error: any, user: Realm.Sync.User) => {
-    if (user) {
-      const configuration: Realm.Configuration = {
-        sync: {
-          user,
-          url: args.url,
-          validate_ssl: false,
-        },
-      };
-
-      openWithConfiguration(configuration);
-    } else {
-      // TODO: display errors properly
-      alert(error);
-    }
-  });
-});
-
-async function openWithConfiguration(configuration: Realm.Configuration) {
-  // TODOL this shouldn't happen so we may consider to throw an exception instead
-  if (realmRef) {
-    realmRef.close();
-  }
-
-  try {
-    realmRef = await Realm.open(configuration);
-
-    ReactDOM.render(
-      <Browser realm={realmRef} />,
-      document.getElementById("app"),
-    );
-  } catch (e) {
-    alert(e);
+  // Hot Module Replacement API
+  if (module.hot) {
+    module.hot.accept("./windows", () => {
+      const NextWindow = require<{CurrentWindow: typeof CurrentWindow}>("./windows").CurrentWindow;
+      ReactDOM.render(
+        <AppContainer>
+          <NextWindow />
+        </AppContainer>
+      , appElement);
+    });
   }
 }

@@ -1,7 +1,7 @@
 {
-    "extends": "tslint:recommended",
-    "rules": {
-        "indent": [true, "spaces", 2],
-        "object-literal-sort-keys": false
-    }
+  "extends": "tslint:recommended",
+  "rules": {
+    "indent": [true, "spaces", 2],
+    "object-literal-sort-keys": false
+  }
 }

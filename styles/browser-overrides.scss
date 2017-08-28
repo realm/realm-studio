@@ -1,14 +1,8 @@
-@import 'reset';
+@import "reset";
 @import "variables";
 @import "main";
 
-body {
-  font: {
-    family: -apple-system, BlinkMacSystemFont, Helvetica, sans-serif;;
-    size: 12px;
-    weight: 400;
-  }
-}
+// TODO: Merge this into the /src/ui/browser/browser.scss
 
 .RealmBrowser {
   display:block;
