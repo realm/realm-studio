@@ -2,9 +2,9 @@ import * as electron from "electron";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { CurrentWindow } from "./windows";
-
 import "realm-studio-styles/index.scss";
+
+import { CurrentWindow } from "./windows";
 
 const isProduction = process.env.NODE_ENV === "production";
 

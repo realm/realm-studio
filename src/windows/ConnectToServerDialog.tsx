@@ -1,6 +1,8 @@
-import * as electron from "electron";
 import * as React from "react";
-import * as Realm from "realm";
+
+import { ConnectToServerContainer } from "../ui/connect-to-server/ConnectToServerContainer";
+
+import "./ConnectToServerDialog.scss";
 
 export class ConnectToServerDialog extends React.Component<{}, {}> {
 
@@ -11,7 +13,7 @@ export class ConnectToServerDialog extends React.Component<{}, {}> {
 
   public render() {
     return (
-      <h1>Connect to server ...</h1>
+      <ConnectToServerContainer />
     );
   }
 }

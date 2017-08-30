@@ -1,0 +1,14 @@
+@import "~realm-studio-styles/variables";
+
+.ConnectToServer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  &__ServerUrlInput,
+  &__Authentication,
+  &__Controls {
+    border: 1px solid $color-indigo;
+    flex-grow: 1;
+  }
+}
