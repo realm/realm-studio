@@ -23,7 +23,7 @@ export default class Application {
   }
 
   public openFile(path: string) {
-    const window = this.windowManager.createWindow(path, WindowType.RealmBrowser);
+    const window = this.windowManager.createWindow(WindowType.RealmBrowser, { path });
 
     window.once("ready-to-show", () => {
       window.show();

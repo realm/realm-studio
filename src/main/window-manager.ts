@@ -2,7 +2,7 @@ import { BrowserWindow, screen } from "electron";
 import * as path from "path";
 import * as url from "url";
 
-import { WindowType } from "../windows/WindowType";
+import { getWindowOptions, WindowType } from "../windows/WindowType";
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -17,14 +17,14 @@ function getRendererHtmlPath() {
 export default class WindowManager {
   public windows: Electron.BrowserWindow[] = [];
 
-  public createWindow(representedPath: string, windowType: WindowType) {
-    const window = new BrowserWindow({
-      title: path.basename(representedPath),
+  public createWindow(windowType: WindowType, context: any = {}) {
+    const window = new BrowserWindow(Object.assign({
+      title: "Realm Studio",
       width: 800,
       height: 600,
       vibrancy: "light",
       show: false,
-    });
+    }, getWindowOptions(windowType, context)));
 
     // Open up the dev tools, if not in production mode
     if (!isProduction) {
@@ -39,21 +39,21 @@ export default class WindowManager {
     const display = this.getDesiredDisplay();
     this.positionWindowOnDisplay(window, display);
 
-    if (process.platform === "darwin") {
-      window.setRepresentedFilename(representedPath);
+    if (typeof(context.path) === "string" && process.platform === "darwin") {
+      window.setRepresentedFilename(context.path);
     }
 
     window.loadURL(url.format({
       pathname: getRendererHtmlPath(),
       protocol: "file:",
       query: {
-        path: representedPath,
         windowType,
       },
       slashes: true,
     }));
 
     window.on("page-title-updated", (event) => {
+      // Prevents windows from updating their title
       event.preventDefault();
     });
 
