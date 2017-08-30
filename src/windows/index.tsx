@@ -17,7 +17,8 @@ export function getWindow(type: WindowType): React.ReactElement<{}> {
 }
 
 export function CurrentWindow(): React.ReactElement<{}> {
-  const query = querystring.parse(location.search);
-  const currentWindow = getWindow(query.windowType);
-  return currentWindow;
+   // Strip away the "?" of the location.search
+  const queryString = location.search.substr(1);
+  const query = querystring.parse(queryString);
+  return getWindow(query.windowType);
 }
