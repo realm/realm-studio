@@ -1,4 +1,4 @@
-import { BrowserWindow } from "electron";
+import { BrowserWindow, screen } from "electron";
 import * as path from "path";
 import * as url from "url";
 
@@ -27,13 +27,17 @@ export default class WindowManager {
     });
 
     // Open up the dev tools, if not in production mode
-    if (process.env.NODE_ENV !== "production") {
+    if (!isProduction) {
       window.once("ready-to-show", () => {
         window.webContents.openDevTools({
           mode: "detach",
         });
       });
     }
+
+    // Center the new window in the desired display
+    const display = this.getDesiredDisplay();
+    this.positionWindowOnDisplay(window, display);
 
     if (process.platform === "darwin") {
       window.setRepresentedFilename(representedPath);
@@ -63,5 +67,28 @@ export default class WindowManager {
     this.windows.push(window);
 
     return window;
+  }
+
+  private getDesiredDisplay(): Electron.Display {
+    const desiredDisplayString = process.env.DISPLAY;
+    if (typeof(desiredDisplayString) === "string") {
+      const desiredDisplayIndex = parseInt(desiredDisplayString, 10);
+      if (Number.isInteger(desiredDisplayIndex)) {
+        const displays = screen.getAllDisplays();
+        const display = displays[desiredDisplayIndex];
+        if (display) {
+          return display;
+        }
+      }
+    }
+    // If we cannot find a display from the environment variable, return the primary
+    return screen.getPrimaryDisplay();
+  }
+
+  private positionWindowOnDisplay(window: Electron.BrowserWindow, display: Electron.Display) {
+    const [ width, height ] = window.getSize();
+    const x = Math.floor(display.workArea.x + display.workArea.width / 2 - width / 2);
+    const y = Math.floor(display.workArea.y + display.workArea.height / 2 - height / 2);
+    window.setPosition(x, y);
   }
 }

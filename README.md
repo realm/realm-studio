@@ -9,6 +9,18 @@ Realm Studio has not yet been officially released.
 
 Once it has - this section should contain links from where it can be downloaded and installed.
 
+## Running
+
+Start the application running:
+
+    electron ./build/main.bundle.js
+
+### Parameters
+
+The application has support for some parameters that can be supplied when starting it:
+
+- The `DISPLAY` environment variable can be set to the index of the display that windows should be created on.
+
 ## Developing
 
 Check out this git repository.
