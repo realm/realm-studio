@@ -42,6 +42,14 @@ export default class Application {
     });
   }
 
+  public showConnectToServerDialog() {
+    const window = this.windowManager.createWindow(WindowType.ConnectToServer);
+
+    window.once("ready-to-show", () => {
+      window.show();
+    });
+  }
+
   private addAppListeners() {
     electron.app.addListener("ready", this.onReady);
     electron.app.addListener("activate", this.onActivate);
@@ -58,7 +66,8 @@ export default class Application {
 
   private onReady = () => {
     this.mainMenu.set();
-    this.showOpenDialog();
+    // this.showOpenDialog();
+    this.showConnectToServerDialog();
 
     electron.app.focus();
   }

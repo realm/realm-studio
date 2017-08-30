@@ -10,6 +10,12 @@ export function getWindowOptions(type: WindowType, context: any): Partial<Electr
     return {
       title: typeof(context.path) === "string" ? context.path : "Realm Browser",
     };
+  } else if (type === WindowType.ConnectToServer) {
+    return {
+      title: "Connect to a Realm Object Server",
+      width: 600,
+      height: 300,
+    };
   }
   return {};
 }
