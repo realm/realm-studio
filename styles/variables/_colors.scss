@@ -17,7 +17,7 @@ $green: #28a745;
 // $brand-primary: $color-ultramarine;
 $theme-colors: (
   primary: $color-ultramarine,
-  secondary: mix($color-dove, $color-elephant, 50%),
+  secondary: $color-dove,
   success: $green,
   info: $color-dove,
   warning: $color-melon,
