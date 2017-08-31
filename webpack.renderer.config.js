@@ -32,9 +32,12 @@ module.exports = _.merge({}, baseConfig, {
         // exclude: path.resolve(__dirname, "node_modules"),
       }, {
         test: /\.scss$/,
-        use: [ "style-loader", "css-loader", "sass-loader" ] // "resolve-url-loader", "sass-loader?sourceMap"
+        use: [ "style-loader", "css-loader", "resolve-url-loader", "sass-loader?sourceMap" ]
       }, {
         test: /\.html$/,
+        use: "file-loader"
+      }, {
+        test: /\.woff2$/,
         use: "file-loader"
       }
     ])
