@@ -11,7 +11,17 @@ $color-charcoal: #1c233f;
 $color-elephant: #9a9ba5;
 $color-dove: #ebebf2;
 
-// TODO: Remove when we can import these from bootstrap.
-$white: #fff;
-$black: #000;
-$brand-primary: $color-ultramarine;
+$green: #28a745;
+
+// Override bootstrap colors
+// $brand-primary: $color-ultramarine;
+$theme-colors: (
+  primary: $color-ultramarine,
+  secondary: mix($color-dove, $color-elephant, 50%),
+  success: $green,
+  info: $color-dove,
+  warning: $color-melon,
+  danger: $color-flamingo,
+  light: $color-dove,
+  dark: $color-charcoal
+);
