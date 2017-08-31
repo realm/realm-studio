@@ -2,6 +2,16 @@
 
 $loading-overlay-background: rgba($color-charcoal, .25);
 
+@keyframes fade {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
 @keyframes pulsing {
   0% {
     transform: scale(.8);
@@ -18,11 +28,14 @@ $loading-overlay-background: rgba($color-charcoal, .25);
 
 .LoadingOverlay {
   align-items: center;
+  animation-duration: .33s;
+  animation-name: fade;
   background: $loading-overlay-background;
   bottom: 0;
   display: flex;
   justify-content: center;
   left: 0;
+  opacity: 1;
   position: absolute;
   right: 0;
   top: 0;
