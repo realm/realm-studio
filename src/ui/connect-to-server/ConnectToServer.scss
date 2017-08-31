@@ -5,10 +5,60 @@
   flex-direction: column;
   height: 100%;
 
-  &__ServerUrlInput,
+  &__ServerUrl,
   &__Authentication,
   &__Controls {
-    border: 1px solid $color-indigo;
+    flex-basis: 0;
     flex-grow: 1;
+    padding: $spacer;
+  }
+
+  &__ServerUrl,
+  &__Authentication {
+    flex-grow: 2;
+  }
+
+  &__ServerUrl {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+  }
+
+  &__ServerUrlGroup {
+    flex-grow: 1;
+    margin: 0;
+  }
+
+  &__Authentication {
+    background: darken($color-dove, 5%);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+  }
+
+  &__CredentialsFormGroup {
+    margin: 0;
+  }
+
+  &__CredentialsLabelCol {
+    align-items: center;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &__CredentialsLabel {
+    margin-bottom: 0;
+    padding-right: $spacer;
+  }
+
+  &__Controls {
+    align-items: flex-end;
+    display: flex;
+    flex-grow: 1;
+    justify-content: center;
+  }
+
+  &__ControlBtn {
+    margin: $spacer / 4;
   }
 }

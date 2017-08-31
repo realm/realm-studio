@@ -3,14 +3,49 @@ import * as Realm from "realm";
 
 import ConnectToServer from "./ConnectToServer";
 
-export class ConnectToServerContainer extends React.Component<{}, {}> {
+export class ConnectToServerContainer extends React.Component<{}, {
+  url: string,
+  username: string,
+  password: string,
+}> {
 
   constructor() {
     super();
-    this.state = {};
+    this.state = {
+      url: "",
+      username: "",
+      password: "",
+    };
   }
 
   public render() {
-    return <ConnectToServer />;
+    return <ConnectToServer {...this.state} {...this} />;
+  }
+
+  public onCancel = () => {
+    // TODO: Close the window
+  }
+
+  public onSubmit = () => {
+    // TODO: Try connecting to ROS
+    console.log(`Trying to connect to ROS: ${this.state.url} (${this.state.username}/${this.state.password})`)
+  }
+
+  public onUrlChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({
+      url: e.target.value,
+    });
+  }
+
+  public onUsernameChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({
+      username: e.target.value,
+    });
+  }
+
+  public onPasswordChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({
+      password: e.target.value,
+    });
   }
 }
