@@ -1,6 +1,5 @@
 files:
   include:
-    - 'styles/**/*.scss'
     - 'src/**/*.scss'
 rules:
   class-name-format:
