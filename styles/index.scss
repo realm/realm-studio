@@ -1,7 +1,12 @@
 @import "./variables";
 @import "./bootstrap";
 
-// @import "./fonts/realm";
+@import "./fonts/realm";
+
+// Applying https://www.mobomo.com/2014/05/better-font-smoothing-in-chrome-on-mac-os-x/
+html {
+  -webkit-font-smoothing: antialiased;
+}
 
 body {
   background: $white;

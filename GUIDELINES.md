@@ -98,3 +98,13 @@ To make sure one part of the applications styles are not overriding another we u
 ["hyphernated BEM"](https://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/), which requires
 that the first letter of the classname is Uppercase. This is because we use the components to model the BEM blocks and
 expect the names to be exactly the same as the class name of the React component that it's styling.
+
+# The "Realm" fonts
+
+We're using the Effra font, aliased as "Realm".
+
+It is included in 10 variations of styles and weights which should be referenced by their individual font names instead
+of using the font-style and font-weight css parameters.
+
+See https://www.smashingmagazine.com/2013/02/setting-weights-and-styles-at-font-face-declaration/ for more information
+on why this is needed.
