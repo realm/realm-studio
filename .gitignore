@@ -2,3 +2,5 @@ build
 dist
 node_modules
 realm-object-server
+
+.DS_Store
