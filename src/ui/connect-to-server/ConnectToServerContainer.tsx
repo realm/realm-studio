@@ -1,6 +1,8 @@
 import * as React from "react";
 import * as Realm from "realm";
 
+import { showError } from "../errors";
+
 import ConnectToServer from "./ConnectToServer";
 
 export class ConnectToServerContainer extends React.Component<{}, {
@@ -28,11 +30,24 @@ export class ConnectToServerContainer extends React.Component<{}, {
     // TODO: Close the window
   }
 
-  public onSubmit = () => {
-    // TODO: Try connecting to ROS
-    console.log(`Trying to connect to ROS: ${this.state.url} (${this.state.username}/${this.state.password})`);
+  public onSubmit = async () => {
+    const { url, username, password } = this.state;
     this.setState({
       isConnecting: true,
+    });
+
+    Realm.Sync.User.login(url, username, password, (err, user) => {
+      this.setState({
+        isConnecting: false,
+      });
+
+      if (err) {
+        // TODO: Find a good way to display this error to the user
+        showError(`Couldn't connect to Realm Object Server`, err);
+      } else {
+        // TODO: Tell the main process that we can connect
+        console.log(`Logged in as ${user}`);
+      }
     });
   }
 
