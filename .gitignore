@@ -4,3 +4,4 @@ node_modules
 realm-object-server
 
 .DS_Store
+data/
