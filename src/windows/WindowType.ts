@@ -13,7 +13,7 @@ export function getWindowOptions(type: WindowType, context: any): Partial<Electr
   } else if (type === WindowType.ConnectToServer) {
     return {
       title: "Connect to Realm Object Server",
-      width: 600,
+      width: 500,
       height: 300,
       resizable: false,
     };
