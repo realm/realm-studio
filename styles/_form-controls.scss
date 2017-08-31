@@ -1,0 +1,3 @@
+.form-control:focus:invalid {
+  border-color: map-get($theme-colors, danger);
+}
