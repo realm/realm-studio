@@ -1,6 +1,8 @@
 import * as React from "react";
 import { Button, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
 
+import LoadingOverlay from "./LoadingOverlay";
+
 import "./ConnectToServer.scss";
 
 const CredentialsFormGroup = ({
@@ -37,6 +39,7 @@ export default ({
   url,
   username,
   password,
+  isConnecting,
 }: {
   onCancel: () => void,
   onSubmit: () => void,
@@ -46,6 +49,7 @@ export default ({
   url: string,
   username: string,
   password: string,
+  isConnecting: boolean,
 }) => {
   return (
     <Form className="ConnectToServer" onSubmit={(e) => {
@@ -80,6 +84,7 @@ export default ({
           Connect
         </Button>
       </div>
+      <LoadingOverlay loading={isConnecting} />
     </Form>
   );
 };

@@ -4,7 +4,7 @@ files:
 rules:
   class-name-format:
     - 1
-    - convention: '^[A-Z][A-Za-z]+(?:__[A-Za-z]+)?(?:--[A-Za-z]+)?$'
+    - convention: '^[A-Z][A-Za-z0-9]+(?:__[A-Za-z0-9\-]+)?(?:--[A-Za-z0-9\-]+)?$'
     - convention-explanation: "Class should be written in hyphenated BEM (Block Element Modifier) format"
   quotes:
     - 1

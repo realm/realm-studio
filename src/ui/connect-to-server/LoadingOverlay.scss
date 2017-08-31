@@ -1,0 +1,48 @@
+@import "~realm-studio-styles/variables";
+
+$loading-overlay-background: rgba($color-charcoal, .25);
+
+@keyframes pulsing {
+  0% {
+    transform: scale(.8);
+  }
+
+  15% {
+    transform: scale(1.3);
+  }
+
+  33% {
+    transform: scale(.8);
+  }
+}
+
+.LoadingOverlay {
+  align-items: center;
+  background: $loading-overlay-background;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+
+  &__dot-1,
+  &__dot-2,
+  &__dot-3 {
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-name: pulsing;
+    color: $color-charcoal;
+    transform: scale(.8);
+    transform-origin: center;
+  }
+
+  &__dot-2 {
+    animation-delay: .33s;
+  }
+
+  &__dot-3 {
+    animation-delay: .66s;
+  }
+}

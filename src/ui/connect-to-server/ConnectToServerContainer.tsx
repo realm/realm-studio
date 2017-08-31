@@ -7,6 +7,7 @@ export class ConnectToServerContainer extends React.Component<{}, {
   url: string,
   username: string,
   password: string,
+  isConnecting: boolean,
 }> {
 
   constructor() {
@@ -15,6 +16,7 @@ export class ConnectToServerContainer extends React.Component<{}, {
       url: "",
       username: "",
       password: "",
+      isConnecting: false,
     };
   }
 
@@ -28,7 +30,10 @@ export class ConnectToServerContainer extends React.Component<{}, {
 
   public onSubmit = () => {
     // TODO: Try connecting to ROS
-    console.log(`Trying to connect to ROS: ${this.state.url} (${this.state.username}/${this.state.password})`)
+    console.log(`Trying to connect to ROS: ${this.state.url} (${this.state.username}/${this.state.password})`);
+    this.setState({
+      isConnecting: true,
+    });
   }
 
   public onUrlChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
