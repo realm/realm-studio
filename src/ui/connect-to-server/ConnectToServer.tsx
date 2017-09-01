@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Button, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
 
-import LoadingOverlay from "./LoadingOverlay";
+import { LoadingOverlay } from "../reusable/loading-overlay";
 
 import "./ConnectToServer.scss";
 
@@ -58,17 +58,17 @@ export default ({
     }}>
       <div className="ConnectToServer__ServerUrl">
         <FormGroup className="ConnectToServer__ServerUrlGroup">
-          <Label for="serverUrl">Realm Object Server URL:</Label>
+          <Label for="serverUrl">URL</Label>
           <Input type="url" name="serverUrl" id="serverUrl" placeholder="https://…" required
             value={url} onChange={onUrlChanged} />
         </FormGroup>
       </div>
       <div className="ConnectToServer__Authentication">
-        <CredentialsFormGroup label="Username:" labelFor="username">
+        <CredentialsFormGroup label="Username" labelFor="username">
           <Input type="text" name="username" id="username" size="sm" required
             value={username} onChange={onUsernameChanged} />
         </CredentialsFormGroup>
-        <CredentialsFormGroup label="Password:" labelFor="password">
+        <CredentialsFormGroup label="Password" labelFor="password">
           <Input type="password" name="password" id="password" size="sm" required
             value={password} onChange={onPasswordChanged} />
         </CredentialsFormGroup>

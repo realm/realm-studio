@@ -3,6 +3,13 @@
 export enum WindowType {
   RealmBrowser = "realm-browser",
   ConnectToServer = "connect-to-server",
+  ServerAdministration = "server-administration",
+}
+
+export interface IServerAdministrationOptions {
+  url: string;
+  username: string;
+  password: string;
 }
 
 export function getWindowOptions(type: WindowType, context: any): Partial<Electron.BrowserWindowConstructorOptions> {
@@ -16,6 +23,13 @@ export function getWindowOptions(type: WindowType, context: any): Partial<Electr
       width: 500,
       height: 300,
       resizable: false,
+    };
+  } else if (type === WindowType.ServerAdministration) {
+    const url = typeof(context.url) === "string" ? context.url : "http://...";
+    return {
+      title: `Realm Object Server: ${url}`,
+      width: 800,
+      height: 600,
     };
   }
   return {};

@@ -1,6 +1,8 @@
 import * as electron from "electron";
+import * as Realm from "realm";
 
-import { WindowType } from "../windows/WindowType";
+import { Actions, IShowServerAdministrationOptions } from "../actions";
+import { IServerAdministrationOptions, WindowType } from "../windows/WindowType";
 import MainMenu from "./main-menu";
 import WindowManager from "./window-manager";
 
@@ -12,10 +14,17 @@ export default class Application {
 
   public run() {
     this.addAppListeners();
+    this.addIpcListeners();
+    // If its already ready - the handler won't be called
+    if (electron.app.isReady()) {
+      this.onReady();
+    }
   }
 
   public destroy() {
     this.removeAppListeners();
+    this.removeIpcListeners();
+    this.windowManager.closeAllWindows();
   }
 
   public userDataPath(): string {
@@ -50,6 +59,19 @@ export default class Application {
     });
   }
 
+  public showServerAdministration(options: IShowServerAdministrationOptions) {
+    const windowOptions: IServerAdministrationOptions = {
+      url: options.url,
+      username: options.username,
+      password: options.password,
+    };
+    const window = this.windowManager.createWindow(WindowType.ServerAdministration, windowOptions);
+
+    window.once("ready-to-show", () => {
+      window.show();
+    });
+  }
+
   private addAppListeners() {
     electron.app.addListener("ready", this.onReady);
     electron.app.addListener("activate", this.onActivate);
@@ -62,6 +84,14 @@ export default class Application {
     electron.app.removeListener("activate", this.onActivate);
     electron.app.removeListener("open-file", this.onOpenFile);
     electron.app.removeListener("window-all-closed", this.onWindowAllClosed);
+  }
+
+  private addIpcListeners() {
+    electron.ipcMain.addListener(Actions.OpenServerAdministration, this.onShowServerAdministration);
+  }
+
+  private removeIpcListeners() {
+    electron.ipcMain.removeListener(Actions.OpenServerAdministration, this.onShowServerAdministration);
   }
 
   private onReady = () => {
@@ -86,6 +116,11 @@ export default class Application {
     if (process.platform !== "darwin") {
       electron.app.quit();
     }
+  }
+
+  private onShowServerAdministration = (event: any, ...args: any[]) => {
+    this.showServerAdministration(args[0] as IShowServerAdministrationOptions);
+    event.returnValue = true;
   }
 }
 

@@ -1,6 +1,8 @@
+import * as electron from "electron";
 import * as React from "react";
 import * as Realm from "realm";
 
+import { showServerAdministration } from "../../actions";
 import { showError } from "../errors";
 
 import ConnectToServer from "./ConnectToServer";
@@ -27,7 +29,7 @@ export class ConnectToServerContainer extends React.Component<{}, {
   }
 
   public onCancel = () => {
-    // TODO: Close the window
+    electron.remote.getCurrentWindow().close();
   }
 
   public onSubmit = async () => {
@@ -49,8 +51,14 @@ export class ConnectToServerContainer extends React.Component<{}, {
           "Failed to fetch": "Could not reach the server",
         });
       } else {
-        // TODO: Tell the main process that we can connect
-        console.log(`Logged in as ${user}`, user);
+        // Show the server administration
+        showServerAdministration({
+          url: user.server,
+          username,
+          password,
+        });
+        // and close this window
+        electron.remote.getCurrentWindow().close();
       }
     });
   }

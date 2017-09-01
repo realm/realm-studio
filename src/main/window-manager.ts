@@ -17,14 +17,14 @@ function getRendererHtmlPath() {
 export default class WindowManager {
   public windows: Electron.BrowserWindow[] = [];
 
-  public createWindow(windowType: WindowType, context: any = {}) {
+  public createWindow(windowType: WindowType, options: any = {}) {
     const window = new BrowserWindow(Object.assign({
       title: "Realm Studio",
       width: 800,
       height: 600,
       vibrancy: "light",
       show: false,
-    }, getWindowOptions(windowType, context)));
+    }, getWindowOptions(windowType, options)));
 
     // Open up the dev tools, if not in production mode
     if (!isProduction) {
@@ -39,8 +39,8 @@ export default class WindowManager {
     const display = this.getDesiredDisplay();
     this.positionWindowOnDisplay(window, display);
 
-    if (typeof(context.path) === "string" && process.platform === "darwin") {
-      window.setRepresentedFilename(context.path);
+    if (typeof(options.path) === "string" && process.platform === "darwin") {
+      window.setRepresentedFilename(options.path);
     }
 
     window.loadURL(url.format({
@@ -48,6 +48,7 @@ export default class WindowManager {
       protocol: "file:",
       query: {
         windowType,
+        options: JSON.stringify(options),
       },
       slashes: true,
     }));
