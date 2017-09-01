@@ -12,7 +12,7 @@ export default ({
   fade = true,
 }: {
   loading: boolean,
-  fade: boolean,
+  fade?: boolean,
 }) => {
   const classNames = ["LoadingOverlay"];
   if (!fade) {
