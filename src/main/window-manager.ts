@@ -70,6 +70,12 @@ export default class WindowManager {
     return window;
   }
 
+  public closeAllWindows() {
+    this.windows.forEach((window) => {
+      window.close();
+    });
+  }
+
   private getDesiredDisplay(): Electron.Display {
     const desiredDisplayString = process.env.DISPLAY;
     if (typeof(desiredDisplayString) === "string") {
