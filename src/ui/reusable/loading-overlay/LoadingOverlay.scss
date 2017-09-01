@@ -28,17 +28,25 @@ $loading-overlay-background: rgba($color-charcoal, .25);
 
 .LoadingOverlay {
   align-items: center;
+  animation-delay: .66s;
   animation-duration: .33s;
+  animation-fill-mode: forwards;
   animation-name: fade;
   background: $loading-overlay-background;
   bottom: 0;
   display: flex;
   justify-content: center;
   left: 0;
-  opacity: 1;
+  opacity: 0;
   position: absolute;
   right: 0;
   top: 0;
+
+  &--no-fade {
+    animation-delay: 0s;
+    animation-duration: 0s;
+    opacity: 1;
+  }
 
   &__dot-1,
   &__dot-2,
