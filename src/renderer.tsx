@@ -40,4 +40,7 @@ if (isProduction) {
       , appElement);
     });
   }
+  // Load devtron
+  // tslint:disable-next-line:no-var-requires
+  require("devtron").install();
 }
