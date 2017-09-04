@@ -3,7 +3,7 @@ import * as React from "react";
 import * as Realm from "realm";
 
 import { showServerAdministration } from "../../actions";
-import { showError } from "../errors";
+import { showError } from "../reusable/errors";
 
 import ConnectToServer from "./ConnectToServer";
 
