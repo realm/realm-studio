@@ -41,7 +41,9 @@
     "webpack:renderer": "webpack-dev-server --config=webpack.renderer.config.js"
   },
   "dependencies": {
+    "@types/faker": "^4.1.1",
     "classnames": "^2.2.5",
+    "faker": "^4.1.0",
     "react": "^15.6.1",
     "react-addons-css-transition-group": "^15.6.0",
     "react-addons-transition-group": "^15.6.0",
