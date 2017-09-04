@@ -16,7 +16,7 @@ We strive to separate components into two categories:
 For more information on the difference between the two, please read
 [Dan Abramov's article](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0).
 
-We might want to introduce a directory of "reusable" components in `./src/ui/reusable` for components which implements
+The project contains a directory of "reusable" components in `./src/ui/reusable` for components which implements
 UI that has been used three or more places in the app.
 
 # TypeScript
