@@ -6,7 +6,8 @@ $realm-browser-colors: (
   dark-gray: $color-elephant,
   darkest: $black,
   lightest: $white,
-  brand-primary: map-get($theme-colors, primary)
+  // brand-primary: map-get($theme-colors, primary)
+  brand-primary: $brand-primary,
 ) !default;
 
 //***** Colors *****

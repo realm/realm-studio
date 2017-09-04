@@ -1,3 +1,14 @@
-.form-control:focus:invalid {
-  border-color: map-get($theme-colors, danger);
+
+.form-control,
+.btn {
+  // TODO: Remove font-family and border-color once reactstrap is up-to-date
+  // @see https://github.com/reactstrap/reactstrap/issues/487
+  font-family: $font-family-sans-serif;
+}
+
+.form-control {
+  &:focus:invalid {
+    // border-color: map-get($theme-colors, danger);
+    border-color: $brand-danger;
+  }
 }

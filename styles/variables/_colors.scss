@@ -14,7 +14,10 @@ $color-dove: #ebebf2;
 $green: #28a745;
 
 // Override bootstrap colors
-// $brand-primary: $color-ultramarine;
+$brand-primary: $color-ultramarine;
+
+/*
+// TODO: Use this once reactstrap is up-to-date https://github.com/reactstrap/reactstrap/issues/487
 $theme-colors: (
   primary: $color-ultramarine,
   secondary: $color-dove,
@@ -25,3 +28,4 @@ $theme-colors: (
   light: $color-dove,
   dark: $color-charcoal
 );
+*/
