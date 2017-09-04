@@ -1,20 +1,65 @@
+import * as classnames from "classnames";
 import * as React from "react";
-import { Button, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
+import { Button, Navbar } from "reactstrap";
 
 import { LoadingOverlay } from "../reusable/loading-overlay";
+import { UsersTableContainer } from "./users/UsersTableContainer";
 
 import "./ServerAdministration.scss";
 
-export default ({
+export enum Tab {
+  Users = "users",
+  Realms = "realms",
+}
+
+export const ServerAdministration = ({
+  activeTab,
+  onTabChanged,
   user,
 }: {
+  activeTab: Tab,
+  onTabChanged: (tab: Tab) => void,
   user: Realm.Sync.User | null,
 }) => {
+  let content = null;
+  if (activeTab === Tab.Users && user) {
+    content = <UsersTableContainer user={user} />;
+  } else {
+    content = <p className="ServerAdministration__no-content">This tab has no content yet</p>;
+  }
+
+  const TabButton = ({
+    tab,
+    label,
+  }: {
+    tab: Tab,
+    label: string,
+  }) => {
+    return (
+      <Button className={classnames("ServerAdministration__tab", {
+        active: activeTab === tab,
+      })} onClick={() => {
+        onTabChanged(tab);
+      }}>
+        {label}
+      </Button>
+    );
+  };
+
   return (
     <div className="ServerAdministration">
-      { user && (
-        <p>Logged in as {user.identity}</p>
-      )}
+      <Navbar className="ServerAdministration__tabs">
+        <TabButton tab={Tab.Users} label="Users" />
+        <TabButton tab={Tab.Realms} label="Realms" />
+        { user && (
+          <p className="ServerAdministration__status">
+            Connected to {user.server} as {user.identity}
+          </p>
+        )}
+      </Navbar>
+      <div className="ServerAdministration__content">
+        {content}
+      </div>
       <LoadingOverlay loading={!user} fade={false} />
     </div>
   );

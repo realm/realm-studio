@@ -1,0 +1,62 @@
+@import "~realm-studio-styles/variables";
+
+$sidebar-shadow: rgba($color-dove, .66);
+
+.UsersTable {
+  display: flex;
+  flex-grow: 1;
+
+  &__selected-row {
+    background: $color-dove;
+  }
+
+  .ReactVirtualized {
+    &__Table {
+      // &__headerRow {
+      //   font-family: "RealmBold";
+      //   font-weight: normal;
+      // }
+
+      &__headerRow,
+      &__row {
+        font-size: .9rem;
+      }
+
+      &__row {
+        border-top: 1px solid $color-dove;
+        cursor: pointer;
+
+        &:focus {
+          // Disabling the default focus outline
+          outline-style: none;
+        }
+      }
+    }
+
+    &__Grid {
+      &:focus {
+        outline-style: none;
+      }
+    }
+  }
+
+  &__table {
+    flex: 1 0;
+  }
+
+  &__selected-user {
+    box-shadow: -5px 0 5px $sidebar-shadow;
+    flex: 0 0 0;
+    height: 100%;
+    opacity: 0;
+    overflow: hidden;
+    transition-duration: .3s;
+    transition-property: flex-basis, opacity;
+    z-index: 1;
+
+    &--active {
+      flex-basis: 33vw;
+      opacity: 1;
+    }
+  }
+}

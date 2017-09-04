@@ -28,7 +28,7 @@ export function getWindowOptions(type: WindowType, context: any): Partial<Electr
     const url = typeof(context.url) === "string" ? context.url : "http://...";
     return {
       title: `Realm Object Server: ${url}`,
-      width: 800,
+      width: 1024,
       height: 600,
     };
   }

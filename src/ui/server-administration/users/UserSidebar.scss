@@ -1,0 +1,17 @@
+@import "~realm-studio-styles/variables";
+
+.UserSidebar {
+  &__card {
+    border-bottom: 0;
+    border-radius: 0;
+    border-right: 0;
+    border-top: 0;
+    height: 100%;
+    overflow: scroll;
+  }
+
+  &__controls {
+    flex-grow: 0;
+    text-align: center;
+  }
+}

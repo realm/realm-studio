@@ -1,10 +1,18 @@
 @import "~realm-studio-styles/variables";
 
 .ServerAdministration {
-  background: $color-dove;
   display: flex;
   flex-direction: column;
   height: 100%;
+
+  &__tabs {
+    background: $color-dove;
+    cursor: default;
+    flex-shrink: 0;
+    justify-content: flex-start;
+    user-select: none;
+    z-index: 2;
+  }
 
   // TODO: Remove this block once we're using bootstrap-v4.0.0-beta
   &__tabs { // sass-lint:disable-line no-mergeable-selectors
@@ -13,4 +21,35 @@
     flex-direction: row;
   }
 
+  &__tab {
+    margin-right: $spacer / 2;
+  }
+
+  &__status {
+    flex-grow: 1;
+    font-size: .9rem;
+    margin: 0;
+    text-align: right;
+  }
+
+  &__content {
+    background: $white;
+    display: flex;
+    flex-grow: 1;
+    position: relative;
+  }
+
+  &__no-content {
+    align-items: center;
+    bottom: 0;
+    color: $color-elephant;
+    cursor: default;
+    display: flex;
+    justify-content: center;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    user-select: none;
+  }
 }

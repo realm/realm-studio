@@ -5,19 +5,21 @@ import * as Realm from "realm";
 import { showServerAdministration } from "../../actions";
 import { showError } from "../errors";
 
-import ServerAdministration from "./ServerAdministration";
+import { ServerAdministration, Tab } from "./ServerAdministration";
 
 export class ServerAdministrationContainer extends React.Component<{
   url: string,
   username: string,
   password: string,
 }, {
+  activeTab: Tab,
   user: Realm.Sync.User | null,
 }> {
 
   constructor() {
     super();
     this.state = {
+      activeTab: Tab.Users,
       user: null,
     };
   }
@@ -35,8 +37,12 @@ export class ServerAdministrationContainer extends React.Component<{
   }
 
   public render() {
-    // return <ServerAdministration {...this.state} {...this} />;
-    return <ServerAdministration user={this.state.user} />;
+    return <ServerAdministration {...this.state} {...this} />;
   }
 
+  public onTabChanged = (tab: Tab) => {
+    this.setState({
+      activeTab: tab,
+    });
+  }
 }
