@@ -19,6 +19,8 @@ For more information on the difference between the two, please read
 The project contains a directory of "reusable" components in `./src/ui/reusable` for components which implements
 UI that has been used three or more places in the app.
 
+Use the `classnames` module to conditionally produce a className attribute for components.
+
 # TypeScript
 
 We use TypeScript (configured from `./tsconfig.json`) as it helps us reason about our code and catch errors at

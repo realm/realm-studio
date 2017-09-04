@@ -41,6 +41,7 @@
     "webpack:renderer": "webpack-dev-server --config=webpack.renderer.config.js"
   },
   "dependencies": {
+    "classnames": "^2.2.5",
     "react": "^15.6.1",
     "react-addons-css-transition-group": "^15.6.0",
     "react-addons-transition-group": "^15.6.0",
@@ -51,6 +52,7 @@
     "realm": "2.0.0-rc5"
   },
   "devDependencies": {
+    "@types/classnames": "^2.2.3",
     "@types/node": "^8.0.8",
     "@types/react": "^15.0.34",
     "@types/react-dom": "^15.5.1",
