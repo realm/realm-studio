@@ -48,7 +48,7 @@ export const UsersTable = ({
               onUserSelected(user && user.userId !== selectedUserId ? user.userId : null);
               event.preventDefault();
             }}>
-            <Column label="User ID" dataKey="userId" width={300} />
+            <Column label="ID" dataKey="userId" width={300} />
             <Column label="Role" dataKey="isAdmin" width={300} cellRenderer={({ cellData }) => {
               return cellData ? "Administrator" : "Regular user";
             }} />
