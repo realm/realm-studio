@@ -10,40 +10,6 @@ $sidebar-shadow: rgba($color-dove, .66);
     background: $color-dove;
   }
 
-  .ReactVirtualized {
-    &__Table {
-      // &__headerRow {
-      //   font-family: "RealmBold";
-      //   font-weight: normal;
-      // }
-
-      &__headerRow,
-      &__row {
-        border-bottom: 1px solid $color-dove;
-        font-size: .9rem;
-      }
-
-      &__row {
-        cursor: pointer;
-
-        &:focus {
-          // Disabling the default focus outline
-          outline-style: none;
-        }
-      }
-
-      &__headerTruncatedText {
-        vertical-align: middle;
-      }
-    }
-
-    &__Grid {
-      &:focus {
-        outline-style: none;
-      }
-    }
-  }
-
   &__table {
     flex: 1 0;
   }
@@ -63,4 +29,6 @@ $sidebar-shadow: rgba($color-dove, .66);
       opacity: 1;
     }
   }
+
+  @import "../ReactVirtualized";
 }

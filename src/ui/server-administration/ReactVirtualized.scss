@@ -1,0 +1,35 @@
+@import "~realm-studio-styles/variables";
+
+.ReactVirtualized {
+  &__Table {
+
+    &__headerRow,
+    &__row {
+      font-size: .9rem;
+    }
+
+    &__headerRow {
+      border-bottom: 2px solid $color-dove;
+    }
+
+    &__row {
+      border-bottom: 1px solid $color-dove;
+      cursor: pointer;
+
+      &:focus {
+        // Disabling the default focus outline
+        outline-style: none;
+      }
+    }
+
+    &__headerTruncatedText {
+      vertical-align: middle;
+    }
+  }
+
+  &__Grid {
+    &:focus {
+      outline-style: none;
+    }
+  }
+}
