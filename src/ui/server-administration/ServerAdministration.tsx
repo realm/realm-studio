@@ -22,7 +22,7 @@ export const ServerAdministration = ({
   user: Realm.Sync.User | null,
 }) => {
   let content = null;
-  if (activeTab === Tab.Users && user) {
+  if (user && activeTab === Tab.Users) {
     content = <UsersTableContainer user={user} />;
   } else {
     content = <p className="ServerAdministration__no-content">This tab has no content yet</p>;
@@ -36,9 +36,8 @@ export const ServerAdministration = ({
     label: string,
   }) => {
     return (
-      <Button className={classnames("ServerAdministration__tab", {
-        active: activeTab === tab,
-      })} onClick={() => {
+      <Button color={activeTab === tab ? "primary" : "secondary"} className="ServerAdministration__tab"
+      onClick={() => {
         onTabChanged(tab);
       }}>
         {label}
@@ -53,7 +52,7 @@ export const ServerAdministration = ({
         <TabButton tab={Tab.Realms} label="Realms" />
         { user && (
           <p className="ServerAdministration__status">
-            Connected to {user.server} as {user.identity}
+            Connected to {user.server}
           </p>
         )}
       </Navbar>
