@@ -4,6 +4,7 @@ import { Button, Navbar } from "reactstrap";
 
 import { LoadingOverlay } from "../reusable/loading-overlay";
 import { LogContainer } from "./logs/LogContainer";
+import { RealmsTableContainer } from "./realms/RealmsTableContainer";
 import { ToolsContainer } from "./tools/ToolsContainer";
 import { UsersTableContainer } from "./users/UsersTableContainer";
 
@@ -28,6 +29,8 @@ export const ServerAdministration = ({
   let content = null;
   if (user && activeTab === Tab.Users) {
     content = <UsersTableContainer user={user} />;
+  } else if (user && activeTab === Tab.Realms) {
+    content = <RealmsTableContainer user={user} />;
   } else if (user && activeTab === Tab.Logs) {
     content = <LogContainer user={user} />;
   } else if (user && activeTab === Tab.Tools) {
