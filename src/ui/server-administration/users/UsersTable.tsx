@@ -2,7 +2,7 @@ import * as classnames from "classnames";
 import * as React from "react";
 import { AutoSizer, Column, Dimensions as IAutoSizerDimensions, Table } from "react-virtualized";
 
-import { IAuthUser, IAuthUserMetadata } from "../../../services/ros";
+import { IAuthUser, IAuthUserMetadata, IRealmFile } from "../../../services/ros";
 
 import { UserRole, UserSidebarContainer } from "./UserSidebarContainer";
 export { UserRole };
@@ -13,6 +13,7 @@ export const UsersTable = ({
   userCount,
   getUser,
   getUserFromId,
+  getUsersRealms,
   onUserDeleted,
   onUserSelected,
   onUserRoleChanged,
@@ -22,6 +23,7 @@ export const UsersTable = ({
   userCount: number,
   getUser: (index: number) => IAuthUser | null,
   getUserFromId: (userId: string) => IAuthUser | null,
+  getUsersRealms: (userId: string) => IRealmFile[],
   onUserDeleted: (userId: string) => void,
   onUserSelected: (userId: string | null) => void,
   onUserRoleChanged: (userId: string, role: UserRole) => void,
@@ -49,8 +51,12 @@ export const UsersTable = ({
               event.preventDefault();
             }}>
             <Column label="ID" dataKey="userId" width={300} />
-            <Column label="Role" dataKey="isAdmin" width={300} cellRenderer={({ cellData }) => {
+            <Column label="Role" dataKey="isAdmin" width={150} cellRenderer={({ cellData }) => {
               return cellData ? "Administrator" : "Regular user";
+            }} />
+            <Column label="Realms" dataKey={null} width={150} cellRenderer={({ rowData }) => {
+              const user = rowData as IAuthUser;
+              return getUsersRealms(user.userId).length;
             }} />
           </Table>
         )}
@@ -59,6 +65,7 @@ export const UsersTable = ({
       <UserSidebarContainer className={classnames("UsersTable__selected-user", {
         "UsersTable__selected-user--active": selectedUserId !== null,
       })}
+        realms={selectedUserId !== null ? getUsersRealms(selectedUserId) : []}
         user={selectedUserId !== null ? getUserFromId(selectedUserId) : null}
         onUserDeleted={onUserDeleted}
         onUserRoleChanged={onUserRoleChanged}

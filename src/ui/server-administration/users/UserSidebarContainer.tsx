@@ -2,7 +2,7 @@ import * as electron from "electron";
 import * as React from "react";
 import * as Realm from "realm";
 
-import { getAuthRealm, IAuthUser, IAuthUserMetadata } from "../../../services/ros";
+import { getAuthRealm, IAuthUser, IAuthUserMetadata, IRealmFile } from "../../../services/ros";
 
 import { UserRole, UserSidebar } from "./UserSidebar";
 export { UserRole };
@@ -10,6 +10,7 @@ export { UserRole };
 export interface IUserSidebarContainerProps {
   className: string | null;
   metadatas: IAuthUserMetadata[];
+  realms: IRealmFile[];
   onUserDeleted: (userId: string) => void;
   onUserRoleChanged: (userId: string, role: UserRole) => void;
   user: IAuthUser | null;

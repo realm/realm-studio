@@ -36,6 +36,7 @@ export const UserSidebar = ({
   className,
   user,
   metadatas,
+  realms,
   onDeleted,
   onRoleChanged,
   roleDropdownOpen,
@@ -60,12 +61,14 @@ export const UserSidebar = ({
                 </DropdownItem>
               </DropdownMenu>
             </ButtonDropdown>
-            <CardText>
-            </CardText>
+
+            <CardText />
+
             <Table size="sm">
               <thead>
                 <tr>
-                  <th>Key</th>
+                  {/* We mention "Metadata" in this header, so we don't need a separate header */}
+                  <th>Metadata key</th>
                   <th>Value</th>
                 </tr>
               </thead>
@@ -75,6 +78,24 @@ export const UserSidebar = ({
                     <tr key={metadata.key}>
                       <td>{metadata.key}</td>
                       <td>{metadata.value}</td>
+                    </tr>
+                  );
+                }) }
+              </tbody>
+            </Table>
+
+            <Table size="sm">
+              <thead>
+                <tr>
+                  {/* We mention "Realm" in this header, so we don't need a separate header */}
+                  <th>Realm path</th>
+                </tr>
+              </thead>
+              <tbody>
+                { realms.map((realm) => {
+                  return (
+                    <tr key={realm.path}>
+                      <td>{realm.path}</td>
                     </tr>
                   );
                 }) }

@@ -2,7 +2,15 @@ import * as electron from "electron";
 import * as React from "react";
 import * as Realm from "realm";
 
-import { deleteUser, getAuthRealm, IAuthUser, IAuthUserMetadata, updateUser } from "../../../services/ros";
+import {
+  deleteUser,
+  getAuthRealm,
+  getRealmManagementRealm,
+  IAuthUser,
+  IAuthUserMetadata,
+  IRealmFile,
+  updateUser,
+} from "../../../services/ros";
 
 import { UserRole, UsersTable } from "./UsersTable";
 
@@ -18,6 +26,7 @@ export interface IUsersTableContainerState {
 export class UsersTableContainer extends React.Component<IUsersTableContainerProps, IUsersTableContainerState> {
 
   private authRealm: Realm;
+  private realmManagementRealm: Realm;
 
   constructor() {
     super();
@@ -28,7 +37,8 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
   }
 
   public componentDidMount() {
-    this.initializeRealm();
+    this.initializeRealms();
+    this.updateUsers();
   }
 
   public componentWillUnmount() {
@@ -38,7 +48,8 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
   public componentDidUpdate(prevProps: IUsersTableContainerProps, prevState: IUsersTableContainerState) {
     // Fetch the users realm from ROS
     if (prevProps.user !== this.props.user) {
-      this.initializeRealm();
+      this.initializeRealms();
+      this.updateUsers();
     }
   }
 
@@ -64,6 +75,10 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
     return this.authRealm.objectForPrimaryKey<IAuthUser>("AuthUser", userId);
   }
 
+  public getUsersRealms = (userId: string): IRealmFile[] => {
+    const realms = this.realmManagementRealm.objects<IRealmFile>("RealmFile").filtered("creatorId = $0", userId);
+    return realms.slice();
+  }
 
   public onUserDeleted = async (userId: string) => {
     const confirmed = await this.confirmUserDeletion(userId);
@@ -81,23 +96,38 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
     });
   }
 
-  private initializeRealm() {
-    // Remove any existing a change listener
+  private initializeRealms() {
+    // Remove any existing a change listeners
     if (this.authRealm) {
       this.authRealm.removeListener("change", this.onUsersChanged);
     }
+    if (this.realmManagementRealm) {
+      this.realmManagementRealm.removeListener("change", this.onRealmsChanged);
+    }
+
+    // Get the realms from the ROS interface
     this.authRealm = getAuthRealm(this.props.user);
+    this.realmManagementRealm = getRealmManagementRealm(this.props.user);
+
+    // Register change listeners
+    this.authRealm.addListener("change", this.onUsersChanged);
+    this.realmManagementRealm.addListener("change", this.onRealmsChanged);
+  }
+
+  private updateUsers() {
     // Get the users
     const users = this.authRealm.objects<IAuthUser>("AuthUser"); // .sorted("isAdmin", true);
     // Set the state
     this.setState({
       users,
     });
-    // Register a change listener
-    this.authRealm.addListener("change", this.onUsersChanged);
   }
 
   private onUsersChanged = () => {
+    this.forceUpdate();
+  }
+
+  private onRealmsChanged = () => {
     this.forceUpdate();
   }
 
