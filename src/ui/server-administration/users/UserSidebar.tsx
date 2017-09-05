@@ -11,6 +11,7 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
+  Input,
   Table,
 } from "reactstrap";
 
@@ -25,24 +26,88 @@ export enum UserRole {
   Regular = "regular",
 }
 
+const MetadataTable = ({
+  metadatas,
+  onMetadataAppended,
+  onMetadataChanged,
+  onMetadataDeleted,
+}: {
+  metadatas: IAuthUserMetadata[],
+  onMetadataAppended: () => void,
+  onMetadataChanged: (index: number, key: string, value: string) => void;
+  onMetadataDeleted: (index: number) => void;
+}) => {
+  return (
+    <Table size="sm" className="UserSidebar__MetadataTable">
+      <thead>
+        <tr>
+          {/* We mention "Metadata" in this header, so we don't need a separate header */}
+          <th>Metadata key</th>
+          <th>Value</th>
+          <th className="UserSidebar__MetadataTableControlCell">
+            <Button size="sm" onClick={onMetadataAppended} title="Click to add a new row of metadata">
+              +
+            </Button>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        { metadatas.map((metadata, index) => {
+          return (
+            <tr key={index}>
+              <td title={metadata.key}>
+                <Input value={metadata.key || ""} size="sm" onChange={(e) => {
+                  onMetadataChanged(index, e.target.value, metadata.value || "");
+                }} />
+              </td>
+              <td title={metadata.value}>
+                <Input value={metadata.value || ""} size="sm" onChange={(e) => {
+                  onMetadataChanged(index, metadata.key || "", e.target.value);
+                }} />
+              </td>
+              <td className="UserSidebar__MetadataTableControlCell">
+                <Button size="sm" className="UserSidebar__MetadataTableDeleteButton"
+                  title={metadata.key ? `Click to delete "${metadata.key}"` : `Click to delete`}
+                  onClick={() => {
+                    onMetadataDeleted(index);
+                  }}>
+                  ×
+                </Button>
+              </td>
+            </tr>
+          );
+        }) }
+      </tbody>
+    </Table>
+  );
+};
+
 export interface IUserSidebarProps extends IUserSidebarContainerProps {
-  roleDropdownOpen: boolean;
+  editingMetadataIndex: number | null;
   onChangePassword: () => void;
   onDeletion: () => void;
+  onMetadataAppended: () => void;
+  onMetadataChanged: (index: number, key: string, value: string) => void;
+  onMetadataDeleted: (index: number) => void;
   onRoleChanged: (role: UserRole) => void;
+  roleDropdownOpen: boolean;
   toggleRoleDropdown: () => void;
 }
 
 export const UserSidebar = ({
   className,
-  user,
+  editingMetadataIndex,
   metadatas,
-  realms,
   onChangePassword,
   onDeletion,
+  onMetadataAppended,
+  onMetadataChanged,
+  onMetadataDeleted,
   onRoleChanged,
+  realms,
   roleDropdownOpen,
   toggleRoleDropdown,
+  user,
 }: IUserSidebarProps) => {
   return (
     <div className={classnames(className, "UserSidebar")}>
@@ -66,27 +131,12 @@ export const UserSidebar = ({
               </DropdownMenu>
             </ButtonDropdown>
 
-            <Table size="sm" className="UserSidebar__metadata-table">
-              <thead>
-                <tr>
-                  {/* We mention "Metadata" in this header, so we don't need a separate header */}
-                  <th>Metadata key</th>
-                  <th>Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                { metadatas.map((metadata) => {
-                  return (
-                    <tr key={metadata.key}>
-                      <td title={metadata.key}>{metadata.key}</td>
-                      <td title={metadata.value}>{metadata.value}</td>
-                    </tr>
-                  );
-                }) }
-              </tbody>
-            </Table>
+            <MetadataTable metadatas={metadatas}
+              onMetadataAppended={onMetadataAppended}
+              onMetadataChanged={onMetadataChanged}
+              onMetadataDeleted={onMetadataDeleted}  />
 
-            <Table size="sm" className="UserSidebar__realms-table">
+            <Table size="sm" className="UserSidebar__RealmsTable">
               <thead>
                 <tr>
                   {/* We mention "Realm" in this header, so we don't need a separate header */}

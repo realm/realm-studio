@@ -51,6 +51,10 @@ export const getRealmManagementRealm = (user: Realm.Sync.User) => {
   return mocked.getRealmManagementRealm();
 };
 
+export const appendUserMetadata = (userId: string, key: string, value: string) => {
+  return mocked.appendUserMetadata(userId, key, value);
+};
+
 export const createUser = async (username: string, password: string) => {
   return await mocked.createUser(username, password);
 };
@@ -64,8 +68,16 @@ export const deleteUser = (userId: string) => {
   mocked.deleteUser(userId);
 };
 
+export const deleteUserMetadata = (userId: string, index: number) => {
+  mocked.deleteUserMetadata(userId, index);
+};
+
 export const updateUser = (userId: string, values: Partial<IAuthUser>) => {
   return mocked.updateUser(userId, values);
+};
+
+export const updateUserMetadata = (userId: string, index: number, key: string, value: string) => {
+  return mocked.updateUserMetadata(userId, index, key, value);
 };
 
 export const updateUserPassword = (userId: string, password: string) => {

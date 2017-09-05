@@ -3,6 +3,7 @@ import * as React from "react";
 import * as Realm from "realm";
 
 import {
+  appendUserMetadata,
   createUser,
   deleteUser,
   getAuthRealm,
@@ -11,6 +12,7 @@ import {
   IAuthUserMetadata,
   IRealmFile,
   updateUser,
+  updateUserMetadata,
   updateUserPassword,
 } from "../../../services/ros";
 

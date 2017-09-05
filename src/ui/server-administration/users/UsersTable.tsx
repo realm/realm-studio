@@ -13,7 +13,6 @@ export { UserRole };
 import "./UsersTable.scss";
 
 export const UsersTable = ({
-  userCount,
   getUser,
   getUserFromId,
   getUsersRealms,
@@ -29,8 +28,8 @@ export const UsersTable = ({
   selectedUsersMetadatas,
   toggleChangePassword,
   toggleCreateUser,
+  userCount,
 }: {
-  userCount: number,
   getUser: (index: number) => IAuthUser | null,
   getUserFromId: (userId: string) => IAuthUser | null,
   getUsersRealms: (userId: string) => IRealmFile[],
@@ -46,6 +45,7 @@ export const UsersTable = ({
   selectedUsersMetadatas: IAuthUserMetadata[],
   toggleChangePassword: () => void,
   toggleCreateUser: () => void,
+  userCount: number,
 }) => {
   return (
     <div className="UsersTable">
@@ -91,12 +91,12 @@ export const UsersTable = ({
       <UserSidebarContainer className={classnames("UsersTable__selected-user", {
         "UsersTable__selected-user--active": selectedUserId !== null,
       })}
-        realms={selectedUserId !== null ? getUsersRealms(selectedUserId) : []}
-        user={selectedUserId !== null ? getUserFromId(selectedUserId) : null}
-        onUserDeletion={onUserDeletion}
+        metadatas={selectedUsersMetadatas}
         onUserChangePassword={onUserChangePassword}
+        onUserDeletion={onUserDeletion}
         onUserRoleChanged={onUserRoleChanged}
-        metadatas={selectedUsersMetadatas} />
+        realms={selectedUserId !== null ? getUsersRealms(selectedUserId) : []}
+        user={selectedUserId !== null ? getUserFromId(selectedUserId) : null} />
 
       <ChangePasswordDialogContainer
         isOpen={isChangePasswordOpen}

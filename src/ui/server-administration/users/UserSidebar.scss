@@ -10,6 +10,7 @@
     border-right: 0;
     border-top: 0;
     height: 100%;
+    // Defining its width makes sure it doesn't collapse when sliding in / out
     width: $sidebar-width;
   }
 
@@ -18,18 +19,28 @@
     text-overflow: ellipsis;
   }
 
-  &__metadata-table,
-  &__realms-table {
+  &__MetadataTable,
+  &__RealmsTable {
     table-layout: fixed;
 
     td {
       overflow: hidden;
       text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 
-  &__metadata-table {
+  &__MetadataTable {
     margin-top: $spacer;
+  }
+
+  &__MetadataTableControlCell {
+    text-align: right;
+    width: 35px;
+
+    * {
+      width: 100%;
+    }
   }
 
   &__controls {
