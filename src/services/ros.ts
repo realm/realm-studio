@@ -12,8 +12,33 @@ export interface IAuthUserMetadata {
   value?: string;
 }
 
-export interface IRealm {
-  //
+export interface IRealmFile {
+  path: string;
+  creatorId: string;
+  creationDate: Date;
+  permissions: IPermissionCondition[];
+}
+
+export enum AccessLevel {
+  none,
+  read,
+  write,
+  admin,
+}
+
+export enum PermissionConditionType {
+  all,
+  user,
+  metadata_exact,
+  metadata_regex,
+}
+
+export interface IPermissionCondition {
+  path: string;
+  accessLevel: AccessLevel;
+  type: PermissionConditionType;
+  key?: string;
+  value?: string;
 }
 
 // TODO: Sync this up with the actual servers Realms
@@ -39,6 +64,6 @@ export const updateUser = (userId: string, values: Partial<IAuthUser>) => {
   return mocked.updateUser(userId, values);
 };
 
-export const updateRealm = (realmId: string, values: Partial<IRealm>) => {
+export const updateRealm = (realmId: string, values: Partial<IRealmFile>) => {
   throw new Error("Not yet implemented");
 };

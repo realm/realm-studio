@@ -1,7 +1,7 @@
 import * as faker from "faker";
 import * as Realm from "realm";
 
-import { IAuthUser, IAuthUserMetadata } from "./ros";
+import { IAuthUser, IAuthUserMetadata, IPermissionCondition, IRealmFile, PermissionConditionType } from "./ros";
 
 // These schemas are copied from ROS
 
@@ -64,6 +64,8 @@ const realmManagementRealm: Realm = new Realm({
   ],
 });
 
+// Functions for getting these realms
+
 export const getAuthRealm = (): Realm => {
   /* tslint:disable-next-line:no-console */
   console.warn(`Using a mocked version of getAuthRealm`);
@@ -73,21 +75,12 @@ export const getAuthRealm = (): Realm => {
     const fakeUserCount = 1000 - userCount;
     authRealm.write(() => {
       for (let u = 0; u < fakeUserCount; u++) {
-        const firstName = faker.name.firstName();
-        const lastName = faker.name.lastName();
-        const email = faker.internet.email(firstName, lastName);
-        const user: IAuthUser = {
-          userId: email,
-          isAdmin: faker.random.boolean(),
-        };
-        const metadatas: IAuthUserMetadata[] = [
-          { userId: email, key: "firstName", value: firstName },
-          { userId: email, key: "lastName", value: lastName },
-        ];
-        authRealm.create("AuthUser", user);
-        metadatas.forEach(((metadata) => {
-          authRealm.create("AuthUserMetadata", metadata);
-        }));
+        try {
+          createFakeUser();
+        } catch (err) {
+          /* tslint:disable-next-line:no-console */
+          console.error(`Couldn't create a fake user.`);
+        }
       }
     });
   }
@@ -95,7 +88,82 @@ export const getAuthRealm = (): Realm => {
 };
 
 export const getRealmManagementRealm = () => {
+  /* tslint:disable-next-line:no-console */
+  console.warn(`Using a mocked version of getRealmManagementRealm`);
+  const realmCount = realmManagementRealm.objects("RealmFile").length;
+  if (realmCount < 100) {
+    const fakeRealmCount = 100 - realmCount;
+    realmManagementRealm.write(() => {
+      for (let r = 0; r < fakeRealmCount; r++) {
+        try {
+          createFakeRealmFile();
+        } catch (err) {
+          /* tslint:disable-next-line:no-console */
+          console.error(`Couldn't create a fake realm file.`);
+        }
+      }
+    });
+  }
   return realmManagementRealm;
+};
+
+// Other functions
+
+export const createFakeRealmFile = () => {
+  const creator = getRandomUser();
+  const pathPartCount = faker.random.number({ min: 1, max: 5 });
+  let path = "";
+  for (let p = 0; p < pathPartCount; p++) {
+    path += "/" + faker.random.arrayElement([
+      faker.hacker.noun(),
+      faker.hacker.verb(),
+    ]).toLowerCase();
+  }
+
+  const permissionsCount = faker.random.number({ min: 0, max: 3 });
+  const permissions: IPermissionCondition[] = [];
+  for (let p = 0; p < permissionsCount; p++) {
+    const permission: IPermissionCondition = {
+      path,
+      accessLevel: faker.random.number({ min: 0, max: 3 }),
+      type: faker.random.number({ min: 0, max: 3 }),
+    };
+    if (permission.type === PermissionConditionType.user) {
+      // TODO: Add the users id?
+    }
+    permissions.push(permission);
+  }
+
+  const realmFile: IRealmFile = {
+    path,
+    creatorId: creator.userId,
+    creationDate: faker.date.past(2),
+    permissions,
+  };
+  realmManagementRealm.create("RealmFile", realmFile);
+};
+
+export const createFakeUser = () => {
+  const firstName = faker.name.firstName();
+  const lastName = faker.name.lastName();
+  const email = faker.internet.email(firstName, lastName);
+  const user: IAuthUser = {
+    userId: email,
+    isAdmin: faker.random.boolean(),
+  };
+  const metadatas: IAuthUserMetadata[] = [
+    { userId: email, key: "firstName", value: firstName },
+    { userId: email, key: "lastName", value: lastName },
+  ];
+  authRealm.create("AuthUser", user);
+  metadatas.forEach(((metadata) => {
+    authRealm.create("AuthUserMetadata", metadata);
+  }));
+};
+
+export const getRandomUser = () => {
+  const users = authRealm.objects<IAuthUser>("AuthUser");
+  return users[faker.random.number({ min: 0, max: users.length })];
 };
 
 export const deleteUser = (userId: string) => {
