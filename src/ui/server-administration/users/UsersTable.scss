@@ -19,17 +19,21 @@ $sidebar-shadow: rgba($color-dove, .66);
 
       &__headerRow,
       &__row {
+        border-bottom: 1px solid $color-dove;
         font-size: .9rem;
       }
 
       &__row {
-        border-top: 1px solid $color-dove;
         cursor: pointer;
 
         &:focus {
           // Disabling the default focus outline
           outline-style: none;
         }
+      }
+
+      &__headerTruncatedText {
+        vertical-align: middle;
       }
     }
 
