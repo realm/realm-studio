@@ -54,9 +54,9 @@ export const UsersTable = ({
             <Column label="Role" dataKey="isAdmin" width={150} cellRenderer={({ cellData }) => {
               return cellData ? "Administrator" : "Regular user";
             }} />
-            <Column label="Realms" dataKey={null} width={150} cellRenderer={({ rowData }) => {
-              const user = rowData as IAuthUser;
-              return getUsersRealms(user.userId).length;
+            <Column label="Realms" dataKey="userId" width={150} cellRenderer={({ cellData }) => {
+              const userId = cellData as string;
+              return getUsersRealms(userId).length;
             }} />
           </Table>
         )}

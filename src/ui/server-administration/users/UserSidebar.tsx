@@ -47,7 +47,9 @@ export const UserSidebar = ({
       {user && (
         <Card className="UserSidebar__card">
           <CardBlock>
-            <CardTitle>{user && user.userId}</CardTitle>
+            <CardTitle className="UserSidebar__title">
+              <span title={user.userId}>{user.userId}</span>
+            </CardTitle>
             <ButtonDropdown isOpen={roleDropdownOpen} toggle={toggleRoleDropdown}>
               <DropdownToggle caret>
                 {user.isAdmin ? "Administrator" : "Regular user"}
@@ -62,9 +64,7 @@ export const UserSidebar = ({
               </DropdownMenu>
             </ButtonDropdown>
 
-            <CardText />
-
-            <Table size="sm">
+            <Table size="sm" className="UserSidebar__metadata-table">
               <thead>
                 <tr>
                   {/* We mention "Metadata" in this header, so we don't need a separate header */}
@@ -76,15 +76,15 @@ export const UserSidebar = ({
                 { metadatas.map((metadata) => {
                   return (
                     <tr key={metadata.key}>
-                      <td>{metadata.key}</td>
-                      <td>{metadata.value}</td>
+                      <td title={metadata.key}>{metadata.key}</td>
+                      <td title={metadata.value}>{metadata.value}</td>
                     </tr>
                   );
                 }) }
               </tbody>
             </Table>
 
-            <Table size="sm">
+            <Table size="sm" className="UserSidebar__realms-table">
               <thead>
                 <tr>
                   {/* We mention "Realm" in this header, so we don't need a separate header */}
@@ -95,7 +95,7 @@ export const UserSidebar = ({
                 { realms.map((realm) => {
                   return (
                     <tr key={realm.path}>
-                      <td>{realm.path}</td>
+                      <td title={realm.path}>{realm.path}</td>
                     </tr>
                   );
                 }) }

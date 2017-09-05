@@ -7,7 +7,25 @@
     border-right: 0;
     border-top: 0;
     height: 100%;
-    overflow: scroll;
+  }
+
+  &__title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__metadata-table,
+  &__realms-table {
+    table-layout: fixed;
+
+    td {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  &__metadata-table {
+    margin-top: $spacer;
   }
 
   &__controls {
