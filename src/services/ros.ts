@@ -51,6 +51,10 @@ export const getRealmManagementRealm = (user: Realm.Sync.User) => {
   return mocked.getRealmManagementRealm();
 };
 
+export const createUser = async (username: string, password: string) => {
+  return await mocked.createUser(username, password);
+};
+
 export const deleteRealm = (userId: string) => {
   // mocked.deleteRealm(userId);
   throw new Error("Not yet implemented");
@@ -62,6 +66,10 @@ export const deleteUser = (userId: string) => {
 
 export const updateUser = (userId: string, values: Partial<IAuthUser>) => {
   return mocked.updateUser(userId, values);
+};
+
+export const updateUserPassword = (userId: string, password: string) => {
+  return mocked.updateUserPassword(userId, password);
 };
 
 export const updateRealm = (realmId: string, values: Partial<IRealmFile>) => {

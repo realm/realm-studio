@@ -1,6 +1,5 @@
 @import "~realm-studio-styles/variables";
-
-$sidebar-shadow: rgba($color-dove, .66);
+@import "../variables";
 
 .UsersTable {
   display: flex;
@@ -14,19 +13,31 @@ $sidebar-shadow: rgba($color-dove, .66);
     flex: 1 0;
   }
 
+  &__overlayed-controls {
+    bottom: $spacer;
+    opacity: 1;
+    position: absolute;
+    right: $spacer;
+    transition-duration: $sidebar-transition-duration;
+    transition-property: opacity;
+
+    &--hidden {
+      opacity: 0;
+    }
+  }
+
   &__selected-user {
     box-shadow: -5px 0 5px $sidebar-shadow;
     flex: 0 0 0;
     height: 100%;
-    opacity: 0;
     overflow: hidden;
-    transition-duration: .3s;
-    transition-property: flex-basis, opacity;
+    transition-duration: $sidebar-transition-duration;
+    transition-property: flex-basis;
+    transition-timing-function: ease-in-out;
     z-index: 1;
 
     &--active {
-      flex-basis: 33vw;
-      opacity: 1;
+      flex-basis: $sidebar-width;
     }
   }
 

@@ -11,7 +11,8 @@ export interface IUserSidebarContainerProps {
   className: string | null;
   metadatas: IAuthUserMetadata[];
   realms: IRealmFile[];
-  onUserDeleted: (userId: string) => void;
+  onUserChangePassword: (userId: string) => void;
+  onUserDeletion: (userId: string) => void;
   onUserRoleChanged: (userId: string, role: UserRole) => void;
   user: IAuthUser | null;
 }
@@ -48,9 +49,15 @@ extends React.Component<IUserSidebarContainerProps, IUserSidebarContainerState> 
     }
   }
 
-  public onDeleted = () => {
+  public onDeletion = () => {
     if (this.props.user) {
-      this.props.onUserDeleted(this.props.user.userId);
+      this.props.onUserDeletion(this.props.user.userId);
+    }
+  }
+
+  public onChangePassword = () => {
+    if (this.props.user) {
+      this.props.onUserChangePassword(this.props.user.userId);
     }
   }
 }

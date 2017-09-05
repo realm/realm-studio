@@ -27,7 +27,8 @@ export enum UserRole {
 
 export interface IUserSidebarProps extends IUserSidebarContainerProps {
   roleDropdownOpen: boolean;
-  onDeleted: () => void;
+  onChangePassword: () => void;
+  onDeletion: () => void;
   onRoleChanged: (role: UserRole) => void;
   toggleRoleDropdown: () => void;
 }
@@ -37,7 +38,8 @@ export const UserSidebar = ({
   user,
   metadatas,
   realms,
-  onDeleted,
+  onChangePassword,
+  onDeletion,
   onRoleChanged,
   roleDropdownOpen,
   toggleRoleDropdown,
@@ -103,8 +105,11 @@ export const UserSidebar = ({
             </Table>
           </CardBlock>
           <CardBlock className="UserSidebar__controls">
-            <Button size="sm" color="danger" onClick={() => onDeleted()}>
-              Delete this user
+            <Button size="sm" onClick={() => onChangePassword()}>
+              Change password
+            </Button>
+            <Button size="sm" color="danger" onClick={() => onDeletion()}>
+              Delete
             </Button>
           </CardBlock>
         </Card>

@@ -1,9 +1,12 @@
 import * as classnames from "classnames";
 import * as React from "react";
 import { AutoSizer, Column, Dimensions as IAutoSizerDimensions, Table } from "react-virtualized";
+import { Button } from "reactstrap";
 
 import { IAuthUser, IAuthUserMetadata, IRealmFile } from "../../../services/ros";
 
+import { ChangePasswordDialogContainer } from "./ChangePasswordDialogContainer";
+import { CreateUserDialogContainer } from "./CreateUserDialogContainer";
 import { UserRole, UserSidebarContainer } from "./UserSidebarContainer";
 export { UserRole };
 
@@ -14,21 +17,35 @@ export const UsersTable = ({
   getUser,
   getUserFromId,
   getUsersRealms,
-  onUserDeleted,
-  onUserSelected,
+  isChangePasswordOpen,
+  isCreateUserOpen,
+  onUserChangePassword,
+  onUserCreated,
+  onUserDeletion,
+  onUserPasswordChanged,
   onUserRoleChanged,
+  onUserSelected,
   selectedUserId,
   selectedUsersMetadatas,
+  toggleChangePassword,
+  toggleCreateUser,
 }: {
   userCount: number,
   getUser: (index: number) => IAuthUser | null,
   getUserFromId: (userId: string) => IAuthUser | null,
   getUsersRealms: (userId: string) => IRealmFile[],
-  onUserDeleted: (userId: string) => void,
-  onUserSelected: (userId: string | null) => void,
+  isChangePasswordOpen: boolean,
+  isCreateUserOpen: boolean,
+  onUserChangePassword: (userId: string) => void,
+  onUserCreated: (username: string, password: string) => void,
+  onUserDeletion: (userId: string) => void,
+  onUserPasswordChanged: (userId: string, password: string) => void,
   onUserRoleChanged: (userId: string, role: UserRole) => void,
+  onUserSelected: (userId: string | null) => void,
   selectedUserId: string | null,
   selectedUsersMetadatas: IAuthUserMetadata[],
+  toggleChangePassword: () => void,
+  toggleCreateUser: () => void,
 }) => {
   return (
     <div className="UsersTable">
@@ -62,14 +79,35 @@ export const UsersTable = ({
         )}
         </AutoSizer>
       </div>
+
+      <div className={classnames("UsersTable__overlayed-controls", {
+        "UsersTable__overlayed-controls--hidden": selectedUserId !== null,
+      })}>
+        <Button onClick={toggleCreateUser}>
+          Create new user
+        </Button>
+      </div>
+
       <UserSidebarContainer className={classnames("UsersTable__selected-user", {
         "UsersTable__selected-user--active": selectedUserId !== null,
       })}
         realms={selectedUserId !== null ? getUsersRealms(selectedUserId) : []}
         user={selectedUserId !== null ? getUserFromId(selectedUserId) : null}
-        onUserDeleted={onUserDeleted}
+        onUserDeletion={onUserDeletion}
+        onUserChangePassword={onUserChangePassword}
         onUserRoleChanged={onUserRoleChanged}
         metadatas={selectedUsersMetadatas} />
+
+      <ChangePasswordDialogContainer
+        isOpen={isChangePasswordOpen}
+        toggle={toggleChangePassword}
+        onPasswordChanged={onUserPasswordChanged}
+        user={selectedUserId !== null ? getUserFromId(selectedUserId) : null} />
+
+      <CreateUserDialogContainer
+        isOpen={isCreateUserOpen}
+        toggle={toggleCreateUser}
+        onUserCreated={onUserCreated} />
     </div>
   );
 };

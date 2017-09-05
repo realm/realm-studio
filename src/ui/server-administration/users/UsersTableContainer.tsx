@@ -3,6 +3,7 @@ import * as React from "react";
 import * as Realm from "realm";
 
 import {
+  createUser,
   deleteUser,
   getAuthRealm,
   getRealmManagementRealm,
@@ -10,6 +11,7 @@ import {
   IAuthUserMetadata,
   IRealmFile,
   updateUser,
+  updateUserPassword,
 } from "../../../services/ros";
 
 import { UserRole, UsersTable } from "./UsersTable";
@@ -19,6 +21,8 @@ export interface IUsersTableContainerProps {
 }
 
 export interface IUsersTableContainerState {
+  isChangePasswordOpen: boolean;
+  isCreateUserOpen: boolean;
   users: Realm.Results<IAuthUser> | null;
   selectedUserId: string | null;
 }
@@ -31,6 +35,8 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
   constructor() {
     super();
     this.state = {
+      isChangePasswordOpen: false,
+      isCreateUserOpen: false,
       users: null,
       selectedUserId: null,
     };
@@ -55,6 +61,8 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
 
   public render() {
     return <UsersTable
+      isChangePasswordOpen={this.state.isChangePasswordOpen}
+      isCreateUserOpen={this.state.isCreateUserOpen}
       selectedUserId={this.state.selectedUserId}
       selectedUsersMetadatas={this.getSelectedUsersMetadatas()}
       userCount={this.state.users ? this.state.users.length : 0}
@@ -80,7 +88,35 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
     return realms.slice();
   }
 
-  public onUserDeleted = async (userId: string) => {
+  public toggleChangePassword = () => {
+    this.setState({
+      isChangePasswordOpen: !this.state.isChangePasswordOpen,
+    });
+  }
+
+  public toggleCreateUser = () => {
+    this.setState({
+      isCreateUserOpen: !this.state.isCreateUserOpen,
+    });
+  }
+
+  public onUserChangePassword = (userId: string) => {
+    this.setState({
+      isChangePasswordOpen: true,
+      selectedUserId: userId,
+    });
+  }
+
+  public onUserCreated = async (username: string, password: string) => {
+    const userId = await createUser(username, password);
+    this.onUserSelected(userId);
+  }
+
+  public onUserPasswordChanged = (userId: string, password: string) => {
+    updateUserPassword(userId, password);
+  }
+
+  public onUserDeletion = async (userId: string) => {
     const confirmed = await this.confirmUserDeletion(userId);
     if (confirmed) {
       deleteUser(userId);

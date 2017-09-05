@@ -1,12 +1,16 @@
 @import "~realm-studio-styles/variables";
+@import "../variables";
 
 .UserSidebar {
+  background: $white;
+
   &__card {
     border-bottom: 0;
     border-radius: 0;
     border-right: 0;
     border-top: 0;
     height: 100%;
+    width: $sidebar-width;
   }
 
   &__title {
@@ -31,5 +35,12 @@
   &__controls {
     flex-grow: 0;
     text-align: center;
+
+    // Add spacing between the controls
+    * {
+      &:not(:first-child) {
+        margin-left: $spacer / 2;
+      }
+    }
   }
 }
