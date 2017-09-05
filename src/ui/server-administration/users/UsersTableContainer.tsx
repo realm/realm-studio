@@ -2,7 +2,7 @@ import * as electron from "electron";
 import * as React from "react";
 import * as Realm from "realm";
 
-import { deleteUser, getAuthRealm, IAuthUser, IAuthUserMetadata } from "../../../services/ros";
+import { deleteUser, getAuthRealm, IAuthUser, IAuthUserMetadata, updateUser } from "../../../services/ros";
 
 import { UserRole, UsersTable } from "./UsersTable";
 
@@ -72,11 +72,8 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
   }
 
   public onUserRoleChanged = (userId: string, role: UserRole) => {
-    this.authRealm.write(() => {
-      const user = this.getUserFromId(userId);
-      if (user) {
-        user.isAdmin = role === UserRole.Administrator;
-      }
+    updateUser(userId, {
+      isAdmin: role === UserRole.Administrator,
     });
   }
 
@@ -86,7 +83,7 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
       this.authRealm.removeListener("change", this.onUsersChanged);
     }
     this.authRealm = getAuthRealm(this.props.user);
-    // Get the users, admins first
+    // Get the users
     const users = this.authRealm.objects<IAuthUser>("AuthUser"); // .sorted("isAdmin", true);
     // Set the state
     this.setState({
