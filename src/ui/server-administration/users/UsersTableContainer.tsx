@@ -64,10 +64,14 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
     return this.authRealm.objectForPrimaryKey<IAuthUser>("AuthUser", userId);
   }
 
-  public onUserDeleted = (userId: string) => {
-    deleteUser(userId);
-    if (userId === this.state.selectedUserId) {
-      this.onUserSelected(null);
+
+  public onUserDeleted = async (userId: string) => {
+    const confirmed = await this.confirmUserDeletion(userId);
+    if (confirmed) {
+      deleteUser(userId);
+      if (userId === this.state.selectedUserId) {
+        this.onUserSelected(null);
+      }
     }
   }
 
@@ -105,5 +109,18 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
     } else {
       return [];
     }
+  }
+
+  private confirmUserDeletion(userId: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      electron.remote.dialog.showMessageBox(electron.remote.getCurrentWindow(), {
+        type: "warning",
+        message: `Are you sure you want to delete this user?`,
+        title: `Deleting ${userId}`,
+        buttons: ["Cancel", "Delete"],
+      }, (response) => {
+        resolve(response === 1);
+      });
+    });
   }
 }
