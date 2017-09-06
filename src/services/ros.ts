@@ -55,8 +55,19 @@ export const appendUserMetadata = (userId: string, key: string, value: string) =
   return mocked.appendUserMetadata(userId, key, value);
 };
 
-export const createUser = async (username: string, password: string) => {
-  return await mocked.createUser(username, password);
+export const createUser = async (server: string, username: string, password: string): Promise<string> => {
+  const newUser = await new Promise<Realm.Sync.User>((resolve, reject) => {
+      // We could create the object in the synced realm, but that wont create the desired username and password
+      Realm.Sync.User.register(server, username, password, (err, user) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(user);
+        }
+      });
+  });
+  newUser.logout();
+  return newUser.identity;
 };
 
 export const deleteRealm = (userId: string) => {

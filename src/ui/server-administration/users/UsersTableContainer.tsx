@@ -110,7 +110,7 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
   }
 
   public onUserCreated = async (username: string, password: string) => {
-    const userId = await createUser(username, password);
+    const userId = await createUser(this.props.user.server, username, password);
     this.onUserSelected(userId);
   }
 

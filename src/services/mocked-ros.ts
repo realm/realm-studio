@@ -156,19 +156,6 @@ export const createFakeRealmFile = () => {
   realmManagementRealm.create("RealmFile", realmFile);
 };
 
-export const createUser = async (username: string, password: string) => {
-  /* tslint:disable-next-line:no-console */
-  console.warn(`Created a mocked user - password will not be set`);
-  const user: IAuthUser = {
-    userId: username,
-    isAdmin: false,
-  };
-  authRealm.write(() => {
-    authRealm.create("AuthUser", user);
-  });
-  return user.userId;
-};
-
 export const createFakeUser = () => {
   const firstName = faker.name.firstName();
   const lastName = faker.name.lastName();
