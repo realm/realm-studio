@@ -83,7 +83,6 @@ const MetadataTable = ({
 };
 
 export interface IUserSidebarProps extends IUserSidebarContainerProps {
-  editingMetadataIndex: number | null;
   onChangePassword: () => void;
   onDeletion: () => void;
   onMetadataAppended: () => void;
@@ -96,7 +95,6 @@ export interface IUserSidebarProps extends IUserSidebarContainerProps {
 
 export const UserSidebar = ({
   className,
-  editingMetadataIndex,
   metadatas,
   onChangePassword,
   onDeletion,

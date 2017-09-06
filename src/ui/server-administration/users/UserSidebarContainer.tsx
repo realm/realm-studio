@@ -27,19 +27,15 @@ export interface IUserSidebarContainerProps {
 
 export interface IUserSidebarContainerState {
   roleDropdownOpen: boolean;
-  editingMetadataIndex: number | null;
 }
 
 export class UserSidebarContainer
 extends React.Component<IUserSidebarContainerProps, IUserSidebarContainerState> {
 
-  private authRealm: Realm;
-
   constructor() {
     super();
     this.state = {
       roleDropdownOpen: false,
-      editingMetadataIndex: null,
     };
   }
 
