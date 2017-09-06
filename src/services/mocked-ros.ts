@@ -109,19 +109,6 @@ export const getRealmManagementRealm = () => {
 
 // Other functions
 
-export const appendUserMetadata = (userId: string, key: string, value: string) => {
-  /* tslint:disable-next-line:no-console */
-  console.warn(`Using a mocked version of appendUserMetadata`, userId, key, value);
-  const metadatas = authRealm.objects<IAuthUserMetadata>("AuthUserMetadata").filtered("userId = $0", userId);
-  authRealm.write(() => {
-    authRealm.create<IAuthUserMetadata>("AuthUserMetadata", {
-      key,
-      userId,
-      value,
-    });
-  });
-};
-
 export const createFakeRealmFile = () => {
   const creator = getRandomUser();
   const pathPartCount = faker.random.number({ min: 1, max: 5 });
@@ -177,55 +164,6 @@ export const createFakeUser = () => {
 export const getRandomUser = () => {
   const users = authRealm.objects<IAuthUser>("AuthUser");
   return users[faker.random.number({ min: 0, max: users.length })];
-};
-
-export const deleteUser = (userId: string) => {
-  /* tslint:disable-next-line:no-console */
-  console.warn(`Using a mocked version of deleteUser`);
-
-  authRealm.write(() => {
-    const user = authRealm.objectForPrimaryKey<IAuthUser>("AuthUser", userId);
-    authRealm.delete(user);
-  });
-};
-
-export const deleteUserMetadata = (userId: string, index: number) => {
-  /* tslint:disable-next-line:no-console */
-  console.warn(`Using a mocked version of deleteUserMetadata`, userId, index);
-  const metadatas = authRealm.objects<IAuthUserMetadata>("AuthUserMetadata").filtered("userId = $0", userId);
-  if (index >= 0 && index < metadatas.length) {
-    authRealm.write(() => {
-      authRealm.delete(metadatas[index]);
-    });
-  } else {
-    throw new Error(`Cannot update users metadata, index ${index} is out of bounds.`);
-  }
-};
-
-export const updateUser = (userId: string, values: Partial<IAuthUser>) => {
-  /* tslint:disable-next-line:no-console */
-  console.warn(`Using a mocked version of updateUser`);
-
-  const user = authRealm.objectForPrimaryKey<IAuthUser>("AuthUser", userId);
-  authRealm.write(() => {
-    if (user && typeof(values.isAdmin) !== "undefined") {
-      user.isAdmin = values.isAdmin;
-    }
-  });
-};
-
-export const updateUserMetadata = (userId: string, index: number, key: string, value: string) => {
-  /* tslint:disable-next-line:no-console */
-  console.warn(`Using a mocked version of updateUserMetadata`, userId, index, key, value);
-  const metadatas = authRealm.objects<IAuthUserMetadata>("AuthUserMetadata").filtered("userId = $0", userId);
-  if (index >= 0 && index < metadatas.length) {
-    authRealm.write(() => {
-      metadatas[index].key = key;
-      metadatas[index].value = value;
-    });
-  } else {
-    throw new Error(`Cannot update users metadata, index ${index} is out of bounds.`);
-  }
 };
 
 export const updateUserPassword = (userId: string, password: string) => {

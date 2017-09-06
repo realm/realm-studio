@@ -3,16 +3,12 @@ import * as React from "react";
 import * as Realm from "realm";
 
 import {
-  appendUserMetadata,
   createUser,
-  deleteUser,
   getAuthRealm,
   getRealmManagementRealm,
   IAuthUser,
   IAuthUserMetadata,
   IRealmFile,
-  updateUser,
-  updateUserMetadata,
   updateUserPassword,
 } from "../../../services/ros";
 
@@ -114,24 +110,66 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
     this.onUserSelected(userId);
   }
 
-  public onUserPasswordChanged = (userId: string, password: string) => {
-    updateUserPassword(userId, password);
-  }
-
   public onUserDeletion = async (userId: string) => {
     const confirmed = await this.confirmUserDeletion(userId);
     if (confirmed) {
-      deleteUser(userId);
+      this.authRealm.write(() => {
+        const user = this.authRealm.objectForPrimaryKey<IAuthUser>("AuthUser", userId);
+        this.authRealm.delete(user);
+      });
       if (userId === this.state.selectedUserId) {
         this.onUserSelected(null);
       }
     }
   }
 
-  public onUserRoleChanged = (userId: string, role: UserRole) => {
-    updateUser(userId, {
-      isAdmin: role === UserRole.Administrator,
+  public onUserMetadataAppended = (userId: string) => {
+    const metadatas = this.authRealm.objects<IAuthUserMetadata>("AuthUserMetadata").filtered("userId = $0", userId);
+    this.authRealm.write(() => {
+      this.authRealm.create<IAuthUserMetadata>("AuthUserMetadata", {
+        key: "",
+        userId,
+        value: "",
+      });
     });
+  }
+
+  public onUserMetadataChanged = (userId: string, index: number, key: string, value: string) => {
+    const metadatas = this.authRealm.objects<IAuthUserMetadata>("AuthUserMetadata").filtered("userId = $0", userId);
+    if (index >= 0 && index < metadatas.length) {
+      this.authRealm.write(() => {
+        metadatas[index].key = key;
+        metadatas[index].value = value;
+      });
+    } else {
+      throw new Error(`Cannot update users metadata, index ${index} is out of bounds.`);
+    }
+  }
+
+  public onUserMetadataDeleted = (userId: string, index: number) => {
+    const metadatas = this.authRealm.objects<IAuthUserMetadata>("AuthUserMetadata").filtered("userId = $0", userId);
+    if (index >= 0 && index < metadatas.length) {
+      this.authRealm.write(() => {
+        this.authRealm.delete(metadatas[index]);
+      });
+    } else {
+      throw new Error(`Cannot update users metadata, index ${index} is out of bounds.`);
+    }
+  }
+
+  public onUserPasswordChanged = (userId: string, password: string) => {
+    updateUserPassword(userId, password);
+  }
+
+  public onUserRoleChanged = (userId: string, role: UserRole) => {
+    const user = this.authRealm.objectForPrimaryKey<IAuthUser>("AuthUser", userId);
+    if (user) {
+      this.authRealm.write(() => {
+        user.isAdmin = role === UserRole.Administrator;
+      });
+    } else {
+      throw new Error(`Found no user with the id ${userId}`);
+    }
   }
 
   private initializeRealms() {

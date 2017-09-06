@@ -3,13 +3,10 @@ import * as React from "react";
 import * as Realm from "realm";
 
 import {
-  appendUserMetadata,
-  deleteUserMetadata,
   getAuthRealm,
   IAuthUser,
   IAuthUserMetadata,
   IRealmFile,
-  updateUserMetadata,
 } from "../../../services/ros";
 
 import { UserRole, UserSidebar } from "./UserSidebar";
@@ -21,6 +18,9 @@ export interface IUserSidebarContainerProps {
   realms: IRealmFile[];
   onUserChangePassword: (userId: string) => void;
   onUserDeletion: (userId: string) => void;
+  onUserMetadataAppended: (userId: string) => void;
+  onUserMetadataChanged: (userId: string, index: number, key: string, value: string) => void;
+  onUserMetadataDeleted: (userId: string, index: number) => void;
   onUserRoleChanged: (userId: string, role: UserRole) => void;
   user: IAuthUser | null;
 }
@@ -73,19 +73,20 @@ extends React.Component<IUserSidebarContainerProps, IUserSidebarContainerState> 
 
   public onMetadataAppended = () => {
     if (this.props.user) {
-      appendUserMetadata(this.props.user.userId, "", "");
+      this.props.onUserMetadataAppended(this.props.user.userId);
     }
   }
 
   public onMetadataChanged = (index: number, key: string, value: string) => {
     if (this.props.user) {
-      updateUserMetadata(this.props.user.userId, index, key, value);
+      this.props.onUserMetadataChanged(this.props.user.userId, index, key, value);
     }
   }
 
   public onMetadataDeleted = (index: number) => {
     if (this.props.user) {
-      deleteUserMetadata(this.props.user.userId, index);
+      this.props.onUserMetadataDeleted(this.props.user.userId, index);
     }
   }
+
 }

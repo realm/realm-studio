@@ -51,10 +51,6 @@ export const getRealmManagementRealm = (user: Realm.Sync.User) => {
   return mocked.getRealmManagementRealm();
 };
 
-export const appendUserMetadata = (userId: string, key: string, value: string) => {
-  return mocked.appendUserMetadata(userId, key, value);
-};
-
 export const createUser = async (server: string, username: string, password: string): Promise<string> => {
   const newUser = await new Promise<Realm.Sync.User>((resolve, reject) => {
       // We could create the object in the synced realm, but that wont create the desired username and password
@@ -73,22 +69,6 @@ export const createUser = async (server: string, username: string, password: str
 export const deleteRealm = (userId: string) => {
   // mocked.deleteRealm(userId);
   throw new Error("Not yet implemented");
-};
-
-export const deleteUser = (userId: string) => {
-  mocked.deleteUser(userId);
-};
-
-export const deleteUserMetadata = (userId: string, index: number) => {
-  mocked.deleteUserMetadata(userId, index);
-};
-
-export const updateUser = (userId: string, values: Partial<IAuthUser>) => {
-  return mocked.updateUser(userId, values);
-};
-
-export const updateUserMetadata = (userId: string, index: number, key: string, value: string) => {
-  return mocked.updateUserMetadata(userId, index, key, value);
 };
 
 export const updateUserPassword = (userId: string, password: string) => {

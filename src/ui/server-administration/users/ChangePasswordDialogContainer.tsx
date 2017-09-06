@@ -29,7 +29,9 @@ extends React.Component<IChangePasswordDialogContainerProps, IChangePasswordDial
 
   public render() {
     const user = this.props.user;
-    return user && (<ChangePasswordDialog {...this.props} {...this.state} {...this} user={user} />);
+    return user ? (
+      <ChangePasswordDialog {...this.props} {...this.state} {...this} user={user} />
+    ) : null;
   }
 
   public onSubmit = (e: React.FormEvent<HTMLFormElement>) => {

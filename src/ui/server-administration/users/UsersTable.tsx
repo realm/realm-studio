@@ -21,6 +21,9 @@ export const UsersTable = ({
   onUserChangePassword,
   onUserCreated,
   onUserDeletion,
+  onUserMetadataAppended,
+  onUserMetadataChanged,
+  onUserMetadataDeleted,
   onUserPasswordChanged,
   onUserRoleChanged,
   onUserSelected,
@@ -38,6 +41,9 @@ export const UsersTable = ({
   onUserChangePassword: (userId: string) => void,
   onUserCreated: (username: string, password: string) => void,
   onUserDeletion: (userId: string) => void,
+  onUserMetadataAppended: (userId: string) => void,
+  onUserMetadataChanged: (userId: string, index: number, key: string, value: string) => void,
+  onUserMetadataDeleted: (userId: string, index: number) => void,
   onUserPasswordChanged: (userId: string, password: string) => void,
   onUserRoleChanged: (userId: string, role: UserRole) => void,
   onUserSelected: (userId: string | null) => void,
@@ -95,6 +101,9 @@ export const UsersTable = ({
         onUserChangePassword={onUserChangePassword}
         onUserDeletion={onUserDeletion}
         onUserRoleChanged={onUserRoleChanged}
+        onUserMetadataAppended={onUserMetadataAppended}
+        onUserMetadataChanged={onUserMetadataChanged}
+        onUserMetadataDeleted={onUserMetadataDeleted}
         realms={selectedUserId !== null ? getUsersRealms(selectedUserId) : []}
         user={selectedUserId !== null ? getUserFromId(selectedUserId) : null} />
 
