@@ -62,7 +62,6 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
       isChangePasswordOpen={this.state.isChangePasswordOpen}
       isCreateUserOpen={this.state.isCreateUserOpen}
       selectedUserId={this.state.selectedUserId}
-      selectedUsersMetadatas={this.getSelectedUsersMetadatas()}
       userCount={this.state.users ? this.state.users.length : 0}
       {...this} />;
   }
@@ -84,6 +83,11 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
   public getUsersRealms = (userId: string): IRealmFile[] => {
     const realms = this.realmManagementRealm.objects<IRealmFile>("RealmFile").filtered("creatorId = $0", userId);
     return realms.slice();
+  }
+
+  public getUsersMetadatas = (userId: string): IAuthUserMetadata[] => {
+    const metadata = this.authRealm.objects<IAuthUserMetadata>("AuthUserMetadata").filtered("userId = $0", userId);
+    return metadata.slice();
   }
 
   public toggleChangePassword = () => {
@@ -205,16 +209,6 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
 
   private onRealmsChanged = () => {
     this.forceUpdate();
-  }
-
-  private getSelectedUsersMetadatas = (): IAuthUserMetadata[] => {
-    if (this.authRealm && this.state.users && this.state.selectedUserId !== null) {
-      const userId = this.state.selectedUserId;
-      const metadata = this.authRealm.objects<IAuthUserMetadata>("AuthUserMetadata").filtered("userId = $0", userId);
-      return metadata.slice();
-    } else {
-      return [];
-    }
   }
 
   private confirmUserDeletion(userId: string): Promise<boolean> {

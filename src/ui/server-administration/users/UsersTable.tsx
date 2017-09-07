@@ -15,6 +15,7 @@ import "./UsersTable.scss";
 export const UsersTable = ({
   getUser,
   getUserFromId,
+  getUsersMetadatas,
   getUsersRealms,
   isChangePasswordOpen,
   isCreateUserOpen,
@@ -28,13 +29,13 @@ export const UsersTable = ({
   onUserRoleChanged,
   onUserSelected,
   selectedUserId,
-  selectedUsersMetadatas,
   toggleChangePassword,
   toggleCreateUser,
   userCount,
 }: {
   getUser: (index: number) => IAuthUser | null,
   getUserFromId: (userId: string) => IAuthUser | null,
+  getUsersMetadatas: (userId: string) => IAuthUserMetadata[],
   getUsersRealms: (userId: string) => IRealmFile[],
   isChangePasswordOpen: boolean,
   isCreateUserOpen: boolean,
@@ -48,7 +49,6 @@ export const UsersTable = ({
   onUserRoleChanged: (userId: string, role: UserRole) => void,
   onUserSelected: (userId: string | null) => void,
   selectedUserId: string | null,
-  selectedUsersMetadatas: IAuthUserMetadata[],
   toggleChangePassword: () => void,
   toggleCreateUser: () => void,
   userCount: number,
@@ -97,13 +97,13 @@ export const UsersTable = ({
       <UserSidebarContainer className={classnames("UsersTable__selected-user", {
         "UsersTable__selected-user--active": selectedUserId !== null,
       })}
-        metadatas={selectedUsersMetadatas}
+        metadatas={selectedUserId !== null ? getUsersMetadatas(selectedUserId) : []}
         onUserChangePassword={onUserChangePassword}
         onUserDeletion={onUserDeletion}
-        onUserRoleChanged={onUserRoleChanged}
         onUserMetadataAppended={onUserMetadataAppended}
         onUserMetadataChanged={onUserMetadataChanged}
         onUserMetadataDeleted={onUserMetadataDeleted}
+        onUserRoleChanged={onUserRoleChanged}
         realms={selectedUserId !== null ? getUsersRealms(selectedUserId) : []}
         user={selectedUserId !== null ? getUserFromId(selectedUserId) : null} />
 
