@@ -71,19 +71,20 @@ export const getAuthRealm = (): Realm => {
   console.warn(`Using a mocked version of getAuthRealm`);
   // If no users exists - let"s create some fake ones
   const userCount = authRealm.objects("AuthUser").length;
-  if (userCount < 1000) {
-    const fakeUserCount = 1000 - userCount;
-    authRealm.write(() => {
-      for (let u = 0; u < fakeUserCount; u++) {
-        try {
-          createFakeUser();
-        } catch (err) {
-          /* tslint:disable-next-line:no-console */
-          console.error(`Couldn't create a fake user.`);
-        }
-      }
-    });
-  }
+  console.log(`ROS has ${userCount} users`);
+  // if (userCount < 1000) {
+  //   const fakeUserCount = 1000 - userCount;
+  //   authRealm.write(() => {
+  //     for (let u = 0; u < fakeUserCount; u++) {
+  //       try {
+  //         createFakeUser();
+  //       } catch (err) {
+  //         /* tslint:disable-next-line:no-console */
+  //         console.error(`Couldn't create a fake user.`);
+  //       }
+  //     }
+  //   });
+  // }
   return authRealm;
 };
 
@@ -91,19 +92,20 @@ export const getRealmManagementRealm = () => {
   /* tslint:disable-next-line:no-console */
   console.warn(`Using a mocked version of getRealmManagementRealm`);
   const realmCount = realmManagementRealm.objects("RealmFile").length;
-  if (realmCount < 1000) {
-    const fakeRealmCount = 1000 - realmCount;
-    realmManagementRealm.write(() => {
-      for (let r = 0; r < fakeRealmCount; r++) {
-        try {
-          createFakeRealmFile();
-        } catch (err) {
-          /* tslint:disable-next-line:no-console */
-          console.error(`Couldn't create a fake realm file.`);
-        }
-      }
-    });
-  }
+  console.log(`ROS has ${realmCount} realms`);
+  // if (realmCount < 1000) {
+  //   const fakeRealmCount = 1000 - realmCount;
+  //   realmManagementRealm.write(() => {
+  //     for (let r = 0; r < fakeRealmCount; r++) {
+  //       try {
+  //         createFakeRealmFile();
+  //       } catch (err) {
+  //         /* tslint:disable-next-line:no-console */
+  //         console.error(`Couldn't create a fake realm file.`);
+  //       }
+  //     }
+  //   });
+  // }
   return realmManagementRealm;
 };
 
