@@ -196,7 +196,7 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
 
   private updateUsers() {
     // Get the users
-    const users = this.authRealm.objects<IAuthUser>("AuthUser"); // .sorted("isAdmin", true);
+    const users = this.authRealm.objects<IAuthUser>("AuthUser").sorted("userId");
     // Set the state
     this.setState({
       users,
