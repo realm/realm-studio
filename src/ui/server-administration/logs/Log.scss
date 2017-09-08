@@ -28,10 +28,12 @@
       font-family: monospace;
       overflow: hidden;
       text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     &__Badges {
       flex: none;
+      user-select: none;
     }
 
     &__Badge {
@@ -46,5 +48,6 @@
     font-size: .875rem;
     justify-content: space-between;
     padding: $spacer / 2;
+    user-select: none;
   }
 }
