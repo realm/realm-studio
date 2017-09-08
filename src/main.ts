@@ -1,4 +1,10 @@
+import { dialog } from "electron";
 import Application from "./main/application";
+
+// TODO: Submit these to a service like opbeat instead.
+process.on("uncaughtException", (error) => {
+  dialog.showErrorBox("Uncaught exception", `${error.message}: ${error.stack}`);
+});
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -15,11 +21,11 @@ Application.sharedApplication.run();
 
 // Look for changes to application
 if (module.hot) {
-  console.log("Accepting changes to the application");
   module.hot.accept("./main/application", () => {
     const NewApplication = require("./main/application").default;
     NewApplication.sharedApplication.run();
   });
-} else if(!isProduction) {
+} else if (!isProduction) {
+  // tslint:disable-next-line:no-console
   console.warn("Hot module replacement was disabled");
 }
