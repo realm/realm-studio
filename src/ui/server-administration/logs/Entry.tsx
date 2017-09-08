@@ -50,16 +50,21 @@ export interface ILogEntry {
   context: { [key: string]: string };
 }
 
+export interface IEntryProps extends ILogEntry {
+  style: any;
+}
+
 export const Entry = ({
+  context,
   level,
   message,
-  context,
-}: ILogEntry) => {
+  style,
+}: IEntryProps) => {
   return (
-    <div className="Log__Entry">
+    <div className="Log__Entry" style={style}>
       <span className="Log__Entry__Message">{message}</span>
       <div className="Log__Entry__Badges">
-        { Object.keys(context).map((key) => (
+        { Object.keys(context || {}).map((key) => (
           <ContextBadge key={key} contextKey={key} contextValue={context[key]} />
         )) }
         <LogLevelBadge level={level} />

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { AutoSizer, Column, Dimensions as IAutoSizerDimensions, Table } from "react-virtualized";
+import { AutoSizer, Column, Dimensions as IAutoSizerDimensions, List } from "react-virtualized";
 
 import { Entry, ILogEntry } from "./Entry";
 import { LevelSelector, LogLevel } from "./LevelSelector";
@@ -24,16 +24,14 @@ export const Log = ({
       <div className="Log__Table">
         <AutoSizer>
         {({width, height}: IAutoSizerDimensions) => (
-          <Table width={width} height={height}
-            rowHeight={20} headerHeight={0} disableHeader
+          <List width={width} height={height}
             rowCount={entries.length}
-            rowGetter={({ index }) => entries[index]}>
-            <Column className="Log__EntryCell" dataKey="null" flexGrow={1} width={width}
-              cellRenderer={({ rowData }) => {
-                const entry = rowData as ILogEntry;
-                return <Entry {...entry} />;
-              }} />
-          </Table>
+            rowHeight={20}
+            rowRenderer={({ key, style, index, isScrolling }) => {
+              const entry = entries[index] as ILogEntry;
+              return <Entry key={key} style={style} {...entry} />;
+            }}
+          />
         )}
         </AutoSizer>
       </div>
