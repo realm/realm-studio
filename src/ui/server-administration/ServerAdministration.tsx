@@ -34,7 +34,7 @@ export const ServerAdministration = ({
   } else if (user && activeTab === Tab.Logs) {
     content = <LogContainer user={user} />;
   } else if (user && activeTab === Tab.Tools) {
-    content = <ToolsContainer />;
+    content = <ToolsContainer user={user} />;
   } else {
     content = <p className="ServerAdministration__no-content">This tab has no content yet</p>;
   }
