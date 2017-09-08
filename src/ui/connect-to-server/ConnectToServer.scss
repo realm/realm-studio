@@ -14,14 +14,10 @@
     padding: $spacer;
   }
 
-  &__ServerUrl,
-  &__Authentication {
-    flex-grow: 2;
-  }
-
   &__ServerUrl {
     align-items: center;
     display: flex;
+    flex-grow: 2;
     justify-content: center;
   }
 
@@ -30,15 +26,30 @@
     margin: 0;
   }
 
-  &__Authentication {
+  &__AuthenticationForm {
     background: darken($color-dove, 5%);
     display: flex;
+    flex-basis: 110px;
     flex-direction: column;
     justify-content: space-around;
+    margin-top: $spacer;
+    position: relative;
+  }
+
+  &__AuthenticationMethodSelector {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    top: -$spacer;
+    width: 100%;
+
+    &__Btn {
+      margin: 0 ($spacer / 4);
+    }
   }
 
   &__CredentialsFormGroup {
-    margin: 0;
+    margin: $spacer / 4;
   }
 
   &__CredentialsLabelCol {

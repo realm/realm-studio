@@ -5,22 +5,27 @@ import * as Realm from "realm";
 import { showServerAdministration } from "../../actions";
 import { showError } from "../reusable/errors";
 
-import ConnectToServer from "./ConnectToServer";
+import { AuthenticationMethod } from "./AuthenticationForm";
+import { ConnectToServer } from "./ConnectToServer";
 
 export class ConnectToServerContainer extends React.Component<{}, {
+  isConnecting: boolean,
+  method: AuthenticationMethod,
   url: string,
   username: string,
   password: string,
-  isConnecting: boolean,
+  token: string,
 }> {
 
   constructor() {
     super();
     this.state = {
+      isConnecting: false,
+      method: AuthenticationMethod.usernamePassword,
       url: "",
       username: "",
       password: "",
-      isConnecting: false,
+      token: "",
     };
   }
 
@@ -33,7 +38,7 @@ export class ConnectToServerContainer extends React.Component<{}, {
   }
 
   public onSubmit = async () => {
-    const { url, username, password } = this.state;
+    const { url, username, password, token } = this.state;
 
     const preparedUrl = this.prepareUrl(url);
 
@@ -41,31 +46,48 @@ export class ConnectToServerContainer extends React.Component<{}, {
       isConnecting: true,
     });
 
-    Realm.Sync.User.login(preparedUrl, username, password, (err, user) => {
-      this.setState({
-        isConnecting: false,
+    if (token) {
+      showServerAdministration({
+        url: preparedUrl,
+        credentials: {
+          token,
+        },
       });
+    } else {
+      Realm.Sync.User.login(preparedUrl, username, password, (err, user) => {
+        this.setState({
+          isConnecting: false,
+        });
 
-      if (err) {
-        showError(`Couldn't connect to Realm Object Server`, err, {
-          "Failed to fetch": "Could not reach the server",
-        });
-      } else {
-        // Show the server administration
-        showServerAdministration({
-          url: user.server,
-          username,
-          password,
-        });
-        // and close this window
-        electron.remote.getCurrentWindow().close();
-      }
-    });
+        if (err) {
+          showError(`Couldn't connect to Realm Object Server`, err, {
+            "Failed to fetch": "Could not reach the server",
+          });
+        } else {
+          // Show the server administration
+          showServerAdministration({
+            url: user.server,
+            credentials: {
+              username,
+              password,
+            },
+          });
+          // and close this window
+          electron.remote.getCurrentWindow().close();
+        }
+      });
+    }
   }
 
   public onUrlChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({
       url: e.target.value,
+    });
+  }
+
+  public onMethodChanged = (method: AuthenticationMethod) => {
+    this.setState({
+      method,
     });
   }
 
@@ -78,6 +100,12 @@ export class ConnectToServerContainer extends React.Component<{}, {
   public onPasswordChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({
       password: e.target.value,
+    });
+  }
+
+  public onTokenChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({
+      token: e.target.value,
     });
   }
 
