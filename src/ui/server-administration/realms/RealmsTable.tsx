@@ -41,7 +41,7 @@ export const RealmsTable = ({
               onRealmSelected(realm && realm.path !== selectedRealmPath ? realm.path : null);
               event.preventDefault();
             }}>
-            <Column label="Path" dataKey="path" width={300} />
+            <Column label="Path" dataKey="path" width={width} />
           </Table>
         )}
         </AutoSizer>
