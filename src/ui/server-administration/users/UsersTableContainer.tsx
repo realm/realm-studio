@@ -40,9 +40,8 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
     };
   }
 
-  public componentDidMount() {
-    this.initializeRealms();
-    this.updateUsers();
+  public async componentDidMount() {
+    await this.initializeRealms();
   }
 
   public componentWillUnmount() {
@@ -59,7 +58,6 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
     // Fetch the users realm from ROS
     if (prevProps.user !== this.props.user) {
       this.initializeRealms();
-      this.updateUsers();
     }
   }
 
@@ -185,7 +183,7 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
     }
   }
 
-  private initializeRealms() {
+  private async initializeRealms() {
     // Remove any existing a change listeners
     if (this.authRealm) {
       this.authRealm.removeListener("change", this.onUsersChanged);
@@ -195,12 +193,15 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
     }
 
     // Get the realms from the ROS interface
-    this.authRealm = getAuthRealm(this.props.user);
-    this.realmManagementRealm = getRealmManagementRealm(this.props.user);
+    this.authRealm = await getAuthRealm(this.props.user);
+    this.realmManagementRealm = await getRealmManagementRealm(this.props.user);
 
     // Register change listeners
     this.authRealm.addListener("change", this.onUsersChanged);
     this.realmManagementRealm.addListener("change", this.onRealmsChanged);
+
+    // Update the users state
+    this.updateUsers();
   }
 
   private updateUsers() {

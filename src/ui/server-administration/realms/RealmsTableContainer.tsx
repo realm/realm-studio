@@ -70,12 +70,12 @@ export class RealmsTableContainer extends React.Component<IRealmTableContainerPr
     }
   }
 
-  private initializeRealm() {
+  private async initializeRealm() {
     // Remove any existing a change listener
     if (this.realmManagementRealm) {
       this.realmManagementRealm.removeListener("change", this.onRealmsChanged);
     }
-    this.realmManagementRealm = getRealmManagementRealm(this.props.user);
+    this.realmManagementRealm = await getRealmManagementRealm(this.props.user);
     // Get the realms
     const realms = this.realmManagementRealm.objects<IRealmFile>("RealmFile");
     // Set the state
