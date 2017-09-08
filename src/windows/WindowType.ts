@@ -6,10 +6,20 @@ export enum WindowType {
   ServerAdministration = "server-administration",
 }
 
-export interface IServerAdministrationOptions {
-  url: string;
+export interface IUsernamePasswordCredentials {
   username: string;
   password: string;
+}
+
+export interface IAdminTokenCredentials {
+  token: string;
+}
+
+export type ServerCredentials = IUsernamePasswordCredentials | IAdminTokenCredentials;
+
+export interface IServerAdministrationOptions {
+  url: string;
+  credentials: ServerCredentials;
 }
 
 export function getWindowOptions(type: WindowType, context: any): Partial<Electron.BrowserWindowConstructorOptions> {

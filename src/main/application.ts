@@ -1,7 +1,7 @@
 import * as electron from "electron";
 import * as Realm from "realm";
 
-import { Actions, IShowServerAdministrationOptions } from "../actions";
+import { Actions } from "../actions";
 import { IServerAdministrationOptions, WindowType } from "../windows/WindowType";
 import MainMenu from "./main-menu";
 import WindowManager from "./window-manager";
@@ -33,7 +33,6 @@ export default class Application {
 
   public openFile(path: string) {
     const window = this.windowManager.createWindow(WindowType.RealmBrowser, { path });
-
     window.once("ready-to-show", () => {
       window.show();
       window.webContents.send("open-file", { path });
@@ -53,20 +52,15 @@ export default class Application {
 
   public showConnectToServerDialog() {
     const window = this.windowManager.createWindow(WindowType.ConnectToServer);
-
     window.once("ready-to-show", () => {
       window.show();
     });
   }
 
-  public showServerAdministration(options: IShowServerAdministrationOptions) {
-    const windowOptions: IServerAdministrationOptions = {
-      url: options.url,
-      username: options.username,
-      password: options.password,
-    };
-    const window = this.windowManager.createWindow(WindowType.ServerAdministration, windowOptions);
-
+  public showServerAdministration(options: IServerAdministrationOptions) {
+    // TODO: Change this once the realm-js Realm.Sync.User serializes correctly
+    // @see https://github.com/realm/realm-js/issues/1276
+    const window = this.windowManager.createWindow(WindowType.ServerAdministration, options);
     window.once("ready-to-show", () => {
       window.show();
     });
@@ -104,7 +98,7 @@ export default class Application {
 
   private onActivate = () => {
     if (this.windowManager.windows.length === 0) {
-      this.showOpenDialog();
+      this.showConnectToServerDialog();
     }
   }
 
@@ -119,7 +113,7 @@ export default class Application {
   }
 
   private onShowServerAdministration = (event: any, ...args: any[]) => {
-    this.showServerAdministration(args[0] as IShowServerAdministrationOptions);
+    this.showServerAdministration(args[0] as IServerAdministrationOptions);
     event.returnValue = true;
   }
 }
