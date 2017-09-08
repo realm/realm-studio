@@ -22,7 +22,7 @@ export class LogContainer extends React.Component<ILogContainerProps, ILogContai
   constructor() {
     super();
     this.state = {
-      entries: [{ level: LogLevel.info, message: "Hello world!", context: {} }],
+      entries: [],
       isLevelSelectorOpen: false,
       level: LogLevel.all,
     };
