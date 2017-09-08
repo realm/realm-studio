@@ -14,9 +14,9 @@ const levelColors: { [level: string]: string } = {
   error: "danger",
   warn: "warning",
   info: "info",
-  detail: "secondary",
-  debug: "secondary",
-  trace: "secondary",
+  detail: "default",
+  debug: "default",
+  trace: "default",
 };
 
 const LogLevelBadge = ({ level }: { level: LogLevel }) => {
