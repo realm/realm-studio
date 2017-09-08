@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { IAuthUser } from "../../../services/ros";
+import { IUser } from "../../../services/ros";
 
 import { CreateUserDialog } from "./CreateUserDialog";
 

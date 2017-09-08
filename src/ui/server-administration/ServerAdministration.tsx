@@ -4,6 +4,7 @@ import { Button, Navbar } from "reactstrap";
 
 import { LoadingOverlay } from "../reusable/loading-overlay";
 import { LogContainer } from "./logs/LogContainer";
+import { ToolsContainer } from "./tools/ToolsContainer";
 import { UsersTableContainer } from "./users/UsersTableContainer";
 
 import "./ServerAdministration.scss";
@@ -12,6 +13,7 @@ export enum Tab {
   Users = "users",
   Realms = "realms",
   Logs = "logs",
+  Tools = "tools",
 }
 
 export const ServerAdministration = ({
@@ -28,6 +30,8 @@ export const ServerAdministration = ({
     content = <UsersTableContainer user={user} />;
   } else if (user && activeTab === Tab.Logs) {
     content = <LogContainer user={user} />;
+  } else if (user && activeTab === Tab.Tools) {
+    content = <ToolsContainer />;
   } else {
     content = <p className="ServerAdministration__no-content">This tab has no content yet</p>;
   }
@@ -55,6 +59,7 @@ export const ServerAdministration = ({
         <TabButton tab={Tab.Users} label="Users" />
         <TabButton tab={Tab.Realms} label="Realms" />
         <TabButton tab={Tab.Logs} label="Logs" />
+        <TabButton tab={Tab.Tools} label="Tools" />
         { user && (
           <p className="ServerAdministration__status">
             Connected to {user.server}

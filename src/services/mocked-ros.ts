@@ -1,21 +1,22 @@
 import * as faker from "faker";
 import * as Realm from "realm";
 
-import { IAuthUser, IAuthUserMetadata, IPermissionCondition, IRealmFile, PermissionConditionType } from "./ros";
+import { IPermissionCondition, IRealmFile, IUser, IUserMetadata, PermissionConditionType } from "./ros";
 
 // These schemas are copied from ROS
 
 const userSchema: Realm.ObjectSchema = {
-  name: "AuthUser",
+  name: "User",
   primaryKey: "userId",
   properties: {
     userId: "string",
     isAdmin: { type: "bool", optional: false },
+    metadata: { type: "list", objectType: "UserMetadata" },
   },
 };
 
 const metadataSchema: Realm.ObjectSchema = {
-  name: "AuthUserMetadata",
+  name: "UserMetadata",
   properties: {
     userId: "string",
     key: "string",
@@ -69,43 +70,12 @@ const realmManagementRealm: Realm = new Realm({
 export const getAuthRealm = (): Realm => {
   /* tslint:disable-next-line:no-console */
   console.warn(`Using a mocked version of getAuthRealm`);
-  // If no users exists - let"s create some fake ones
-  const userCount = authRealm.objects("AuthUser").length;
-  console.log(`ROS has ${userCount} users`);
-  // if (userCount < 1000) {
-  //   const fakeUserCount = 1000 - userCount;
-  //   authRealm.write(() => {
-  //     for (let u = 0; u < fakeUserCount; u++) {
-  //       try {
-  //         createFakeUser();
-  //       } catch (err) {
-  //         /* tslint:disable-next-line:no-console */
-  //         console.error(`Couldn't create a fake user.`);
-  //       }
-  //     }
-  //   });
-  // }
   return authRealm;
 };
 
 export const getRealmManagementRealm = () => {
   /* tslint:disable-next-line:no-console */
   console.warn(`Using a mocked version of getRealmManagementRealm`);
-  const realmCount = realmManagementRealm.objects("RealmFile").length;
-  console.log(`ROS has ${realmCount} realms`);
-  // if (realmCount < 1000) {
-  //   const fakeRealmCount = 1000 - realmCount;
-  //   realmManagementRealm.write(() => {
-  //     for (let r = 0; r < fakeRealmCount; r++) {
-  //       try {
-  //         createFakeRealmFile();
-  //       } catch (err) {
-  //         /* tslint:disable-next-line:no-console */
-  //         console.error(`Couldn't create a fake realm file.`);
-  //       }
-  //     }
-  //   });
-  // }
   return realmManagementRealm;
 };
 
@@ -114,7 +84,7 @@ export const getRealmManagementRealm = () => {
 export const createFakeRealmFile = () => {
   const creator = getRandomUser();
   const pathPartCount = faker.random.number({ min: 1, max: 5 });
-  let path = "";
+  let path = "/" + faker.random.uuid();
   for (let p = 0; p < pathPartCount; p++) {
     path += "/" + faker.random.arrayElement([
       faker.hacker.noun(),
@@ -149,23 +119,54 @@ export const createFakeUser = () => {
   const firstName = faker.name.firstName();
   const lastName = faker.name.lastName();
   const email = faker.internet.email(firstName, lastName);
-  const user: IAuthUser = {
+  const user: IUser = {
     userId: email,
-    isAdmin: faker.random.boolean(),
+    isAdmin: false,
+    metadata: [
+      { userId: email, key: "firstName", value: firstName },
+      { userId: email, key: "lastName", value: lastName },
+    ],
   };
-  const metadatas: IAuthUserMetadata[] = [
-    { userId: email, key: "firstName", value: firstName },
-    { userId: email, key: "lastName", value: lastName },
-  ];
-  authRealm.create("AuthUser", user);
-  metadatas.forEach(((metadata) => {
-    authRealm.create("AuthUserMetadata", metadata);
-  }));
+  authRealm.create("User", user);
+};
+
+export const createFakeUsersAndRealms = (userCount: number = 1000, realmCount: number = 1000) => {
+  let createdUsers = 0;
+  let createdRealms = 0;
+  authRealm.write(() => {
+    for (let u = 0; u < userCount; u++) {
+      try {
+        createFakeUser();
+        createdUsers++;
+      } catch (err) {
+        // tslint:disable-next-line:no-console
+        console.warn(`Failed to create a fake user:`, err);
+      }
+    }
+  });
+  realmManagementRealm.write(() => {
+    for (let r = 0; r < realmCount; r++) {
+      try {
+        createFakeRealmFile();
+        createdRealms++;
+      } catch (err) {
+        // tslint:disable-next-line:no-console
+        console.warn(`Failed to create a fake realm:`, err);
+      }
+    }
+  });
+  return {
+    createdRealms,
+    createdUsers,
+  };
 };
 
 export const getRandomUser = () => {
-  const users = authRealm.objects<IAuthUser>("AuthUser");
-  return users[faker.random.number({ min: 0, max: users.length })];
+  const users = authRealm.objects<IUser>("User");
+  if (users.length === 0) {
+    throw new Error("Cannot get a random user when no users exists");
+  }
+  return users[faker.random.number({ min: 0, max: users.length - 1 })];
 };
 
 export const updateUserPassword = (userId: string, password: string) => {

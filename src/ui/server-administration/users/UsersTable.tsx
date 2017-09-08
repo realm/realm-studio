@@ -3,7 +3,7 @@ import * as React from "react";
 import { AutoSizer, Column, Dimensions as IAutoSizerDimensions, Table } from "react-virtualized";
 import { Button } from "reactstrap";
 
-import { IAuthUser, IAuthUserMetadata, IRealmFile } from "../../../services/ros";
+import { IRealmFile, IUser, IUserMetadata} from "../../../services/ros";
 
 import { ChangePasswordDialogContainer } from "./ChangePasswordDialogContainer";
 import { CreateUserDialogContainer } from "./CreateUserDialogContainer";
@@ -33,9 +33,9 @@ export const UsersTable = ({
   toggleCreateUser,
   userCount,
 }: {
-  getUser: (index: number) => IAuthUser | null,
-  getUserFromId: (userId: string) => IAuthUser | null,
-  getUsersMetadatas: (userId: string) => IAuthUserMetadata[],
+  getUser: (index: number) => IUser | null,
+  getUserFromId: (userId: string) => IUser | null,
+  getUsersMetadatas: (userId: string) => IUserMetadata[],
   getUsersRealms: (userId: string) => IRealmFile[],
   isChangePasswordOpen: boolean,
   isCreateUserOpen: boolean,

@@ -11,7 +11,7 @@ import {
   ModalHeader,
 } from "reactstrap";
 
-import { IAuthUser } from "../../../services/ros";
+import { IUser } from "../../../services/ros";
 
 export const ChangePasswordDialog = ({
   isOpen,
@@ -30,7 +30,7 @@ export const ChangePasswordDialog = ({
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void,
   password: string,
   passwordRepeated: string,
-  user: IAuthUser,
+  user: IUser,
 }) => {
   return (
     <Modal isOpen={isOpen} toggle={toggle}>

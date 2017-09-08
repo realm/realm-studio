@@ -6,9 +6,9 @@ import {
   createUser,
   getAuthRealm,
   getRealmManagementRealm,
-  IAuthUser,
-  IAuthUserMetadata,
   IRealmFile,
+  IUser,
+  IUserMetadata,
   updateUserPassword,
 } from "../../../services/ros";
 
@@ -21,7 +21,7 @@ export interface IUsersTableContainerProps {
 export interface IUsersTableContainerState {
   isChangePasswordOpen: boolean;
   isCreateUserOpen: boolean;
-  users: Realm.Results<IAuthUser> | null;
+  users: Realm.Results<IUser> | null;
   selectedUserId: string | null;
 }
 
@@ -46,7 +46,13 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
   }
 
   public componentWillUnmount() {
-    this.authRealm.removeListener("change", this.onUsersChanged);
+    // Remove any existing a change listeners
+    if (this.authRealm) {
+      this.authRealm.removeListener("change", this.onUsersChanged);
+    }
+    if (this.realmManagementRealm) {
+      this.realmManagementRealm.removeListener("change", this.onRealmsChanged);
+    }
   }
 
   public componentDidUpdate(prevProps: IUsersTableContainerProps, prevState: IUsersTableContainerState) {
@@ -72,12 +78,12 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
     });
   }
 
-  public getUser = (index: number): IAuthUser | null => {
+  public getUser = (index: number): IUser | null => {
     return this.state.users ? this.state.users[index] : null;
   }
 
-  public getUserFromId = (userId: string): IAuthUser | null => {
-    return this.authRealm.objectForPrimaryKey<IAuthUser>("AuthUser", userId);
+  public getUserFromId = (userId: string): IUser | null => {
+    return this.authRealm.objectForPrimaryKey<IUser>("User", userId);
   }
 
   public getUsersRealms = (userId: string): IRealmFile[] => {
@@ -85,9 +91,9 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
     return realms.slice();
   }
 
-  public getUsersMetadatas = (userId: string): IAuthUserMetadata[] => {
-    const metadata = this.authRealm.objects<IAuthUserMetadata>("AuthUserMetadata").filtered("userId = $0", userId);
-    return metadata.slice();
+  public getUsersMetadatas = (userId: string): IUserMetadata[] => {
+    const user = this.getUserFromId(userId);
+    return user ? user.metadata.slice() : [];
   }
 
   public toggleChangePassword = () => {
@@ -118,7 +124,7 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
     const confirmed = await this.confirmUserDeletion(userId);
     if (confirmed) {
       this.authRealm.write(() => {
-        const user = this.authRealm.objectForPrimaryKey<IAuthUser>("AuthUser", userId);
+        const user = this.authRealm.objectForPrimaryKey<IUser>("User", userId);
         this.authRealm.delete(user);
       });
       if (userId === this.state.selectedUserId) {
@@ -128,33 +134,36 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
   }
 
   public onUserMetadataAppended = (userId: string) => {
-    const metadatas = this.authRealm.objects<IAuthUserMetadata>("AuthUserMetadata").filtered("userId = $0", userId);
-    this.authRealm.write(() => {
-      this.authRealm.create<IAuthUserMetadata>("AuthUserMetadata", {
-        key: "",
-        userId,
-        value: "",
+    const user = this.getUserFromId(userId);
+    if (user) {
+      this.authRealm.write(() => {
+        const metadataRow = this.authRealm.create<IUserMetadata>("UserMetadata", {
+          key: "",
+          userId,
+          value: "",
+        });
+        user.metadata.push(metadataRow);
       });
-    });
+    }
   }
 
   public onUserMetadataChanged = (userId: string, index: number, key: string, value: string) => {
-    const metadatas = this.authRealm.objects<IAuthUserMetadata>("AuthUserMetadata").filtered("userId = $0", userId);
-    if (index >= 0 && index < metadatas.length) {
+    const user = this.getUserFromId(userId);
+    if (user && index >= 0 && index < user.metadata.length) {
       this.authRealm.write(() => {
-        metadatas[index].key = key;
-        metadatas[index].value = value;
+        user.metadata[index].key = key;
+        user.metadata[index].value = value;
       });
     } else {
-      throw new Error(`Cannot update users metadata, index ${index} is out of bounds.`);
+      throw new Error(`Cannot update users metadata, user not found or index ${index} is out of bounds.`);
     }
   }
 
   public onUserMetadataDeleted = (userId: string, index: number) => {
-    const metadatas = this.authRealm.objects<IAuthUserMetadata>("AuthUserMetadata").filtered("userId = $0", userId);
-    if (index >= 0 && index < metadatas.length) {
+    const user = this.getUserFromId(userId);
+    if (user && index >= 0 && index < user.metadata.length) {
       this.authRealm.write(() => {
-        this.authRealm.delete(metadatas[index]);
+        this.authRealm.delete(user.metadata[index]);
       });
     } else {
       throw new Error(`Cannot update users metadata, index ${index} is out of bounds.`);
@@ -166,7 +175,7 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
   }
 
   public onUserRoleChanged = (userId: string, role: UserRole) => {
-    const user = this.authRealm.objectForPrimaryKey<IAuthUser>("AuthUser", userId);
+    const user = this.authRealm.objectForPrimaryKey<IUser>("User", userId);
     if (user) {
       this.authRealm.write(() => {
         user.isAdmin = role === UserRole.Administrator;
@@ -196,7 +205,7 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
 
   private updateUsers() {
     // Get the users
-    const users = this.authRealm.objects<IAuthUser>("AuthUser").sorted("userId");
+    const users = this.authRealm.objects<IUser>("User").sorted("userId");
     // Set the state
     this.setState({
       users,

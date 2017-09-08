@@ -4,9 +4,9 @@ import * as Realm from "realm";
 
 import {
   getAuthRealm,
-  IAuthUser,
-  IAuthUserMetadata,
   IRealmFile,
+  IUser,
+  IUserMetadata,
 } from "../../../services/ros";
 
 import { UserRole, UserSidebar } from "./UserSidebar";
@@ -14,7 +14,7 @@ export { UserRole };
 
 export interface IUserSidebarContainerProps {
   className: string | null;
-  metadatas: IAuthUserMetadata[];
+  metadatas: IUserMetadata[];
   realms: IRealmFile[];
   onUserChangePassword: (userId: string) => void;
   onUserDeletion: (userId: string) => void;
@@ -22,7 +22,7 @@ export interface IUserSidebarContainerProps {
   onUserMetadataChanged: (userId: string, index: number, key: string, value: string) => void;
   onUserMetadataDeleted: (userId: string, index: number) => void;
   onUserRoleChanged: (userId: string, role: UserRole) => void;
-  user: IAuthUser | null;
+  user: IUser | null;
 }
 
 export interface IUserSidebarContainerState {

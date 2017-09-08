@@ -1,0 +1,13 @@
+@import "~realm-studio-styles/variables";
+
+.Tools {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+
+  & > * {
+    margin: $spacer / 4;
+  }
+}

@@ -15,7 +15,7 @@ import {
   Table,
 } from "reactstrap";
 
-import { IAuthUser, IAuthUserMetadata } from "../../../services/ros";
+import { IUser, IUserMetadata } from "../../../services/ros";
 
 import { IUserSidebarContainerProps } from "./UserSidebarContainer";
 
@@ -32,7 +32,7 @@ const MetadataTable = ({
   onMetadataChanged,
   onMetadataDeleted,
 }: {
-  metadatas: IAuthUserMetadata[],
+  metadatas: IUserMetadata[],
   onMetadataAppended: () => void,
   onMetadataChanged: (index: number, key: string, value: string) => void;
   onMetadataDeleted: (index: number) => void;

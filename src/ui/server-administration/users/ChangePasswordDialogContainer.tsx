@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { IAuthUser } from "../../../services/ros";
+import { IUser } from "../../../services/ros";
 
 import { ChangePasswordDialog } from "./ChangePasswordDialog";
 
@@ -8,7 +8,7 @@ export interface IChangePasswordDialogContainerProps {
   isOpen: boolean;
   onPasswordChanged: (userId: string, password: string) => void;
   toggle: () => void;
-  user: IAuthUser | null;
+  user: IUser | null;
 }
 
 export interface IChangePasswordDialogContainerState {

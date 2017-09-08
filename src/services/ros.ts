@@ -1,12 +1,13 @@
 import * as Realm from "realm";
 import * as mocked from "./mocked-ros";
 
-export interface IAuthUser {
+export interface IUser {
   userId: string;
   isAdmin: boolean;
+  metadata: IUserMetadata[];
 }
 
-export interface IAuthUserMetadata {
+export interface IUserMetadata {
   userId: string;
   key: string;
   value?: string;
