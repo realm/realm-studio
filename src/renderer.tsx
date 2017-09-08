@@ -2,15 +2,20 @@ import * as electron from "electron";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
+// FIXME: see https://github.com/realm/realm-js/issues/818
+// This needs to happen before realm is loaded
+const userDataPath = electron.remote.app.getPath("userData");
+process.chdir(userDataPath);
+
+// Make sync only report errors
+import * as Realm from "realm";
+Realm.Sync.setLogLevel("error");
+
 import "realm-studio-styles/index.scss";
 
 import { CurrentWindow } from "./windows";
 
 const isProduction = process.env.NODE_ENV === "production";
-
-// FIXME: see https://github.com/realm/realm-js/issues/818
-const userDataPath = electron.remote.app.getPath("userData");
-process.chdir(userDataPath);
 
 const appElement = document.getElementById("app");
 
