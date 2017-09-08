@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  user-select: none;
 
   .ReactVirtualized {
     &__List {
@@ -20,20 +21,21 @@
   &__Entry {
     align-items: center;
     display: flex;
-    font-size: .9rem;
     padding: 0 ($spacer / 2);
 
     &__Message {
       flex-grow: 1;
-      font-family: monospace;
+      font-family: $font-family-monospace;
+      font-size: .8rem;
       overflow: hidden;
       text-overflow: ellipsis;
+      user-select: text;
       white-space: nowrap;
     }
 
     &__Badges {
       flex: none;
-      user-select: none;
+      font-size: .9rem;
     }
 
     &__Badge {
@@ -48,6 +50,5 @@
     font-size: .875rem;
     justify-content: space-between;
     padding: $spacer / 2;
-    user-select: none;
   }
 }
