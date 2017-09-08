@@ -41,9 +41,9 @@
     "webpack:renderer": "webpack-dev-server --config=webpack.renderer.config.js"
   },
   "dependencies": {
-    "@types/faker": "^4.1.1",
     "classnames": "^2.2.5",
     "faker": "^4.1.0",
+    "moment": "^2.18.1",
     "react": "^15.6.1",
     "react-addons-css-transition-group": "^15.6.0",
     "react-addons-transition-group": "^15.6.0",
@@ -55,10 +55,11 @@
   },
   "devDependencies": {
     "@types/classnames": "^2.2.3",
+    "@types/faker": "^4.1.1",
     "@types/node": "^8.0.8",
-    "@types/react": "^15.0.34",
     "@types/react-dom": "^15.5.1",
     "@types/react-virtualized": "^9.7.3",
+    "@types/react": "^15.0.34",
     "@types/reactstrap": "^4.3.13",
     "@types/source-map-support": "^0.4.0",
     "@types/webpack-env": "^1.13.0",
@@ -86,5 +87,6 @@
     "webpack": "^3.5.4",
     "webpack-dev-server": "^2.7.1",
     "webpack-node-externals": "^1.6.0"
-  }
+  },
+  "false": {}
 }

@@ -1,0 +1,40 @@
+@import "~realm-studio-styles/variables";
+
+.Log {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+
+  &__Table {
+    flex-grow: 1;
+  }
+
+  &__Entry {
+    align-items: center;
+    display: flex;
+    font-size: .9rem;
+
+    &__Message {
+      flex-grow: 1;
+      font-family: monospace;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &__Badges {
+      flex: none;
+    }
+
+    &__Badge {
+      margin-left: $spacer / 4;
+    }
+  }
+
+  &__Controls {
+    background: $color-dove;
+    display: flex;
+    font-size: .875rem;
+    justify-content: space-between;
+    padding: $spacer / 2;
+  }
+}
