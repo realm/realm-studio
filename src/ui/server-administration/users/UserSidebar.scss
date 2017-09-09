@@ -24,6 +24,10 @@
   &__RealmsTable {
     table-layout: fixed;
 
+    th {
+      border-top: 0;
+    }
+
     td {
       overflow: hidden;
       text-overflow: ellipsis;
