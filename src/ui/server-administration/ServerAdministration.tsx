@@ -62,7 +62,7 @@ export const ServerAdministration = ({
         <TabButton tab={Tab.Users} label="Users" />
         <TabButton tab={Tab.Realms} label="Realms" />
         <TabButton tab={Tab.Logs} label="Logs" />
-        <TabButton tab={Tab.Tools} label="Tools" />
+        {/* <TabButton tab={Tab.Tools} label="Tools" /> */}
         { user && (
           <p className="ServerAdministration__status">
             Connected to {user.server}
