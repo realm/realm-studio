@@ -104,7 +104,6 @@ export const timeoutPromise = (url: string, delay: number = 5000): Promise<Realm
 };
 
 export const getAuthRealm = (user: Realm.Sync.User): Promise<Realm> => {
-  /*
   const url = getRealmUrl(user, "__admin");
   const realm = Realm.open({
     sync: {
@@ -117,12 +116,9 @@ export const getAuthRealm = (user: Realm.Sync.User): Promise<Realm> => {
     ],
   });
   return Promise.race<Realm>([ realm, timeoutPromise(url) ]);
-  */
-  return mocked.getAuthRealm();
 };
 
 export const getRealmManagementRealm = (user: Realm.Sync.User): Promise<Realm> => {
-  /*
   const url = getRealmUrl(user, "__permissions");
   const realm = Realm.open({
     sync: {
@@ -135,8 +131,6 @@ export const getRealmManagementRealm = (user: Realm.Sync.User): Promise<Realm> =
     ],
   });
   return Promise.race<Realm>([ realm, timeoutPromise(url) ]);
-  */
-  return mocked.getRealmManagementRealm();
 };
 
 export const createUser = async (server: string, username: string, password: string): Promise<string> => {
