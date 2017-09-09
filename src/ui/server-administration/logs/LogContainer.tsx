@@ -24,7 +24,7 @@ export class LogContainer extends React.Component<ILogContainerProps, ILogContai
     this.state = {
       entries: [],
       isLevelSelectorOpen: false,
-      level: LogLevel.all,
+      level: LogLevel.info,
     };
   }
 
