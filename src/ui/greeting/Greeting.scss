@@ -7,7 +7,6 @@
 
   &__ActionsPanel,
   &__HistoryPanel {
-    flex-shrink: 0;
     padding: $spacer;
   }
 
@@ -16,14 +15,34 @@
     background: $window-background;
     display: flex;
     flex-direction: column;
-    flex-grow: 3;
     justify-content: space-around;
+    width: 60%;
+  }
+
+  &__Brand {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__Title {
+    margin-top: $spacer;
+  }
+
+  &__Actions {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__Action {
+    margin: $spacer / 4;
   }
 
   &__HistoryPanel {
     background: $color-charcoal;
     color: $color-dove;
-    flex-grow: 2;
+    width: 40%;
   }
 
   &__Logo {

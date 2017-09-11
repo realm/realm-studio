@@ -1,19 +1,37 @@
 import * as React from "react";
 import { Button } from "reactstrap";
 
-import * as realmLogo from "../reusable/RealmLogo.svg";
+import realmLogo from "realm-studio-svgs/RealmLogo.svg";
 
 import "./Greeting.scss";
 
-export const Greeting = () => (
+export const Greeting = ({
+  version,
+}: {
+  version: string;
+}) => (
   <div className="Greeting">
     <div className="Greeting__ActionsPanel">
-      <img src={realmLogo} className="Greeting__Logo" />
+      <div className="Greeting__Brand">
+        <svg viewBox={realmLogo.viewBox} className="Greeting__Logo">
+          <use xlinkHref={realmLogo.url} />
+        </svg>
+        <h3 className="Greeting__Title">
+          Realm Studio
+        </h3>
+        <p>Version {version}</p>
+      </div>
       <div className="Greeting__Actions">
-        <Button>Connect to Realm Object Server</Button>
+        <Button className="Greeting__Action">
+          Open a local Realm
+        </Button>
+        <Button className="Greeting__Action">
+          Connect to Realm Object Server
+        </Button>
       </div>
     </div>
     <div className="Greeting__HistoryPanel">
+      ...
     </div>
   </div>
 );
