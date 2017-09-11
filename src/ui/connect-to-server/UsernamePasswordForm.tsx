@@ -22,7 +22,7 @@ export const UsernamePasswordForm = ({
         value={username} onChange={onUsernameChanged} />
     </CredentialsFormGroup>
     <CredentialsFormGroup label="Password" labelFor="password">
-      <Input type="password" name="password" id="password" size="sm" required={isRequired}
+      <Input type="password" name="password" id="password" size="sm"
         value={password} onChange={onPasswordChanged} />
     </CredentialsFormGroup>
   </div>
