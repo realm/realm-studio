@@ -1,14 +1,19 @@
 import * as React from "react";
 import { Button } from "reactstrap";
 
-import realmLogo from "realm-studio-svgs/RealmLogo.svg";
+import realmLogo from "realm-studio-svgs/realm-logo.svg";
+import { HistoryPanelContainer } from "./HistoryPanelContainer";
 
 import "./Greeting.scss";
 
 export const Greeting = ({
+  onConnectToServer,
+  onOpenLocalRealm,
   version,
 }: {
-  version: string;
+  onConnectToServer: () => void,
+  onOpenLocalRealm: () => void,
+  version: string,
 }) => (
   <div className="Greeting">
     <div className="Greeting__ActionsPanel">
@@ -22,16 +27,14 @@ export const Greeting = ({
         <p>Version {version}</p>
       </div>
       <div className="Greeting__Actions">
-        <Button className="Greeting__Action">
+        <Button className="Greeting__Action" onClick={onOpenLocalRealm}>
           Open a local Realm
         </Button>
-        <Button className="Greeting__Action">
+        <Button className="Greeting__Action" onClick={onConnectToServer}>
           Connect to Realm Object Server
         </Button>
       </div>
     </div>
-    <div className="Greeting__HistoryPanel">
-      ...
-    </div>
+    <HistoryPanelContainer />
   </div>
 );
