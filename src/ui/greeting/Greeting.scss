@@ -1,0 +1,32 @@
+@import "~realm-studio-styles/variables";
+
+.Greeting {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+
+  &__ActionsPanel,
+  &__HistoryPanel {
+    flex-shrink: 0;
+    padding: $spacer;
+  }
+
+  &__ActionsPanel {
+    align-items: center;
+    background: $window-background;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 3;
+    justify-content: space-around;
+  }
+
+  &__HistoryPanel {
+    background: $color-charcoal;
+    color: $color-dove;
+    flex-grow: 2;
+  }
+
+  &__Logo {
+    width: 90px;
+  }
+}

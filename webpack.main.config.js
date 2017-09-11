@@ -21,11 +21,11 @@ module.exports = _.merge({}, baseConfig, {
         test: /\.tsx?$/,
         use: "awesome-typescript-loader"
       }, {
-        test: /\.scss$/,
-        use: "null-loader"
-      }, {
         test: /\.html$/,
         use: "file-loader"
+      }, {
+        test: /\.(scss|svg)$/,
+        use: "null-loader"
       }
     ])
   },

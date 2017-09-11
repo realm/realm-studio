@@ -57,6 +57,13 @@ export default class Application {
     });
   }
 
+  public showGreeting() {
+    const window = this.windowManager.createWindow(WindowType.Greeting);
+    window.once("ready-to-show", () => {
+      window.show();
+    });
+  }
+
   public showServerAdministration(options: IServerAdministrationOptions) {
     // TODO: Change this once the realm-js Realm.Sync.User serializes correctly
     // @see https://github.com/realm/realm-js/issues/1276
@@ -81,17 +88,20 @@ export default class Application {
   }
 
   private addIpcListeners() {
-    electron.ipcMain.addListener(Actions.OpenServerAdministration, this.onShowServerAdministration);
+    electron.ipcMain.addListener(Actions.ShowGreeting, this.onShowGreeting);
+    electron.ipcMain.addListener(Actions.ShowServerAdministration, this.onShowServerAdministration);
   }
 
   private removeIpcListeners() {
-    electron.ipcMain.removeListener(Actions.OpenServerAdministration, this.onShowServerAdministration);
+    electron.ipcMain.removeListener(Actions.ShowGreeting, this.onShowGreeting);
+    electron.ipcMain.removeListener(Actions.ShowServerAdministration, this.onShowServerAdministration);
   }
 
   private onReady = () => {
     this.mainMenu.set();
     // this.showOpenDialog();
-    this.showConnectToServerDialog();
+    // this.showConnectToServerDialog();
+    this.showGreeting();
 
     electron.app.focus();
   }
@@ -110,6 +120,11 @@ export default class Application {
     if (process.platform !== "darwin") {
       electron.app.quit();
     }
+  }
+
+  private onShowGreeting = (event: any, ...args: any[]) => {
+    this.showGreeting();
+    event.returnValue = true;
   }
 
   private onShowServerAdministration = (event: any, ...args: any[]) => {

@@ -33,7 +33,7 @@ const resolve = {
   alias: {
     "realm-studio-styles": path.resolve(__dirname, "styles")
   },
-  extensions: [".ts", ".tsx", ".js", ".jsx", ".html", ".scss"],
+  extensions: [".ts", ".tsx", ".js", ".jsx", ".html", ".scss", ".svg"],
 };
 
 const baseConfig = {

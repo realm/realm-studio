@@ -1,8 +1,9 @@
 // This enum is not in index.tsx to enable the main process to import this without importing React components.
 
 export enum WindowType {
-  RealmBrowser = "realm-browser",
   ConnectToServer = "connect-to-server",
+  Greeting = "greeting",
+  RealmBrowser = "realm-browser",
   ServerAdministration = "server-administration",
 }
 
@@ -40,6 +41,13 @@ export function getWindowOptions(type: WindowType, context: any): Partial<Electr
       title: `Realm Object Server: ${url}`,
       width: 1024,
       height: 600,
+    };
+  } else if (type === WindowType.Greeting) {
+    return {
+      title: `Realm Studio`,
+      width: 600,
+      height: 400,
+      resizable: false,
     };
   }
   return {};
