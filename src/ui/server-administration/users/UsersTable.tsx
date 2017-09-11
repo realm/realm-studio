@@ -77,7 +77,7 @@ export const UsersTable = ({
             <Column label="Role" dataKey="isAdmin" width={150} cellRenderer={({ cellData }) => {
               return cellData ? "Administrator" : "Regular user";
             }} />
-            <Column label="Realms" dataKey="userId" width={150} cellRenderer={({ cellData }) => {
+            <Column label="# Realms" dataKey="userId" width={150} cellRenderer={({ cellData }) => {
               const userId = cellData as string;
               return getUsersRealms(userId).length;
             }} />
