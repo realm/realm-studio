@@ -15,7 +15,7 @@ import {
   Table,
 } from "reactstrap";
 
-import { IUser, IUserMetadata } from "../../../services/ros";
+import { IRealmFile, IUser, IUserMetadata } from "../../../services/ros";
 
 import { IUserSidebarContainerProps } from "./UserSidebarContainer";
 
@@ -77,10 +77,48 @@ const MetadataTable = ({
             </tr>
           );
         }) }
+        { metadatas.length === 0 ? (
+          <tr>
+            <td colSpan={3} className="UserSidebar__EmptyTableExplanation">
+              This user has no metadata
+            </td>
+          </tr>
+        ) : null}
       </tbody>
     </Table>
   );
 };
+
+const RealmsTable = ({
+  realms,
+}: {
+  realms: IRealmFile[],
+}) => (
+  <Table size="sm" className="UserSidebar__RealmsTable">
+    <thead>
+      <tr>
+        {/* We mention "Realm" in this header, so we don't need a separate header */}
+        <th>Realm path</th>
+      </tr>
+    </thead>
+    <tbody>
+      { realms.map((realm) => {
+        return (
+          <tr key={realm.path}>
+            <td title={realm.path}>{realm.path}</td>
+          </tr>
+        );
+      }) }
+      { realms.length === 0 ? (
+        <tr>
+          <td colSpan={1} className="UserSidebar__EmptyTableExplanation">
+            This user has no realms
+          </td>
+        </tr>
+      ) : null}
+    </tbody>
+  </Table>
+);
 
 export interface IUserSidebarProps extends IUserSidebarContainerProps {
   onChangePassword: () => void;
@@ -110,8 +148,8 @@ export const UserSidebar = ({
   return (
     <div className={classnames(className, "UserSidebar")}>
       {user && (
-        <Card className="UserSidebar__card">
-          <CardBlock>
+        <Card className="UserSidebar__Card">
+          <CardBlock className="UserSidebar__Top">
             <CardTitle className="UserSidebar__title">
               <span title={user.userId}>{user.userId}</span>
             </CardTitle>
@@ -128,31 +166,15 @@ export const UserSidebar = ({
                 </DropdownItem>
               </DropdownMenu>
             </ButtonDropdown>
-
+          </CardBlock>
+          <CardBlock className="UserSidebar__Tables">
             <MetadataTable metadatas={metadatas}
               onMetadataAppended={onMetadataAppended}
               onMetadataChanged={onMetadataChanged}
-              onMetadataDeleted={onMetadataDeleted}  />
-
-            <Table size="sm" className="UserSidebar__RealmsTable">
-              <thead>
-                <tr>
-                  {/* We mention "Realm" in this header, so we don't need a separate header */}
-                  <th>Realm path</th>
-                </tr>
-              </thead>
-              <tbody>
-                { realms.map((realm) => {
-                  return (
-                    <tr key={realm.path}>
-                      <td title={realm.path}>{realm.path}</td>
-                    </tr>
-                  );
-                }) }
-              </tbody>
-            </Table>
+              onMetadataDeleted={onMetadataDeleted} />
+            <RealmsTable realms={realms} />
           </CardBlock>
-          <CardBlock className="UserSidebar__controls">
+          <CardBlock className="UserSidebar__Controls">
             <Button size="sm" onClick={() => onChangePassword()}>
               Change password
             </Button>

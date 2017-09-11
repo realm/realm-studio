@@ -4,14 +4,29 @@
 .UserSidebar {
   background: $white;
 
-  &__card {
+  &__Card {
+    // Defining its width makes sure it doesn't collapse when sliding in / out
     border-bottom: 0;
     border-radius: 0;
     border-right: 0;
     border-top: 0;
+    display: flex;
     height: 100%;
-    // Defining its width makes sure it doesn't collapse when sliding in / out
     width: $sidebar-width;
+  }
+
+  &__Top,
+  &__Tables {
+    padding-bottom: 0;
+  }
+
+  &__Top,
+  &__Controls {
+    flex: 0 0 auto;
+  }
+
+  &__Tables {
+    overflow-y: scroll;
   }
 
   &__title {
@@ -35,10 +50,6 @@
     }
   }
 
-  &__MetadataTable {
-    margin-top: $spacer;
-  }
-
   &__MetadataTableControlCell {
     text-align: right;
     width: 35px;
@@ -48,8 +59,14 @@
     }
   }
 
-  &__controls {
-    flex-grow: 0;
+  &__EmptyTableExplanation {
+    color: $color-elephant;
+    font-size: .9rem;
+    text-align: center;
+  }
+
+  &__Controls {
+    display: block;
     text-align: center;
 
     // Add spacing between the controls
