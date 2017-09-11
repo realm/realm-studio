@@ -1,7 +1,7 @@
 @import "~realm-studio-styles/variables";
 
 .ConnectToServer {
-  background: $color-dove;
+  background: $window-background;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -27,7 +27,7 @@
   }
 
   &__AuthenticationForm {
-    background: darken($color-dove, 5%);
+    background: $color-dove;
     display: flex;
     flex-basis: 110px;
     flex-direction: column;

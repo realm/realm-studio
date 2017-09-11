@@ -20,6 +20,8 @@ $brand-info: $color-ultramarine;
 $btn-secondary-bg: $color-dove;
 $btn-secondary-border: $color-dove;
 
+$window-background: mix(#fff, $color-dove, 50%);
+
 /*
 // TODO: Use this once reactstrap is up-to-date https://github.com/reactstrap/reactstrap/issues/487
 $theme-colors: (
