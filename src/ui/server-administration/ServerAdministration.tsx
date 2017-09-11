@@ -11,8 +11,8 @@ import { UsersTableContainer } from "./users/UsersTableContainer";
 import "./ServerAdministration.scss";
 
 export enum Tab {
-  Users = "users",
   Realms = "realms",
+  Users = "users",
   Logs = "logs",
   Tools = "tools",
 }
@@ -27,10 +27,10 @@ export const ServerAdministration = ({
   user: Realm.Sync.User | null,
 }) => {
   let content = null;
-  if (user && activeTab === Tab.Users) {
-    content = <UsersTableContainer user={user} />;
-  } else if (user && activeTab === Tab.Realms) {
+  if (user && activeTab === Tab.Realms) {
     content = <RealmsTableContainer user={user} />;
+  } else if (user && activeTab === Tab.Users) {
+    content = <UsersTableContainer user={user} />;
   } else if (user && activeTab === Tab.Logs) {
     content = <LogContainer user={user} />;
   } else if (user && activeTab === Tab.Tools) {
@@ -59,8 +59,8 @@ export const ServerAdministration = ({
   return (
     <div className="ServerAdministration">
       <Navbar className="ServerAdministration__tabs">
-        <TabButton tab={Tab.Users} label="Users" />
         <TabButton tab={Tab.Realms} label="Realms" />
+        <TabButton tab={Tab.Users} label="Users" />
         <TabButton tab={Tab.Logs} label="Logs" />
         {/* <TabButton tab={Tab.Tools} label="Tools" /> */}
         { user && (

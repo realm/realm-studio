@@ -19,7 +19,7 @@ export class ServerAdministrationContainer extends React.Component<IServerAdmini
   constructor() {
     super();
     this.state = {
-      activeTab: Tab.Users,
+      activeTab: Tab.Realms,
       user: null,
     };
   }
