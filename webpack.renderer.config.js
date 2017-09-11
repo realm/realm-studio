@@ -36,7 +36,12 @@ module.exports = _.merge({}, baseConfig, {
         use: [ "style-loader", "css-loader", "resolve-url-loader", "sass-loader?sourceMap" ]
       }, {
         test: /\.svg$/,
-        use: "file-loader"
+        loader: "svg-sprite-loader",
+        include: path.resolve(__dirname, "static/svgs"),
+        options: {
+          extract: true,
+          spriteFilename: "sprite.svg"
+        }
       }, {
         test: /\.woff2$/,
         use: "file-loader"
