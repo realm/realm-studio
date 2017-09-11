@@ -2,6 +2,8 @@ import * as classnames from "classnames";
 import * as React from "react";
 import { Button, Navbar } from "reactstrap";
 
+import realmLogo from "realm-studio-svgs/realm-logo.svg";
+
 import { LoadingOverlay } from "../reusable/loading-overlay";
 import { LogContainer } from "./logs/LogContainer";
 import { RealmsTableContainer } from "./realms/RealmsTableContainer";
@@ -59,6 +61,9 @@ export const ServerAdministration = ({
   return (
     <div className="ServerAdministration">
       <Navbar className="ServerAdministration__tabs">
+        <svg viewBox={realmLogo.viewBox} className="ServerAdministration__logo">
+          <use xlinkHref={realmLogo.url} />
+        </svg>
         <TabButton tab={Tab.Realms} label="Realms" />
         <TabButton tab={Tab.Users} label="Users" />
         <TabButton tab={Tab.Logs} label="Logs" />
