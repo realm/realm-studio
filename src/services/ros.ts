@@ -5,11 +5,11 @@ import * as mocked from "./mocked-ros";
 export interface IUser {
   userId: string;
   isAdmin: boolean;
-  metadata: IUserMetadata[];
+  metadata: IUserMetadataRow[];
 }
 
-export interface IUserMetadata {
-  userId: string;
+export interface IUserMetadataRow {
+  user?: IUser;
   key: string;
   value?: string;
 }
@@ -51,16 +51,16 @@ export const userSchema: Realm.ObjectSchema = {
   properties: {
     userId: "string",
     isAdmin: { type: "bool", optional: false },
-    metadata: { type: "list", objectType: "UserMetadata" },
+    metadata: { type: "list", objectType: "UserMetadataRow", default: [], optional: false },
   },
 };
 
-export const metadataSchema: Realm.ObjectSchema = {
-  name: "UserMetadata",
+export const userMetadataRowSchema: Realm.ObjectSchema = {
+  name: "UserMetadataRow",
   properties: {
-    userId: "string",
-    key: "string",
-    value: { type: "string", optional: true },
+    user: { type: "linkingObjects", objectType: "User", property: "metadata" },
+    key: { type: "string", optional: false },
+    value: { type: "string", optional: false },
   },
 };
 
@@ -112,7 +112,7 @@ export const getAuthRealm = (user: Realm.Sync.User): Promise<Realm> => {
     },
     schema: [
       userSchema,
-      metadataSchema,
+      userMetadataRowSchema,
     ],
   });
   return Promise.race<Realm>([ realm, timeoutPromise(url) ]);

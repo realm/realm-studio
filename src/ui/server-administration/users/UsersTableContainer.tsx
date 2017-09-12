@@ -8,7 +8,7 @@ import {
   getRealmManagementRealm,
   IRealmFile,
   IUser,
-  IUserMetadata,
+  IUserMetadataRow,
   updateUserPassword,
 } from "../../../services/ros";
 import { showError } from "../../reusable/errors";
@@ -90,7 +90,7 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
     return realms.slice();
   }
 
-  public getUsersMetadatas = (userId: string): IUserMetadata[] => {
+  public getUsersMetadatas = (userId: string): IUserMetadataRow[] => {
     const user = this.getUserFromId(userId);
     return user ? user.metadata.slice() : [];
   }
@@ -136,9 +136,8 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
     const user = this.getUserFromId(userId);
     if (user) {
       this.authRealm.write(() => {
-        const metadataRow = this.authRealm.create<IUserMetadata>("UserMetadata", {
+        const metadataRow = this.authRealm.create<IUserMetadataRow>("UserMetadataRow", {
           key: "",
-          userId,
           value: "",
         });
         user.metadata.push(metadataRow);

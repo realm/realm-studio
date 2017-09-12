@@ -5,7 +5,7 @@ import {
   IPermissionCondition,
   IRealmFile,
   IUser,
-  IUserMetadata,
+  IUserMetadataRow,
   metadataSchema,
   permissionConditionSchema,
   PermissionConditionType,
