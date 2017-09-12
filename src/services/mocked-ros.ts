@@ -6,10 +6,10 @@ import {
   IRealmFile,
   IUser,
   IUserMetadataRow,
-  metadataSchema,
   permissionConditionSchema,
   PermissionConditionType,
   realmFileSchema,
+  userMetadataRowSchema,
   userSchema,
 } from "./ros";
 
@@ -18,7 +18,7 @@ export const getAuthRealm = async (): Promise<Realm> => {
     path: "./data/auth.realm",
     schema: [
       userSchema,
-      metadataSchema,
+      userMetadataRowSchema,
     ],
   });
 };
@@ -75,8 +75,8 @@ export const createFakeUser = (authRealm: Realm) => {
     userId: email,
     isAdmin: false,
     metadata: [
-      { userId: email, key: "firstName", value: firstName },
-      { userId: email, key: "lastName", value: lastName },
+      { key: "firstName", value: firstName },
+      { key: "lastName", value: lastName },
     ],
   };
   authRealm.create("User", user);
