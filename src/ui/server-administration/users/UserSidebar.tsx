@@ -15,7 +15,7 @@ import {
   Table,
 } from "reactstrap";
 
-import { IRealmFile, IUser, IUserMetadata } from "../../../services/ros";
+import { IRealmFile, IUser, IUserMetadataRow } from "../../../services/ros";
 
 import { IUserSidebarContainerProps } from "./UserSidebarContainer";
 
@@ -32,7 +32,7 @@ const MetadataTable = ({
   onMetadataChanged,
   onMetadataDeleted,
 }: {
-  metadatas: IUserMetadata[],
+  metadatas: IUserMetadataRow[],
   onMetadataAppended: () => void,
   onMetadataChanged: (index: number, key: string, value: string) => void;
   onMetadataDeleted: (index: number) => void;

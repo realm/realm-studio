@@ -6,7 +6,7 @@ import {
   getAuthRealm,
   IRealmFile,
   IUser,
-  IUserMetadata,
+  IUserMetadataRow,
 } from "../../../services/ros";
 
 import { UserRole, UserSidebar } from "./UserSidebar";
@@ -14,7 +14,7 @@ export { UserRole };
 
 export interface IUserSidebarContainerProps {
   className: string | null;
-  metadatas: IUserMetadata[];
+  metadatas: IUserMetadataRow[];
   realms: IRealmFile[];
   onUserChangePassword: (userId: string) => void;
   onUserDeletion: (userId: string) => void;
