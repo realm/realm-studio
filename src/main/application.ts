@@ -2,7 +2,13 @@ import * as electron from "electron";
 import * as Realm from "realm";
 
 import { Actions } from "../actions";
-import { IServerAdministrationOptions, WindowType } from "../windows/WindowType";
+import {
+  ILocalRealmBrowserOptions,
+  IRealmBrowserOptions,
+  IServerAdministrationOptions,
+  RealmBrowserMode,
+  WindowType,
+} from "../windows/WindowType";
 import MainMenu from "./main-menu";
 import WindowManager from "./window-manager";
 
@@ -23,6 +29,10 @@ export default class Application {
     },
     [Actions.ShowOpenLocalRealm]: (event, ...args) => {
       this.showOpenLocalRealm();
+      event.returnValue = true;
+    },
+    [Actions.ShowRealmBrowser]: (event, ...args) => {
+      this.showRealmBrowser(args[0] as IRealmBrowserOptions);
       event.returnValue = true;
     },
     [Actions.ShowServerAdministration]: (event, ...args) => {
@@ -50,24 +60,7 @@ export default class Application {
     return electron.app.getPath("userData");
   }
 
-  public showRealmBrowser(path: string) {
-    const window = this.windowManager.createWindow(WindowType.RealmBrowser, { path });
-    window.once("ready-to-show", () => {
-      window.show();
-      window.webContents.send("open-file", { path });
-    });
-  }
-
-  public showOpenLocalRealm() {
-    electron.dialog.showOpenDialog({
-      properties: ["openFile"],
-      filters: [{ name: "Realm Files", extensions: ["realm"] }],
-    }, (selectedPaths) => {
-      if (selectedPaths) {
-        this.showRealmBrowser(selectedPaths[0]);
-      }
-    });
-  }
+  // Implementation of action handlers below
 
   public showConnectToServer() {
     const window = this.windowManager.createWindow(WindowType.ConnectToServer);
@@ -78,6 +71,29 @@ export default class Application {
 
   public showGreeting() {
     const window = this.windowManager.createWindow(WindowType.Greeting);
+    window.once("ready-to-show", () => {
+      window.show();
+    });
+  }
+
+  public showOpenLocalRealm() {
+    electron.dialog.showOpenDialog({
+      properties: ["openFile"],
+      filters: [{ name: "Realm Files", extensions: ["realm"] }],
+    }, (selectedPaths) => {
+      if (selectedPaths) {
+        selectedPaths.forEach((path) => {
+          this.showRealmBrowser({
+            mode: RealmBrowserMode.Local,
+            path,
+          } as ILocalRealmBrowserOptions);
+        });
+      }
+    });
+  }
+
+  public showRealmBrowser(options: IRealmBrowserOptions) {
+    const window = this.windowManager.createWindow(WindowType.RealmBrowser, options);
     window.once("ready-to-show", () => {
       window.show();
     });

@@ -11,6 +11,7 @@ export const RealmsTable = ({
   getRealm,
   getRealmFromId,
   onRealmDeleted,
+  onRealmOpened,
   onRealmSelected,
   selectedRealmPath,
 }: {
@@ -18,6 +19,7 @@ export const RealmsTable = ({
   getRealm: (index: number) => IRealmFile | null,
   getRealmFromId: (path: string) => IRealmFile | null,
   onRealmDeleted: (path: string) => void,
+  onRealmOpened: (path: string) => void,
   onRealmSelected: (path: string | null) => void,
   selectedRealmPath: string | null,
 }) => {
@@ -40,6 +42,12 @@ export const RealmsTable = ({
               const realm = getRealm(index);
               onRealmSelected(realm && realm.path !== selectedRealmPath ? realm.path : null);
               event.preventDefault();
+            }}
+            onRowDoubleClick={({event, index}) => {
+              const realm = getRealm(index);
+              if (realm) {
+                onRealmOpened(realm.path);
+              }
             }}>
             <Column label="Path" dataKey="path" width={width} />
           </Table>
