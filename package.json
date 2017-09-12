@@ -54,7 +54,7 @@
     "react-draggable": "^2.2.6",
     "react-virtualized": "^9.9.0",
     "reactstrap": "^4.8.0",
-    "realm": "2.0.0-rc5"
+    "realm": "2.0.0-rc6"
   },
   "devDependencies": {
     "@types/classnames": "^2.2.3",
