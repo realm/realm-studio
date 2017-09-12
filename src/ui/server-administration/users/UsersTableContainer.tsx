@@ -11,6 +11,7 @@ import {
   IUserMetadata,
   updateUserPassword,
 } from "../../../services/ros";
+import { showError } from "../../reusable/errors";
 
 import { UserRole, UsersTable } from "./UsersTable";
 
@@ -192,16 +193,20 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
       this.realmManagementRealm.removeListener("change", this.onRealmsChanged);
     }
 
-    // Get the realms from the ROS interface
-    this.authRealm = await getAuthRealm(this.props.user);
-    this.realmManagementRealm = await getRealmManagementRealm(this.props.user);
+    try {
+      // Get the realms from the ROS interface
+      this.authRealm = await getAuthRealm(this.props.user);
+      this.realmManagementRealm = await getRealmManagementRealm(this.props.user);
 
-    // Register change listeners
-    this.authRealm.addListener("change", this.onUsersChanged);
-    this.realmManagementRealm.addListener("change", this.onRealmsChanged);
+      // Register change listeners
+      this.authRealm.addListener("change", this.onUsersChanged);
+      this.realmManagementRealm.addListener("change", this.onRealmsChanged);
 
-    // Update the users state
-    this.updateUsers();
+      // Update the users state
+      this.updateUsers();
+    } catch (err) {
+      showError("Could not open the synchronized realms", err);
+    }
   }
 
   private updateUsers() {

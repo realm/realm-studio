@@ -3,6 +3,7 @@ import * as React from "react";
 import * as Realm from "realm";
 
 import { deleteRealm, getRealmManagementRealm, IRealmFile } from "../../../services/ros";
+import { showError } from "../../reusable/errors";
 
 import { RealmsTable } from "./RealmsTable";
 
@@ -32,7 +33,9 @@ export class RealmsTableContainer extends React.Component<IRealmTableContainerPr
   }
 
   public componentWillUnmount() {
-    this.realmManagementRealm.removeListener("change", this.onRealmsChanged);
+    if (this.realmManagementRealm) {
+      this.realmManagementRealm.removeListener("change", this.onRealmsChanged);
+    }
   }
 
   public componentDidUpdate(prevProps: IRealmTableContainerProps, prevState: IRealmTableContainerState) {
@@ -75,15 +78,19 @@ export class RealmsTableContainer extends React.Component<IRealmTableContainerPr
     if (this.realmManagementRealm) {
       this.realmManagementRealm.removeListener("change", this.onRealmsChanged);
     }
-    this.realmManagementRealm = await getRealmManagementRealm(this.props.user);
-    // Get the realms
-    const realms = this.realmManagementRealm.objects<IRealmFile>("RealmFile");
-    // Set the state
-    this.setState({
-      realms,
-    });
-    // Register a change listener
-    this.realmManagementRealm.addListener("change", this.onRealmsChanged);
+    try {
+      this.realmManagementRealm = await getRealmManagementRealm(this.props.user);
+      // Get the realms
+      const realms = this.realmManagementRealm.objects<IRealmFile>("RealmFile");
+      // Set the state
+      this.setState({
+        realms,
+      });
+      // Register a change listener
+      this.realmManagementRealm.addListener("change", this.onRealmsChanged);
+    } catch (err) {
+      showError("Could not open the synchronized realm", err);
+    }
   }
 
   private onRealmsChanged = () => {
