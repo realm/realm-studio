@@ -2,6 +2,7 @@ const path = require("path");
 const nodeExternals = require("webpack-node-externals");
 const webpack = require('webpack');
 const { CheckerPlugin } = require("awesome-typescript-loader");
+const SpriteLoaderPlugin = require("svg-sprite-loader/plugin");
 
 const isProduction = process.env.NODE_ENV === "production";
 console.log("Running in", isProduction ? "production" : "development", "mode");
@@ -13,6 +14,8 @@ const devDependenciesWhitelist = devDependencies.map((module) => {
   // The the base "module" or "module/..", not "module something else"
   return new RegExp(`^${module}(?:$|\/.*)`);
 });
+
+const version = require("./package.json").version;
 
 const externals = [
   nodeExternals({
@@ -31,9 +34,10 @@ const node = {
 
 const resolve = {
   alias: {
-    "realm-studio-styles": path.resolve(__dirname, "styles")
+    "realm-studio-styles": path.resolve(__dirname, "styles"),
+    "realm-studio-svgs": path.resolve(__dirname, "static/svgs")
   },
-  extensions: [".ts", ".tsx", ".js", ".jsx", ".html", ".scss"],
+  extensions: [".ts", ".tsx", ".js", ".jsx", ".html", ".scss", ".svg"],
 };
 
 const baseConfig = {
@@ -50,8 +54,10 @@ const baseConfig = {
     // @see https://github.com/s-panferov/awesome-typescript-loader#configuration on why CheckerPlugin is needed
     new CheckerPlugin(),
     new webpack.DefinePlugin({
-      "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV)
-    })
+      "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
+      "process.env.REALM_STUDIO_VERSION": JSON.stringify(version || "unknown")
+    }),
+    new SpriteLoaderPlugin(),
   ].concat(isProduction ? [
     // Plugins for production
   ] : [

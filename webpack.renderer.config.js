@@ -6,8 +6,6 @@ const baseConfig = require("./webpack.base.config.js");
 
 const isProduction = process.env.NODE_ENV === "production";
 
-const entryPrefix = isProduction ? "webpack-dev-server/client?http://localhost:8080/" : "";
-
 module.exports = _.merge({}, baseConfig, {
   devServer: isProduction ? {} : {
     hot: true,
@@ -31,11 +29,19 @@ module.exports = _.merge({}, baseConfig, {
         ],
         // exclude: path.resolve(__dirname, "node_modules"),
       }, {
+        test: /\.html$/,
+        use: "file-loader"
+      }, {
         test: /\.scss$/,
         use: [ "style-loader", "css-loader", "resolve-url-loader", "sass-loader?sourceMap" ]
       }, {
-        test: /\.html$/,
-        use: "file-loader"
+        test: /\.svg$/,
+        loader: "svg-sprite-loader",
+        include: path.resolve(__dirname, "static/svgs"),
+        options: {
+          extract: true,
+          spriteFilename: "sprite.svg"
+        }
       }, {
         test: /\.woff2$/,
         use: "file-loader"

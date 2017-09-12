@@ -17,7 +17,7 @@ export default class MainMenu {
             label: "Open...",
             accelerator: "CmdOrCtrl+O",
             click: () => {
-              Application.sharedApplication.showOpenDialog();
+              Application.sharedApplication.showOpenLocalRealm();
             },
           },
           {

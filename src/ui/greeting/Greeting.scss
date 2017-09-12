@@ -1,0 +1,88 @@
+@import "~realm-studio-styles/variables";
+
+$history-panel-icon-size: 20px;
+
+.Greeting {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+
+  &__ActionsPanel,
+  &__HistoryPanel {
+    padding: $spacer / 2;
+  }
+
+  &__ActionsPanel {
+    align-items: center;
+    background: $window-background;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 60%;
+  }
+
+  &__Brand {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__Title {
+    margin-top: $spacer;
+  }
+
+  &__Actions {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__Action {
+    margin: $spacer / 4;
+  }
+
+  &__HistoryPanel {
+    background: $color-charcoal;
+    color: $color-dove;
+    font-size: .9rem;
+    width: 40%;
+
+    a {
+      color: $color-dove;
+    }
+
+    &__Entry {
+      align-items: center;
+      display: flex;
+    }
+
+    &__Icon {
+      height: $history-panel-icon-size;
+      margin: $spacer / 2;
+      width: $history-panel-icon-size;
+    }
+
+    &__Description {
+      flex-grow: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 20px;
+    }
+
+    &__Empty {
+      align-items: center;
+      cursor: default;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      justify-content: center;
+      padding: $spacer / 2;
+      user-select: none;
+    }
+  }
+
+  &__Logo {
+    width: 90px;
+  }
+}

@@ -12,9 +12,28 @@ export default class Application {
   private mainMenu = new MainMenu();
   private windowManager = new WindowManager();
 
+  private actions: { [action: string]: (event: Electron.IpcMessageEvent, ...args: any[]) => void } = {
+    [Actions.ShowConnectToServer]: (event, ...args) => {
+      this.showConnectToServer();
+      event.returnValue = true;
+    },
+    [Actions.ShowGreeting]: (event, ...args) => {
+      this.showGreeting();
+      event.returnValue = true;
+    },
+    [Actions.ShowOpenLocalRealm]: (event, ...args) => {
+      this.showOpenLocalRealm();
+      event.returnValue = true;
+    },
+    [Actions.ShowServerAdministration]: (event, ...args) => {
+      this.showServerAdministration(args[0] as IServerAdministrationOptions);
+      event.returnValue = true;
+    },
+  };
+
   public run() {
     this.addAppListeners();
-    this.addIpcListeners();
+    this.addActionListeners();
     // If its already ready - the handler won't be called
     if (electron.app.isReady()) {
       this.onReady();
@@ -23,7 +42,7 @@ export default class Application {
 
   public destroy() {
     this.removeAppListeners();
-    this.removeIpcListeners();
+    this.removeActionListeners();
     this.windowManager.closeAllWindows();
   }
 
@@ -31,7 +50,7 @@ export default class Application {
     return electron.app.getPath("userData");
   }
 
-  public openFile(path: string) {
+  public showRealmBrowser(path: string) {
     const window = this.windowManager.createWindow(WindowType.RealmBrowser, { path });
     window.once("ready-to-show", () => {
       window.show();
@@ -39,19 +58,26 @@ export default class Application {
     });
   }
 
-  public showOpenDialog() {
+  public showOpenLocalRealm() {
     electron.dialog.showOpenDialog({
       properties: ["openFile"],
       filters: [{ name: "Realm Files", extensions: ["realm"] }],
     }, (selectedPaths) => {
       if (selectedPaths) {
-        this.openFile(selectedPaths[0]);
+        this.showRealmBrowser(selectedPaths[0]);
       }
     });
   }
 
-  public showConnectToServerDialog() {
+  public showConnectToServer() {
     const window = this.windowManager.createWindow(WindowType.ConnectToServer);
+    window.once("ready-to-show", () => {
+      window.show();
+    });
+  }
+
+  public showGreeting() {
+    const window = this.windowManager.createWindow(WindowType.Greeting);
     window.once("ready-to-show", () => {
       window.show();
     });
@@ -80,41 +106,43 @@ export default class Application {
     electron.app.removeListener("window-all-closed", this.onWindowAllClosed);
   }
 
-  private addIpcListeners() {
-    electron.ipcMain.addListener(Actions.OpenServerAdministration, this.onShowServerAdministration);
+  private addActionListeners() {
+    Object.keys(this.actions).forEach((action: string) => {
+      const handler = this.actions[action];
+      electron.ipcMain.addListener(action, handler);
+    });
   }
 
-  private removeIpcListeners() {
-    electron.ipcMain.removeListener(Actions.OpenServerAdministration, this.onShowServerAdministration);
+  private removeActionListeners() {
+    Object.keys(this.actions).forEach((action: string) => {
+      const handler = this.actions[action];
+      electron.ipcMain.removeListener(action, handler);
+    });
   }
 
   private onReady = () => {
     this.mainMenu.set();
-    // this.showOpenDialog();
-    this.showConnectToServerDialog();
+    // this.showOpenLocalRealm();
+    // this.showConnectToServer();
+    this.showGreeting();
 
     electron.app.focus();
   }
 
   private onActivate = () => {
     if (this.windowManager.windows.length === 0) {
-      this.showConnectToServerDialog();
+      this.showGreeting();
     }
   }
 
-  private onOpenFile = (event: any, path: string) => {
-    this.openFile(path);
+  private onOpenFile = () => {
+    this.showOpenLocalRealm();
   }
 
   private onWindowAllClosed = () => {
     if (process.platform !== "darwin") {
       electron.app.quit();
     }
-  }
-
-  private onShowServerAdministration = (event: any, ...args: any[]) => {
-    this.showServerAdministration(args[0] as IServerAdministrationOptions);
-    event.returnValue = true;
   }
 }
 

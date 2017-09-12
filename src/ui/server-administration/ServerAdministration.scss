@@ -6,7 +6,7 @@
   height: 100%;
 
   &__tabs {
-    background: $color-dove;
+    background: $window-background;
     cursor: default;
     flex-shrink: 0;
     justify-content: flex-start;
@@ -21,8 +21,17 @@
     flex-direction: row;
   }
 
+  &__logo {
+    height: 30px;
+    margin-right: $spacer;
+  }
+
   &__tab {
     margin-right: $spacer / 2;
+  }
+
+  &__version {
+    color: $color-elephant;
   }
 
   &__status {
