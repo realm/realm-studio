@@ -13,6 +13,7 @@ import { RealmBrowser } from "./RealmBrowser";
 
 export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions, {
   schemas: Realm.ObjectSchema[],
+  selectedSchemaName: string | null,
 }> {
 
   private realm: Realm;
@@ -21,6 +22,7 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     super();
     this.state = {
       schemas: [],
+      selectedSchemaName: null,
     };
   }
 
@@ -47,6 +49,12 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     } else {
       return 0;
     }
+  }
+
+  public onSchemaSelected = (name: string) => {
+    this.setState({
+      selectedSchemaName: name,
+    });
   }
 
   private async initializeLocalRealm(options: ILocalRealmBrowserOptions) {
