@@ -43,11 +43,22 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     return <RealmBrowser {...this.state} {...this} />;
   }
 
+  public getColumnWidth = (index: number) => {
+    return 100;
+  }
+
   public getNumberOfObjects = (name: string) => {
     if (this.realm) {
       return this.realm.objects(name).length;
     } else {
       return 0;
+    }
+  }
+
+  public getObject = (index: number) => {
+    if (this.state.selectedSchemaName) {
+      const objects = this.realm.objects(this.state.selectedSchemaName);
+      return objects[index];
     }
   }
 
@@ -63,6 +74,7 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     });
     this.setState({
       schemas: this.realm.schema,
+      selectedSchemaName: this.realm.schema.length > 0 ? this.realm.schema[0].name : null,
     });
   }
 

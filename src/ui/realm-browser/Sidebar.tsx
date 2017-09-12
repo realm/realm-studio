@@ -27,7 +27,7 @@ export const Sidebar = ({
           <span className="RealmBrowser__Sidebar__SchemaName">
             {schema.name}
           </span>
-          <Badge>
+          <Badge color="primary">
             {getNumberOfObjects(schema.name)}
           </Badge>
         </li>

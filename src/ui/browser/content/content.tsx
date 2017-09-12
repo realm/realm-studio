@@ -168,8 +168,7 @@ export default class Content extends React.Component<IContentProps, IContentStat
         <Draggable
           axis="x"
           position={{ x: this.getColumWidth(params.columnIndex) - 10, y: 0 }}
-          onDrag={(event: any, data: any) => this.setColumnWidth(params.columnIndex, data.x + 10)}
-        >
+          onDrag={(event: any, data: any) => this.setColumnWidth(params.columnIndex, data.x + 10)} >
           <div className="resizeHandle"></div>
         </Draggable>
       </div>

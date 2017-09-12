@@ -7,16 +7,23 @@ import { Content } from "./Content";
 import { Sidebar } from "./Sidebar";
 
 export const RealmBrowser = ({
+  getColumnWidth,
   getNumberOfObjects,
+  getObject,
   onSchemaSelected,
   schemas,
   selectedSchemaName,
 }: {
+  getColumnWidth: (index: number) => number,
   getNumberOfObjects: (name: string) => number,
+  getObject: (index: number) => any,
   onSchemaSelected: (name: string) => void,
   schemas: Realm.ObjectSchema[],
   selectedSchemaName: string | null,
 }) => {
+  const selectedSchema = schemas.find((schema) => schema.name === selectedSchemaName) || null;
+  const selectedNumberOfObjects = selectedSchemaName ? getNumberOfObjects(selectedSchemaName) : 0;
+
   return (
     <div className="RealmBrowser">
       <Sidebar
@@ -24,7 +31,11 @@ export const RealmBrowser = ({
         getNumberOfObjects={getNumberOfObjects}
         selectedSchemaName={selectedSchemaName}
         onSchemaSelected={onSchemaSelected} />
-      <Content />
+      <Content
+        schema={selectedSchema}
+        getColumnWidth={getColumnWidth}
+        getObject={getObject}
+        numberOfObjects={selectedNumberOfObjects} />
     </div>
   );
 };

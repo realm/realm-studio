@@ -11,6 +11,7 @@
 
     &__Header {
       border-bottom: 1px solid $color-dove;
+      font-size: .9rem;
       margin-bottom: $spacer / 2;
       padding-bottom: $spacer / 2;
     }
@@ -28,7 +29,7 @@
       display: flex;
       justify-content: space-between;
       list-style: none;
-      padding: ($spacer / 4) ($spacer / 2);
+      padding: $spacer / 2;
 
       &:hover,
       &:focus {
@@ -38,6 +39,11 @@
       &--selected {
         background: $brand-primary;
         color: $color-dove;
+
+        &:hover,
+        &:focus {
+          background: $brand-primary;
+        }
       }
     }
 
@@ -50,5 +56,11 @@
 
   &__Content {
     width: 70%;
+
+    &__Cell {
+      overflow: hidden;
+    }
+
+    @import "../reusable/ReactVirtualized";
   }
 }
