@@ -9,8 +9,8 @@ $realm-browser-header-handle-width: 8px;
 
   &__Sidebar {
     background: $window-background;
+    flex: 0 2 200px;
     padding: $spacer / 2;
-    width: 30%;
 
     &__Header {
       border-bottom: 1px solid $color-dove;
@@ -58,7 +58,7 @@ $realm-browser-header-handle-width: 8px;
   }
 
   &__Content {
-    width: 70%;
+    flex: 1 1 0;
 
     &__HeaderCell,
     &__Cell {
