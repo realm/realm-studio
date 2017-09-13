@@ -56,9 +56,8 @@ export const HistoryPanel = ({
       <div className="Greeting__HistoryPanel__Empty">
         <p>Welcome to Realm Studio!</p>
         <p>
-          Download and start the&nbsp;
-          <a href="https://realm.io/docs/realm-object-server/" target="browser">
-            Realm Object Server
+          <a href="https://realm.io/docs/realm-object-server/" target="_blank">
+            Download and start the Realm Object Server
           </a>, if you have not already done that.
         </p>
       </div>

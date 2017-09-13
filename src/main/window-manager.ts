@@ -1,4 +1,4 @@
-import { BrowserWindow, screen } from "electron";
+import { BrowserWindow, screen, shell } from "electron";
 import * as path from "path";
 import * as url from "url";
 
@@ -56,6 +56,12 @@ export default class WindowManager {
     window.on("page-title-updated", (event) => {
       // Prevents windows from updating their title
       event.preventDefault();
+    });
+
+    // Open all links in the external browser
+    window.webContents.on("new-window", (event, openedUrl: string) => {
+      event.preventDefault();
+      shell.openExternal(openedUrl);
     });
 
     window.on("closed", () => {

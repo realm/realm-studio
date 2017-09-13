@@ -43,7 +43,7 @@ export const ConnectToServer = ({
       <div className="ConnectToServer__ServerUrl">
         <FormGroup className="ConnectToServer__ServerUrlGroup">
           <Label for="serverUrl">URL</Label>
-          <Input type="url" name="serverUrl" id="serverUrl" placeholder="https://…" required
+          <Input type="url" name="serverUrl" id="serverUrl" placeholder="http://localhost:9080"
             value={url} onChange={onUrlChanged} />
         </FormGroup>
       </div>

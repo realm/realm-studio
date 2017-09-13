@@ -16,6 +16,7 @@ import { ServerAdministration, Tab } from "./ServerAdministration";
 
 export class ServerAdministrationContainer extends React.Component<IServerAdministrationOptions, {
   activeTab: Tab,
+  isRealmOpening: boolean,
   user: Realm.Sync.User | null,
 }> {
 
@@ -23,6 +24,7 @@ export class ServerAdministrationContainer extends React.Component<IServerAdmini
     super();
     this.state = {
       activeTab: Tab.Realms,
+      isRealmOpening: false,
       user: null,
     };
   }
@@ -52,12 +54,17 @@ export class ServerAdministrationContainer extends React.Component<IServerAdmini
 
   // TODO: Once the user serializes better, this method should be moved to the ./realms/RealmsTableContainer.tsx
   public onRealmOpened = (path: string) => {
-    showRealmBrowser({
-      mode: RealmBrowserMode.Synced,
-      serverUrl: this.props.url,
-      path,
-      credentials: this.props.credentials,
-    } as ISyncedRealmBrowserOptions);
+    if (!this.state.isRealmOpening) {
+      this.setState({ isRealmOpening: true });
+      // Let the UI update before sync waiting on the window to appear
+      showRealmBrowser({
+        mode: RealmBrowserMode.Synced,
+        serverUrl: this.props.url,
+        path,
+        credentials: this.props.credentials,
+      } as ISyncedRealmBrowserOptions);
+      this.setState({ isRealmOpening: false });
+    }
   }
 
   public onTabChanged = (tab: Tab) => {
