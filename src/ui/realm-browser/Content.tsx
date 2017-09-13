@@ -6,14 +6,20 @@ import { Cell } from "./Cell";
 import { HeaderCell } from "./HeaderCell";
 
 export const Content = ({
-  getColumnWidth,
+  columnWidths,
   getObject,
+  gridRef,
+  onCellChange,
   numberOfObjects,
+  onColumnWidthChanged,
   schema,
 }: {
-  getColumnWidth: (index: number) => any,
+  columnWidths: number[],
   getObject: (index: number) => any,
+  gridRef: (grid: MultiGrid) => void,
   numberOfObjects: number,
+  onCellChange: (index: number, propertyName: string, value: string) => void,
+  onColumnWidthChanged: (index: number, width: number) => void,
   schema: Realm.ObjectSchema | null,
 }) => {
   if (schema) {
@@ -32,11 +38,15 @@ export const Content = ({
         rowIndex: number,
         style: React.CSSProperties,
       }) => {
-        // We subtract 1, as the 0th row is the header.
-        const object = getObject(rowIndex - 1);
-        const width = getColumnWidth(columnIndex);
+      // We subtract 1, as the 0th row is the header.
+        const objectIndex = rowIndex - 1;
+        const object = getObject(objectIndex);
         return (
-          <Cell key={key} value={object[propertyName]} property={property} width={width} style={style} />
+          <Cell key={key} width={columnWidths[columnIndex]} style={style}
+            value={object[propertyName]} property={property} isEditing={true} onChange={(value) => {
+              // We subtract 1, as the 0th row is the header.
+              onCellChange(objectIndex, propertyName, value);
+            }} />
         );
       };
     });
@@ -52,9 +62,11 @@ export const Content = ({
         key: string,
         style: React.CSSProperties,
       }) => {
-        const width = getColumnWidth(columnIndex);
         return (
-          <HeaderCell key={key} property={property} width={width} style={style} propertyName={propertyName} />
+          <HeaderCell key={key}
+            property={property} propertyName={propertyName}
+            width={columnWidths[columnIndex]} style={style}
+            onWidthChanged={(newWidth) => onColumnWidthChanged(columnIndex, newWidth)} />
         );
       };
     });
@@ -72,9 +84,10 @@ export const Content = ({
         <AutoSizer>
           {({ height, width }: IAutoSizerDimensions) => (
             <MultiGrid width={width} height={height}
+              ref={gridRef}
               rowCount={numberOfObjects}
               columnCount={propertyNames.length}
-              columnWidth={({ index }) => getColumnWidth(index)}
+              columnWidth={({ index }) => columnWidths[index]}
               cellRenderer={(props) => {
                 if (props.rowIndex === 0) {
                   return headerRenderers[props.columnIndex](props);
@@ -84,7 +97,7 @@ export const Content = ({
               }}
               fixedColumnCount={0}
               fixedRowCount={1}
-              rowHeight={26}
+              rowHeight={({ index }) => index === 0 ? 40 : 26}
               {...styleProps} />
           )}
         </AutoSizer>

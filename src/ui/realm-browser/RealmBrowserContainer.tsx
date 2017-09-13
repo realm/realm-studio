@@ -12,8 +12,8 @@ import {
 import { RealmBrowser } from "./RealmBrowser";
 
 export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions, {
-  schemas: Realm.ObjectSchema[],
-  selectedSchemaName: string | null,
+  schemas: Realm.ObjectSchema[];
+  selectedSchemaName: string | null;
 }> {
 
   private realm: Realm;
@@ -39,12 +39,12 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     }
   }
 
-  public render() {
-    return <RealmBrowser {...this.state} {...this} />;
+  public componentWillUnmount() {
+    this.removeRealmChangeListener();
   }
 
-  public getColumnWidth = (index: number) => {
-    return 100;
+  public render() {
+    return <RealmBrowser {...this.state} {...this} />;
   }
 
   public getNumberOfObjects = (name: string) => {
@@ -55,10 +55,26 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     }
   }
 
-  public getObject = (index: number) => {
+  public getObject = (index: number): any => {
     if (this.state.selectedSchemaName) {
       const objects = this.realm.objects(this.state.selectedSchemaName);
       return objects[index];
+    }
+  }
+
+  public onCellChange = (index: number, propertyName: string, value: string) => {
+    if (this.realm) {
+      const selectedSchema = this.realm.schema.find((schema) => schema.name === this.state.selectedSchemaName);
+      if (selectedSchema) {
+        const object = this.getObject(index);
+        const property = selectedSchema.properties[propertyName];
+        if (object) {
+          this.realm.write(() => {
+            // TODO: Apply the various data parsings and transformations, based on the type
+            object[propertyName] = value;
+          });
+        }
+      }
     }
   }
 
@@ -72,14 +88,32 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     this.realm = await Realm.open({
       path: options.path,
     });
+    const firstSchemaName = this.realm.schema.length > 0 ? this.realm.schema[0].name : null;
     this.setState({
       schemas: this.realm.schema,
-      selectedSchemaName: this.realm.schema.length > 0 ? this.realm.schema[0].name : null,
+      selectedSchemaName: firstSchemaName,
     });
+    this.addRealmChangeListener();
   }
 
   private async initializeSyncedRealm(options: ISyncedRealmBrowserOptions) {
     //
+  }
+
+  private addRealmChangeListener() {
+    if (this.realm) {
+      this.realm.addListener("change", this.onRealmChanged);
+    }
+  }
+
+  private removeRealmChangeListener() {
+    if (this.realm) {
+      this.realm.removeListener("change", this.onRealmChanged);
+    }
+  }
+
+  private onRealmChanged = () => {
+    this.forceUpdate();
   }
 
 }

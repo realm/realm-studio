@@ -3,20 +3,20 @@ import * as Realm from "realm";
 
 import "./RealmBrowser.scss";
 
-import { Content } from "./Content";
+import { ContentContainer } from "./ContentContainer";
 import { Sidebar } from "./Sidebar";
 
 export const RealmBrowser = ({
-  getColumnWidth,
   getNumberOfObjects,
   getObject,
+  onCellChange,
   onSchemaSelected,
   schemas,
   selectedSchemaName,
 }: {
-  getColumnWidth: (index: number) => number,
   getNumberOfObjects: (name: string) => number,
   getObject: (index: number) => any,
+  onCellChange: (index: number, propertyName: string, value: string) => void,
   onSchemaSelected: (name: string) => void,
   schemas: Realm.ObjectSchema[],
   selectedSchemaName: string | null,
@@ -29,13 +29,13 @@ export const RealmBrowser = ({
       <Sidebar
         schemas={schemas}
         getNumberOfObjects={getNumberOfObjects}
-        selectedSchemaName={selectedSchemaName}
-        onSchemaSelected={onSchemaSelected} />
-      <Content
+        onSchemaSelected={onSchemaSelected}
+        selectedSchemaName={selectedSchemaName} />
+      <ContentContainer
         schema={selectedSchema}
-        getColumnWidth={getColumnWidth}
         getObject={getObject}
-        numberOfObjects={selectedNumberOfObjects} />
+        numberOfObjects={selectedNumberOfObjects}
+        onCellChange={onCellChange} />
     </div>
   );
 };
