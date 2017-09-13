@@ -28,8 +28,15 @@ export const showOpenLocalRealm = (options?: void) => {
   ipcRenderer.sendSync(Actions.ShowOpenLocalRealm, options);
 };
 
-export const showRealmBrowser = (options: IRealmBrowserOptions) => {
-  ipcRenderer.sendSync(Actions.ShowRealmBrowser, options);
+export const showRealmBrowser = async (options: IRealmBrowserOptions) => {
+  return new Promise((resolve, reject) => {
+    const success = ipcRenderer.sendSync(Actions.ShowRealmBrowser, options);
+    if (success) {
+      resolve();
+    } else {
+      reject();
+    }
+  });
 };
 
 export const showServerAdministration = (options: IServerAdministrationOptions) => {

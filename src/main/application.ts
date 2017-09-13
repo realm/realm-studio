@@ -31,8 +31,8 @@ export default class Application {
       this.showOpenLocalRealm();
       event.returnValue = true;
     },
-    [Actions.ShowRealmBrowser]: (event, ...args) => {
-      this.showRealmBrowser(args[0] as IRealmBrowserOptions);
+    [Actions.ShowRealmBrowser]: async (event, ...args) => {
+      await this.showRealmBrowser(args[0] as IRealmBrowserOptions);
       event.returnValue = true;
     },
     [Actions.ShowServerAdministration]: (event, ...args) => {
@@ -92,10 +92,13 @@ export default class Application {
     });
   }
 
-  public showRealmBrowser(options: IRealmBrowserOptions) {
-    const window = this.windowManager.createWindow(WindowType.RealmBrowser, options);
-    window.once("ready-to-show", () => {
-      window.show();
+  public async showRealmBrowser(options: IRealmBrowserOptions) {
+    return new Promise((resolve) => {
+      const window = this.windowManager.createWindow(WindowType.RealmBrowser, options);
+      window.once("ready-to-show", () => {
+        window.show();
+        resolve();
+      });
     });
   }
 

@@ -21,11 +21,13 @@ export enum Tab {
 
 export const ServerAdministration = ({
   activeTab,
+  isRealmOpening,
   onRealmOpened,
   onTabChanged,
   user,
 }: {
   activeTab: Tab,
+  isRealmOpening: boolean,
   onRealmOpened: (path: string) => void,
   onTabChanged: (tab: Tab) => void,
   user: Realm.Sync.User | null,
@@ -79,7 +81,7 @@ export const ServerAdministration = ({
       <div className="ServerAdministration__content">
         {content}
       </div>
-      <LoadingOverlay loading={!user} fade={false} />
+      <LoadingOverlay loading={!user || isRealmOpening} fade={false} />
     </div>
   );
 };
