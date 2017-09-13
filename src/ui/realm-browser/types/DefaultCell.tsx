@@ -2,6 +2,7 @@ import * as classnames from "classnames";
 import * as React from "react";
 import { Input } from "reactstrap";
 import * as Realm from "realm";
+import * as util from "util";
 
 export const DefaultCell = ({
   property,
@@ -16,6 +17,6 @@ export const DefaultCell = ({
     "RealmBrowser__Content__Input",
     "RealmBrowser__Content__Input--disabled",
   )}>
-    {JSON.stringify(value)}
+    {util.inspect(value)}
   </div>
 );
