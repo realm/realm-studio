@@ -79,6 +79,10 @@ $history-panel-icon-size: 20px;
       justify-content: center;
       padding: $spacer / 2;
       user-select: none;
+
+      a {
+        text-decoration: underline;
+      }
     }
   }
 
