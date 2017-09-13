@@ -11,6 +11,8 @@ export const getPropertyDisplayed = (property: Realm.ObjectSchemaProperty) => {
     return `${property.objectType}[]`;
   } else if (property.type === "linkingObjects") {
     return property.objectType;
+  } else if (property.type === "object") {
+    return property.objectType;
   } else {
     return property.type;
   }
