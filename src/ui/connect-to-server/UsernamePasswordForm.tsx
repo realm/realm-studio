@@ -18,7 +18,7 @@ export const UsernamePasswordForm = ({
 }) => (
   <div>
     <CredentialsFormGroup label="Username" labelFor="username">
-      <Input type="text" name="username" id="username" size="sm" required={isRequired}
+      <Input type="text" name="username" id="username" size="sm" placeholder="realm-admin"
         value={username} onChange={onUsernameChanged} />
     </CredentialsFormGroup>
     <CredentialsFormGroup label="Password" labelFor="password">

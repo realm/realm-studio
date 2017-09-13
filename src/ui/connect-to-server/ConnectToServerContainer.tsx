@@ -41,6 +41,7 @@ export class ConnectToServerContainer extends React.Component<{}, {
     const { url, username, password, token } = this.state;
 
     const preparedUrl = this.prepareUrl(url);
+    const preparedUsername = this.prepareUsername(username);
 
     this.setState({
       isConnecting: true,
@@ -54,7 +55,7 @@ export class ConnectToServerContainer extends React.Component<{}, {
         },
       });
     } else {
-      Realm.Sync.User.login(preparedUrl, username, password, (err, user) => {
+      Realm.Sync.User.login(preparedUrl, preparedUsername, password, (err, user) => {
         this.setState({
           isConnecting: false,
         });
@@ -68,7 +69,7 @@ export class ConnectToServerContainer extends React.Component<{}, {
           showServerAdministration({
             url: user.server,
             credentials: {
-              username,
+              username: preparedUsername,
               password,
             },
           });
@@ -110,10 +111,20 @@ export class ConnectToServerContainer extends React.Component<{}, {
   }
 
   private prepareUrl(url: string) {
-    if (url.indexOf("http") !== 0) {
+    if (url === "") {
+      return "http://localhost:9080";
+    } else if (url.indexOf("http") !== 0) {
       return `http://${url}`;
     } else {
       return url;
+    }
+  }
+
+  private prepareUsername(username: string) {
+    if (username === "") {
+      return "realm-admin";
+    } else {
+      return username;
     }
   }
 }
