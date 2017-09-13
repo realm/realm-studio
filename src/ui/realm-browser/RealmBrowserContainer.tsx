@@ -3,11 +3,14 @@ import * as React from "react";
 import * as Realm from "realm";
 
 import {
+  IAdminTokenCredentials,
   ILocalRealmBrowserOptions,
   IRealmBrowserOptions,
   ISyncedRealmBrowserOptions,
+  IUsernamePasswordCredentials,
   RealmBrowserMode,
 } from "../../windows/WindowType";
+import { showError } from "../reusable/errors";
 
 import { RealmBrowser } from "./RealmBrowser";
 
@@ -33,14 +36,18 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
       this.initializeLocalRealm(options);
     } else if (this.props.mode === RealmBrowserMode.Synced) {
       const options = this.props as ISyncedRealmBrowserOptions;
-      assert(options.url, "Missing a url");
+      assert(options.serverUrl, "Missing a serverUrl");
+      assert(options.path, "Missing a path");
       assert(options.credentials, "Missing credentials");
       this.initializeSyncedRealm(this.props as ISyncedRealmBrowserOptions);
     }
   }
 
   public componentWillUnmount() {
-    this.removeRealmChangeListener();
+    if (this.realm) {
+      this.removeRealmChangeListener();
+      this.realm.close();
+    }
   }
 
   public render() {
@@ -97,7 +104,50 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
   }
 
   private async initializeSyncedRealm(options: ISyncedRealmBrowserOptions) {
-    //
+    const user = await this.getUser(options);
+
+    const serverUrl = new URL(options.serverUrl);
+    serverUrl.protocol = "realm:";
+
+    // Remove the initial slash from the path, if any
+    const path = options.path.indexOf("/") === 0 ? options.path.slice(1) : options.path;
+    const url = serverUrl.toString() + path;
+
+    this.realm = await Realm.open({
+      sync: {
+        url,
+        user,
+        validate_ssl: false,
+      },
+    });
+
+    const firstSchemaName = this.realm.schema.length > 0 ? this.realm.schema[0].name : null;
+    this.setState({
+      schemas: this.realm.schema,
+      selectedSchemaName: firstSchemaName,
+    });
+    this.addRealmChangeListener();
+  }
+
+  private async getUser(options: ISyncedRealmBrowserOptions): Promise<Realm.Sync.User> {
+    return new Promise<Realm.Sync.User>((resolve, reject) => {
+      if ("token" in options.credentials) {
+        const credentials = options.credentials as IAdminTokenCredentials;
+        const user = Realm.Sync.User.adminUser(credentials.token, options.serverUrl);
+        resolve(user);
+      } else if ("username" in options.credentials && "password" in options.credentials) {
+        const credentials = options.credentials as IUsernamePasswordCredentials;
+        Realm.Sync.User.login(options.serverUrl, credentials.username, credentials.password, (err, user) => {
+          if (err) {
+            showError(`Couldn't connect to Realm Object Server`, err, {
+              "Failed to fetch": "Could not reach the server",
+            });
+          } else {
+            resolve(user);
+          }
+        });
+      }
+    });
   }
 
   private addRealmChangeListener() {

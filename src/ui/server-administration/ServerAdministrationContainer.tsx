@@ -54,7 +54,8 @@ export class ServerAdministrationContainer extends React.Component<IServerAdmini
   public onRealmOpened = (path: string) => {
     showRealmBrowser({
       mode: RealmBrowserMode.Synced,
-      url: `${this.props.url}${path}`,
+      serverUrl: this.props.url,
+      path,
       credentials: this.props.credentials,
     } as ISyncedRealmBrowserOptions);
   }

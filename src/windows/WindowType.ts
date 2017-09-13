@@ -34,8 +34,9 @@ export interface IRealmBrowserOptions {
 }
 
 export interface ISyncedRealmBrowserOptions extends IRealmBrowserOptions {
-  url: string;
   credentials: ServerCredentials;
+  path: string;
+  serverUrl: string;
 }
 
 export interface ILocalRealmBrowserOptions extends IRealmBrowserOptions {
