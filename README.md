@@ -13,7 +13,7 @@ Once it has - this section should contain links from where it can be downloaded 
 
 Start the application running:
 
-    electron ./build/main.bundle.js
+    ./node_modules/.bin/electron ./build/main.bundle.js
 
 ### Parameters
 
