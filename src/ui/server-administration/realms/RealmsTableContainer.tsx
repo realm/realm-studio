@@ -9,6 +9,7 @@ import { RealmsTable } from "./RealmsTable";
 
 export interface IRealmTableContainerProps {
   user: Realm.Sync.User;
+  onRealmOpened: (path: string) => void;
 }
 
 export interface IRealmTableContainerState {
@@ -52,12 +53,6 @@ export class RealmsTableContainer extends React.Component<IRealmTableContainerPr
       {...this} />;
   }
 
-  public onRealmSelected = (path: string | null) => {
-    this.setState({
-      selectedRealmPath: path,
-    });
-  }
-
   public getRealm = (index: number): IRealmFile | null => {
     return this.state.realms ? this.state.realms[index] : null;
   }
@@ -71,6 +66,16 @@ export class RealmsTableContainer extends React.Component<IRealmTableContainerPr
     if (path === this.state.selectedRealmPath) {
       this.onRealmSelected(null);
     }
+  }
+
+  public onRealmOpened = (path: string) => {
+    this.props.onRealmOpened(path);
+  }
+
+  public onRealmSelected = (path: string | null) => {
+    this.setState({
+      selectedRealmPath: path,
+    });
   }
 
   private async initializeRealm() {

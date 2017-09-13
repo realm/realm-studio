@@ -1,4 +1,5 @@
-// This enum is not in index.tsx to enable the main process to import this without importing React components.
+// These enums and interfaces are not in index.tsx to enable the main process to import this without importing
+// React components.
 
 export enum WindowType {
   ConnectToServer = "connect-to-server",
@@ -21,6 +22,25 @@ export type ServerCredentials = IUsernamePasswordCredentials | IAdminTokenCreden
 export interface IServerAdministrationOptions {
   url: string;
   credentials: ServerCredentials;
+}
+
+export enum RealmBrowserMode {
+  Synced = "synced",
+  Local = "local",
+}
+
+export interface IRealmBrowserOptions {
+  mode: RealmBrowserMode;
+}
+
+export interface ISyncedRealmBrowserOptions extends IRealmBrowserOptions {
+  credentials: ServerCredentials;
+  path: string;
+  serverUrl: string;
+}
+
+export interface ILocalRealmBrowserOptions extends IRealmBrowserOptions {
+  path: string;
 }
 
 export function getWindowOptions(type: WindowType, context: any): Partial<Electron.BrowserWindowConstructorOptions> {

@@ -21,16 +21,18 @@ export enum Tab {
 
 export const ServerAdministration = ({
   activeTab,
+  onRealmOpened,
   onTabChanged,
   user,
 }: {
   activeTab: Tab,
+  onRealmOpened: (path: string) => void,
   onTabChanged: (tab: Tab) => void,
   user: Realm.Sync.User | null,
 }) => {
   let content = null;
   if (user && activeTab === Tab.Realms) {
-    content = <RealmsTableContainer user={user} />;
+    content = <RealmsTableContainer user={user} onRealmOpened={onRealmOpened} />;
   } else if (user && activeTab === Tab.Users) {
     content = <UsersTableContainer user={user} />;
   } else if (user && activeTab === Tab.Logs) {

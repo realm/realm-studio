@@ -1,7 +1,7 @@
 import * as querystring from "querystring";
 import * as React from "react";
 
-import { IServerAdministrationOptions, WindowType } from "./WindowType";
+import { IRealmBrowserOptions, IServerAdministrationOptions, WindowType } from "./WindowType";
 
 import { ConnectToServerDialog } from "./ConnectToServerDialog";
 import { GreetingWindow } from "./GreetingWindow";
@@ -15,7 +15,7 @@ export function getWindow(type: WindowType): React.ReactElement<{}> {
   const options = query.options ? JSON.parse(query.options) as object : {};
 
   if (type === WindowType.RealmBrowser) {
-    return <RealmBrowserWindow />;
+    return <RealmBrowserWindow options={options as IRealmBrowserOptions} />;
   } else if (type === WindowType.ConnectToServer) {
     return <ConnectToServerDialog />;
   } else if (type === WindowType.ServerAdministration) {

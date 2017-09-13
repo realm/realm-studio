@@ -2,10 +2,13 @@ import * as electron from "electron";
 import * as React from "react";
 import * as Realm from "realm";
 
+import { showRealmBrowser } from "../../actions";
 import {
   IAdminTokenCredentials,
   IServerAdministrationOptions,
+  ISyncedRealmBrowserOptions,
   IUsernamePasswordCredentials,
+  RealmBrowserMode,
 } from "../../windows/WindowType";
 import { showError } from "../reusable/errors";
 
@@ -45,6 +48,16 @@ export class ServerAdministrationContainer extends React.Component<IServerAdmini
 
   public render() {
     return <ServerAdministration {...this.state} {...this} />;
+  }
+
+  // TODO: Once the user serializes better, this method should be moved to the ./realms/RealmsTableContainer.tsx
+  public onRealmOpened = (path: string) => {
+    showRealmBrowser({
+      mode: RealmBrowserMode.Synced,
+      serverUrl: this.props.url,
+      path,
+      credentials: this.props.credentials,
+    } as ISyncedRealmBrowserOptions);
   }
 
   public onTabChanged = (tab: Tab) => {

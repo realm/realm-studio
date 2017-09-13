@@ -51,7 +51,7 @@
     "react-addons-css-transition-group": "^15.6.0",
     "react-addons-transition-group": "^15.6.0",
     "react-dom": "^15.6.1",
-    "react-draggable": "^2.2.6",
+    "react-draggable": "^3.0.3",
     "react-virtualized": "^9.9.0",
     "reactstrap": "^4.8.0",
     "realm": "2.0.0-rc6"

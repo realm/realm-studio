@@ -1,0 +1,113 @@
+@import "~realm-studio-styles/variables";
+
+// This constant should match the HANDLE_WIDTH in HeaderCell.tsx
+$realm-browser-header-handle-width: 8px;
+
+.RealmBrowser {
+  display: flex;
+  height: 100%;
+
+  &__Sidebar {
+    background: $window-background;
+    padding: $spacer / 2;
+    width: 30%;
+
+    &__Header {
+      border-bottom: 1px solid $color-dove;
+      font-size: .9rem;
+      margin-bottom: $spacer / 2;
+      padding-bottom: $spacer / 2;
+    }
+
+    &__SchemaList {
+      margin: 0 (-$spacer / 2);
+      overflow-x: hidden;
+      overflow-y: auto;
+      padding: 0;
+    }
+
+    &__Schema {
+      align-items: center;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      list-style: none;
+      padding: $spacer / 2;
+
+      &:hover,
+      &:focus {
+        background: $color-dove;
+      }
+
+      &--selected {
+        background: $brand-primary;
+        color: $color-dove;
+
+        &:hover,
+        &:focus {
+          background: $brand-primary;
+        }
+      }
+    }
+
+    &__SchemaName {
+      flex-shrink: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  &__Content {
+    width: 70%;
+
+    &__HeaderCell,
+    &__Cell {
+      border-bottom: 1px solid $color-dove;
+      border-right: 1px solid $color-dove;
+      position: relative;
+    }
+
+    &__HeaderCell {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding: 0 ($spacer / 4);
+    }
+
+    &__HeaderName {
+      font-size: $font-size-sm;
+    }
+
+    &__HeaderType {
+      color: $brand-primary;
+      font-size: $font-size-xs;
+      font-weight: bold;
+    }
+
+    &__Cell,
+    &__PropertyName {
+      overflow: hidden;
+    }
+
+    &__HeaderHandle {
+      cursor: ew-resize;
+      height: 100%;
+      left: 0;
+      position: absolute;
+      top: 0;
+      width: $realm-browser-header-handle-width;
+      z-index: 1;
+    }
+
+    &__Input {
+      border: 0;
+      white-space: nowrap;
+
+      &--disabled {
+        color: $color-elephant;
+      }
+    }
+
+    @import "../reusable/ReactVirtualized";
+  }
+}
