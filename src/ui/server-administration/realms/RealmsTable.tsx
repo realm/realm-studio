@@ -33,21 +33,29 @@ export const RealmsTable = ({
             rowClassName={({ index }) => {
               const realm = getRealm(index);
               return classnames("RealmsTable__row", {
-                "RealmsTable__selected-row": realm && realm.path === selectedRealmPath,
+                "RealmsTable__row--selected": realm && realm.path === selectedRealmPath,
               });
             }}
             rowCount={realmCount}
             rowGetter={({ index }) => getRealm(index)}
             onRowClick={({event, index}) => {
               const realm = getRealm(index);
+              if (realm) {
+                onRealmOpened(realm.path);
+              }
+              /*
+              const realm = getRealm(index);
               onRealmSelected(realm && realm.path !== selectedRealmPath ? realm.path : null);
               event.preventDefault();
+              */
             }}
             onRowDoubleClick={({event, index}) => {
+              /*
               const realm = getRealm(index);
               if (realm) {
                 onRealmOpened(realm.path);
               }
+              */
             }}>
             <Column label="Path" dataKey="path" width={width} />
           </Table>

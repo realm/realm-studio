@@ -85,7 +85,7 @@ export const Content = ({
           {({ height, width }: IAutoSizerDimensions) => (
             <MultiGrid width={width} height={height}
               ref={gridRef}
-              rowCount={numberOfObjects}
+              rowCount={numberOfObjects + 1}
               columnCount={propertyNames.length}
               columnWidth={({ index }) => columnWidths[index]}
               cellRenderer={(props) => {
