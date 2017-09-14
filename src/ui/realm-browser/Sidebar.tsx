@@ -15,7 +15,7 @@ export const Sidebar = ({
 }) => (
   <div className="RealmBrowser__Sidebar">
     <div className="RealmBrowser__Sidebar__Header">
-      Schemas
+      Classes
     </div>
     <ul className="RealmBrowser__Sidebar__SchemaList">
       {schemas.map((schema) => (
