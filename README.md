@@ -52,3 +52,19 @@ To build releasable packages for the various installable formats, run the `dist`
 
 This will clean the `./build` folder and run `build` internally, before using
 [electron-builder](https://www.npmjs.com/package/electron-builder) to produce an Electron app ready for distribution.
+
+## Releasing
+
+The release flow is based on Electron Builder's ["Recommended GitHub Releases Workflow"](https://www.electron.build/publishing-artifacts).
+
+1. Make sure the `package.json` specifies a version that has not yet been released.
+2. [Create a new draft release](https://github.com/realm/realm-studio/releases/new) on GitHub.
+  1. Enter the version from `package.json` as the tag, but prepend it with a "v".
+  2. Make one or more merges to the master branch with this new version in the `package.json`. Every [successful build on CI](https://ci.realm.io/blue/organizations/jenkins/realm%2Frealm-studio/activity/) with the same version will upload build artifacts (the .dmg package for distribution on Mac), as long as the release is in draft.
+  3. Once satisfied with the result, consider if it's a pre-release and publish the release.
+3. Prepare the next version by bumping the minor version (-.x.-) of the `package.json`.
+4. Announce the release on Slack in the #releases channel if a bot has not already done that.
+
+Note: We should be using [semantic versioning](http://semver.org/), incrementing the major (x.-.-) version when breaking 
+breaking backwards compatibility and incrementing the patch (-.-.x) when an upcoming release is simply fixing bugs in the
+previous version.
