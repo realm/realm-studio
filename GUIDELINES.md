@@ -11,7 +11,7 @@ We use [React](https://facebook.github.io/react/) as our primary framework for b
 
 We strive to separate components into two categories:
 - Presentational components, that ideally has no state and only cares about rendering and importing stylesheets.
-- Container components that
+- Container components, that wraps presentation components, and holds some application state and defines behaviour by mutating this according to the users interactions.
 
 For more information on the difference between the two, please read
 [Dan Abramov's article](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0).
@@ -103,10 +103,11 @@ expect the names to be exactly the same as the class name of the React component
 
 # The "Realm" fonts
 
-We're using the Effra font, aliased as "Realm".
+We've included the Effra font, aliased as "Realm", but primarily use system fonts to get an experiance that feels more like
+the users desktop environment.
 
-It is included in 10 variations of styles and weights which should be referenced by their individual font names instead
-of using the font-style and font-weight css parameters.
+The Effra font is included in 10 variations of styles and weights which should be referenced by their individual font names
+instead of using the font-style and font-weight css parameters.
 
 See https://www.smashingmagazine.com/2013/02/setting-weights-and-styles-at-font-face-declaration/ for more information
 on why this is needed.
