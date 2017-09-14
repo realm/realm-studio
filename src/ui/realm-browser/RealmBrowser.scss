@@ -33,6 +33,7 @@ $realm-browser-header-handle-width: 8px;
       justify-content: space-between;
       list-style: none;
       padding: $spacer / 2;
+      background: $window-background;
 
       &:hover,
       &:focus {
