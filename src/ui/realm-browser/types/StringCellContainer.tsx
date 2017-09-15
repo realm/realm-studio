@@ -131,7 +131,7 @@ export class StringCellContainer extends React.Component<IStringCellContainerPro
         return new Promise((resolve, reject) => {
             remote.dialog.showMessageBox(remote.getCurrentWindow(), {
                 type: "error",
-                message: `${message} \n If you leave the cell, value will not be saved.`,
+                message: `${message} \n\n If you leave the cell, value will not be saved. \n Do you want continue?`,
                 title: `Updating cell`,
                 buttons: ["Ok", "Cancel"],
             }, (response) => {
