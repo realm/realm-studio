@@ -81,7 +81,7 @@ export class StringCellContainer extends React.Component<IStringCellContainerPro
                     break;
                 case "date":
                     if (moment(temporalValue).isValid()) {
-                        parsedValue = new Date(parsedValue);
+                        parsedValue = new Date(temporalValue);
                     }
                     // tslint:disable-next-line:max-line-length
                     errorMessage = `This field is of type ${property.type}. Your input of "${temporalValue}" isn't a proper ${property.type} value.`;
@@ -92,6 +92,7 @@ export class StringCellContainer extends React.Component<IStringCellContainerPro
 
         if (typeof parsedValue !== "undefined") {
             onUpdateValue(parsedValue);
+            this.setState({temporalValue: parsedValue});
             this.setState({isEditing: false});
         } else {
             this.showInvalidValueError(errorMessage).then((shouldResetValue) => {
