@@ -1,6 +1,5 @@
 import * as classnames from "classnames";
 import * as React from "react";
-import { Input } from "reactstrap";
 import * as Realm from "realm";
 import * as util from "util";
 
