@@ -12,23 +12,27 @@ export const StringCell = ({
 }: {
   isEditing: boolean,
   onChange: (newValue: string) => void,
-  onBlur: () => void,
+  onBlur: (input: HTMLInputElement) => void,
   onFocus: () => void,
   value: string,
   temporalValue: string,
-}) => isEditing ? (
-  <Input
-      className="RealmBrowser__Content__Input"
-      size="sm"
-      value={temporalValue}
-      onChange={(e) => onChange(e.target.value)}
-      onBlur={onBlur}
-  />
-) : (
-  <div
-      className={classnames("form-control", "form-control-sm", "RealmBrowser__Content__Input")}
-      onClick={onFocus}
-  >
-    {value === null ? "" : value.toString()}
-  </div>
-);
+}) => {
+    let textInput: HTMLInputElement;
+    return isEditing ? (
+        <Input
+            className="RealmBrowser__Content__Input"
+            size="sm"
+            getRef={(input) => { textInput = input; }}
+            value={temporalValue}
+            onChange={(e) => onChange(e.target.value)}
+            onBlur={(e) => onBlur(textInput)}
+        />
+    ) : (
+        <div
+            className={classnames("form-control", "form-control-sm", "RealmBrowser__Content__Input")}
+            onClick={onFocus}
+        >
+            {value === null ? "" : value.toString()}
+        </div>
+    );
+}

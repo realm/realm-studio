@@ -1,3 +1,4 @@
+import { remote } from "electron";
 import * as moment from "moment";
 import * as React from "react";
 import * as Realm from "realm";
@@ -48,17 +49,16 @@ export class StringCellContainer extends React.Component<IStringCellContainerPro
         });
     }
 
-    public onBlur = (): void => {
+    public onBlur = (input: HTMLInputElement): void => {
         const {value, property, onUpdateValue} = this.props;
         const {temporalValue} = this.state;
-        let parsedValue = null;
+        let parsedValue: any;
+        let errorMessage: string = "Unexpected error";
 
         if (temporalValue === "") {
             if (property.optional) {
-                onUpdateValue(parsedValue);
-            } else {
-                this.setState({temporalValue: value});
-                console.error("This field is not optional.");
+                parsedValue = null;
+                errorMessage = "This field is not optional.";
             }
         } else {
             switch (property.type) {
@@ -66,42 +66,43 @@ export class StringCellContainer extends React.Component<IStringCellContainerPro
                 case "float":
                 case "double": {
                     parsedValue = this.getParsedNumberValue(temporalValue, property);
-
-                    if (typeof parsedValue !== "undefined") {
-                        onUpdateValue(parsedValue);
-                    } else {
-                        // tslint:disable-next-line:max-line-length
-                        console.error(`This field is of type ${property.type}. Your input of "${temporalValue}" isn't a proper ${property.type} value.`);
-                    }
+                    // tslint:disable-next-line:max-line-length
+                    errorMessage = `This field is of type ${property.type}. Your input of "${temporalValue}" isn't a proper ${property.type} value.`;
                     break;
                 }
                 case "bool": {
                     parsedValue = this.getParsedBoolValue(temporalValue);
-
-                    if (typeof parsedValue !== "undefined") {
-                        onUpdateValue(parsedValue);
-                    } else {
-                        // tslint:disable-next-line:max-line-length
-                        console.error(`This field is of type ${property.type}. Your input of "${temporalValue}" isn't a proper ${property.type} value. Try "true", "false", or even "0" for false or "1" for true.`);
-                    }
+                    // tslint:disable-next-line:max-line-length
+                    errorMessage = `This field is of type ${property.type}. Your input of "${temporalValue}" isn't a proper ${property.type} value. Try "true", "false", or even "0" for false or "1" for true.`;
                     break;
                 }
                 case "string":
-                    onUpdateValue(temporalValue);
+                    parsedValue = temporalValue;
                     break;
                 case "date":
-                    parsedValue = moment(temporalValue);
-
-                    if (parsedValue.isValid()) {
-                        onUpdateValue(new Date(parsedValue));
-                    } else {
-                        // tslint:disable-next-line:max-line-length
-                        console.error(`This field is of type ${property.type}. Your input of "${temporalValue}" isn't a proper ${property.type} value.`);                    }
+                    if (moment(temporalValue).isValid()) {
+                        parsedValue = new Date(parsedValue);
+                    }
+                    // tslint:disable-next-line:max-line-length
+                    errorMessage = `This field is of type ${property.type}. Your input of "${temporalValue}" isn't a proper ${property.type} value.`;
                     break;
                 default:
             }
         }
-        this.setState({isEditing: false});
+
+        if (typeof parsedValue !== "undefined") {
+            onUpdateValue(parsedValue);
+            this.setState({isEditing: false});
+        } else {
+            this.showInvalidValueError(errorMessage).then((shouldResetValue) => {
+                if (shouldResetValue) {
+                    this.setState({temporalValue: value});
+                    this.setState({isEditing: false});
+                } else {
+                    input.focus();
+                }
+            });
+        }
     }
 
     private getParsedNumberValue = (value: string, property: Realm.ObjectSchemaProperty): number | undefined => {
@@ -111,7 +112,7 @@ export class StringCellContainer extends React.Component<IStringCellContainerPro
     }
 
     private getParsedBoolValue = (value: string): boolean | undefined => {
-        const safeValue = value.toLocaleLowerCase();
+        const safeValue = value.toString().trim().toLowerCase();
 
         switch (safeValue) {
             case "true":
@@ -123,5 +124,18 @@ export class StringCellContainer extends React.Component<IStringCellContainerPro
             default:
                 return undefined;
         }
+    }
+
+    private showInvalidValueError(message: string): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+                type: "error",
+                message: `${message} \n If you leave the cell, value will not be saved.`,
+                title: `Updating cell`,
+                buttons: ["Ok", "Cancel"],
+            }, (response) => {
+                resolve(response === 0);
+            });
+        });
     }
 }
