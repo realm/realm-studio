@@ -1,24 +1,34 @@
 import * as classnames from "classnames";
 import * as React from "react";
 import { Input } from "reactstrap";
-import * as Realm from "realm";
 
 export const StringCell = ({
   isEditing,
   onChange,
-  property,
+  onBlur,
+  onFocus,
   value,
+  temporalValue,
 }: {
   isEditing: boolean,
-  onChange: (value: string) => void,
-  property: Realm.ObjectSchemaProperty,
+  onChange: (newValue: string) => void,
+  onBlur: () => void,
+  onFocus: () => void,
   value: string,
+  temporalValue: string,
 }) => isEditing ? (
-  <Input className="RealmBrowser__Content__Input" size="sm" value={value} onChange={(e) => {
-    onChange(e.target.value);
-  }} />
+  <Input
+      className="RealmBrowser__Content__Input"
+      size="sm"
+      value={temporalValue}
+      onChange={(e) => onChange(e.target.value)}
+      onBlur={onBlur}
+  />
 ) : (
-  <div className={classnames("form-control", "form-control-sm", "RealmBrowser__Content__Input")}>
-    {JSON.stringify(value)}
+  <div
+      className={classnames("form-control", "form-control-sm", "RealmBrowser__Content__Input")}
+      onClick={onFocus}
+  >
+    {value === null ? "" : value.toString()}
   </div>
 );

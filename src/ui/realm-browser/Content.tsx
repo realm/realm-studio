@@ -43,7 +43,7 @@ export const Content = ({
         const object = getObject(objectIndex);
         return (
           <Cell key={key} width={columnWidths[columnIndex]} style={style}
-            value={object[propertyName]} property={property} isEditing={true} onChange={(value) => {
+            value={object[propertyName]} property={property} onUpdateValue={(value) => {
               // We subtract 1, as the 0th row is the header.
               onCellChange(objectIndex, propertyName, value);
             }} />
