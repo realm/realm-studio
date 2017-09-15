@@ -2,6 +2,7 @@ build
 dist
 node_modules
 realm-object-server
+.idea
 
 .DS_Store
 data/

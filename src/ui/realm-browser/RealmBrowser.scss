@@ -15,8 +15,12 @@ $realm-browser-header-handle-width: 8px;
     &__Header {
       border-bottom: 1px solid $color-dove;
       font-size: .9rem;
+      font-weight: bold;
+      line-height: 2em;
+      height: 2rem;
+      text-transform: uppercase;
       margin-bottom: $spacer / 2;
-      padding-bottom: $spacer / 2;
+      color: #9A9BA5;
     }
 
     &__SchemaList {
@@ -77,6 +81,7 @@ $realm-browser-header-handle-width: 8px;
 
     &__HeaderName {
       font-size: $font-size-sm;
+      font-weight: bold;
     }
 
     &__HeaderType {
