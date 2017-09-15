@@ -120,6 +120,13 @@ export default class MainMenu {
           {
             type: "separator",
           },
+          { 
+            label: "Check for Updates...", 
+            click: () => { Application.sharedApplication.checkForUpdates(); } 
+          },
+          {
+            type: "separator",
+          },
           {
             role: "services",
             submenu: [],

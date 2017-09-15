@@ -10,12 +10,14 @@ import {
   WindowType,
 } from "../windows/WindowType";
 import MainMenu from "./main-menu";
+import Updater from "./updater";
 import WindowManager from "./window-manager";
 
 export default class Application {
   public static sharedApplication = new Application();
 
   private mainMenu = new MainMenu();
+  private updater = new Updater();
   private windowManager = new WindowManager();
 
   private actions: { [action: string]: (event: Electron.IpcMessageEvent, ...args: any[]) => void } = {
@@ -111,6 +113,10 @@ export default class Application {
     });
   }
 
+  public checkForUpdates() {
+    this.updater.checkForUpdates();
+  }
+
   private addAppListeners() {
     electron.app.addListener("ready", this.onReady);
     electron.app.addListener("activate", this.onActivate);
@@ -146,6 +152,8 @@ export default class Application {
     this.showGreeting();
 
     electron.app.focus();
+
+    this.updater.checkForUpdates(true);
   }
 
   private onActivate = () => {
