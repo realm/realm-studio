@@ -130,10 +130,13 @@ export class StringCellContainer extends React.Component<IStringCellContainerPro
     private showInvalidValueError(message: string): Promise<boolean> {
         return new Promise((resolve, reject) => {
             remote.dialog.showMessageBox(remote.getCurrentWindow(), {
-                type: "error",
-                message: `${message} \n\n If you leave the cell, value will not be saved. \n Do you want continue?`,
+                type: "warning",
+                // tslint:disable-next-line:max-line-length
+                message: `${message}\n\nIf you leave the cell with an invalid value, the changes to the content will not be saved.`,
                 title: `Updating cell`,
-                buttons: ["Ok", "Cancel"],
+                buttons: ["Leave without saving", "Keep editing"],
+                defaultId: 1,
+                cancelId: 1,
             }, (response) => {
                 resolve(response === 0);
             });
