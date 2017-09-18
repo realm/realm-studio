@@ -26,6 +26,7 @@ export const StringCell = ({
             value={temporalValue}
             onChange={(e) => onChange(e.target.value)}
             onBlur={(e) => onBlur(textInput)}
+            onKeyPress={(e) => (e.key === "Enter") && onBlur(textInput)}
         />
     ) : (
         <div
