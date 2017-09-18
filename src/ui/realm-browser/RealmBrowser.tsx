@@ -2,7 +2,7 @@ import * as React from "react";
 import * as Realm from "realm";
 
 import "./RealmBrowser.scss";
-
+import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from 'reactstrap';
 import { ContentContainer } from "./ContentContainer";
 import { Sidebar } from "./Sidebar";
 
@@ -11,6 +11,7 @@ export const RealmBrowser = ({
   getObject,
   onCellChange,
   onSchemaSelected,
+  onListCellClick,
   schemas,
   selectedSchemaName,
 }: {
@@ -18,6 +19,7 @@ export const RealmBrowser = ({
   getObject: (index: number) => any,
   onCellChange: (index: number, propertyName: string, value: string) => void,
   onSchemaSelected: (name: string) => void,
+  onListCellClick: () => void,
   schemas: Realm.ObjectSchema[],
   selectedSchemaName: string | null,
 }) => {
@@ -31,11 +33,26 @@ export const RealmBrowser = ({
         getNumberOfObjects={getNumberOfObjects}
         onSchemaSelected={onSchemaSelected}
         selectedSchemaName={selectedSchemaName} />
-      <ContentContainer
-        schema={selectedSchema}
-        getObject={getObject}
-        numberOfObjects={selectedNumberOfObjects}
-        onCellChange={onCellChange} />
+      <div className="TabsContainer">
+        <Nav tabs>
+          <NavItem>
+            <NavLink className="active">
+              Tab1
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink>
+              More Tabs
+            </NavLink>
+          </NavItem>
+        </Nav>
+        <ContentContainer
+            schema={selectedSchema}
+            getObject={getObject}
+            numberOfObjects={selectedNumberOfObjects}
+            onCellChange={onCellChange}
+            onListCellClick={onListCellClick}/>
+      </div>
     </div>
   );
 };

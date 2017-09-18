@@ -91,6 +91,15 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     });
   }
 
+  public onListCellClick = () => {
+    console.log(this.state.selectedSchemaName);
+    console.log(this.realm.objects("ABFRestaurantObject").filtered('businessId = "10"'));
+  }
+
+  public onObjectCellClick = () => {
+    console.log('object clicked');
+  }
+
   private async initializeLocalRealm(options: ILocalRealmBrowserOptions) {
     this.realm = await Realm.open({
       path: options.path,
