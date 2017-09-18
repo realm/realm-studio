@@ -9,6 +9,7 @@ export interface IContentContainerProps {
   getObject: (index: number) => any;
   numberOfObjects: number;
   onCellChange: (index: number, propertyName: string, value: string) => void;
+  onListCellClick: () => void;
   schema: Realm.ObjectSchema | null;
 }
 
