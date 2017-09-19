@@ -1,6 +1,7 @@
 import * as assert from "assert";
 import * as React from "react";
 import * as Realm from "realm";
+import * as util from "util";
 
 import {
   IAdminTokenCredentials,
@@ -96,9 +97,9 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
 
   public onSchemaSelected = (name: string) => {
     this.setState({
-      selectedSchemaName: name,
-      selectedTab: undefined,
+      selectedSchemaName: name
     });
+    this.addTab(null, name, this.getSelectedSchema());
   }
 
   public getSelectedSchema = (): Realm.ObjectSchema | null => {
@@ -152,6 +153,7 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
 
   private addTab = (object: any, schemaName: string, value: any) => {
     const {tabs} = this.state;
+
     const newTab = {
       data: value,
       schemaName,
@@ -159,11 +161,21 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
       id: `${schemaName} ${tabs.length}`
     };
 
-    this.setState({
-      selectedTab: newTab,
-      selectedSchemaName: schemaName,
-      tabs: [...tabs, newTab],
-    });
+    const tabAlreadyCreated = tabs.find(tab => tab.schemaName === newTab.schemaName && util.inspect(tab.associatedObject) === util.inspect(newTab.associatedObject));
+
+    if (tabAlreadyCreated) {
+      this.setState({
+          selectedTab: tabAlreadyCreated,
+          selectedSchemaName: schemaName
+      });
+    } else {
+      this.setState({
+          selectedTab: newTab,
+          selectedSchemaName: schemaName,
+          tabs: [...tabs, newTab],
+      });
+    }
+
   }
 
   public onObjectCellClick = (property: any, value: any) => {
@@ -176,9 +188,9 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     });
     const firstSchemaName = this.realm.schema.length > 0 ? this.realm.schema[0].name : undefined;
     this.setState({
-      schemas: this.realm.schema,
-      selectedSchemaName: firstSchemaName,
+      schemas: this.realm.schema
     });
+    firstSchemaName && this.onSchemaSelected(firstSchemaName);
     this.addRealmChangeListener();
   }
 
@@ -202,9 +214,9 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
 
     const firstSchemaName = this.realm.schema.length > 0 ? this.realm.schema[0].name : undefined;
     this.setState({
-      schemas: this.realm.schema,
-      selectedSchemaName: firstSchemaName,
+      schemas: this.realm.schema
     });
+    firstSchemaName && this.onSchemaSelected(firstSchemaName);
     this.addRealmChangeListener();
   }
 
