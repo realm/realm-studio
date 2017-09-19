@@ -10,10 +10,10 @@ export const ListCell = ({
 }: {
   property: Realm.ObjectSchemaProperty,
   value: any,
-  onClick: () => void,
+  onClick: (property: Realm.ObjectSchemaProperty, value: any) => void,
 }) => (
   <div
-    onClick={onClick}
+    onClick={() => onClick(property, value)}
     className={classnames(
       "form-control",
       "form-control-sm",

@@ -10,13 +10,18 @@ import {
   IUsernamePasswordCredentials,
   RealmBrowserMode,
 } from "../../windows/WindowType";
-import { showError } from "../reusable/errors";
+import {showError} from "../reusable/errors";
 
-import { RealmBrowser } from "./RealmBrowser";
+import {RealmBrowser} from "./RealmBrowser";
 
 export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions, {
   schemas: Realm.ObjectSchema[];
   selectedSchemaName: string | null;
+  selectedTab: {
+    schema: string,
+    data: any,
+  } | null;
+  tabs: any[];
 }> {
 
   private realm: Realm;
@@ -26,6 +31,8 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     this.state = {
       schemas: [],
       selectedSchemaName: null,
+      selectedTab: null,
+      tabs: [],
     };
   }
 
@@ -55,6 +62,10 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
   }
 
   public getNumberOfObjects = (name: string) => {
+    const {selectedTab} = this.state;
+    if (selectedTab) {
+      return selectedTab.data.length;
+    }
     if (this.realm) {
       return this.realm.objects(name).length;
     } else {
@@ -63,18 +74,20 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
   }
 
   public getObject = (index: number): any => {
-    if (this.state.selectedSchemaName) {
-      const objects = this.realm.objects(this.state.selectedSchemaName);
+    const {selectedTab, selectedSchemaName} = this.state;
+    if (selectedTab) {
+      return selectedTab.data[index];
+    }
+    if (selectedSchemaName) {
+      const objects = this.realm.objects(selectedSchemaName);
       return objects[index];
     }
   }
 
-  public onCellChange = (index: number, propertyName: string, value: string) => {
+  public onCellChange = (object: any, propertyName: string, value: string) => {
     if (this.realm) {
       const selectedSchema = this.realm.schema.find((schema) => schema.name === this.state.selectedSchemaName);
       if (selectedSchema) {
-        const object = this.getObject(index);
-        const property = selectedSchema.properties[propertyName];
         if (object) {
           this.realm.write(() => {
             // TODO: Apply the various data parsings and transformations, based on the type
@@ -88,16 +101,63 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
   public onSchemaSelected = (name: string) => {
     this.setState({
       selectedSchemaName: name,
+      selectedTab: null,
     });
   }
 
-  public onListCellClick = () => {
-    console.log(this.state.selectedSchemaName);
-    console.log(this.realm.objects("ABFRestaurantObject").filtered('businessId = "10"'));
+  public onTabSelected = (index: string) => {
+    const {tabs} = this.state;
+    const newTab = tabs.find((t) => t.id === index);
+    this.setState({
+      selectedTab: newTab,
+      selectedSchemaName: newTab.schema,
+    });
   }
 
-  public onObjectCellClick = () => {
-    console.log('object clicked');
+  public populateSidebar = () => {
+    const {schemas} = this.state;
+    if (schemas) {
+      return schemas.map((schema) => ({
+        name: schema.name,
+        length: this.realm.objects(name).length,
+      }));
+    } else {
+      return [];
+    }
+  }
+
+  public getSchemaLength = (name: string) => {
+    if (this.realm) {
+      return this.realm.objects(name).length;
+    } else {
+      return 0;
+    }
+  };
+
+  public onListCellClick = (property: any, value: any) => {
+    const {tabs} = this.state;
+    if (property.type === "object") {
+      // ToDo: Scroll to selected object
+      this.setState({
+        selectedTab: null,
+        selectedSchemaName: property.objectType,
+      });
+    } else {
+      const newTab = {
+        data: value,
+        schema: property.objectType,
+        id: `${property.objectType} ${tabs.length}`,
+      };
+      this.setState({
+        selectedTab: newTab,
+        selectedSchemaName: property.objectType,
+        tabs: [...tabs, newTab],
+      });
+    }
+  }
+
+  public onObjectCellClick = (property: any, value: any) => {
+    console.log(property, value);
   }
 
   private async initializeLocalRealm(options: ILocalRealmBrowserOptions) {

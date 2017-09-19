@@ -19,7 +19,7 @@ export const Content = ({
   getObject: (index: number) => any,
   gridRef: (grid: MultiGrid) => void,
   numberOfObjects: number,
-  onCellChange: (index: number, propertyName: string, value: string) => void,
+  onCellChange: (object: any, propertyName: string, value: string) => void,
   onListCellClick: () => void,
   onColumnWidthChanged: (index: number, width: number) => void,
   schema: Realm.ObjectSchema | null,
@@ -44,11 +44,18 @@ export const Content = ({
         const objectIndex = rowIndex - 1;
         const object = getObject(objectIndex);
         return (
-          <Cell key={key} width={columnWidths[columnIndex]} style={style} onListCellClick={onListCellClick}
-            value={object[propertyName]} property={property} onUpdateValue={(value) => {
+          <Cell
+            key={key}
+            width={columnWidths[columnIndex]}
+            style={style}
+            onListCellClick={onListCellClick}
+            value={object[propertyName]}
+            property={property}
+            onUpdateValue={(value) => {
               // We subtract 1, as the 0th row is the header.
-              onCellChange(objectIndex, propertyName, value);
-            }} />
+              onCellChange(object, propertyName, value);
+            }}
+          />
         );
       };
     });
@@ -65,10 +72,14 @@ export const Content = ({
         style: React.CSSProperties,
       }) => {
         return (
-          <HeaderCell key={key}
-            property={property} propertyName={propertyName}
-            width={columnWidths[columnIndex]} style={style}
-            onWidthChanged={(newWidth) => onColumnWidthChanged(columnIndex, newWidth)} />
+          <HeaderCell
+            key={key}
+            property={property}
+            propertyName={propertyName}
+            width={columnWidths[columnIndex]}
+            style={style}
+            onWidthChanged={(newWidth) => onColumnWidthChanged(columnIndex, newWidth)}
+          />
         );
       };
     });
