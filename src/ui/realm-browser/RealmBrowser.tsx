@@ -27,7 +27,7 @@ export const RealmBrowser = ({
   onCellChange: (index: number, propertyName: string, value: string) => void,
   onTabSelected: (id: string) => void,
   onSchemaSelected: (name: string) => void,
-  onListCellClick: () => void,
+  onListCellClick: (property: Realm.ObjectSchemaProperty, value: any) => void,
   schemas: Realm.ObjectSchema[],
   selectedSchemaName: string | null,
   selectedTab: any,

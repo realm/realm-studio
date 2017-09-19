@@ -5,7 +5,7 @@ import "./RealmBrowser.scss";
 
 export interface ITab {
   data: any;
-  schema: string;
+  schemaName: string;
   id: string;
 }
 
@@ -30,7 +30,7 @@ export const Tabs = ({
             className={tabClass}
             onClick={() => onTabSelected(tab.id)}
           >
-            {`Tab ${tab.id}`}
+            {tab.id}
           </NavLink>
         </NavItem>
       );

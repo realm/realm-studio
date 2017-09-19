@@ -71,7 +71,7 @@ $realm-browser-header-handle-width: 8px;
   &__Tab {
     &--active {
       background: $brand-primary;
-      color: $color-dove;
+      color: $color-dove !important;
     }
   }
 
