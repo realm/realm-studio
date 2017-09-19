@@ -105,6 +105,12 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     });
   }
 
+  public getSelectedSchema = (): Realm.ObjectSchema | null => {
+    const {schemas, selectedSchemaName} = this.state;
+
+    return schemas.find((schema) => schema.name === selectedSchemaName) || null;
+  }
+
   public onTabSelected = (index: string) => {
     const {tabs} = this.state;
     const newTab = tabs.find((t) => t.id === index);
@@ -132,10 +138,9 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     } else {
       return 0;
     }
-  };
+  }
 
   public onListCellClick = (property: any, value: any) => {
-    const {tabs} = this.state;
     if (property.type === "object") {
       // ToDo: Scroll to selected object
       this.setState({
@@ -143,17 +148,24 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
         selectedSchemaName: property.objectType,
       });
     } else {
-      const newTab = {
-        data: value,
-        schema: property.objectType,
-        id: `${property.objectType} ${tabs.length}`,
-      };
-      this.setState({
-        selectedTab: newTab,
-        selectedSchemaName: property.objectType,
-        tabs: [...tabs, newTab],
-      });
+      this.addTab(property.objectType, value);
     }
+  }
+
+  private addTab = (schemaName: string, value: any) => {
+    const {tabs} = this.state;
+
+    const newTab = {
+      data: value,
+      schema: schemaName,
+      id: `${schemaName} ${tabs.length}`,
+    };
+
+    this.setState({
+      selectedTab: newTab,
+      selectedSchemaName: schemaName,
+      tabs: [...tabs, newTab],
+    });
   }
 
   public onObjectCellClick = (property: any, value: any) => {
