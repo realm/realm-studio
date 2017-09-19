@@ -19,7 +19,7 @@ export const Tabs = ({
   tabs: ITab[],
   onTabSelected: (tabId: string) => void,
 }) => (
-  <Nav tabs>
+  <Nav className="RealmBrowser__Tabs" tabs>
     {tabs && tabs.map((tab) => {
       const tabClass = classnames({
         "RealmBrowser__Tab": true,

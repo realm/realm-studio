@@ -68,6 +68,10 @@ $realm-browser-header-handle-width: 8px;
     flex-direction: column;
   }
 
+  &__Tabs {
+    min-height: 42px;
+  }
+
   &__Tab {
     &--active {
       background: $brand-primary;
