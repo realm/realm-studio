@@ -61,7 +61,7 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     const {selectedTab} = this.state;
 
     if (this.realm && selectedTab) {
-      return selectedTab.isSchema ?
+      return selectedTab.isModel ?
         this.realm.objects(selectedTab.schemaName).length : selectedTab.data.length;
     } else {
       return 0;
@@ -72,7 +72,7 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     const {selectedTab} = this.state;
 
     if (this.realm && selectedTab) {
-        return selectedTab.isSchema ?
+        return selectedTab.isModel ?
             this.realm.objects(selectedTab.schemaName)[index] : selectedTab.data[index];
     }
   }
@@ -135,6 +135,10 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     }
   }
 
+  public onObjectCellClick = (property: any, value: any) => {
+    console.log(property, value);
+  }
+
   private addTab = (object: any, schemaName: string, value: any) => {
     const {tabs} = this.state;
 
@@ -143,7 +147,7 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
       schemaName,
       associatedObject: object,
       id: tabs.length,
-      isSchema: util.isNullOrUndefined(object)
+      isModel: util.isNullOrUndefined(object)
     };
 
     const tabAlreadyCreated = tabs.find(tab => tab.schemaName === newTab.schemaName && util.inspect(tab.associatedObject) === util.inspect(newTab.associatedObject));
@@ -159,10 +163,6 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
       });
     }
 
-  }
-
-  public onObjectCellClick = (property: any, value: any) => {
-    console.log(property, value);
   }
 
   private async initializeLocalRealm(options: ILocalRealmBrowserOptions) {

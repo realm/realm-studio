@@ -8,7 +8,7 @@ export interface ITab {
   schemaName: string;
   id: number;
   associatedObject?: any;
-  isSchema: boolean;
+  isModel: boolean;
 }
 
 export const Tabs = ({
@@ -26,7 +26,7 @@ export const Tabs = ({
         "RealmBrowser__Tab": true,
         "RealmBrowser__Tab--active": selectedTab && selectedTab.id === tab.id,
       });
-      const caption = `${tab.schemaName} ${tab.isSchema ? "model" : "list"}`;
+      const caption = `${tab.schemaName} ${tab.isModel ? "model" : "list"}`;
       return (
         <NavItem key={tab.id}>
           <NavLink
