@@ -17,8 +17,8 @@ import {RealmBrowser} from "./RealmBrowser";
 
 export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions, {
   schemas: Realm.ObjectSchema[];
-  selectedSchemaName: string | null;
-  selectedTab: ITab | null;
+  selectedSchemaName?: string;
+  selectedTab?: ITab;
   tabs: ITab[];
 }> {
 
@@ -28,8 +28,6 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     super();
     this.state = {
       schemas: [],
-      selectedSchemaName: null,
-      selectedTab: null,
       tabs: [],
     };
   }
@@ -99,7 +97,7 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
   public onSchemaSelected = (name: string) => {
     this.setState({
       selectedSchemaName: name,
-      selectedTab: null,
+      selectedTab: undefined,
     });
   }
 
@@ -111,7 +109,7 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
 
   public onTabSelected = (index: string) => {
     const {tabs} = this.state;
-    const newTab = tabs.find((t) => t.id === index) || null;
+    const newTab = tabs.find((t) => t.id === index);
     this.setState({
       selectedTab: newTab,
       selectedSchemaName: newTab && newTab.schemaName,
@@ -138,26 +136,27 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     }
   }
 
-  public onListCellClick = (property: any, value: any) => {
+  public onListCellClick = (object: any, property: Realm.ObjectSchemaProperty, value: any) => {
+    const schemaName = property.objectType;
+
     if (property.type === "object") {
       // ToDo: Scroll to selected object
       this.setState({
-        selectedTab: null,
+        selectedTab: undefined,
         selectedSchemaName: property.objectType,
       });
     } else {
-      this.addTab(property.objectType, value);
+      this.addTab(object, schemaName || '', value);
     }
   }
 
-  private addTab = (schemaName: string, value: any) => {
+  private addTab = (object: any, schemaName: string, value: any) => {
     const {tabs} = this.state;
-    console.log(value);
     const newTab = {
       data: value,
       schemaName,
-      id: `${schemaName} ${tabs.length}`,
-      caption: `${schemaName} list`,
+      associatedObject: object,
+      id: `${schemaName} ${tabs.length}`
     };
 
     this.setState({
@@ -175,7 +174,7 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     this.realm = await Realm.open({
       path: options.path,
     });
-    const firstSchemaName = this.realm.schema.length > 0 ? this.realm.schema[0].name : null;
+    const firstSchemaName = this.realm.schema.length > 0 ? this.realm.schema[0].name : undefined;
     this.setState({
       schemas: this.realm.schema,
       selectedSchemaName: firstSchemaName,
@@ -201,7 +200,7 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
       },
     });
 
-    const firstSchemaName = this.realm.schema.length > 0 ? this.realm.schema[0].name : null;
+    const firstSchemaName = this.realm.schema.length > 0 ? this.realm.schema[0].name : undefined;
     this.setState({
       schemas: this.realm.schema,
       selectedSchemaName: firstSchemaName,

@@ -8,8 +8,8 @@ const MINIMUM_COLUMN_WIDTH = 20;
 export interface IContentContainerProps {
   getObject: (index: number) => any;
   numberOfObjects: number;
-  onCellChange: (index: number, propertyName: string, value: string) => void;
-  onListCellClick: (property: Realm.ObjectSchemaProperty, value: any) => void;
+  onCellChange: (object: any, propertyName: string, value: string) => void;
+  onListCellClick: (object: any, property: Realm.ObjectSchemaProperty, value: any) => void;
   schema: Realm.ObjectSchema | null;
 }
 

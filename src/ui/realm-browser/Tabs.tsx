@@ -7,6 +7,7 @@ export interface ITab {
   data: any;
   schemaName: string;
   id: string;
+  associatedObject?: any;
 }
 
 export const Tabs = ({
@@ -14,7 +15,7 @@ export const Tabs = ({
   tabs,
   onTabSelected,
 }: {
-  selectedTab: ITab,
+  selectedTab?: ITab,
   tabs: ITab[],
   onTabSelected: (tabId: string) => void,
 }) => (
