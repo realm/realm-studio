@@ -1,5 +1,5 @@
 import * as React from "react";
-import { AutoSizer, Column, Dimensions as IAutoSizerDimensions, MultiGrid } from "react-virtualized";
+import { AutoSizer, Dimensions as IAutoSizerDimensions, Grid } from "react-virtualized";
 import * as Realm from "realm";
 
 import { Cell } from "./Cell";
@@ -18,7 +18,7 @@ export const Content = ({
 }: {
   columnWidths: number[],
   getObject: (index: number) => any,
-  gridRef: (grid: MultiGrid) => void,
+  gridRef: (grid: Grid) => void,
   numberOfObjects: number,
   onCellChange: (object: any, propertyName: string, value: string) => void,
   onListCellClick: (object: any, property: Realm.ObjectSchemaProperty, value: any) => void,
@@ -100,7 +100,9 @@ export const Content = ({
       <div className="RealmBrowser__Content">
         <AutoSizer>
           {({ height, width }: IAutoSizerDimensions) => (
-            <MultiGrid width={width} height={height}
+            <Grid
+              width={width}
+              height={height}
               ref={gridRef}
               rowCount={numberOfObjects + 1}
               columnCount={propertyNames.length}
@@ -114,8 +116,7 @@ export const Content = ({
               }}
               fixedColumnCount={0}
               fixedRowCount={1}
-              rowHeight={({ index }) => index === 0 ? 40 : 26}
-              {...styleProps} />
+              rowHeight={({ index }) => index === 0 ? 40 : 26} />
           )}
         </AutoSizer>
       </div>
