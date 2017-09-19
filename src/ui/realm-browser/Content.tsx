@@ -1,5 +1,5 @@
 import * as React from "react";
-import { AutoSizer, Dimensions as IAutoSizerDimensions, Grid } from "react-virtualized";
+import { AutoSizer, Dimensions as IAutoSizerDimensions, Grid, ScrollSync } from "react-virtualized";
 import * as Realm from "realm";
 
 import { Cell } from "./Cell";
@@ -96,30 +96,59 @@ export const Content = ({
       styleTopRightGrid: {},
     };
 
+    const headerHeight = 40;
+    const rowHeight = 26;
+    const scrollBarWidth = 20;
+
     return (
-      <div className="RealmBrowser__Content">
-        <AutoSizer>
-          {({ height, width }: IAutoSizerDimensions) => (
-            <Grid
-              width={width}
-              height={height}
-              ref={gridRef}
-              rowCount={numberOfObjects + 1}
-              columnCount={propertyNames.length}
-              columnWidth={({ index }) => columnWidths[index]}
-              cellRenderer={(props) => {
-                if (props.rowIndex === 0) {
-                  return headerRenderers[props.columnIndex](props);
-                } else {
-                  return columnRenderers[props.columnIndex](props);
-                }
-              }}
-              fixedColumnCount={0}
-              fixedRowCount={1}
-              rowHeight={({ index }) => index === 0 ? 40 : 26} />
-          )}
-        </AutoSizer>
-      </div>
+      <ScrollSync>
+        {({clientHeight, clientWidth, onScroll, scrollHeight, scrollLeft, scrollTop, scrollWidth}) => (
+          <div className="RealmBrowser__Content">
+            <AutoSizer>
+              {({height, width}: IAutoSizerDimensions) => (
+                <Grid
+                  width={width - scrollBarWidth}
+                  className="RealmBrowser__Content__Header"
+                  height={headerHeight}
+                  rowCount={1}
+                  columnCount={propertyNames.length}
+                  columnWidth={({index}) => columnWidths[index]}
+                  cellRenderer={(props) => headerRenderers[props.columnIndex](props)}
+                  fixedColumnCount={0}
+                  fixedRowCount={1}
+                  scrollLeft={scrollLeft}
+                  rowHeight={({index}) => index === 0 ? headerHeight : rowHeight}
+                />
+              )}
+            </AutoSizer>
+            <AutoSizer>
+              {({height, width}: IAutoSizerDimensions) => (
+                <Grid
+                  width={width}
+                  height={height - headerHeight}
+                  style={{marginTop: headerHeight}}
+                  ref={gridRef}
+                  rowCount={numberOfObjects + 1}
+                  columnCount={propertyNames.length}
+                  columnWidth={({index}) => columnWidths[index]}
+                  cellRenderer={(props) => {
+                    if (props.rowIndex === 0) {
+                      return null;
+                    } else {
+                      return columnRenderers[props.columnIndex](props);
+                    }
+                  }}
+                  fixedColumnCount={0}
+                  fixedRowCount={1}
+                  scrollLeft={scrollLeft}
+                  onScroll={onScroll}
+                  rowHeight={({index}) => index === 0 ? 0 : rowHeight}
+                />
+              )}
+            </AutoSizer>
+          </div>
+        )}
+      </ScrollSync>
     );
   } else {
     return (<p>Loading</p>);
