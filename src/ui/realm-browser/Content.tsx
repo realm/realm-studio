@@ -14,6 +14,7 @@ export const Content = ({
   numberOfObjects,
   onColumnWidthChanged,
   schema,
+  rowToHighlight,
 }: {
   columnWidths: number[],
   getObject: (index: number) => any,
@@ -23,6 +24,7 @@ export const Content = ({
   onListCellClick: (object: any, property: Realm.ObjectSchemaProperty, value: any) => void,
   onColumnWidthChanged: (index: number, width: number) => void,
   schema: Realm.ObjectSchema | null,
+  rowToHighlight: number | null,
 }) => {
   if (schema) {
     // Generate the columns from the schemas properties
@@ -56,6 +58,7 @@ export const Content = ({
             onUpdateValue={(value) => {
               onCellChange(object, propertyName, value);
             }}
+            isHighlight={rowToHighlight === objectIndex}
           />
         );
       };

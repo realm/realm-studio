@@ -11,6 +11,7 @@ export interface IContentContainerProps {
   onCellChange: (object: any, propertyName: string, value: string) => void;
   onListCellClick: (object: any, property: Realm.ObjectSchemaProperty, value: any) => void;
   schema: Realm.ObjectSchema | null;
+  rowToHighlight: number | null;
 }
 
 export class ContentContainer extends React.Component<IContentContainerProps, {

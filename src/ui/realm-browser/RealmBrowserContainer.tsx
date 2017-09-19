@@ -61,8 +61,8 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     const {selectedTab} = this.state;
 
     if (this.realm && selectedTab) {
-      return selectedTab.isModel ?
-        this.realm.objects(selectedTab.schemaName).length : selectedTab.data.length;
+      return selectedTab.isList ?
+        selectedTab.data.length : this.realm.objects(selectedTab.schemaName).length;
     } else {
       return 0;
     }
@@ -72,8 +72,18 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     const {selectedTab} = this.state;
 
     if (this.realm && selectedTab) {
-        return selectedTab.isModel ?
-            this.realm.objects(selectedTab.schemaName)[index] : selectedTab.data[index];
+      return selectedTab.isList ?
+        selectedTab.data[index] : this.realm.objects(selectedTab.schemaName)[index];
+    }
+  }
+
+  public getHighlightRowIndex = (): number | null => {
+    const {selectedTab} = this.state;
+
+    if (selectedTab && !selectedTab.isList && !util.isNullOrUndefined(selectedTab.data)) {
+      return this.realm.objects(selectedTab.schemaName).findIndex(object => util.inspect(object) === util.inspect(selectedTab.data));
+    } else {
+      return null;
     }
   }
 
@@ -87,7 +97,15 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
   }
 
   public onSchemaSelected = (name: string) => {
-    this.addTab(null, name, this.getSelectedSchema());
+    const newTab = {
+      data: null,
+      schemaName: name,
+      associatedObject: null,
+      id: this.state.tabs.length,
+      isList: false,
+    };
+
+    this.addTab(newTab);
   }
 
   public getSelectedSchema = (): Realm.ObjectSchema | null => {
@@ -125,32 +143,21 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
   }
 
   public onListCellClick = (object: any, property: Realm.ObjectSchemaProperty, value: any) => {
-    const schemaName = property.objectType;
-
-    if (property.type === "object") {
-      // ToDo: Scroll to selected object
-      this.addTab(null, schemaName || '', value);
-    } else {
-      this.addTab(object, schemaName || '', value);
-    }
-  }
-
-  public onObjectCellClick = (property: any, value: any) => {
-    console.log(property, value);
-  }
-
-  private addTab = (object: any, schemaName: string, value: any) => {
-    const {tabs} = this.state;
-
     const newTab = {
-      data: value,
-      schemaName,
-      associatedObject: object,
-      id: tabs.length,
-      isModel: util.isNullOrUndefined(object)
+        data: value,
+        schemaName: property.objectType || '',
+        associatedObject: property.type === "list" ? object : null,
+        id: this.state.tabs.length,
+        isList: property.type === "list",
     };
 
-    const tabAlreadyCreated = tabs.find(tab => tab.schemaName === newTab.schemaName && util.inspect(tab.associatedObject) === util.inspect(newTab.associatedObject));
+    this.addTab(newTab);
+  }
+
+  private addTab = (tabToAdd: ITab) => {
+    console.log(tabToAdd);
+    const {tabs} = this.state;
+    const tabAlreadyCreated = tabs.find(tab => (!tabToAdd.isList && tab.schemaName === tabToAdd.schemaName && util.isNull(tab.associatedObject)) || (tabToAdd.isList && tab.schemaName === tabToAdd.schemaName && util.inspect(tab.associatedObject) === util.inspect(tabToAdd.associatedObject)));
 
     if (tabAlreadyCreated) {
       this.setState({
@@ -158,8 +165,8 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
       });
     } else {
       this.setState({
-          selectedTab: newTab,
-          tabs: [...tabs, newTab],
+          selectedTab: tabToAdd,
+          tabs: [...tabs, tabToAdd],
       });
     }
 

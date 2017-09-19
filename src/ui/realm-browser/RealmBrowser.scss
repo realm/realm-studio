@@ -87,6 +87,13 @@ $realm-browser-header-handle-width: 8px;
       border-bottom: 1px solid $color-dove;
       border-right: 1px solid $color-dove;
       position: relative;
+
+      &.Highlight {
+        > * {
+          background-color: $color-indigo;
+          color: white;
+        }
+      }
     }
 
     &__HeaderCell {
@@ -125,6 +132,7 @@ $realm-browser-header-handle-width: 8px;
     &__Input {
       border: 0;
       white-space: nowrap;
+      height: 100%;
 
       &--null {
         color: $color-elephant;
