@@ -15,7 +15,7 @@ export const Cell = ({
   width,
 }: {
   onUpdateValue: (value: string) => void,
-  onListCellClick: () => void,
+  onListCellClick: (property: Realm.ObjectSchemaProperty, value: any) => void,
   property: Realm.ObjectSchemaProperty,
   style: React.CSSProperties,
   value: any,

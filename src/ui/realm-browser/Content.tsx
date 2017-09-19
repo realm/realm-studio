@@ -20,7 +20,7 @@ export const Content = ({
   gridRef: (grid: MultiGrid) => void,
   numberOfObjects: number,
   onCellChange: (object: any, propertyName: string, value: string) => void,
-  onListCellClick: () => void,
+  onListCellClick: (property: Realm.ObjectSchemaProperty, value: any) => void,
   onColumnWidthChanged: (index: number, width: number) => void,
   schema: Realm.ObjectSchema | null,
 }) => {
@@ -48,11 +48,13 @@ export const Content = ({
             key={key}
             width={columnWidths[columnIndex]}
             style={style}
-            onListCellClick={onListCellClick}
+            onListCellClick={(property: Realm.ObjectSchemaProperty, value: any) => {
+              console.log(object);
+              onListCellClick(property, value);
+            }}
             value={object[propertyName]}
             property={property}
             onUpdateValue={(value) => {
-              // We subtract 1, as the 0th row is the header.
               onCellChange(object, propertyName, value);
             }}
           />

@@ -10,6 +10,7 @@ import {
   IUsernamePasswordCredentials,
   RealmBrowserMode,
 } from "../../windows/WindowType";
+import {ITab} from "./Tabs";
 import {showError} from "../reusable/errors";
 
 import {RealmBrowser} from "./RealmBrowser";
@@ -17,11 +18,8 @@ import {RealmBrowser} from "./RealmBrowser";
 export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions, {
   schemas: Realm.ObjectSchema[];
   selectedSchemaName: string | null;
-  selectedTab: {
-    schema: string,
-    data: any,
-  } | null;
-  tabs: any[];
+  selectedTab: ITab | null;
+  tabs: ITab[];
 }> {
 
   private realm: Realm;
@@ -113,10 +111,10 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
 
   public onTabSelected = (index: string) => {
     const {tabs} = this.state;
-    const newTab = tabs.find((t) => t.id === index);
+    const newTab = tabs.find((t) => t.id === index) || null;
     this.setState({
       selectedTab: newTab,
-      selectedSchemaName: newTab.schema,
+      selectedSchemaName: newTab && newTab.schemaName,
     });
   }
 
@@ -154,11 +152,12 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
 
   private addTab = (schemaName: string, value: any) => {
     const {tabs} = this.state;
-
+    console.log(value);
     const newTab = {
       data: value,
-      schema: schemaName,
+      schemaName,
       id: `${schemaName} ${tabs.length}`,
+      caption: `${schemaName} list`,
     };
 
     this.setState({
