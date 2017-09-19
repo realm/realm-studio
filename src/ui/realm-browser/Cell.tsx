@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as Realm from "realm";
+import * as classnames from "classnames";
 
 import { DefaultCell } from "./types/DefaultCell";
 import { ListCell } from "./types/ListCell";
@@ -13,6 +14,7 @@ export const Cell = ({
   style,
   value,
   width,
+  isHighlight,
 }: {
   onUpdateValue: (value: string) => void,
   onListCellClick: (property: Realm.ObjectSchemaProperty, value: any) => void,
@@ -20,6 +22,7 @@ export const Cell = ({
   style: React.CSSProperties,
   value: any,
   width: number,
+  isHighlight: boolean
 }) => {
   let content;
   switch (property.type) {
@@ -46,7 +49,10 @@ export const Cell = ({
   }
 
   return (
-    <div style={style} className="RealmBrowser__Content__Cell">
+    <div style={style} className={classnames(
+      "RealmBrowser__Content__Cell",
+      isHighlight && "Highlight"
+    )}>
       {content}
     </div>
   );

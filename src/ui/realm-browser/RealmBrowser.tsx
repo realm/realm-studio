@@ -18,7 +18,8 @@ export const RealmBrowser = ({
   selectedTab,
   tabs,
   onTabSelected,
-}: {
+  getHighlightRowIndex,
+} : {
   getNumberOfObjects: () => number,
   getSchemaLength: (name: string) => number,
   getSelectedSchema: () => Realm.ObjectSchema | null,
@@ -30,6 +31,7 @@ export const RealmBrowser = ({
   schemas: Realm.ObjectSchema[],
   selectedTab?: ITab,
   tabs: ITab[],
+  getHighlightRowIndex: () => number | null,
 }) => {
   return (
     <div className="RealmBrowser">
@@ -50,7 +52,9 @@ export const RealmBrowser = ({
           getObject={getObject}
           numberOfObjects={getNumberOfObjects()}
           onCellChange={onCellChange}
-          onListCellClick={onListCellClick}/>
+          onListCellClick={onListCellClick}
+          rowToHighlight={getHighlightRowIndex()}
+        />
       </div>
     </div>
   );
