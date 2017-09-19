@@ -1,10 +1,10 @@
 import * as React from "react";
 import * as Realm from "realm";
 
-import { ContentContainer } from "./ContentContainer";
+import {ContentContainer} from "./ContentContainer";
 import "./RealmBrowser.scss";
-import { Sidebar } from "./Sidebar";
-import { Tabs } from "./Tabs";
+import {Sidebar} from "./Sidebar";
+import {Tabs, ITab} from "./Tabs";
 
 export const RealmBrowser = ({
   getNumberOfObjects,
@@ -24,14 +24,14 @@ export const RealmBrowser = ({
   getSchemaLength: (name: string) => number,
   getSelectedSchema: () => Realm.ObjectSchema | null,
   getObject: (index: number) => any,
-  onCellChange: (index: number, propertyName: string, value: string) => void,
+  onCellChange: (object: any, propertyName: string, value: string) => void,
   onTabSelected: (id: string) => void,
   onSchemaSelected: (name: string) => void,
-  onListCellClick: (property: Realm.ObjectSchemaProperty, value: any) => void,
+  onListCellClick: (object: any, property: Realm.ObjectSchemaProperty, value: any) => void,
   schemas: Realm.ObjectSchema[],
-  selectedSchemaName: string | null,
-  selectedTab: any,
-  tabs: any[],
+  selectedSchemaName?: string,
+  selectedTab?: ITab,
+  tabs: ITab[],
 }) => {
   const selectedSchema = getSelectedSchema();
   const selectedNumberOfObjects = selectedSchemaName ? getNumberOfObjects(selectedSchemaName) : 0;
