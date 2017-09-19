@@ -66,6 +66,12 @@ $realm-browser-header-handle-width: 8px;
     flex: 1 1 0;
     display: flex;
     flex-direction: column;
+    &__Tab {
+      &--active {
+        background: $brand-primary;
+        color: $color-dove !important;
+      }
+    }
   }
   &__Content {
     flex: 1 1 0;

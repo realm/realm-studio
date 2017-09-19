@@ -10,11 +10,11 @@ export const ObjectCell = ({
 }: {
   property: Realm.ObjectSchemaProperty,
   value: any,
-  onClick: () => void,
+  onClick: (property: Realm.ObjectSchemaProperty, value: any) => void,
 }) => {
   const formatedValue = util.inspect(value);
   return <div
-      onClick={onClick}
+      onClick={() => onClick(property, value)}
       className={classnames(
           "form-control",
           "form-control-sm",

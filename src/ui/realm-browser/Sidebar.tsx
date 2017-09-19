@@ -1,17 +1,18 @@
 import * as classnames from "classnames";
 import * as React from "react";
 import { Badge } from "reactstrap";
+import "./RealmBrowser.scss";
 
 export const Sidebar = ({
-  getNumberOfObjects,
   onSchemaSelected,
   schemas,
   selectedSchemaName,
+  getSchemaLength,
 }: {
-  getNumberOfObjects: (name: string) => number,
   onSchemaSelected: (name: string) => void,
   schemas: Realm.ObjectSchema[],
   selectedSchemaName: string | null,
+  getSchemaLength: (name: string) => number,
 }) => (
   <div className="RealmBrowser__Sidebar">
     <div className="RealmBrowser__Sidebar__Header">
@@ -28,7 +29,7 @@ export const Sidebar = ({
             {schema.name}
           </span>
           <Badge color="primary">
-            {getNumberOfObjects(schema.name)}
+            {getSchemaLength(schema.name)}
           </Badge>
         </li>
       ))}
