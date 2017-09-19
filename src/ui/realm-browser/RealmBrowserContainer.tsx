@@ -18,7 +18,6 @@ import {RealmBrowser} from "./RealmBrowser";
 
 export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions, {
   schemas: Realm.ObjectSchema[];
-  selectedSchemaName?: string;
   selectedTab?: ITab;
   tabs: ITab[];
 }> {
@@ -58,62 +57,50 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     return <RealmBrowser {...this.state} {...this} />;
   }
 
-  public getNumberOfObjects = (name: string) => {
+  public getNumberOfObjects = () => {
     const {selectedTab} = this.state;
-    if (selectedTab) {
-      return selectedTab.data.length;
-    }
-    if (this.realm) {
-      return this.realm.objects(name).length;
+
+    if (this.realm && selectedTab) {
+      return selectedTab.isSchema ?
+        this.realm.objects(selectedTab.schemaName).length : selectedTab.data.length;
     } else {
       return 0;
     }
   }
 
   public getObject = (index: number): any => {
-    const {selectedTab, selectedSchemaName} = this.state;
-    if (selectedTab) {
-      return selectedTab.data[index];
-    }
-    if (selectedSchemaName) {
-      const objects = this.realm.objects(selectedSchemaName);
-      return objects[index];
+    const {selectedTab} = this.state;
+
+    if (this.realm && selectedTab) {
+        return selectedTab.isSchema ?
+            this.realm.objects(selectedTab.schemaName)[index] : selectedTab.data[index];
     }
   }
 
   public onCellChange = (object: any, propertyName: string, value: string) => {
-    if (this.realm) {
-      const selectedSchema = this.realm.schema.find((schema) => schema.name === this.state.selectedSchemaName);
-      if (selectedSchema) {
-        if (object) {
-          this.realm.write(() => {
-            // TODO: Apply the various data parsings and transformations, based on the type
-            object[propertyName] = value;
-          });
-        }
-      }
+    if (this.realm && object) {
+      this.realm.write(() => {
+        // TODO: Apply the various data parsings and transformations, based on the type
+        object[propertyName] = value;
+      });
     }
   }
 
   public onSchemaSelected = (name: string) => {
-    this.setState({
-      selectedSchemaName: name
-    });
     this.addTab(null, name, this.getSelectedSchema());
   }
 
   public getSelectedSchema = (): Realm.ObjectSchema | null => {
-    const {schemas, selectedSchemaName} = this.state;
+    const {schemas, selectedTab} = this.state;
 
-    return schemas.find((schema) => schema.name === selectedSchemaName) || null;
+    return schemas.find((schema) => schema.name === (selectedTab && selectedTab.schemaName)) || null;
   }
 
-  public onTabSelected = (index: string) => {
+  public onTabSelected = (index: number) => {
     const {tabs} = this.state;
     const newTab = tabs.find((t) => t.id === index);
     this.setState({
-      selectedTab: newTab,
-      selectedSchemaName: newTab && newTab.schemaName,
+      selectedTab: newTab
     });
   }
 
@@ -142,10 +129,7 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
 
     if (property.type === "object") {
       // ToDo: Scroll to selected object
-      this.setState({
-        selectedTab: undefined,
-        selectedSchemaName: property.objectType,
-      });
+      this.addTab(null, schemaName || '', value);
     } else {
       this.addTab(object, schemaName || '', value);
     }
@@ -158,20 +142,19 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
       data: value,
       schemaName,
       associatedObject: object,
-      id: `${schemaName} ${tabs.length}`
+      id: tabs.length,
+      isSchema: util.isNullOrUndefined(object)
     };
 
     const tabAlreadyCreated = tabs.find(tab => tab.schemaName === newTab.schemaName && util.inspect(tab.associatedObject) === util.inspect(newTab.associatedObject));
 
     if (tabAlreadyCreated) {
       this.setState({
-          selectedTab: tabAlreadyCreated,
-          selectedSchemaName: schemaName
+          selectedTab: tabAlreadyCreated
       });
     } else {
       this.setState({
           selectedTab: newTab,
-          selectedSchemaName: schemaName,
           tabs: [...tabs, newTab],
       });
     }
