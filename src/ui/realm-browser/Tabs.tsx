@@ -6,8 +6,9 @@ import "./RealmBrowser.scss";
 export interface ITab {
   data: any;
   schemaName: string;
-  id: string;
+  id: number;
   associatedObject?: any;
+  isSchema: boolean;
 }
 
 export const Tabs = ({
@@ -17,7 +18,7 @@ export const Tabs = ({
 }: {
   selectedTab?: ITab,
   tabs: ITab[],
-  onTabSelected: (tabId: string) => void,
+  onTabSelected: (tabId: number) => void,
 }) => (
   <Nav className="RealmBrowser__Tabs" tabs>
     {tabs && tabs.map((tab) => {
@@ -25,13 +26,14 @@ export const Tabs = ({
         "RealmBrowser__Tab": true,
         "RealmBrowser__Tab--active": selectedTab && selectedTab.id === tab.id,
       });
+      const caption = `${tab.schemaName} ${tab.isSchema ? "model" : "list"}`;
       return (
         <NavItem key={tab.id}>
           <NavLink
             className={tabClass}
             onClick={() => onTabSelected(tab.id)}
           >
-            {tab.id}
+            {caption}
           </NavLink>
         </NavItem>
       );

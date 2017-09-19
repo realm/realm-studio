@@ -15,32 +15,28 @@ export const RealmBrowser = ({
   onSchemaSelected,
   onListCellClick,
   schemas,
-  selectedSchemaName,
   selectedTab,
   tabs,
   onTabSelected,
 }: {
-  getNumberOfObjects: (name: string) => number,
+  getNumberOfObjects: () => number,
   getSchemaLength: (name: string) => number,
   getSelectedSchema: () => Realm.ObjectSchema | null,
   getObject: (index: number) => any,
   onCellChange: (object: any, propertyName: string, value: string) => void,
-  onTabSelected: (id: string) => void,
+  onTabSelected: (id: number) => void,
   onSchemaSelected: (name: string) => void,
   onListCellClick: (object: any, property: Realm.ObjectSchemaProperty, value: any) => void,
   schemas: Realm.ObjectSchema[],
-  selectedSchemaName?: string,
   selectedTab?: ITab,
   tabs: ITab[],
 }) => {
-  const selectedSchema = getSelectedSchema();
-  const selectedNumberOfObjects = selectedSchemaName ? getNumberOfObjects(selectedSchemaName) : 0;
   return (
     <div className="RealmBrowser">
       <Sidebar
         schemas={schemas}
         onSchemaSelected={onSchemaSelected}
-        selectedSchemaName={selectedSchemaName}
+        selectedSchemaName={selectedTab && selectedTab.schemaName}
         getSchemaLength={getSchemaLength}
       />
       <div className="RealmBrowser__Wrapper">
@@ -50,9 +46,9 @@ export const RealmBrowser = ({
           onTabSelected={onTabSelected}
         />
         <ContentContainer
-          schema={selectedSchema}
+          schema={getSelectedSchema()}
           getObject={getObject}
-          numberOfObjects={selectedNumberOfObjects}
+          numberOfObjects={getNumberOfObjects()}
           onCellChange={onCellChange}
           onListCellClick={onListCellClick}/>
       </div>
