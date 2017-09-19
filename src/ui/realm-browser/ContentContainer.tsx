@@ -1,7 +1,7 @@
 import * as React from "react";
-import { MultiGrid } from "react-virtualized";
+import {Grid} from "react-virtualized";
 
-import { Content } from "./Content";
+import {Content} from "./Content";
 
 const MINIMUM_COLUMN_WIDTH = 20;
 
@@ -19,7 +19,7 @@ export class ContentContainer extends React.Component<IContentContainerProps, {
 }> {
 
   // A reference to the grid inside the content container is needed to resize collumns
-  private grid: MultiGrid;
+  private grid: Grid;
 
   constructor() {
     super();
@@ -36,6 +36,9 @@ export class ContentContainer extends React.Component<IContentContainerProps, {
     if (props.schema && this.props.schema !== props.schema) {
       this.setDefaultColumnWidths(props.schema);
     }
+    if (this.grid && props.rowToHighlight) {
+      this.grid.scrollToCell({columnIndex: 0, rowIndex: props.rowToHighlight});
+    }
   }
 
   public onColumnWidthChanged = (index: number, width: number) => {
@@ -44,12 +47,9 @@ export class ContentContainer extends React.Component<IContentContainerProps, {
     this.setState({
       columnWidths,
     });
-    if (this.grid) {
-      this.grid.recomputeGridSize();
-    }
   }
 
-  public gridRef = (grid: MultiGrid) => {
+  public gridRef = (grid: Grid) => {
     this.grid = grid;
   }
 
