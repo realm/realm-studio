@@ -7,15 +7,25 @@ const HANDLE_WIDTH = 8;
 const HANDLE_OFFSET = HANDLE_WIDTH / 2;
 
 export const getPropertyDisplayed = (property: Realm.ObjectSchemaProperty) => {
-  if (property.type === "list") {
-    return `${property.objectType}[]`;
-  } else if (property.type === "linkingObjects") {
-    return property.objectType;
-  } else if (property.type === "object") {
-    return property.objectType;
-  } else {
-    return property.type;
+  let typeDesc;
+
+  switch (property.type) {
+    case "list":
+      typeDesc = `${property.objectType}[]`;
+      break;
+    case "object":
+    case "linkingObjects":
+      typeDesc = property.objectType;
+      break;
+    default:
+      typeDesc = property.type;
   }
+
+  if (property.optional) {
+    typeDesc += " (optional)";
+  }
+
+  return typeDesc;
 };
 
 export const HeaderCell = ({
