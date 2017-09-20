@@ -22,7 +22,7 @@ export const getPropertyDisplayed = (property: Realm.ObjectSchemaProperty) => {
   }
 
   if (property.optional) {
-    typeDesc += " (optional)";
+    typeDesc += "?";
   }
 
   return typeDesc;
