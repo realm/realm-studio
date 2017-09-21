@@ -54,7 +54,7 @@
     "react-draggable": "^3.0.3",
     "react-virtualized": "^9.9.0",
     "reactstrap": "^4.8.0",
-    "realm": "2.0.0-rc6"
+    "realm": "^2.0.0-rc9"
   },
   "devDependencies": {
     "@types/classnames": "^2.2.3",
@@ -78,7 +78,7 @@
     "node-sass": "^4.5.3",
     "null-loader": "^0.1.1",
     "react-hot-loader": "^3.0.0-beta.7",
-    "realm-object-server": "^2.0.0-alpha.27",
+    "realm-object-server": "^2.0.0-alpha.35",
     "resolve-url-loader": "^2.1.0",
     "sass-lint": "^1.10.2",
     "sass-loader": "^6.0.6",

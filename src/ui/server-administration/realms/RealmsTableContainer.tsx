@@ -2,7 +2,7 @@ import * as electron from "electron";
 import * as React from "react";
 import * as Realm from "realm";
 
-import { deleteRealm, getRealmManagementRealm, IRealmFile } from "../../../services/ros";
+import { deleteRealm, getAdminRealm, IRealmFile } from "../../../services/ros";
 import { showError } from "../../reusable/errors";
 
 import { RealmsTable } from "./RealmsTable";
@@ -19,7 +19,7 @@ export interface IRealmTableContainerState {
 
 export class RealmsTableContainer extends React.Component<IRealmTableContainerProps, IRealmTableContainerState> {
 
-  private realmManagementRealm: Realm;
+  private adminRealm: Realm;
 
   constructor() {
     super();
@@ -34,8 +34,8 @@ export class RealmsTableContainer extends React.Component<IRealmTableContainerPr
   }
 
   public componentWillUnmount() {
-    if (this.realmManagementRealm) {
-      this.realmManagementRealm.removeListener("change", this.onRealmsChanged);
+    if (this.adminRealm) {
+      this.adminRealm.removeListener("change", this.onRealmsChanged);
     }
   }
 
@@ -58,7 +58,7 @@ export class RealmsTableContainer extends React.Component<IRealmTableContainerPr
   }
 
   public getRealmFromId = (path: string): IRealmFile | null => {
-    return this.realmManagementRealm.objectForPrimaryKey<IRealmFile>("RealmFile", path);
+    return this.adminRealm.objectForPrimaryKey<IRealmFile>("RealmFile", path);
   }
 
   public onRealmDeleted = (path: string) => {
@@ -80,19 +80,20 @@ export class RealmsTableContainer extends React.Component<IRealmTableContainerPr
 
   private async initializeRealm() {
     // Remove any existing a change listener
-    if (this.realmManagementRealm) {
-      this.realmManagementRealm.removeListener("change", this.onRealmsChanged);
+    if (this.adminRealm) {
+      this.adminRealm.removeListener("change", this.onRealmsChanged);
     }
     try {
-      this.realmManagementRealm = await getRealmManagementRealm(this.props.user);
+      this.adminRealm = await getAdminRealm(this.props.user);
+      console.log("PATH: " + this.adminRealm.path);
       // Get the realms
-      const realms = this.realmManagementRealm.objects<IRealmFile>("RealmFile");
+      const realms = this.adminRealm.objects<IRealmFile>("RealmFile");
       // Set the state
       this.setState({
         realms,
       });
       // Register a change listener
-      this.realmManagementRealm.addListener("change", this.onRealmsChanged);
+      this.adminRealm.addListener("change", this.onRealmsChanged);
     } catch (err) {
       showError("Could not open the synchronized realm", err);
     }

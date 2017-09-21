@@ -2,39 +2,32 @@ import * as faker from "faker";
 import * as Realm from "realm";
 
 import {
-  IPermissionCondition,
+  IPermission,
   IRealmFile,
   IUser,
   IUserMetadataRow,
-  permissionConditionSchema,
-  PermissionConditionType,
+  permissionSchema,
   realmFileSchema,
   userMetadataRowSchema,
   userSchema,
+  accountSchema
 } from "./ros";
 
-export const getAuthRealm = async (): Promise<Realm> => {
+export const getAdminRealm = async (): Promise<Realm> => {
   return new Realm({
-    path: "./data/auth.realm",
+    path: "./data/__admin.realm",
     schema: [
       userSchema,
       userMetadataRowSchema,
-    ],
-  });
-};
-
-export const getRealmManagementRealm = async (): Promise<Realm> => {
-  return new Realm({
-    path: "./data/realmmanagement.realm",
-    schema: [
       realmFileSchema,
-      permissionConditionSchema,
+      permissionSchema,
+      accountSchema
     ],
   });
 };
 
-export const createFakeRealmFile = (realmManagementRealm: Realm, authRealm: Realm) => {
-  const creator = getRandomUser(authRealm);
+export const createFakeRealmFile = (adminRealm: Realm) => {
+  const creator = getRandomUser(adminRealm);
   const pathPartCount = faker.random.number({ min: 1, max: 5 });
   let path = "/" + faker.random.uuid();
   for (let p = 0; p < pathPartCount; p++) {
@@ -45,16 +38,15 @@ export const createFakeRealmFile = (realmManagementRealm: Realm, authRealm: Real
   }
 
   const permissionsCount = faker.random.number({ min: 0, max: 3 });
-  const permissions: IPermissionCondition[] = [];
+  const permissions: IPermission[] = [];
   for (let p = 0; p < permissionsCount; p++) {
-    const permission: IPermissionCondition = {
-      path,
-      accessLevel: faker.random.number({ min: 0, max: 3 }),
-      type: faker.random.number({ min: 0, max: 3 }),
+    const permission: IPermission = {
+      user: creator,
+      mayRead: true,
+      mayWrite: true,
+      mayManage: true
     };
-    if (permission.type === PermissionConditionType.user) {
-      // TODO: Add the users id?
-    }
+
     permissions.push(permission);
   }
 
@@ -64,10 +56,10 @@ export const createFakeRealmFile = (realmManagementRealm: Realm, authRealm: Real
     creationDate: faker.date.past(2),
     permissions,
   };
-  realmManagementRealm.create("RealmFile", realmFile);
+  adminRealm.create("RealmFile", realmFile);
 };
 
-export const createFakeUser = (authRealm: Realm) => {
+export const createFakeUser = (adminRealm: Realm) => {
   const firstName = faker.name.firstName();
   const lastName = faker.name.lastName();
   const email = faker.internet.email(firstName, lastName);
@@ -78,27 +70,26 @@ export const createFakeUser = (authRealm: Realm) => {
       { key: "firstName", value: firstName },
       { key: "lastName", value: lastName },
     ],
+    accounts: [],
   };
-  authRealm.create("User", user);
+  adminRealm.create("User", user);
 };
 
 export const createFakeUsersAndRealms = ({
-  authRealm,
-  realmManagementRealm,
+  adminRealm,
   userCount,
   realmCount,
 }: {
-  authRealm: Realm,
-  realmManagementRealm: Realm,
+  adminRealm: Realm,
   userCount: number,
   realmCount: number,
 }) => {
   let createdUsers = 0;
   let createdRealms = 0;
-  authRealm.write(() => {
+  adminRealm.write(() => {
     for (let u = 0; u < userCount; u++) {
       try {
-        createFakeUser(authRealm);
+        createFakeUser(adminRealm);
         createdUsers++;
       } catch (err) {
         // tslint:disable-next-line:no-console
@@ -106,10 +97,10 @@ export const createFakeUsersAndRealms = ({
       }
     }
   });
-  realmManagementRealm.write(() => {
+  adminRealm.write(() => {
     for (let r = 0; r < realmCount; r++) {
       try {
-        createFakeRealmFile(realmManagementRealm, authRealm);
+        createFakeRealmFile(adminRealm);
         createdRealms++;
       } catch (err) {
         // tslint:disable-next-line:no-console
@@ -123,8 +114,8 @@ export const createFakeUsersAndRealms = ({
   };
 };
 
-export const getRandomUser = (authRealm: Realm) => {
-  const users = authRealm.objects<IUser>("User");
+export const getRandomUser = (adminRealm: Realm) => {
+  const users = adminRealm.objects<IUser>("User");
   if (users.length === 0) {
     throw new Error("Cannot get a random user when no users exists");
   }

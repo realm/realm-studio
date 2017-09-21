@@ -4,8 +4,7 @@ import * as Realm from "realm";
 
 import {
   createUser,
-  getAuthRealm,
-  getRealmManagementRealm,
+  getAdminRealm,
   IRealmFile,
   IUser,
   IUserMetadataRow,
@@ -28,8 +27,7 @@ export interface IUsersTableContainerState {
 
 export class UsersTableContainer extends React.Component<IUsersTableContainerProps, IUsersTableContainerState> {
 
-  private authRealm: Realm;
-  private realmManagementRealm: Realm;
+  private adminRealm: Realm;
 
   constructor() {
     super();
@@ -47,11 +45,8 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
 
   public componentWillUnmount() {
     // Remove any existing a change listeners
-    if (this.authRealm) {
-      this.authRealm.removeListener("change", this.onUsersChanged);
-    }
-    if (this.realmManagementRealm) {
-      this.realmManagementRealm.removeListener("change", this.onRealmsChanged);
+    if (this.adminRealm) {
+      this.adminRealm.removeListener("change", this.onUsersChanged);
     }
   }
 
@@ -82,11 +77,11 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
   }
 
   public getUserFromId = (userId: string): IUser | null => {
-    return this.authRealm.objectForPrimaryKey<IUser>("User", userId);
+    return this.adminRealm.objectForPrimaryKey<IUser>("User", userId);
   }
 
   public getUsersRealms = (userId: string): IRealmFile[] => {
-    const realms = this.realmManagementRealm.objects<IRealmFile>("RealmFile").filtered("creatorId = $0", userId);
+    const realms = this.adminRealm.objects<IRealmFile>("RealmFile").filtered("creatorId = $0", userId);
     return realms.slice();
   }
 
@@ -122,9 +117,9 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
   public onUserDeletion = async (userId: string) => {
     const confirmed = await this.confirmUserDeletion(userId);
     if (confirmed) {
-      this.authRealm.write(() => {
-        const user = this.authRealm.objectForPrimaryKey<IUser>("User", userId);
-        this.authRealm.delete(user);
+      this.adminRealm.write(() => {
+        const user = this.adminRealm.objectForPrimaryKey<IUser>("User", userId);
+        this.adminRealm.delete(user);
       });
       if (userId === this.state.selectedUserId) {
         this.onUserSelected(null);
@@ -135,8 +130,8 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
   public onUserMetadataAppended = (userId: string) => {
     const user = this.getUserFromId(userId);
     if (user) {
-      this.authRealm.write(() => {
-        const metadataRow = this.authRealm.create<IUserMetadataRow>("UserMetadataRow", {
+      this.adminRealm.write(() => {
+        const metadataRow = this.adminRealm.create<IUserMetadataRow>("UserMetadataRow", {
           key: "",
           value: "",
         });
@@ -148,7 +143,7 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
   public onUserMetadataChanged = (userId: string, index: number, key: string, value: string) => {
     const user = this.getUserFromId(userId);
     if (user && index >= 0 && index < user.metadata.length) {
-      this.authRealm.write(() => {
+      this.adminRealm.write(() => {
         user.metadata[index].key = key;
         user.metadata[index].value = value;
       });
@@ -160,8 +155,8 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
   public onUserMetadataDeleted = (userId: string, index: number) => {
     const user = this.getUserFromId(userId);
     if (user && index >= 0 && index < user.metadata.length) {
-      this.authRealm.write(() => {
-        this.authRealm.delete(user.metadata[index]);
+      this.adminRealm.write(() => {
+        this.adminRealm.delete(user.metadata[index]);
       });
     } else {
       throw new Error(`Cannot update users metadata, index ${index} is out of bounds.`);
@@ -173,9 +168,9 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
   }
 
   public onUserRoleChanged = (userId: string, role: UserRole) => {
-    const user = this.authRealm.objectForPrimaryKey<IUser>("User", userId);
+    const user = this.adminRealm.objectForPrimaryKey<IUser>("User", userId);
     if (user) {
-      this.authRealm.write(() => {
+      this.adminRealm.write(() => {
         user.isAdmin = role === UserRole.Administrator;
       });
     } else {
@@ -185,21 +180,16 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
 
   private async initializeRealms() {
     // Remove any existing a change listeners
-    if (this.authRealm) {
-      this.authRealm.removeListener("change", this.onUsersChanged);
-    }
-    if (this.realmManagementRealm) {
-      this.realmManagementRealm.removeListener("change", this.onRealmsChanged);
+    if (this.adminRealm) {
+      this.adminRealm.removeListener("change", this.onUsersChanged);
     }
 
     try {
       // Get the realms from the ROS interface
-      this.authRealm = await getAuthRealm(this.props.user);
-      this.realmManagementRealm = await getRealmManagementRealm(this.props.user);
+      this.adminRealm = await getAdminRealm(this.props.user);
 
       // Register change listeners
-      this.authRealm.addListener("change", this.onUsersChanged);
-      this.realmManagementRealm.addListener("change", this.onRealmsChanged);
+      this.adminRealm.addListener("change", this.onUsersChanged);
 
       // Update the users state
       this.updateUsers();
@@ -210,7 +200,7 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
 
   private updateUsers() {
     // Get the users
-    const users = this.authRealm.objects<IUser>("User").sorted("userId");
+    const users = this.adminRealm.objects<IUser>("User").sorted("userId");
     // Set the state
     this.setState({
       users,

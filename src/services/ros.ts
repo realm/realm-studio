@@ -5,11 +5,18 @@ import * as mocked from "./mocked-ros";
 export interface IUser {
   userId: string;
   isAdmin: boolean;
+  accounts: IAccount[];
   metadata: IUserMetadataRow[];
 }
 
+export interface IAccount {
+  provider: string;
+  providerId: string;
+  user: IUser[];
+}
+
 export interface IUserMetadataRow {
-  user?: IUser;
+  user?: IUser[];
   key: string;
   value?: string;
 }
@@ -18,7 +25,14 @@ export interface IRealmFile {
   path: string;
   creatorId: string;
   creationDate: Date;
-  permissions: IPermissionCondition[];
+  permissions: IPermission[];
+}
+
+export interface IPermission {
+  user: IUser;
+  mayRead: boolean;
+  mayWrite: boolean;
+  mayManage: boolean;
 }
 
 export enum AccessLevel {
@@ -28,65 +42,59 @@ export enum AccessLevel {
   admin,
 }
 
-export enum PermissionConditionType {
-  all,
-  user,
-  metadata_exact,
-  metadata_regex,
-}
-
-export interface IPermissionCondition {
-  path: string;
-  accessLevel: AccessLevel;
-  type: PermissionConditionType;
-  key?: string;
-  value?: string;
-}
-
 // These schemas are copied from ROS
 
 export const userSchema: Realm.ObjectSchema = {
-  name: "User",
-  primaryKey: "userId",
+  name: 'User',
+  primaryKey: 'userId',
   properties: {
-    userId: "string",
-    isAdmin: { type: "bool", optional: false },
-    metadata: { type: "list", objectType: "UserMetadataRow", default: [], optional: false },
-  },
+      userId: { type: 'string', optional: false },
+      isAdmin: { type: 'bool', optional: false },
+      accounts: { type: "list", objectType: "Account" },
+      metadata: { type: 'list', objectType: 'UserMetadataRow', default: [], optional: false }
+      }
 };
 
 export const userMetadataRowSchema: Realm.ObjectSchema = {
-  name: "UserMetadataRow",
+  name: 'UserMetadataRow',
   properties: {
-    user: { type: "linkingObjects", objectType: "User", property: "metadata" },
-    key: { type: "string", optional: false },
-    value: { type: "string", optional: false },
-  },
+      user: { type: 'linkingObjects', objectType: 'User', property: 'metadata' },
+      key: { type: 'string', optional: false },
+      value: { type: 'string', optional: false }
+  }
 };
 
 export const realmFileSchema: Realm.ObjectSchema = {
-  name: "RealmFile",
-  primaryKey: "path",
+  name: 'RealmFile',
+  primaryKey: 'path',
   properties: {
-    path: "string",
-    creatorId: "string",
-    creationDate: "date",
-    permissions: {
-      type: "list",
-      objectType: "PermissionCondition",
-    },
-  },
+      path: 'string',
+      creatorId: { type: 'string', optional: true, default: 'realm-admin' },
+      creationDate: 'date',
+      syncLabel: 'string',
+      permissions: { type: 'list', objectType: 'Permission', default: [], optional: false }
+  }
 };
 
-export const permissionConditionSchema: Realm.ObjectSchema = {
-  name: "PermissionCondition",
+export const permissionSchema: Realm.ObjectSchema = {
+  name: 'Permission',
   properties: {
-    path: "string",
-    accessLevel: "int", // ['none', 'read', 'write', 'admin']
-    type: "int", // ['all', 'user', 'metadata_exact', 'metadata_regex']
-    key: { type: "string", optional: true },
-    value: { type: "string", optional: true },
-  },
+      user: { type: 'User' },
+      owners: {type: 'linkingObjects', objectType: 'RealmFile', property: 'permissions'},
+      mayRead: { type: 'bool', optional: false },
+      mayWrite: { type: 'bool', optional: false },
+      mayManage: { type: 'bool', optional: false },
+      updatedAt: { type: 'date', optional: false },
+  }
+};
+
+export const accountSchema: Realm.ObjectSchema = {
+  name: 'Account',
+  properties: {
+      provider: { type: 'string', optional: false, indexed: true },
+      providerId: { type: "string", optional: false, indexed: true },
+      user: {type: 'linkingObjects', objectType: 'User', property: 'accounts'}
+  }
 };
 
 const getRealmUrl = (user: Realm.Sync.User, path: string) => {
@@ -103,9 +111,10 @@ export const timeoutPromise = (url: string, delay: number = 5000): Promise<Realm
   });
 };
 
-export const getAuthRealm = (user: Realm.Sync.User): Promise<Realm> => {
+export const getAdminRealm = (user: Realm.Sync.User): Promise<Realm> => {
   const url = getRealmUrl(user, "__admin");
   const realm = Realm.open({
+    path: "./data/__admin.realm",
     sync: {
       url,
       user,
@@ -113,21 +122,9 @@ export const getAuthRealm = (user: Realm.Sync.User): Promise<Realm> => {
     schema: [
       userSchema,
       userMetadataRowSchema,
-    ],
-  });
-  return Promise.race<Realm>([ realm, timeoutPromise(url) ]);
-};
-
-export const getRealmManagementRealm = (user: Realm.Sync.User): Promise<Realm> => {
-  const url = getRealmUrl(user, "__permissions");
-  const realm = Realm.open({
-    sync: {
-      url,
-      user,
-    },
-    schema: [
       realmFileSchema,
-      permissionConditionSchema,
+      permissionSchema,
+      accountSchema
     ],
   });
   return Promise.race<Realm>([ realm, timeoutPromise(url) ]);
