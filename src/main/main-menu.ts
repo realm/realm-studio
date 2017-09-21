@@ -26,75 +26,41 @@ export default class MainMenu {
           {
             role: "close",
           },
+          { type: "separator" },
+          { role: "close" },
         ],
       },
       {
         label: "Edit",
         submenu: [
-          {
-            role: "undo",
-          },
-          {
-            role: "redo",
-          },
-          {
-            type: "separator",
-          },
-          {
-            role: "cut",
-          },
-          {
-            role: "copy",
-          },
-          {
-            role: "paste",
-          },
-          {
-            role: "delete",
-          },
-          {
-            role: "selectall",
-          },
+          { role: "undo" },
+          { role: "redo" },
+          { type: "separator" },
+          { role: "cut" },
+          { role: "copy" },
+          { role: "paste" },
+          { role: "delete" },
+          { role: "selectall" },
         ],
       },
       {
         label: "View",
         submenu: [
-          {
-            role: "reload",
-          },
-          {
-            role: "toggledevtools",
-          },
-          {
-            type: "separator",
-          },
-          {
-            role: "resetzoom",
-          },
-          {
-            role: "zoomin",
-          },
-          {
-            role: "zoomout",
-          },
-          {
-            type: "separator",
-          },
-          {
-            role: "togglefullscreen",
-          },
+          { role: "reload" },
+          { role: "toggledevtools" },
+          { type: "separator" },
+          { role: "resetzoom" },
+          { role: "zoomin" },
+          { role: "zoomout" },
+          { type: "separator" },
+          { role: "togglefullscreen" },
         ],
       },
       {
         role: "window",
         submenu: [
-          {
-            role: "minimize",
-          },
-          {
-            role: "zoom",
-          },
+          { role: "minimize" },
+          { role: "zoom" },
         ],
       },
       {
@@ -102,9 +68,7 @@ export default class MainMenu {
         submenu: [
           {
             label: "Learn More...",
-            click: () => {
-              electron.shell.openExternal("https://github.com/realm/realm-browser-js");
-            },
+            click: () => { electron.shell.openExternal("https://github.com/realm/realm-browser-js"); },
           },
         ],
       },
@@ -114,34 +78,17 @@ export default class MainMenu {
       template.unshift({
         label: electron.app.getName(),
         submenu: [
-          {
-            role: "about",
-          },
-          {
-            type: "separator",
-          },
-          {
-            role: "services",
-            submenu: [],
-          },
-          {
-            type: "separator",
-          },
-          {
-            role: "hide",
-          },
-          {
-            role: "hideothers",
-          },
-          {
-            role: "unhide",
-          },
-          {
-            type: "separator",
-          },
-          {
-            role: "quit",
-          },
+          { role: "about" },
+          { type: "separator" },
+          { label: "Check for Updates...", click: () => { Application.sharedApplication.checkForUpdates(); } },
+          { type: "separator" },
+          { role: "services", submenu: [] },
+          { type: "separator" },
+          { role: "hide" },
+          { role: "hideothers" },
+          { role: "unhide" },
+          { type: "separator" },
+          { role: "quit" },
         ],
       });
     }
