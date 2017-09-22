@@ -3,7 +3,7 @@ import * as React from "react";
 import * as Realm from "realm";
 
 import {
-  getAuthRealm,
+  getAdminRealm,
   IRealmFile,
   IUser,
   IUserMetadataRow,
