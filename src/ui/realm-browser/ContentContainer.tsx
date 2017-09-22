@@ -19,7 +19,8 @@ export class ContentContainer extends React.Component<IContentContainerProps, {
 }> {
 
   // A reference to the grid inside the content container is needed to resize collumns
-  private grid: Grid;
+  private gridContent: Grid;
+  private gridHeader: Grid;
 
   constructor() {
     super();
@@ -36,10 +37,11 @@ export class ContentContainer extends React.Component<IContentContainerProps, {
     if (props.schema && this.props.schema !== props.schema) {
       this.setDefaultColumnWidths(props.schema);
     }
-    if (this.grid && props.rowToHighlight) {
-      this.grid.scrollToCell({columnIndex: 0, rowIndex: props.rowToHighlight});
+    if (this.gridContent && props.rowToHighlight) {
+      this.gridContent.scrollToCell({columnIndex: 0, rowIndex: props.rowToHighlight});
     }
   }
+
 
   public onColumnWidthChanged = (index: number, width: number) => {
     const columnWidths = Array.from(this.state.columnWidths);
@@ -47,11 +49,20 @@ export class ContentContainer extends React.Component<IContentContainerProps, {
     this.setState({
       columnWidths,
     });
+    if (this.gridContent && this.gridHeader) {
+      this.gridContent.recomputeGridSize();
+      this.gridHeader.recomputeGridSize();
+    }
   }
 
-  public gridRef = (grid: Grid) => {
-    this.grid = grid;
+  public gridContentRef = (grid: Grid) => {
+    this.gridContent = grid;
   }
+
+  public gridHeaderRef = (grid: Grid) => {
+    this.gridHeader = grid;
+  }
+
 
   private setDefaultColumnWidths(schema: Realm.ObjectSchema) {
     const columnWidths = Object.keys(schema.properties).map((propertyName) => {
@@ -72,8 +83,9 @@ export class ContentContainer extends React.Component<IContentContainerProps, {
     this.setState({
       columnWidths,
     });
-    if (this.grid) {
-      this.grid.recomputeGridSize();
+    if (this.gridContent && this.gridHeader) {
+      this.gridContent.recomputeGridSize();
+      this.gridHeader.recomputeGridSize();
     }
   }
 }

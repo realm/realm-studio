@@ -8,7 +8,8 @@ import { HeaderCell } from "./HeaderCell";
 export const Content = ({
   columnWidths,
   getObject,
-  gridRef,
+  gridContentRef,
+  gridHeaderRef,
   onCellChange,
   onListCellClick,
   numberOfObjects,
@@ -18,7 +19,8 @@ export const Content = ({
 }: {
   columnWidths: number[],
   getObject: (index: number) => any,
-  gridRef: (grid: Grid) => void,
+  gridContentRef: (grid: Grid) => void,
+  gridHeaderRef: (grid: Grid) => void,
   numberOfObjects: number,
   onCellChange: (object: any, propertyName: string, value: string) => void,
   onListCellClick: (object: any, property: Realm.ObjectSchemaProperty, value: any) => void,
@@ -110,12 +112,11 @@ export const Content = ({
                   width={width - scrollBarWidth}
                   className="RealmBrowser__Content__Header"
                   height={headerHeight}
+                  ref={gridHeaderRef}
                   rowCount={1}
                   columnCount={propertyNames.length}
                   columnWidth={({index}) => columnWidths[index]}
                   cellRenderer={(props) => headerRenderers[props.columnIndex](props)}
-                  fixedColumnCount={0}
-                  fixedRowCount={1}
                   scrollLeft={scrollLeft}
                   rowHeight={({index}) => index === 0 ? headerHeight : rowHeight}
                 />
@@ -127,7 +128,7 @@ export const Content = ({
                   width={width}
                   height={height - headerHeight}
                   style={{marginTop: headerHeight}}
-                  ref={gridRef}
+                  ref={gridContentRef}
                   rowCount={numberOfObjects + 1}
                   columnCount={propertyNames.length}
                   columnWidth={({index}) => columnWidths[index]}
@@ -138,9 +139,6 @@ export const Content = ({
                       return columnRenderers[props.columnIndex](props);
                     }
                   }}
-                  fixedColumnCount={0}
-                  fixedRowCount={1}
-                  scrollLeft={scrollLeft}
                   onScroll={onScroll}
                   rowHeight={({index}) => index === 0 ? 0 : rowHeight}
                 />
