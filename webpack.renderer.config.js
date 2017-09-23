@@ -43,7 +43,8 @@ module.exports = _.merge({}, baseConfig, {
           spriteFilename: "sprite.svg"
         }
       }, {
-        test: /\.woff2$/,
+        test: /\.(eot|svg|ttf|woff|woff2)$/,
+        exclude: path.resolve(__dirname, "static/svgs"),
         use: "file-loader"
       }
     ])
