@@ -65,6 +65,7 @@
     "react-dom": "^15.6.1",
     "react-draggable": "^3.0.3",
     "react-virtualized": "^9.9.0",
+    "lodash": "^4.17.4",
     "reactstrap": "^4.8.0",
     "realm": "^2.0.0-rc9"
   },
