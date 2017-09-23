@@ -6,16 +6,24 @@ import * as Realm from "realm";
 const HANDLE_WIDTH = 8;
 const HANDLE_OFFSET = HANDLE_WIDTH / 2;
 
-export const getPropertyDisplayed = (property: Realm.ObjectSchemaProperty) => {
-  if (property.type === "list") {
-    return `${property.objectType}[]`;
-  } else if (property.type === "linkingObjects") {
-    return property.objectType;
-  } else if (property.type === "object") {
-    return property.objectType;
-  } else {
-    return property.type;
+const getPropertyDescription = (property: Realm.ObjectSchemaProperty) => {
+  switch (property.type) {
+    case "list":
+      return `${property.objectType}[]`;
+    case "object":
+    case "linkingObjects":
+      return property.objectType;
+    default:
+      return property.type;
   }
+};
+
+const getPropertyPostfix = (property: Realm.ObjectSchemaProperty) => {
+  return property.optional ? "?" : "";
+};
+
+export const getPropertyDisplayed = (property: Realm.ObjectSchemaProperty) => {
+  return getPropertyDescription(property) + getPropertyPostfix(property);
 };
 
 export const HeaderCell = ({

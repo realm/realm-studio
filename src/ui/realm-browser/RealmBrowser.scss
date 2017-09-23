@@ -109,6 +109,10 @@ $realm-browser-header-handle-width: 8px;
       border: 0;
       white-space: nowrap;
 
+      &--null {
+        color: $color-elephant;
+      }
+
       &--disabled {
         color: $color-elephant;
       }

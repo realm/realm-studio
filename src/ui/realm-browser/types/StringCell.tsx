@@ -30,10 +30,13 @@ export const StringCell = ({
         />
     ) : (
         <div
-            className={classnames("form-control", "form-control-sm", "RealmBrowser__Content__Input")}
+            className={classnames("form-control",
+                                  "form-control-sm",
+                                  "RealmBrowser__Content__Input",
+                                  {"RealmBrowser__Content__Input--null": value === null})}
             onClick={onFocus}
         >
-            {value === null ? "" : value.toString()}
+            {value === null ? "null" : value.toString()}
         </div>
     );
 }
