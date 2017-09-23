@@ -31,14 +31,66 @@ $realm-browser-header-handle-width: 8px;
     }
 
     &__Schema {
-      align-items: center;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
       list-style: none;
+      flex-direction: column;
+
+    }
+
+    &__Sublevel {
+      border-top: 1px solid rgba(128, 128, 128, 0.29);
+      padding: 0 $spacer / 2 $spacer / 3 $spacer / 1.5;
+      &__Name {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        &__Text {
+          margin: 0 5px;
+
+        }
+      }
+      &__Label {
+        padding-left: $spacer;
+        font-size: 0.8rem;
+      }
+      &__Properties {
+        padding-left: $spacer * 1.45;
+        font-size: 0.8rem;
+        &--ref {
+          color: blue;
+          text-decoration: underline;
+          margin-left:5px;
+          cursor:pointer;
+        }
+      }
+
+      &:hover,
+      &:focus {
+        background: $color-dove;
+      }
+
+      &--selected {
+        background: rgba(128, 128, 128, 0.28);
+        color: #39477f;
+
+        &:hover,
+        &:focus {
+          background: rgba(128, 128, 128, 0.28);
+        }
+      }
+
+    }
+
+    &__Schema__Info {
+      display: flex;
       padding: $spacer / 2;
       background: $window-background;
 
+      align-items: center;
+      cursor: pointer;
+      justify-content: space-between;
       &:hover,
       &:focus {
         background: $color-dove;
@@ -55,7 +107,7 @@ $realm-browser-header-handle-width: 8px;
       }
     }
 
-    &__SchemaName {
+    &__Schema__Name {
       flex-shrink: 1;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -81,10 +133,32 @@ $realm-browser-header-handle-width: 8px;
 
   &__Content {
     flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+
+    .ReactVirtualized__Grid {
+      &::-webkit-scrollbar {
+        width: 13px;
+        height: 13px;
+
+      }
+
+      &::-webkit-scrollbar-track {
+        box-shadow: none;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: darkgrey;
+        outline: 0;
+        border-radius: 10px;
+        height: 20px;
+      }
+
+    }
 
     &__Header {
-      z-index:4;
-      overflow-x:hidden !important;
+      z-index: 4;
+      overflow-x: hidden !important;
     }
 
     &__HeaderCell,

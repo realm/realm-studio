@@ -11,15 +11,22 @@ import {
   IUsernamePasswordCredentials,
   RealmBrowserMode,
 } from "../../windows/WindowType";
-import {ITab} from "./Tabs";
 import {showError} from "../reusable/errors";
 
 import {RealmBrowser} from "./RealmBrowser";
 
+export interface IList {
+  data: Realm.Results<any>;
+  schemaName: string;
+  parent: Realm.Object;
+  property: Realm.ObjectSchemaProperty | any;
+}
+
 export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions, {
   schemas: Realm.ObjectSchema[];
-  selectedTab?: ITab;
-  tabs: ITab[];
+  list: IList | null;
+  selectedSchemaName?: string | null;
+  rowToHighlight: number | null
 }> {
 
   private realm: Realm;
@@ -28,7 +35,9 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     super();
     this.state = {
       schemas: [],
-      tabs: [],
+      list: null,
+      selectedSchemaName: null,
+      rowToHighlight: null,
     };
   }
 
@@ -57,35 +66,13 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     return <RealmBrowser {...this.state} {...this} />;
   }
 
-  public getNumberOfObjects = () => {
-    const {selectedTab} = this.state;
-
-    if (this.realm && selectedTab) {
-      return selectedTab.isList ?
-        selectedTab.data.length : this.realm.objects(selectedTab.schemaName).length;
+  public getSelectedData = (): any => {
+    const {list, selectedSchemaName} = this.state;
+    if (this.realm && selectedSchemaName) {
+      return list ?
+        list.data : this.realm.objects(selectedSchemaName);
     } else {
-      return 0;
-    }
-  }
-
-  public getObject = (index: number): any => {
-    const {selectedTab} = this.state;
-
-    if (this.realm && selectedTab) {
-      return selectedTab.isList ?
-        selectedTab.data[index] : this.realm.objects(selectedTab.schemaName)[index];
-    }
-  }
-
-  public getHighlightRowIndex = (): number | null => {
-    const {selectedTab} = this.state;
-
-    if (selectedTab && !selectedTab.isList && !util.isNullOrUndefined(selectedTab.data)) {
-      return this.realm
-        .objects(selectedTab.schemaName)
-        .findIndex(object => util.inspect(object) === util.inspect(selectedTab.data));
-    } else {
-      return null;
+      return [];
     }
   }
 
@@ -98,42 +85,20 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     }
   }
 
-  public onSchemaSelected = (name: string) => {
-    const newTab = {
-      data: null,
-      schemaName: name,
-      associatedObject: null,
-      id: this.state.tabs.length,
-      isList: false,
-    };
-
-    this.addTab(newTab);
+  public onSchemaSelected = (name: string, objectToScroll?: any) => {
+    const {selectedSchemaName} = this.state;
+    if (selectedSchemaName !== name) {
+      const rowToHighlight = objectToScroll
+        ? this.realm.objects(name).indexOf(objectToScroll)
+        : null;
+      this.setState({selectedSchemaName: name, list: null, rowToHighlight});
+    }
   }
 
   public getSelectedSchema = (): Realm.ObjectSchema | null => {
-    const {schemas, selectedTab} = this.state;
+    const {schemas, selectedSchemaName, list} = this.state;
 
-    return schemas.find((schema) => schema.name === (selectedTab && selectedTab.schemaName)) || null;
-  }
-
-  public onTabSelected = (index: number) => {
-    const {tabs} = this.state;
-    const newTab = tabs.find((t) => t.id === index);
-    this.setState({
-      selectedTab: newTab,
-    });
-  }
-
-  public populateSidebar = () => {
-    const {schemas} = this.state;
-    if (schemas) {
-      return schemas.map((schema) => ({
-        name: schema.name,
-        length: this.realm.objects(name).length,
-      }));
-    } else {
-      return [];
-    }
+    return schemas.find((schema) => schema.name === (list ? list.schemaName : selectedSchemaName)) || null;
   }
 
   public getSchemaLength = (name: string) => {
@@ -145,38 +110,22 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
   }
 
   public onListCellClick = (object: any, property: Realm.ObjectSchemaProperty, value: any) => {
-    const newTab = {
-      data: value,
-      schemaName: property.objectType || '',
-      associatedObject: property.type === "list" ? object : null,
-      id: this.state.tabs.length,
-      isList: property.type === "list",
-    };
-
-    this.addTab(newTab);
-  }
-
-  private addTab = (tabToAdd: ITab) => {
-    const {tabs} = this.state;
-    const tabAlreadyCreated = tabs.find(tab => (!tabToAdd.isList && tab.schemaName === tabToAdd.schemaName &&
-      util.isNull(tab.associatedObject)) || (tabToAdd.isList && tab.schemaName === tabToAdd.schemaName &&
-      util.inspect(tab.associatedObject) === util.inspect(tabToAdd.associatedObject))
-    );
-
-    if (tabAlreadyCreated) {
-      this.setState({
-        selectedTab: {
-          ...tabAlreadyCreated,
-          data: tabToAdd.data,
-        },
-      });
+    if (property.type === "list") {
+      const list = {
+        data: value,
+        schemaName: property.objectType || "",
+        parent: object,
+        property,
+      };
+      this.setState({list, selectedSchemaName: "list", rowToHighlight: null});
     } else {
+      const index = this.realm.objects(property.objectType || "").indexOf(value);
       this.setState({
-        selectedTab: tabToAdd,
-        tabs: [...tabs, tabToAdd],
+        selectedSchemaName: property.objectType,
+        list: null,
+        rowToHighlight: index,
       });
     }
-
   }
 
   private async initializeLocalRealm(options: ILocalRealmBrowserOptions) {
@@ -185,7 +134,7 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     });
     const firstSchemaName = this.realm.schema.length > 0 ? this.realm.schema[0].name : undefined;
     this.setState({
-      schemas: this.realm.schema
+      schemas: this.realm.schema,
     });
     firstSchemaName && this.onSchemaSelected(firstSchemaName);
     this.addRealmChangeListener();
@@ -211,7 +160,7 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
 
     const firstSchemaName = this.realm.schema.length > 0 ? this.realm.schema[0].name : undefined;
     this.setState({
-      schemas: this.realm.schema
+      schemas: this.realm.schema,
     });
     firstSchemaName && this.onSchemaSelected(firstSchemaName);
     this.addRealmChangeListener();
