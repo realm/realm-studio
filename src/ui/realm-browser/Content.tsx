@@ -1,32 +1,29 @@
 import * as React from "react";
-import { AutoSizer, Dimensions as IAutoSizerDimensions, Grid, ScrollSync } from "react-virtualized";
+import {AutoSizer, Dimensions as IAutoSizerDimensions, Grid, ScrollSync} from "react-virtualized";
 import * as Realm from "realm";
-
-import { Cell } from "./Cell";
-import { HeaderCell } from "./HeaderCell";
+import {Cell} from "./Cell";
+import {HeaderCell} from "./HeaderCell";
 
 export const Content = ({
   columnWidths,
-  getObject,
   gridContentRef,
   gridHeaderRef,
   onCellChange,
   onListCellClick,
-  numberOfObjects,
   onColumnWidthChanged,
   schema,
   rowToHighlight,
+  data,
 }: {
   columnWidths: number[],
-  getObject: (index: number) => any,
   gridContentRef: (grid: Grid) => void,
   gridHeaderRef: (grid: Grid) => void,
-  numberOfObjects: number,
   onCellChange: (object: any, propertyName: string, value: string) => void,
   onListCellClick: (object: any, property: Realm.ObjectSchemaProperty, value: any) => void,
   onColumnWidthChanged: (index: number, width: number) => void,
   schema: Realm.ObjectSchema | null,
   rowToHighlight: number | null,
+  data: Realm.Results<any> | any;
 }) => {
   if (schema) {
     // Generate the columns from the schemas properties
@@ -44,9 +41,7 @@ export const Content = ({
         rowIndex: number,
         style: React.CSSProperties,
       }) => {
-      // We subtract 1, as the 0th row is the header.
-        const objectIndex = rowIndex - 1;
-        const object = getObject(objectIndex);
+        const object = data[rowIndex];
         return (
           <Cell
             key={key}
@@ -60,7 +55,7 @@ export const Content = ({
             onUpdateValue={(value) => {
               onCellChange(object, propertyName, value);
             }}
-            isHighlight={rowToHighlight === objectIndex}
+            isHighlight={rowToHighlight === rowIndex}
           />
         );
       };
@@ -90,63 +85,48 @@ export const Content = ({
       };
     });
 
-    const styleProps = {
-      style: {},
-      styleBottomLeftGrid: {},
-      styleBottomRightGrid: {},
-      styleTopLeftGrid: {},
-      styleTopRightGrid: {},
-    };
-
     const headerHeight = 40;
     const rowHeight = 26;
     const scrollBarWidth = 20;
 
     return (
-      <ScrollSync>
-        {({clientHeight, clientWidth, onScroll, scrollHeight, scrollLeft, scrollTop, scrollWidth}) => (
-          <div className="RealmBrowser__Content">
-            <AutoSizer>
-              {({height, width}: IAutoSizerDimensions) => (
-                <Grid
-                  width={width - scrollBarWidth}
-                  className="RealmBrowser__Content__Header"
-                  height={headerHeight}
-                  ref={gridHeaderRef}
-                  rowCount={1}
-                  columnCount={propertyNames.length}
-                  columnWidth={({index}) => columnWidths[index]}
-                  cellRenderer={(props) => headerRenderers[props.columnIndex](props)}
-                  scrollLeft={scrollLeft}
-                  rowHeight={({index}) => index === 0 ? headerHeight : rowHeight}
-                />
-              )}
-            </AutoSizer>
-            <AutoSizer>
-              {({height, width}: IAutoSizerDimensions) => (
-                <Grid
-                  width={width}
-                  height={height - headerHeight}
-                  style={{marginTop: headerHeight}}
-                  ref={gridContentRef}
-                  rowCount={numberOfObjects + 1}
-                  columnCount={propertyNames.length}
-                  columnWidth={({index}) => columnWidths[index]}
-                  cellRenderer={(props) => {
-                    if (props.rowIndex === 0) {
-                      return null;
-                    } else {
-                      return columnRenderers[props.columnIndex](props);
-                    }
-                  }}
-                  onScroll={onScroll}
-                  rowHeight={({index}) => index === 0 ? 0 : rowHeight}
-                />
-              )}
-            </AutoSizer>
-          </div>
-        )}
-      </ScrollSync>
+      <div className="RealmBrowser__Content">
+        <ScrollSync>
+          {({clientHeight, clientWidth, onScroll, scrollHeight, scrollLeft, scrollTop, scrollWidth}) => (
+            <div style={{ position: "relative", flex: "1 1 auto" }}>
+              <AutoSizer>
+                {({height, width}: IAutoSizerDimensions) => (
+                  <div>
+                    <Grid
+                      width={width - scrollBarWidth}
+                      className="RealmBrowser__Content__Header"
+                      height={headerHeight}
+                      ref={gridHeaderRef}
+                      rowCount={1}
+                      columnCount={propertyNames.length}
+                      columnWidth={({index}) => columnWidths[index]}
+                      cellRenderer={(props) => headerRenderers[props.columnIndex](props)}
+                      scrollLeft={scrollLeft}
+                      rowHeight={headerHeight}
+                    />
+                    <Grid
+                      width={width}
+                      height={height - headerHeight}
+                      ref={gridContentRef}
+                      rowCount={data.length}
+                      columnCount={propertyNames.length}
+                      columnWidth={({index}) => columnWidths[index]}
+                      cellRenderer={(props) => columnRenderers[props.columnIndex](props)}
+                      onScroll={onScroll}
+                      rowHeight={rowHeight}
+                    />
+                  </div>
+                )}
+              </AutoSizer>
+            </div>
+          )}
+        </ScrollSync>
+      </div>
     );
   } else {
     return (<p>Loading</p>);

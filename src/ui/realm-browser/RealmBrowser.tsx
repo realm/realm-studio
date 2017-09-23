@@ -3,57 +3,49 @@ import * as Realm from "realm";
 
 import {ContentContainer} from "./ContentContainer";
 import "./RealmBrowser.scss";
+import {IList} from "./RealmBrowserContainer";
 import {Sidebar} from "./Sidebar";
-import {Tabs, ITab} from "./Tabs";
 
 export const RealmBrowser = ({
-  getNumberOfObjects,
   getSchemaLength,
   getSelectedSchema,
-  getObject,
   onCellChange,
   onSchemaSelected,
   onListCellClick,
   schemas,
-  selectedTab,
-  tabs,
-  onTabSelected,
-  getHighlightRowIndex,
-} : {
-  getNumberOfObjects: () => number,
+  rowToHighlight,
+  getSelectedData,
+  selectedSchemaName,
+  list,
+}: {
   getSchemaLength: (name: string) => number,
+  getSelectedData: () => any,
   getSelectedSchema: () => Realm.ObjectSchema | null,
-  getObject: (index: number) => any,
   onCellChange: (object: any, propertyName: string, value: string) => void,
-  onTabSelected: (id: number) => void,
-  onSchemaSelected: (name: string) => void,
+  onSchemaSelected: (name: string, objectToScroll: any) => void,
   onListCellClick: (object: any, property: Realm.ObjectSchemaProperty, value: any) => void,
   schemas: Realm.ObjectSchema[],
-  selectedTab?: ITab,
-  tabs: ITab[],
-  getHighlightRowIndex: () => number | null,
+  rowToHighlight: number | null,
+  selectedSchemaName?: string | null,
+  list: IList | null,
 }) => {
+  const values = getSelectedData();
   return (
     <div className="RealmBrowser">
       <Sidebar
         schemas={schemas}
         onSchemaSelected={onSchemaSelected}
-        selectedSchemaName={selectedTab && selectedTab.schemaName}
+        selectedSchemaName={selectedSchemaName}
         getSchemaLength={getSchemaLength}
+        list={list}
       />
       <div className="RealmBrowser__Wrapper">
-        <Tabs
-          tabs={tabs}
-          selectedTab={selectedTab}
-          onTabSelected={onTabSelected}
-        />
         <ContentContainer
           schema={getSelectedSchema()}
-          getObject={getObject}
-          numberOfObjects={getNumberOfObjects()}
           onCellChange={onCellChange}
           onListCellClick={onListCellClick}
-          rowToHighlight={getHighlightRowIndex()}
+          rowToHighlight={rowToHighlight}
+          data={values}
         />
       </div>
     </div>

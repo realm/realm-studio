@@ -6,12 +6,11 @@ import {Content} from "./Content";
 const MINIMUM_COLUMN_WIDTH = 20;
 
 export interface IContentContainerProps {
-  getObject: (index: number) => any;
-  numberOfObjects: number;
   onCellChange: (object: any, propertyName: string, value: string) => void;
   onListCellClick: (object: any, property: Realm.ObjectSchemaProperty, value: any) => void;
   schema: Realm.ObjectSchema | null;
   rowToHighlight: number | null;
+  data: Realm.Results<any> | any;
 }
 
 export class ContentContainer extends React.Component<IContentContainerProps, {
@@ -37,12 +36,17 @@ export class ContentContainer extends React.Component<IContentContainerProps, {
     if (props.schema && this.props.schema !== props.schema) {
       this.setDefaultColumnWidths(props.schema);
     }
-    if (this.gridContent && props.rowToHighlight) {
-      this.gridContent.scrollToCell({columnIndex: 0, rowIndex: props.rowToHighlight});
-    }
   }
 
-
+  public componentDidUpdate(prevProps: IContentContainerProps) {
+    if (this.gridContent && this.props.rowToHighlight && this.props.rowToHighlight !== prevProps.rowToHighlight) {
+      this.gridContent.scrollToCell({
+        columnIndex: 0,
+        rowIndex: this.props.rowToHighlight,
+      });
+    }
+  }
+  
   public onColumnWidthChanged = (index: number, width: number) => {
     const columnWidths = Array.from(this.state.columnWidths);
     columnWidths[index] = Math.max(width, MINIMUM_COLUMN_WIDTH);
@@ -62,7 +66,6 @@ export class ContentContainer extends React.Component<IContentContainerProps, {
   public gridHeaderRef = (grid: Grid) => {
     this.gridHeader = grid;
   }
-
 
   private setDefaultColumnWidths(schema: Realm.ObjectSchema) {
     const columnWidths = Object.keys(schema.properties).map((propertyName) => {
