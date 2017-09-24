@@ -1,5 +1,6 @@
 import * as React from "react";
 import {AutoSizer, Dimensions as IAutoSizerDimensions, Grid, ScrollSync} from "react-virtualized";
+import {Input, InputGroup, InputGroupAddon} from "reactstrap";
 import * as Realm from "realm";
 import {Cell} from "./Cell";
 import {HeaderCell} from "./HeaderCell";
@@ -14,6 +15,10 @@ export const Content = ({
   schema,
   rowToHighlight,
   data,
+  query,
+  onQueryChange,
+  sort,
+  onSortClick,
 }: {
   columnWidths: number[],
   gridContentRef: (grid: Grid) => void,
@@ -23,7 +28,11 @@ export const Content = ({
   onColumnWidthChanged: (index: number, width: number) => void,
   schema: Realm.ObjectSchema | null,
   rowToHighlight: number | null,
-  data: Realm.Results<any> | any;
+  data: Realm.Results<any> | any,
+  query: string | null,
+  onQueryChange: (e: React.SyntheticEvent<any>) => void,
+  sort: string | null,
+  onSortClick: (property: string) => void,
 }) => {
   if (schema) {
     // Generate the columns from the schemas properties
@@ -80,6 +89,8 @@ export const Content = ({
             width={columnWidths[columnIndex]}
             style={style}
             onWidthChanged={(newWidth) => onColumnWidthChanged(columnIndex, newWidth)}
+            onSortClick={onSortClick}
+            sort={sort}
           />
         );
       };
@@ -91,6 +102,18 @@ export const Content = ({
 
     return (
       <div className="RealmBrowser__Content">
+        <div className="RealmBrowser__Content__Actions">
+          <InputGroup className="RealmBrowser__Content__Actions__Filter">
+            <InputGroupAddon>
+              <i className="fa fa-search" aria-hidden="true" />
+            </InputGroupAddon>
+            <Input
+              placeholder="Query ..."
+              onChange={onQueryChange}
+              value={query || ""}
+            />
+          </InputGroup>
+        </div>
         <ScrollSync>
           {({clientHeight, clientWidth, onScroll, scrollHeight, scrollLeft, scrollTop, scrollWidth}) => (
             <div style={{ position: "relative", flex: "1 1 auto" }}>

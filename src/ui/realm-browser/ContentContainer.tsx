@@ -15,6 +15,8 @@ export interface IContentContainerProps {
 
 export class ContentContainer extends React.Component<IContentContainerProps, {
   columnWidths: number[],
+  query: string | null,
+  sort: string | null,
 }> {
 
   // A reference to the grid inside the content container is needed to resize collumns
@@ -25,16 +27,53 @@ export class ContentContainer extends React.Component<IContentContainerProps, {
     super();
     this.state = {
       columnWidths: [],
+      query: null,
+      sort: null,
     };
   }
 
+  get filteredData(): any {
+    const {data} = this.props;
+    const {query, sort} = this.state;
+
+    let newData = data;
+
+    if (query) {
+      try {
+        newData = data.filtered(query);
+      } catch (err) {
+        newData = data;
+      }
+    }
+
+    if (sort) {
+      try {
+        newData = newData.sorted(sort);
+      } catch (err) {
+        return newData;
+      }
+    }
+
+    return newData;
+  }
+
+  public onQueryChange = (e: React.SyntheticEvent<any>) => {
+    this.setState({query: e.currentTarget.value});
+  }
+
+  public onSortClick = (property: string) => {
+    const {sort} = this.state;
+    this.setState({sort: property === sort ? null : property});
+  }
+
   public render() {
-    return <Content {...this.state} {...this.props} {...this} />;
+    return <Content {...this.state} {...this.props} {...this} data={this.filteredData} />;
   }
 
   public componentWillReceiveProps(props: IContentContainerProps) {
     if (props.schema && this.props.schema !== props.schema) {
       this.setDefaultColumnWidths(props.schema);
+      this.setState({sort: null, query: null});
     }
   }
 
@@ -46,7 +85,7 @@ export class ContentContainer extends React.Component<IContentContainerProps, {
       });
     }
   }
-  
+
   public onColumnWidthChanged = (index: number, width: number) => {
     const columnWidths = Array.from(this.state.columnWidths);
     columnWidths[index] = Math.max(width, MINIMUM_COLUMN_WIDTH);
