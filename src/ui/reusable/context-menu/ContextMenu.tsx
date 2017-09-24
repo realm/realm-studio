@@ -1,7 +1,7 @@
 import * as React from "react";
 import "./ContextMenu.scss";
 
-interface IAction {
+export interface IAction {
   label: string;
   onClick: () => any;
 }
