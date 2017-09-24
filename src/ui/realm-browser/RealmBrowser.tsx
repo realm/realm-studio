@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as Realm from "realm";
 
+import {ContextMenu} from "../reusable/context-menu";
 import {ContentContainer} from "./ContentContainer";
 import "./RealmBrowser.scss";
 import {IList} from "./RealmBrowserContainer";
@@ -17,6 +18,9 @@ export const RealmBrowser = ({
   getSelectedData,
   selectedSchemaName,
   list,
+  onContextMenu,
+  contextMenu,
+  onContextMenuClose,
 }: {
   getSchemaLength: (name: string) => number,
   getSelectedData: () => any,
@@ -28,6 +32,9 @@ export const RealmBrowser = ({
   rowToHighlight: number | null,
   selectedSchemaName?: string | null,
   list: IList | null,
+  onContextMenu: (e: React.SyntheticEvent<any>, object: any) => void,
+  contextMenu: any,
+  onContextMenuClose: () => void,
 }) => {
   const values = getSelectedData();
   return (
@@ -46,8 +53,15 @@ export const RealmBrowser = ({
           onListCellClick={onListCellClick}
           rowToHighlight={rowToHighlight}
           data={values}
+          onContextMenu={onContextMenu}
         />
       </div>
+      {contextMenu && (
+        <ContextMenu
+          {...contextMenu}
+          close={onContextMenuClose}
+        />
+      )}
     </div>
   );
 };

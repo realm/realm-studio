@@ -19,6 +19,8 @@ export const Content = ({
   onQueryChange,
   sort,
   onSortClick,
+  onContextMenu
+
 }: {
   columnWidths: number[],
   gridContentRef: (grid: Grid) => void,
@@ -33,6 +35,7 @@ export const Content = ({
   onQueryChange: (e: React.SyntheticEvent<any>) => void,
   sort: string | null,
   onSortClick: (property: string) => void,
+  onContextMenu: (e: React.SyntheticEvent<any>, object: any) => void
 }) => {
   if (schema) {
     // Generate the columns from the schemas properties
@@ -65,6 +68,7 @@ export const Content = ({
               onCellChange(object, propertyName, value);
             }}
             isHighlight={rowToHighlight === rowIndex}
+            onContextMenu={(e) => onContextMenu(e, object)}
           />
         );
       };
@@ -116,7 +120,7 @@ export const Content = ({
         </div>
         <ScrollSync>
           {({clientHeight, clientWidth, onScroll, scrollHeight, scrollLeft, scrollTop, scrollWidth}) => (
-            <div style={{ position: "relative", flex: "1 1 auto" }}>
+            <div style={{position: "relative", flex: "1 1 auto"}}>
               <AutoSizer>
                 {({height, width}: IAutoSizerDimensions) => (
                   <div>

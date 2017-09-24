@@ -6,16 +6,21 @@ import * as util from "util";
 export const DefaultCell = ({
   property,
   value,
+  onContextMenu,
 }: {
   property: Realm.ObjectSchemaProperty,
   value: any,
+  onContextMenu: (e: React.SyntheticEvent<any>) => void,
 }) => (
-  <div className={classnames(
-    "form-control",
-    "form-control-sm",
-    "RealmBrowser__Content__Input",
-    "RealmBrowser__Content__Input--disabled",
-  )}>
+  <div
+    onContextMenu={onContextMenu}
+    className={classnames(
+      "form-control",
+      "form-control-sm",
+      "RealmBrowser__Content__Input",
+      "RealmBrowser__Content__Input--disabled",
+    )}
+  >
     {util.inspect(value)}
   </div>
 );
