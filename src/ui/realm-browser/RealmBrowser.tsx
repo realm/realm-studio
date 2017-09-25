@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as Realm from "realm";
 
+import {ConfirmModal} from "../reusable/confirm-modal";
 import {ContextMenu} from "../reusable/context-menu";
 import {ContentContainer} from "./ContentContainer";
 import "./RealmBrowser.scss";
@@ -21,6 +22,7 @@ export const RealmBrowser = ({
   onContextMenu,
   contextMenu,
   onContextMenuClose,
+  confirmModal,
 }: {
   getSchemaLength: (name: string) => number,
   getSelectedData: () => any,
@@ -35,6 +37,10 @@ export const RealmBrowser = ({
   onContextMenu: (e: React.SyntheticEvent<any>, object: any) => void,
   contextMenu: any,
   onContextMenuClose: () => void,
+  confirmModal: {
+    yes: () => void,
+    no: () => void,
+  } | null,
 }) => {
   const values = getSelectedData();
   return (
@@ -62,6 +68,15 @@ export const RealmBrowser = ({
           close={onContextMenuClose}
         />
       )}
+      {confirmModal &&
+      <ConfirmModal
+        title="Deleting object ..."
+        description="Are you sure you want to delete this object?"
+        status={true}
+        yes={confirmModal.yes}
+        no={confirmModal.no}
+      />
+      }
     </div>
   );
 };

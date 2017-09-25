@@ -28,6 +28,10 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
   list: IList | null;
   selectedSchemaName?: string | null;
   rowToHighlight: number | null;
+  confirmModal: {
+    yes: () => void,
+    no: () => void,
+  } | null;
   contextMenu: {
     x: number,
     y: number,
@@ -46,6 +50,7 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
       selectedSchemaName: null,
       rowToHighlight: null,
       contextMenu: null,
+      confirmModal: null,
     };
   }
 
@@ -154,15 +159,24 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
         y: e.clientY,
         object,
         actions: [
-          {label: "Delete", onClick: () => this.deleteObject(object)},
+          {label: "Delete", onClick: () => this.openConfirmModal(object)},
         ],
+      },
+    });
+  }
+
+  public openConfirmModal = (object: any) => {
+    this.setState({
+      confirmModal: {
+        yes: () => this.deleteObject(object),
+        no: () => this.setState({confirmModal: null}),
       },
     });
   }
 
   public deleteObject = (object: Realm.Object) => {
     this.realm.write(() => this.realm.delete(object));
-    this.setState({rowToHighlight: null});
+    this.setState({rowToHighlight: null, confirmModal: null});
   }
 
   public onContextMenuClose = (): void => {
