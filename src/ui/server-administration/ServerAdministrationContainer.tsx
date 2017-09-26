@@ -29,22 +29,21 @@ export class ServerAdministrationContainer extends React.Component<IServerAdmini
     };
   }
 
-  public componentDidMount() {
+  public async componentDidMount() {
     if ("token" in this.props.credentials) {
       const credentials = this.props.credentials as IAdminTokenCredentials;
       const user = Realm.Sync.User.adminUser(credentials.token, this.props.url);
       this.setState({ user });
     } else if ("username" in this.props.credentials && "password" in this.props.credentials) {
       const credentials = this.props.credentials as IUsernamePasswordCredentials;
-      Realm.Sync.User.login(this.props.url, credentials.username, credentials.password, (err, user) => {
-        if (err) {
-          showError(`Couldn't connect to Realm Object Server`, err, {
-            "Failed to fetch": "Could not reach the server",
-          });
-        } else {
-          this.setState({ user });
-        }
-      });
+      try {
+        const user = await Realm.Sync.User.login(this.props.url, credentials.username, credentials.password);
+        this.setState({ user });
+      } catch (err) {
+        showError(`Couldn't connect to Realm Object Server`, err, {
+          "Failed to fetch": "Could not reach the server",
+        });
+      }
     }
   }
 
