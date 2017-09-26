@@ -1,7 +1,5 @@
 import * as Realm from "realm";
 
-import * as mocked from "./mocked-ros";
-
 export interface IUser {
   userId: string;
   isAdmin: boolean;
@@ -71,16 +69,8 @@ export const getAdminRealm = (user: Realm.Sync.User): Promise<Realm> => {
 };
 
 export const createUser = async (server: string, username: string, password: string): Promise<string> => {
-  const newUser = await new Promise<Realm.Sync.User>((resolve, reject) => {
-      // We could create the object in the synced realm, but that wont create the desired username and password
-      Realm.Sync.User.register(server, username, password, (err, user) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(user);
-        }
-      });
-  });
+  // We could create the object in the synced realm, but that wont create the desired username and password
+  const newUser = await Realm.Sync.User.register(server, username, password);
   newUser.logout();
   return newUser.identity;
 };
@@ -90,8 +80,26 @@ export const deleteRealm = (userId: string) => {
   throw new Error("Not yet implemented");
 };
 
-export const updateUserPassword = (userId: string, password: string) => {
-  return mocked.updateUserPassword(userId, password);
+export const updateUserPassword = async (adminUser: Realm.Sync.User, userId: string, password: string) => {
+  const server = adminUser.server;
+  // TODO: This could be moved to Realm-JS instead
+  const request = new Request(`${server}/auth/password`, {
+    method: "PUT",
+    headers: new Headers({
+      "Authorization": adminUser.token,
+      "Accept": "application/json, text/plain, */*",
+      "Content-Type": "application/json",
+    }),
+    body: JSON.stringify({
+      user_id: userId,
+      data: {
+        new_password: password,
+      },
+    }),
+  });
+  // Perform the request
+  const response = await fetch(request);
+  return response.status === 200;
 };
 
 export const updateRealm = (realmId: string, values: Partial<IRealmFile>) => {
