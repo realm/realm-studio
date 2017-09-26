@@ -164,7 +164,10 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
   }
 
   public onUserPasswordChanged = (userId: string, password: string) => {
-    updateUserPassword(userId, password);
+    const success = updateUserPassword(this.props.user, userId, password);
+    if (!success) {
+      showError("Couldn't update password");
+    }
   }
 
   public onUserRoleChanged = (userId: string, role: UserRole) => {

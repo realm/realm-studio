@@ -167,22 +167,22 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
   }
 
   private async getUser(options: ISyncedRealmBrowserOptions): Promise<Realm.Sync.User> {
-    return new Promise<Realm.Sync.User>((resolve, reject) => {
+    return new Promise<Realm.Sync.User>(async (resolve, reject) => {
       if ("token" in options.credentials) {
         const credentials = options.credentials as IAdminTokenCredentials;
         const user = Realm.Sync.User.adminUser(credentials.token, options.serverUrl);
         resolve(user);
       } else if ("username" in options.credentials && "password" in options.credentials) {
         const credentials = options.credentials as IUsernamePasswordCredentials;
-        Realm.Sync.User.login(options.serverUrl, credentials.username, credentials.password, (err, user) => {
-          if (err) {
-            showError(`Couldn't connect to Realm Object Server`, err, {
-              "Failed to fetch": "Could not reach the server",
-            });
-          } else {
-            resolve(user);
-          }
-        });
+        try {
+          const user = await Realm.Sync.User.login(options.serverUrl, credentials.username, credentials.password);
+          resolve(user);
+        } catch (err) {
+          showError(`Couldn't connect to Realm Object Server`, err, {
+            "Failed to fetch": "Could not reach the server",
+          });
+          reject(err);
+        }
       }
     });
   }

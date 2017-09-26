@@ -55,28 +55,27 @@ export class ConnectToServerContainer extends React.Component<{}, {
         },
       });
     } else {
-      Realm.Sync.User.login(preparedUrl, preparedUsername, password, (err, user) => {
+      try {
+        const user = await Realm.Sync.User.login(preparedUrl, preparedUsername, password);
+        // Show the server administration
+        showServerAdministration({
+          url: user.server,
+          credentials: {
+            username: preparedUsername,
+            password,
+          },
+        });
+        // and close this window
+        electron.remote.getCurrentWindow().close();
+      } catch (err) {
+        showError(`Couldn't connect to Realm Object Server`, err, {
+          "Failed to fetch": "Could not reach the server",
+        });
+      } finally {
         this.setState({
           isConnecting: false,
         });
-
-        if (err) {
-          showError(`Couldn't connect to Realm Object Server`, err, {
-            "Failed to fetch": "Could not reach the server",
-          });
-        } else {
-          // Show the server administration
-          showServerAdministration({
-            url: user.server,
-            credentials: {
-              username: preparedUsername,
-              password,
-            },
-          });
-          // and close this window
-          electron.remote.getCurrentWindow().close();
-        }
-      });
+      }
     }
   }
 

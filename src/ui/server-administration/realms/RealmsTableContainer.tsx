@@ -85,7 +85,6 @@ export class RealmsTableContainer extends React.Component<IRealmTableContainerPr
     }
     try {
       this.adminRealm = await getAdminRealm(this.props.user);
-      console.log("PATH: " + this.adminRealm.path);
       // Get the realms
       const realms = this.adminRealm.objects<IRealmFile>("RealmFile");
       // Set the state
