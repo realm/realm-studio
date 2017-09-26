@@ -44,59 +44,6 @@ export enum AccessLevel {
 
 // These schemas are copied from ROS
 
-export const userSchema: Realm.ObjectSchema = {
-  name: "User",
-  primaryKey: "userId",
-  properties: {
-      userId: { type: "string", optional: false },
-      isAdmin: { type: "bool", optional: false },
-      accounts: { type: "list", objectType: "Account" },
-      metadata: { type: "list", objectType: "UserMetadataRow", default: [], optional: false }
-      }
-};
-
-export const userMetadataRowSchema: Realm.ObjectSchema = {
-  name: "UserMetadataRow",
-  properties: {
-      user: { type: "linkingObjects", objectType: "User", property: "metadata" },
-      key: { type: "string", optional: false },
-      value: { type: "string", optional: false }
-  }
-};
-
-export const realmFileSchema: Realm.ObjectSchema = {
-  name: "RealmFile",
-  primaryKey: "path",
-  properties: {
-      path: "string",
-      creatorId: { type: "string", optional: true, default: "realm-admin" },
-      creationDate: "date",
-      syncLabel: "string",
-      permissions: { type: "list", objectType: "Permission", default: [], optional: false }
-  }
-};
-
-export const permissionSchema: Realm.ObjectSchema = {
-  name: "Permission",
-  properties: {
-      user: { type: "User" },
-      owners: {type: "linkingObjects", objectType: "RealmFile", property: "permissions"},
-      mayRead: { type: "bool", optional: false },
-      mayWrite: { type: "bool", optional: false },
-      mayManage: { type: "bool", optional: false },
-      updatedAt: { type: "date", optional: false },
-  }
-};
-
-export const accountSchema: Realm.ObjectSchema = {
-  name: "Account",
-  properties: {
-      provider: { type: "string", optional: false, indexed: true },
-      providerId: { type: "string", optional: false, indexed: true },
-      user: {type: "linkingObjects", objectType: "User", property: "accounts"}
-  }
-};
-
 const getRealmUrl = (user: Realm.Sync.User, path: string) => {
   const url = new URL(path, user.server);
   url.protocol = "realm:";
@@ -119,13 +66,6 @@ export const getAdminRealm = (user: Realm.Sync.User): Promise<Realm> => {
       url,
       user,
     },
-    schema: [
-      userSchema,
-      userMetadataRowSchema,
-      realmFileSchema,
-      permissionSchema,
-      accountSchema
-    ],
   });
   return Promise.race<Realm>([ realm, timeoutPromise(url) ]);
 };
