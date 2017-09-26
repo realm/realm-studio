@@ -5,6 +5,21 @@ It should be flexible, updated and a topic for discussions.
 
 ---
 
+# Linters
+
+This document describes guidelines, some of which can be checked by static code analysis tools called linters.
+Specifically this project has configuration files codifying the code-style that we've decided. These can be read and
+understood by editors - if the correct plugins have been installed.
+
+If you cannot find editor support for `tslint` and `sass-lint`, run this to test the two respectively
+
+    npm run lint:ts
+    npm run lint:sass
+
+Or just run `npm run lint` to run one followed by the other.
+
+Please discuss or create a pull-request if a part of the code-style feels impeding - we can change them if we choose to.
+
 # React
 
 We use [React](https://facebook.github.io/react/) as our primary framework for building the user interface.
@@ -103,8 +118,8 @@ expect the names to be exactly the same as the class name of the React component
 
 # The "Realm" fonts
 
-We've included the Effra font, aliased as "Realm", but primarily use system fonts to get an experiance that feels more like
-the users desktop environment.
+We've included the Effra font, aliased as "Realm", but primarily use system fonts to get an experience that feels more
+like the users desktop environment.
 
 The Effra font is included in 10 variations of styles and weights which should be referenced by their individual font names
 instead of using the font-style and font-weight css parameters.
