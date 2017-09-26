@@ -2,6 +2,7 @@
 
 // This constant should match the HANDLE_WIDTH in HeaderCell.tsx
 $realm-browser-header-handle-width: 8px;
+$realm-browser-header-icon-space: 24px;
 
 .RealmBrowser {
   display: flex;
@@ -61,8 +62,8 @@ $realm-browser-header-handle-width: 8px;
         &--ref {
           color: blue;
           text-decoration: underline;
-          margin-left:5px;
-          cursor:pointer;
+          margin-left: 5px;
+          cursor: pointer;
         }
       }
 
@@ -136,6 +137,16 @@ $realm-browser-header-handle-width: 8px;
     display: flex;
     flex-direction: column;
 
+    &__Actions {
+      &__Filter {
+        &,
+        input,
+        .input-group-addon {
+          border-radius: 0;
+        }
+      }
+    }
+
     .ReactVirtualized__Grid {
       &::-webkit-scrollbar {
         width: 13px;
@@ -179,18 +190,35 @@ $realm-browser-header-handle-width: 8px;
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      padding: 0 ($spacer / 4);
+      padding: 0 $realm-browser-header-icon-space 0 ($spacer / 4);
     }
 
     &__HeaderName {
       font-size: $font-size-sm;
       font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &__HeaderSort {
+      position: absolute;
+      right: 10px;
+      top: 14px;
+      font-size: 12px;
+      cursor: pointer;
+      &--active {
+        color: $color-indigo;
+      }
     }
 
     &__HeaderType {
       color: $brand-primary;
       font-size: $font-size-xs;
       font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     &__Cell,
