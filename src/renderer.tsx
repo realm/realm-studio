@@ -2,6 +2,8 @@ import * as electron from "electron";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
+const isProduction = process.env.NODE_ENV === "production";
+
 // FIXME: see https://github.com/realm/realm-js/issues/818
 // This needs to happen before realm is loaded
 const userDataPath = electron.remote.app.getPath("userData");
@@ -14,8 +16,6 @@ Realm.Sync.setLogLevel("error");
 import "realm-studio-styles/index.scss";
 
 import { CurrentWindow } from "./windows";
-
-const isProduction = process.env.NODE_ENV === "production";
 
 const appElement = document.getElementById("app");
 
@@ -45,7 +45,8 @@ if (isProduction) {
       , appElement);
     });
   }
-  // Load devtron
+
+  // Load devtron - if not in production
   // tslint:disable-next-line:no-var-requires
   require("devtron").install();
 }
