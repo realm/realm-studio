@@ -1,10 +1,28 @@
 {
-  "extends": ["tslint:latest", "tslint-react"],
+  "extends": [
+    "tslint:latest",
+    "tslint-react",
+    "tslint-eslint-rules",
+    "tslint-config-prettier"
+  ],
+  "rulesDirectory": [
+    "tslint-plugin-prettier"
+  ],
   "rules": {
-    "indent": [true, "spaces", 2],
+    "object-literal-sort-keys": false,
+    "jsx-boolean-value": false,
     "jsx-no-lambda": false,
-    "jsx-no-multiline-js": false,
-    "no-submodule-imports": [true, "realm-studio-svgs", "realm-studio-styles"],
-    "object-literal-sort-keys": false
+    "no-submodule-imports": [
+      true,
+      "realm-studio-svgs",
+      "realm-studio-styles"
+    ],
+    "prettier": [
+      true,
+      {
+        "singleQuote": true,
+        "trailingComma": "all"
+      }
+    ]
   }
 }
