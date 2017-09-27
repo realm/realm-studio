@@ -24,7 +24,9 @@ export const Log = ({
       <div className="Log__Table">
         <AutoSizer>
         {({width, height}: IAutoSizerDimensions) => (
-          <List width={width} height={height}
+          <List
+            width={width}
+            height={height}
             rowCount={entries.length}
             rowHeight={20}
             rowRenderer={({ key, style, index, isScrolling }) => {
@@ -42,8 +44,11 @@ export const Log = ({
         <div className="Log__LevelSelector">
           Show levels &ge;&nbsp;
           <LevelSelector
-            isDropdownOpen={isLevelSelectorOpen} selectedLevel={level}
-            toggle={toggleLevelSelector} onLevelChanged={onLevelChanged} />
+            isDropdownOpen={isLevelSelectorOpen}
+            selectedLevel={level}
+            toggle={toggleLevelSelector}
+            onLevelChanged={onLevelChanged}
+          />
         </div>
       </div>
     </div>

@@ -42,13 +42,25 @@ export const ChangePasswordDialog = ({
           <p>Enter the new password for {user.userId}.</p>
           <FormGroup>
             <Label for="password">Password</Label>
-            <Input name="password" id="password" type="password" required
-              value={password} onChange={onPasswordChanged} />
+            <Input
+              name="password"
+              id="password"
+              type="password"
+              required={true}
+              value={password}
+              onChange={onPasswordChanged}
+            />
           </FormGroup>
           <FormGroup>
             <Label for="password-repeated">Password (repeated)</Label>
-            <Input name="password-repeated" id="password-repeated" type="password" required
-              value={passwordRepeated} onChange={onPasswordRepeatedChanged} />
+            <Input
+              name="password-repeated"
+              id="password-repeated"
+              type="password"
+              required={true}
+              value={passwordRepeated}
+              onChange={onPasswordRepeatedChanged}
+            />
           </FormGroup>
         </ModalBody>
         <ModalFooter>

@@ -18,12 +18,25 @@ export const UsernamePasswordForm = ({
 }) => (
   <div>
     <CredentialsFormGroup label="Username" labelFor="username">
-      <Input type="text" name="username" id="username" size="sm" placeholder="realm-admin"
-        value={username} onChange={onUsernameChanged} />
+      <Input
+        type="text"
+        name="username"
+        id="username"
+        size="sm"
+        placeholder="realm-admin"
+        value={username}
+        onChange={onUsernameChanged}
+      />
     </CredentialsFormGroup>
     <CredentialsFormGroup label="Password" labelFor="password">
-      <Input type="password" name="password" id="password" size="sm"
-        value={password} onChange={onPasswordChanged} />
+      <Input
+        type="password"
+        name="password"
+        id="password"
+        size="sm"
+        value={password}
+        onChange={onPasswordChanged}
+      />
     </CredentialsFormGroup>
   </div>
 );

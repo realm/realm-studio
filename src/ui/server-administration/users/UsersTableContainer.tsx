@@ -58,12 +58,15 @@ export class UsersTableContainer extends React.Component<IUsersTableContainerPro
   }
 
   public render() {
-    return <UsersTable
-      isChangePasswordOpen={this.state.isChangePasswordOpen}
-      isCreateUserOpen={this.state.isCreateUserOpen}
-      selectedUserId={this.state.selectedUserId}
-      userCount={this.state.users ? this.state.users.length : 0}
-      {...this} />;
+    return (
+      <UsersTable
+        isChangePasswordOpen={this.state.isChangePasswordOpen}
+        isCreateUserOpen={this.state.isCreateUserOpen}
+        selectedUserId={this.state.selectedUserId}
+        userCount={this.state.users ? this.state.users.length : 0}
+        {...this}
+      />
+    );
   }
 
   public onUserSelected = (userId: string | null) => {

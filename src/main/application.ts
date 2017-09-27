@@ -50,7 +50,7 @@ export default class Application {
     if (electron.app.isReady()) {
       this.onReady();
     }
-    
+
     this.updater.checkForUpdates(true);
   }
 
@@ -87,10 +87,11 @@ export default class Application {
     }, (selectedPaths) => {
       if (selectedPaths) {
         selectedPaths.forEach((path) => {
-          this.showRealmBrowser({
+          const options: ILocalRealmBrowserOptions = {
             mode: RealmBrowserMode.Local,
             path,
-          } as ILocalRealmBrowserOptions);
+          };
+          this.showRealmBrowser(options);
         });
       }
     });

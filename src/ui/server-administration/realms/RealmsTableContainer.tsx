@@ -47,10 +47,13 @@ export class RealmsTableContainer extends React.Component<IRealmTableContainerPr
   }
 
   public render() {
-    return <RealmsTable
-      selectedRealmPath={this.state.selectedRealmPath}
-      realmCount={this.state.realms ? this.state.realms.length : 0}
-      {...this} />;
+    return (
+      <RealmsTable
+        selectedRealmPath={this.state.selectedRealmPath}
+        realmCount={this.state.realms ? this.state.realms.length : 0}
+        {...this}
+      />
+    );
   }
 
   public getRealm = (index: number): IRealmFile | null => {

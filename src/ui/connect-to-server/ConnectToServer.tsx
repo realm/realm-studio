@@ -36,26 +36,40 @@ export const ConnectToServer = ({
   isConnecting: boolean,
 }) => {
   return (
-    <Form className="ConnectToServer" onSubmit={(e) => {
-      e.preventDefault();
-      onSubmit();
-    }}>
+    <Form
+      className="ConnectToServer"
+      onSubmit={(e) => { e.preventDefault(); onSubmit(); }}
+    >
       <div className="ConnectToServer__ServerUrl">
         <FormGroup className="ConnectToServer__ServerUrlGroup">
           <Label for="serverUrl">URL</Label>
-          <Input type="url" name="serverUrl" id="serverUrl" placeholder="http://localhost:9080"
-            value={url} onChange={onUrlChanged} />
+          <Input
+            type="url"
+            name="serverUrl"
+            id="serverUrl"
+            placeholder="http://localhost:9080"
+            value={url}
+            onChange={onUrlChanged}
+          />
         </FormGroup>
       </div>
-      <AuthenticationForm method={method} onMethodChanged={onMethodChanged}
-        username={username} password={password}
-        onUsernameChanged={onUsernameChanged} onPasswordChanged={onPasswordChanged}
-        token={token} onTokenChanged={onTokenChanged} />
+      <AuthenticationForm
+        method={method}
+        onMethodChanged={onMethodChanged}
+        username={username}
+        password={password}
+        onUsernameChanged={onUsernameChanged}
+        onPasswordChanged={onPasswordChanged}
+        token={token}
+        onTokenChanged={onTokenChanged}
+      />
       <div className="ConnectToServer__Controls">
-        <Button color="secondary" size="sm" className="ConnectToServer__ControlBtn" onClick={(e) => {
-          e.preventDefault();
-          onCancel();
-        }}>
+        <Button
+          color="secondary"
+          size="sm"
+          className="ConnectToServer__ControlBtn"
+          onClick={(e) => { e.preventDefault(); onCancel(); }}
+        >
           Cancel
         </Button>
         <Button color="primary" size="sm" className="ConnectToServer__ControlBtn">

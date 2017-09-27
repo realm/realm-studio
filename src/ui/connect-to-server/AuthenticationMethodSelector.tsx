@@ -11,20 +11,20 @@ export const AuthenticationMethodSelector = ({
   onMethodChanged: (method: AuthenticationMethod) => void,
 }) => (
   <div className="ConnectToServer__AuthenticationMethodSelector">
-    <Button className="ConnectToServer__AuthenticationMethodSelector__Btn" size="sm"
-      active={ method === AuthenticationMethod.usernamePassword }
-      onClick={(e) => {
-        e.preventDefault();
-        onMethodChanged(AuthenticationMethod.usernamePassword);
-      }}>
+    <Button
+      className="ConnectToServer__AuthenticationMethodSelector__Btn"
+      size="sm"
+      active={method === AuthenticationMethod.usernamePassword}
+      onClick={(e) => { e.preventDefault(); onMethodChanged(AuthenticationMethod.usernamePassword); }}
+    >
       Username / password
     </Button>
-    <Button className="ConnectToServer__AuthenticationMethodSelector__Btn" size="sm"
-      active={ method === AuthenticationMethod.adminToken }
-      onClick={(e) => {
-        e.preventDefault();
-        onMethodChanged(AuthenticationMethod.adminToken);
-      }}>
+    <Button
+      className="ConnectToServer__AuthenticationMethodSelector__Btn"
+      size="sm"
+      active={method === AuthenticationMethod.adminToken}
+      onClick={(e) => { e.preventDefault(); onMethodChanged(AuthenticationMethod.adminToken); }}
+    >
       Admin token
     </Button>
   </div>

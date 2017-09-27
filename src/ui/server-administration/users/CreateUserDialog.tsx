@@ -43,18 +43,36 @@ export const CreateUserDialog = ({
         <ModalBody>
           <FormGroup>
             <Label for="username">Username</Label>
-            <Input name="username" id="username" type="text" required
-              value={username} onChange={onUsernameChanged} />
+            <Input
+              name="username"
+              id="username"
+              type="text"
+              required={true}
+              value={username}
+              onChange={onUsernameChanged}
+            />
           </FormGroup>
           <FormGroup>
             <Label for="password">Password</Label>
-            <Input name="password" id="password" type="password" required
-              value={password} onChange={onPasswordChanged} />
+            <Input
+              name="password"
+              id="password"
+              type="password"
+              required={true}
+              value={password}
+              onChange={onPasswordChanged}
+            />
           </FormGroup>
           <FormGroup>
             <Label for="password-repeated">Password (repeated)</Label>
-            <Input name="password-repeated" id="password-repeated" type="password" required
-              value={passwordRepeated} onChange={onPasswordRepeatedChanged} />
+            <Input
+              name="password-repeated"
+              id="password-repeated"
+              type="password"
+              required={true}
+              value={passwordRepeated}
+              onChange={onPasswordRepeatedChanged}
+            />
           </FormGroup>
         </ModalBody>
         <ModalFooter>

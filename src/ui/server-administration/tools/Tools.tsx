@@ -12,7 +12,7 @@ export const Tools = ({
     <Button onClick={onGenerateMockUserAndRealms}>
       Generate mock users and realms
     </Button>
-    <Button disabled>
+    <Button disabled={true}>
       Generate entries in the log
     </Button>
   </div>

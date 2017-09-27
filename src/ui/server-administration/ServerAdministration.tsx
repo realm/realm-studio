@@ -53,10 +53,13 @@ export const ServerAdministration = ({
     label: string,
   }) => {
     return (
-      <Button color={activeTab === tab ? "primary" : "secondary"} className="ServerAdministration__tab"
-      onClick={() => {
-        onTabChanged(tab);
-      }}>
+      <Button
+        color={activeTab === tab ? "primary" : "secondary"}
+        className="ServerAdministration__tab"
+        onClick={() => {
+          onTabChanged(tab);
+        }}
+      >
         {label}
       </Button>
     );

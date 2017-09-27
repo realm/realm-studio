@@ -13,7 +13,7 @@ process.chdir(userDataPath);
 import * as Realm from "realm";
 Realm.Sync.setLogLevel("error");
 
-import "realm-studio-styles/index.scss";
+import "realm-studio-styles";
 
 import { CurrentWindow } from "./windows";
 

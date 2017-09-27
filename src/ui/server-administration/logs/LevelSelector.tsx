@@ -26,8 +26,8 @@ export const LevelSelector = ({
   toggle: () => void,
 }) => {
   return (
-    <ButtonDropdown size="sm" dropup className={className} isOpen={isDropdownOpen} toggle={toggle}>
-      <DropdownToggle caret>
+    <ButtonDropdown size="sm" dropup={true} className={className} isOpen={isDropdownOpen} toggle={toggle}>
+      <DropdownToggle caret={true}>
         {selectedLevel}
       </DropdownToggle>
       <DropdownMenu right={true}>

@@ -56,12 +56,13 @@ export class ServerAdministrationContainer extends React.Component<IServerAdmini
     if (!this.state.isRealmOpening) {
       this.setState({ isRealmOpening: true });
       // Let the UI update before sync waiting on the window to appear
-      showRealmBrowser({
+      const options: ISyncedRealmBrowserOptions = {
         mode: RealmBrowserMode.Synced,
         serverUrl: this.props.url,
         path,
         credentials: this.props.credentials,
-      } as ISyncedRealmBrowserOptions);
+      };
+      showRealmBrowser(options);
       this.setState({ isRealmOpening: false });
     }
   }
