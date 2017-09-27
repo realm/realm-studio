@@ -1,7 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Let's figure out where this script is located
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# TODO: Consider adding back this to the package.json
+# "npmArgs": [
+#   "--realm_enable_sync"
+# ],
 
 # Check that the packagecloud token is sat, or exit
 if [ -z "$PACKAGECLOUD_TOKEN" ]; then
