@@ -1,12 +1,12 @@
-import * as React from "react";
-import * as Realm from "realm";
+import * as React from 'react';
+import * as Realm from 'realm';
 
-import {ConfirmModal} from "../reusable/confirm-modal";
-import {ContextMenu} from "../reusable/context-menu";
-import {ContentContainer} from "./ContentContainer";
-import "./RealmBrowser.scss";
-import {IList} from "./RealmBrowserContainer";
-import {Sidebar} from "./Sidebar";
+import { ConfirmModal } from '../reusable/confirm-modal';
+import { ContextMenu } from '../reusable/context-menu';
+import { ContentContainer } from './ContentContainer';
+import './RealmBrowser.scss';
+import { IList } from './RealmBrowserContainer';
+import { Sidebar } from './Sidebar';
 
 export const RealmBrowser = ({
   getSchemaLength,
@@ -24,23 +24,27 @@ export const RealmBrowser = ({
   onContextMenuClose,
   confirmModal,
 }: {
-  getSchemaLength: (name: string) => number,
-  getSelectedData: () => any,
-  getSelectedSchema: () => Realm.ObjectSchema | null,
-  onCellChange: (object: any, propertyName: string, value: string) => void,
-  onSchemaSelected: (name: string, objectToScroll: any) => void,
-  onListCellClick: (object: any, property: Realm.ObjectSchemaProperty, value: any) => void,
-  schemas: Realm.ObjectSchema[],
-  rowToHighlight: number | null,
-  selectedSchemaName?: string | null,
-  list: IList | null,
-  onContextMenu: (e: React.SyntheticEvent<any>, object: any) => void,
-  contextMenu: any,
-  onContextMenuClose: () => void,
+  getSchemaLength: (name: string) => number;
+  getSelectedData: () => any;
+  getSelectedSchema: () => Realm.ObjectSchema | null;
+  onCellChange: (object: any, propertyName: string, value: string) => void;
+  onSchemaSelected: (name: string, objectToScroll: any) => void;
+  onListCellClick: (
+    object: any,
+    property: Realm.ObjectSchemaProperty,
+    value: any,
+  ) => void;
+  schemas: Realm.ObjectSchema[];
+  rowToHighlight: number | null;
+  selectedSchemaName?: string | null;
+  list: IList | null;
+  onContextMenu: (e: React.SyntheticEvent<any>, object: any) => void;
+  contextMenu: any;
+  onContextMenuClose: () => void;
   confirmModal: {
-    yes: () => void,
-    no: () => void,
-  } | null,
+    yes: () => void;
+    no: () => void;
+  } | null;
 }) => {
   const values = getSelectedData();
   return (
@@ -63,20 +67,17 @@ export const RealmBrowser = ({
         />
       </div>
       {contextMenu && (
-        <ContextMenu
-          {...contextMenu}
-          close={onContextMenuClose}
+        <ContextMenu {...contextMenu} close={onContextMenuClose} />
+      )}
+      {confirmModal && (
+        <ConfirmModal
+          title="Deleting object ..."
+          description="Are you sure you want to delete this object?"
+          status={true}
+          yes={confirmModal.yes}
+          no={confirmModal.no}
         />
       )}
-      {confirmModal &&
-      <ConfirmModal
-        title="Deleting object ..."
-        description="Are you sure you want to delete this object?"
-        status={true}
-        yes={confirmModal.yes}
-        no={confirmModal.no}
-      />
-      }
     </div>
   );
 };

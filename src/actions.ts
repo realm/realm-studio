@@ -1,17 +1,17 @@
-import { ipcRenderer } from "electron";
-import * as Realm from "realm";
+import { ipcRenderer } from 'electron';
+import * as Realm from 'realm';
 
 import {
   IRealmBrowserOptions,
   IServerAdministrationOptions,
-} from "./windows/WindowType";
+} from './windows/WindowType';
 
 export enum Actions {
-  ShowConnectToServer = "show-connect-to-server",
-  ShowGreeting = "show-server-administration",
-  ShowOpenLocalRealm = "show-open-local-realm",
-  ShowRealmBrowser = "show-realm-browser",
-  ShowServerAdministration = "show-server-administration",
+  ShowConnectToServer = 'show-connect-to-server',
+  ShowGreeting = 'show-server-administration',
+  ShowOpenLocalRealm = 'show-open-local-realm',
+  ShowRealmBrowser = 'show-realm-browser',
+  ShowServerAdministration = 'show-server-administration',
 }
 
 // We use sendSync to avoid closing windows before the actions complete
@@ -39,6 +39,8 @@ export const showRealmBrowser = async (options: IRealmBrowserOptions) => {
   });
 };
 
-export const showServerAdministration = (options: IServerAdministrationOptions) => {
+export const showServerAdministration = (
+  options: IServerAdministrationOptions,
+) => {
   ipcRenderer.sendSync(Actions.ShowServerAdministration, options);
 };

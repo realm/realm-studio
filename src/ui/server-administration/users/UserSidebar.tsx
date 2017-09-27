@@ -1,5 +1,5 @@
-import * as classnames from "classnames";
-import * as React from "react";
+import * as classnames from 'classnames';
+import * as React from 'react';
 import {
   Button,
   ButtonDropdown,
@@ -13,17 +13,17 @@ import {
   DropdownToggle,
   Input,
   Table,
-} from "reactstrap";
+} from 'reactstrap';
 
-import { IRealmFile, IUser, IUserMetadataRow } from "../../../services/ros";
+import { IRealmFile, IUser, IUserMetadataRow } from '../../../services/ros';
 
-import { IUserSidebarContainerProps } from "./UserSidebarContainer";
+import { IUserSidebarContainerProps } from './UserSidebarContainer';
 
-import "./UserSidebar.scss";
+import './UserSidebar.scss';
 
 export enum UserRole {
-  Administrator = "administrator",
-  Regular = "regular",
+  Administrator = 'administrator',
+  Regular = 'regular',
 }
 
 const MetadataTable = ({
@@ -32,8 +32,8 @@ const MetadataTable = ({
   onMetadataChanged,
   onMetadataDeleted,
 }: {
-  metadatas: IUserMetadataRow[],
-  onMetadataAppended: () => void,
+  metadatas: IUserMetadataRow[];
+  onMetadataAppended: () => void;
   onMetadataChanged: (index: number, key: string, value: string) => void;
   onMetadataDeleted: (index: number) => void;
 }) => {
@@ -45,31 +45,43 @@ const MetadataTable = ({
           <th>Metadata key</th>
           <th>Value</th>
           <th className="UserSidebar__MetadataTableControlCell">
-            <Button size="sm" onClick={onMetadataAppended} title="Click to add a new row of metadata">
+            <Button
+              size="sm"
+              onClick={onMetadataAppended}
+              title="Click to add a new row of metadata"
+            >
               +
             </Button>
           </th>
         </tr>
       </thead>
       <tbody>
-        { metadatas.map((metadata, index) => {
+        {metadatas.map((metadata, index) => {
           return (
             <tr key={index}>
               <td title={metadata.key}>
                 <Input
-                  value={metadata.key || ""}
+                  value={metadata.key || ''}
                   size="sm"
-                  onChange={(e) => {
-                    onMetadataChanged(index, e.target.value, metadata.value || "");
+                  onChange={e => {
+                    onMetadataChanged(
+                      index,
+                      e.target.value,
+                      metadata.value || '',
+                    );
                   }}
                 />
               </td>
               <td title={metadata.value}>
                 <Input
-                  value={metadata.value || ""}
+                  value={metadata.value || ''}
                   size="sm"
-                  onChange={(e) => {
-                    onMetadataChanged(index, metadata.key || "", e.target.value);
+                  onChange={e => {
+                    onMetadataChanged(
+                      index,
+                      metadata.key || '',
+                      e.target.value,
+                    );
                   }}
                 />
               </td>
@@ -77,7 +89,11 @@ const MetadataTable = ({
                 <Button
                   size="sm"
                   className="UserSidebar__MetadataTableDeleteButton"
-                  title={metadata.key ? `Click to delete "${metadata.key}"` : `Click to delete`}
+                  title={
+                    metadata.key
+                      ? `Click to delete "${metadata.key}"`
+                      : `Click to delete`
+                  }
                   onClick={() => {
                     onMetadataDeleted(index);
                   }}
@@ -87,8 +103,8 @@ const MetadataTable = ({
               </td>
             </tr>
           );
-        }) }
-        { metadatas.length === 0 ? (
+        })}
+        {metadatas.length === 0 ? (
           <tr>
             <td colSpan={3} className="UserSidebar__EmptyTableExplanation">
               This user has no metadata
@@ -100,11 +116,7 @@ const MetadataTable = ({
   );
 };
 
-const RealmsTable = ({
-  realms,
-}: {
-  realms: IRealmFile[],
-}) => (
+const RealmsTable = ({ realms }: { realms: IRealmFile[] }) => (
   <Table size="sm" className="UserSidebar__RealmsTable">
     <thead>
       <tr>
@@ -113,14 +125,14 @@ const RealmsTable = ({
       </tr>
     </thead>
     <tbody>
-      { realms.map((realm) => {
+      {realms.map(realm => {
         return (
           <tr key={realm.path}>
             <td title={realm.path}>{realm.path}</td>
           </tr>
         );
-      }) }
-      { realms.length === 0 ? (
+      })}
+      {realms.length === 0 ? (
         <tr>
           <td colSpan={1} className="UserSidebar__EmptyTableExplanation">
             This user has no realms
@@ -157,19 +169,24 @@ export const UserSidebar = ({
   user,
 }: IUserSidebarProps) => {
   return (
-    <div className={classnames(className, "UserSidebar")}>
+    <div className={classnames(className, 'UserSidebar')}>
       {user && (
         <Card className="UserSidebar__Card">
           <CardBlock className="UserSidebar__Top">
             <CardTitle className="UserSidebar__title">
               <span title={user.userId}>{user.userId}</span>
             </CardTitle>
-            <ButtonDropdown isOpen={roleDropdownOpen} toggle={toggleRoleDropdown}>
+            <ButtonDropdown
+              isOpen={roleDropdownOpen}
+              toggle={toggleRoleDropdown}
+            >
               <DropdownToggle caret={true}>
-                {user.isAdmin ? "Administrator" : "Regular user"}
+                {user.isAdmin ? 'Administrator' : 'Regular user'}
               </DropdownToggle>
               <DropdownMenu>
-                <DropdownItem onClick={() => onRoleChanged(UserRole.Administrator)}>
+                <DropdownItem
+                  onClick={() => onRoleChanged(UserRole.Administrator)}
+                >
                   Administrator
                 </DropdownItem>
                 <DropdownItem onClick={() => onRoleChanged(UserRole.Regular)}>

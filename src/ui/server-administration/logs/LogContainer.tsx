@@ -1,9 +1,9 @@
-import * as React from "react";
-import * as Realm from "realm";
+import * as React from 'react';
+import * as Realm from 'realm';
 
-import { ILogEntry } from "./Entry";
-import { LogLevel } from "./LevelSelector";
-import { Log } from "./Log";
+import { ILogEntry } from './Entry';
+import { LogLevel } from './LevelSelector';
+import { Log } from './Log';
 
 export interface ILogContainerProps {
   user: Realm.Sync.User;
@@ -15,8 +15,10 @@ export interface ILogContainerState {
   level: LogLevel;
 }
 
-export class LogContainer extends React.Component<ILogContainerProps, ILogContainerState> {
-
+export class LogContainer extends React.Component<
+  ILogContainerProps,
+  ILogContainerState
+> {
   private socket: WebSocket | null;
 
   constructor() {
@@ -29,10 +31,19 @@ export class LogContainer extends React.Component<ILogContainerProps, ILogContai
   }
 
   public render() {
-    return <Log isLevelSelectorOpen={this.state.isLevelSelectorOpen} {...this.state} {...this} />;
+    return (
+      <Log
+        isLevelSelectorOpen={this.state.isLevelSelectorOpen}
+        {...this.state}
+        {...this}
+      />
+    );
   }
 
-  public componentDidUpdate(props: ILogContainerProps, state: ILogContainerState) {
+  public componentDidUpdate(
+    props: ILogContainerProps,
+    state: ILogContainerState,
+  ) {
     if (this.state.level !== state.level) {
       this.connect();
     }
@@ -50,13 +61,13 @@ export class LogContainer extends React.Component<ILogContainerProps, ILogContai
     this.setState({
       level,
     });
-  }
+  };
 
   public toggleLevelSelector = () => {
     this.setState({
       isLevelSelectorOpen: !this.state.isLevelSelectorOpen,
     });
-  }
+  };
 
   private connect() {
     if (this.socket) {
@@ -68,7 +79,7 @@ export class LogContainer extends React.Component<ILogContainerProps, ILogContai
 
     const url = this.generateLogUrl();
     this.socket = new WebSocket(url);
-    this.socket.addEventListener("message", this.onLogMessage);
+    this.socket.addEventListener('message', this.onLogMessage);
   }
 
   private disconnect() {
@@ -79,7 +90,7 @@ export class LogContainer extends React.Component<ILogContainerProps, ILogContai
   }
 
   private generateLogUrl() {
-    const serverUrl = this.props.user.server.replace("http", "ws");
+    const serverUrl = this.props.user.server.replace('http', 'ws');
     return `${serverUrl}/log/${this.state.level}`;
   }
 
@@ -88,5 +99,5 @@ export class LogContainer extends React.Component<ILogContainerProps, ILogContai
     this.setState({
       entries: newEntries.concat(this.state.entries),
     });
-  }
+  };
 }

@@ -1,10 +1,10 @@
-import * as React from "react";
-import { Button, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
+import * as React from 'react';
+import { Button, Col, Form, FormGroup, Input, Label, Row } from 'reactstrap';
 
-import { LoadingOverlay } from "../reusable/loading-overlay";
-import { AuthenticationForm, AuthenticationMethod } from "./AuthenticationForm";
+import { LoadingOverlay } from '../reusable/loading-overlay';
+import { AuthenticationForm, AuthenticationMethod } from './AuthenticationForm';
 
-import "./ConnectToServer.scss";
+import './ConnectToServer.scss';
 
 export const ConnectToServer = ({
   method,
@@ -21,24 +21,27 @@ export const ConnectToServer = ({
   token,
   isConnecting,
 }: {
-  method: AuthenticationMethod,
-  onCancel: () => void,
-  onSubmit: () => void,
-  onUrlChanged: (e: React.ChangeEvent<HTMLInputElement>) => void,
-  onMethodChanged: (method: AuthenticationMethod) => void,
-  onUsernameChanged: (e: React.ChangeEvent<HTMLInputElement>) => void,
-  onPasswordChanged: (e: React.ChangeEvent<HTMLInputElement>) => void,
-  onTokenChanged: (e: React.ChangeEvent<HTMLInputElement>) => void,
-  url: string,
-  username: string,
-  password: string,
-  token: string,
-  isConnecting: boolean,
+  method: AuthenticationMethod;
+  onCancel: () => void;
+  onSubmit: () => void;
+  onUrlChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onMethodChanged: (method: AuthenticationMethod) => void;
+  onUsernameChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onPasswordChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onTokenChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  url: string;
+  username: string;
+  password: string;
+  token: string;
+  isConnecting: boolean;
 }) => {
   return (
     <Form
       className="ConnectToServer"
-      onSubmit={(e) => { e.preventDefault(); onSubmit(); }}
+      onSubmit={e => {
+        e.preventDefault();
+        onSubmit();
+      }}
     >
       <div className="ConnectToServer__ServerUrl">
         <FormGroup className="ConnectToServer__ServerUrlGroup">
@@ -68,11 +71,18 @@ export const ConnectToServer = ({
           color="secondary"
           size="sm"
           className="ConnectToServer__ControlBtn"
-          onClick={(e) => { e.preventDefault(); onCancel(); }}
+          onClick={e => {
+            e.preventDefault();
+            onCancel();
+          }}
         >
           Cancel
         </Button>
-        <Button color="primary" size="sm" className="ConnectToServer__ControlBtn">
+        <Button
+          color="primary"
+          size="sm"
+          className="ConnectToServer__ControlBtn"
+        >
           Connect
         </Button>
       </div>

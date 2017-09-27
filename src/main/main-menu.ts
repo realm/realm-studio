@@ -1,5 +1,5 @@
-import * as electron from "electron";
-import Application from "./application";
+import * as electron from 'electron';
+import Application from './application';
 
 export default class MainMenu {
   private menu = electron.Menu.buildFromTemplate(this.menuTemplate());
@@ -11,84 +11,90 @@ export default class MainMenu {
   private menuTemplate(): Electron.MenuItemConstructorOptions[] {
     const template: Electron.MenuItemConstructorOptions[] = [
       {
-        label: "File",
+        label: 'File',
         submenu: [
           {
-            label: "Open...",
-            accelerator: "CmdOrCtrl+O",
+            label: 'Open...',
+            accelerator: 'CmdOrCtrl+O',
             click: () => {
               Application.sharedApplication.showOpenLocalRealm();
             },
           },
           {
-            type: "separator",
+            type: 'separator',
           },
           {
-            role: "close",
+            role: 'close',
           },
-          { type: "separator" },
-          { role: "close" },
+          { type: 'separator' },
+          { role: 'close' },
         ],
       },
       {
-        label: "Edit",
+        label: 'Edit',
         submenu: [
-          { role: "undo" },
-          { role: "redo" },
-          { type: "separator" },
-          { role: "cut" },
-          { role: "copy" },
-          { role: "paste" },
-          { role: "delete" },
-          { role: "selectall" },
+          { role: 'undo' },
+          { role: 'redo' },
+          { type: 'separator' },
+          { role: 'cut' },
+          { role: 'copy' },
+          { role: 'paste' },
+          { role: 'delete' },
+          { role: 'selectall' },
         ],
       },
       {
-        label: "View",
+        label: 'View',
         submenu: [
-          { role: "reload" },
-          { role: "toggledevtools" },
-          { type: "separator" },
-          { role: "resetzoom" },
-          { role: "zoomin" },
-          { role: "zoomout" },
-          { type: "separator" },
-          { role: "togglefullscreen" },
+          { role: 'reload' },
+          { role: 'toggledevtools' },
+          { type: 'separator' },
+          { role: 'resetzoom' },
+          { role: 'zoomin' },
+          { role: 'zoomout' },
+          { type: 'separator' },
+          { role: 'togglefullscreen' },
         ],
       },
       {
-        role: "window",
-        submenu: [
-          { role: "minimize" },
-          { role: "zoom" },
-        ],
+        role: 'window',
+        submenu: [{ role: 'minimize' }, { role: 'zoom' }],
       },
       {
-        role: "help",
+        role: 'help',
         submenu: [
           {
-            label: "Learn More...",
-            click: () => { electron.shell.openExternal("https://github.com/realm/realm-browser-js"); },
+            label: 'Learn More...',
+            click: () => {
+              electron.shell.openExternal(
+                'https://github.com/realm/realm-browser-js',
+              );
+            },
           },
         ],
       },
     ];
 
-    if (process.platform === "darwin") {
+    if (process.platform === 'darwin') {
       template.unshift({
         label: electron.app.getName(),
         submenu: [
-          { role: "about" },
-          { type: "separator" },
-          { label: "Check for Updates...", click: () => { Application.sharedApplication.checkForUpdates(); } },
-          { type: "separator" },
-          { role: "services", submenu: [] },
-          { type: "separator" },
-          { role: "hide" },
-          { role: "hideothers" },
-          { role: "unhide" },
-          { type: "separator" },
-          { role: "quit" },
+          { role: 'about' },
+          { type: 'separator' },
+          {
+            label: 'Check for Updates...',
+            click: () => {
+              Application.sharedApplication.checkForUpdates();
+            },
+          },
+          { type: 'separator' },
+          { role: 'services', submenu: [] },
+          { type: 'separator' },
+          { role: 'hide' },
+          { role: 'hideothers' },
+          { role: 'unhide' },
+          { type: 'separator' },
+          { role: 'quit' },
         ],
       });
     }

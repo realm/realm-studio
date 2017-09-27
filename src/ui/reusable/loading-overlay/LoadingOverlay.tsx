@@ -1,6 +1,6 @@
-import * as React from "react";
+import * as React from 'react';
 
-import "./LoadingOverlay.scss";
+import './LoadingOverlay.scss';
 
 /**
  * An absolutly positioned loading overlay with three animated dots.
@@ -11,15 +11,15 @@ export default ({
   loading,
   fade = true,
 }: {
-  loading: boolean,
-  fade?: boolean,
+  loading: boolean;
+  fade?: boolean;
 }) => {
-  const classNames = ["LoadingOverlay"];
+  const classNames = ['LoadingOverlay'];
   if (!fade) {
-    classNames.push("LoadingOverlay--no-fade");
+    classNames.push('LoadingOverlay--no-fade');
   }
   return loading ? (
-    <div className={classNames.join(" ")}>
+    <div className={classNames.join(' ')}>
       <svg
         className="LoadingOverlay__svg"
         width="60px"
@@ -29,9 +29,27 @@ export default ({
         xmlns="http://www.w3.org/2000/svg"
       >
         <g>
-          <circle fill="currentColor" className="LoadingOverlay__dot-1" cx="5" cy="5" r="5" />
-          <circle fill="currentColor" className="LoadingOverlay__dot-2" cx="25" cy="5" r="5" />
-          <circle fill="currentColor" className="LoadingOverlay__dot-3" cx="45" cy="5" r="5" />
+          <circle
+            fill="currentColor"
+            className="LoadingOverlay__dot-1"
+            cx="5"
+            cy="5"
+            r="5"
+          />
+          <circle
+            fill="currentColor"
+            className="LoadingOverlay__dot-2"
+            cx="25"
+            cy="5"
+            r="5"
+          />
+          <circle
+            fill="currentColor"
+            className="LoadingOverlay__dot-3"
+            cx="45"
+            cy="5"
+            r="5"
+          />
         </g>
       </svg>
     </div>

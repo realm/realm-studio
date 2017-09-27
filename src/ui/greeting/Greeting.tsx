@@ -1,19 +1,19 @@
-import * as React from "react";
-import { Button } from "reactstrap";
+import * as React from 'react';
+import { Button } from 'reactstrap';
 
-import realmLogo from "realm-studio-svgs/realm-logo.svg";
-import { HistoryPanelContainer } from "./HistoryPanelContainer";
+import realmLogo from 'realm-studio-svgs/realm-logo.svg';
+import { HistoryPanelContainer } from './HistoryPanelContainer';
 
-import "./Greeting.scss";
+import './Greeting.scss';
 
 export const Greeting = ({
   onConnectToServer,
   onOpenLocalRealm,
   version,
 }: {
-  onConnectToServer: () => void,
-  onOpenLocalRealm: () => void,
-  version: string,
+  onConnectToServer: () => void;
+  onOpenLocalRealm: () => void;
+  version: string;
 }) => (
   <div className="Greeting">
     <div className="Greeting__ActionsPanel">
@@ -21,9 +21,7 @@ export const Greeting = ({
         <svg viewBox={realmLogo.viewBox} className="Greeting__Logo">
           <use xlinkHref={realmLogo.url} />
         </svg>
-        <h3 className="Greeting__Title">
-          Realm Studio
-        </h3>
+        <h3 className="Greeting__Title">Realm Studio</h3>
         <p>Version {version}</p>
       </div>
       <div className="Greeting__Actions">

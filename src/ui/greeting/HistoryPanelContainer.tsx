@@ -1,12 +1,14 @@
-import * as React from "react";
+import * as React from 'react';
 
-import { IHistoryEntry, IServerEntry, ISyncedRealmEntry } from "./HistoryEntry";
-import { HistoryPanel } from "./HistoryPanel";
+import { IHistoryEntry, IServerEntry, ISyncedRealmEntry } from './HistoryEntry';
+import { HistoryPanel } from './HistoryPanel';
 
-export class HistoryPanelContainer extends React.Component<{}, {
-  entries: IHistoryEntry[],
-}> {
-
+export class HistoryPanelContainer extends React.Component<
+  {},
+  {
+    entries: IHistoryEntry[];
+  }
+> {
   constructor() {
     super();
     this.state = {
@@ -23,5 +25,4 @@ export class HistoryPanelContainer extends React.Component<{}, {
   public render() {
     return <HistoryPanel {...this.state} />;
   }
-
 }

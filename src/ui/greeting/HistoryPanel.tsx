@@ -1,6 +1,6 @@
-import * as React from "react";
+import * as React from 'react';
 
-import { HistoryEntry, IHistoryEntry } from "./HistoryEntry";
+import { HistoryEntry, IHistoryEntry } from './HistoryEntry';
 
 const Empty = () => (
   <div className="Greeting__HistoryPanel__Empty">
@@ -13,11 +13,7 @@ const Empty = () => (
   </div>
 );
 
-export const HistoryPanel = ({
-  entries,
-}: {
-  entries: IHistoryEntry[];
-}) => (
+export const HistoryPanel = ({ entries }: { entries: IHistoryEntry[] }) => (
   <div className="Greeting__HistoryPanel">
     {entries.map((entry, index) => <HistoryEntry entry={entry} key={index} />)}
     {entries.length === 0 ? <Empty /> : null}

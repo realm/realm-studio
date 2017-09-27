@@ -1,8 +1,8 @@
-import * as React from "react";
+import * as React from 'react';
 
-import { IUser } from "../../../services/ros";
+import { IUser } from '../../../services/ros';
 
-import { CreateUserDialog } from "./CreateUserDialog";
+import { CreateUserDialog } from './CreateUserDialog';
 
 export interface ICreateUserDialogContainerProps {
   isOpen: boolean;
@@ -16,15 +16,16 @@ export interface ICreateUserDialogContainerState {
   username: string;
 }
 
-export class CreateUserDialogContainer
-extends React.Component<ICreateUserDialogContainerProps, ICreateUserDialogContainerState> {
-
+export class CreateUserDialogContainer extends React.Component<
+  ICreateUserDialogContainerProps,
+  ICreateUserDialogContainerState
+> {
   public constructor() {
     super();
     this.state = {
-      password: "",
-      passwordRepeated: "",
-      username: "",
+      password: '',
+      passwordRepeated: '',
+      username: '',
     };
   }
 
@@ -37,30 +38,32 @@ extends React.Component<ICreateUserDialogContainerProps, ICreateUserDialogContai
     const { password, passwordRepeated, username } = this.state;
     if (password === passwordRepeated) {
       this.setState({
-        password: "",
-        passwordRepeated: "",
-        username: "",
+        password: '',
+        passwordRepeated: '',
+        username: '',
       });
       this.props.toggle();
       this.props.onUserCreated(username, password);
     }
-  }
+  };
 
   public onPasswordChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({
       password: e.target.value,
     });
-  }
+  };
 
-  public onPasswordRepeatedChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+  public onPasswordRepeatedChanged = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     this.setState({
       passwordRepeated: e.target.value,
     });
-  }
+  };
 
   public onUsernameChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({
       username: e.target.value,
     });
-  }
+  };
 }
