@@ -3,7 +3,7 @@
 # Let's figure out where this script is located
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# TODO: Consider adding back this to the package.json
+# TODO: To enable sync add this to the package.json
 # "npmArgs": [
 #   "--realm_enable_sync"
 # ],
@@ -16,7 +16,13 @@ fi
 
 # Use the same dependencies as the current version of realm
 REALM_PATH=$(dirname $(node -p "require.resolve('realm')"))/..
-source $REALM_PATH/dependencies.list
+REALM_DEPENDENCIES_PATH=$REALM_PATH/dependencies.list
+if [ ! -f $REALM_DEPENDENCIES_PATH ]; then
+    echo "Could not locate the realm-js dependencies.list ($REALM_DEPENDENCIES_PATH)"
+    exit 2
+fi
+
+source $REALM_DEPENDENCIES_PATH
 
 # Build the docker image
 docker build -t realm-studio \
@@ -25,4 +31,12 @@ docker build -t realm-studio \
   $DIR
 
 # Build the dependencies for electron
-docker run -v $DIR/../..:/src -t realm-studio
+docker run \
+  -v $DIR/../..:/src \
+  -v realm-studio-node-modules:/src/node_modules \
+  -v ~/.cache/electron:/root/.cache/electron \
+  -v ~/.cache/electron-builder:/root/.cache/electron-builder \
+  -t \
+  realm-studio
+
+# -ti --entrypoint=/bin/bash \
