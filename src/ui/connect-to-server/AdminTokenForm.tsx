@@ -14,8 +14,15 @@ export const AdminTokenForm = ({
 }) => (
   <div>
     <CredentialsFormGroup label="Admin token" labelFor="token">
-      <Input type="text" name="token" id="token" size="sm" required={isRequired}
-        value={token} onChange={onTokenChanged} />
+      <Input
+        id="token"
+        name="token"
+        onChange={onTokenChanged}
+        required={isRequired}
+        size="sm"
+        type="text"
+        value={token}
+      />
     </CredentialsFormGroup>
   </div>
 );

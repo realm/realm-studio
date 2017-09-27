@@ -32,8 +32,13 @@ export const AuthenticationForm = ({
   let form;
   if (method === AuthenticationMethod.usernamePassword) {
     form = (
-      <UsernamePasswordForm username={username} password={password} isRequired={!token}
-        onUsernameChanged={onUsernameChanged} onPasswordChanged={onPasswordChanged} />
+      <UsernamePasswordForm
+        username={username}
+        password={password}
+        isRequired={!token}
+        onUsernameChanged={onUsernameChanged}
+        onPasswordChanged={onPasswordChanged}
+      />
     );
   } else if (method === AuthenticationMethod.adminToken) {
     form = (

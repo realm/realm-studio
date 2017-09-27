@@ -56,21 +56,32 @@ const MetadataTable = ({
           return (
             <tr key={index}>
               <td title={metadata.key}>
-                <Input value={metadata.key || ""} size="sm" onChange={(e) => {
-                  onMetadataChanged(index, e.target.value, metadata.value || "");
-                }} />
+                <Input
+                  value={metadata.key || ""}
+                  size="sm"
+                  onChange={(e) => {
+                    onMetadataChanged(index, e.target.value, metadata.value || "");
+                  }}
+                />
               </td>
               <td title={metadata.value}>
-                <Input value={metadata.value || ""} size="sm" onChange={(e) => {
-                  onMetadataChanged(index, metadata.key || "", e.target.value);
-                }} />
+                <Input
+                  value={metadata.value || ""}
+                  size="sm"
+                  onChange={(e) => {
+                    onMetadataChanged(index, metadata.key || "", e.target.value);
+                  }}
+                />
               </td>
               <td className="UserSidebar__MetadataTableControlCell">
-                <Button size="sm" className="UserSidebar__MetadataTableDeleteButton"
+                <Button
+                  size="sm"
+                  className="UserSidebar__MetadataTableDeleteButton"
                   title={metadata.key ? `Click to delete "${metadata.key}"` : `Click to delete`}
                   onClick={() => {
                     onMetadataDeleted(index);
-                  }}>
+                  }}
+                >
                   ×
                 </Button>
               </td>
@@ -154,7 +165,7 @@ export const UserSidebar = ({
               <span title={user.userId}>{user.userId}</span>
             </CardTitle>
             <ButtonDropdown isOpen={roleDropdownOpen} toggle={toggleRoleDropdown}>
-              <DropdownToggle caret>
+              <DropdownToggle caret={true}>
                 {user.isAdmin ? "Administrator" : "Regular user"}
               </DropdownToggle>
               <DropdownMenu>
@@ -168,10 +179,12 @@ export const UserSidebar = ({
             </ButtonDropdown>
           </CardBlock>
           <CardBlock className="UserSidebar__Tables">
-            <MetadataTable metadatas={metadatas}
+            <MetadataTable
+              metadatas={metadatas}
               onMetadataAppended={onMetadataAppended}
               onMetadataChanged={onMetadataChanged}
-              onMetadataDeleted={onMetadataDeleted} />
+              onMetadataDeleted={onMetadataDeleted}
+            />
             <RealmsTable realms={realms} />
           </CardBlock>
           <CardBlock className="UserSidebar__Controls">

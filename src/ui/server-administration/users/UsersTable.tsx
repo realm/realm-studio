@@ -58,8 +58,11 @@ export const UsersTable = ({
       <div className="UsersTable__table">
         <AutoSizer>
         {({width, height}: IAutoSizerDimensions) => (
-          <Table width={width} height={height}
-            rowHeight={30} headerHeight={30}
+          <Table
+            width={width}
+            height={height}
+            rowHeight={30}
+            headerHeight={30}
             rowClassName={({ index }) => {
               const user = getUser(index);
               return classnames("UsersTable__row", {
@@ -72,31 +75,45 @@ export const UsersTable = ({
               const user = getUser(index);
               onUserSelected(user && user.userId !== selectedUserId ? user.userId : null);
               event.preventDefault();
-            }}>
+            }}
+          >
             <Column label="ID" dataKey="userId" width={300} />
-            <Column label="Role" dataKey="isAdmin" width={150} cellRenderer={({ cellData }) => {
-              return cellData ? "Administrator" : "Regular user";
-            }} />
-            <Column label="# Realms" dataKey="userId" width={150} cellRenderer={({ cellData }) => {
-              const userId = cellData as string;
-              return getUsersRealms(userId).length;
-            }} />
+            <Column
+              label="Role"
+              dataKey="isAdmin"
+              width={150}
+              cellRenderer={({ cellData }) => {
+                return cellData ? "Administrator" : "Regular user";
+              }}
+            />
+            <Column
+              label="# Realms"
+              dataKey="userId"
+              width={150}
+              cellRenderer={({ cellData }) => {
+                const userId = cellData as string;
+                return getUsersRealms(userId).length;
+              }}
+            />
           </Table>
         )}
         </AutoSizer>
       </div>
 
-      <div className={classnames("UsersTable__overlayed-controls", {
-        "UsersTable__overlayed-controls--hidden": selectedUserId !== null,
-      })}>
+      <div
+        className={classnames("UsersTable__overlayed-controls", {
+          "UsersTable__overlayed-controls--hidden": selectedUserId !== null,
+        })}
+      >
         <Button onClick={toggleCreateUser}>
           Create new user
         </Button>
       </div>
 
-      <UserSidebarContainer className={classnames("UsersTable__selected-user", {
-        "UsersTable__selected-user--active": selectedUserId !== null,
-      })}
+      <UserSidebarContainer
+        className={classnames("UsersTable__selected-user", {
+          "UsersTable__selected-user--active": selectedUserId !== null,
+        })}
         metadatas={selectedUserId !== null ? getUsersMetadatas(selectedUserId) : []}
         onUserChangePassword={onUserChangePassword}
         onUserDeletion={onUserDeletion}
@@ -105,18 +122,21 @@ export const UsersTable = ({
         onUserMetadataDeleted={onUserMetadataDeleted}
         onUserRoleChanged={onUserRoleChanged}
         realms={selectedUserId !== null ? getUsersRealms(selectedUserId) : []}
-        user={selectedUserId !== null ? getUserFromId(selectedUserId) : null} />
+        user={selectedUserId !== null ? getUserFromId(selectedUserId) : null}
+      />
 
       <ChangePasswordDialogContainer
         isOpen={isChangePasswordOpen}
         toggle={toggleChangePassword}
         onPasswordChanged={onUserPasswordChanged}
-        user={selectedUserId !== null ? getUserFromId(selectedUserId) : null} />
+        user={selectedUserId !== null ? getUserFromId(selectedUserId) : null}
+      />
 
       <CreateUserDialogContainer
         isOpen={isCreateUserOpen}
         toggle={toggleCreateUser}
-        onUserCreated={onUserCreated} />
+        onUserCreated={onUserCreated}
+      />
     </div>
   );
 };

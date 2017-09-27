@@ -28,8 +28,11 @@ export const RealmsTable = ({
       <div className="RealmsTable__table">
         <AutoSizer>
         {({width, height}: IAutoSizerDimensions) => (
-          <Table width={width} height={height}
-            rowHeight={30} headerHeight={30}
+          <Table
+            width={width}
+            height={height}
+            rowHeight={30}
+            headerHeight={30}
             rowClassName={({ index }) => {
               const realm = getRealm(index);
               return classnames("RealmsTable__row", {
@@ -43,20 +46,8 @@ export const RealmsTable = ({
               if (realm) {
                 onRealmOpened(realm.path);
               }
-              /*
-              const realm = getRealm(index);
-              onRealmSelected(realm && realm.path !== selectedRealmPath ? realm.path : null);
-              event.preventDefault();
-              */
             }}
-            onRowDoubleClick={({event, index}) => {
-              /*
-              const realm = getRealm(index);
-              if (realm) {
-                onRealmOpened(realm.path);
-              }
-              */
-            }}>
+          >
             <Column label="Path" dataKey="path" width={width} />
           </Table>
         )}

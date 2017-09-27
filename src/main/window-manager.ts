@@ -18,13 +18,14 @@ export default class WindowManager {
   public windows: Electron.BrowserWindow[] = [];
 
   public createWindow(windowType: WindowType, options: any = {}) {
-    const window = new BrowserWindow(Object.assign({
+    const window = new BrowserWindow({
       title: "Realm Studio",
       width: 800,
       height: 600,
       vibrancy: "light",
       show: false,
-    }, getWindowOptions(windowType, options)));
+      ...getWindowOptions(windowType, options),
+    });
 
     // Open up the dev tools, if not in production mode
     if (!isProduction) {

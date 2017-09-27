@@ -23,7 +23,7 @@ const LogLevelBadge = ({ level }: { level: LogLevel }) => {
   const color = levelColors[level] || "default";
   return (
     <Badge color={color} className="Log__Entry__Badge">
-      <span unselectable>
+      <span unselectable={true} >
         {level}
       </span>
     </Badge>
@@ -34,12 +34,18 @@ const ContextBadge = ({ contextKey, contextValue }: { contextKey: string, contex
   return (
     <Badge color="default" className="Log__Entry__Badge">
       { contextKey === "timestamp" ? (
-        <span title={`${contextKey}: ${moment(contextValue).toISOString()}`} unselectable>
-           { moment(contextValue).calendar(undefined, calendarFormats) }
+        <span
+          title={`${contextKey}: ${moment(contextValue).toISOString()}`}
+          unselectable={true}
+        >
+          {moment(contextValue).calendar(undefined, calendarFormats)}
         </span>
       ) : (
-        <span title={contextKey} unselectable>
-           { contextValue }
+        <span
+          title={contextKey}
+          unselectable={true}
+        >
+           {contextValue}
         </span>
       )}
     </Badge>
@@ -66,9 +72,9 @@ export const Entry = ({
     <div className="Log__Entry" style={style}>
       <span className="Log__Entry__Message">{message}</span>
       <div className="Log__Entry__Badges">
-        { Object.keys(context || {}).map((key) => (
+        {Object.keys(context || {}).map((key) => (
           <ContextBadge key={key} contextKey={key} contextValue={context[key]} />
-        )) }
+        ))}
         <LogLevelBadge level={level} />
       </div>
     </div>
