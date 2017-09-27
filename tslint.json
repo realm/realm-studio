@@ -1,7 +1,10 @@
 {
-  "extends": "tslint:recommended",
+  "extends": ["tslint:latest", "tslint-react"],
   "rules": {
     "indent": [true, "spaces", 2],
+    "jsx-no-lambda": false,
+    "jsx-no-multiline-js": false,
+    "no-submodule-imports": [true, "realm-studio-svgs", "realm-studio-styles"],
     "object-literal-sort-keys": false
   }
 }
