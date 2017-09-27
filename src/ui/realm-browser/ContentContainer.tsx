@@ -11,6 +11,7 @@ export interface IContentContainerProps {
   schema: Realm.ObjectSchema | null;
   rowToHighlight: number | null;
   data: Realm.Results<any> | any;
+  onContextMenu: (e: React.SyntheticEvent<any>, object: any) => void;
 }
 
 export class ContentContainer extends React.Component<IContentContainerProps, {

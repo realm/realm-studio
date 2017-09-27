@@ -11,6 +11,7 @@ import {
   IUsernamePasswordCredentials,
   RealmBrowserMode,
 } from "../../windows/WindowType";
+import {IContextMenuAction} from "../reusable/context-menu";
 import {showError} from "../reusable/errors";
 
 import {RealmBrowser} from "./RealmBrowser";
@@ -26,7 +27,17 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
   schemas: Realm.ObjectSchema[];
   list: IList | null;
   selectedSchemaName?: string | null;
-  rowToHighlight: number | null
+  rowToHighlight: number | null;
+  confirmModal: {
+    yes: () => void,
+    no: () => void,
+  } | null;
+  contextMenu: {
+    x: number,
+    y: number,
+    object: any,
+    actions: IContextMenuAction[],
+  } | null;
 }> {
 
   private realm: Realm;
@@ -38,6 +49,8 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
       list: null,
       selectedSchemaName: null,
       rowToHighlight: null,
+      contextMenu: null,
+      confirmModal: null,
     };
   }
 
@@ -126,6 +139,48 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
         rowToHighlight: index,
       });
     }
+  }
+
+  public onContextMenu = (e: React.MouseEvent<any>, object: any) => {
+    e.preventDefault();
+
+    const {list} = this.state;
+
+    const index = list
+      ? list.data.indexOf(object)
+      : this.realm
+        .objects(object.objectSchema().name)
+        .indexOf(object);
+
+    this.setState({
+      rowToHighlight: index,
+      contextMenu: {
+        x: e.clientX,
+        y: e.clientY,
+        object,
+        actions: [
+          {label: "Delete", onClick: () => this.openConfirmModal(object)},
+        ],
+      },
+    });
+  }
+
+  public openConfirmModal = (object: any) => {
+    this.setState({
+      confirmModal: {
+        yes: () => this.deleteObject(object),
+        no: () => this.setState({confirmModal: null}),
+      },
+    });
+  }
+
+  public deleteObject = (object: Realm.Object) => {
+    this.realm.write(() => this.realm.delete(object));
+    this.setState({rowToHighlight: null, confirmModal: null});
+  }
+
+  public onContextMenuClose = (): void => {
+    this.setState({contextMenu: null, rowToHighlight: null});
   }
 
   private async initializeLocalRealm(options: ILocalRealmBrowserOptions) {
