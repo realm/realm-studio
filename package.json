@@ -22,9 +22,6 @@
       "category": "public.app-category.developer-tools",
       "target": "zip"
     },
-    "npmArgs": [
-      "--realm_enable_sync"
-    ],
     "publish": [
       {
         "provider": "s3",

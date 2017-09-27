@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 . $NVM_DIR/nvm.sh
 
@@ -10,3 +10,6 @@ npm install
 
 # Rebuild the dependencies for node on Linux - needed if run from a machine that already installed the package.
 npm rebuild
+
+# Running dist will first build the app and package the app for Linux
+# npm run dist
