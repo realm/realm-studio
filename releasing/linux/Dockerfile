@@ -43,6 +43,14 @@ RUN yum clean all && \
 # Get rid of the core dynamic library otherwise the build will link to it instead of the static one
 RUN rm /usr/lib64/librealm.so
 
+# Install the dependencies that electron-builder has on the environment
+# @see https://github.com/electron-userland/electron-builder/issues/2078
+# - icns2png
+# RUN yum clean all && \
+#   yum install -y \
+#   libicns \
+#   libicns-utils
+
 # Put gcc 4.9 in path
 ENV PATH="/opt/rh/devtoolset-3/root/usr/bin:${PATH}"
 
