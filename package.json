@@ -63,6 +63,9 @@
     "nsis": {
       "installerIcon": "static/icons/win/realm-studio.ico"
     },
+    "npmArgs": [
+      "--realm_enable_sync"
+    ],
     "publish": [
       {
         "provider": "s3",
