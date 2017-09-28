@@ -59,10 +59,9 @@ export const timeoutPromise = (
   });
 };
 
-export const getAdminRealm = (user: Realm.Sync.User): Promise<Realm> => {
+export const getAdminRealm = async (user: Realm.Sync.User): Promise<Realm> => {
   const url = getRealmUrl(user, '__admin');
   const realm = Realm.open({
-    path: './data/__admin.realm',
     sync: {
       url,
       user,
