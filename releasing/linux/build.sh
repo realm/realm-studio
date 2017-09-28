@@ -37,6 +37,5 @@ docker run \
   -v ~/.cache/electron:/root/.cache/electron \
   -v ~/.cache/electron-builder:/root/.cache/electron-builder \
   -t \
+  -i --entrypoint=/bin/bash \
   realm-studio
-
-# -ti --entrypoint=/bin/bash \
