@@ -51,7 +51,14 @@
     "wait-for-bundle": "node ./webpack.wait-for-bundle.js",
     "webpack:main": "webpack --config=webpack.main.config.js",
     "webpack:renderer": "webpack-dev-server --config=webpack.renderer.config.js",
-    "tslint-prettier": "tslint --fix 'src/**/*.ts' 'src/**/*.tsx'"
+    "tslint-prettier": "tslint --fix 'src/**/*.ts' 'src/**/*.tsx'",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "tslint-prettier",
+      "git add"
+    ]
   },
   "dependencies": {
     "classnames": "^2.2.5",
@@ -88,6 +95,8 @@
     "electron": "^1.7.5",
     "electron-builder": "^19.22.1",
     "file-loader": "^0.11.2",
+    "husky": "^0.14.3",
+    "lint-staged": "^4.2.3",
     "node-sass": "^4.5.3",
     "null-loader": "^0.1.1",
     "prettier": "^1.7.1",
