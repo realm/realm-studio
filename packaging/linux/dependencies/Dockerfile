@@ -41,4 +41,4 @@ RUN rm /usr/lib64/librealm.so
 
 WORKDIR /project
 
-ENTRYPOINT ["/bin/bash", "releasing/linux/dependencies/build-inside.sh"]
+ENTRYPOINT ["/bin/bash", "packaging/linux/dependencies/build-inside.sh"]

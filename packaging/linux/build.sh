@@ -55,7 +55,7 @@ docker run --rm -t \
   -v ~/.cache/electron:/root/.cache/electron \
   -v ~/.cache/electron-builder:/root/.cache/electron-builder \
   electronuserland/builder:wine \
-  releasing/linux/build-inside.sh # This will npm install and npm run dist
+  packaging/linux/build-inside.sh # This will npm install and npm run dist
   # npm run dist
 
 # Clean up - if using a tmp folder

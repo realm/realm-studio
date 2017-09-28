@@ -1,4 +1,4 @@
-# Releasing for Linux
+# Package for Linux
 
 <!--
 The app needs its dependencies to be build for electron on Linux, specifically:
@@ -8,7 +8,7 @@ The app needs its dependencies to be build for electron on Linux, specifically:
 
 To build the app for linux, run
 
-    PACKAGECLOUD_TOKEN=... ./releasing/linux/build.sh
+    PACKAGECLOUD_TOKEN=... ./packaging/linux/build.sh
 
 This will `npm install`, which will in turn run `electron-builder install-app-deps` inside a docker image provided by
 the `electron-builder` community. The binary will *not* have realm-sync available.
