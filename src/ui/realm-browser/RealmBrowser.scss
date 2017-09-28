@@ -121,6 +121,14 @@ $realm-browser-header-icon-space: 24px;
     flex-direction: column;
   }
 
+  &__SelectObject{
+    min-height:300px;
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    padding:0;
+  }
+
   &__Tabs {
     min-height: 42px;
   }
