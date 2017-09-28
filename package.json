@@ -22,6 +22,9 @@
       "category": "public.app-category.developer-tools",
       "target": "zip"
     },
+    "linux": {
+      "target": "tar.gz"
+    },
     "publish": [
       {
         "provider": "s3",
