@@ -33,9 +33,6 @@
         "!node_modules/realm/vendor${/*}"
       ]
     },
-    "npmArgs": [
-      "--realm_enable_sync"
-    ],
     "publish": [
       {
         "provider": "s3",
