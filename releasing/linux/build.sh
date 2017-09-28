@@ -27,31 +27,36 @@ fi
 source $REALM_DEPENDENCIES_PATH
 
 # Create a temporary directory and resolve any symbolic links
-NODE_MODULES_PATH=$(cd `mktemp -d` && pwd -P)
+# NODE_MODULES_PATH=$(cd `mktemp -d` && pwd -P)
+NODE_MODULES_PATH=realm-studio-node-modules
 REALM_STUDIO_DEPENDENCIES_TAG=realm-studio-dependencies
 
-# Build the docker image
-docker build -t $REALM_STUDIO_DEPENDENCIES_TAG \
+# Build the docker image - based on a CentOS 6 image
+# DISABLED
+true || docker build -t $REALM_STUDIO_DEPENDENCIES_TAG \
   --build-arg PACKAGECLOUD_URL=https://${PACKAGECLOUD_TOKEN}:@packagecloud.io/install/repositories/realm/sync-devel \
   --build-arg REALM_SYNC_VERSION=${REALM_SYNC_VERSION} \
   $DIR/dependencies
 
-# Build the dependencies for electron
-docker run --rm -t \
+# Build the dependencies for electron - inside the previous image
+# DISABLED
+true || docker run --rm -t \
   -v $DIR/../..:/project \
   -v $NODE_MODULES_PATH:/project/node_modules \
   -v ~/.cache/electron:/root/.cache/electron \
   -v ~/.cache/electron-builder:/root/.cache/electron-builder \
   $REALM_STUDIO_DEPENDENCIES_TAG
 
-# Package up the app for Linux in the image provided by `electron-builder`
+# Package up the app for Linux inside the image provided by `electron-builder`
+
 docker run --rm -t \
   -v $DIR/../..:/project \
   -v $NODE_MODULES_PATH:/project/node_modules \
   -v ~/.cache/electron:/root/.cache/electron \
   -v ~/.cache/electron-builder:/root/.cache/electron-builder \
   electronuserland/builder:wine \
-  npm run dist
+  releasing/linux/build-inside.sh # This will npm install and npm run dist
+  # npm run dist
 
-# Clean up
-rm -rf $NODE_MODULES_PATH
+# Clean up - if using a tmp folder
+# rm -rf $NODE_MODULES_PATH
