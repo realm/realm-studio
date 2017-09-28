@@ -6,16 +6,25 @@ import { Content } from './Content';
 const MINIMUM_COLUMN_WIDTH = 20;
 
 export interface IContentContainerProps {
-  onCellChange: (object: any, propertyName: string, value: string) => void;
-  onListCellClick: (
+  onCellChange?: (object: any, propertyName: string, value: string) => void;
+  onListCellClick?: (
+    object: any,
+    property: Realm.ObjectSchemaProperty,
+    value: any,
+  ) => void;
+  onRowClick?: (
     object: any,
     property: Realm.ObjectSchemaProperty,
     value: any,
   ) => void;
   schema: Realm.ObjectSchema | null;
-  rowToHighlight: number | null;
+  rowToHighlight?: number | null;
   data: Realm.Results<any> | any;
-  onContextMenu: (e: React.SyntheticEvent<any>, object: any) => void;
+  onContextMenu?: (
+    e: React.SyntheticEvent<any>,
+    object: any,
+    property: Realm.ObjectSchemaProperty,
+  ) => void;
 }
 
 export class ContentContainer extends React.Component<
@@ -82,6 +91,12 @@ export class ContentContainer extends React.Component<
         data={this.filteredData}
       />
     );
+  }
+
+  public componentWillMount() {
+    if (this.props.schema) {
+      this.setDefaultColumnWidths(this.props.schema);
+    }
   }
 
   public componentWillReceiveProps(props: IContentContainerProps) {
