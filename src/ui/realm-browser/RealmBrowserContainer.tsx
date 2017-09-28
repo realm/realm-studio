@@ -14,8 +14,8 @@ import {
 import { RealmBrowser } from './RealmBrowser';
 
 export interface IList {
-  data: Realm.Results<any>;
-  parent: Realm.Object;
+  data: Realm.List<any>;
+  parent: Realm.Object | any;
   property: Realm.ObjectSchemaProperty | any;
   schemaName: string;
 }
@@ -85,7 +85,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   }
 
   public render() {
-    return <RealmBrowser {...this.state} {...this} />;
+    return <RealmBrowser {...this.state} {...this.props} {...this} />;
   }
 
   public getSelectedData = (): any => {
@@ -104,6 +104,28 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         object[propertyName] = value;
       });
     }
+  };
+
+  public onCellChangeOrder = (currentIndex: number, newIndex: number) => {
+    const { list } = this.state;
+    if (list) {
+      const properIndex =
+        newIndex > list.data.length
+          ? list.data.length - 1
+          : newIndex < 0 ? 0 : newIndex;
+      this.realm.write(() => {
+        const movedObjects = list.data.splice(currentIndex, 1);
+        list.data.splice(properIndex, 0, movedObjects[0]);
+      });
+      this.setState({ rowToHighlight: properIndex, columnToHighlight: 0 });
+    }
+  };
+
+  public setRowToHighlight = (row: number, column?: number) => {
+    this.setState({
+      rowToHighlight: row,
+      columnToHighlight: column,
+    });
   };
 
   public onSchemaSelected = (name: string, objectToScroll?: any) => {
@@ -145,7 +167,10 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     rowIndex: number,
     columnIndex: number,
   ) => {
-    this.setState({ rowToHighlight: rowIndex, columnToHighlight: columnIndex });
+    this.setState({
+      rowToHighlight: rowIndex,
+      columnToHighlight: columnIndex,
+    });
 
     if (this.clickTimeout) {
       clearTimeout(this.clickTimeout);
@@ -197,7 +222,8 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     property: Realm.ObjectSchemaProperty,
     value: any,
   ) => {
-    if (property.type === 'object') {
+    const { list } = this.state;
+    if (property.type === 'object' && !list) {
       this.openSelectObject(object, property);
     }
   };
@@ -217,7 +243,14 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
 
     const actions = [];
 
-    if (property.type === 'object') {
+    if (list) {
+      actions.push({
+        label: 'Add object',
+        onClick: () => this.openSelectObject(list.parent, list.property),
+      });
+    }
+
+    if (property.type === 'object' && !list) {
       actions.push({
         label: 'Update reference',
         onClick: () => this.openSelectObject(object, property),
@@ -260,14 +293,21 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   };
 
   public updateObjectReference = (reference: any) => {
-    const { selectObject } = this.state;
-    if (selectObject) {
+    const { selectObject, list } = this.state;
+    if (list) {
+      const { parent, property } = list;
+
+      this.realm.write(() => {
+        parent[property.name].push(reference);
+      });
+    } else if (selectObject) {
       const { property, object } = selectObject;
+
       this.realm.write(() => {
         object[property.name] = reference;
       });
-      this.setState({ selectObject: null });
     }
+    this.setState({ selectObject: null });
   };
 
   public closeSelectObject = () => {
@@ -284,7 +324,15 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   };
 
   public deleteObject = (object: Realm.Object) => {
-    this.realm.write(() => this.realm.delete(object));
+    const { list } = this.state;
+    if (list) {
+      const index = list.data.indexOf(object);
+      this.realm.write(() => {
+        list.data.splice(index, 1);
+      });
+    } else {
+      this.realm.write(() => this.realm.delete(object));
+    }
     this.setState({ rowToHighlight: undefined, confirmModal: undefined });
   };
 
