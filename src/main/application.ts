@@ -13,6 +13,8 @@ import MainMenu from './main-menu';
 import Updater from './updater';
 import WindowManager from './window-manager';
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 export default class Application {
   public static sharedApplication = new Application();
 
@@ -53,7 +55,14 @@ export default class Application {
       this.onReady();
     }
 
-    this.updater.checkForUpdates(true);
+    if (isProduction) {
+      this.updater.checkForUpdates(true);
+    } else {
+      // tslint:disable-next-line:no-console
+      console.info(
+        'Check for updates skipped becaused environment is not production',
+      );
+    }
   }
 
   public destroy() {
