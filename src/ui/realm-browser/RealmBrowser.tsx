@@ -42,10 +42,9 @@ export const RealmBrowser = ({
     columnIndex: number,
   ) => void;
   schemas: Realm.ObjectSchema[];
-  rowToHighlight?: number;
-  columnToHighlight?: number;
-  selectedSchemaName?: string;
-  list?: IList;
+  rowToHighlight: number | null;
+  selectedSchemaName?: string | null;
+  list: IList | null;
   onContextMenu: (
     e: React.SyntheticEvent<any>,
     object: any,
@@ -56,7 +55,7 @@ export const RealmBrowser = ({
   confirmModal?: {
     yes: () => void;
     no: () => void;
-  };
+  } | null;
   selectObject?: any;
   closeSelectObject: () => void;
   updateObjectReference: (object: any) => void;

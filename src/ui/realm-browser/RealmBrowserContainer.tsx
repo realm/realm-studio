@@ -65,7 +65,7 @@ export class RealmBrowserContainer extends React.Component<
       rowToHighlight: undefined,
       columnToHighlight: undefined,
       contextMenu: null,
-      confirmModal: undefined,
+      confirmModal: null,
       selectObject: null,
     };
   }
@@ -178,34 +178,18 @@ export class RealmBrowserContainer extends React.Component<
         parent: object,
         property,
       };
-      this.setState({
-        list,
-        selectedSchemaName: 'list',
-        rowToHighlight: undefined,
-        columnToHighlight: undefined,
-      });
-    } else if (property.type === 'object') {
+      this.setState({ list, selectedSchemaName: 'list', rowToHighlight: null });
+    } else {
       if (value) {
         const index = this.realm
           .objects(property.objectType || '')
           .indexOf(value);
         this.setState({
           selectedSchemaName: property.objectType,
-          list: undefined,
+          list: null,
           rowToHighlight: index,
-          columnToHighlight: 0,
         });
       }
-    }
-  };
-
-  public onCellDoubleClick = (
-    object: any,
-    property: Realm.ObjectSchemaProperty,
-    value: any,
-  ) => {
-    if (property.type === 'object') {
-      this.openSelectObject(object, property);
     }
   };
 
@@ -222,7 +206,12 @@ export class RealmBrowserContainer extends React.Component<
       ? list.data.indexOf(object)
       : this.realm.objects(object.objectSchema().name).indexOf(object);
 
-    const actions = [];
+    const actions = [
+      {
+        label: 'Delete',
+        onClick: () => this.openConfirmModal(object),
+      },
+    ];
 
     if (property.type === 'object') {
       actions.push({
@@ -230,11 +219,6 @@ export class RealmBrowserContainer extends React.Component<
         onClick: () => this.openSelectObject(object, property),
       });
     }
-
-    actions.push({
-      label: 'Delete',
-      onClick: () => this.openConfirmModal(object),
-    });
 
     this.setState({
       rowToHighlight: index,
