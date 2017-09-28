@@ -1,3 +1,4 @@
+import * as os from 'os';
 import * as React from 'react';
 import { Button } from 'reactstrap';
 
@@ -7,10 +8,12 @@ import { HistoryPanelContainer } from './HistoryPanelContainer';
 import './Greeting.scss';
 
 export const Greeting = ({
+  isSyncEnabled,
   onConnectToServer,
   onOpenLocalRealm,
   version,
 }: {
+  isSyncEnabled: boolean;
   onConnectToServer: () => void;
   onOpenLocalRealm: () => void;
   version: string;
@@ -28,7 +31,15 @@ export const Greeting = ({
         <Button className="Greeting__Action" onClick={onOpenLocalRealm}>
           Open a local Realm
         </Button>
-        <Button className="Greeting__Action" onClick={onConnectToServer}>
+        <Button
+          className="Greeting__Action"
+          onClick={onConnectToServer}
+          disabled={!isSyncEnabled}
+          title={isSyncEnabled ?
+            "Click to connect to Realm Object Server" :
+            `This feature is currently not available on ${os.type()}`
+          }
+        >
           Connect to Realm Object Server
         </Button>
       </div>
