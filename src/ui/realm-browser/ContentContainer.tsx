@@ -7,7 +7,12 @@ const MINIMUM_COLUMN_WIDTH = 20;
 
 export interface IContentContainerProps {
   onCellChange?: (object: any, propertyName: string, value: string) => void;
-  onCellClick?: (
+  onListCellClick?: (
+    object: any,
+    property: Realm.ObjectSchemaProperty,
+    value: any,
+  ) => void;
+  onRowClick?: (
     object: any,
     property: Realm.ObjectSchemaProperty,
     value: any,
@@ -15,8 +20,7 @@ export interface IContentContainerProps {
     columnIndex: number,
   ) => void;
   schema: Realm.ObjectSchema | null;
-  rowToHighlight?: number;
-  columnToHighlight?: number;
+  rowToHighlight?: number | null;
   data: Realm.Results<any> | any;
   onContextMenu?: (
     e: React.SyntheticEvent<any>,
