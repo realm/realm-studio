@@ -1,15 +1,15 @@
-import { BrowserWindow, screen, shell } from "electron";
-import * as path from "path";
-import * as url from "url";
+import { BrowserWindow, screen, shell } from 'electron';
+import * as path from 'path';
+import * as url from 'url';
 
-import { getWindowOptions, WindowType } from "../windows/WindowType";
+import { getWindowOptions, WindowType } from '../windows/WindowType';
 
-const isProduction = process.env.NODE_ENV === "production";
+const isProduction = process.env.NODE_ENV === 'production';
 
 function getRendererHtmlPath() {
-  const indexPath = isProduction ?
-                    require("../../static/index.html") :
-                    require("../../static/index.development.html");
+  const indexPath = isProduction
+    ? require('../../static/index.html')
+    : require('../../static/index.development.html');
   // __dirname is the directory of the bundle
   return path.resolve(__dirname, indexPath);
 }
@@ -19,19 +19,19 @@ export default class WindowManager {
 
   public createWindow(windowType: WindowType, options: any = {}) {
     const window = new BrowserWindow({
-      title: "Realm Studio",
+      title: 'Realm Studio',
       width: 800,
       height: 600,
-      vibrancy: "light",
+      vibrancy: 'light',
       show: false,
       ...getWindowOptions(windowType, options),
     });
 
     // Open up the dev tools, if not in production mode
     if (!isProduction) {
-      window.once("ready-to-show", () => {
+      window.once('ready-to-show', () => {
         window.webContents.openDevTools({
-          mode: "detach",
+          mode: 'detach',
         });
       });
     }
@@ -40,32 +40,34 @@ export default class WindowManager {
     const display = this.getDesiredDisplay();
     this.positionWindowOnDisplay(window, display);
 
-    if (typeof(options.path) === "string" && process.platform === "darwin") {
+    if (typeof options.path === 'string' && process.platform === 'darwin') {
       window.setRepresentedFilename(options.path);
     }
 
-    window.loadURL(url.format({
-      pathname: getRendererHtmlPath(),
-      protocol: "file:",
-      query: {
-        windowType,
-        options: JSON.stringify(options),
-      },
-      slashes: true,
-    }));
+    window.loadURL(
+      url.format({
+        pathname: getRendererHtmlPath(),
+        protocol: 'file:',
+        query: {
+          windowType,
+          options: JSON.stringify(options),
+        },
+        slashes: true,
+      }),
+    );
 
-    window.on("page-title-updated", (event) => {
+    window.on('page-title-updated', event => {
       // Prevents windows from updating their title
       event.preventDefault();
     });
 
     // Open all links in the external browser
-    window.webContents.on("new-window", (event, openedUrl: string) => {
+    window.webContents.on('new-window', (event, openedUrl: string) => {
       event.preventDefault();
       shell.openExternal(openedUrl);
     });
 
-    window.on("closed", () => {
+    window.on('closed', () => {
       const index = this.windows.indexOf(window);
       if (index > -1) {
         this.windows.splice(index, 1);
@@ -78,14 +80,14 @@ export default class WindowManager {
   }
 
   public closeAllWindows() {
-    this.windows.forEach((window) => {
+    this.windows.forEach(window => {
       window.close();
     });
   }
 
   private getDesiredDisplay(): Electron.Display {
     const desiredDisplayString = process.env.DISPLAY;
-    if (typeof(desiredDisplayString) === "string") {
+    if (typeof desiredDisplayString === 'string') {
       const desiredDisplayIndex = parseInt(desiredDisplayString, 10);
       if (Number.isInteger(desiredDisplayIndex)) {
         const displays = screen.getAllDisplays();
@@ -99,10 +101,17 @@ export default class WindowManager {
     return screen.getPrimaryDisplay();
   }
 
-  private positionWindowOnDisplay(window: Electron.BrowserWindow, display: Electron.Display) {
-    const [ width, height ] = window.getSize();
-    const x = Math.floor(display.workArea.x + display.workArea.width / 2 - width / 2);
-    const y = Math.floor(display.workArea.y + display.workArea.height / 2 - height / 2);
+  private positionWindowOnDisplay(
+    window: Electron.BrowserWindow,
+    display: Electron.Display,
+  ) {
+    const [width, height] = window.getSize();
+    const x = Math.floor(
+      display.workArea.x + display.workArea.width / 2 - width / 2,
+    );
+    const y = Math.floor(
+      display.workArea.y + display.workArea.height / 2 - height / 2,
+    );
     window.setPosition(x, y);
   }
 }

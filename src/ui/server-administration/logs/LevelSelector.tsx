@@ -1,15 +1,20 @@
-import * as React from "react";
-import { ButtonDropdown, DropdownItem, DropdownMenu, DropdownToggle } from "reactstrap";
+import * as React from 'react';
+import {
+  ButtonDropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownToggle,
+} from 'reactstrap';
 
 export enum LogLevel {
-  fatal = "fatal",
-  error = "error",
-  warn = "warn",
-  info = "info",
-  detail = "detail",
-  debug = "debug",
-  trace = "trace",
-  all = "all",
+  fatal = 'fatal',
+  error = 'error',
+  warn = 'warn',
+  info = 'info',
+  detail = 'detail',
+  debug = 'debug',
+  trace = 'trace',
+  all = 'all',
 }
 
 export const LevelSelector = ({
@@ -19,20 +24,27 @@ export const LevelSelector = ({
   selectedLevel,
   toggle,
 }: {
-  className?: string,
-  isDropdownOpen: boolean,
-  onLevelChanged: (level: LogLevel) => void,
-  selectedLevel: LogLevel,
-  toggle: () => void,
+  className?: string;
+  isDropdownOpen: boolean;
+  onLevelChanged: (level: LogLevel) => void;
+  selectedLevel: LogLevel;
+  toggle: () => void;
 }) => {
   return (
-    <ButtonDropdown size="sm" dropup={true} className={className} isOpen={isDropdownOpen} toggle={toggle}>
-      <DropdownToggle caret={true}>
-        {selectedLevel}
-      </DropdownToggle>
+    <ButtonDropdown
+      size="sm"
+      dropup={true}
+      className={className}
+      isOpen={isDropdownOpen}
+      toggle={toggle}
+    >
+      <DropdownToggle caret={true}>{selectedLevel}</DropdownToggle>
       <DropdownMenu right={true}>
-        {Object.keys(LogLevel).map((level) => (
-          <DropdownItem key={level} onClick={() => onLevelChanged(level as LogLevel)}>
+        {Object.keys(LogLevel).map(level => (
+          <DropdownItem
+            key={level}
+            onClick={() => onLevelChanged(level as LogLevel)}
+          >
             {level}
           </DropdownItem>
         ))}

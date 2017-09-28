@@ -1,7 +1,7 @@
-import * as assert from "assert";
-import * as React from "react";
-import * as Realm from "realm";
-import * as util from "util";
+import * as assert from 'assert';
+import * as React from 'react';
+import * as Realm from 'realm';
+import * as util from 'util';
 
 import {
   IAdminTokenCredentials,
@@ -10,11 +10,11 @@ import {
   ISyncedRealmBrowserOptions,
   IUsernamePasswordCredentials,
   RealmBrowserMode,
-} from "../../windows/WindowType";
-import {IContextMenuAction} from "../reusable/context-menu";
-import {showError} from "../reusable/errors";
+} from '../../windows/WindowType';
+import { IContextMenuAction } from '../reusable/context-menu';
+import { showError } from '../reusable/errors';
 
-import {RealmBrowser} from "./RealmBrowser";
+import { RealmBrowser } from './RealmBrowser';
 
 export interface IList {
   data: Realm.Results<any>;
@@ -23,23 +23,27 @@ export interface IList {
   property: Realm.ObjectSchemaProperty | any;
 }
 
-export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions, {
+export interface IState {
   schemas: Realm.ObjectSchema[];
   list: IList | null;
   selectedSchemaName?: string | null;
   rowToHighlight: number | null;
   confirmModal: {
-    yes: () => void,
-    no: () => void,
+    yes: () => void;
+    no: () => void;
   } | null;
   contextMenu: {
-    x: number,
-    y: number,
-    object: any,
-    actions: IContextMenuAction[],
+    x: number;
+    y: number;
+    object: any;
+    actions: IContextMenuAction[];
   } | null;
-}> {
+}
 
+export class RealmBrowserContainer extends React.Component<
+  IRealmBrowserOptions,
+  IState
+> {
   private realm: Realm;
 
   constructor() {
@@ -57,13 +61,13 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
   public componentDidMount() {
     if (this.props.mode === RealmBrowserMode.Local) {
       const options = this.props as ILocalRealmBrowserOptions;
-      assert(options.path, "Missing a path");
+      assert(options.path, 'Missing a path');
       this.initializeLocalRealm(options);
     } else if (this.props.mode === RealmBrowserMode.Synced) {
       const options = this.props as ISyncedRealmBrowserOptions;
-      assert(options.serverUrl, "Missing a serverUrl");
-      assert(options.path, "Missing a path");
-      assert(options.credentials, "Missing credentials");
+      assert(options.serverUrl, 'Missing a serverUrl');
+      assert(options.path, 'Missing a path');
+      assert(options.credentials, 'Missing credentials');
       this.initializeSyncedRealm(this.props as ISyncedRealmBrowserOptions);
     }
   }
@@ -80,14 +84,13 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
   }
 
   public getSelectedData = (): any => {
-    const {list, selectedSchemaName} = this.state;
+    const { list, selectedSchemaName } = this.state;
     if (this.realm && selectedSchemaName) {
-      return list ?
-        list.data : this.realm.objects(selectedSchemaName);
+      return list ? list.data : this.realm.objects(selectedSchemaName);
     } else {
       return [];
     }
-  }
+  };
 
   public onCellChange = (object: any, propertyName: string, value: string) => {
     if (this.realm && object) {
@@ -96,23 +99,27 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
         object[propertyName] = value;
       });
     }
-  }
+  };
 
   public onSchemaSelected = (name: string, objectToScroll?: any) => {
-    const {selectedSchemaName} = this.state;
+    const { selectedSchemaName } = this.state;
     if (selectedSchemaName !== name) {
       const rowToHighlight = objectToScroll
         ? this.realm.objects(name).indexOf(objectToScroll)
         : null;
-      this.setState({selectedSchemaName: name, list: null, rowToHighlight});
+      this.setState({ selectedSchemaName: name, list: null, rowToHighlight });
     }
-  }
+  };
 
   public getSelectedSchema = (): Realm.ObjectSchema | null => {
-    const {schemas, selectedSchemaName, list} = this.state;
+    const { schemas, selectedSchemaName, list } = this.state;
 
-    return schemas.find((schema) => schema.name === (list ? list.schemaName : selectedSchemaName)) || null;
-  }
+    return (
+      schemas.find(
+        schema => schema.name === (list ? list.schemaName : selectedSchemaName),
+      ) || null
+    );
+  };
 
   public getSchemaLength = (name: string) => {
     if (this.realm) {
@@ -120,37 +127,41 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     } else {
       return 0;
     }
-  }
+  };
 
-  public onListCellClick = (object: any, property: Realm.ObjectSchemaProperty, value: any) => {
-    if (property.type === "list") {
+  public onListCellClick = (
+    object: any,
+    property: Realm.ObjectSchemaProperty,
+    value: any,
+  ) => {
+    if (property.type === 'list') {
       const list = {
         data: value,
-        schemaName: property.objectType || "",
+        schemaName: property.objectType || '',
         parent: object,
         property,
       };
-      this.setState({list, selectedSchemaName: "list", rowToHighlight: null});
+      this.setState({ list, selectedSchemaName: 'list', rowToHighlight: null });
     } else {
-      const index = this.realm.objects(property.objectType || "").indexOf(value);
+      const index = this.realm
+        .objects(property.objectType || '')
+        .indexOf(value);
       this.setState({
         selectedSchemaName: property.objectType,
         list: null,
         rowToHighlight: index,
       });
     }
-  }
+  };
 
   public onContextMenu = (e: React.MouseEvent<any>, object: any) => {
     e.preventDefault();
 
-    const {list} = this.state;
+    const { list } = this.state;
 
     const index = list
       ? list.data.indexOf(object)
-      : this.realm
-        .objects(object.objectSchema().name)
-        .indexOf(object);
+      : this.realm.objects(object.objectSchema().name).indexOf(object);
 
     this.setState({
       rowToHighlight: index,
@@ -159,39 +170,42 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
         y: e.clientY,
         object,
         actions: [
-          {label: "Delete", onClick: () => this.openConfirmModal(object)},
+          { label: 'Delete', onClick: () => this.openConfirmModal(object) },
         ],
       },
     });
-  }
+  };
 
   public openConfirmModal = (object: any) => {
     this.setState({
       confirmModal: {
         yes: () => this.deleteObject(object),
-        no: () => this.setState({confirmModal: null}),
+        no: () => this.setState({ confirmModal: null }),
       },
     });
-  }
+  };
 
   public deleteObject = (object: Realm.Object) => {
     this.realm.write(() => this.realm.delete(object));
-    this.setState({rowToHighlight: null, confirmModal: null});
-  }
+    this.setState({ rowToHighlight: null, confirmModal: null });
+  };
 
   public onContextMenuClose = (): void => {
-    this.setState({contextMenu: null, rowToHighlight: null});
-  }
+    this.setState({ contextMenu: null, rowToHighlight: null });
+  };
 
   private async initializeLocalRealm(options: ILocalRealmBrowserOptions) {
     this.realm = await Realm.open({
       path: options.path,
     });
-    const firstSchemaName = this.realm.schema.length > 0 ? this.realm.schema[0].name : undefined;
+    const firstSchemaName =
+      this.realm.schema.length > 0 ? this.realm.schema[0].name : undefined;
     this.setState({
       schemas: this.realm.schema,
     });
-    firstSchemaName && this.onSchemaSelected(firstSchemaName);
+    if (firstSchemaName) {
+      this.onSchemaSelected(firstSchemaName);
+    }
     this.addRealmChangeListener();
   }
 
@@ -199,10 +213,11 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
     const user = await this.getUser(options);
 
     const serverUrl = new URL(options.serverUrl);
-    serverUrl.protocol = "realm:";
+    serverUrl.protocol = 'realm:';
 
     // Remove the initial slash from the path, if any
-    const path = options.path.indexOf("/") === 0 ? options.path.slice(1) : options.path;
+    const path =
+      options.path.indexOf('/') === 0 ? options.path.slice(1) : options.path;
     const url = serverUrl.toString() + path;
 
     this.realm = await Realm.open({
@@ -213,28 +228,43 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
       },
     });
 
-    const firstSchemaName = this.realm.schema.length > 0 ? this.realm.schema[0].name : undefined;
+    const firstSchemaName =
+      this.realm.schema.length > 0 ? this.realm.schema[0].name : undefined;
     this.setState({
       schemas: this.realm.schema,
     });
-    firstSchemaName && this.onSchemaSelected(firstSchemaName);
+    if (firstSchemaName) {
+      this.onSchemaSelected(firstSchemaName);
+    }
     this.addRealmChangeListener();
   }
 
-  private async getUser(options: ISyncedRealmBrowserOptions): Promise<Realm.Sync.User> {
+  private async getUser(
+    options: ISyncedRealmBrowserOptions,
+  ): Promise<Realm.Sync.User> {
     return new Promise<Realm.Sync.User>(async (resolve, reject) => {
-      if ("token" in options.credentials) {
+      if ('token' in options.credentials) {
         const credentials = options.credentials as IAdminTokenCredentials;
-        const user = Realm.Sync.User.adminUser(credentials.token, options.serverUrl);
+        const user = Realm.Sync.User.adminUser(
+          credentials.token,
+          options.serverUrl,
+        );
         resolve(user);
-      } else if ("username" in options.credentials && "password" in options.credentials) {
+      } else if (
+        'username' in options.credentials &&
+        'password' in options.credentials
+      ) {
         const credentials = options.credentials as IUsernamePasswordCredentials;
         try {
-          const user = await Realm.Sync.User.login(options.serverUrl, credentials.username, credentials.password);
+          const user = await Realm.Sync.User.login(
+            options.serverUrl,
+            credentials.username,
+            credentials.password,
+          );
           resolve(user);
         } catch (err) {
           showError(`Couldn't connect to Realm Object Server`, err, {
-            "Failed to fetch": "Could not reach the server",
+            'Failed to fetch': 'Could not reach the server',
           });
           reject(err);
         }
@@ -244,18 +274,17 @@ export class RealmBrowserContainer extends React.Component<IRealmBrowserOptions,
 
   private addRealmChangeListener() {
     if (this.realm) {
-      this.realm.addListener("change", this.onRealmChanged);
+      this.realm.addListener('change', this.onRealmChanged);
     }
   }
 
   private removeRealmChangeListener() {
     if (this.realm) {
-      this.realm.removeListener("change", this.onRealmChanged);
+      this.realm.removeListener('change', this.onRealmChanged);
     }
   }
 
   private onRealmChanged = () => {
     this.forceUpdate();
-  }
-
+  };
 }

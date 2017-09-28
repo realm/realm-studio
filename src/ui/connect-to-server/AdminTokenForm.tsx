@@ -1,16 +1,16 @@
-import * as React from "react";
-import { Input } from "reactstrap";
+import * as React from 'react';
+import { Input } from 'reactstrap';
 
-import { CredentialsFormGroup } from "./CredentialsFormGroup";
+import { CredentialsFormGroup } from './CredentialsFormGroup';
 
 export const AdminTokenForm = ({
   isRequired,
   token,
   onTokenChanged,
 }: {
-  isRequired: boolean,
-  token: string,
-  onTokenChanged: (e: React.ChangeEvent<HTMLInputElement>) => void,
+  isRequired: boolean;
+  token: string;
+  onTokenChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) => (
   <div>
     <CredentialsFormGroup label="Admin token" labelFor="token">

@@ -1,11 +1,11 @@
-import * as React from "react";
-import * as Realm from "realm";
-import * as classnames from "classnames";
+import * as classnames from 'classnames';
+import * as React from 'react';
+import * as Realm from 'realm';
 
-import {DefaultCell} from "./types/DefaultCell";
-import {ListCell} from "./types/ListCell";
-import {ObjectCell} from "./types/ObjectCell";
-import {StringCellContainer} from "./types/StringCellContainer";
+import { DefaultCell } from './types/DefaultCell';
+import { ListCell } from './types/ListCell';
+import { ObjectCell } from './types/ObjectCell';
+import { StringCellContainer } from './types/StringCellContainer';
 
 export const Cell = ({
   onUpdateValue,
@@ -17,23 +17,23 @@ export const Cell = ({
   isHighlight,
   onContextMenu,
 }: {
-  onUpdateValue: (value: string) => void,
-  onListCellClick: (property: Realm.ObjectSchemaProperty, value: any) => void,
-  property: Realm.ObjectSchemaProperty,
-  style: React.CSSProperties,
-  value: any,
-  width: number,
-  isHighlight: boolean,
-  onContextMenu: (e: React.SyntheticEvent<any>) => void,
+  onUpdateValue: (value: string) => void;
+  onListCellClick: (property: Realm.ObjectSchemaProperty, value: any) => void;
+  property: Realm.ObjectSchemaProperty;
+  style: React.CSSProperties;
+  value: any;
+  width: number;
+  isHighlight: boolean;
+  onContextMenu: (e: React.SyntheticEvent<any>) => void;
 }) => {
   let content;
   switch (property.type) {
-    case "int":
-    case "float":
-    case "double":
-    case "bool":
-    case "string":
-    case "date": {
+    case 'int':
+    case 'float':
+    case 'double':
+    case 'bool':
+    case 'string':
+    case 'date': {
       content = (
         <StringCellContainer
           property={property}
@@ -44,7 +44,7 @@ export const Cell = ({
       );
       break;
     }
-    case "list":
+    case 'list':
       content = (
         <ListCell
           onContextMenu={onContextMenu}
@@ -54,7 +54,7 @@ export const Cell = ({
         />
       );
       break;
-    case "object":
+    case 'object':
       content = (
         <ObjectCell
           onContextMenu={onContextMenu}
@@ -75,10 +75,13 @@ export const Cell = ({
   }
 
   return (
-    <div style={style} className={classnames(
-      "RealmBrowser__Content__Cell",
-      isHighlight && "Highlight",
-    )}>
+    <div
+      style={style}
+      className={classnames(
+        'RealmBrowser__Content__Cell',
+        isHighlight && 'Highlight',
+      )}
+    >
       {content}
     </div>
   );

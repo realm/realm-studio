@@ -50,7 +50,15 @@
     "electron:dist": "electron-builder",
     "wait-for-bundle": "node ./webpack.wait-for-bundle.js",
     "webpack:main": "webpack --config=webpack.main.config.js",
-    "webpack:renderer": "webpack-dev-server --config=webpack.renderer.config.js"
+    "webpack:renderer": "webpack-dev-server --config=webpack.renderer.config.js",
+    "tslint-prettier": "tslint --fix 'src/**/*.ts' 'src/**/*.tsx'",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "tslint-prettier",
+      "git add"
+    ]
   },
   "dependencies": {
     "classnames": "^2.2.5",
@@ -87,8 +95,11 @@
     "electron": "^1.7.5",
     "electron-builder": "^19.22.1",
     "file-loader": "^0.11.2",
+    "husky": "^0.14.3",
+    "lint-staged": "^4.2.3",
     "node-sass": "^4.5.3",
     "null-loader": "^0.1.1",
+    "prettier": "^1.7.1",
     "react-hot-loader": "^3.0.0-beta.7",
     "realm-object-server": "2.0.0-alpha.37",
     "resolve-url-loader": "^2.1.0",
@@ -98,6 +109,9 @@
     "style-loader": "^0.18.2",
     "svg-sprite-loader": "^3.2.5",
     "tslint": "^5.6.0",
+    "tslint-config-prettier": "^1.5.0",
+    "tslint-eslint-rules": "^4.1.1",
+    "tslint-plugin-prettier": "^1.2.0",
     "tslint-react": "^3.2.0",
     "typescript": "^2.4.2",
     "url-loader": "^0.5.9",

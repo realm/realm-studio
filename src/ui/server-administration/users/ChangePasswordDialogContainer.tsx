@@ -1,8 +1,8 @@
-import * as React from "react";
+import * as React from 'react';
 
-import { IUser } from "../../../services/ros";
+import { IUser } from '../../../services/ros';
 
-import { ChangePasswordDialog } from "./ChangePasswordDialog";
+import { ChangePasswordDialog } from './ChangePasswordDialog';
 
 export interface IChangePasswordDialogContainerProps {
   isOpen: boolean;
@@ -16,21 +16,27 @@ export interface IChangePasswordDialogContainerState {
   passwordRepeated: string;
 }
 
-export class ChangePasswordDialogContainer
-extends React.Component<IChangePasswordDialogContainerProps, IChangePasswordDialogContainerState> {
-
+export class ChangePasswordDialogContainer extends React.Component<
+  IChangePasswordDialogContainerProps,
+  IChangePasswordDialogContainerState
+> {
   public constructor() {
     super();
     this.state = {
-      password: "",
-      passwordRepeated: "",
+      password: '',
+      passwordRepeated: '',
     };
   }
 
   public render() {
     const user = this.props.user;
     return user ? (
-      <ChangePasswordDialog {...this.props} {...this.state} {...this} user={user} />
+      <ChangePasswordDialog
+        {...this.props}
+        {...this.state}
+        {...this}
+        user={user}
+      />
     ) : null;
   }
 
@@ -40,24 +46,26 @@ extends React.Component<IChangePasswordDialogContainerProps, IChangePasswordDial
       const { password, passwordRepeated } = this.state;
       if (password === passwordRepeated) {
         this.setState({
-          password: "",
-          passwordRepeated: "",
+          password: '',
+          passwordRepeated: '',
         });
         this.props.toggle();
         this.props.onPasswordChanged(this.props.user.userId, password);
       }
     }
-  }
+  };
 
   public onPasswordChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({
       password: e.target.value,
     });
-  }
+  };
 
-  public onPasswordRepeatedChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+  public onPasswordRepeatedChanged = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     this.setState({
       passwordRepeated: e.target.value,
     });
-  }
+  };
 }

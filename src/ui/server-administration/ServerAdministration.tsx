@@ -1,22 +1,22 @@
-import * as classnames from "classnames";
-import * as React from "react";
-import { Button, Navbar } from "reactstrap";
+import * as classnames from 'classnames';
+import * as React from 'react';
+import { Button, Navbar } from 'reactstrap';
 
-import realmLogo from "realm-studio-svgs/realm-logo.svg";
+import realmLogo from 'realm-studio-svgs/realm-logo.svg';
 
-import { LoadingOverlay } from "../reusable/loading-overlay";
-import { LogContainer } from "./logs/LogContainer";
-import { RealmsTableContainer } from "./realms/RealmsTableContainer";
-import { ToolsContainer } from "./tools/ToolsContainer";
-import { UsersTableContainer } from "./users/UsersTableContainer";
+import { LoadingOverlay } from '../reusable/loading-overlay';
+import { LogContainer } from './logs/LogContainer';
+import { RealmsTableContainer } from './realms/RealmsTableContainer';
+import { ToolsContainer } from './tools/ToolsContainer';
+import { UsersTableContainer } from './users/UsersTableContainer';
 
-import "./ServerAdministration.scss";
+import './ServerAdministration.scss';
 
 export enum Tab {
-  Realms = "realms",
-  Users = "users",
-  Logs = "logs",
-  Tools = "tools",
+  Realms = 'realms',
+  Users = 'users',
+  Logs = 'logs',
+  Tools = 'tools',
 }
 
 export const ServerAdministration = ({
@@ -26,15 +26,17 @@ export const ServerAdministration = ({
   onTabChanged,
   user,
 }: {
-  activeTab: Tab,
-  isRealmOpening: boolean,
-  onRealmOpened: (path: string) => void,
-  onTabChanged: (tab: Tab) => void,
-  user: Realm.Sync.User | null,
+  activeTab: Tab;
+  isRealmOpening: boolean;
+  onRealmOpened: (path: string) => void;
+  onTabChanged: (tab: Tab) => void;
+  user: Realm.Sync.User | null;
 }) => {
   let content = null;
   if (user && activeTab === Tab.Realms) {
-    content = <RealmsTableContainer user={user} onRealmOpened={onRealmOpened} />;
+    content = (
+      <RealmsTableContainer user={user} onRealmOpened={onRealmOpened} />
+    );
   } else if (user && activeTab === Tab.Users) {
     content = <UsersTableContainer user={user} />;
   } else if (user && activeTab === Tab.Logs) {
@@ -42,19 +44,17 @@ export const ServerAdministration = ({
   } else if (user && activeTab === Tab.Tools) {
     content = <ToolsContainer user={user} />;
   } else {
-    content = <p className="ServerAdministration__no-content">This tab has no content yet</p>;
+    content = (
+      <p className="ServerAdministration__no-content">
+        This tab has no content yet
+      </p>
+    );
   }
 
-  const TabButton = ({
-    tab,
-    label,
-  }: {
-    tab: Tab,
-    label: string,
-  }) => {
+  const TabButton = ({ tab, label }: { tab: Tab; label: string }) => {
     return (
       <Button
-        color={activeTab === tab ? "primary" : "secondary"}
+        color={activeTab === tab ? 'primary' : 'secondary'}
         className="ServerAdministration__tab"
         onClick={() => {
           onTabChanged(tab);
@@ -75,16 +75,14 @@ export const ServerAdministration = ({
         <TabButton tab={Tab.Users} label="Users" />
         <TabButton tab={Tab.Logs} label="Logs" />
         {/* <TabButton tab={Tab.Tools} label="Tools" /> */}
-        { user && (
+        {user && (
           <p className="ServerAdministration__status">
             Connected to {user.server}
           </p>
         )}
       </Navbar>
-      <div className="ServerAdministration__content">
-        {content}
-      </div>
-      <LoadingOverlay loading={!user || isRealmOpening} fade={false} />
+      <div className="ServerAdministration__content">{content}</div>
+      <LoadingOverlay loading={!user || isRealmOpening} fade={false} />
     </div>
   );
 };

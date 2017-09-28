@@ -1,31 +1,33 @@
-import * as electron from "electron";
-import * as React from "react";
-import * as Realm from "realm";
+import * as electron from 'electron';
+import * as React from 'react';
+import * as Realm from 'realm';
 
-import { showServerAdministration } from "../../actions";
-import { showError } from "../reusable/errors";
+import { showServerAdministration } from '../../actions';
+import { showError } from '../reusable/errors';
 
-import { AuthenticationMethod } from "./AuthenticationForm";
-import { ConnectToServer } from "./ConnectToServer";
+import { AuthenticationMethod } from './AuthenticationForm';
+import { ConnectToServer } from './ConnectToServer';
 
-export class ConnectToServerContainer extends React.Component<{}, {
-  isConnecting: boolean,
-  method: AuthenticationMethod,
-  url: string,
-  username: string,
-  password: string,
-  token: string,
-}> {
-
+export class ConnectToServerContainer extends React.Component<
+  {},
+  {
+    isConnecting: boolean;
+    method: AuthenticationMethod;
+    url: string;
+    username: string;
+    password: string;
+    token: string;
+  }
+> {
   constructor() {
     super();
     this.state = {
       isConnecting: false,
       method: AuthenticationMethod.usernamePassword,
-      url: "",
-      username: "",
-      password: "",
-      token: "",
+      url: '',
+      username: '',
+      password: '',
+      token: '',
     };
   }
 
@@ -35,7 +37,7 @@ export class ConnectToServerContainer extends React.Component<{}, {
 
   public onCancel = () => {
     electron.remote.getCurrentWindow().close();
-  }
+  };
 
   public onSubmit = async () => {
     const { url, username, password, token } = this.state;
@@ -56,7 +58,11 @@ export class ConnectToServerContainer extends React.Component<{}, {
       });
     } else {
       try {
-        const user = await Realm.Sync.User.login(preparedUrl, preparedUsername, password);
+        const user = await Realm.Sync.User.login(
+          preparedUrl,
+          preparedUsername,
+          password,
+        );
         // Show the server administration
         showServerAdministration({
           url: user.server,
@@ -69,7 +75,7 @@ export class ConnectToServerContainer extends React.Component<{}, {
         electron.remote.getCurrentWindow().close();
       } catch (err) {
         showError(`Couldn't connect to Realm Object Server`, err, {
-          "Failed to fetch": "Could not reach the server",
+          'Failed to fetch': 'Could not reach the server',
         });
       } finally {
         this.setState({
@@ -77,42 +83,42 @@ export class ConnectToServerContainer extends React.Component<{}, {
         });
       }
     }
-  }
+  };
 
   public onUrlChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({
       url: e.target.value,
     });
-  }
+  };
 
   public onMethodChanged = (method: AuthenticationMethod) => {
     this.setState({
       method,
     });
-  }
+  };
 
   public onUsernameChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({
       username: e.target.value,
     });
-  }
+  };
 
   public onPasswordChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({
       password: e.target.value,
     });
-  }
+  };
 
   public onTokenChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({
       token: e.target.value,
     });
-  }
+  };
 
   private prepareUrl(url: string) {
-    if (url === "") {
-      return "http://localhost:9080";
-    } else if (url.indexOf("http") !== 0) {
+    if (url === '') {
+      return 'http://localhost:9080';
+    } else if (url.indexOf('http') !== 0) {
       return `http://${url}`;
     } else {
       return url;
@@ -120,8 +126,8 @@ export class ConnectToServerContainer extends React.Component<{}, {
   }
 
   private prepareUsername(username: string) {
-    if (username === "") {
-      return "realm-admin";
+    if (username === '') {
+      return 'realm-admin';
     } else {
       return username;
     }

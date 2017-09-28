@@ -1,25 +1,31 @@
-import * as React from "react";
-import {Grid} from "react-virtualized";
+import * as React from 'react';
+import { Grid } from 'react-virtualized';
 
-import {Content} from "./Content";
+import { Content } from './Content';
 
 const MINIMUM_COLUMN_WIDTH = 20;
 
 export interface IContentContainerProps {
   onCellChange: (object: any, propertyName: string, value: string) => void;
-  onListCellClick: (object: any, property: Realm.ObjectSchemaProperty, value: any) => void;
+  onListCellClick: (
+    object: any,
+    property: Realm.ObjectSchemaProperty,
+    value: any,
+  ) => void;
   schema: Realm.ObjectSchema | null;
   rowToHighlight: number | null;
   data: Realm.Results<any> | any;
   onContextMenu: (e: React.SyntheticEvent<any>, object: any) => void;
 }
 
-export class ContentContainer extends React.Component<IContentContainerProps, {
-  columnWidths: number[],
-  query: string | null,
-  sort: string | null,
-}> {
-
+export class ContentContainer extends React.Component<
+  IContentContainerProps,
+  {
+    columnWidths: number[];
+    query: string | null;
+    sort: string | null;
+  }
+> {
   // A reference to the grid inside the content container is needed to resize collumns
   private gridContent: Grid;
   private gridHeader: Grid;
@@ -34,8 +40,8 @@ export class ContentContainer extends React.Component<IContentContainerProps, {
   }
 
   get filteredData(): any {
-    const {data} = this.props;
-    const {query, sort} = this.state;
+    const { data } = this.props;
+    const { query, sort } = this.state;
 
     let newData = data;
 
@@ -59,27 +65,38 @@ export class ContentContainer extends React.Component<IContentContainerProps, {
   }
 
   public onQueryChange = (e: React.SyntheticEvent<any>) => {
-    this.setState({query: e.currentTarget.value});
-  }
+    this.setState({ query: e.currentTarget.value });
+  };
 
   public onSortClick = (property: string) => {
-    const {sort} = this.state;
-    this.setState({sort: property === sort ? null : property});
-  }
+    const { sort } = this.state;
+    this.setState({ sort: property === sort ? null : property });
+  };
 
   public render() {
-    return <Content {...this.state} {...this.props} {...this} data={this.filteredData} />;
+    return (
+      <Content
+        {...this.state}
+        {...this.props}
+        {...this}
+        data={this.filteredData}
+      />
+    );
   }
 
   public componentWillReceiveProps(props: IContentContainerProps) {
     if (props.schema && this.props.schema !== props.schema) {
       this.setDefaultColumnWidths(props.schema);
-      this.setState({sort: null, query: null});
+      this.setState({ sort: null, query: null });
     }
   }
 
   public componentDidUpdate(prevProps: IContentContainerProps) {
-    if (this.gridContent && this.props.rowToHighlight && this.props.rowToHighlight !== prevProps.rowToHighlight) {
+    if (
+      this.gridContent &&
+      this.props.rowToHighlight &&
+      this.props.rowToHighlight !== prevProps.rowToHighlight
+    ) {
       this.gridContent.scrollToCell({
         columnIndex: 0,
         rowIndex: this.props.rowToHighlight,
@@ -97,27 +114,29 @@ export class ContentContainer extends React.Component<IContentContainerProps, {
       this.gridContent.recomputeGridSize();
       this.gridHeader.recomputeGridSize();
     }
-  }
+  };
 
   public gridContentRef = (grid: Grid) => {
     this.gridContent = grid;
-  }
+  };
 
   public gridHeaderRef = (grid: Grid) => {
     this.gridHeader = grid;
-  }
+  };
 
   private setDefaultColumnWidths(schema: Realm.ObjectSchema) {
-    const columnWidths = Object.keys(schema.properties).map((propertyName) => {
-      const property = schema.properties[propertyName] as Realm.ObjectSchemaProperty;
+    const columnWidths = Object.keys(schema.properties).map(propertyName => {
+      const property = schema.properties[
+        propertyName
+      ] as Realm.ObjectSchemaProperty;
       switch (property.type) {
-        case "int":
+        case 'int':
           return 100;
-        case "bool":
+        case 'bool':
           return 100;
-        case "string":
+        case 'string':
           return 300;
-        case "date":
+        case 'date':
           return 200;
         default:
           return 200;

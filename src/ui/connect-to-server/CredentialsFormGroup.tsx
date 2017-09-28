@@ -1,14 +1,14 @@
-import * as React from "react";
-import { Col, FormGroup, Label, Row } from "reactstrap";
+import * as React from 'react';
+import { Col, FormGroup, Label, Row } from 'reactstrap';
 
 export const CredentialsFormGroup = ({
   label,
   labelFor,
   children,
 }: {
-  label: string,
-  labelFor: string,
-  children: React.ReactElement<any>,
+  label: string;
+  labelFor: string;
+  children: React.ReactElement<any>;
 }) => (
   <FormGroup className="ConnectToServer__CredentialsFormGroup">
     <Row noGutters={true}>
@@ -17,9 +17,7 @@ export const CredentialsFormGroup = ({
           {label}
         </Label>
       </Col>
-      <Col xs={9}>
-        {children}
-      </Col>
+      <Col xs={9}>{children}</Col>
     </Row>
   </FormGroup>
 );

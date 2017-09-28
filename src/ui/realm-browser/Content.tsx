@@ -1,9 +1,14 @@
-import * as React from "react";
-import {AutoSizer, Dimensions as IAutoSizerDimensions, Grid, ScrollSync} from "react-virtualized";
-import {Input, InputGroup, InputGroupAddon} from "reactstrap";
-import * as Realm from "realm";
-import {Cell} from "./Cell";
-import {HeaderCell} from "./HeaderCell";
+import * as React from 'react';
+import {
+  AutoSizer,
+  Dimensions as IAutoSizerDimensions,
+  Grid,
+  ScrollSync,
+} from 'react-virtualized';
+import { Input, InputGroup, InputGroupAddon } from 'reactstrap';
+import * as Realm from 'realm';
+import { Cell } from './Cell';
+import { HeaderCell } from './HeaderCell';
 
 export const Content = ({
   columnWidths,
@@ -19,39 +24,44 @@ export const Content = ({
   onQueryChange,
   sort,
   onSortClick,
-  onContextMenu
-
+  onContextMenu,
 }: {
-  columnWidths: number[],
-  gridContentRef: (grid: Grid) => void,
-  gridHeaderRef: (grid: Grid) => void,
-  onCellChange: (object: any, propertyName: string, value: string) => void,
-  onListCellClick: (object: any, property: Realm.ObjectSchemaProperty, value: any) => void,
-  onColumnWidthChanged: (index: number, width: number) => void,
-  schema: Realm.ObjectSchema | null,
-  rowToHighlight: number | null,
-  data: Realm.Results<any> | any,
-  query: string | null,
-  onQueryChange: (e: React.SyntheticEvent<any>) => void,
-  sort: string | null,
-  onSortClick: (property: string) => void,
-  onContextMenu: (e: React.SyntheticEvent<any>, object: any) => void
+  columnWidths: number[];
+  gridContentRef: (grid: Grid) => void;
+  gridHeaderRef: (grid: Grid) => void;
+  onCellChange: (object: any, propertyName: string, value: string) => void;
+  onListCellClick: (
+    object: any,
+    property: Realm.ObjectSchemaProperty,
+    value: any,
+  ) => void;
+  onColumnWidthChanged: (index: number, width: number) => void;
+  schema: Realm.ObjectSchema | null;
+  rowToHighlight: number | null;
+  data: Realm.Results<any> | any;
+  query: string | null;
+  onQueryChange: (e: React.SyntheticEvent<any>) => void;
+  sort: string | null;
+  onSortClick: (property: string) => void;
+  onContextMenu: (e: React.SyntheticEvent<any>, object: any) => void;
 }) => {
   if (schema) {
     // Generate the columns from the schemas properties
     const propertyNames = Object.keys(schema.properties);
-    const columnRenderers = propertyNames.map((propertyName) => {
-      const property = schema.properties[propertyName] as Realm.ObjectSchemaProperty;
+    const columnRenderers = propertyNames.map(propertyName => {
+      const property = schema.properties[
+        propertyName
+      ] as Realm.ObjectSchemaProperty;
       return ({
         columnIndex,
         key,
         rowIndex,
         style,
       }: {
-        columnIndex: number,
-        key: string,
-        rowIndex: number,
-        style: React.CSSProperties,
+        columnIndex: number;
+        key: string;
+        rowIndex: number;
+        style: React.CSSProperties;
       }) => {
         const object = data[rowIndex];
         return (
@@ -59,31 +69,36 @@ export const Content = ({
             key={key}
             width={columnWidths[columnIndex]}
             style={style}
-            onListCellClick={(property: Realm.ObjectSchemaProperty, value: any) => {
+            onListCellClick={(
+              property: Realm.ObjectSchemaProperty, // tslint:disable-line:no-shadowed-variable
+              value: any,
+            ) => {
               onListCellClick(object, property, value);
             }}
             value={object[propertyName]}
             property={property}
-            onUpdateValue={(value) => {
+            onUpdateValue={value => {
               onCellChange(object, propertyName, value);
             }}
             isHighlight={rowToHighlight === rowIndex}
-            onContextMenu={(e) => onContextMenu(e, object)}
+            onContextMenu={e => onContextMenu(e, object)}
           />
         );
       };
     });
 
-    const headerRenderers = propertyNames.map((propertyName) => {
-      const property = schema.properties[propertyName] as Realm.ObjectSchemaProperty;
+    const headerRenderers = propertyNames.map(propertyName => {
+      const property = schema.properties[
+        propertyName
+      ] as Realm.ObjectSchemaProperty;
       return ({
         columnIndex,
         key,
         style,
       }: {
-        columnIndex: number,
-        key: string,
-        style: React.CSSProperties,
+        columnIndex: number;
+        key: string;
+        style: React.CSSProperties;
       }) => {
         return (
           <HeaderCell
@@ -92,7 +107,8 @@ export const Content = ({
             propertyName={propertyName}
             width={columnWidths[columnIndex]}
             style={style}
-            onWidthChanged={(newWidth) => onColumnWidthChanged(columnIndex, newWidth)}
+            onWidthChanged={newWidth =>
+              onColumnWidthChanged(columnIndex, newWidth)}
             onSortClick={onSortClick}
             sort={sort}
           />
@@ -114,15 +130,23 @@ export const Content = ({
             <Input
               placeholder="Query ..."
               onChange={onQueryChange}
-              value={query || ""}
+              value={query || ''}
             />
           </InputGroup>
         </div>
         <ScrollSync>
-          {({clientHeight, clientWidth, onScroll, scrollHeight, scrollLeft, scrollTop, scrollWidth}) => (
-            <div style={{position: "relative", flex: "1 1 auto"}}>
+          {({
+            clientHeight,
+            clientWidth,
+            onScroll,
+            scrollHeight,
+            scrollLeft,
+            scrollTop,
+            scrollWidth,
+          }) => (
+            <div style={{ position: 'relative', flex: '1 1 auto' }}>
               <AutoSizer>
-                {({height, width}: IAutoSizerDimensions) => (
+                {({ height, width }: IAutoSizerDimensions) => (
                   <div>
                     <Grid
                       width={width - scrollBarWidth}
@@ -131,8 +155,9 @@ export const Content = ({
                       ref={gridHeaderRef}
                       rowCount={1}
                       columnCount={propertyNames.length}
-                      columnWidth={({index}) => columnWidths[index]}
-                      cellRenderer={(props) => headerRenderers[props.columnIndex](props)}
+                      columnWidth={({ index }) => columnWidths[index]}
+                      cellRenderer={props =>
+                        headerRenderers[props.columnIndex](props)}
                       scrollLeft={scrollLeft}
                       rowHeight={headerHeight}
                     />
@@ -142,8 +167,9 @@ export const Content = ({
                       ref={gridContentRef}
                       rowCount={data.length}
                       columnCount={propertyNames.length}
-                      columnWidth={({index}) => columnWidths[index]}
-                      cellRenderer={(props) => columnRenderers[props.columnIndex](props)}
+                      columnWidth={({ index }) => columnWidths[index]}
+                      cellRenderer={props =>
+                        columnRenderers[props.columnIndex](props)}
                       onScroll={onScroll}
                       rowHeight={rowHeight}
                     />
@@ -156,6 +182,6 @@ export const Content = ({
       </div>
     );
   } else {
-    return (<p>Loading</p>);
+    return <p>Loading</p>;
   }
 };

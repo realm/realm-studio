@@ -1,4 +1,4 @@
-import * as Realm from "realm";
+import * as Realm from 'realm';
 
 export interface IUser {
   userId: string;
@@ -44,11 +44,14 @@ export enum AccessLevel {
 
 const getRealmUrl = (user: Realm.Sync.User, path: string) => {
   const url = new URL(path, user.server);
-  url.protocol = "realm:";
+  url.protocol = 'realm:';
   return url.toString();
 };
 
-export const timeoutPromise = (url: string, delay: number = 5000): Promise<Realm> => {
+export const timeoutPromise = (
+  url: string,
+  delay: number = 5000,
+): Promise<Realm> => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       reject(new Error(`Timed out opening Realm: ${url}`));
@@ -57,18 +60,22 @@ export const timeoutPromise = (url: string, delay: number = 5000): Promise<Realm
 };
 
 export const getAdminRealm = (user: Realm.Sync.User): Promise<Realm> => {
-  const url = getRealmUrl(user, "__admin");
+  const url = getRealmUrl(user, '__admin');
   const realm = Realm.open({
-    path: "./data/__admin.realm",
+    path: './data/__admin.realm',
     sync: {
       url,
       user,
     },
   });
-  return Promise.race<Realm>([ realm, timeoutPromise(url) ]);
+  return Promise.race<Realm>([realm, timeoutPromise(url)]);
 };
 
-export const createUser = async (server: string, username: string, password: string): Promise<string> => {
+export const createUser = async (
+  server: string,
+  username: string,
+  password: string,
+): Promise<string> => {
   // We could create the object in the synced realm, but that wont create the desired username and password
   const newUser = await Realm.Sync.User.register(server, username, password);
   newUser.logout();
@@ -77,18 +84,22 @@ export const createUser = async (server: string, username: string, password: str
 
 export const deleteRealm = (userId: string) => {
   // mocked.deleteRealm(userId);
-  throw new Error("Not yet implemented");
+  throw new Error('Not yet implemented');
 };
 
-export const updateUserPassword = async (adminUser: Realm.Sync.User, userId: string, password: string) => {
+export const updateUserPassword = async (
+  adminUser: Realm.Sync.User,
+  userId: string,
+  password: string,
+) => {
   const server = adminUser.server;
   // TODO: This could be moved to Realm-JS instead
   const request = new Request(`${server}/auth/password`, {
-    method: "PUT",
+    method: 'PUT',
     headers: new Headers({
-      "Authorization": adminUser.token,
-      "Accept": "application/json, text/plain, */*",
-      "Content-Type": "application/json",
+      Authorization: adminUser.token,
+      Accept: 'application/json, text/plain, */*',
+      'Content-Type': 'application/json',
     }),
     body: JSON.stringify({
       user_id: userId,
@@ -103,5 +114,5 @@ export const updateUserPassword = async (adminUser: Realm.Sync.User, userId: str
 };
 
 export const updateRealm = (realmId: string, values: Partial<IRealmFile>) => {
-  throw new Error("Not yet implemented");
+  throw new Error('Not yet implemented');
 };

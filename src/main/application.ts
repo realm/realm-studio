@@ -1,17 +1,17 @@
-import * as electron from "electron";
-import * as Realm from "realm";
+import * as electron from 'electron';
+import * as Realm from 'realm';
 
-import { Actions } from "../actions";
+import { Actions } from '../actions';
 import {
   ILocalRealmBrowserOptions,
   IRealmBrowserOptions,
   IServerAdministrationOptions,
   RealmBrowserMode,
   WindowType,
-} from "../windows/WindowType";
-import MainMenu from "./main-menu";
-import Updater from "./updater";
-import WindowManager from "./window-manager";
+} from '../windows/WindowType';
+import MainMenu from './main-menu';
+import Updater from './updater';
+import WindowManager from './window-manager';
 
 export default class Application {
   public static sharedApplication = new Application();
@@ -20,7 +20,9 @@ export default class Application {
   private updater = new Updater();
   private windowManager = new WindowManager();
 
-  private actions: { [action: string]: (event: Electron.IpcMessageEvent, ...args: any[]) => void } = {
+  private actions: {
+    [action: string]: (event: Electron.IpcMessageEvent, ...args: any[]) => void;
+  } = {
     [Actions.ShowConnectToServer]: (event, ...args) => {
       this.showConnectToServer();
       event.returnValue = true;
@@ -61,46 +63,52 @@ export default class Application {
   }
 
   public userDataPath(): string {
-    return electron.app.getPath("userData");
+    return electron.app.getPath('userData');
   }
 
   // Implementation of action handlers below
 
   public showConnectToServer() {
     const window = this.windowManager.createWindow(WindowType.ConnectToServer);
-    window.once("ready-to-show", () => {
+    window.once('ready-to-show', () => {
       window.show();
     });
   }
 
   public showGreeting() {
     const window = this.windowManager.createWindow(WindowType.Greeting);
-    window.once("ready-to-show", () => {
+    window.once('ready-to-show', () => {
       window.show();
     });
   }
 
   public showOpenLocalRealm() {
-    electron.dialog.showOpenDialog({
-      properties: ["openFile"],
-      filters: [{ name: "Realm Files", extensions: ["realm"] }],
-    }, (selectedPaths) => {
-      if (selectedPaths) {
-        selectedPaths.forEach((path) => {
-          const options: ILocalRealmBrowserOptions = {
-            mode: RealmBrowserMode.Local,
-            path,
-          };
-          this.showRealmBrowser(options);
-        });
-      }
-    });
+    electron.dialog.showOpenDialog(
+      {
+        properties: ['openFile'],
+        filters: [{ name: 'Realm Files', extensions: ['realm'] }],
+      },
+      selectedPaths => {
+        if (selectedPaths) {
+          selectedPaths.forEach(path => {
+            const options: ILocalRealmBrowserOptions = {
+              mode: RealmBrowserMode.Local,
+              path,
+            };
+            this.showRealmBrowser(options);
+          });
+        }
+      },
+    );
   }
 
   public async showRealmBrowser(options: IRealmBrowserOptions) {
-    return new Promise((resolve) => {
-      const window = this.windowManager.createWindow(WindowType.RealmBrowser, options);
-      window.once("ready-to-show", () => {
+    return new Promise(resolve => {
+      const window = this.windowManager.createWindow(
+        WindowType.RealmBrowser,
+        options,
+      );
+      window.once('ready-to-show', () => {
         window.show();
         resolve();
       });
@@ -110,8 +118,11 @@ export default class Application {
   public showServerAdministration(options: IServerAdministrationOptions) {
     // TODO: Change this once the realm-js Realm.Sync.User serializes correctly
     // @see https://github.com/realm/realm-js/issues/1276
-    const window = this.windowManager.createWindow(WindowType.ServerAdministration, options);
-    window.once("ready-to-show", () => {
+    const window = this.windowManager.createWindow(
+      WindowType.ServerAdministration,
+      options,
+    );
+    window.once('ready-to-show', () => {
       window.show();
     });
   }
@@ -121,17 +132,17 @@ export default class Application {
   }
 
   private addAppListeners() {
-    electron.app.addListener("ready", this.onReady);
-    electron.app.addListener("activate", this.onActivate);
-    electron.app.addListener("open-file", this.onOpenFile);
-    electron.app.addListener("window-all-closed", this.onWindowAllClosed);
+    electron.app.addListener('ready', this.onReady);
+    electron.app.addListener('activate', this.onActivate);
+    electron.app.addListener('open-file', this.onOpenFile);
+    electron.app.addListener('window-all-closed', this.onWindowAllClosed);
   }
 
   private removeAppListeners() {
-    electron.app.removeListener("ready", this.onReady);
-    electron.app.removeListener("activate", this.onActivate);
-    electron.app.removeListener("open-file", this.onOpenFile);
-    electron.app.removeListener("window-all-closed", this.onWindowAllClosed);
+    electron.app.removeListener('ready', this.onReady);
+    electron.app.removeListener('activate', this.onActivate);
+    electron.app.removeListener('open-file', this.onOpenFile);
+    electron.app.removeListener('window-all-closed', this.onWindowAllClosed);
   }
 
   private addActionListeners() {
@@ -155,23 +166,23 @@ export default class Application {
     this.showGreeting();
 
     electron.app.focus();
-  }
+  };
 
   private onActivate = () => {
     if (this.windowManager.windows.length === 0) {
       this.showGreeting();
     }
-  }
+  };
 
   private onOpenFile = () => {
     this.showOpenLocalRealm();
-  }
+  };
 
   private onWindowAllClosed = () => {
-    if (process.platform !== "darwin") {
+    if (process.platform !== 'darwin') {
       electron.app.quit();
     }
-  }
+  };
 }
 
 if (module.hot) {
