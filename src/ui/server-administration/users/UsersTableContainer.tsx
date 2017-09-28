@@ -89,10 +89,18 @@ export class UsersTableContainer extends React.Component<
   };
 
   public getUsersRealms = (userId: string): IRealmFile[] => {
-    const realms = this.adminRealm
-      .objects<IRealmFile>('RealmFile')
-      .filtered('creatorId = $0', userId);
-    return realms.slice();
+    const user = this.adminRealm.objectForPrimaryKey<IRealmFile>(
+      'User',
+      userId,
+    );
+    if (user) {
+      const realms = this.adminRealm
+        .objects<IRealmFile>('RealmFile')
+        .filtered('owner = $0', user);
+      return realms.slice();
+    } else {
+      return [];
+    }
   };
 
   public getUsersMetadatas = (userId: string): IUserMetadataRow[] => {

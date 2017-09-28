@@ -23,7 +23,15 @@
       "target": "zip"
     },
     "linux": {
-      "target": "tar.gz"
+      "target": "tar.gz",
+      "files": [
+        "!node_modules/realm/android${/*}",
+        "!node_modules/realm/build${/*}",
+        "!node_modules/realm/react-native${/*}",
+        "!node_modules/realm/scripts${/*}",
+        "!node_modules/realm/src${/*}",
+        "!node_modules/realm/vendor${/*}"
+      ]
     },
     "publish": [
       {
@@ -68,26 +76,25 @@
     "faker": "^4.1.0",
     "font-awesome": "^4.7.0",
     "moment": "^2.18.1",
-    "electron-publisher-s3": "^19.21.0",
-    "electron-updater": "^2.8.7",
+    "electron-updater": "^2.10.1",
     "react": "^15.6.1",
-    "react-addons-css-transition-group": "^15.6.0",
-    "react-addons-transition-group": "^15.6.0",
+    "react-addons-css-transition-group": "^15.6.2",
+    "react-addons-transition-group": "^15.6.2",
     "react-dom": "^15.6.1",
     "react-draggable": "^3.0.3",
     "react-virtualized": "^9.9.0",
     "lodash": "^4.17.4",
     "reactstrap": "^4.8.0",
-    "realm": "2.0.0-rc11"
+    "realm": "2.0.0-rc13"
   },
   "devDependencies": {
     "@types/classnames": "^2.2.3",
     "@types/faker": "^4.1.1",
-    "@types/node": "^8.0.8",
-    "@types/react": "^15.0.34",
-    "@types/react-dom": "^15.5.1",
+    "@types/node": "^8.0.31",
+    "@types/react": "^16.0.7",
+    "@types/react-dom": "^15.5.5",
     "@types/react-virtualized": "^9.7.3",
-    "@types/reactstrap": "^4.3.13",
+    "@types/reactstrap": "^4.6.1",
     "@types/source-map-support": "^0.4.0",
     "@types/webpack-env": "^1.13.0",
     "awesome-typescript-loader": "^3.2.3",
@@ -95,8 +102,9 @@
     "concurrently": "^3.5.0",
     "css-loader": "^0.28.4",
     "devtron": "^1.4.0",
-    "electron": "^1.7.5",
-    "electron-builder": "^19.22.1",
+    "electron": "^1.7.8",
+    "electron-builder": "^19.31.1",
+    "electron-publisher-s3": "^19.32.0",
     "file-loader": "^0.11.2",
     "husky": "^0.14.3",
     "lint-staged": "^4.2.3",
@@ -104,7 +112,7 @@
     "null-loader": "^0.1.1",
     "prettier": "^1.7.1",
     "react-hot-loader": "^3.0.0-beta.7",
-    "realm-object-server": "2.0.0-alpha.37",
+    "realm-object-server": "2.0.0-alpha.39",
     "resolve-url-loader": "^2.1.0",
     "sass-lint": "^1.10.2",
     "sass-loader": "^6.0.6",
@@ -116,10 +124,10 @@
     "tslint-eslint-rules": "^4.1.1",
     "tslint-plugin-prettier": "^1.2.0",
     "tslint-react": "^3.2.0",
-    "typescript": "^2.4.2",
+    "typescript": "^2.5.3",
     "url-loader": "^0.5.9",
     "webpack": "^3.5.4",
-    "webpack-dev-server": "^2.7.1",
+    "webpack-dev-server": "^2.9.1",
     "webpack-node-externals": "^1.6.0"
   },
   "false": {}
