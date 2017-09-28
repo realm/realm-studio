@@ -11,7 +11,10 @@ process.chdir(userDataPath);
 
 // Make sync only report errors
 import * as Realm from 'realm';
-Realm.Sync.setLogLevel('error');
+// If sync is enabled on Realm - make it less verbose
+if (Realm.Sync) {
+  Realm.Sync.setLogLevel('error');
+}
 
 import 'realm-studio-styles';
 

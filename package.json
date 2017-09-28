@@ -1,6 +1,6 @@
 {
   "name": "realm-studio",
-  "version": "0.0.1-alpha.9",
+  "version": "0.0.1-alpha.10",
   "description": "A tool for everything Realm.",
   "author": "Realm Inc.",
   "repository": "https://github.com/realm/realm-studio",
@@ -21,6 +21,9 @@
     "mac": {
       "category": "public.app-category.developer-tools",
       "target": "zip"
+    },
+    "linux": {
+      "target": "tar.gz"
     },
     "publish": [
       {

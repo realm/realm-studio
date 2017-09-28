@@ -195,7 +195,7 @@ export class RealmBrowserContainer extends React.Component<
   };
 
   private async initializeLocalRealm(options: ILocalRealmBrowserOptions) {
-    this.realm = await Realm.open({
+    this.realm = new Realm({
       path: options.path,
     });
     const firstSchemaName =
