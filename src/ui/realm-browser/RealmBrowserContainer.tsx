@@ -38,6 +38,14 @@ export interface IState {
     object: any;
     actions: IContextMenuAction[];
   } | null;
+  selectObject?: {
+    schema: Realm.ObjectSchema | null;
+    data: Realm.Results<any> | any;
+    property: any;
+    schemaName: string;
+    object: any;
+    optional: boolean;
+  } | null;
 }
 
 export class RealmBrowserContainer extends React.Component<
@@ -55,6 +63,7 @@ export class RealmBrowserContainer extends React.Component<
       rowToHighlight: null,
       contextMenu: null,
       confirmModal: null,
+      selectObject: null,
     };
   }
 
@@ -143,18 +152,24 @@ export class RealmBrowserContainer extends React.Component<
       };
       this.setState({ list, selectedSchemaName: 'list', rowToHighlight: null });
     } else {
-      const index = this.realm
-        .objects(property.objectType || '')
-        .indexOf(value);
-      this.setState({
-        selectedSchemaName: property.objectType,
-        list: null,
-        rowToHighlight: index,
-      });
+      if (value) {
+        const index = this.realm
+          .objects(property.objectType || '')
+          .indexOf(value);
+        this.setState({
+          selectedSchemaName: property.objectType,
+          list: null,
+          rowToHighlight: index,
+        });
+      }
     }
   };
 
-  public onContextMenu = (e: React.MouseEvent<any>, object: any) => {
+  public onContextMenu = (
+    e: React.MouseEvent<any>,
+    object: any,
+    property: Realm.ObjectSchemaProperty,
+  ) => {
     e.preventDefault();
 
     const { list } = this.state;
@@ -163,17 +178,63 @@ export class RealmBrowserContainer extends React.Component<
       ? list.data.indexOf(object)
       : this.realm.objects(object.objectSchema().name).indexOf(object);
 
+    const actions = [
+      {
+        label: 'Delete',
+        onClick: () => this.openConfirmModal(object),
+      },
+    ];
+
+    if (property.type === 'object') {
+      actions.push({
+        label: 'Update reference',
+        onClick: () => this.openSelectObject(object, property),
+      });
+    }
+
     this.setState({
       rowToHighlight: index,
       contextMenu: {
         x: e.clientX,
         y: e.clientY,
         object,
-        actions: [
-          { label: 'Delete', onClick: () => this.openConfirmModal(object) },
-        ],
+        actions,
       },
     });
+  };
+
+  public openSelectObject = (object: any, property: any) => {
+    const { schemas } = this.state;
+
+    const objectSchema =
+      schemas.find(schema => schema.name === property.objectType) || null;
+    const data = this.realm.objects(property.objectType) || null;
+
+    this.setState({
+      selectObject: {
+        property,
+        object,
+        optional: property.optional,
+        schemaName: property.objectType,
+        schema: objectSchema,
+        data,
+      },
+    });
+  };
+
+  public updateObjectReference = (reference: any) => {
+    const { selectObject } = this.state;
+    if (selectObject) {
+      const { property, object } = selectObject;
+      this.realm.write(() => {
+        object[property.name] = reference;
+      });
+      this.setState({ selectObject: null });
+    }
+  };
+
+  public closeSelectObject = () => {
+    this.setState({ selectObject: null });
   };
 
   public openConfirmModal = (object: any) => {
@@ -191,7 +252,7 @@ export class RealmBrowserContainer extends React.Component<
   };
 
   public onContextMenuClose = (): void => {
-    this.setState({ contextMenu: null, rowToHighlight: null });
+    this.setState({ contextMenu: null });
   };
 
   private async initializeLocalRealm(options: ILocalRealmBrowserOptions) {

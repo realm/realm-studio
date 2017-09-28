@@ -6,6 +6,7 @@ import { ContextMenu } from '../reusable/context-menu';
 import { ContentContainer } from './ContentContainer';
 import './RealmBrowser.scss';
 import { IList } from './RealmBrowserContainer';
+import { SelectObject } from './SelectObject';
 import { Sidebar } from './Sidebar';
 
 export const RealmBrowser = ({
@@ -23,6 +24,9 @@ export const RealmBrowser = ({
   contextMenu,
   onContextMenuClose,
   confirmModal,
+  selectObject,
+  closeSelectObject,
+  updateObjectReference,
 }: {
   getSchemaLength: (name: string) => number;
   getSelectedData: () => any;
@@ -38,13 +42,20 @@ export const RealmBrowser = ({
   rowToHighlight: number | null;
   selectedSchemaName?: string | null;
   list: IList | null;
-  onContextMenu: (e: React.SyntheticEvent<any>, object: any) => void;
+  onContextMenu: (
+    e: React.SyntheticEvent<any>,
+    object: any,
+    property: Realm.ObjectSchemaProperty,
+  ) => void;
   contextMenu: any;
   onContextMenuClose: () => void;
   confirmModal: {
     yes: () => void;
     no: () => void;
   } | null;
+  selectObject?: any;
+  closeSelectObject: () => void;
+  updateObjectReference: (object: any) => void;
 }) => {
   const values = getSelectedData();
   return (
@@ -76,6 +87,17 @@ export const RealmBrowser = ({
           status={true}
           yes={confirmModal.yes}
           no={confirmModal.no}
+        />
+      )}
+      {selectObject && (
+        <SelectObject
+          status={true}
+          schema={selectObject.schema}
+          data={selectObject.data}
+          optional={selectObject.optional}
+          schemaName={selectObject.schemaName}
+          updateReference={updateObjectReference}
+          close={closeSelectObject}
         />
       )}
     </div>
