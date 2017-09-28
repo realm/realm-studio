@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Enable devtoolset-3's gcc
+source /opt/rh/devtoolset-3/enable
+
+# Enable NVM
 source $NVM_DIR/nvm.sh
 
 # Make npm rebuild not download realm binaries
