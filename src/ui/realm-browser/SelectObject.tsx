@@ -14,12 +14,14 @@ export interface IProps {
 
 export interface IState {
   rowToHighlight?: number;
+  columnToHighlight?: number;
   objectToAdd?: Realm.ObjectSchema;
 }
 
 export class SelectObject extends React.Component<IProps, IState> {
   public state = {
     rowToHighlight: undefined,
+    columnToHighlight: undefined,
     objectToAdd: undefined,
   };
 
@@ -27,16 +29,21 @@ export class SelectObject extends React.Component<IProps, IState> {
     object: any,
     property: Realm.ObjectSchemaProperty,
     value: any,
-    index: number,
+    rowIndex: number,
+    columnIndex: number,
   ) => {
-    this.setState({ rowToHighlight: index, objectToAdd: object });
+    this.setState({
+      rowToHighlight: rowIndex,
+      columnToHighlight: columnIndex,
+      objectToAdd: object,
+    });
   };
 
   public setNewValue = () => this.props.updateReference(this.state.objectToAdd);
 
   public render() {
     const { status, schema, data, close, schemaName, optional } = this.props;
-    const { rowToHighlight, objectToAdd } = this.state;
+    const { rowToHighlight, objectToAdd, columnToHighlight } = this.state;
     return (
       <Modal size="lg" isOpen={status} toggle={close} className="ConfirmModal">
         <ModalHeader toggle={close}>Select a new {schemaName}</ModalHeader>
@@ -48,6 +55,7 @@ export class SelectObject extends React.Component<IProps, IState> {
                 data={data}
                 onCellClick={this.onCellClick}
                 rowToHighlight={rowToHighlight}
+                columnToHighlight={columnToHighlight}
               />
             )}
         </ModalBody>

@@ -28,6 +28,7 @@ export interface IState {
   list: IList | null;
   selectedSchemaName?: string | null;
   rowToHighlight: number | null;
+  columnToHighlight?: number;
   confirmModal: {
     yes: () => void;
     no: () => void;
@@ -62,6 +63,7 @@ export class RealmBrowserContainer extends React.Component<
       list: null,
       selectedSchemaName: null,
       rowToHighlight: null,
+      columnToHighlight: undefined,
       contextMenu: null,
       confirmModal: null,
       selectObject: null,
@@ -143,9 +145,10 @@ export class RealmBrowserContainer extends React.Component<
     object: any,
     property: Realm.ObjectSchemaProperty,
     value: any,
-    index: number,
+    rowIndex: number,
+    columnIndex: number,
   ) => {
-    this.setState({ rowToHighlight: index });
+    this.setState({ rowToHighlight: rowIndex, columnToHighlight: columnIndex });
 
     if (this.clickTimeout) {
       clearTimeout(this.clickTimeout);
@@ -171,7 +174,12 @@ export class RealmBrowserContainer extends React.Component<
         parent: object,
         property,
       };
-      this.setState({ list, selectedSchemaName: 'list', rowToHighlight: null });
+      this.setState({
+        list,
+        selectedSchemaName: 'list',
+        rowToHighlight: null,
+        columnToHighlight: undefined,
+      });
     } else if (property.type === 'object') {
       if (value) {
         const index = this.realm
@@ -181,6 +189,7 @@ export class RealmBrowserContainer extends React.Component<
           selectedSchemaName: property.objectType,
           list: null,
           rowToHighlight: index,
+          columnToHighlight: 0,
         });
       }
     }

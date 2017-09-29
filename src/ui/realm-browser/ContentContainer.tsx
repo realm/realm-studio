@@ -11,10 +11,12 @@ export interface IContentContainerProps {
     object: any,
     property: Realm.ObjectSchemaProperty,
     value: any,
-    index: number,
+    rowIndex: number,
+    columnIndex: number,
   ) => void;
   schema: Realm.ObjectSchema | null;
   rowToHighlight?: number | null;
+  columnToHighlight?: number;
   data: Realm.Results<any> | any;
   onContextMenu?: (
     e: React.SyntheticEvent<any>,
@@ -106,10 +108,11 @@ export class ContentContainer extends React.Component<
     if (
       this.gridContent &&
       this.props.rowToHighlight &&
-      this.props.rowToHighlight !== prevProps.rowToHighlight
+      (this.props.rowToHighlight !== prevProps.rowToHighlight ||
+        this.props.columnToHighlight !== prevProps.columnToHighlight)
     ) {
       this.gridContent.scrollToCell({
-        columnIndex: 0,
+        columnIndex: this.props.columnToHighlight || 0,
         rowIndex: this.props.rowToHighlight,
       });
     }

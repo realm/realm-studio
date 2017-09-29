@@ -35,6 +35,7 @@ export const Content = ({
     property: Realm.ObjectSchemaProperty,
     value: any,
     rowIndex: number,
+    columnIndex: number,
   ) => void;
   onColumnWidthChanged: (index: number, width: number) => void;
   schema: Realm.ObjectSchema | null;
@@ -78,7 +79,9 @@ export const Content = ({
             onCellClick={(
               property: Realm.ObjectSchemaProperty, // tslint:disable-line:no-shadowed-variable
               value: any,
-            ) => onCellClick && onCellClick(object, property, value, rowIndex)}
+            ) =>
+              onCellClick &&
+              onCellClick(object, property, value, rowIndex, columnIndex)}
             value={object[propertyName]}
             property={property}
             onUpdateValue={value =>
