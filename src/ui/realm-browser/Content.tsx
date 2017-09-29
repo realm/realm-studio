@@ -15,7 +15,7 @@ export const Content = ({
   gridContentRef,
   gridHeaderRef,
   onCellChange,
-  onListCellClick,
+  onCellClick,
   onColumnWidthChanged,
   schema,
   rowToHighlight,
@@ -25,16 +25,16 @@ export const Content = ({
   sort,
   onSortClick,
   onContextMenu,
-  onRowClick,
 }: {
   columnWidths: number[];
   gridContentRef: (grid: Grid) => void;
   gridHeaderRef: (grid: Grid) => void;
   onCellChange?: (object: any, propertyName: string, value: string) => void;
-  onListCellClick?: (
+  onCellClick?: (
     object: any,
     property: Realm.ObjectSchemaProperty,
     value: any,
+    rowIndex: number,
   ) => void;
   onColumnWidthChanged: (index: number, width: number) => void;
   schema: Realm.ObjectSchema | null;
@@ -48,11 +48,6 @@ export const Content = ({
     e: React.SyntheticEvent<any>,
     object: any,
     property: Realm.ObjectSchemaProperty,
-  ) => void;
-  onRowClick?: (
-    object: any,
-    property: Realm.ObjectSchemaProperty,
-    value: any,
   ) => void;
 }) => {
   if (schema) {
@@ -75,15 +70,15 @@ export const Content = ({
       }) => {
         const object = data[rowIndex];
 
-        const cell = (
+        return (
           <Cell
             key={key}
             width={columnWidths[columnIndex]}
             style={style}
-            onListCellClick={(
+            onCellClick={(
               property: Realm.ObjectSchemaProperty, // tslint:disable-line:no-shadowed-variable
               value: any,
-            ) => onListCellClick && onListCellClick(object, property, value)}
+            ) => onCellClick && onCellClick(object, property, value, rowIndex)}
             value={object[propertyName]}
             property={property}
             onUpdateValue={value =>
@@ -92,22 +87,6 @@ export const Content = ({
             onContextMenu={e =>
               onContextMenu && onContextMenu(e, object, property)}
           />
-        );
-
-        return onRowClick ? (
-          <div
-            key={key}
-            style={{ userSelect: 'none', cursor: 'pointer' }}
-            onClick={e => {
-              e.stopPropagation();
-              e.preventDefault();
-              onRowClick(object, property, object[propertyName]);
-            }}
-          >
-            {cell}
-          </div>
-        ) : (
-          cell
         );
       };
     });

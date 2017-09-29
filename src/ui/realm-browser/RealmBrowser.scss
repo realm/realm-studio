@@ -256,6 +256,10 @@ $realm-browser-header-icon-space: 24px;
       &--disabled {
         color: $color-elephant;
       }
+
+      &--unselectable {
+        user-select: none;
+      }
     }
 
     &__Link {

@@ -9,7 +9,7 @@ import { StringCellContainer } from './types/StringCellContainer';
 
 export const Cell = ({
   onUpdateValue,
-  onListCellClick,
+  onCellClick,
   property,
   style,
   value,
@@ -18,7 +18,7 @@ export const Cell = ({
   onContextMenu,
 }: {
   onUpdateValue: (value: string) => void;
-  onListCellClick: (property: Realm.ObjectSchemaProperty, value: any) => void;
+  onCellClick: (property: Realm.ObjectSchemaProperty, value: any) => void;
   property: Realm.ObjectSchemaProperty;
   style: React.CSSProperties;
   value: any;
@@ -40,6 +40,7 @@ export const Cell = ({
           value={value}
           onUpdateValue={onUpdateValue}
           onContextMenu={onContextMenu}
+          onClick={onCellClick}
         />
       );
       break;
@@ -50,7 +51,7 @@ export const Cell = ({
           onContextMenu={onContextMenu}
           property={property}
           value={value}
-          onClick={onListCellClick}
+          onClick={onCellClick}
         />
       );
       break;
@@ -60,7 +61,7 @@ export const Cell = ({
           onContextMenu={onContextMenu}
           property={property}
           value={value}
-          onClick={onListCellClick}
+          onClick={onCellClick}
         />
       );
       break;

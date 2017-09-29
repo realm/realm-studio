@@ -7,15 +7,11 @@ const MINIMUM_COLUMN_WIDTH = 20;
 
 export interface IContentContainerProps {
   onCellChange?: (object: any, propertyName: string, value: string) => void;
-  onListCellClick?: (
+  onCellClick?: (
     object: any,
     property: Realm.ObjectSchemaProperty,
     value: any,
-  ) => void;
-  onRowClick?: (
-    object: any,
-    property: Realm.ObjectSchemaProperty,
-    value: any,
+    index: number,
   ) => void;
   schema: Realm.ObjectSchema | null;
   rowToHighlight?: number | null;
