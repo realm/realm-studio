@@ -112,7 +112,7 @@
     "null-loader": "^0.1.1",
     "prettier": "^1.7.1",
     "react-hot-loader": "^3.0.0-beta.7",
-    "realm-object-server": "2.0.0-alpha.39",
+    "realm-object-server": "2.0.0-alpha.40",
     "resolve-url-loader": "^2.1.0",
     "sass-lint": "^1.10.2",
     "sass-loader": "^6.0.6",
