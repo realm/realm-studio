@@ -1,6 +1,6 @@
 {
   "name": "realm-studio",
-  "version": "0.0.1-alpha.10",
+  "version": "0.0.1-alpha.11",
   "description": "A tool for everything Realm.",
   "author": "Realm Inc.",
   "repository": "https://github.com/realm/realm-studio",
@@ -85,7 +85,7 @@
     "react-virtualized": "^9.9.0",
     "lodash": "^4.17.4",
     "reactstrap": "^4.8.0",
-    "realm": "2.0.0-rc13"
+    "realm": "2.0.0-rc14"
   },
   "devDependencies": {
     "@types/classnames": "^2.2.3",
