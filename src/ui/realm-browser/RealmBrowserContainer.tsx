@@ -149,10 +149,9 @@ export class RealmBrowserContainer extends React.Component<
     object: any,
     property: Realm.ObjectSchemaProperty,
     value: any,
-    rowIndex: number,
-    columnIndex: number,
+    index: number,
   ) => {
-    this.setState({ rowToHighlight: rowIndex, columnToHighlight: columnIndex });
+    this.setState({ rowToHighlight: index });
 
     if (this.clickTimeout) {
       clearTimeout(this.clickTimeout);
@@ -179,7 +178,7 @@ export class RealmBrowserContainer extends React.Component<
         property,
       };
       this.setState({ list, selectedSchemaName: 'list', rowToHighlight: null });
-    } else {
+    } else if (property.type === 'object') {
       if (value) {
         const index = this.realm
           .objects(property.objectType || '')
@@ -190,6 +189,16 @@ export class RealmBrowserContainer extends React.Component<
           rowToHighlight: index,
         });
       }
+    }
+  };
+
+  public onCellDoubleClick = (
+    object: any,
+    property: Realm.ObjectSchemaProperty,
+    value: any,
+  ) => {
+    if (property.type === 'object') {
+      this.openSelectObject(object, property);
     }
   };
 

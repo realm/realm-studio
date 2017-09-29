@@ -12,37 +12,56 @@ export interface IProps {
   optional: boolean;
 }
 
-export const SelectObject = ({
-  status,
-  schema,
-  data,
-  close,
-  updateReference,
-  schemaName,
-  optional,
-}: IProps) => (
-  <Modal size="lg" isOpen={status} toggle={close} className="ConfirmModal">
-    <ModalHeader toggle={close}>Select a new {schemaName}</ModalHeader>
-    <ModalBody className="RealmBrowser__SelectObject">
-      {data &&
-        schema && (
-          <ContentContainer
-            schema={schema}
-            data={data}
-            onRowClick={updateReference}
-            onListCellClick={updateReference}
-          />
-        )}
-    </ModalBody>
-    <ModalFooter>
-      {optional && (
-        <Button color="primary" onClick={() => updateReference(null)}>
-          Set to null
-        </Button>
-      )}
-      <Button color="secondary" onClick={close}>
-        Close
-      </Button>
-    </ModalFooter>
-  </Modal>
-);
+export interface IState {
+  rowToHighlight?: number;
+  objectToAdd?: Realm.ObjectSchema;
+}
+
+export class SelectObject extends React.Component<IProps, IState> {
+  public state = {
+    rowToHighlight: undefined,
+    objectToAdd: undefined,
+  };
+
+  public onCellClick = (
+    object: any,
+    property: Realm.ObjectSchemaProperty,
+    value: any,
+    index: number,
+  ) => {
+    this.setState({ rowToHighlight: index, objectToAdd: object });
+  };
+
+  public setNewValue = () => this.props.updateReference(this.state.objectToAdd);
+
+  public render() {
+    const { status, schema, data, close, schemaName, optional } = this.props;
+    const { rowToHighlight, objectToAdd } = this.state;
+    return (
+      <Modal size="lg" isOpen={status} toggle={close} className="ConfirmModal">
+        <ModalHeader toggle={close}>Select a new {schemaName}</ModalHeader>
+        <ModalBody className="RealmBrowser__SelectObject">
+          {data &&
+            schema && (
+              <ContentContainer
+                schema={schema}
+                data={data}
+                onCellClick={this.onCellClick}
+                rowToHighlight={rowToHighlight}
+              />
+            )}
+        </ModalBody>
+        <ModalFooter>
+          {optional && (
+            <Button color="primary" onClick={this.setNewValue}>
+              Set {!objectToAdd && 'to null'}
+            </Button>
+          )}
+          <Button color="secondary" onClick={close}>
+            Close
+          </Button>
+        </ModalFooter>
+      </Modal>
+    );
+  }
+}
