@@ -38,10 +38,12 @@ export const RealmBrowser = ({
     object: any,
     property: Realm.ObjectSchemaProperty,
     value: any,
-    index: number,
+    rowIndex: number,
+    columnIndex: number,
   ) => void;
   schemas: Realm.ObjectSchema[];
   rowToHighlight: number | null;
+  columnToHighlight?: number;
   selectedSchemaName?: string | null;
   list: IList | null;
   onContextMenu: (
@@ -74,6 +76,7 @@ export const RealmBrowser = ({
           schema={getSelectedSchema()}
           onCellChange={onCellChange}
           onCellClick={onCellClick}
+          columnToHighlight={columnToHighlight}
           rowToHighlight={rowToHighlight}
           data={values}
           onContextMenu={onContextMenu}

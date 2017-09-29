@@ -11,10 +11,12 @@ export interface IContentContainerProps {
     object: any,
     property: Realm.ObjectSchemaProperty,
     value: any,
-    index: number,
+    rowIndex: number,
+    columnIndex: number,
   ) => void;
   schema: Realm.ObjectSchema | null;
   rowToHighlight?: number | null;
+  columnToHighlight?: number;
   data: Realm.Results<any> | any;
   onContextMenu?: (
     e: React.SyntheticEvent<any>,
