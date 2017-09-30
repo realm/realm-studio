@@ -25,11 +25,11 @@ export interface IList {
 
 export interface IState {
   schemas: Realm.ObjectSchema[];
-  list: IList | null;
-  selectedSchemaName?: string | null;
-  rowToHighlight: number | null;
+  list?: IList;
+  selectedSchemaName?: string;
+  rowToHighlight?: number;
   columnToHighlight?: number;
-  confirmModal: {
+  confirmModal?: {
     yes: () => void;
     no: () => void;
   };
@@ -60,12 +60,12 @@ export class RealmBrowserContainer extends React.Component<
     super();
     this.state = {
       schemas: [],
-      list: null,
-      selectedSchemaName: null,
-      rowToHighlight: null,
+      list: undefined,
+      selectedSchemaName: undefined,
+      rowToHighlight: undefined,
       columnToHighlight: undefined,
       contextMenu: null,
-      confirmModal: null,
+      confirmModal: undefined,
       selectObject: null,
     };
   }
@@ -181,7 +181,7 @@ export class RealmBrowserContainer extends React.Component<
       this.setState({
         list,
         selectedSchemaName: 'list',
-        rowToHighlight: null,
+        rowToHighlight: undefined,
         columnToHighlight: undefined,
       });
     } else if (property.type === 'object') {
@@ -191,7 +191,7 @@ export class RealmBrowserContainer extends React.Component<
           .indexOf(value);
         this.setState({
           selectedSchemaName: property.objectType,
-          list: null,
+          list: undefined,
           rowToHighlight: index,
           columnToHighlight: 0,
         });
@@ -222,12 +222,7 @@ export class RealmBrowserContainer extends React.Component<
       ? list.data.indexOf(object)
       : this.realm.objects(object.objectSchema().name).indexOf(object);
 
-    const actions = [
-      {
-        label: 'Delete',
-        onClick: () => this.openConfirmModal(object),
-      },
-    ];
+    const actions = [];
 
     if (property.type === 'object') {
       actions.push({
@@ -235,6 +230,11 @@ export class RealmBrowserContainer extends React.Component<
         onClick: () => this.openSelectObject(object, property),
       });
     }
+
+    actions.push({
+      label: 'Delete',
+      onClick: () => this.openConfirmModal(object),
+    });
 
     this.setState({
       rowToHighlight: index,

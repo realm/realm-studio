@@ -15,7 +15,7 @@ export interface IContentContainerProps {
     columnIndex: number,
   ) => void;
   schema: Realm.ObjectSchema | null;
-  rowToHighlight?: number | null;
+  rowToHighlight?: number;
   columnToHighlight?: number;
   data: Realm.Results<any> | any;
   onContextMenu?: (
