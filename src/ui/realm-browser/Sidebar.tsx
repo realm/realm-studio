@@ -16,9 +16,9 @@ export const Sidebar = ({
 }: {
   onSchemaSelected: (name: string, objectToScroll?: any) => void;
   schemas: Realm.ObjectSchema[];
-  selectedSchemaName?: string | null;
+  selectedSchemaName?: string;
   getSchemaLength: (name: string) => number;
-  list: IList | null;
+  list?: IList;
 }) => (
   <div className="RealmBrowser__Sidebar">
     <div className="RealmBrowser__Sidebar__Header">Classes</div>

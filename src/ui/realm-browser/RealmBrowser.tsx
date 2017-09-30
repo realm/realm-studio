@@ -6,6 +6,7 @@ import { ContextMenu } from '../reusable/context-menu';
 import { ContentContainer } from './ContentContainer';
 import './RealmBrowser.scss';
 import { IList } from './RealmBrowserContainer';
+import { SelectObject } from './SelectObject';
 import { Sidebar } from './Sidebar';
 
 export const RealmBrowser = ({
@@ -13,9 +14,10 @@ export const RealmBrowser = ({
   getSelectedSchema,
   onCellChange,
   onSchemaSelected,
-  onListCellClick,
+  onCellClick,
   schemas,
   rowToHighlight,
+  columnToHighlight,
   getSelectedData,
   selectedSchemaName,
   list,
@@ -23,28 +25,41 @@ export const RealmBrowser = ({
   contextMenu,
   onContextMenuClose,
   confirmModal,
+  selectObject,
+  closeSelectObject,
+  updateObjectReference,
 }: {
   getSchemaLength: (name: string) => number;
   getSelectedData: () => any;
   getSelectedSchema: () => Realm.ObjectSchema | null;
   onCellChange: (object: any, propertyName: string, value: string) => void;
   onSchemaSelected: (name: string, objectToScroll: any) => void;
-  onListCellClick: (
+  onCellClick: (
     object: any,
     property: Realm.ObjectSchemaProperty,
     value: any,
+    rowIndex: number,
+    columnIndex: number,
   ) => void;
   schemas: Realm.ObjectSchema[];
-  rowToHighlight: number | null;
-  selectedSchemaName?: string | null;
-  list: IList | null;
-  onContextMenu: (e: React.SyntheticEvent<any>, object: any) => void;
+  rowToHighlight?: number;
+  columnToHighlight?: number;
+  selectedSchemaName?: string;
+  list?: IList;
+  onContextMenu: (
+    e: React.SyntheticEvent<any>,
+    object: any,
+    property: Realm.ObjectSchemaProperty,
+  ) => void;
   contextMenu: any;
   onContextMenuClose: () => void;
-  confirmModal: {
+  confirmModal?: {
     yes: () => void;
     no: () => void;
-  } | null;
+  };
+  selectObject?: any;
+  closeSelectObject: () => void;
+  updateObjectReference: (object: any) => void;
 }) => {
   const values = getSelectedData();
   return (
@@ -60,7 +75,8 @@ export const RealmBrowser = ({
         <ContentContainer
           schema={getSelectedSchema()}
           onCellChange={onCellChange}
-          onListCellClick={onListCellClick}
+          onCellClick={onCellClick}
+          columnToHighlight={columnToHighlight}
           rowToHighlight={rowToHighlight}
           data={values}
           onContextMenu={onContextMenu}
@@ -76,6 +92,17 @@ export const RealmBrowser = ({
           status={true}
           yes={confirmModal.yes}
           no={confirmModal.no}
+        />
+      )}
+      {selectObject && (
+        <SelectObject
+          status={true}
+          schema={selectObject.schema}
+          data={selectObject.data}
+          optional={selectObject.optional}
+          schemaName={selectObject.schemaName}
+          updateReference={updateObjectReference}
+          close={closeSelectObject}
         />
       )}
     </div>

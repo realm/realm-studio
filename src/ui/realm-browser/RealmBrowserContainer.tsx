@@ -25,18 +25,27 @@ export interface IList {
 
 export interface IState {
   schemas: Realm.ObjectSchema[];
-  list: IList | null;
-  selectedSchemaName?: string | null;
-  rowToHighlight: number | null;
-  confirmModal: {
+  list?: IList;
+  selectedSchemaName?: string;
+  rowToHighlight?: number;
+  columnToHighlight?: number;
+  confirmModal?: {
     yes: () => void;
     no: () => void;
-  } | null;
+  };
   contextMenu: {
     x: number;
     y: number;
     object: any;
     actions: IContextMenuAction[];
+  } | null;
+  selectObject?: {
+    schema: Realm.ObjectSchema | null;
+    data: Realm.Results<any> | any;
+    property: any;
+    schemaName: string;
+    object: any;
+    optional: boolean;
   } | null;
 }
 
@@ -45,16 +54,19 @@ export class RealmBrowserContainer extends React.Component<
   IState
 > {
   private realm: Realm;
+  private clickTimeout?: any;
 
   constructor() {
     super();
     this.state = {
       schemas: [],
-      list: null,
-      selectedSchemaName: null,
-      rowToHighlight: null,
+      list: undefined,
+      selectedSchemaName: undefined,
+      rowToHighlight: undefined,
+      columnToHighlight: undefined,
       contextMenu: null,
-      confirmModal: null,
+      confirmModal: undefined,
+      selectObject: null,
     };
   }
 
@@ -106,8 +118,12 @@ export class RealmBrowserContainer extends React.Component<
     if (selectedSchemaName !== name) {
       const rowToHighlight = objectToScroll
         ? this.realm.objects(name).indexOf(objectToScroll)
-        : null;
-      this.setState({ selectedSchemaName: name, list: null, rowToHighlight });
+        : undefined;
+      this.setState({
+        selectedSchemaName: name,
+        list: undefined,
+        rowToHighlight,
+      });
     }
   };
 
@@ -129,7 +145,28 @@ export class RealmBrowserContainer extends React.Component<
     }
   };
 
-  public onListCellClick = (
+  public onCellClick = (
+    object: any,
+    property: Realm.ObjectSchemaProperty,
+    value: any,
+    rowIndex: number,
+    columnIndex: number,
+  ) => {
+    this.setState({ rowToHighlight: rowIndex, columnToHighlight: columnIndex });
+
+    if (this.clickTimeout) {
+      clearTimeout(this.clickTimeout);
+      this.onCellDoubleClick(object, property, value);
+      this.clickTimeout = null;
+    } else {
+      this.clickTimeout = setTimeout(() => {
+        this.onCellSingleClick(object, property, value);
+        this.clickTimeout = null;
+      }, 200);
+    }
+  };
+
+  public onCellSingleClick = (
     object: any,
     property: Realm.ObjectSchemaProperty,
     value: any,
@@ -141,20 +178,42 @@ export class RealmBrowserContainer extends React.Component<
         parent: object,
         property,
       };
-      this.setState({ list, selectedSchemaName: 'list', rowToHighlight: null });
-    } else {
-      const index = this.realm
-        .objects(property.objectType || '')
-        .indexOf(value);
       this.setState({
-        selectedSchemaName: property.objectType,
-        list: null,
-        rowToHighlight: index,
+        list,
+        selectedSchemaName: 'list',
+        rowToHighlight: undefined,
+        columnToHighlight: undefined,
       });
+    } else if (property.type === 'object') {
+      if (value) {
+        const index = this.realm
+          .objects(property.objectType || '')
+          .indexOf(value);
+        this.setState({
+          selectedSchemaName: property.objectType,
+          list: undefined,
+          rowToHighlight: index,
+          columnToHighlight: 0,
+        });
+      }
     }
   };
 
-  public onContextMenu = (e: React.MouseEvent<any>, object: any) => {
+  public onCellDoubleClick = (
+    object: any,
+    property: Realm.ObjectSchemaProperty,
+    value: any,
+  ) => {
+    if (property.type === 'object') {
+      this.openSelectObject(object, property);
+    }
+  };
+
+  public onContextMenu = (
+    e: React.MouseEvent<any>,
+    object: any,
+    property: Realm.ObjectSchemaProperty,
+  ) => {
     e.preventDefault();
 
     const { list } = this.state;
@@ -163,35 +222,81 @@ export class RealmBrowserContainer extends React.Component<
       ? list.data.indexOf(object)
       : this.realm.objects(object.objectSchema().name).indexOf(object);
 
+    const actions = [];
+
+    if (property.type === 'object') {
+      actions.push({
+        label: 'Update reference',
+        onClick: () => this.openSelectObject(object, property),
+      });
+    }
+
+    actions.push({
+      label: 'Delete',
+      onClick: () => this.openConfirmModal(object),
+    });
+
     this.setState({
       rowToHighlight: index,
       contextMenu: {
         x: e.clientX,
         y: e.clientY,
         object,
-        actions: [
-          { label: 'Delete', onClick: () => this.openConfirmModal(object) },
-        ],
+        actions,
       },
     });
+  };
+
+  public openSelectObject = (object: any, property: any) => {
+    const { schemas } = this.state;
+
+    const objectSchema =
+      schemas.find(schema => schema.name === property.objectType) || null;
+    const data = this.realm.objects(property.objectType) || null;
+
+    this.setState({
+      selectObject: {
+        property,
+        object,
+        optional: property.optional,
+        schemaName: property.objectType,
+        schema: objectSchema,
+        data,
+      },
+    });
+  };
+
+  public updateObjectReference = (reference: any) => {
+    const { selectObject } = this.state;
+    if (selectObject) {
+      const { property, object } = selectObject;
+      this.realm.write(() => {
+        object[property.name] = reference;
+      });
+      this.setState({ selectObject: null });
+    }
+  };
+
+  public closeSelectObject = () => {
+    this.setState({ selectObject: null });
   };
 
   public openConfirmModal = (object: any) => {
     this.setState({
       confirmModal: {
         yes: () => this.deleteObject(object),
-        no: () => this.setState({ confirmModal: null }),
+        no: () => this.setState({ confirmModal: undefined }),
       },
     });
   };
 
   public deleteObject = (object: Realm.Object) => {
     this.realm.write(() => this.realm.delete(object));
-    this.setState({ rowToHighlight: null, confirmModal: null });
+    this.setState({ rowToHighlight: undefined, confirmModal: undefined });
   };
 
   public onContextMenuClose = (): void => {
-    this.setState({ contextMenu: null, rowToHighlight: null });
+    this.setState({ contextMenu: null });
   };
 
   private async initializeLocalRealm(options: ILocalRealmBrowserOptions) {

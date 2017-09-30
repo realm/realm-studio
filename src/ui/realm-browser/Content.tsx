@@ -15,7 +15,7 @@ export const Content = ({
   gridContentRef,
   gridHeaderRef,
   onCellChange,
-  onListCellClick,
+  onCellClick,
   onColumnWidthChanged,
   schema,
   rowToHighlight,
@@ -29,21 +29,27 @@ export const Content = ({
   columnWidths: number[];
   gridContentRef: (grid: Grid) => void;
   gridHeaderRef: (grid: Grid) => void;
-  onCellChange: (object: any, propertyName: string, value: string) => void;
-  onListCellClick: (
+  onCellChange?: (object: any, propertyName: string, value: string) => void;
+  onCellClick?: (
     object: any,
     property: Realm.ObjectSchemaProperty,
     value: any,
+    rowIndex: number,
+    columnIndex: number,
   ) => void;
   onColumnWidthChanged: (index: number, width: number) => void;
   schema: Realm.ObjectSchema | null;
-  rowToHighlight: number | null;
+  rowToHighlight?: number;
   data: Realm.Results<any> | any;
   query: string | null;
   onQueryChange: (e: React.SyntheticEvent<any>) => void;
   sort: string | null;
   onSortClick: (property: string) => void;
-  onContextMenu: (e: React.SyntheticEvent<any>, object: any) => void;
+  onContextMenu?: (
+    e: React.SyntheticEvent<any>,
+    object: any,
+    property: Realm.ObjectSchemaProperty,
+  ) => void;
 }) => {
   if (schema) {
     // Generate the columns from the schemas properties
@@ -64,24 +70,25 @@ export const Content = ({
         style: React.CSSProperties;
       }) => {
         const object = data[rowIndex];
+
         return (
           <Cell
             key={key}
             width={columnWidths[columnIndex]}
             style={style}
-            onListCellClick={(
+            onCellClick={(
               property: Realm.ObjectSchemaProperty, // tslint:disable-line:no-shadowed-variable
               value: any,
-            ) => {
-              onListCellClick(object, property, value);
-            }}
+            ) =>
+              onCellClick &&
+              onCellClick(object, property, value, rowIndex, columnIndex)}
             value={object[propertyName]}
             property={property}
-            onUpdateValue={value => {
-              onCellChange(object, propertyName, value);
-            }}
+            onUpdateValue={value =>
+              onCellChange && onCellChange(object, propertyName, value)}
             isHighlight={rowToHighlight === rowIndex}
-            onContextMenu={e => onContextMenu(e, object)}
+            onContextMenu={e =>
+              onContextMenu && onContextMenu(e, object, property)}
           />
         );
       };

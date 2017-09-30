@@ -6,16 +6,23 @@ import { Content } from './Content';
 const MINIMUM_COLUMN_WIDTH = 20;
 
 export interface IContentContainerProps {
-  onCellChange: (object: any, propertyName: string, value: string) => void;
-  onListCellClick: (
+  onCellChange?: (object: any, propertyName: string, value: string) => void;
+  onCellClick?: (
     object: any,
     property: Realm.ObjectSchemaProperty,
     value: any,
+    rowIndex: number,
+    columnIndex: number,
   ) => void;
   schema: Realm.ObjectSchema | null;
-  rowToHighlight: number | null;
+  rowToHighlight?: number;
+  columnToHighlight?: number;
   data: Realm.Results<any> | any;
-  onContextMenu: (e: React.SyntheticEvent<any>, object: any) => void;
+  onContextMenu?: (
+    e: React.SyntheticEvent<any>,
+    object: any,
+    property: Realm.ObjectSchemaProperty,
+  ) => void;
 }
 
 export class ContentContainer extends React.Component<
@@ -84,6 +91,12 @@ export class ContentContainer extends React.Component<
     );
   }
 
+  public componentWillMount() {
+    if (this.props.schema) {
+      this.setDefaultColumnWidths(this.props.schema);
+    }
+  }
+
   public componentWillReceiveProps(props: IContentContainerProps) {
     if (props.schema && this.props.schema !== props.schema) {
       this.setDefaultColumnWidths(props.schema);
@@ -95,10 +108,11 @@ export class ContentContainer extends React.Component<
     if (
       this.gridContent &&
       this.props.rowToHighlight &&
-      this.props.rowToHighlight !== prevProps.rowToHighlight
+      (this.props.rowToHighlight !== prevProps.rowToHighlight ||
+        this.props.columnToHighlight !== prevProps.columnToHighlight)
     ) {
       this.gridContent.scrollToCell({
-        columnIndex: 0,
+        columnIndex: this.props.columnToHighlight || 0,
         rowIndex: this.props.rowToHighlight,
       });
     }
