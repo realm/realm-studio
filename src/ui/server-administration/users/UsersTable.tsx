@@ -10,6 +10,7 @@ import { Button } from 'reactstrap';
 
 import { IRealmFile, IUser, IUserMetadataRow } from '../../../services/ros';
 
+import { LoadingOverlay } from '../../reusable/loading-overlay';
 import { ChangePasswordDialogContainer } from './ChangePasswordDialogContainer';
 import { CreateUserDialogContainer } from './CreateUserDialogContainer';
 import { UserRole, UserSidebarContainer } from './UserSidebarContainer';
@@ -22,6 +23,7 @@ export const UsersTable = ({
   getUserFromId,
   getUsersMetadatas,
   getUsersRealms,
+  hasLoaded,
   isChangePasswordOpen,
   isCreateUserOpen,
   onUserChangePassword,
@@ -42,6 +44,7 @@ export const UsersTable = ({
   getUserFromId: (userId: string) => IUser | null;
   getUsersMetadatas: (userId: string) => IUserMetadataRow[];
   getUsersRealms: (userId: string) => IRealmFile[];
+  hasLoaded: boolean;
   isChangePasswordOpen: boolean;
   isCreateUserOpen: boolean;
   onUserChangePassword: (userId: string) => void;
@@ -150,6 +153,8 @@ export const UsersTable = ({
         toggle={toggleCreateUser}
         onUserCreated={onUserCreated}
       />
+
+      <LoadingOverlay loading={!hasLoaded} fade={true} />
     </div>
   );
 };

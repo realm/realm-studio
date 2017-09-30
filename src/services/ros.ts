@@ -50,7 +50,7 @@ const getRealmUrl = (user: Realm.Sync.User, path: string) => {
 
 export const timeoutPromise = (
   url: string,
-  delay: number = 5000,
+  delay: number = 2000,
 ): Promise<Realm> => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
@@ -62,7 +62,6 @@ export const timeoutPromise = (
 export const getAdminRealm = (user: Realm.Sync.User): Promise<Realm> => {
   const url = getRealmUrl(user, '__admin');
   const realm = Realm.open({
-    path: './data/__admin.realm',
     sync: {
       url,
       user,

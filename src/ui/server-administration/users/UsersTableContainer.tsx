@@ -4,13 +4,13 @@ import * as Realm from 'realm';
 
 import {
   createUser,
-  getAdminRealm,
   IRealmFile,
   IUser,
   IUserMetadataRow,
   updateUserPassword,
 } from '../../../services/ros';
 import { showError } from '../../reusable/errors';
+import { AdminRealmLoadingComponent } from '../AdminRealmLoadingComponent';
 
 import { UserRole, UsersTable } from './UsersTable';
 
@@ -19,37 +19,26 @@ export interface IUsersTableContainerProps {
 }
 
 export interface IUsersTableContainerState {
+  hasLoaded: boolean;
   isChangePasswordOpen: boolean;
   isCreateUserOpen: boolean;
-  users: Realm.Results<IUser> | null;
   selectedUserId: string | null;
+  users: Realm.Results<IUser> | null;
 }
 
-export class UsersTableContainer extends React.Component<
+export class UsersTableContainer extends AdminRealmLoadingComponent<
   IUsersTableContainerProps,
   IUsersTableContainerState
 > {
-  private adminRealm: Realm;
-
   constructor() {
     super();
     this.state = {
+      hasLoaded: false,
       isChangePasswordOpen: false,
       isCreateUserOpen: false,
-      users: null,
       selectedUserId: null,
+      users: null,
     };
-  }
-
-  public async componentDidMount() {
-    await this.initializeRealms();
-  }
-
-  public componentWillUnmount() {
-    // Remove any existing a change listeners
-    if (this.adminRealm) {
-      this.adminRealm.removeListener('change', this.onUsersChanged);
-    }
   }
 
   public componentDidUpdate(
@@ -58,17 +47,16 @@ export class UsersTableContainer extends React.Component<
   ) {
     // Fetch the users realm from ROS
     if (prevProps.user !== this.props.user) {
-      this.initializeRealms();
+      this.cancelLoadingRealms();
+      this.initializeRealm();
     }
   }
 
   public render() {
     return (
       <UsersTable
-        isChangePasswordOpen={this.state.isChangePasswordOpen}
-        isCreateUserOpen={this.state.isCreateUserOpen}
-        selectedUserId={this.state.selectedUserId}
         userCount={this.state.users ? this.state.users.length : 0}
+        {...this.state}
         {...this}
       />
     );
@@ -210,41 +198,15 @@ export class UsersTableContainer extends React.Component<
     }
   };
 
-  private async initializeRealms() {
-    // Remove any existing a change listeners
-    if (this.adminRealm) {
-      this.adminRealm.removeListener('change', this.onUsersChanged);
-    }
-
-    try {
-      // Get the realms from the ROS interface
-      this.adminRealm = await getAdminRealm(this.props.user);
-
-      // Register change listeners
-      this.adminRealm.addListener('change', this.onUsersChanged);
-
-      // Update the users state
-      this.updateUsers();
-    } catch (err) {
-      showError('Could not open the synchronized realms', err);
-    }
-  }
-
-  private updateUsers() {
-    // Get the users
-    const users = this.adminRealm.objects<IUser>('User').sorted('userId');
-    // Set the state
-    this.setState({
-      users,
-    });
-  }
-
-  private onUsersChanged = () => {
+  protected onAdminRealmChanged = () => {
     this.forceUpdate();
   };
 
-  private onRealmsChanged = () => {
-    this.forceUpdate();
+  protected onAdminRealmLoaded = () => {
+    // Get the users and save them in the state
+    this.setState({
+      users: this.adminRealm.objects<IUser>('User').sorted('userId'),
+    });
   };
 
   private confirmUserDeletion(userId: string): Promise<boolean> {
