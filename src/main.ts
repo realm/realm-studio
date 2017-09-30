@@ -1,10 +1,20 @@
-import { dialog } from 'electron';
+import { app, dialog } from 'electron';
+import * as fs from 'fs-extra';
+import * as path from 'path';
+
 import Application from './main/application';
 
 // TODO: Submit these to a service like opbeat instead.
 process.on('uncaughtException', error => {
   dialog.showErrorBox('Uncaught exception', `${error.message}: ${error.stack}`);
 });
+
+// Create a directory for the renderer processes to create directories in
+const userDataPath = app.getPath('userData');
+const processDir = path.resolve(userDataPath, 'realm-studio');
+if (!fs.existsSync(processDir)) {
+  fs.mkdir(processDir);
+}
 
 const isProduction = process.env.NODE_ENV === 'production';
 
