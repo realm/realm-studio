@@ -39,7 +39,7 @@ export const Content = ({
   ) => void;
   onColumnWidthChanged: (index: number, width: number) => void;
   schema: Realm.ObjectSchema | null;
-  rowToHighlight?: number | null;
+  rowToHighlight?: number;
   data: Realm.Results<any> | any;
   query: string | null;
   onQueryChange: (e: React.SyntheticEvent<any>) => void;
