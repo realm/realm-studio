@@ -1,6 +1,6 @@
 {
   "name": "realm-studio",
-  "version": "0.0.1-alpha.11",
+  "version": "0.0.1-alpha.13",
   "description": "A tool for everything Realm.",
   "author": "Realm Inc.",
   "repository": "https://github.com/realm/realm-studio",
@@ -86,7 +86,7 @@
     "react-draggable": "^3.0.3",
     "react-virtualized": "^9.9.0",
     "reactstrap": "^4.8.0",
-    "realm": "2.0.0-rc14"
+    "realm": "2.0.0-rc16"
   },
   "devDependencies": {
     "@types/classnames": "^2.2.3",
@@ -114,7 +114,7 @@
     "null-loader": "^0.1.1",
     "prettier": "^1.7.1",
     "react-hot-loader": "^3.0.0-beta.7",
-    "realm-object-server": "2.0.0-alpha.40",
+    "realm-object-server": "2.0.0-alpha.42",
     "resolve-url-loader": "^2.1.0",
     "sass-lint": "^1.10.2",
     "sass-loader": "^6.0.6",
