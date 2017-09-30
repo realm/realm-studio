@@ -22,7 +22,7 @@ fs.mkdirSync(processDir);
 // Change to it
 process.chdir(processDir);
 // Make sure directory is removed when process / window is closed
-process.on('exit', () => {
+window.addEventListener('beforeunload', e => {
   fs.removeSync(processDir);
 });
 
