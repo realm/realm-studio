@@ -1,13 +1,30 @@
 import * as electron from 'electron';
+import * as fs from 'fs-extra';
+import * as path from 'path';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
+// Create and change working directory to aviod conflicts of opening two realms twice
 // FIXME: see https://github.com/realm/realm-js/issues/818
 // This needs to happen before realm is loaded
+
+// Generating a path for this process
 const userDataPath = electron.remote.app.getPath('userData');
-process.chdir(userDataPath);
+const processDir = path.resolve(
+  userDataPath,
+  'realm-studio',
+  process.pid.toString(),
+);
+// Create the directory
+fs.mkdirSync(processDir);
+// Change to it
+process.chdir(processDir);
+// Make sure directory is removed when process / window is closed
+process.on('exit', () => {
+  fs.removeSync(processDir);
+});
 
 // Make sync only report errors
 import * as Realm from 'realm';

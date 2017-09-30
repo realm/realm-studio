@@ -2,12 +2,7 @@ import * as electron from 'electron';
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import {
-  getAdminRealm,
-  IRealmFile,
-  IUser,
-  IUserMetadataRow,
-} from '../../../services/ros';
+import { IRealmFile, IUser, IUserMetadataRow } from '../../../services/ros';
 
 import { UserRole, UserSidebar } from './UserSidebar';
 export { UserRole };

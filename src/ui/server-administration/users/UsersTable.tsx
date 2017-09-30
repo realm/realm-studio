@@ -11,6 +11,7 @@ import { Button } from 'reactstrap';
 import { IRealmFile, IUser, IUserMetadataRow } from '../../../services/ros';
 
 import { LoadingOverlay } from '../../reusable/loading-overlay';
+import { ILoadingProgress } from '../../reusable/RealmLoadingComponent';
 import { ChangePasswordDialogContainer } from './ChangePasswordDialogContainer';
 import { CreateUserDialogContainer } from './CreateUserDialogContainer';
 import { UserRole, UserSidebarContainer } from './UserSidebarContainer';
@@ -23,7 +24,6 @@ export const UsersTable = ({
   getUserFromId,
   getUsersMetadatas,
   getUsersRealms,
-  hasLoaded,
   isChangePasswordOpen,
   isCreateUserOpen,
   onUserChangePassword,
@@ -35,6 +35,7 @@ export const UsersTable = ({
   onUserPasswordChanged,
   onUserRoleChanged,
   onUserSelected,
+  progress,
   selectedUserId,
   toggleChangePassword,
   toggleCreateUser,
@@ -44,7 +45,6 @@ export const UsersTable = ({
   getUserFromId: (userId: string) => IUser | null;
   getUsersMetadatas: (userId: string) => IUserMetadataRow[];
   getUsersRealms: (userId: string) => IRealmFile[];
-  hasLoaded: boolean;
   isChangePasswordOpen: boolean;
   isCreateUserOpen: boolean;
   onUserChangePassword: (userId: string) => void;
@@ -61,6 +61,7 @@ export const UsersTable = ({
   onUserPasswordChanged: (userId: string, password: string) => void;
   onUserRoleChanged: (userId: string, role: UserRole) => void;
   onUserSelected: (userId: string | null) => void;
+  progress: ILoadingProgress;
   selectedUserId: string | null;
   toggleChangePassword: () => void;
   toggleCreateUser: () => void;
@@ -154,7 +155,7 @@ export const UsersTable = ({
         onUserCreated={onUserCreated}
       />
 
-      <LoadingOverlay loading={!hasLoaded} fade={true} />
+      <LoadingOverlay progress={progress} fade={true} />
     </div>
   );
 };

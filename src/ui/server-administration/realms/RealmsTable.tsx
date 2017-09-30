@@ -9,25 +9,26 @@ import {
 
 import { IRealmFile } from '../../../services/ros';
 import { LoadingOverlay } from '../../reusable/loading-overlay';
+import { ILoadingProgress } from '../../reusable/RealmLoadingComponent';
 
 import './RealmsTable.scss';
 
 export const RealmsTable = ({
   getRealm,
   getRealmFromId,
-  hasLoaded,
   onRealmDeleted,
   onRealmOpened,
   onRealmSelected,
+  progress,
   realmCount,
   selectedRealmPath,
 }: {
   getRealm: (index: number) => IRealmFile | null;
   getRealmFromId: (path: string) => IRealmFile | null;
-  hasLoaded: boolean;
   onRealmDeleted: (path: string) => void;
   onRealmOpened: (path: string) => void;
   onRealmSelected: (path: string | null) => void;
+  progress: ILoadingProgress;
   realmCount: number;
   selectedRealmPath: string | null;
 }) => {
@@ -63,7 +64,7 @@ export const RealmsTable = ({
         </AutoSizer>
       </div>
 
-      <LoadingOverlay loading={!hasLoaded} fade={true} />
+      <LoadingOverlay progress={progress} fade={true} />
     </div>
   );
 };

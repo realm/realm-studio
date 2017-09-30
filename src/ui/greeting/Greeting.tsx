@@ -35,9 +35,10 @@ export const Greeting = ({
           className="Greeting__Action"
           onClick={onConnectToServer}
           disabled={!isSyncEnabled}
-          title={isSyncEnabled ?
-            "Click to connect to Realm Object Server" :
-            `This feature is currently not available on ${os.type()}`
+          title={
+            isSyncEnabled
+              ? 'Click to connect to Realm Object Server'
+              : `This feature is currently not available on ${os.type()}`
           }
         >
           Connect to Realm Object Server

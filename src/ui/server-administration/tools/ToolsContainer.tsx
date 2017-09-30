@@ -1,8 +1,6 @@
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import { getAdminRealm } from '../../../services/ros';
-
 import { Tools } from './Tools';
 
 export class ToolsContainer extends React.Component<

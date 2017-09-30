@@ -1,4 +1,7 @@
 import * as React from 'react';
+import { Progress } from 'reactstrap';
+
+import { ILoadingProgress } from './index';
 
 import './LoadingOverlay.scss';
 
@@ -9,14 +12,20 @@ import './LoadingOverlay.scss';
  */
 export default ({
   loading,
+  progress,
   fade = true,
 }: {
-  loading: boolean;
+  loading?: boolean;
+  progress?: ILoadingProgress;
   fade?: boolean;
 }) => {
   const classNames = ['LoadingOverlay'];
   if (!fade) {
     classNames.push('LoadingOverlay--no-fade');
+  }
+  // If a progress has been supplied, it overrides loading
+  if (progress) {
+    loading = !progress.done;
   }
   return loading ? (
     <div className={classNames.join(' ')}>
@@ -52,6 +61,13 @@ export default ({
           />
         </g>
       </svg>
+      {progress && (
+        <Progress
+          className="LoadingOverlay__Progress"
+          value={progress.transferred}
+          max={progress.transferable}
+        />
+      )}
     </div>
   ) : null;
 };
