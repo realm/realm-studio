@@ -1,3 +1,5 @@
+import { remote as electron } from 'electron';
+import * as path from 'path';
 import * as Realm from 'realm';
 
 export interface IUser {
@@ -42,15 +44,15 @@ export enum AccessLevel {
 
 // These schemas are copied from ROS
 
-const getRealmUrl = (user: Realm.Sync.User, path: string) => {
-  const url = new URL(path, user.server);
+const getRealmUrl = (user: Realm.Sync.User, realmPath: string) => {
+  const url = new URL(realmPath, user.server);
   url.protocol = 'realm:';
   return url.toString();
 };
 
 export const timeoutPromise = (
   url: string,
-  delay: number = 2000,
+  delay: number = 30000,
 ): Promise<Realm> => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
@@ -59,15 +61,25 @@ export const timeoutPromise = (
   });
 };
 
-export const getAdminRealm = (user: Realm.Sync.User): Promise<Realm> => {
-  const url = getRealmUrl(user, '__admin');
+export const getRealm = async (
+  user: Realm.Sync.User,
+  realmPath: string,
+  progressCallback?: Realm.Sync.ProgressNotificationCallback,
+): Promise<Realm> => {
+  const url = getRealmUrl(user, realmPath);
   const realm = Realm.open({
     sync: {
       url,
       user,
     },
   });
-  return Promise.race<Realm>([realm, timeoutPromise(url)]);
+
+  if (progressCallback) {
+    realm.progress(progressCallback);
+  }
+
+  // Return a promise that resolves once the entire synced Realm has been downloaded
+  return await Promise.race<Realm>([realm, timeoutPromise(url)]);
 };
 
 export const createUser = async (

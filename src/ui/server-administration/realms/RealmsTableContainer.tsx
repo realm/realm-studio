@@ -2,9 +2,12 @@ import * as electron from 'electron';
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import { deleteRealm, getAdminRealm, IRealmFile } from '../../../services/ros';
+import { deleteRealm, IRealmFile } from '../../../services/ros';
 import { showError } from '../../reusable/errors';
-import { AdminRealmLoadingComponent } from '../AdminRealmLoadingComponent';
+import {
+  ILoadingProgress,
+  RealmLoadingComponent,
+} from '../../reusable/RealmLoadingComponent';
 
 import { RealmsTable } from './RealmsTable';
 
@@ -14,21 +17,23 @@ export interface IRealmTableContainerProps {
 }
 
 export interface IRealmTableContainerState {
-  hasLoaded: boolean;
   realms: Realm.Results<IRealmFile> | null;
   selectedRealmPath: string | null;
+  progress: ILoadingProgress;
 }
 
-export class RealmsTableContainer extends AdminRealmLoadingComponent<
+export class RealmsTableContainer extends RealmLoadingComponent<
   IRealmTableContainerProps,
   IRealmTableContainerState
 > {
   constructor() {
-    super();
+    super('__admin');
     this.state = {
-      hasLoaded: false,
       realms: null,
       selectedRealmPath: null,
+      progress: {
+        done: false,
+      },
     };
   }
 
@@ -57,7 +62,7 @@ export class RealmsTableContainer extends AdminRealmLoadingComponent<
   };
 
   public getRealmFromId = (path: string): IRealmFile | null => {
-    return this.adminRealm.objectForPrimaryKey<IRealmFile>('RealmFile', path);
+    return this.realm.objectForPrimaryKey<IRealmFile>('RealmFile', path);
   };
 
   public onRealmDeleted = (path: string) => {
@@ -77,14 +82,14 @@ export class RealmsTableContainer extends AdminRealmLoadingComponent<
     });
   };
 
-  protected onAdminRealmChanged = () => {
+  protected onRealmChanged = () => {
     this.forceUpdate();
   };
 
-  protected onAdminRealmLoaded = () => {
+  protected onRealmLoaded = () => {
     // Get the realms and save them in the state
     this.setState({
-      realms: this.adminRealm.objects<IRealmFile>('RealmFile'),
+      realms: this.realm.objects<IRealmFile>('RealmFile'),
     });
   };
 }
