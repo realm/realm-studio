@@ -52,7 +52,7 @@
     "lint:ts": "tslint --project tsconfig.json --type-check 'src/**/*.ts' 'src/**/*.tsx'",
     "lint:sass": "sass-lint -c .sass-lint.yml 'src/**/*.scss' -v",
     "build": "NODE_ENV=production webpack",
-    "electron": "electron ./build/main.bundle.js",
+    "electron": "electron .",
     "dev": "rm -rf ./build && NODE_ENV=develop concurrently --names \"WEBPACK:M,WEBPACK:R,ELECTRON\" \"npm run webpack:main\" \"npm run webpack:renderer\" \"npm run wait-for-bundle && npm run electron\"",
     "dev:ros": "ros start",
     "pack": "rm -rf ./build ./dist && npm run build && npm run electron:pack",
