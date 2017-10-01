@@ -12,20 +12,6 @@ $loading-overlay-background: rgba($color-charcoal, .25);
   }
 }
 
-@keyframes pulsing {
-  0% {
-    transform: scale(.8);
-  }
-
-  15% {
-    transform: scale(1.3);
-  }
-
-  33% {
-    transform: scale(.8);
-  }
-}
-
 .LoadingOverlay {
   align-items: center;
   animation-delay: 0s;
@@ -34,6 +20,7 @@ $loading-overlay-background: rgba($color-charcoal, .25);
   animation-name: fade;
   background: $loading-overlay-background;
   bottom: 0;
+  color: $color-charcoal;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -47,25 +34,6 @@ $loading-overlay-background: rgba($color-charcoal, .25);
     animation-delay: 0s;
     animation-duration: 0s;
     opacity: 1;
-  }
-
-  &__dot-1,
-  &__dot-2,
-  &__dot-3 {
-    animation-duration: 1s;
-    animation-iteration-count: infinite;
-    animation-name: pulsing;
-    color: $color-charcoal;
-    transform: scale(.8);
-    transform-origin: center;
-  }
-
-  &__dot-2 {
-    animation-delay: .33s;
-  }
-
-  &__dot-3 {
-    animation-delay: .66s;
   }
 
   &__Progress {
