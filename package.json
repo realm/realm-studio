@@ -1,5 +1,6 @@
 {
   "name": "realm-studio",
+  "productName": "Realm Studio",
   "version": "1.0.0-alpha.14",
   "description": "A tool for everything Realm.",
   "author": "Realm Inc.",
@@ -7,7 +8,6 @@
   "license": "Apache-2.0",
   "main": "./build/main.bundle.js",
   "build": {
-    "productName": "Realm Studio",
     "appId": "io.realm.realm-studio",
     "directories": {
       "buildResources": "./resources"
