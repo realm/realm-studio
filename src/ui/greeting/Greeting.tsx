@@ -2,8 +2,11 @@ import * as os from 'os';
 import * as React from 'react';
 import { Button } from 'reactstrap';
 
+import { IUpdateStatus } from '../../main/updater';
+
 import realmLogo from 'realm-studio-svgs/realm-logo.svg';
 import { HistoryPanelContainer } from './HistoryPanelContainer';
+import { UpdateStatusIndicator } from './UpdateStatusIndicator';
 
 import './Greeting.scss';
 
@@ -11,11 +14,13 @@ export const Greeting = ({
   isSyncEnabled,
   onConnectToServer,
   onOpenLocalRealm,
+  updateStatus,
   version,
 }: {
   isSyncEnabled: boolean;
   onConnectToServer: () => void;
   onOpenLocalRealm: () => void;
+  updateStatus: IUpdateStatus;
   version: string;
 }) => (
   <div className="Greeting">
@@ -25,7 +30,10 @@ export const Greeting = ({
           <use xlinkHref={realmLogo.url} />
         </svg>
         <h3 className="Greeting__Title">Realm Studio</h3>
-        <p>Version {version}</p>
+        <p>
+          Version {version}
+          {updateStatus && <UpdateStatusIndicator status={updateStatus} />}
+        </p>
       </div>
       <div className="Greeting__Actions">
         <Button className="Greeting__Action" onClick={onOpenLocalRealm}>

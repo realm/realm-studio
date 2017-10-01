@@ -31,6 +31,15 @@ $history-panel-icon-size: 20px;
     margin-top: $spacer;
   }
 
+  &__UpdateStatusIndicator {
+    font-size: .8rem;
+
+    &__dots,
+    &__icon {
+      margin: 0 ($spacer / 4);
+    }
+  }
+
   &__Actions {
     align-items: center;
     display: flex;

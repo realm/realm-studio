@@ -7,10 +7,6 @@ const SpriteLoaderPlugin = require("svg-sprite-loader/plugin");
 const isProduction = process.env.NODE_ENV === "production";
 console.log("Running in", isProduction ? "production" : "development", "mode");
 
-const BUILD_PATH = path.resolve(__dirname, "build");
-
-const version = require("./package.json").version;
-
 const externals = [
   nodeExternals({
     // Anyting related to webpack, we want to keep in the bundle
@@ -48,7 +44,6 @@ const baseConfig = {
     new CheckerPlugin(),
     new webpack.DefinePlugin({
       "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
-      "process.env.REALM_STUDIO_VERSION": JSON.stringify(version || "unknown")
     }),
     new SpriteLoaderPlugin(),
   ].concat(isProduction ? [
@@ -56,7 +51,7 @@ const baseConfig = {
   ] : [
     // Plugins for development
     new webpack.NamedModulesPlugin(),
-    new webpack.HotModuleReplacementPlugin()
+    new webpack.HotModuleReplacementPlugin(),
   ]),
   resolve
 };

@@ -54,20 +54,12 @@ export default class Application {
     if (electron.app.isReady()) {
       this.onReady();
     }
-
-    if (isProduction) {
-      this.updater.checkForUpdates(true);
-    } else {
-      // tslint:disable-next-line:no-console
-      console.info(
-        'Check for updates skipped becaused environment is not production',
-      );
-    }
   }
 
   public destroy() {
     this.removeAppListeners();
     this.removeActionListeners();
+    this.updater.destroy();
     this.windowManager.closeAllWindows();
   }
 
@@ -88,6 +80,12 @@ export default class Application {
     const window = this.windowManager.createWindow(WindowType.Greeting);
     window.once('ready-to-show', () => {
       window.show();
+      // Check for updates
+      this.updater.checkForUpdates(true);
+    });
+    this.updater.addListeningWindow(window);
+    window.once('close', () => {
+      this.updater.removeListeningWindow(window);
     });
   }
 
@@ -173,7 +171,6 @@ export default class Application {
     // this.showOpenLocalRealm();
     // this.showConnectToServer();
     this.showGreeting();
-
     electron.app.focus();
   };
 
