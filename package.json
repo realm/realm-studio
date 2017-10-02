@@ -49,6 +49,7 @@
         "portable"
       ],
       "files": [
+        "build/*",
         "!node_modules/realm/android${/*}",
         "!node_modules/realm/build${/*}",
         "!node_modules/realm/react-native${/*}",
