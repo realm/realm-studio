@@ -1,7 +1,8 @@
 import * as electron from 'electron';
 import * as Realm from 'realm';
 
-import { Actions } from '../actions';
+import { ActionReceiver } from '../actions/ActionReceiver';
+import { MainTransport } from '../actions/transports/MainTransport';
 import {
   ILocalRealmBrowserOptions,
   IRealmBrowserOptions,
@@ -10,6 +11,7 @@ import {
   WindowType,
 } from '../windows/WindowType';
 import MainMenu from './main-menu';
+import { MainActions } from './MainActions';
 import Updater from './updater';
 import WindowManager from './window-manager';
 
@@ -22,34 +24,28 @@ export default class Application {
   private updater = new Updater();
   private windowManager = new WindowManager();
 
-  private actions: {
-    [action: string]: (event: Electron.IpcMessageEvent, ...args: any[]) => void;
-  } = {
-    [Actions.ShowConnectToServer]: (event, ...args) => {
-      this.showConnectToServer();
-      event.returnValue = true;
+  private actionHandlers = {
+    [MainActions.ShowConnectToServer]: () => {
+      return this.showConnectToServer();
     },
-    [Actions.ShowGreeting]: (event, ...args) => {
-      this.showGreeting();
-      event.returnValue = true;
+    [MainActions.ShowGreeting]: () => {
+      return this.showGreeting();
     },
-    [Actions.ShowOpenLocalRealm]: (event, ...args) => {
-      this.showOpenLocalRealm();
-      event.returnValue = true;
+    [MainActions.ShowOpenLocalRealm]: () => {
+      return this.showOpenLocalRealm();
     },
-    [Actions.ShowRealmBrowser]: async (event, ...args) => {
-      await this.showRealmBrowser(args[0] as IRealmBrowserOptions);
-      event.returnValue = true;
+    [MainActions.ShowRealmBrowser]: (options: IRealmBrowserOptions) => {
+      return this.showRealmBrowser(options);
     },
-    [Actions.ShowServerAdministration]: (event, ...args) => {
-      this.showServerAdministration(args[0] as IServerAdministrationOptions);
-      event.returnValue = true;
+    [MainActions.ShowServerAdministration]: (
+      options: IServerAdministrationOptions,
+    ) => {
+      return this.showServerAdministration(options);
     },
   };
 
   public run() {
     this.addAppListeners();
-    this.addActionListeners();
     // If its already ready - the handler won't be called
     if (electron.app.isReady()) {
       this.onReady();
@@ -58,7 +54,6 @@ export default class Application {
 
   public destroy() {
     this.removeAppListeners();
-    this.removeActionListeners();
     this.updater.destroy();
     this.windowManager.closeAllWindows();
   }
@@ -69,68 +64,81 @@ export default class Application {
 
   // Implementation of action handlers below
 
-  public showConnectToServer() {
-    const window = this.windowManager.createWindow(WindowType.ConnectToServer);
-    window.once('ready-to-show', () => {
+  public async showConnectToServer() {
+    return new Promise(resolve => {
+      const window = this.windowManager.createWindow(
+        WindowType.ConnectToServer,
+      );
       window.show();
+      window.webContents.once('did-finish-load', () => {
+        resolve();
+      });
     });
   }
 
   public showGreeting() {
-    const window = this.windowManager.createWindow(WindowType.Greeting);
-    window.once('ready-to-show', () => {
-      window.show();
-      // Check for updates
-      this.updater.checkForUpdates(true);
-    });
-    this.updater.addListeningWindow(window);
-    window.once('close', () => {
-      this.updater.removeListeningWindow(window);
+    return new Promise(resolve => {
+      const window = this.windowManager.createWindow(WindowType.Greeting);
+      window.once('ready-to-show', () => {
+        window.show();
+        // Check for updates
+        this.updater.checkForUpdates(true);
+      });
+      this.updater.addListeningWindow(window);
+      window.once('close', () => {
+        this.updater.removeListeningWindow(window);
+      });
     });
   }
 
   public showOpenLocalRealm() {
-    electron.dialog.showOpenDialog(
-      {
-        properties: ['openFile'],
-        filters: [{ name: 'Realm Files', extensions: ['realm'] }],
-      },
-      selectedPaths => {
-        if (selectedPaths) {
-          selectedPaths.forEach(path => {
-            const options: ILocalRealmBrowserOptions = {
-              mode: RealmBrowserMode.Local,
-              path,
-            };
-            this.showRealmBrowser(options);
-          });
-        }
-      },
-    );
+    return new Promise(resolve => {
+      electron.dialog.showOpenDialog(
+        {
+          properties: ['openFile'],
+          filters: [{ name: 'Realm Files', extensions: ['realm'] }],
+        },
+        selectedPaths => {
+          if (selectedPaths) {
+            selectedPaths.forEach(path => {
+              const options: ILocalRealmBrowserOptions = {
+                mode: RealmBrowserMode.Local,
+                path,
+              };
+              this.showRealmBrowser(options);
+            });
+          }
+        },
+      );
+      resolve();
+    });
   }
 
-  public async showRealmBrowser(options: IRealmBrowserOptions) {
+  public showRealmBrowser(options: IRealmBrowserOptions) {
     return new Promise(resolve => {
       const window = this.windowManager.createWindow(
         WindowType.RealmBrowser,
         options,
       );
-      window.once('ready-to-show', () => {
-        window.show();
+      window.show();
+      window.webContents.once('did-finish-load', () => {
         resolve();
       });
     });
   }
 
   public showServerAdministration(options: IServerAdministrationOptions) {
-    // TODO: Change this once the realm-js Realm.Sync.User serializes correctly
-    // @see https://github.com/realm/realm-js/issues/1276
-    const window = this.windowManager.createWindow(
-      WindowType.ServerAdministration,
-      options,
-    );
-    window.once('ready-to-show', () => {
+    return new Promise(resolve => {
+      // TODO: Change this once the realm-js Realm.Sync.User serializes correctly
+      // @see https://github.com/realm/realm-js/issues/1276
+      const window = this.windowManager.createWindow(
+        WindowType.ServerAdministration,
+        options,
+      );
       window.show();
+      window.webContents.once('did-finish-load', () => {
+        resolve();
+      });
     });
   }
 
@@ -143,6 +151,7 @@ export default class Application {
     electron.app.addListener('activate', this.onActivate);
     electron.app.addListener('open-file', this.onOpenFile);
     electron.app.addListener('window-all-closed', this.onWindowAllClosed);
+    electron.app.addListener('web-contents-created', this.onWebContentsCreated);
   }
 
   private removeAppListeners() {
@@ -150,20 +159,10 @@ export default class Application {
     electron.app.removeListener('activate', this.onActivate);
     electron.app.removeListener('open-file', this.onOpenFile);
     electron.app.removeListener('window-all-closed', this.onWindowAllClosed);
-  }
-
-  private addActionListeners() {
-    Object.keys(this.actions).forEach((action: string) => {
-      const handler = this.actions[action];
-      electron.ipcMain.addListener(action, handler);
-    });
-  }
-
-  private removeActionListeners() {
-    Object.keys(this.actions).forEach((action: string) => {
-      const handler = this.actions[action];
-      electron.ipcMain.removeListener(action, handler);
-    });
+    electron.app.removeListener(
+      'web-contents-created',
+      this.onWebContentsCreated,
+    );
   }
 
   private onReady = () => {
@@ -188,6 +187,14 @@ export default class Application {
     if (process.platform !== 'darwin') {
       electron.app.quit();
     }
+  };
+
+  private onWebContentsCreated = (
+    event: Electron.Event,
+    webContents: Electron.WebContents,
+  ) => {
+    const receiver = new ActionReceiver(this.actionHandlers);
+    receiver.setTransport(new MainTransport(webContents));
   };
 }
 

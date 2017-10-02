@@ -7,28 +7,32 @@ import {
   WindowType,
 } from './WindowType';
 
-import { ConnectToServerDialog } from './ConnectToServerDialog';
-import { GreetingWindow } from './GreetingWindow';
-import { RealmBrowserWindow } from './RealmBrowserWindow';
-import { ServerAdministrationWindow } from './ServerAdministrationWindow';
-
 export function getWindow(type: WindowType): React.ReactElement<{}> {
   // Strip away the "?" of the location.search
   const queryString = location.search.substr(1);
   const query = querystring.parse(queryString);
   const options = query.options ? JSON.parse(query.options) as object : {};
 
+  // We're using calls to require here, to prevent loading anything that does not
+  // relate to the specific window being loaded.
   if (type === WindowType.RealmBrowser) {
+    const RealmBrowserWindow = require('./RealmBrowserWindow')
+      .RealmBrowserWindow;
     return <RealmBrowserWindow options={options as IRealmBrowserOptions} />;
   } else if (type === WindowType.ConnectToServer) {
+    const ConnectToServerDialog = require('./ConnectToServerDialog')
+      .ConnectToServerDialog;
     return <ConnectToServerDialog />;
   } else if (type === WindowType.ServerAdministration) {
+    const ServerAdministrationWindow = require('./ServerAdministrationWindow')
+      .ServerAdministrationWindow;
     return (
       <ServerAdministrationWindow
         options={options as IServerAdministrationOptions}
       />
     );
   } else if (type === WindowType.Greeting) {
+    const GreetingWindow = require('./GreetingWindow').GreetingWindow;
     return <GreetingWindow />;
   } else {
     throw new Error(`Unexpected window type: ${type}`);
