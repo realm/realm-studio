@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Let's figure out where this script is located
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PACKAGING_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 bold=$(tput bold)
 normal=$(tput sgr0)
@@ -22,7 +22,7 @@ fi
 
 source $REALM_DEPENDENCIES_PATH
 
-SECRETS_PATH=$DIR/secrets.sh
+SECRETS_PATH=$PACKAGING_DIR/secrets.sh
 if [ -f $SECRETS_PATH ]; then
     rs_echo "🔑" "Loading secrets into environment"
     source $SECRETS_PATH
