@@ -6,3 +6,6 @@ realm-object-server
 
 .DS_Store
 data/
+
+# Created by mocha-webpack
+.tmp
