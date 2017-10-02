@@ -12,11 +12,8 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 // Generating a path for this process
 const userDataPath = electron.remote.app.getPath('userData');
-const processDir = path.resolve(
-  userDataPath,
-  'realm-studio',
-  process.pid.toString(),
-);
+const pid = process.pid.toString();
+const processDir = path.resolve(userDataPath, `renderer-${pid}`);
 // Create the directory
 fs.mkdirSync(processDir);
 // Change to it

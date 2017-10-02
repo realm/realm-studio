@@ -27,3 +27,17 @@ When the `build.sh` script has run the `node_modules/realm/compiled/electron-v1.
 produced and this can be copied to a linux box with a window manager (like Ubuntu 16.04 desktop), that has this
 repository checked out, into its `node_modules/realm/compiled` folder.
 -->
+
+# Package for Windows
+
+Prepare a release branch on GitHub and perform a checkout of this on a Windows machine that can build realm-js.
+
+Run the installer - which will build the Windows binary of realm-js for Electron.
+
+    npm install
+
+Copy the contents of realm-studio/node_modules/realm/compiled/electron-v1.7_win32_x64 somewhere reachable.
+
+# Publish Linux and Windows to S3 & GitHub
+
+    npm run electron:dist -- -wl --publish=always

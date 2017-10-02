@@ -1,9 +1,13 @@
 {
   "name": "realm-studio",
   "productName": "Realm Studio",
-  "version": "1.0.0-alpha.14",
+  "version": "1.0.0-rc.1",
   "description": "A tool for everything Realm.",
-  "author": "Realm Inc.",
+  "author": {
+    "name": "Realm Inc.",
+    "email": "info@realm.io",
+    "url": "https://realm.io"
+  },
   "repository": "https://github.com/realm/realm-studio",
   "license": "Apache-2.0",
   "main": "./build/main.bundle.js",
@@ -23,7 +27,12 @@
       "target": "zip"
     },
     "linux": {
-      "target": "tar.gz",
+      "target": [
+        "AppImage",
+        "deb",
+        "rpm",
+        "tar.gz"
+      ],
       "files": [
         "!node_modules/realm/android${/*}",
         "!node_modules/realm/build${/*}",
@@ -32,6 +41,27 @@
         "!node_modules/realm/src${/*}",
         "!node_modules/realm/vendor${/*}"
       ]
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "zip",
+        "portable"
+      ],
+      "files": [
+        "build/*",
+        "!node_modules/realm/android${/*}",
+        "!node_modules/realm/build${/*}",
+        "!node_modules/realm/react-native${/*}",
+        "!node_modules/realm/scripts${/*}",
+        "!node_modules/realm/src${/*}",
+        "!node_modules/realm/vendor${/*}"
+      ],
+      "icon": "static/icons/win/realm-studio.ico",
+      "verifyUpdateCodeSignature": false
+    },
+    "nsis": {
+      "installerIcon": "static/icons/win/realm-studio.ico"
     },
     "publish": [
       {
@@ -115,7 +145,7 @@
     "husky": "^0.14.3",
     "lint-staged": "^4.2.3",
     "mocha": "^3.5.3",
-    "mocha-webpack": "^0.7.0",
+    "mocha-webpack": "^1.0.0-rc.1",
     "node-sass": "^4.5.3",
     "null-loader": "^0.1.1",
     "prettier": "^1.7.1",
