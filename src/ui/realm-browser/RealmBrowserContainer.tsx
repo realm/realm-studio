@@ -105,6 +105,7 @@ export class RealmBrowserContainer extends React.Component<
         onContextMenuClose={this.onContextMenuClose}
         closeSelectObject={this.closeSelectObject}
         updateObjectReference={this.updateObjectReference}
+        onCellChangeOrder={this.onCellChangeOrder}
       />
     );
   }
@@ -124,6 +125,17 @@ export class RealmBrowserContainer extends React.Component<
         // TODO: Apply the various data parsings and transformations, based on the type
         object[propertyName] = value;
       });
+    }
+  };
+
+  public onCellChangeOrder = (currentIndex: number, newIndex: number) => {
+    const { list } = this.state;
+    if (list) {
+      this.realm.write(() => {
+        const deletedObjects = list.data.splice(currentIndex, 1);
+        list.data.splice(newIndex, 0, deletedObjects[0]);
+      });
+      this.setState({ rowToHighlight: newIndex, columnToHighlight: 0 });
     }
   };
 
@@ -166,7 +178,12 @@ export class RealmBrowserContainer extends React.Component<
     rowIndex: number,
     columnIndex: number,
   ) => {
-    this.setState({ rowToHighlight: rowIndex, columnToHighlight: columnIndex });
+    if (rowIndex) {
+      this.setState({
+        rowToHighlight: rowIndex,
+        columnToHighlight: columnIndex,
+      });
+    }
 
     if (this.clickTimeout) {
       clearTimeout(this.clickTimeout);

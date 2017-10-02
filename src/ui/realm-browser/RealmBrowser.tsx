@@ -28,6 +28,7 @@ export const RealmBrowser = ({
   selectObject,
   closeSelectObject,
   updateObjectReference,
+  onCellChangeOrder,
 }: {
   getSchemaLength: (name: string) => number;
   getSelectedData: () => any;
@@ -60,6 +61,7 @@ export const RealmBrowser = ({
   selectObject?: any;
   closeSelectObject: () => void;
   updateObjectReference: (object: any) => void;
+  onCellChangeOrder: (currentIndex: number, newIndex: number) => void;
 }) => {
   const values = getSelectedData();
   return (
@@ -80,6 +82,7 @@ export const RealmBrowser = ({
           rowToHighlight={rowToHighlight}
           data={values}
           onContextMenu={onContextMenu}
+          onCellChangeOrder={onCellChangeOrder}
         />
       </div>
       {contextMenu && (

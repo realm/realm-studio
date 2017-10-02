@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Draggable, { DraggableData } from 'react-draggable';
 import { Grid } from 'react-virtualized';
 
 import { Content } from './Content';
@@ -23,6 +24,7 @@ export interface IContentContainerProps {
     object: any,
     property: Realm.ObjectSchemaProperty,
   ) => void;
+  onCellChangeOrder?: (currentIndex: number, newIndex: number) => void;
 }
 
 export class ContentContainer extends React.Component<
@@ -31,6 +33,10 @@ export class ContentContainer extends React.Component<
     columnWidths: number[];
     query: string | null;
     sort: string | null;
+    draggingCell?: {
+      y: number;
+      index: number;
+    };
   }
 > {
   // A reference to the grid inside the content container is needed to resize collumns
@@ -43,6 +49,7 @@ export class ContentContainer extends React.Component<
       columnWidths: [],
       query: null,
       sort: null,
+      draggingCell: undefined,
     };
   }
 
@@ -117,6 +124,29 @@ export class ContentContainer extends React.Component<
       });
     }
   }
+
+  public onDrag = (e: any, ui: DraggableData, index: number) => {
+    this.setState({
+      draggingCell: {
+        index,
+        y: ui.lastY,
+      },
+    });
+  };
+
+  public onDragEnd = (e: any, ui: any) => {
+    const { onCellChangeOrder } = this.props;
+    const { draggingCell } = this.state;
+    if (draggingCell && onCellChangeOrder) {
+      const rowHeight = 26;
+      const currentIndex = draggingCell.index;
+      const newIndex = draggingCell.index + ui.lastY / rowHeight;
+      if (onCellChangeOrder) {
+        onCellChangeOrder(currentIndex, newIndex);
+      }
+      this.setState({ draggingCell: undefined });
+    }
+  };
 
   public onColumnWidthChanged = (index: number, width: number) => {
     const columnWidths = Array.from(this.state.columnWidths);
