@@ -4,9 +4,9 @@
   "version": "1.0.0-rc.1",
   "description": "A tool for everything Realm.",
   "author": {
-    "name": "Realm Inc.",
-    "email": "info@realm.io",
-    "url": "https://realm.io"
+    "name" : "Realm Inc.",
+    "email" : "info@realm.io",
+    "url" : "https://realm.io"
   },
   "repository": "https://github.com/realm/realm-studio",
   "license": "Apache-2.0",
