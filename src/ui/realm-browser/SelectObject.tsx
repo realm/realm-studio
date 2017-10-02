@@ -60,9 +60,14 @@ export class SelectObject extends React.Component<IProps, IState> {
             )}
         </ModalBody>
         <ModalFooter>
-          {optional && (
+          {objectToAdd && (
             <Button color="primary" onClick={this.setNewValue}>
-              Set {!objectToAdd && 'to null'}
+              Set
+            </Button>
+          )}
+          {optional && (
+            <Button color="warning" onClick={this.setNewValue}>
+              Set to null
             </Button>
           )}
           <Button color="secondary" onClick={close}>
