@@ -9,13 +9,6 @@ process.on('uncaughtException', error => {
   dialog.showErrorBox('Uncaught exception', `${error.message}: ${error.stack}`);
 });
 
-// Create a directory for the renderer processes to create directories in
-const userDataPath = app.getPath('userData');
-const processDir = path.resolve(userDataPath, 'realm-studio');
-if (!fs.existsSync(processDir)) {
-  fs.mkdir(processDir);
-}
-
 const isProduction = process.env.NODE_ENV === 'production';
 
 // Make node understand the source-maps emitted from WebPack.
