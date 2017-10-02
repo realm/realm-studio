@@ -23,7 +23,7 @@
       "target": "zip"
     },
     "linux": {
-      "target": "tar.gz",
+      "target": ["AppImage", "deb", "rpm", "tar.gz"],
       "files": [
         "!node_modules/realm/android${/*}",
         "!node_modules/realm/build${/*}",
@@ -34,15 +34,21 @@
       ]
     },
     "win": {
-      "target": ["zip", "portable"],
+      "target": ["nsis", "zip", "portable"],
       "files": [
+        "build/*",
         "!node_modules/realm/android${/*}",
         "!node_modules/realm/build${/*}",
         "!node_modules/realm/react-native${/*}",
         "!node_modules/realm/scripts${/*}",
         "!node_modules/realm/src${/*}",
         "!node_modules/realm/vendor${/*}"
-      ]
+      ],
+      "icon": "static/icons/win/realm-studio.ico",
+      "verifyUpdateCodeSignature": false
+    },
+    "nsis": {
+      "installerIcon": "static/icons/win/realm-studio.ico"
     },
     "publish": [
       {
