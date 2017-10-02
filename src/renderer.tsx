@@ -26,13 +26,6 @@ window.addEventListener('beforeunload', e => {
   fs.removeSync(processDir);
 });
 
-// Make sync only report errors
-import * as Realm from 'realm';
-// If sync is enabled on Realm - make it less verbose
-if (Realm.Sync) {
-  Realm.Sync.setLogLevel('error');
-}
-
 import 'realm-studio-styles';
 
 import { CurrentWindow } from './windows';
@@ -72,3 +65,12 @@ if (isProduction) {
   // tslint:disable-next-line:no-var-requires
   require('devtron').install();
 }
+
+// Using process.nextTick - as requiring realm blocks rendering
+process.nextTick(() => {
+  const Realm = require('realm');
+  // If sync is enabled on Realm - make it less verbose
+  if (Realm.Sync) {
+    Realm.Sync.setLogLevel('error');
+  }
+});
