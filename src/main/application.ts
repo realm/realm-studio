@@ -79,8 +79,8 @@ export default class Application {
   public showGreeting() {
     return new Promise(resolve => {
       const window = this.windowManager.createWindow(WindowType.Greeting);
-      window.show();
       window.once('ready-to-show', () => {
+        window.show();
         // Check for updates
         this.updater.checkForUpdates(true);
       });
