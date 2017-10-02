@@ -145,7 +145,7 @@
     "husky": "^0.14.3",
     "lint-staged": "^4.2.3",
     "mocha": "^3.5.3",
-    "mocha-webpack": "^0.7.0",
+    "mocha-webpack": "^1.0.0-rc.1",
     "node-sass": "^4.5.3",
     "null-loader": "^0.1.1",
     "prettier": "^1.7.1",
