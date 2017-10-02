@@ -2,7 +2,7 @@ import * as electron from 'electron';
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import { showServerAdministration } from '../../actions';
+import { main } from '../../actions/main';
 import { showError } from '../reusable/errors';
 
 import { AuthenticationMethod } from './AuthenticationForm';
@@ -50,11 +50,14 @@ export class ConnectToServerContainer extends React.Component<
     });
 
     if (token) {
-      showServerAdministration({
+      await main.showServerAdministration({
         url: preparedUrl,
         credentials: {
           token,
         },
+      });
+      this.setState({
+        isConnecting: false,
       });
     } else {
       try {
@@ -64,7 +67,7 @@ export class ConnectToServerContainer extends React.Component<
           password,
         );
         // Show the server administration
-        showServerAdministration({
+        await main.showServerAdministration({
           url: user.server,
           credentials: {
             username: preparedUsername,

@@ -29,7 +29,7 @@ export default class WindowManager {
 
     // Open up the dev tools, if not in production mode
     if (!isProduction) {
-      window.once('ready-to-show', () => {
+      window.webContents.once('did-finish-load', () => {
         window.webContents.openDevTools({
           mode: 'detach',
         });

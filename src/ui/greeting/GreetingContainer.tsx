@@ -1,10 +1,9 @@
 import * as electron from 'electron';
 import * as React from 'react';
-import * as Realm from 'realm';
 
 import { IUpdateStatus } from '../../main/updater';
 
-import { showConnectToServer, showOpenLocalRealm } from '../../actions';
+import { main } from '../../actions/main';
 
 import { Greeting } from './Greeting';
 
@@ -22,13 +21,21 @@ export class GreetingContainer extends React.Component<
       updateStatus: {
         checking: false,
       },
-      isSyncEnabled: !!Realm.Sync,
+      isSyncEnabled: false,
       version: electron.remote.app.getVersion() || 'unknown',
     };
   }
 
   public componentDidMount() {
     electron.ipcRenderer.on('update-status', this.updateStatusChanged);
+    // Require realm and check update state with the sync support
+    // Using nextTick to prevent blocking when loading realm
+    process.nextTick(() => {
+      const Realm = require('realm');
+      this.setState({
+        isSyncEnabled: !!Realm.Sync,
+      });
+    });
   }
 
   public componentWillUnmount() {
@@ -43,11 +50,11 @@ export class GreetingContainer extends React.Component<
   }
 
   public onConnectToServer = () => {
-    showConnectToServer();
+    main.showConnectToServer();
   };
 
   public onOpenLocalRealm = () => {
-    showOpenLocalRealm();
+    main.showOpenLocalRealm();
   };
 
   public updateStatusChanged = (
