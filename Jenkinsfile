@@ -37,18 +37,11 @@ if (env.BRANCH_NAME == 'master') {
     }
 
     stage('Build') {
-      docker.build('realm-studio-testing', '
-        -v /etc/passwd:/etc/passwd:ro \
-        -v ${PWD}:/tmp \
-        ./testing \
-      ')
+      docker.build('realm-studio-testing', '-v /etc/passwd:/etc/passwd:ro -v ${PWD}:/tmp ./testing')
     }
 
     stage('Test') {
-      docker.image('realm-studio-testing:latest').inside(' \
-        -v /etc/passwd:/etc/passwd:ro \
-        -v ${PWD}:/tmp \
-      ') {
+      docker.image('realm-studio-testing:latest').inside('-v /etc/passwd:/etc/passwd:ro -v ${PWD}:/tmp') {
         sh '''
           npm install --quiet
         '''
