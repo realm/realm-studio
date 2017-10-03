@@ -13,6 +13,7 @@ node('macos') {
 
   stage('Build') {
     sh '''
+      nvm install
       npm install --quiet
       npm run build
     '''
