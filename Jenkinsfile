@@ -37,12 +37,15 @@ if (env.BRANCH_NAME == 'master') {
     }
 
     stage('Build') {
-      docker.build('realm-studio-testing', './testing')
+      docker.build('realm-studio-testing', '
+        -v /etc/passwd:/etc/passwd:ro \
+        -v ${PWD}:/tmp \
+        ./testing \
+      ')
     }
 
     stage('Test') {
       docker.image('realm-studio-testing:latest').inside(' \
-        -u realm-studio \
         -v /etc/passwd:/etc/passwd:ro \
         -v ${PWD}:/tmp \
       ') {
