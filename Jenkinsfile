@@ -13,7 +13,7 @@ node('macos') {
 
   stage('Build') {
     def nodeVersion = readFile('.nvmrc').trim()
-    nvm(nodeVersion) {
+    nvm(version: nodeVersion) {
       sh '''
         npm install --quiet
         npm run build
