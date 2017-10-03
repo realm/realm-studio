@@ -245,7 +245,8 @@ export class RealmBrowserContainer extends React.Component<
     property: Realm.ObjectSchemaProperty,
     value: any,
   ) => {
-    if (property.type === 'object') {
+    const { list } = this.state;
+    if (property.type === 'object' && !list) {
       this.openSelectObject(object, property);
     }
   };
