@@ -11,3 +11,5 @@ RUN adduser \
 
 RUN mkdir /project/node_modules \
   && chown -R $USER:$USER /project
+
+RUN npm install --quiet

@@ -36,18 +36,14 @@ if (env.BRANCH_NAME == 'master') {
       rlmCheckout scm
     }
 
-    docker.build('realm-studio-testing', './testing')
+    stage('Build') {
+      docker.build('realm-studio-testing', './testing')
+    }
 
-    docker.image('realm-studio-testing:latest').inside('-u realm-studio') {
-      stage('Build') {
+    stage('Test') {
+      docker.image('realm-studio-testing:latest').inside('-u realm-studio') {
         sh '''
           npm install --quiet
-        '''
-      }
-
-      stage('Test') {
-        sh '''
-          xvfb-maybe npm test
         '''
       }
     }
