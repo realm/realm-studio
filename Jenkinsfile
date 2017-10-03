@@ -1,27 +1,23 @@
 #!groovy
 
-node('macos') {
-  stage('Checkout') {
-    checkout([
-      $class: 'GitSCM',
-      branches: scm.branches,
-      gitTool: 'native git',
-      extensions: scm.extensions + [[$class: 'CleanCheckout'], [$class: 'CloneOption', depth: 0, noTags: false, reference: '', shallow: false]],
-      userRemoteConfigs: scm.userRemoteConfigs
-    ])
-  }
+@Library('realm-ci') _
 
-  stage('Build') {
-    def nodeVersion = readFile('.nvmrc').trim()
-    nvm(version: nodeVersion) {
-      sh '''
-        npm install --quiet
-        npm run build
-      '''
+if (env.BRANCH_NAME == "master") {
+  node('macos') {
+    stage('Checkout') {
+      rlmCheckout scm
     }
-  }
 
-  if (env.BRANCH_NAME == "master") {
+    stage('Build') {
+      def nodeVersion = readFile('.nvmrc').trim()
+      nvm(version: nodeVersion) {
+        sh '''
+          npm install --quiet
+          npm run build
+        '''
+      }
+    }
+
     stage('Publish') {
       // eletron-build check credentials even for --publish never, so will always specify it.
       withCredentials([
@@ -32,6 +28,16 @@ node('macos') {
       }
 
       archiveArtifacts "dist/*.zip"
+    }
+  }
+} else {
+  node('docker') {
+    stage('Checkout') {
+      rlmCheckout scm
+    }
+
+    stage('Build') {
+      
     }
   }
 }
