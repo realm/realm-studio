@@ -25,6 +25,7 @@ export interface IContentContainerProps {
     property: Realm.ObjectSchemaProperty,
   ) => void;
   onCellChangeOrder?: (currentIndex: number, newIndex: number) => void;
+  setRowToHighlight?: (row: number, column?: number) => void;
 }
 
 export class ContentContainer extends React.Component<
@@ -101,6 +102,7 @@ export class ContentContainer extends React.Component<
         gridHeaderRef={this.gridHeaderRef}
         onQueryChange={this.onQueryChange}
         onSortClick={this.onSortClick}
+        onDragStart={this.onDragStart}
       />
     );
   }
@@ -131,6 +133,12 @@ export class ContentContainer extends React.Component<
       });
     }
   }
+
+  public onDragStart = (row: number, column: number) => {
+    if (this.props.setRowToHighlight) {
+      this.props.setRowToHighlight(row, column);
+    }
+  };
 
   public onDrag = (e: any, ui: DraggableData, index: number) => {
     this.setState({

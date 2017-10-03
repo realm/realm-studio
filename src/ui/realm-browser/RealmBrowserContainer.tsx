@@ -106,6 +106,7 @@ export class RealmBrowserContainer extends React.Component<
         closeSelectObject={this.closeSelectObject}
         updateObjectReference={this.updateObjectReference}
         onCellChangeOrder={this.onCellChangeOrder}
+        setRowToHighlight={this.setRowToHighlight}
       />
     );
   }
@@ -141,6 +142,13 @@ export class RealmBrowserContainer extends React.Component<
       });
       this.setState({ rowToHighlight: properIndex, columnToHighlight: 0 });
     }
+  };
+
+  public setRowToHighlight = (row: number, column?: number) => {
+    this.setState({
+      rowToHighlight: row,
+      columnToHighlight: column,
+    });
   };
 
   public onSchemaSelected = (name: string, objectToScroll?: any) => {

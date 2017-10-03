@@ -30,6 +30,7 @@ export const Content = ({
   draggingCell,
   onDragEnd,
   draggable,
+  onDragStart,
 }: {
   columnWidths: number[];
   gridContentRef: (grid: Grid) => void;
@@ -62,6 +63,7 @@ export const Content = ({
   onDrag: (e: any, ui: any, index: number) => void;
   onDragEnd: (e: any, ui: any) => void;
   draggable: boolean;
+  onDragStart: (row: number, column: number) => void;
 }) => {
   if (schema) {
     // Generate the columns from the schemas properties
@@ -120,6 +122,7 @@ export const Content = ({
               grid={[1, 26]}
               axis="y"
               key={key}
+              onStart={() => onDragStart(rowIndex, columnIndex)}
               onDrag={(e: any, ui: any) => onDrag(e, ui, rowIndex)}
               onStop={onDragEnd}
               position={{ x: 0, y: 0 }}
