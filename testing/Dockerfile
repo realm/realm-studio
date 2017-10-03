@@ -12,4 +12,4 @@ RUN adduser \
 RUN mkdir /tmp/node_modules \
   && chown -R $USER:$USER /tmp
 
-RUN npm install --quiet
+RUN npm install --quiet --no-shrinkwrap
