@@ -36,16 +36,15 @@ if (env.BRANCH_NAME == 'master') {
       rlmCheckout scm
     }
 
-    stage('Build') {
-      docker.build('realm-studio-testing', '-v /etc/passwd:/etc/passwd:ro -v ${PWD}:/tmp ./testing')
-    }
-
-    stage('Test') {
-      docker.image('realm-studio-testing:latest').inside('-v /etc/passwd:/etc/passwd:ro -v ${PWD}:/tmp') {
-        sh '''
-          npm install --quiet
-        '''
-      }
+    stage('Build and test') {
+      docker
+        .image('electronuserland/builder:wine-chrome')
+        .inside('-e HOME=/tmp -v /etc/passwd:/etc/passwd:ro') {
+          sh '''
+            npm install --quiet
+            ./node_modules/.bin/xvfb-maybe npm test
+          '''
+        }
     }
   }
 }
