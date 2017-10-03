@@ -36,7 +36,7 @@ if (env.BRANCH_NAME == 'master') {
       rlmCheckout scm
     }
 
-    docker.build('realm-studio-testing', '-f ./testing/Dockerfile')
+    docker.build('realm-studio-testing', './testing')
 
     docker.image('realm-studio-testing:latest').inside('-u realm-studio') {
       stage('Build') {
