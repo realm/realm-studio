@@ -36,7 +36,7 @@ if (env.BRANCH_NAME == 'master') {
       rlmCheckout scm
     }
 
-    docker.image('electronuserland/builder:wine-chrome').inside('-u root') {
+    docker.image('./testing').inside('-u realm-studio') {
       stage('Build') {
         sh '''
           npm install --quiet
