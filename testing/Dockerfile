@@ -1,10 +1,13 @@
 FROM electronuserland/builder:wine-chrome
 
 WORKDIR /project
-ENV HOME /project
+ENV HOME /home/realm-studio
 ENV USER realm-studio
+ENV PATH ./node_modules/.bin/:$PATH
 
 RUN adduser \
   --gecos "" --disabled-password \
-  --home=/project --no-create-home \
-  -u 1014 $USER && chown -R $USER:$USER /project
+  -u 1014 $USER
+
+RUN mkdir /project/node_modules \
+  && chown -R $USER:$USER /project
