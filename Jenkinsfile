@@ -45,7 +45,7 @@ if (env.BRANCH_NAME == 'master') {
 
       stage('Test') {
         sh '''
-          npm test
+          xvfb-maybe npm test
         '''
       }
     }
