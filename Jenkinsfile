@@ -2,7 +2,7 @@
 
 @Library('realm-ci') _
 
-if (env.BRANCH_NAME == "master") {
+if (env.BRANCH_NAME == 'master') {
   node('macos') {
     stage('Checkout') {
       rlmCheckout scm
@@ -27,7 +27,7 @@ if (env.BRANCH_NAME == "master") {
         sh './node_modules/.bin/electron-builder --publish onTagOrDraft'
       }
 
-      archiveArtifacts "dist/*.zip"
+      archiveArtifacts 'dist/*.zip'
     }
   }
 } else {
@@ -36,8 +36,18 @@ if (env.BRANCH_NAME == "master") {
       rlmCheckout scm
     }
 
-    stage('Build') {
-      
+    image.image('electronuserland/builder:wine-chrome').inside {
+      stage('Build') {
+        sh '''
+          npm install --quiet
+        '''
+      }
+
+      stage('Test') {
+        sh '''
+          npm test
+        '''
+      }
     }
   }
 }
