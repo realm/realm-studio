@@ -1,6 +1,6 @@
 #!groovy
 
-node('osx_vegas') {
+node('macos') {
   stage('Checkout') {
     checkout([
       $class: 'GitSCM',
