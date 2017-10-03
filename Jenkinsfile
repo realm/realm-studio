@@ -36,7 +36,9 @@ if (env.BRANCH_NAME == 'master') {
       rlmCheckout scm
     }
 
-    docker.image('./testing').inside('-u realm-studio') {
+    docker.build('realm-studio-testing', '-f testing')
+
+    docker.image('realm-studio-testing:latest').inside('-u realm-studio') {
       stage('Build') {
         sh '''
           npm install --quiet
