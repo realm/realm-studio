@@ -92,8 +92,15 @@ export class ContentContainer extends React.Component<
       <Content
         {...this.state}
         {...this.props}
-        {...this}
+        onDrag={this.onDrag}
+        onDragEnd={this.onDragEnd}
+        onColumnWidthChanged={this.onColumnWidthChanged}
+        draggable={!!this.props.onCellChangeOrder}
         data={this.filteredData}
+        gridContentRef={this.gridContentRef}
+        gridHeaderRef={this.gridHeaderRef}
+        onQueryChange={this.onQueryChange}
+        onSortClick={this.onSortClick}
       />
     );
   }
@@ -137,14 +144,18 @@ export class ContentContainer extends React.Component<
   public onDragEnd = (e: any, ui: any) => {
     const { onCellChangeOrder } = this.props;
     const { draggingCell } = this.state;
+
     if (draggingCell && onCellChangeOrder) {
       const rowHeight = 26;
       const currentIndex = draggingCell.index;
       const newIndex = draggingCell.index + ui.lastY / rowHeight;
+
       if (onCellChangeOrder) {
         onCellChangeOrder(currentIndex, newIndex);
       }
-      this.setState({ draggingCell: undefined });
+
+      // Reset the dragging cell after a few milliseconds
+      setTimeout(() => this.setState({ draggingCell: undefined }), 100);
     }
   };
 

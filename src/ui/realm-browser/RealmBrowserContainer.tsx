@@ -131,11 +131,15 @@ export class RealmBrowserContainer extends React.Component<
   public onCellChangeOrder = (currentIndex: number, newIndex: number) => {
     const { list } = this.state;
     if (list) {
+      const properIndex =
+        newIndex > list.data.length
+          ? list.data.length - 1
+          : newIndex < 0 ? 0 : newIndex;
       this.realm.write(() => {
         const deletedObjects = list.data.splice(currentIndex, 1);
-        list.data.splice(newIndex, 0, deletedObjects[0]);
+        list.data.splice(properIndex, 0, deletedObjects[0]);
       });
-      this.setState({ rowToHighlight: newIndex, columnToHighlight: 0 });
+      this.setState({ rowToHighlight: properIndex, columnToHighlight: 0 });
     }
   };
 
@@ -178,12 +182,10 @@ export class RealmBrowserContainer extends React.Component<
     rowIndex: number,
     columnIndex: number,
   ) => {
-    if (rowIndex) {
-      this.setState({
-        rowToHighlight: rowIndex,
-        columnToHighlight: columnIndex,
-      });
-    }
+    this.setState({
+      rowToHighlight: rowIndex,
+      columnToHighlight: columnIndex,
+    });
 
     if (this.clickTimeout) {
       clearTimeout(this.clickTimeout);

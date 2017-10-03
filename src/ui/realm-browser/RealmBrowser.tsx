@@ -82,7 +82,9 @@ export const RealmBrowser = ({
           rowToHighlight={rowToHighlight}
           data={values}
           onContextMenu={onContextMenu}
-          onCellChangeOrder={onCellChangeOrder}
+          onCellChangeOrder={
+            selectedSchemaName === 'list' ? onCellChangeOrder : undefined
+          }
         />
       </div>
       {contextMenu && (
