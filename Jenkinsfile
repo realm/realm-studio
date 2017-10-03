@@ -41,7 +41,11 @@ if (env.BRANCH_NAME == 'master') {
     }
 
     stage('Test') {
-      docker.image('realm-studio-testing:latest').inside('-u realm-studio') {
+      docker.image('realm-studio-testing:latest').inside(' \
+        -u realm-studio \
+        -e HOME=/tmp \
+        -v /etc/passwd:/etc/passwd:ro \
+      ') {
         sh '''
           npm install --quiet
         '''
