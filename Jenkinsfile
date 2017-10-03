@@ -1,44 +1,55 @@
 #!groovy
 
-node('osx_vegas') {
-  stage('Checkout') {
-    checkout([
-      $class: 'GitSCM',
-      branches: scm.branches,
-      gitTool: 'native git',
-      extensions: scm.extensions + [[$class: 'CleanCheckout'], [$class: 'CloneOption', depth: 0, noTags: false, reference: '', shallow: false]],
-      userRemoteConfigs: scm.userRemoteConfigs
-    ])
-  }
+@Library('realm-ci') _
 
-  stage('Build') {
-    sh '''
-      npm install --quiet
-      npm run build
-    '''
-  }
+if (env.BRANCH_NAME == 'master') {
+  node('macos') {
+    stage('Checkout') {
+      rlmCheckout scm
+    }
 
-  stage('Publish') {
-    // eletron-build check credentials even for --publish never, so will always specify it.
-    withCredentials([
-      [$class: 'StringBinding', credentialsId: 'github-release-token', variable: 'GH_TOKEN'],
-      [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-s3-user-key', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']
-    ]) {
-      if (env.BRANCH_NAME == "master") {
-        sh './node_modules/.bin/electron-builder --publish onTagOrDraft'
-      } else {
-        sh './node_modules/.bin/electron-builder --publish never'
+    stage('Build') {
+      def nodeVersion = readFile('.nvmrc').trim()
+      nvm(version: nodeVersion) {
+        sh '''
+          npm install --quiet
+          npm run build
+        '''
       }
     }
 
-    archiveArtifacts "dist/*.zip"
+    stage('Publish') {
+      // eletron-build check credentials even for --publish never, so will always specify it.
+      withCredentials([
+        [$class: 'StringBinding', credentialsId: 'github-release-token', variable: 'GH_TOKEN'],
+        [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-s3-user-key', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']
+      ]) {
+        sh './node_modules/.bin/electron-builder --publish onTagOrDraft'
+      }
+
+      archiveArtifacts 'dist/*.zip'
+    }
   }
-}
+} else {
+  node('docker') {
+    stage('Checkout') {
+      rlmCheckout scm
+    }
 
-def getPackageBuildProductName() {
-  return sh(returnStdout: true, script:"node -e \"console.log(require('./package.json').build.productName)\"").trim()
-}
+    docker.build('realm-studio-testing', './testing')
 
-def getPackageVersion() {
-  return sh(returnStdout: true, script:"node -e \"console.log(require('./package.json').version)\"").trim()
+    docker.image('realm-studio-testing:latest').inside('-u realm-studio') {
+      stage('Build') {
+        sh '''
+          npm install --quiet
+        '''
+      }
+
+      stage('Test') {
+        sh '''
+          xvfb-maybe npm test
+        '''
+      }
+    }
+  }
 }

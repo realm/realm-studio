@@ -5,7 +5,7 @@ const { CheckerPlugin } = require("awesome-typescript-loader");
 const SpriteLoaderPlugin = require("svg-sprite-loader/plugin");
 
 const isProduction = process.env.NODE_ENV === "production";
-console.log("Running in", isProduction ? "production" : "development", "mode");
+// console.log("Running in", isProduction ? "production" : "development", "mode");
 
 const externals = [
   nodeExternals({
