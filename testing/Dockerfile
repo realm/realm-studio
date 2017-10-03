@@ -1,11 +1,13 @@
 FROM electronuserland/builder:wine-chrome
 
+WORKDIR /tmp
+
+ENV USER realm-studio
 ENV PATH ./node_modules/.bin/:$PATH
 
-RUN adduser --gecos "" --disabled-password -u 1014 realm-studio
+RUN adduser --gecos "" --disabled-password -u 1014 $USER
 
 RUN mkdir /tmp/node_modules \
- && chown -R realm-studio:realm-studio /tmp
+ && chown -R $USER:$USER /tmp
 
-RUN cd /tmp \
- && npm install --quiet --no-shrinkwrap
+RUN npm install --quiet --no-shrinkwrap
