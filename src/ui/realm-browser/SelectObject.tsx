@@ -41,6 +41,8 @@ export class SelectObject extends React.Component<IProps, IState> {
 
   public setNewValue = () => this.props.updateReference(this.state.objectToAdd);
 
+  public setToNull = () => this.props.updateReference(null);
+
   public render() {
     const { status, schema, data, close, schemaName, optional } = this.props;
     const { rowToHighlight, objectToAdd, columnToHighlight } = this.state;
@@ -66,7 +68,7 @@ export class SelectObject extends React.Component<IProps, IState> {
             </Button>
           )}
           {optional && (
-            <Button color="warning" onClick={this.setNewValue}>
+            <Button color="warning" onClick={this.setToNull}>
               Set to null
             </Button>
           )}
