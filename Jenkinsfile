@@ -38,7 +38,10 @@ if (env.BRANCH_NAME == 'master') {
 
     stage('Build and test') {
       // Computing a packageHash from the package-lock.json
-      def packageHash = sh("git ls-files -s package-lock.json | cut -d ' ' -f 2", returnStdout: true).trim()
+      def packageHash = sh(
+        script: "git ls-files -s package-lock.json | cut -d ' ' -f 2",
+        returnStdout: true
+      ).trim()
       // Using buildDockerEnv ensures that the image is pushed
       buildDockerEnv("ci/realm-studio:pr-${packageHash}", extra_args: '-f Dockerfile.testing')
         .inside('-e HOME=/tmp -v /etc/passwd:/etc/passwd:ro') {
