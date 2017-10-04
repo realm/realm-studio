@@ -40,6 +40,8 @@ if (env.BRANCH_NAME == 'master') {
       docker
         .build('realm-studio-testing', '-f Dockerfile.testing .')
         .inside('-e HOME=/tmp -v /etc/passwd:/etc/passwd:ro') {
+          sh 'pwd'
+          sh 'cd /tmp'
           sh './node_modules/.bin/xvfb-maybe npm test'
         }
     }
