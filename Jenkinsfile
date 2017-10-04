@@ -54,7 +54,11 @@ if (env.BRANCH_NAME == 'master') {
         sh 'ln -s /tmp/node_modules .'
         // Test that the package-lock has changed while building the image
         // - if it has, a dependency was changed in package.json but not updated in the lock
-        sh 'diff /tmp/package-lock.json package-lock.json || (echo "Error: package.json was changed - but package-lock.json was not updated"; exit 1)'
+        try {
+          sh 'diff /tmp/package-lock.json package-lock.json'
+        } catch(err) {
+          error "package.json was changed - but package-lock.json was not updated"
+        }
         // Run the tests with xvfb to allow opening windows virtually
         sh './node_modules/.bin/xvfb-maybe npm test'
       }
