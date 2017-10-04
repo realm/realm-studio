@@ -38,7 +38,7 @@ if (env.BRANCH_NAME == 'master') {
 
     stage('Build and test') {
       docker
-        .image('electronuserland/builder:wine-chrome')
+        .build('realm-studio-testing', './testing')
         .inside('-e HOME=/tmp -v /etc/passwd:/etc/passwd:ro') {
           sh 'npm install --quiet'
           sh './node_modules/.bin/xvfb-maybe npm test'
