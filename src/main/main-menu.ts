@@ -1,6 +1,8 @@
 import * as electron from 'electron';
 import Application from './application';
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 export default class MainMenu {
   private menu = electron.Menu.buildFromTemplate(this.menuTemplate());
 
@@ -40,9 +42,9 @@ export default class MainMenu {
       {
         label: 'View',
         submenu: [
-          { role: 'reload' },
-          { role: 'toggledevtools' },
-          { type: 'separator' },
+          { role: 'reload', visible: !isProduction },
+          { role: 'toggledevtools', visible: !isProduction },
+          { type: 'separator', visible: !isProduction },
           { role: 'resetzoom' },
           { role: 'zoomin' },
           { role: 'zoomout' },
