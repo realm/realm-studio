@@ -26,7 +26,7 @@ export default class Application {
 
   private actionHandlers = {
     [MainActions.CheckForUpdates]: () => {
-      return this.checkForUpdates();
+      this.checkForUpdates();
     },
     [MainActions.ShowConnectToServer]: () => {
       return this.showConnectToServer();
