@@ -20,12 +20,6 @@ export default class MainMenu {
               Application.sharedApplication.showOpenLocalRealm();
             },
           },
-          {
-            type: 'separator',
-          },
-          {
-            role: 'close',
-          },
           { type: 'separator' },
           { role: 'close' },
         ],
