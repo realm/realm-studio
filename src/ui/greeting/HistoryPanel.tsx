@@ -6,7 +6,10 @@ const Empty = () => (
   <div className="Greeting__HistoryPanel__Empty">
     <p>Welcome to Realm Studio!</p>
     <p>
-      <a href="https://realm.io/docs/realm-object-server/" target="_blank">
+      <a
+        href="https://realm.gitbooks.io/realm-object-server/content/getting-started.html"
+        target="_blank"
+      >
         Download and start the Realm Object Server
       </a>, if you have not already done that.
     </p>
