@@ -11,15 +11,22 @@ Once it has - this section should contain links from where it can be downloaded 
 
 ## Running
 
-Start the application running:
+Run the application according to the release notes from where you've downloaded it.
 
-    ./node_modules/.bin/electron ./build/main.bundle.js
+If you've checked out this repository, install and start it by running
+
+    npm install
+    npm start
 
 ### Parameters
 
 The application has support for some parameters that can be supplied when starting it:
 
 - The `DISPLAY` environment variable can be set to the index of the display that windows should be created on.
+  So to start the application, opening windows on your secondary monitor, run
+
+      DISPLAY=1 npm start
+
 
 ## Developing
 
@@ -29,7 +36,7 @@ Install dependencies from NPM:
 
     npm install
 
-Start the developer, concurrently running 2x webpack and electron:
+Start the developer (concurrently running 2x webpack and electron internally):
 
     npm run dev
 
@@ -65,6 +72,6 @@ The release flow is based on Electron Builder's ["Recommended GitHub Releases Wo
 3. Prepare the next version by bumping the minor version (-.x.-) of the `package.json`.
 4. Announce the release on Slack in the #releases channel if a bot has not already done that.
 
-Note: We should be using [semantic versioning](http://semver.org/), incrementing the major (x.-.-) version when breaking 
+Note: We should be using [semantic versioning](http://semver.org/), incrementing the major (x.-.-) version when breaking
 breaking backwards compatibility and incrementing the patch (-.-.x) when an upcoming release is simply fixing bugs in the
 previous version.
