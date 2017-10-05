@@ -25,6 +25,9 @@ export default class Application {
   private windowManager = new WindowManager();
 
   private actionHandlers = {
+    [MainActions.CheckForUpdates]: () => {
+      return this.checkForUpdates();
+    },
     [MainActions.ShowConnectToServer]: () => {
       return this.showConnectToServer();
     },
