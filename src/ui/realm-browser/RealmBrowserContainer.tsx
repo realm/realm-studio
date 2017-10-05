@@ -92,23 +92,7 @@ export class RealmBrowserContainer extends React.Component<
   }
 
   public render() {
-    return (
-      <RealmBrowser
-        {...this.state}
-        getSchemaLength={this.getSchemaLength}
-        getSelectedSchema={this.getSelectedSchema}
-        onCellChange={this.onCellChange}
-        onSchemaSelected={this.onSchemaSelected}
-        onCellClick={this.onCellClick}
-        getSelectedData={this.getSelectedData}
-        onContextMenu={this.onContextMenu}
-        onContextMenuClose={this.onContextMenuClose}
-        closeSelectObject={this.closeSelectObject}
-        updateObjectReference={this.updateObjectReference}
-        onCellChangeOrder={this.onCellChangeOrder}
-        setRowToHighlight={this.setRowToHighlight}
-      />
-    );
+    return <RealmBrowser {...this.state} {...this.props} {...this} />;
   }
 
   public getSelectedData = (): any => {

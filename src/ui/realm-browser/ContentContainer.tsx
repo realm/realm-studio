@@ -93,16 +93,8 @@ export class ContentContainer extends React.Component<
       <Content
         {...this.state}
         {...this.props}
-        onDrag={this.onDrag}
-        onDragEnd={this.onDragEnd}
-        onColumnWidthChanged={this.onColumnWidthChanged}
+        {...this}
         draggable={!!this.props.onCellChangeOrder}
-        data={this.filteredData}
-        gridContentRef={this.gridContentRef}
-        gridHeaderRef={this.gridHeaderRef}
-        onQueryChange={this.onQueryChange}
-        onSortClick={this.onSortClick}
-        onDragStart={this.onDragStart}
       />
     );
   }
