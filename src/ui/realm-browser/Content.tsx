@@ -85,82 +85,54 @@ export const Content = ({
       }) => {
         const object = data[rowIndex];
 
-        if (!draggable) {
-          return (
-            <Cell
-              key={key}
-              width={columnWidths[columnIndex]}
-              style={style}
-              onCellClick={(
-                property: Realm.ObjectSchemaProperty, // tslint:disable-line:no-shadowed-variable
-                value: any,
-              ) =>
-                onCellClick &&
-                onCellClick(object, property, value, rowIndex, columnIndex)}
-              value={object[propertyName]}
-              property={property}
-              onUpdateValue={value =>
-                onCellChange && onCellChange(object, propertyName, value)}
-              isHighlight={rowToHighlight === rowIndex}
-              onContextMenu={e =>
-                onContextMenu && onContextMenu(e, object, property)}
-            />
-          );
-        } else {
-          let draggingStyle = {};
+        let draggingStyle = {};
 
-          if (draggingCell && rowIndex === draggingCell.index) {
-            draggingStyle = {
-              top: style.top + draggingCell.y,
-              zIndex: 4000,
-              cursor: 'move',
-            };
-          }
-
-          return (
-            <Draggable
-              grid={[1, 26]}
-              axis="y"
-              key={key}
-              onStart={() => onDragStart(rowIndex, columnIndex)}
-              onDrag={(e: any, ui: any) => onDrag(e, ui, rowIndex)}
-              onStop={onDragEnd}
-              position={{ x: 0, y: 0 }}
-            >
-              <span>
-                <Cell
-                  key={key}
-                  width={columnWidths[columnIndex]}
-                  style={{ ...style, ...draggingStyle }}
-                  onCellClick={(
-                    property: Realm.ObjectSchemaProperty, // tslint:disable-line:no-shadowed-variable
-                    value: any,
-                  ) => {
-                    if (
-                      onCellClick &&
-                      (!draggingCell || (draggingCell && draggingCell.y === 0))
-                    ) {
-                      onCellClick(
-                        object,
-                        property,
-                        value,
-                        rowIndex,
-                        columnIndex,
-                      );
-                    }
-                  }}
-                  value={object[propertyName]}
-                  property={property}
-                  onUpdateValue={value =>
-                    onCellChange && onCellChange(object, propertyName, value)}
-                  isHighlight={rowToHighlight === rowIndex}
-                  onContextMenu={e =>
-                    onContextMenu && onContextMenu(e, object, property)}
-                />
-              </span>
-            </Draggable>
-          );
+        if (draggable && draggingCell && rowIndex === draggingCell.index) {
+          draggingStyle = {
+            top: style.top + draggingCell.y,
+            zIndex: 4000,
+            cursor: 'move',
+          };
         }
+
+        return (
+          <Draggable
+            grid={[1, 26]}
+            axis="y"
+            key={key}
+            onStart={() => onDragStart(rowIndex, columnIndex)}
+            onDrag={(e: any, ui: any) => onDrag(e, ui, rowIndex)}
+            onStop={onDragEnd}
+            position={{ x: 0, y: 0 }}
+            disabled={!draggable}
+          >
+            <span>
+              <Cell
+                key={key}
+                width={columnWidths[columnIndex]}
+                style={{ ...style, ...draggingStyle }}
+                onCellClick={(
+                  property: Realm.ObjectSchemaProperty, // tslint:disable-line:no-shadowed-variable
+                  value: any,
+                ) => {
+                  if (
+                    onCellClick &&
+                    (!draggingCell || (draggingCell && draggingCell.y === 0))
+                  ) {
+                    onCellClick(object, property, value, rowIndex, columnIndex);
+                  }
+                }}
+                value={object[propertyName]}
+                property={property}
+                onUpdateValue={value =>
+                  onCellChange && onCellChange(object, propertyName, value)}
+                isHighlight={rowToHighlight === rowIndex}
+                onContextMenu={e =>
+                  onContextMenu && onContextMenu(e, object, property)}
+              />
+            </span>
+          </Draggable>
+        );
       };
     });
 
