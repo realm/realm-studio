@@ -6,11 +6,13 @@ import { IUpdateStatus } from '../../main/updater';
 import { LoadingDots } from '../reusable/loading-dots/LoadingDots';
 
 export const UpdateStatusIndicator = ({
+  onCheckForUpdates,
   status,
 }: {
+  onCheckForUpdates: () => void;
   status: IUpdateStatus;
 }) => (
-  <span className="Greeting__UpdateStatusIndicator">
+  <span className="Greeting__UpdateStatusIndicator" onClick={onCheckForUpdates}>
     {status.checking && (
       <LoadingDots className="Greeting__UpdateStatusIndicator__dots" />
     )}

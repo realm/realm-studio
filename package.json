@@ -98,12 +98,10 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": [
-      "tslint-prettier",
-      "git add"
+      "tslint --fix"
     ],
     "package.json": [
-      "check:package-lock",
-      "git add"
+      "check:package-lock"
     ]
   },
   "dependencies": {

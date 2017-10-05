@@ -5,5 +5,5 @@ export { ActionReceiver } from './ActionReceiver';
 export { ActionSender } from './ActionSender';
 
 export interface IActionHandlers {
-  [name: string]: (...args: any[]) => Promise<any>;
+  [name: string]: (...args: any[]) => Promise<any> | void;
 }

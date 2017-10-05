@@ -7,6 +7,10 @@ import {
 } from '../../windows/WindowType';
 
 export class Sender extends ActionSender {
+  public checkForUpdates() {
+    return this.send(MainActions.CheckForUpdates);
+  }
+
   public showConnectToServer() {
     return this.send(MainActions.ShowConnectToServer);
   }

@@ -25,6 +25,9 @@ export default class Application {
   private windowManager = new WindowManager();
 
   private actionHandlers = {
+    [MainActions.CheckForUpdates]: () => {
+      this.checkForUpdates();
+    },
     [MainActions.ShowConnectToServer]: () => {
       return this.showConnectToServer();
     },
@@ -79,9 +82,12 @@ export default class Application {
   public showGreeting() {
     return new Promise(resolve => {
       const window = this.windowManager.createWindow(WindowType.Greeting);
+      // Show the window, the first time its ready-to-show
       window.once('ready-to-show', () => {
         window.show();
-        // Check for updates
+      });
+      // Check for updates, every time the contents has loaded
+      window.webContents.on('did-finish-load', () => {
         this.updater.checkForUpdates(true);
       });
       this.updater.addListeningWindow(window);

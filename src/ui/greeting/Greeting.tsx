@@ -12,12 +12,14 @@ import './Greeting.scss';
 
 export const Greeting = ({
   isSyncEnabled,
+  onCheckForUpdates,
   onConnectToServer,
   onOpenLocalRealm,
   updateStatus,
   version,
 }: {
   isSyncEnabled: boolean;
+  onCheckForUpdates: () => void;
   onConnectToServer: () => void;
   onOpenLocalRealm: () => void;
   updateStatus: IUpdateStatus;
@@ -32,7 +34,12 @@ export const Greeting = ({
         <h3 className="Greeting__Title">Realm Studio</h3>
         <p>
           Version {version}
-          {updateStatus && <UpdateStatusIndicator status={updateStatus} />}
+          {updateStatus && (
+            <UpdateStatusIndicator
+              status={updateStatus}
+              onCheckForUpdates={onCheckForUpdates}
+            />
+          )}
         </p>
       </div>
       <div className="Greeting__Actions">
