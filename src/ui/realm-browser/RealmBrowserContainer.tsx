@@ -121,8 +121,8 @@ export class RealmBrowserContainer extends React.Component<
           ? list.data.length - 1
           : newIndex < 0 ? 0 : newIndex;
       this.realm.write(() => {
-        const deletedObjects = list.data.splice(currentIndex, 1);
-        list.data.splice(properIndex, 0, deletedObjects[0]);
+        const movedObjects = list.data.splice(currentIndex, 1);
+        list.data.splice(properIndex, 0, movedObjects[0]);
       });
       this.setState({ rowToHighlight: properIndex, columnToHighlight: 0 });
     }
