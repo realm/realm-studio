@@ -57,6 +57,10 @@ export class GreetingContainer extends React.Component<
     main.showOpenLocalRealm();
   };
 
+  public onCheckForUpdates = () => {
+    main.checkForUpdates();
+  };
+
   public updateStatusChanged = (
     e: Electron.IpcMessageEvent,
     status: IUpdateStatus,
