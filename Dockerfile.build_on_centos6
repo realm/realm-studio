@@ -1,0 +1,27 @@
+FROM centos:6
+
+ENV NPM_CONFIG_UNSAFE_PERM true
+
+RUN touch /var/lib/rpm/* \
+ && yum -y install \
+      centos-release-scl-rh \
+      epel-release \
+ && yum -y install \
+      chrpath \
+      devtoolset-3-binutils \
+      devtoolset-3-gcc \
+      devtoolset-3-gcc-c++ \
+      jq \
+      libconfig-devel \
+      openssl-devel \
+      python27 \
+      wget \
+      which \
+ && yum clean all
+
+ENV NVM_DIR /tmp/.nvm
+RUN wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.31.4/install.sh | bash
+RUN source /opt/rh/devtoolset-3/enable \
+ && source $NVM_DIR/nvm.sh \
+ && nvm install 8.4 \
+ && chmod a+rwX -R ${NVM_DIR}
