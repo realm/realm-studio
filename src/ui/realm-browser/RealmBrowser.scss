@@ -7,6 +7,7 @@ $realm-browser-header-icon-space: 24px;
 .RealmBrowser {
   display: flex;
   height: 100%;
+  overflow: hidden;
 
   &__Sidebar {
     background: $window-background;
