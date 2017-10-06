@@ -19,9 +19,4 @@ RUN touch /var/lib/rpm/* \
       which \
  && yum clean all
 
-ENV NVM_DIR /tmp/.nvm
-RUN wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.31.4/install.sh | bash
-RUN source /opt/rh/devtoolset-3/enable \
- && source $NVM_DIR/nvm.sh \
- && nvm install 8.4 \
- && chmod a+rwX -R ${NVM_DIR}
+RUN source /opt/rh/devtoolset-3/enable

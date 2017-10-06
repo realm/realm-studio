@@ -74,11 +74,15 @@ def buildOnCentos6() {
       image.inside('-e HOME=/tmp -v /etc/passwd:/etc/passwd:ro') {
         // Link in the node_modules from the image
         sh 'ln -s /tmp/node_modules .'
-        // Test that the package-lock has changed while building the image
-        // - if it has, a dependency was changed in package.json but not updated in the lock
-        sh 'npm run check:package-lock'
-        // Run the tests with xvfb to allow opening windows virtually
-        sh 'npm install --quiet'
+
+        def nodeVersion = readFile('.nvmrc').trim()
+        nvm(version: nodeVersion) {
+          // Test that the package-lock has changed while building the image
+          // - if it has, a dependency was changed in package.json but not updated in the lock
+          sh 'npm run check:package-lock'
+          // Run the tests with xvfb to allow opening windows virtually
+          sh 'npm install --quiet'
+        }
       }
       stash name:'centos6', includes:'node_modules/realm/compiled/**/*'
     }
