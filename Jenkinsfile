@@ -94,8 +94,8 @@ def runTestsOnMacos(String command) {
 }
 
 def runTestsOnWindows(String command) {
-  bat 'npm install --quiet'
   bat 'npm uninstall realm-object-server --save-dev'
+  bat 'npm install --quiet'
   bat command
 }
 
