@@ -56,7 +56,7 @@ def build(String label) {
   return {
     node(label) {
       rlmCheckout scm
-      runTests(label, 'npm build')
+      runTests(label, 'npm run build')
     }
   }
 }
