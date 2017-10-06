@@ -76,7 +76,7 @@
     ]
   },
   "scripts": {
-    "build": "NODE_ENV=production webpack",
+    "build": "webpack --env.NODE_ENV=production",
     "check:package-lock": "node ./checking/package-lock.js",
     "dev:ros": "ros start",
     "dev": "rm -rf ./build && NODE_ENV=develop concurrently --names \"WEBPACK:M,WEBPACK:R,ELECTRON\" \"npm run webpack:main\" \"npm run webpack:renderer\" \"npm run wait-for-bundle && npm run electron\"",
