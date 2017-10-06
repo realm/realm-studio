@@ -1,5 +1,7 @@
 FROM centos:6
 
+ENV NODE_VERSION 8.6
+
 ENV NPM_CONFIG_UNSAFE_PERM true
 
 RUN touch /var/lib/rpm/* \
@@ -21,9 +23,13 @@ RUN touch /var/lib/rpm/* \
 
 RUN source /opt/rh/devtoolset-3/enable
 
-RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.29.0/install.sh | bash
-ENV NVM_DIR=$HOME/.nvm
-RUN source $HOME/.nvm/nvm.sh \
- && nvm install 8.6 \
- && nvm alias default 8.6 \
- && nvm use default
+ENV NVM_DIR /tmp/.nvm
+RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.4/install.sh | bash
+RUN source ${NVM_DIR}/nvm.sh \
+ && nvm install ${NODE_VERSION} \
+ && nvm alias default ${NODE_VERSION} \
+ && nvm use default \
+ && nvm cache dir
+
+ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
