@@ -85,7 +85,7 @@ def buildOnCentos6() {
   }
 }
 
-def buildOnWindows(String command) {
+def buildOnWindows() {
   return {
     node('windows') {
       rlmCheckout scm
