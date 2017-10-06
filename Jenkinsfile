@@ -65,7 +65,7 @@ def runTests(String label, String command) {
   "runTestsOn${label.capitalize()}"(command)
 }
 
-runTestsOnDocker(String command) {
+def runTestsOnDocker(String command) {
   // Computing a packageHash from the package-lock.json
   def packageHash = sh(
     script: "git ls-files -s package-lock.json | cut -d ' ' -f 2",
@@ -85,7 +85,7 @@ runTestsOnDocker(String command) {
   }
 }
 
-runTestsOnMacos(String command) {
+def runTestsOnMacos(String command) {
   def nodeVersion = readFile('.nvmrc').trim()
   nvm(version: nodeVersion) {
     sh 'npm install --quiet'
@@ -93,7 +93,7 @@ runTestsOnMacos(String command) {
   }
 }
 
-runTestsOnWindows(String command) {
+def runTestsOnWindows(String command) {
   bat 'npm install --quiet'
   bat command
 }
