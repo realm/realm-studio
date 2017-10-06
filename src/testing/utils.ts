@@ -12,7 +12,7 @@ export const createApp = (
   entries: { [name: string]: string },
   rendererHtmlPath: string,
 ) => {
-  const webpackTestConfig = require('../../webpack.test.config.js');
+  const webpackTestConfig = require('../../webpack.test.config.js')();
   return new Promise<Application>((resolve, reject) => {
     // Compile the .ts file before starting the Spectron app
     webpack(
