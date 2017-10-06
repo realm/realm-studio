@@ -1,6 +1,6 @@
 FROM centos:6
 
-ENV NODE_VERSION 8.6
+ENV NODE_VERSION 8.6.0
 
 ENV NPM_CONFIG_UNSAFE_PERM true
 
@@ -17,19 +17,15 @@ RUN touch /var/lib/rpm/* \
       libconfig-devel \
       openssl-devel \
       python27 \
+      tar \
       wget \
       which \
+      xz \
  && yum clean all
 
 RUN source /opt/rh/devtoolset-3/enable
 
-ENV NVM_DIR /tmp/.nvm
-RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.4/install.sh | bash
-RUN source ${NVM_DIR}/nvm.sh \
- && nvm install ${NODE_VERSION} \
- && nvm alias default ${NODE_VERSION} \
- && nvm use default \
- && nvm cache dir
-
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+RUN curl -SLO "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz" \
+ && tar -xJf "node-v${NODE_VERSION}-linux-x64.tar.xz" -C /usr/local --strip-components=1 \
+ && rm "node-v${NODE_VERSION}-linux-x64.tar.xz" \
+ && ln -s /usr/local/bin/node /usr/local/bin/nodejs
