@@ -2,20 +2,19 @@
 
 @Library('realm-ci') _
 
-node('docker') {
-  rlmCheckout scm
+jobWrapper {
+  node('docker') {
+    rlmCheckout scm
+  }
+
+  parallel (
+    macos: packageOnMacos(),
+    linux: buildOnCentos6(),
+    windows: buildOnWindows()
+  )
+  aggregate: aggregate()
 }
 
-parallel (
-  macos: packageOnMacos(),
-  others: {
-    parallel(
-      linux: buildOnCentos6(),
-      windows: buildOnWindows()
-    )
-    aggregate: aggregate()
-  }
-)
 
 /*
 if (env.BRANCH_NAME == 'master') {
@@ -121,20 +120,24 @@ def packageOnMacos() {
 }
 
 def aggregate() {
-  rlmCheckout scm
-  unstash 'centos6'
-  unstash 'windows'
+  return {
+    node('docker') {
+      rlmCheckout scm
+      unstash 'centos6'
+      unstash 'windows'
 
-  def packageHash = getPackageHash()
-  image = buildDockerEnv("ci/realm-studio:publish-${packageHash}", extra_args: '-f Dockerfile.testing')
-  image.inside {
-    sh 'npm run build'
-    // eletron-build check credentials even for --publish never, so will always specify it.
-    withCredentials([
-      [$class: 'StringBinding', credentialsId: 'github-release-token', variable: 'GH_TOKEN'],
-      [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-s3-user-key', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']
-    ]) {
-      sh 'node_modules/.bin/electron-builder --publish onTagOrDraft'
+      def packageHash = getPackageHash()
+      image = buildDockerEnv("ci/realm-studio:publish-${packageHash}", extra_args: '-f Dockerfile.testing')
+      image.inside {
+        sh 'npm run build'
+        // eletron-build check credentials even for --publish never, so will always specify it.
+        withCredentials([
+          [$class: 'StringBinding', credentialsId: 'github-release-token', variable: 'GH_TOKEN'],
+          [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-s3-user-key', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']
+        ]) {
+          sh 'node_modules/.bin/electron-builder --publish onTagOrDraft'
+        }
+      }
     }
   }
 }
