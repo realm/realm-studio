@@ -20,3 +20,10 @@ RUN touch /var/lib/rpm/* \
  && yum clean all
 
 RUN source /opt/rh/devtoolset-3/enable
+
+RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.29.0/install.sh | bash
+ENV NVM_DIR=$HOME/.nvm
+RUN source $HOME/.nvm/nvm.sh \
+ && nvm install 8.6 \
+ && nvm alias default 8.6 \
+ && nvm use default
