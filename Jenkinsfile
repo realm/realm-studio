@@ -18,7 +18,24 @@ jobWrapper {
   }
 
   stage('Publish') {
-    aggregate()
+    node('docker') {
+      rlmCheckout scm
+      unstash 'centos6'
+      unstash 'windows'
+
+      def packageHash = getPackageHash()
+      image = buildDockerEnv("ci/realm-studio:publish-${packageHash}", extra_args: '-f Dockerfile.testing')
+      image.inside {
+        sh 'npm run build'
+        // eletron-build check credentials even for --publish never, so will always specify it.
+        withCredentials([
+          [$class: 'StringBinding', credentialsId: 'github-release-token', variable: 'GH_TOKEN'],
+          [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-s3-user-key', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']
+        ]) {
+          sh 'node_modules/.bin/electron-builder --publish onTagOrDraft'
+        }
+      }
+    }
   }
 }
 
@@ -90,8 +107,7 @@ def buildOnWindows() {
   return {
     node('windows') {
       rlmCheckout scm
-      bat 'npm uninstall realm-object-server --save-dev'
-      bat 'npm install --quiet'
+      bat 'npm install --quiet --production'
       stash name:'windows', includes:'node_modules/realm/compiled/**/*'
     }
   }
@@ -115,29 +131,6 @@ def packageOnMacos() {
         }
 
         archiveArtifacts 'dist/*.zip'
-      }
-    }
-  }
-}
-
-def aggregate() {
-  return {
-    node('docker') {
-      rlmCheckout scm
-      unstash 'centos6'
-      unstash 'windows'
-
-      def packageHash = getPackageHash()
-      image = buildDockerEnv("ci/realm-studio:publish-${packageHash}", extra_args: '-f Dockerfile.testing')
-      image.inside {
-        sh 'npm run build'
-        // eletron-build check credentials even for --publish never, so will always specify it.
-        withCredentials([
-          [$class: 'StringBinding', credentialsId: 'github-release-token', variable: 'GH_TOKEN'],
-          [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-s3-user-key', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']
-        ]) {
-          sh 'node_modules/.bin/electron-builder --publish onTagOrDraft'
-        }
       }
     }
   }

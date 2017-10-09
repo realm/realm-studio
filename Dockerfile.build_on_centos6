@@ -32,4 +32,4 @@ ADD package.json /tmp/package.json
 ADD package-lock.json /tmp/package-lock.json
 RUN source /opt/rh/devtoolset-3/enable \
  && cd /tmp \
- && npm install --quiet
+ && npm install --quiet --production
