@@ -3,16 +3,23 @@
 @Library('realm-ci') _
 
 jobWrapper {
-  node('docker') {
-    rlmCheckout scm
+  stage('SCM') {
+    node('docker') {
+      rlmCheckout scm
+    }
   }
 
-  parallel (
-    macos: packageOnMacos(),
-    linux: buildOnCentos6(),
-    windows: buildOnWindows()
-  )
-  aggregate: aggregate()
+  stage('Build') {
+    parallel (
+      macos: packageOnMacos(),
+      linux: buildOnCentos6(),
+      windows: buildOnWindows()
+    )
+  }
+
+  stage('Publish') {
+    aggregate()
+  }
 }
 
 
