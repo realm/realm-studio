@@ -23,8 +23,6 @@ RUN touch /var/lib/rpm/* \
       xz \
  && yum clean all
 
-RUN source /opt/rh/devtoolset-3/enable
-
 RUN curl -SLO "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz" \
  && tar -xJf "node-v${NODE_VERSION}-linux-x64.tar.xz" -C /usr/local --strip-components=1 \
  && rm "node-v${NODE_VERSION}-linux-x64.tar.xz" \
@@ -32,5 +30,6 @@ RUN curl -SLO "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-li
 
 ADD package.json /tmp/package.json
 ADD package-lock.json /tmp/package-lock.json
-RUN cd /tmp && npm install --quiet
-RUN cp -a /tmp/node_modules /project/
+RUN source /opt/rh/devtoolset-3/enable \
+ && cd /tmp \
+ && npm install --quiet
