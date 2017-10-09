@@ -26,11 +26,15 @@ mixpanel.init('bbadd422d2866fc9431cb63baa70bb1a', {
 
 settings.getSettings().then(({ identity }) => {
   mixpanel.identify(identity);
+  mixpanel.people.set({
+    $browser: 'Realm Studio (Chrome)',
+    $browser_version: electron.remote.app.getVersion() || 'unknown',
+  });
 });
 
 mixpanel.register({
   $browser: 'Realm Studio (Chrome)',
-  realm_studio_version: electron.remote.app.getVersion() || 'unknown',
+  $browser_version: electron.remote.app.getVersion() || 'unknown',
 });
 
 export = mixpanel;
