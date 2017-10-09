@@ -44,7 +44,7 @@ export abstract class ActionSender {
     }
   }
 
-  protected awaitResponse(requestId: string): IRequestHandle {
+  protected awaitResponse(requestId: string): Promise<any> {
     // Creating a placeholder, with values that should get overwritten before this method returns
     const requestHandle: Partial<IRequestHandle> = {};
     // Create the promise and override the handles .resolve
@@ -54,7 +54,7 @@ export abstract class ActionSender {
     // Hold on to and return the request handle
     if (requestHandle.promise && requestHandle.resolve) {
       this.requests[requestId] = requestHandle as IRequestHandle;
-      return this.requests[requestId];
+      return this.requests[requestId].promise;
     } else {
       throw new Error(`The promise or resolve callback was not set`);
     }
