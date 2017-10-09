@@ -22,3 +22,7 @@ declare module 'express' {
 declare module 'uws' {
   export class Server {}
 }
+
+declare module 'mixpanel-browser' {
+  export = mixpanel;
+}
