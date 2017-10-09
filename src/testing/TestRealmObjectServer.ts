@@ -1,3 +1,7 @@
+// FIXME: This test realm object server is not completely implemented just yet.
+// It needs to register the appropreate services.
+
+/*
 import * as fs from 'fs-extra';
 import * as Realm from 'realm';
 import {
@@ -11,9 +15,6 @@ import {
   SyncService,
 } from 'realm-object-server';
 import { URL } from 'url';
-
-// FIXME: This test realm object server is not completely implemented just yet.
-// It needs to register the appropreate services.
 
 export class TestRealmObjectServer extends Server {
   constructor() {
@@ -50,3 +51,4 @@ export class TestRealmObjectServer extends Server {
     return Realm.Sync.User.login(url, 'realm-admin', '');
   }
 }
+*/

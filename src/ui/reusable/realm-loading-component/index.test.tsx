@@ -6,7 +6,7 @@ import * as React from 'react';
 import * as ReactTestUtils from 'react-dom/test-utils';
 import * as Realm from 'realm';
 import { RealmLoadingMode } from '../../../services/ros';
-import { TestRealmObjectServer } from '../../../testing/TestRealmObjectServer';
+// import { TestRealmObjectServer } from '../../../testing/TestRealmObjectServer';
 
 import {
   IRealmLoadingComponentState,
@@ -59,6 +59,7 @@ describe('<RealmLoadingComponent />', () => {
     });
   });
 
+  /*
   describe('when opening the __admin realm of ROS', async () => {
     let server: TestRealmObjectServer;
     let changes = 0;
@@ -121,4 +122,5 @@ describe('<RealmLoadingComponent />', () => {
   after(() => {
     global.window.close();
   });
+  */
 });
