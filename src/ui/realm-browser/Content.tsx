@@ -42,7 +42,7 @@ export const Content = ({
   ) => void;
   onColumnWidthChanged: (index: number, width: number) => void;
   schema: Realm.ObjectSchema | null;
-  progress: ILoadingProgress;
+  progress?: ILoadingProgress;
   rowToHighlight?: number;
   data: Realm.Results<any> | any;
   query: string | null;
@@ -192,7 +192,7 @@ export const Content = ({
         </ScrollSync>
       </div>
     );
-  } else if (progress.done) {
+  } else if (progress && progress.done) {
     return <div className="RealmBrowser__Content--no-schema-selected" />;
   } else {
     return null;

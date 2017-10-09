@@ -16,7 +16,7 @@ export interface IContentContainerProps {
     columnIndex: number,
   ) => void;
   schema: Realm.ObjectSchema | null;
-  progress: ILoadingProgress;
+  progress?: ILoadingProgress;
   rowToHighlight?: number;
   columnToHighlight?: number;
   data: Realm.Results<any> | any;
