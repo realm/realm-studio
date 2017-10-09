@@ -10,8 +10,10 @@ import { Button } from 'reactstrap';
 
 import { IRealmFile, IUser, IUserMetadataRow } from '../../../services/ros';
 
-import { LoadingOverlay } from '../../reusable/loading-overlay';
-import { ILoadingProgress } from '../../reusable/RealmLoadingComponent';
+import {
+  ILoadingProgress,
+  LoadingOverlay,
+} from '../../reusable/loading-overlay';
 import { ChangePasswordDialogContainer } from './ChangePasswordDialogContainer';
 import { CreateUserDialogContainer } from './CreateUserDialogContainer';
 import { UserRole, UserSidebarContainer } from './UserSidebarContainer';

@@ -7,6 +7,8 @@ import {
 } from 'react-virtualized';
 import { Input, InputGroup, InputGroupAddon } from 'reactstrap';
 import * as Realm from 'realm';
+
+import { ILoadingProgress } from '../reusable/loading-overlay';
 import { Cell } from './Cell';
 import { HeaderCell } from './HeaderCell';
 
@@ -18,6 +20,7 @@ export const Content = ({
   onCellClick,
   onColumnWidthChanged,
   schema,
+  progress,
   rowToHighlight,
   data,
   query,
@@ -39,6 +42,7 @@ export const Content = ({
   ) => void;
   onColumnWidthChanged: (index: number, width: number) => void;
   schema: Realm.ObjectSchema | null;
+  progress: ILoadingProgress;
   rowToHighlight?: number;
   data: Realm.Results<any> | any;
   query: string | null;
@@ -188,7 +192,9 @@ export const Content = ({
         </ScrollSync>
       </div>
     );
+  } else if (progress.done) {
+    return <div className="RealmBrowser__Content--no-schema-selected" />;
   } else {
-    return <p>Loading</p>;
+    return null;
   }
 };

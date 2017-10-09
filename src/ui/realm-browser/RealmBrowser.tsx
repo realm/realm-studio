@@ -3,6 +3,7 @@ import * as Realm from 'realm';
 
 import { ConfirmModal } from '../reusable/confirm-modal';
 import { ContextMenu } from '../reusable/context-menu';
+import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
 import { ContentContainer } from './ContentContainer';
 import './RealmBrowser.scss';
 import { IList } from './RealmBrowserContainer';
@@ -10,30 +11,38 @@ import { SelectObject } from './SelectObject';
 import { Sidebar } from './Sidebar';
 
 export const RealmBrowser = ({
-  getSchemaLength,
-  getSelectedSchema,
-  onCellChange,
-  onSchemaSelected,
-  onCellClick,
-  schemas,
-  rowToHighlight,
-  columnToHighlight,
-  getSelectedData,
-  selectedSchemaName,
-  list,
-  onContextMenu,
-  contextMenu,
-  onContextMenuClose,
-  confirmModal,
-  selectObject,
   closeSelectObject,
+  columnToHighlight,
+  confirmModal,
+  contextMenu,
+  getSchemaLength,
+  getSelectedData,
+  getSelectedSchema,
+  list,
+  onCellChange,
+  onCellClick,
+  onContextMenu,
+  onContextMenuClose,
+  onSchemaSelected,
+  progress,
+  rowToHighlight,
+  schemas,
+  selectedSchemaName,
+  selectObject,
   updateObjectReference,
 }: {
+  closeSelectObject: () => void;
+  columnToHighlight?: number;
+  confirmModal?: {
+    yes: () => void;
+    no: () => void;
+  };
+  contextMenu: any;
   getSchemaLength: (name: string) => number;
   getSelectedData: () => any;
   getSelectedSchema: () => Realm.ObjectSchema | null;
+  list?: IList;
   onCellChange: (object: any, propertyName: string, value: string) => void;
-  onSchemaSelected: (name: string, objectToScroll: any) => void;
   onCellClick: (
     object: any,
     property: Realm.ObjectSchemaProperty,
@@ -41,45 +50,41 @@ export const RealmBrowser = ({
     rowIndex: number,
     columnIndex: number,
   ) => void;
-  schemas: Realm.ObjectSchema[];
-  rowToHighlight?: number;
-  columnToHighlight?: number;
-  selectedSchemaName?: string;
-  list?: IList;
   onContextMenu: (
     e: React.SyntheticEvent<any>,
     object: any,
     property: Realm.ObjectSchemaProperty,
   ) => void;
-  contextMenu: any;
   onContextMenuClose: () => void;
-  confirmModal?: {
-    yes: () => void;
-    no: () => void;
-  };
+  onSchemaSelected: (name: string, objectToScroll: any) => void;
+  progress: ILoadingProgress;
+  rowToHighlight?: number;
+  schemas: Realm.ObjectSchema[];
+  selectedSchemaName?: string;
   selectObject?: any;
-  closeSelectObject: () => void;
   updateObjectReference: (object: any) => void;
 }) => {
   const values = getSelectedData();
   return (
     <div className="RealmBrowser">
       <Sidebar
-        schemas={schemas}
-        onSchemaSelected={onSchemaSelected}
-        selectedSchemaName={selectedSchemaName}
         getSchemaLength={getSchemaLength}
         list={list}
+        onSchemaSelected={onSchemaSelected}
+        progress={progress}
+        schemas={schemas}
+        selectedSchemaName={selectedSchemaName}
       />
       <div className="RealmBrowser__Wrapper">
         <ContentContainer
-          schema={getSelectedSchema()}
+          columnToHighlight={columnToHighlight}
+          data={values}
           onCellChange={onCellChange}
           onCellClick={onCellClick}
-          columnToHighlight={columnToHighlight}
-          rowToHighlight={rowToHighlight}
-          data={values}
           onContextMenu={onContextMenu}
+          progress={progress}
+          rowToHighlight={rowToHighlight}
+          schema={getSelectedSchema()}
         />
       </div>
       {contextMenu && (
@@ -105,6 +110,8 @@ export const RealmBrowser = ({
           close={closeSelectObject}
         />
       )}
+
+      <LoadingOverlay progress={progress} fade={true} />
     </div>
   );
 };

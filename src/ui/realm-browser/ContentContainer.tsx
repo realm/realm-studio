@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Grid } from 'react-virtualized';
 
+import { ILoadingProgress } from '../reusable/loading-overlay';
 import { Content } from './Content';
 
 const MINIMUM_COLUMN_WIDTH = 20;
@@ -15,6 +16,7 @@ export interface IContentContainerProps {
     columnIndex: number,
   ) => void;
   schema: Realm.ObjectSchema | null;
+  progress: ILoadingProgress;
   rowToHighlight?: number;
   columnToHighlight?: number;
   data: Realm.Results<any> | any;

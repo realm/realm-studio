@@ -7,13 +7,15 @@ import {
   IRealmFile,
   IUser,
   IUserMetadataRow,
+  RealmLoadingMode,
   updateUserPassword,
 } from '../../../services/ros';
 import { showError } from '../../reusable/errors';
+import { ILoadingProgress } from '../../reusable/loading-overlay';
 import {
-  ILoadingProgress,
+  IRealmLoadingComponentState,
   RealmLoadingComponent,
-} from '../../reusable/RealmLoadingComponent';
+} from '../../reusable/realm-loading-component';
 
 import { UserRole, UsersTable } from './UsersTable';
 
@@ -21,7 +23,7 @@ export interface IUsersTableContainerProps {
   user: Realm.Sync.User;
 }
 
-export interface IUsersTableContainerState {
+export interface IUsersTableContainerState extends IRealmLoadingComponentState {
   isChangePasswordOpen: boolean;
   isCreateUserOpen: boolean;
   selectedUserId: string | null;
@@ -34,7 +36,7 @@ export class UsersTableContainer extends RealmLoadingComponent<
   IUsersTableContainerState
 > {
   constructor() {
-    super('/__admin');
+    super();
     this.state = {
       isChangePasswordOpen: false,
       isCreateUserOpen: false,
@@ -46,14 +48,19 @@ export class UsersTableContainer extends RealmLoadingComponent<
     };
   }
 
+  public componentDidMount() {
+    if (this.props.user) {
+      this.gotUser(this.props.user);
+    }
+  }
+
   public componentDidUpdate(
     prevProps: IUsersTableContainerProps,
     prevState: IUsersTableContainerState,
   ) {
-    // Fetch the users realm from ROS
+    // Fetch the realms realm from ROS
     if (prevProps.user !== this.props.user) {
-      this.cancelLoadingRealms();
-      this.initializeRealm();
+      this.gotUser(this.props.user);
     }
   }
 
@@ -199,6 +206,14 @@ export class UsersTableContainer extends RealmLoadingComponent<
       throw new Error(`Found no user with the id ${userId}`);
     }
   };
+
+  protected gotUser(user: Realm.Sync.User) {
+    this.loadRealm({
+      authentication: this.props.user,
+      mode: RealmLoadingMode.Synced,
+      path: '__admin',
+    });
+  }
 
   protected onRealmChanged = () => {
     this.forceUpdate();
