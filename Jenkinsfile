@@ -72,6 +72,7 @@ def buildOnCentos6() {
       def packageHash = getPackageHash()
       image = buildDockerEnv("ci/realm-studio:centos6-${packageHash}", extra_args: '-f Dockerfile.build_on_centos6')
       def container = sh(returnStdout: true, script: "docker create ${image.id}").trim()
+      sh 'mkdir -p node_modules/realm/compiled'
       sh "docker cp ${container}:/tmp/node_modules/realm/compiled node_modules/realm/compiled"
       stash name:'centos6', includes:'node_modules/realm/compiled/**/*'
     }
