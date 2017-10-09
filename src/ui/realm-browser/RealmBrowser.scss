@@ -10,8 +10,10 @@ $realm-browser-header-icon-space: 24px;
 
   &__Sidebar {
     background: $window-background;
-    flex: 0 2 200px;
+    display: flex;
+    flex-direction: column;
     padding: $spacer / 2;
+    width: 200px;
 
     &__Header {
       border-bottom: 1px solid $color-dove;
