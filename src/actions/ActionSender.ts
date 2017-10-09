@@ -44,14 +44,20 @@ export abstract class ActionSender {
     }
   }
 
-  protected awaitResponse(requestId: string) {
-    const promise = new Promise((resolve, reject) => {
-      this.requests[requestId] = {
-        promise,
-        resolve,
-      };
+  protected awaitResponse(requestId: string): Promise<any> {
+    // Creating a placeholder, with values that should get overwritten before this method returns
+    const requestHandle: Partial<IRequestHandle> = {};
+    // Create the promise and override the handles .resolve
+    requestHandle.promise = new Promise((resolve, reject) => {
+      requestHandle.resolve = resolve;
     });
-    return promise;
+    // Hold on to and return the request handle
+    if (requestHandle.promise && requestHandle.resolve) {
+      this.requests[requestId] = requestHandle as IRequestHandle;
+      return this.requests[requestId].promise;
+    } else {
+      throw new Error(`The promise or resolve callback was not set`);
+    }
   }
 
   private onResponse = (requestId: string, result: any) => {

@@ -2,6 +2,9 @@ import { remote as electron } from 'electron';
 import * as path from 'path';
 import * as Realm from 'realm';
 
+export * from './ros-authentication';
+export * from './ros-realms';
+
 export interface IUser {
   userId: string;
   isAdmin: boolean;

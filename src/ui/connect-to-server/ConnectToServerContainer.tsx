@@ -51,8 +51,8 @@ export class ConnectToServerContainer extends React.Component<
 
     if (token) {
       await main.showServerAdministration({
-        url: preparedUrl,
         credentials: {
+          url: preparedUrl,
           token,
         },
       });
@@ -68,8 +68,8 @@ export class ConnectToServerContainer extends React.Component<
         );
         // Show the server administration
         await main.showServerAdministration({
-          url: user.server,
           credentials: {
+            url: user.server,
             username: preparedUsername,
             password,
           },
