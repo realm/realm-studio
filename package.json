@@ -91,7 +91,7 @@
     "postinstall": "electron-builder install-app-deps",
     "precommit": "lint-staged",
     "start": "rm -rf ./build && npm run build && npm run electron",
-    "test": "mocha-webpack --webpack-config webpack.test.config.js 'src/**/*.test.ts' 'src/**/*.test.tsx'",
+    "test": "mocha-webpack",
     "tslint-prettier": "tslint --fix 'src/**/*.ts' 'src/**/*.tsx'",
     "wait-for-bundle": "node ./webpack.wait-for-bundle.js",
     "webpack:main": "webpack --config=webpack.main.config.js",
