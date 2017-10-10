@@ -19,7 +19,7 @@ export const ObjectCell = ({
       className={classnames(
         'form-control',
         'form-control-sm',
-        'RealmBrowser__Content__Link',
+        'RealmBrowser__Content__ObjectCell',
       )}
       title={formatedValue}
     >
