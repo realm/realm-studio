@@ -32,4 +32,7 @@ ADD package.json /tmp/package.json
 ADD package-lock.json /tmp/package-lock.json
 RUN source /opt/rh/devtoolset-3/enable \
  && cd /tmp \
- && npm install --quiet --production
+ && npm install --quiet --production --ignore-scripts \
+ && ver=$(cat package-lock.json | jq --raw-output '.dependencies | .["electron-builder"] | .version') \
+ && npm install electron-builder@${version} \
+ && node_modules/.bin/electron-builder install-app-deps
