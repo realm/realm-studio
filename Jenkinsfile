@@ -26,6 +26,7 @@ jobWrapper {
       def packageHash = getPackageHash()
       image = buildDockerEnv("ci/realm-studio:publish-${packageHash}", extra_args: '-f Dockerfile.testing')
       image.inside {
+        sh 'npm install'
         sh 'npm run build'
         // eletron-build check credentials even for --publish never, so will always specify it.
         withCredentials([
