@@ -20,8 +20,10 @@ jobWrapper {
   stage('Publish') {
     node('docker') {
       rlmCheckout scm
-      unstash 'centos6'
-      unstash 'windows'
+      dir('unstash') {
+        unstash 'centos6'
+        unstash 'windows'
+      }
 
       def packageHash = getPackageHash()
       image = buildDockerEnv("ci/realm-studio:publish-${packageHash}", extra_args: '-f Dockerfile.testing')
@@ -31,6 +33,7 @@ jobWrapper {
         // Test that the package-lock has changed while building the image
         // - if it has, a dependency was changed in package.json but not updated in the lock
         sh 'npm run check:package-lock'
+        sh 'cp -R unstash/* .'
         sh 'npm run build'
         // eletron-build check credentials even for --publish never, so will always specify it.
         withCredentials([
