@@ -23,16 +23,13 @@ jobWrapper {
       dir('unstash') {
         unstash 'centos6'
         unstash 'windows'
+        sh 'mv node_modules/compiled/compiled/* node_modules/compiled'
       }
 
       def packageHash = getPackageHash()
       image = buildDockerEnv("ci/realm-studio:publish-${packageHash}", extra_args: '-f Dockerfile.testing')
       image.inside {
-        // Link in the node_modules from the image
-        sh 'ln -s /tmp/node_modules .'
-        // Test that the package-lock has changed while building the image
-        // - if it has, a dependency was changed in package.json but not updated in the lock
-        sh 'npm run check:package-lock'
+        sh 'npm install'
         sh 'cp -R unstash/node_modules/* node_modules/'
         sh 'npm run build'
         // eletron-build check credentials even for --publish never, so will always specify it.
