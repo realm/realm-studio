@@ -109,7 +109,7 @@ def buildOnWindows() {
       rlmCheckout scm
       bat 'npm install --quiet --production --ignore-scripts'
       def lockJson = readJSON file: 'package-lock.json'
-      def  = lockJson['dependencies']['electron-builder']['version'].trim()
+      def  ebVersion = lockJson['dependencies']['electron-builder']['version'].trim()
       bat "npm install electron-builder@${ebVersion}"
       bat 'node_modules/.bin/electron-builder install-app-deps'
       stash name:'windows', includes:'node_modules/realm/compiled/**/*'
