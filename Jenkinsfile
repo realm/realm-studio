@@ -23,7 +23,7 @@ jobWrapper {
       dir('unstash') {
         unstash 'centos6'
         unstash 'windows'
-        sh 'mv node_modules/compiled/compiled/* node_modules/compiled'
+        sh 'mv node_modules/realm/compiled/compiled/* node_modules/realm/compiled'
       }
 
       def packageHash = getPackageHash()
