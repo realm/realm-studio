@@ -44,7 +44,7 @@ module.exports = (env) => {
       // @see https://github.com/s-panferov/awesome-typescript-loader#configuration on why CheckerPlugin is needed
       new CheckerPlugin(),
       new webpack.DefinePlugin({
-        "process.env.NODE_ENV": JSON.stringify(env.NODE_ENV),
+        "process.env.NODE_ENV": JSON.stringify(env ? env.NODE_ENV : 'development'),
       }),
       new SpriteLoaderPlugin(),
     ].concat(isProduction ? [
