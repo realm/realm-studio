@@ -3,11 +3,10 @@ import * as Realm from 'realm';
 
 import { ActionReceiver } from '../actions/ActionReceiver';
 import { MainTransport } from '../actions/transports/MainTransport';
+import { RealmLoadingMode } from '../services/ros';
 import {
-  ILocalRealmBrowserOptions,
   IRealmBrowserOptions,
   IServerAdministrationOptions,
-  RealmBrowserMode,
   WindowType,
 } from '../windows/WindowType';
 import MainMenu from './main-menu';
@@ -107,9 +106,11 @@ export default class Application {
         selectedPaths => {
           if (selectedPaths) {
             selectedPaths.forEach(path => {
-              const options: ILocalRealmBrowserOptions = {
-                mode: RealmBrowserMode.Local,
-                path,
+              const options: IRealmBrowserOptions = {
+                realm: {
+                  mode: RealmLoadingMode.Local,
+                  path,
+                },
               };
               this.showRealmBrowser(options);
             });

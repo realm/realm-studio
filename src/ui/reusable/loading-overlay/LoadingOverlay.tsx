@@ -11,7 +11,7 @@ import './LoadingOverlay.scss';
  * @param options.loading Is it loading?
  * @param options.fade Delay and fade in the overlay, prevent flickering when the load is fast.
  */
-export default ({
+export const LoadingOverlay = ({
   loading,
   progress,
   fade = true,

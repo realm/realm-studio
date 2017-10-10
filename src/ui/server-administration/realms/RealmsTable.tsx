@@ -8,8 +8,10 @@ import {
 } from 'react-virtualized';
 
 import { IRealmFile } from '../../../services/ros';
-import { LoadingOverlay } from '../../reusable/loading-overlay';
-import { ILoadingProgress } from '../../reusable/RealmLoadingComponent';
+import {
+  ILoadingProgress,
+  LoadingOverlay,
+} from '../../reusable/loading-overlay';
 
 import './RealmsTable.scss';
 

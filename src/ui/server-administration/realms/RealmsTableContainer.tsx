@@ -2,12 +2,16 @@ import * as electron from 'electron';
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import { deleteRealm, IRealmFile } from '../../../services/ros';
+import {
+  deleteRealm,
+  IRealmFile,
+  RealmLoadingMode,
+} from '../../../services/ros';
 import { showError } from '../../reusable/errors';
 import {
-  ILoadingProgress,
+  IRealmLoadingComponentState,
   RealmLoadingComponent,
-} from '../../reusable/RealmLoadingComponent';
+} from '../../reusable/realm-loading-component';
 
 import { RealmsTable } from './RealmsTable';
 
@@ -16,10 +20,9 @@ export interface IRealmTableContainerProps {
   onRealmOpened: (path: string) => void;
 }
 
-export interface IRealmTableContainerState {
+export interface IRealmTableContainerState extends IRealmLoadingComponentState {
   realms: Realm.Results<IRealmFile> | null;
   selectedRealmPath: string | null;
-  progress: ILoadingProgress;
 }
 
 export class RealmsTableContainer extends RealmLoadingComponent<
@@ -27,7 +30,7 @@ export class RealmsTableContainer extends RealmLoadingComponent<
   IRealmTableContainerState
 > {
   constructor() {
-    super('__admin');
+    super();
     this.state = {
       realms: null,
       selectedRealmPath: null,
@@ -37,13 +40,19 @@ export class RealmsTableContainer extends RealmLoadingComponent<
     };
   }
 
+  public componentDidMount() {
+    if (this.props.user) {
+      this.gotUser(this.props.user);
+    }
+  }
+
   public componentDidUpdate(
     prevProps: IRealmTableContainerProps,
     prevState: IRealmTableContainerState,
   ) {
     // Fetch the realms realm from ROS
     if (prevProps.user !== this.props.user) {
-      this.initializeRealm();
+      this.gotUser(this.props.user);
     }
   }
 
@@ -81,6 +90,14 @@ export class RealmsTableContainer extends RealmLoadingComponent<
       selectedRealmPath: path,
     });
   };
+
+  protected gotUser(user: Realm.Sync.User) {
+    this.loadRealm({
+      authentication: this.props.user,
+      mode: RealmLoadingMode.Synced,
+      path: '__admin',
+    });
+  }
 
   protected onRealmChanged = () => {
     this.forceUpdate();

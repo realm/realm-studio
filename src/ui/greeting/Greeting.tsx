@@ -6,6 +6,7 @@ import { IUpdateStatus } from '../../main/updater';
 
 import realmLogo from 'realm-studio-svgs/realm-logo.svg';
 import { HistoryPanelContainer } from './HistoryPanelContainer';
+import { SignupOverlayContainer } from './SignupOverlayContainer';
 import { UpdateStatusIndicator } from './UpdateStatusIndicator';
 
 import './Greeting.scss';
@@ -61,5 +62,6 @@ export const Greeting = ({
       </div>
     </div>
     <HistoryPanelContainer />
+    <SignupOverlayContainer />
   </div>
 );

@@ -10,18 +10,21 @@ $realm-browser-header-icon-space: 24px;
 
   &__Sidebar {
     background: $window-background;
-    flex: 0 2 200px;
+    display: flex;
+    flex-direction: column;
     padding: $spacer / 2;
+    padding-bottom: 0;
+    width: 200px;
 
     &__Header {
       border-bottom: 1px solid $color-dove;
+      color: #9A9BA5;
       font-size: .9rem;
       font-weight: bold;
-      line-height: 2em;
       height: 2rem;
-      text-transform: uppercase;
+      line-height: 2em;
       margin-bottom: $spacer / 2;
-      color: #9A9BA5;
+      text-transform: uppercase;
     }
 
     &__SchemaList {
@@ -29,41 +32,85 @@ $realm-browser-header-icon-space: 24px;
       overflow-x: hidden;
       overflow-y: auto;
       padding: 0;
+
+      &--empty {
+        display: flex;
+        height: 100%;
+        justify-content: flex-start;
+
+        &::before {
+          color: $color-elephant;
+          content: "This Realm has no schemas defined";
+          text-align: center;
+        }
+      }
     }
 
     &__Schema {
-      list-style: none;
       flex-direction: column;
+      list-style: none;
 
+      &__Name {
+        flex-shrink: 1;
+        overflow: hidden;
+        padding-right: $spacer / 4;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      &__Info {
+        align-items: center;
+        background: $window-background;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        padding: $spacer / 2;
+
+        &:hover,
+        &:focus {
+          background: $color-dove;
+        }
+
+        &--selected {
+          background: $brand-primary;
+          color: $color-dove;
+
+          &:hover,
+          &:focus {
+            background: $brand-primary;
+          }
+        }
+      }
     }
 
     &__Sublevel {
       border-top: 1px solid rgba(128, 128, 128, 0.29);
       padding: 0 $spacer / 2 $spacer / 3 $spacer / 1.5;
       &__Name {
-        display: flex;
         align-items: center;
+        display: flex;
         justify-content: space-between;
-        text-overflow: ellipsis;
         overflow: hidden;
+        text-overflow: ellipsis;
         white-space: nowrap;
+
         &__Text {
           margin: 0 5px;
-
         }
       }
       &__Label {
+        font-size: .8rem;
         padding-left: $spacer;
-        font-size: 0.8rem;
       }
       &__Properties {
         padding-left: $spacer * 1.45;
-        font-size: 0.8rem;
+        font-size: .8rem;
+
         &--ref {
           color: blue;
-          text-decoration: underline;
-          margin-left: 5px;
           cursor: pointer;
+          margin-left: 5px;
+          text-decoration: underline;
         }
       }
 
@@ -83,48 +130,18 @@ $realm-browser-header-icon-space: 24px;
       }
 
     }
-
-    &__Schema__Info {
-      display: flex;
-      padding: $spacer / 2;
-      background: $window-background;
-
-      align-items: center;
-      cursor: pointer;
-      justify-content: space-between;
-      &:hover,
-      &:focus {
-        background: $color-dove;
-      }
-
-      &--selected {
-        background: $brand-primary;
-        color: $color-dove;
-
-        &:hover,
-        &:focus {
-          background: $brand-primary;
-        }
-      }
-    }
-
-    &__Schema__Name {
-      flex-shrink: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
   }
 
   &__Wrapper {
-    flex: 1 1 0;
     display: flex;
+    flex: 1 1 0;
     flex-direction: column;
   }
 
   &__SelectObject {
     display: flex;
-    flex-direction: column;
     flex: 1 1 0;
+    flex-direction: column;
     min-height: 300px;
     padding: 0;
   }
@@ -141,9 +158,21 @@ $realm-browser-header-icon-space: 24px;
   }
 
   &__Content {
-    flex: 1 1 0;
     display: flex;
+    flex: 1 1 0;
     flex-direction: column;
+
+    &--no-schema-selected {
+      align-items: center;
+      display: flex;
+      height: 100%;
+      justify-content: center;
+
+      &::before {
+        color: $color-elephant;
+        content: "No schema selected";
+      }
+    }
 
     &__Actions {
       &__Filter {
@@ -157,9 +186,8 @@ $realm-browser-header-icon-space: 24px;
 
     .ReactVirtualized__Grid {
       &::-webkit-scrollbar {
-        width: 13px;
         height: 13px;
-
+        width: 13px;
       }
 
       &::-webkit-scrollbar-track {
@@ -168,16 +196,16 @@ $realm-browser-header-icon-space: 24px;
 
       &::-webkit-scrollbar-thumb {
         background-color: darkgrey;
-        outline: 0;
         border-radius: 10px;
         height: 20px;
+        outline: 0;
       }
 
     }
 
     &__Header {
-      z-index: 4;
       overflow-x: hidden !important;
+      z-index: 4;
     }
 
     &__HeaderCell,
@@ -204,17 +232,18 @@ $realm-browser-header-icon-space: 24px;
     &__HeaderName {
       font-size: $font-size-sm;
       font-weight: bold;
-      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     &__HeaderSort {
+      cursor: pointer;
+      font-size: 12px;
       position: absolute;
       right: 10px;
       top: 14px;
-      font-size: 12px;
-      cursor: pointer;
+
       &--active {
         color: $color-indigo;
       }
@@ -224,9 +253,9 @@ $realm-browser-header-icon-space: 24px;
       color: $brand-primary;
       font-size: $font-size-xs;
       font-weight: bold;
-      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     &__Cell,
@@ -246,8 +275,8 @@ $realm-browser-header-icon-space: 24px;
 
     &__Input {
       border: 0;
-      white-space: nowrap;
       height: 100%;
+      white-space: nowrap;
 
       &--null {
         color: $color-elephant;
@@ -275,4 +304,3 @@ $realm-browser-header-icon-space: 24px;
     @import "../reusable/ReactVirtualized";
   }
 }
-

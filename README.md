@@ -47,6 +47,19 @@ checker or run the lint command:
 
     npm run lint
 
+## Testing
+
+To run all tests, run
+
+    npm test
+
+When developing on a specific feature, you can run a specific test each time files changes,
+
+    npm test -- -w src/ui/reusable/realm-loading-component/index.test.ts
+
+`-w` starts mocha-webpack in watch-mode and `src/ui/reusable/realm-loading-component/index.test.ts` is the relative path
+of a test that will run every time a file in the project gets saved.
+
 ## Building
 
 To build the app into resources that will be included into a releasable package, run the `build` command:

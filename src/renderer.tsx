@@ -4,6 +4,8 @@ import * as path from 'path';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
+import * as mixpanel from './mixpanel';
+
 const isProduction = process.env.NODE_ENV === 'production';
 
 // Create and change working directory to aviod conflicts of opening two realms twice

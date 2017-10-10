@@ -5,10 +5,13 @@ import * as Realm from 'realm';
 import { main } from '../../actions/main';
 import {
   IAdminTokenCredentials,
-  IServerAdministrationOptions,
-  ISyncedRealmBrowserOptions,
+  ISyncedRealmToLoad,
   IUsernamePasswordCredentials,
-  RealmBrowserMode,
+  RealmLoadingMode,
+} from '../../services/ros';
+import {
+  IRealmBrowserOptions,
+  IServerAdministrationOptions,
 } from '../../windows/WindowType';
 import { showError } from '../reusable/errors';
 
@@ -32,9 +35,10 @@ export class ServerAdministrationContainer extends React.Component<
   }
 
   public async componentDidMount() {
+    const serverUrl = this.props.credentials.url;
     if ('token' in this.props.credentials) {
       const credentials = this.props.credentials as IAdminTokenCredentials;
-      const user = Realm.Sync.User.adminUser(credentials.token, this.props.url);
+      const user = Realm.Sync.User.adminUser(credentials.token, serverUrl);
       this.setState({ user });
     } else if (
       'username' in this.props.credentials &&
@@ -44,7 +48,7 @@ export class ServerAdministrationContainer extends React.Component<
         .credentials as IUsernamePasswordCredentials;
       try {
         const user = await Realm.Sync.User.login(
-          this.props.url,
+          serverUrl,
           credentials.username,
           credentials.password,
         );
@@ -66,13 +70,12 @@ export class ServerAdministrationContainer extends React.Component<
     if (!this.state.isRealmOpening) {
       this.setState({ isRealmOpening: true });
       // Let the UI update before sync waiting on the window to appear
-      const options: ISyncedRealmBrowserOptions = {
-        mode: RealmBrowserMode.Synced,
-        serverUrl: this.props.url,
+      const realm: ISyncedRealmToLoad = {
+        authentication: this.props.credentials,
+        mode: RealmLoadingMode.Synced,
         path,
-        credentials: this.props.credentials,
       };
-      await main.showRealmBrowser(options);
+      await main.showRealmBrowser({ realm });
       this.setState({ isRealmOpening: false });
     }
   };

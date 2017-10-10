@@ -1,4 +1,4 @@
-export { default as LoadingOverlay } from './LoadingOverlay';
+export { LoadingOverlay } from './LoadingOverlay';
 
 export interface ILoadingProgress {
   done: boolean;

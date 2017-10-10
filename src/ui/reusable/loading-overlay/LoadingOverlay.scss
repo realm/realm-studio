@@ -1,7 +1,5 @@
 @import "~realm-studio-styles/variables";
 
-$loading-overlay-background: rgba($color-charcoal, .25);
-
 @keyframes fade {
   0% {
     opacity: 0;
@@ -18,7 +16,7 @@ $loading-overlay-background: rgba($color-charcoal, .25);
   animation-duration: .33s;
   animation-fill-mode: forwards;
   animation-name: fade;
-  background: $loading-overlay-background;
+  background: $overlay-background;
   bottom: 0;
   color: $color-charcoal;
   display: flex;
