@@ -24,7 +24,10 @@ export const StringCell = ({
   let textInput: HTMLInputElement;
   return isEditing ? (
     <Input
-      className="RealmBrowser__Content__Input"
+      className={classnames(
+        'RealmBrowser__Content__Input',
+        `RealmBrowser__Content__Input--${property.type}`,
+      )}
       size="sm"
       getRef={input => {
         textInput = input;
@@ -43,6 +46,7 @@ export const StringCell = ({
         'form-control-sm',
         'RealmBrowser__Content__Input',
         'RealmBrowser__Content__Input--unselectable',
+        `RealmBrowser__Content__Input--${property.type}`,
         { 'RealmBrowser__Content__Input--null': value === null },
       )}
       onDoubleClick={onFocus}
