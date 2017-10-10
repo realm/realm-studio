@@ -33,7 +33,7 @@ jobWrapper {
         // Test that the package-lock has changed while building the image
         // - if it has, a dependency was changed in package.json but not updated in the lock
         sh 'npm run check:package-lock'
-        sh 'cp -R unstash/* .'
+        sh 'cp -R unstash/node_modules/* node_modules/'
         sh 'npm run build'
         // eletron-build check credentials even for --publish never, so will always specify it.
         withCredentials([
