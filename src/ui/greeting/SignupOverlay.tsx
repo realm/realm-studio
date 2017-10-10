@@ -37,7 +37,7 @@ export const SignupOverlay = ({
     >
       <ModalBody>
         <h5>Thanks for using Realm Studio!</h5>
-        <p>We would love to get in touch with you.</p>
+        <p>Please enter your email to continue.</p>
         <FormGroup>
           <Input
             id="email"
@@ -57,12 +57,12 @@ export const SignupOverlay = ({
               onChange={onNewsletterChange}
               type="checkbox"
             />
-            &nbsp;Send me product updates
+            &nbsp;Send me notifications about product updates.
           </Label>
         </FormGroup>
       </ModalBody>
       <ModalFooter>
-        <Button onClick={onSkip}>Skip</Button>
+        {/*<Button onClick={onSkip}>Skip</Button>*/}
         <Button color="primary">Let's get started!</Button>
       </ModalFooter>
     </form>
