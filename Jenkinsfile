@@ -107,6 +107,7 @@ def buildOnWindows() {
   return {
     node('windows') {
       rlmCheckout scm
+      bat 'npm uninstall realm-object-server --save-dev'
       bat 'npm install --quiet --production --ignore-scripts'
       def lockJson = readJSON file: 'package-lock.json'
       def  ebVersion = lockJson['dependencies']['electron-builder']['version'].trim()
