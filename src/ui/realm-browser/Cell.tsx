@@ -2,6 +2,7 @@ import * as classnames from 'classnames';
 import * as React from 'react';
 import * as Realm from 'realm';
 
+import { DataCell } from './types/DataCell';
 import { DefaultCell } from './types/DefaultCell';
 import { ListCell } from './types/ListCell';
 import { ObjectCell } from './types/ObjectCell';
@@ -40,18 +41,25 @@ export const Cell = ({
           value={value}
           onUpdateValue={onUpdateValue}
           onContextMenu={onContextMenu}
-          onClick={onCellClick}
         />
       );
       break;
     }
+    case 'data':
+      content = (
+        <DataCell
+          onContextMenu={onContextMenu}
+          property={property}
+          value={value}
+        />
+      );
+      break;
     case 'list':
       content = (
         <ListCell
           onContextMenu={onContextMenu}
           property={property}
           value={value}
-          onClick={onCellClick}
         />
       );
       break;
@@ -61,7 +69,6 @@ export const Cell = ({
           onContextMenu={onContextMenu}
           property={property}
           value={value}
-          onClick={onCellClick}
         />
       );
       break;
@@ -78,10 +85,12 @@ export const Cell = ({
   return (
     <div
       style={style}
-      className={classnames(
-        'RealmBrowser__Content__Cell',
-        isHighlight && 'Highlight',
-      )}
+      className={classnames('RealmBrowser__Content__Cell', {
+        'RealmBrowser__Content__Cell--highlighted': isHighlight,
+      })}
+      onClick={() => {
+        onCellClick(property, value);
+      }}
     >
       {content}
     </div>

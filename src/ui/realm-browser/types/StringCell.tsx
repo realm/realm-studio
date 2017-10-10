@@ -10,7 +10,6 @@ export const StringCell = ({
   value,
   temporalValue,
   onContextMenu,
-  onClick,
   property,
 }: {
   isEditing: boolean;
@@ -21,7 +20,6 @@ export const StringCell = ({
   value: string;
   temporalValue: string;
   onContextMenu: (e: React.SyntheticEvent<any>) => void;
-  onClick: (property: Realm.ObjectSchemaProperty, value: any) => void;
 }) => {
   let textInput: HTMLInputElement;
   return isEditing ? (
@@ -47,7 +45,6 @@ export const StringCell = ({
         'RealmBrowser__Content__Input--unselectable',
         { 'RealmBrowser__Content__Input--null': value === null },
       )}
-      onClick={() => onClick(property, value)}
       onDoubleClick={onFocus}
       onContextMenu={onContextMenu}
     >

@@ -214,11 +214,14 @@ $realm-browser-header-icon-space: 24px;
       border-right: 1px solid $color-dove;
       position: relative;
 
-      &.Highlight {
-        > * {
-          background-color: $color-indigo;
-          color: white;
-        }
+      &--highlighted {
+        background: $color-dove;
+      }
+
+      // We need to do this, because reactstrap adds the form-control class
+      // after the classNames that we provide.
+      .form-control { // sass-lint:disable-line class-name-format
+        background: transparent;
       }
     }
 
@@ -274,6 +277,7 @@ $realm-browser-header-icon-space: 24px;
     }
 
     &__Input {
+      background: transparent;
       border: 0;
       height: 100%;
       white-space: nowrap;
@@ -289,15 +293,41 @@ $realm-browser-header-icon-space: 24px;
       &--unselectable {
         user-select: none;
       }
+
+      &--int {
+        position: absolute;
+        right: 0;
+        text-align: right;
+        width: auto;
+      }
     }
 
-    &__Link {
+    &__ListCell,
+    &__ObjectCell {
       border: 0;
       color: $brand-primary;
       cursor: pointer;
+    }
+
+    &__ListCell {
+      display: flex;
+      width: 100%;
 
       &:hover {
         text-decoration: underline;
+      }
+
+      &__Value {
+        flex: 1 1 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      &__Count {
+        flex: 0 0 0;
+        margin-left: $spacer / 4;
+        white-space: nowrap;
       }
     }
 

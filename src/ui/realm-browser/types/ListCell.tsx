@@ -6,7 +6,6 @@ import * as Realm from 'realm';
 export const ListCell = ({
   property,
   value,
-  onClick,
   onContextMenu,
 }: {
   property: Realm.ObjectSchemaProperty;
@@ -15,7 +14,6 @@ export const ListCell = ({
   onContextMenu: (e: React.SyntheticEvent<any>) => void;
 }) => (
   <div
-    onClick={() => onClick(property, value)}
     onContextMenu={onContextMenu}
     className={classnames(
       'form-control',
