@@ -2,7 +2,7 @@
 
 @Library('realm-ci') _
 
-if (env.BRANCH_NAME == 'master') {
+if (env.BRANCH_NAME == 'releasing') {
   node('macos') {
     stage('Checkout') {
       rlmCheckout scm
@@ -24,7 +24,7 @@ if (env.BRANCH_NAME == 'master') {
         [$class: 'StringBinding', credentialsId: 'github-release-token', variable: 'GH_TOKEN'],
         [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-s3-user-key', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']
       ]) {
-        sh './node_modules/.bin/electron-builder --publish onTagOrDraft'
+        sh './node_modules/.bin/electron-builder --publish always'
       }
 
       archiveArtifacts 'dist/*.zip'
