@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Draggable from 'react-draggable';
 import {
   AutoSizer,
   Dimensions as IAutoSizerDimensions,
@@ -28,6 +29,11 @@ export const Content = ({
   sort,
   onSortClick,
   onContextMenu,
+  onDrag,
+  draggingCell,
+  onDragEnd,
+  draggable,
+  onDragStart,
 }: {
   columnWidths: number[];
   gridContentRef: (grid: Grid) => void;
@@ -54,6 +60,14 @@ export const Content = ({
     object: any,
     property: Realm.ObjectSchemaProperty,
   ) => void;
+  draggingCell?: {
+    y: number;
+    index: number;
+  };
+  onDrag: (e: any, ui: any, index: number) => void;
+  onDragEnd: (e: any, ui: any) => void;
+  draggable: boolean;
+  onDragStart: (row: number, column: number) => void;
 }) => {
   if (schema) {
     // Generate the columns from the schemas properties
@@ -75,25 +89,53 @@ export const Content = ({
       }) => {
         const object = data[rowIndex];
 
+        let draggingStyle = {};
+
+        if (draggable && draggingCell && rowIndex === draggingCell.index) {
+          draggingStyle = {
+            top: style.top + draggingCell.y,
+            zIndex: 4000,
+            cursor: 'move',
+          };
+        }
+
         return (
-          <Cell
+          <Draggable
+            grid={[1, 26]}
+            axis="y"
             key={key}
-            width={columnWidths[columnIndex]}
-            style={style}
-            onCellClick={(
-              property: Realm.ObjectSchemaProperty, // tslint:disable-line:no-shadowed-variable
-              value: any,
-            ) =>
-              onCellClick &&
-              onCellClick(object, property, value, rowIndex, columnIndex)}
-            value={object[propertyName]}
-            property={property}
-            onUpdateValue={value =>
-              onCellChange && onCellChange(object, propertyName, value)}
-            isHighlight={rowToHighlight === rowIndex}
-            onContextMenu={e =>
-              onContextMenu && onContextMenu(e, object, property)}
-          />
+            onStart={() => onDragStart(rowIndex, columnIndex)}
+            onDrag={(e: any, ui: any) => onDrag(e, ui, rowIndex)}
+            onStop={onDragEnd}
+            position={{ x: 0, y: 0 }}
+            disabled={!draggable}
+          >
+            <span>
+              <Cell
+                key={key}
+                width={columnWidths[columnIndex]}
+                style={{ ...style, ...draggingStyle }}
+                onCellClick={(
+                  property: Realm.ObjectSchemaProperty, // tslint:disable-line:no-shadowed-variable
+                  value: any,
+                ) => {
+                  if (
+                    onCellClick &&
+                    (!draggingCell || (draggingCell && draggingCell.y === 0))
+                  ) {
+                    onCellClick(object, property, value, rowIndex, columnIndex);
+                  }
+                }}
+                value={object[propertyName]}
+                property={property}
+                onUpdateValue={value =>
+                  onCellChange && onCellChange(object, propertyName, value)}
+                isHighlight={rowToHighlight === rowIndex}
+                onContextMenu={e =>
+                  onContextMenu && onContextMenu(e, object, property)}
+              />
+            </span>
+          </Draggable>
         );
       };
     });
@@ -175,6 +217,7 @@ export const Content = ({
                     <Grid
                       width={width}
                       height={height - headerHeight}
+                      className="RealmBrowser__Content__Values"
                       ref={gridContentRef}
                       rowCount={data.length}
                       columnCount={propertyNames.length}
