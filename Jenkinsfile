@@ -28,7 +28,7 @@ jobWrapper {
 
       def packageHash = getPackageHash()
       image = buildDockerEnv("ci/realm-studio:publish-${packageHash}", extra_args: '-f Dockerfile.testing')
-      image.inside {
+      image.inside('-e HOME=/tmp') {
         sh 'npm install'
         sh 'cp -R unstash/node_modules/* node_modules/'
         sh 'npm run build'
