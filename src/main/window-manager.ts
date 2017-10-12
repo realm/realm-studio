@@ -67,8 +67,10 @@ export default class WindowManager {
 
     // Open all links in the external browser
     window.webContents.on('new-window', (event, openedUrl: string) => {
-      event.preventDefault();
-      shell.openExternal(openedUrl);
+      if (openedUrl.indexOf('http') === 0) {
+        event.preventDefault();
+        shell.openExternal(openedUrl);
+      }
     });
 
     window.on('closed', () => {
