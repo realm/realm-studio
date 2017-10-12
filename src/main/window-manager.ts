@@ -33,6 +33,10 @@ export default class WindowManager {
         window.webContents.openDevTools({
           mode: 'detach',
         });
+        // Focus to original window, to prevent the dev tools from overlaying itself
+        setTimeout(() => {
+          window.focus();
+        }, 500);
       });
     }
 
