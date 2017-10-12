@@ -54,7 +54,6 @@ export const ListCell = ({
 }: {
   property: Realm.ObjectSchemaProperty;
   value: any;
-  onClick: (property: Realm.ObjectSchemaProperty, value: any) => void;
   onContextMenu: (e: React.SyntheticEvent<any>) => void;
 }) => (
   <div
