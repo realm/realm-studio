@@ -2,7 +2,7 @@
 
 @Library('realm-ci') _
 
-if (env.BRANCH_NAME == 'releasing') {
+if (env.BRANCH_NAME == 'releases') {
   node('macos') {
     stage('Checkout') {
       rlmCheckout scm
