@@ -17,9 +17,9 @@ const displayValue = (
   property: Realm.ObjectSchemaProperty,
   list: Realm.List<any>,
 ) => {
-  if (!list || list.length === 0) {
-    return `Empty`;
-  } else if (isListOfPrimitive(property)) {
+  if (!list) {
+    return 'null';
+  } else if (isListOfPrimitive(property) && list.length > 0) {
     // Let's not show all values here - 10 must be enough
     const limitedValues = list.slice(0, VALUE_LENGTH_LIMIT);
     // Concatinate ", " separated string representations of the elements in the list
@@ -46,23 +46,24 @@ const displayValue = (
     }
     return limitedString;
   } else {
-    // Check if this type of object has a primary key
-    const firstObject: Realm.Object = list[0];
-    const primaryKey = firstObject.objectSchema().primaryKey;
-    if (primaryKey) {
-      let limitedString = list
-        .slice(0, VALUE_LENGTH_LIMIT)
-        .map(element => {
-          return element[primaryKey];
-        })
-        .join(', ');
-      if (list.length > VALUE_LENGTH_LIMIT) {
-        limitedString += ' (and more)';
+    if (list.length > 0) {
+      // Check if this type of object has a primary key
+      const firstObject: Realm.Object = list[0];
+      const primaryKey = firstObject.objectSchema().primaryKey;
+      if (primaryKey) {
+        let limitedString = list
+          .slice(0, VALUE_LENGTH_LIMIT)
+          .map(element => {
+            return element[primaryKey];
+          })
+          .join(', ');
+        if (list.length > VALUE_LENGTH_LIMIT) {
+          limitedString += ' (and more)';
+        }
+        return `[list of ${property.objectType}: ${limitedString}]`;
       }
-      return limitedString;
-    } else {
-      return `[list of ${property.objectType}]`;
     }
+    return `[list of ${property.objectType}]`;
   }
 };
 
