@@ -3,27 +3,89 @@ import * as React from 'react';
 import { Badge } from 'reactstrap';
 import * as Realm from 'realm';
 
+import * as DataCell from './DataCell';
+import * as primitives from './primitives';
+
+const VALUE_LENGTH_LIMIT = 10;
+const VALUE_STRING_LENGTH_LIMIT = 50;
+
+const isListOfPrimitive = (property: Realm.ObjectSchemaProperty) => {
+  return primitives.TYPES.indexOf(property.objectType || '') >= 0;
+};
+
+const displayValue = (
+  property: Realm.ObjectSchemaProperty,
+  list: Realm.List<any>,
+) => {
+  if (!list) {
+    return 'null';
+  } else if (isListOfPrimitive(property) && list.length > 0) {
+    // Let's not show all values here - 10 must be enough
+    const limitedValues = list.slice(0, VALUE_LENGTH_LIMIT);
+    // Concatinate ", " separated string representations of the elements in the list
+    let limitedString = limitedValues
+      .map((v: any) => {
+        // Turn the value into a string representation
+        const representation =
+          property.objectType === 'data' ? DataCell.displayValue(v) : String(v);
+        // If the representation is too long, limit it
+        if (representation.length > VALUE_STRING_LENGTH_LIMIT) {
+          const limited = representation.substring(
+            0,
+            VALUE_STRING_LENGTH_LIMIT,
+          );
+          return `${limited} (...)`;
+        } else {
+          return representation;
+        }
+      })
+      .join(', ');
+    // Prepending a string if not all values are shown
+    if (list.length > VALUE_LENGTH_LIMIT) {
+      limitedString += ' (and more)';
+    }
+    return limitedString;
+  } else {
+    if (list.length > 0) {
+      // Check if this type of object has a primary key
+      const firstObject: Realm.Object = list[0];
+      const primaryKey = firstObject.objectSchema().primaryKey;
+      if (primaryKey) {
+        let limitedString = list
+          .slice(0, VALUE_LENGTH_LIMIT)
+          .map(element => {
+            return element[primaryKey];
+          })
+          .join(', ');
+        if (list.length > VALUE_LENGTH_LIMIT) {
+          limitedString += ' (and more)';
+        }
+        return `[list of ${property.objectType}: ${limitedString}]`;
+      }
+    }
+    return `[list of ${property.objectType}]`;
+  }
+};
+
 export const ListCell = ({
   property,
   value,
-  onClick,
-  onContextMenu,
 }: {
   property: Realm.ObjectSchemaProperty;
   value: any;
-  onClick: (property: Realm.ObjectSchemaProperty, value: any) => void;
-  onContextMenu: (e: React.SyntheticEvent<any>) => void;
 }) => (
   <div
-    onClick={() => onClick(property, value)}
-    onContextMenu={onContextMenu}
     className={classnames(
       'form-control',
       'form-control-sm',
-      'RealmBrowser__Content__Link',
+      'RealmBrowser__Content__ListCell',
     )}
   >
-    {property.objectType}
-    <Badge color="primary">{value.length}</Badge>
+    <span className="RealmBrowser__Content__ListCell__Value">
+      {displayValue(property, value)}
+    </span>
+    <span className="RealmBrowser__Content__ListCell__Count">
+      <Badge color="primary">{value.length}</Badge>
+    </span>
   </div>
 );

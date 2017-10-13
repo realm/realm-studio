@@ -145,5 +145,3 @@ def packageOnMacos() {
     }
   }
 }
-
-

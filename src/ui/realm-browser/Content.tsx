@@ -10,29 +10,32 @@ import * as Realm from 'realm';
 
 import { ILoadingProgress } from '../reusable/loading-overlay';
 import { Cell } from './Cell';
+import { Focus, IRendererParams } from './focus';
 import { HeaderCell } from './HeaderCell';
+import { MoreIndicators } from './MoreIndicators';
+import { ICellChangeOptions } from './RealmBrowserContainer';
 
 export const Content = ({
   columnWidths,
+  focus,
   gridContentRef,
   gridHeaderRef,
   onCellChange,
   onCellClick,
   onColumnWidthChanged,
-  schema,
-  progress,
-  rowToHighlight,
-  data,
-  query,
-  onQueryChange,
-  sort,
-  onSortClick,
   onContextMenu,
+  onQueryChange,
+  onSortClick,
+  progress,
+  query,
+  rowToHighlight,
+  sort,
 }: {
   columnWidths: number[];
+  focus: Focus | null;
   gridContentRef: (grid: Grid) => void;
   gridHeaderRef: (grid: Grid) => void;
-  onCellChange?: (object: any, propertyName: string, value: string) => void;
+  onCellChange?: (options: ICellChangeOptions) => void;
   onCellClick?: (
     object: any,
     property: Realm.ObjectSchemaProperty,
@@ -41,95 +44,42 @@ export const Content = ({
     columnIndex: number,
   ) => void;
   onColumnWidthChanged: (index: number, width: number) => void;
-  schema: Realm.ObjectSchema | null;
-  progress?: ILoadingProgress;
-  rowToHighlight?: number;
-  data: Realm.Results<any> | any;
-  query: string | null;
-  onQueryChange: (e: React.SyntheticEvent<any>) => void;
-  sort: string | null;
-  onSortClick: (property: string) => void;
   onContextMenu?: (
     e: React.SyntheticEvent<any>,
     object: any,
+    rowIndex: number,
     property: Realm.ObjectSchemaProperty,
   ) => void;
+  onQueryChange: (e: React.SyntheticEvent<any>) => void;
+  onSortClick: (property: string) => void;
+  progress?: ILoadingProgress;
+  query: string | null;
+  rowToHighlight?: number;
+  sort: string | null;
 }) => {
-  if (schema) {
-    // Generate the columns from the schemas properties
-    const propertyNames = Object.keys(schema.properties);
-    const columnRenderers = propertyNames.map(propertyName => {
-      const property = schema.properties[
-        propertyName
-      ] as Realm.ObjectSchemaProperty;
-      return ({
-        columnIndex,
-        key,
-        rowIndex,
-        style,
-      }: {
-        columnIndex: number;
-        key: string;
-        rowIndex: number;
-        style: React.CSSProperties;
-      }) => {
-        const object = data[rowIndex];
-
-        return (
-          <Cell
-            key={key}
-            width={columnWidths[columnIndex]}
-            style={style}
-            onCellClick={(
-              property: Realm.ObjectSchemaProperty, // tslint:disable-line:no-shadowed-variable
-              value: any,
-            ) =>
-              onCellClick &&
-              onCellClick(object, property, value, rowIndex, columnIndex)}
-            value={object[propertyName]}
-            property={property}
-            onUpdateValue={value =>
-              onCellChange && onCellChange(object, propertyName, value)}
-            isHighlight={rowToHighlight === rowIndex}
-            onContextMenu={e =>
-              onContextMenu && onContextMenu(e, object, property)}
-          />
-        );
-      };
-    });
-
-    const headerRenderers = propertyNames.map(propertyName => {
-      const property = schema.properties[
-        propertyName
-      ] as Realm.ObjectSchemaProperty;
-      return ({
-        columnIndex,
-        key,
-        style,
-      }: {
-        columnIndex: number;
-        key: string;
-        style: React.CSSProperties;
-      }) => {
-        return (
-          <HeaderCell
-            key={key}
-            property={property}
-            propertyName={propertyName}
-            width={columnWidths[columnIndex]}
-            style={style}
-            onWidthChanged={newWidth =>
-              onColumnWidthChanged(columnIndex, newWidth)}
-            onSortClick={onSortClick}
-            sort={sort}
-          />
-        );
-      };
-    });
-
+  if (focus) {
     const headerHeight = 40;
     const rowHeight = 26;
     const scrollBarWidth = 20;
+
+    const rendererParams: IRendererParams = {
+      columnWidths,
+      onCellChange,
+      onCellClick,
+      onColumnWidthChanged,
+      onContextMenu,
+      onSortClick,
+      rowToHighlight,
+      filter: query ? query : undefined,
+      sort: sort ? { propertyName: sort } : undefined,
+    };
+
+    const {
+      columnCount,
+      rowCount,
+      headerRenderers,
+      valueRenderers,
+    } = focus.generateRenderers(rendererParams);
 
     return (
       <div className="RealmBrowser__Content">
@@ -145,51 +95,73 @@ export const Content = ({
             />
           </InputGroup>
         </div>
-        <ScrollSync>
-          {({
-            clientHeight,
-            clientWidth,
-            onScroll,
-            scrollHeight,
-            scrollLeft,
-            scrollTop,
-            scrollWidth,
-          }) => (
-            <div style={{ position: 'relative', flex: '1 1 auto' }}>
-              <AutoSizer>
-                {({ height, width }: IAutoSizerDimensions) => (
-                  <div>
-                    <Grid
-                      width={width - scrollBarWidth}
-                      className="RealmBrowser__Content__Header"
-                      height={headerHeight}
-                      ref={gridHeaderRef}
-                      rowCount={1}
-                      columnCount={propertyNames.length}
-                      columnWidth={({ index }) => columnWidths[index]}
-                      cellRenderer={props =>
-                        headerRenderers[props.columnIndex](props)}
-                      scrollLeft={scrollLeft}
-                      rowHeight={headerHeight}
-                    />
-                    <Grid
-                      width={width}
-                      height={height - headerHeight}
-                      ref={gridContentRef}
-                      rowCount={data.length}
-                      columnCount={propertyNames.length}
-                      columnWidth={({ index }) => columnWidths[index]}
-                      cellRenderer={props =>
-                        columnRenderers[props.columnIndex](props)}
-                      onScroll={onScroll}
-                      rowHeight={rowHeight}
-                    />
-                  </div>
-                )}
-              </AutoSizer>
-            </div>
-          )}
-        </ScrollSync>
+        <div className="RealmBrowser__Content__AutoSizer">
+          <AutoSizer>
+            {({ width, height }) => (
+              <ScrollSync>
+                {({
+                  clientHeight,
+                  clientWidth,
+                  onScroll,
+                  scrollHeight,
+                  scrollLeft,
+                  scrollTop,
+                  scrollWidth,
+                }) => {
+                  return (
+                    <div>
+                      <Grid
+                        className="RealmBrowser__Content__HeaderGrid"
+                        width={width}
+                        height={headerHeight}
+                        ref={gridHeaderRef}
+                        rowCount={1}
+                        columnCount={columnCount}
+                        columnWidth={({ index }) => columnWidths[index]}
+                        cellRenderer={props =>
+                          headerRenderers[props.columnIndex](props)}
+                        scrollLeft={scrollLeft}
+                        rowHeight={headerHeight}
+                        style={{
+                          overflowX: 'hidden',
+                        }}
+                      />
+                      <div
+                        className="RealmBrowser__Content__ValueGridContainer"
+                        style={{
+                          width,
+                          height: height - headerHeight,
+                        }}
+                      >
+                        <MoreIndicators
+                          scrollTop={scrollTop}
+                          scrollLeft={scrollLeft}
+                          scrollRight={scrollWidth - width - scrollLeft}
+                          scrollBottom={
+                            headerHeight + scrollHeight - height - scrollTop
+                          }
+                        />
+                        <Grid
+                          className="RealmBrowser__Content__ValueGrid"
+                          width={width}
+                          height={height - headerHeight}
+                          ref={gridContentRef}
+                          rowCount={rowCount}
+                          columnCount={columnCount}
+                          columnWidth={({ index }) => columnWidths[index]}
+                          cellRenderer={props =>
+                            valueRenderers[props.columnIndex](props)}
+                          onScroll={onScroll}
+                          rowHeight={rowHeight}
+                        />
+                      </div>
+                    </div>
+                  );
+                }}
+              </ScrollSync>
+            )}
+          </AutoSizer>
+        </div>
       </div>
     );
   } else if (progress && progress.done) {

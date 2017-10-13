@@ -3,11 +3,14 @@ import { Grid } from 'react-virtualized';
 
 import { ILoadingProgress } from '../reusable/loading-overlay';
 import { Content } from './Content';
+import { ClassFocus, Focus } from './focus';
+import { ICellChangeOptions } from './RealmBrowserContainer';
 
 const MINIMUM_COLUMN_WIDTH = 20;
 
 export interface IContentContainerProps {
-  onCellChange?: (object: any, propertyName: string, value: string) => void;
+  focus: Focus | null;
+  onCellChange?: (options: ICellChangeOptions) => void;
   onCellClick?: (
     object: any,
     property: Realm.ObjectSchemaProperty,
@@ -15,25 +18,27 @@ export interface IContentContainerProps {
     rowIndex: number,
     columnIndex: number,
   ) => void;
-  schema: Realm.ObjectSchema | null;
   progress?: ILoadingProgress;
+  // TODO: Combine these into a single `highlight` property
   rowToHighlight?: number;
   columnToHighlight?: number;
-  data: Realm.Results<any> | any;
   onContextMenu?: (
     e: React.SyntheticEvent<any>,
     object: any,
+    rowIndex: number,
     property: Realm.ObjectSchemaProperty,
   ) => void;
 }
 
+export interface IContentContainerState {
+  columnWidths: number[];
+  query: string | null;
+  sort: string | null;
+}
+
 export class ContentContainer extends React.Component<
   IContentContainerProps,
-  {
-    columnWidths: number[];
-    query: string | null;
-    sort: string | null;
-  }
+  IContentContainerState
 > {
   // A reference to the grid inside the content container is needed to resize collumns
   private gridContent: Grid;
@@ -48,31 +53,6 @@ export class ContentContainer extends React.Component<
     };
   }
 
-  get filteredData(): any {
-    const { data } = this.props;
-    const { query, sort } = this.state;
-
-    let newData = data;
-
-    if (query) {
-      try {
-        newData = data.filtered(query);
-      } catch (err) {
-        newData = data;
-      }
-    }
-
-    if (sort) {
-      try {
-        newData = newData.sorted(sort);
-      } catch (err) {
-        return newData;
-      }
-    }
-
-    return newData;
-  }
-
   public onQueryChange = (e: React.SyntheticEvent<any>) => {
     this.setState({ query: e.currentTarget.value });
   };
@@ -83,30 +63,28 @@ export class ContentContainer extends React.Component<
   };
 
   public render() {
-    return (
-      <Content
-        {...this.state}
-        {...this.props}
-        {...this}
-        data={this.filteredData}
-      />
-    );
+    return <Content {...this.state} {...this.props} {...this} />;
   }
 
   public componentWillMount() {
-    if (this.props.schema) {
-      this.setDefaultColumnWidths(this.props.schema);
+    if (this.props.focus instanceof ClassFocus) {
+      const properties = this.props.focus.getProperties();
+      this.setDefaultColumnWidths(properties);
     }
   }
 
   public componentWillReceiveProps(props: IContentContainerProps) {
-    if (props.schema && this.props.schema !== props.schema) {
-      this.setDefaultColumnWidths(props.schema);
+    if (props.focus instanceof ClassFocus && this.props.focus !== props.focus) {
+      const properties = props.focus.getProperties();
+      this.setDefaultColumnWidths(properties);
       this.setState({ sort: null, query: null });
     }
   }
 
-  public componentDidUpdate(prevProps: IContentContainerProps) {
+  public componentDidUpdate(
+    prevProps: IContentContainerProps,
+    prevState: IContentContainerState,
+  ) {
     if (
       this.gridContent &&
       this.props.rowToHighlight &&
@@ -118,6 +96,13 @@ export class ContentContainer extends React.Component<
         rowIndex: this.props.rowToHighlight,
       });
     }
+
+    if (this.state.columnWidths !== prevState.columnWidths) {
+      if (this.gridContent && this.gridHeader) {
+        this.gridContent.recomputeGridSize();
+        this.gridHeader.recomputeGridSize();
+      }
+    }
   }
 
   public onColumnWidthChanged = (index: number, width: number) => {
@@ -126,10 +111,6 @@ export class ContentContainer extends React.Component<
     this.setState({
       columnWidths,
     });
-    if (this.gridContent && this.gridHeader) {
-      this.gridContent.recomputeGridSize();
-      this.gridHeader.recomputeGridSize();
-    }
   };
 
   public gridContentRef = (grid: Grid) => {
@@ -140,11 +121,8 @@ export class ContentContainer extends React.Component<
     this.gridHeader = grid;
   };
 
-  private setDefaultColumnWidths(schema: Realm.ObjectSchema) {
-    const columnWidths = Object.keys(schema.properties).map(propertyName => {
-      const property = schema.properties[
-        propertyName
-      ] as Realm.ObjectSchemaProperty;
+  private setDefaultColumnWidths(properties: Realm.ObjectSchemaProperty[]) {
+    const columnWidths = properties.map(property => {
       switch (property.type) {
         case 'int':
           return 100;
@@ -155,15 +133,11 @@ export class ContentContainer extends React.Component<
         case 'date':
           return 200;
         default:
-          return 200;
+          return 300;
       }
     });
     this.setState({
       columnWidths,
     });
-    if (this.gridContent && this.gridHeader) {
-      this.gridContent.recomputeGridSize();
-      this.gridHeader.recomputeGridSize();
-    }
   }
 }

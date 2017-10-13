@@ -3,7 +3,11 @@ import * as React from 'react';
 import * as Realm from 'realm';
 import * as util from 'util';
 
-export const DefaultCell = ({
+export const displayValue = (value: ArrayBuffer) => {
+  return `[${value.byteLength} bytes of data]`;
+};
+
+export const DataCell = ({
   property,
   value,
 }: {
@@ -18,6 +22,6 @@ export const DefaultCell = ({
       'RealmBrowser__Content__Input--disabled',
     )}
   >
-    {util.inspect(value)}
+    {displayValue(value)}
   </div>
 );

@@ -1,43 +1,75 @@
 import * as classnames from 'classnames';
 import * as React from 'react';
 import { Badge } from 'reactstrap';
+
 import { ILoadingProgress } from '../reusable/loading-overlay';
-import { IList } from './RealmBrowserContainer';
+import { ClassFocus, Focus, ListFocus } from './focus';
+import * as objectCell from './types/ObjectCell';
 
 import './RealmBrowser.scss';
 
 import * as util from 'util';
 
+const ListFocusComponent = ({
+  focus,
+  onSchemaSelected,
+}: {
+  focus: ListFocus;
+  onSchemaSelected: (name: string, objectToScroll?: any) => void;
+}) => {
+  const parent = focus.getParent();
+  return (
+    <div className={classnames('RealmBrowser__Sidebar__List')}>
+      <div className="RealmBrowser__Sidebar__List__Name">
+        <span className="RealmBrowser__Sidebar__List__Name__Text">
+          List of {focus.getObjectType()}
+        </span>
+        <Badge color="primary">{focus.getResultCount()}</Badge>
+      </div>
+      <div className="RealmBrowser__Sidebar__List__Parent">
+        <div>
+          <strong>{focus.getPropertyName()}</strong> on
+        </div>
+        <div>
+          {!parent.objectSchema().primaryKey ? 'a ' : null}
+          <span
+            onClick={() => onSchemaSelected(parent.objectSchema().name, parent)}
+            className="RealmBrowser__Sidebar__List__ParentObject"
+            title={objectCell.display(parent, true)}
+          >
+            {objectCell.display(parent, false)}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const Sidebar = ({
+  focus,
   getSchemaLength,
-  list,
   onSchemaSelected,
   progress,
   schemas,
-  selectedSchemaName,
 }: {
+  focus: Focus | null;
   getSchemaLength: (name: string) => number;
-  list?: IList;
   onSchemaSelected: (name: string, objectToScroll?: any) => void;
   progress: ILoadingProgress;
   schemas: Realm.ObjectSchema[];
-  selectedSchemaName?: string;
 }) => (
   <div className="RealmBrowser__Sidebar">
     <div className="RealmBrowser__Sidebar__Header">Classes</div>
     {schemas && schemas.length > 0 ? (
       <ul className="RealmBrowser__Sidebar__SchemaList">
         {schemas.map(schema => {
-          const schemaClass = classnames({
-            RealmBrowser__Sidebar__Schema__Info: true,
-            'RealmBrowser__Sidebar__Schema__Info--selected':
-              selectedSchemaName === schema.name,
-          });
-          const listClass = classnames({
-            RealmBrowser__Sidebar__Sublevel: true,
-            'RealmBrowser__Sidebar__Sublevel--selected':
-              selectedSchemaName === 'list',
-          });
+          const hasFocus = focus && focus.isFocussingOn(schema.name);
+          const schemaClass = classnames(
+            'RealmBrowser__Sidebar__Schema__Info',
+            {
+              'RealmBrowser__Sidebar__Schema__Info--selected': hasFocus,
+            },
+          );
           return (
             <li
               key={schema.name}
@@ -53,40 +85,12 @@ export const Sidebar = ({
                 </span>
                 <Badge color="primary">{getSchemaLength(schema.name)}</Badge>
               </div>
-              {list &&
-                list.parent.objectSchema().name === schema.name && (
-                  <div className={listClass}>
-                    <div className="RealmBrowser__Sidebar__Sublevel__Name">
-                      <i className="fa fa-caret-right" />
-                      <span className="RealmBrowser__Sidebar__Sublevel__Name__Text">
-                        {`List: ${list.schemaName}`}
-                      </span>
-                      <Badge color="primary">{list.data.length}</Badge>
-                    </div>
-                    <div className="RealmBrowser__Sidebar__Sublevel__Parent">
-                      <div className="RealmBrowser__Sidebar__Sublevel__Label">
-                        Parent
-                      </div>
-                      <div className="RealmBrowser__Sidebar__Sublevel__Properties">
-                        Object:
-                        <span
-                          onClick={() =>
-                            onSchemaSelected(
-                              list.parent.objectSchema().name,
-                              list.parent,
-                            )}
-                          className="RealmBrowser__Sidebar__Sublevel__Properties--ref"
-                          title={util.inspect(list.parent)}
-                        >
-                          Information
-                        </span>
-                      </div>
-                      <div className="RealmBrowser__Sidebar__Sublevel__Properties">
-                        Property: {list.property.name}
-                      </div>
-                    </div>
-                  </div>
-                )}
+              {hasFocus && focus instanceof ListFocus ? (
+                <ListFocusComponent
+                  focus={focus}
+                  onSchemaSelected={onSchemaSelected}
+                />
+              ) : null}
             </li>
           );
         })}

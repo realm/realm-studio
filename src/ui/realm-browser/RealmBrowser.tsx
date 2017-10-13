@@ -5,20 +5,20 @@ import { ConfirmModal } from '../reusable/confirm-modal';
 import { ContextMenu } from '../reusable/context-menu';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
 import { ContentContainer } from './ContentContainer';
-import './RealmBrowser.scss';
-import { IList } from './RealmBrowserContainer';
+import { ClassFocus, Focus } from './focus';
+import { ICellChangeOptions } from './RealmBrowserContainer';
 import { SelectObject } from './SelectObject';
 import { Sidebar } from './Sidebar';
+
+import './RealmBrowser.scss';
 
 export const RealmBrowser = ({
   closeSelectObject,
   columnToHighlight,
   confirmModal,
   contextMenu,
+  focus,
   getSchemaLength,
-  getSelectedData,
-  getSelectedSchema,
-  list,
   onCellChange,
   onCellClick,
   onContextMenu,
@@ -27,7 +27,6 @@ export const RealmBrowser = ({
   progress,
   rowToHighlight,
   schemas,
-  selectedSchemaName,
   selectObject,
   updateObjectReference,
 }: {
@@ -38,11 +37,9 @@ export const RealmBrowser = ({
     no: () => void;
   };
   contextMenu: any;
+  focus: Focus | null;
   getSchemaLength: (name: string) => number;
-  getSelectedData: () => any;
-  getSelectedSchema: () => Realm.ObjectSchema | null;
-  list?: IList;
-  onCellChange: (object: any, propertyName: string, value: string) => void;
+  onCellChange: (options: ICellChangeOptions) => void;
   onCellClick: (
     object: any,
     property: Realm.ObjectSchemaProperty,
@@ -53,6 +50,7 @@ export const RealmBrowser = ({
   onContextMenu: (
     e: React.SyntheticEvent<any>,
     object: any,
+    rowIndex: number,
     property: Realm.ObjectSchemaProperty,
   ) => void;
   onContextMenuClose: () => void;
@@ -60,31 +58,27 @@ export const RealmBrowser = ({
   progress: ILoadingProgress;
   rowToHighlight?: number;
   schemas: Realm.ObjectSchema[];
-  selectedSchemaName?: string;
   selectObject?: any;
   updateObjectReference: (object: any) => void;
 }) => {
-  const values = getSelectedData();
   return (
     <div className="RealmBrowser">
       <Sidebar
+        focus={focus}
         getSchemaLength={getSchemaLength}
-        list={list}
         onSchemaSelected={onSchemaSelected}
         progress={progress}
         schemas={schemas}
-        selectedSchemaName={selectedSchemaName}
       />
       <div className="RealmBrowser__Wrapper">
         <ContentContainer
           columnToHighlight={columnToHighlight}
-          data={values}
+          focus={focus}
           onCellChange={onCellChange}
           onCellClick={onCellClick}
           onContextMenu={onContextMenu}
           progress={progress}
           rowToHighlight={rowToHighlight}
-          schema={getSelectedSchema()}
         />
       </div>
       {contextMenu && (
@@ -99,7 +93,8 @@ export const RealmBrowser = ({
           no={confirmModal.no}
         />
       )}
-      {selectObject && (
+      {/* TODO: Reimplement this */}
+      {/*selectObject && (
         <SelectObject
           status={true}
           schema={selectObject.schema}
@@ -109,7 +104,7 @@ export const RealmBrowser = ({
           updateReference={updateObjectReference}
           close={closeSelectObject}
         />
-      )}
+      )*/}
 
       <LoadingOverlay progress={progress} fade={true} />
     </div>

@@ -1,8 +1,13 @@
 @import "~realm-studio-styles/variables";
 
 // This constant should match the HANDLE_WIDTH in HeaderCell.tsx
-$realm-browser-header-handle-width: 8px;
+$realm-browser-header-handle-width: 7px;
 $realm-browser-header-icon-space: 24px;
+$realm-browser-header-handle-hover-bg: rgba(0, 0, 0, .1);
+
+$realm-browser-more-indicator-size: $spacer;
+$realm-browser-more-indicator-dark-color: rgba(0, 0, 0, .2);
+$realm-browser-more-indicator-light-color: rgba(0, 0, 0, 0);
 
 .RealmBrowser {
   display: flex;
@@ -83,9 +88,11 @@ $realm-browser-header-icon-space: 24px;
       }
     }
 
-    &__Sublevel {
-      border-top: 1px solid rgba(128, 128, 128, 0.29);
-      padding: 0 $spacer / 2 $spacer / 3 $spacer / 1.5;
+    &__List {
+      background: $color-dove;
+      // box-shadow: inset 0 0 .4rem $realm-browser-list-box-shadow-color;
+      padding: $spacer / 2;
+
       &__Name {
         align-items: center;
         display: flex;
@@ -95,40 +102,21 @@ $realm-browser-header-icon-space: 24px;
         white-space: nowrap;
 
         &__Text {
-          margin: 0 5px;
+          font-size: .8rem;
+          margin-right: $spacer / 2;
+          overflow: hidden;
         }
       }
-      &__Label {
+
+      &__Parent {
         font-size: .8rem;
-        padding-left: $spacer;
-      }
-      &__Properties {
-        padding-left: $spacer * 1.45;
-        font-size: .8rem;
-
-        &--ref {
-          color: blue;
-          cursor: pointer;
-          margin-left: 5px;
-          text-decoration: underline;
-        }
       }
 
-      &:hover,
-      &:focus {
-        background: $color-dove;
+      &__ParentObject {
+        color: $brand-primary;
+        cursor: pointer;
+        text-decoration: underline;
       }
-
-      &--selected {
-        background: rgba(128, 128, 128, 0.28);
-        color: #39477f;
-
-        &:hover,
-        &:focus {
-          background: rgba(128, 128, 128, 0.28);
-        }
-      }
-
     }
   }
 
@@ -184,27 +172,12 @@ $realm-browser-header-icon-space: 24px;
       }
     }
 
-    .ReactVirtualized__Grid {
-      &::-webkit-scrollbar {
-        height: 13px;
-        width: 13px;
-      }
-
-      &::-webkit-scrollbar-track {
-        box-shadow: none;
-      }
-
-      &::-webkit-scrollbar-thumb {
-        background-color: darkgrey;
-        border-radius: 10px;
-        height: 20px;
-        outline: 0;
-      }
-
+    &__AutoSizer {
+      height: 100%;
     }
 
-    &__Header {
-      overflow-x: hidden !important;
+    &__HeaderGrid {
+      overflow-x: hidden;
       z-index: 4;
     }
 
@@ -214,19 +187,22 @@ $realm-browser-header-icon-space: 24px;
       border-right: 1px solid $color-dove;
       position: relative;
 
-      &.Highlight {
-        > * {
-          background-color: $color-indigo;
-          color: white;
-        }
+      &--highlighted {
+        background: $color-dove;
+      }
+
+      // We need to do this, because reactstrap adds the form-control class
+      // after the classNames that we provide.
+      .form-control { // sass-lint:disable-line class-name-format
+        background: transparent;
       }
     }
 
     &__HeaderCell {
       display: flex;
       flex-direction: column;
-      overflow: hidden;
       padding: 0 $realm-browser-header-icon-space 0 ($spacer / 4);
+      position: relative;
     }
 
     &__HeaderName {
@@ -235,9 +211,28 @@ $realm-browser-header-icon-space: 24px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+
+      &--primitive {
+        &::before {
+          color: $color-elephant;
+          content: "primitive";
+        }
+      }
+    }
+
+    &__HeaderType {
+      bottom: 0;
+      color: $brand-primary;
+      font-size: $font-size-xs;
+      font-weight: bold;
+      overflow: hidden;
+      position: absolute;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     &__HeaderSort {
+      color: $color-elephant;
       cursor: pointer;
       font-size: 12px;
       position: absolute;
@@ -245,22 +240,8 @@ $realm-browser-header-icon-space: 24px;
       top: 14px;
 
       &--active {
-        color: $color-indigo;
+        color: $color-charcoal;
       }
-    }
-
-    &__HeaderType {
-      color: $brand-primary;
-      font-size: $font-size-xs;
-      font-weight: bold;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    &__Cell,
-    &__PropertyName {
-      overflow: hidden;
     }
 
     &__HeaderHandle {
@@ -271,9 +252,20 @@ $realm-browser-header-icon-space: 24px;
       top: 0;
       width: $realm-browser-header-handle-width;
       z-index: 1;
+
+      &:hover {
+        background: $realm-browser-header-handle-hover-bg;
+      }
+    }
+
+    &__Cell,
+    &__PropertyName {
+      overflow: hidden;
+      white-space: nowrap;
     }
 
     &__Input {
+      background: transparent;
       border: 0;
       height: 100%;
       white-space: nowrap;
@@ -289,15 +281,105 @@ $realm-browser-header-icon-space: 24px;
       &--unselectable {
         user-select: none;
       }
+
+      &--int {
+        position: absolute;
+        right: 0;
+        text-align: right;
+        width: auto;
+      }
     }
 
-    &__Link {
+    &__ListCell,
+    &__ObjectCell {
       border: 0;
       color: $brand-primary;
       cursor: pointer;
+    }
+
+    &__ListCell {
+      display: flex;
+      width: 100%;
 
       &:hover {
         text-decoration: underline;
+      }
+
+      &__Value {
+        flex: 1 1 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      &__Count {
+        flex: 0 0 0;
+        margin-left: $spacer / 4;
+        white-space: nowrap;
+      }
+    }
+
+    &__ValueGridContainer {
+      position: relative;
+    }
+
+    &__More {
+      opacity: 0;
+      pointer-events: none;
+      position: absolute;
+      transition: opacity .2s;
+      z-index: 4;
+
+      &--visible {
+        opacity: 1;
+      }
+
+      &--top,
+      &--bottom {
+        height: $realm-browser-more-indicator-size;
+        width: 100%;
+      }
+
+      &--left,
+      &--right {
+        height: 100%;
+        width: $realm-browser-more-indicator-size;
+      }
+
+      &--top {
+        background: linear-gradient(
+          to bottom,
+          $realm-browser-more-indicator-dark-color,
+          $realm-browser-more-indicator-light-color
+        );
+        top: 0;
+      }
+
+      &--bottom {
+        background: linear-gradient(
+          to top,
+          $realm-browser-more-indicator-dark-color,
+          $realm-browser-more-indicator-light-color
+        );
+        bottom: 0;
+      }
+
+      &--left {
+        background: linear-gradient(
+          to right,
+          $realm-browser-more-indicator-dark-color,
+          $realm-browser-more-indicator-light-color
+        );
+        left: 0;
+      }
+
+      &--right {
+        background: linear-gradient(
+          to left,
+          $realm-browser-more-indicator-dark-color,
+          $realm-browser-more-indicator-light-color
+        );
+        right: 0;
       }
     }
 
