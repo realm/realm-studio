@@ -4,21 +4,24 @@ import { Badge } from 'reactstrap';
 import * as Realm from 'realm';
 
 import * as DataCell from './DataCell';
+import * as primitives from './primitives';
 
-const PRIMITIVES = ['bool', 'int', 'float', 'double', 'string', 'data', 'date'];
 const VALUE_LENGTH_LIMIT = 10;
 const VALUE_STRING_LENGTH_LIMIT = 50;
 
 const isListOfPrimitive = (property: Realm.ObjectSchemaProperty) => {
-  return PRIMITIVES.indexOf(property.objectType || '') >= 0;
+  return primitives.TYPES.indexOf(property.objectType || '') >= 0;
 };
 
-const displayValue = (property: Realm.ObjectSchemaProperty, value: any) => {
-  if (!value || value.length === 0) {
+const displayValue = (
+  property: Realm.ObjectSchemaProperty,
+  list: Realm.List<any>,
+) => {
+  if (!list || list.length === 0) {
     return `Empty`;
   } else if (isListOfPrimitive(property)) {
     // Let's not show all values here - 10 must be enough
-    const limitedValues = value.slice(0, VALUE_LENGTH_LIMIT);
+    const limitedValues = list.slice(0, VALUE_LENGTH_LIMIT);
     // Concatinate ", " separated string representations of the elements in the list
     let limitedString = limitedValues
       .map((v: any) => {
@@ -38,26 +41,39 @@ const displayValue = (property: Realm.ObjectSchemaProperty, value: any) => {
       })
       .join(', ');
     // Prepending a string if not all values are shown
-    if (value.length > VALUE_LENGTH_LIMIT) {
+    if (list.length > VALUE_LENGTH_LIMIT) {
       limitedString += ' (and more)';
     }
     return limitedString;
   } else {
-    return `List of ${property.objectType}`;
+    // Check if this type of object has a primary key
+    const firstObject: Realm.Object = list[0];
+    const primaryKey = firstObject.objectSchema().primaryKey;
+    if (primaryKey) {
+      let limitedString = list
+        .slice(0, VALUE_LENGTH_LIMIT)
+        .map(element => {
+          return element[primaryKey];
+        })
+        .join(', ');
+      if (list.length > VALUE_LENGTH_LIMIT) {
+        limitedString += ' (and more)';
+      }
+      return limitedString;
+    } else {
+      return `[list of ${property.objectType}]`;
+    }
   }
 };
 
 export const ListCell = ({
   property,
   value,
-  onContextMenu,
 }: {
   property: Realm.ObjectSchemaProperty;
   value: any;
-  onContextMenu: (e: React.SyntheticEvent<any>) => void;
 }) => (
   <div
-    onContextMenu={onContextMenu}
     className={classnames(
       'form-control',
       'form-control-sm',

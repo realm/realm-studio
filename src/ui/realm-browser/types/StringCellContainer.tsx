@@ -8,7 +8,6 @@ export interface IStringCellContainerProps {
   onUpdateValue: (value: any) => void;
   property: Realm.ObjectSchemaProperty;
   value: string;
-  onContextMenu: (e: React.SyntheticEvent<any>) => void;
 }
 
 export class StringCellContainer extends React.Component<
@@ -38,16 +37,10 @@ export class StringCellContainer extends React.Component<
   }
 
   public render() {
-    const { value, onContextMenu, property } = this.props;
+    const { value, property } = this.props;
 
     return (
-      <StringCell
-        onContextMenu={onContextMenu}
-        value={value}
-        property={property}
-        {...this.state}
-        {...this}
-      />
+      <StringCell value={value} property={property} {...this.state} {...this} />
     );
   }
 

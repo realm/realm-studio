@@ -6,14 +6,11 @@ import * as util from 'util';
 export const DefaultCell = ({
   property,
   value,
-  onContextMenu,
 }: {
   property: Realm.ObjectSchemaProperty;
   value: any;
-  onContextMenu: (e: React.SyntheticEvent<any>) => void;
 }) => (
   <div
-    onContextMenu={onContextMenu}
     className={classnames(
       'form-control',
       'form-control-sm',

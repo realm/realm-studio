@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+
 import { ContentContainer } from './ContentContainer';
+import { Focus } from './focus';
 
 export interface IProps {
+  focus: Focus;
   status: boolean;
-  schema: Realm.ObjectSchema;
-  data: Realm.Results<any> | any;
   close: () => void;
   schemaName: string;
   updateReference: (object: any) => void;
@@ -42,22 +43,20 @@ export class SelectObject extends React.Component<IProps, IState> {
   public setNewValue = () => this.props.updateReference(this.state.objectToAdd);
 
   public render() {
-    const { status, schema, data, close, schemaName, optional } = this.props;
+    const { focus, status, close, schemaName, optional } = this.props;
     const { rowToHighlight, objectToAdd, columnToHighlight } = this.state;
     return (
       <Modal size="lg" isOpen={status} toggle={close} className="ConfirmModal">
         <ModalHeader toggle={close}>Select a new {schemaName}</ModalHeader>
         <ModalBody className="RealmBrowser__SelectObject">
-          {data &&
-            schema && (
-              <ContentContainer
-                schema={schema}
-                data={data}
-                onCellClick={this.onCellClick}
-                rowToHighlight={rowToHighlight}
-                columnToHighlight={columnToHighlight}
-              />
-            )}
+          {focus && (
+            <ContentContainer
+              focus={focus}
+              onCellClick={this.onCellClick}
+              rowToHighlight={rowToHighlight}
+              columnToHighlight={columnToHighlight}
+            />
+          )}
         </ModalBody>
         <ModalFooter>
           {optional && (

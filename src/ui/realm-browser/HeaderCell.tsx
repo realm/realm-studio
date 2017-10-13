@@ -4,8 +4,8 @@ import Draggable, { DraggableData } from 'react-draggable';
 import * as Realm from 'realm';
 
 // This constant should match the $realm-browser-header-handle-width in scss
-const HANDLE_WIDTH = 8;
-const HANDLE_OFFSET = HANDLE_WIDTH / 2;
+const HANDLE_WIDTH = 7;
+const HANDLE_OFFSET = Math.ceil(HANDLE_WIDTH / 2);
 
 const getPropertyDescription = (property: Realm.ObjectSchemaProperty) => {
   switch (property.type) {
@@ -38,29 +38,36 @@ export const HeaderCell = ({
 }: {
   onWidthChanged: (width: number) => void;
   property: Realm.ObjectSchemaProperty;
-  propertyName: string;
+  propertyName: string | null;
   style: React.CSSProperties;
   width: number;
   onSortClick: (property: string) => void;
   sort: string | null;
 }) => {
-  const sortClass = classNames({
-    RealmBrowser__Content__HeaderSort: true,
+  const sortClass = classNames('RealmBrowser__Content__HeaderSort', {
     'RealmBrowser__Content__HeaderSort--active': sort === propertyName,
   });
   return (
     <div
       style={style}
       className="RealmBrowser__Content__HeaderCell"
-      title={propertyName}
+      title={propertyName || ''}
     >
-      <div className="RealmBrowser__Content__HeaderName">{propertyName}</div>
+      <div
+        className={classNames('RealmBrowser__Content__HeaderName', {
+          'RealmBrowser__Content__HeaderName--primitive': propertyName === null,
+        })}
+      >
+        {propertyName}
+      </div>
       <div className="RealmBrowser__Content__HeaderType">
         {getPropertyDisplayed(property)}
       </div>
-      <div className={sortClass} onClick={() => onSortClick(propertyName)}>
-        <i className="fa fa-sort" />
-      </div>
+      {propertyName ? (
+        <div className={sortClass} onClick={() => onSortClick(propertyName)}>
+          <i className="fa fa-sort" />
+        </div>
+      ) : null}
       <Draggable
         axis="x"
         onDrag={(e: Event, data: DraggableData) => {

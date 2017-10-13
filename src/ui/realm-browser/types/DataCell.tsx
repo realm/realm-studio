@@ -10,14 +10,11 @@ export const displayValue = (value: ArrayBuffer) => {
 export const DataCell = ({
   property,
   value,
-  onContextMenu,
 }: {
   property: Realm.ObjectSchemaProperty;
   value: any;
-  onContextMenu: (e: React.SyntheticEvent<any>) => void;
 }) => (
   <div
-    onContextMenu={onContextMenu}
     className={classnames(
       'form-control',
       'form-control-sm',

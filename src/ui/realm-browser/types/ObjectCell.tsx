@@ -3,27 +3,38 @@ import * as React from 'react';
 import * as Realm from 'realm';
 import * as util from 'util';
 
+export const display = (object: Realm.Object, inspectOnMissingPk = false) => {
+  const schema = object.objectSchema();
+  if (schema.primaryKey) {
+    const pk = (object as { [property: string]: any })[schema.primaryKey];
+    return `${schema.name} {${schema.primaryKey} = ${pk}}`;
+  } else if (inspectOnMissingPk) {
+    const formatedValue = util
+      .inspect(object, false, 0)
+      .replace('RealmObject', ' ');
+  } else {
+    return schema.name;
+  }
+};
+
 export const ObjectCell = ({
   property,
   value,
-  onContextMenu,
 }: {
   property: Realm.ObjectSchemaProperty;
-  value: any;
-  onContextMenu: (e: React.SyntheticEvent<any>) => void;
+  value: Realm.Object;
 }) => {
-  const formatedValue = util.inspect(value);
+  const displayValue = display(value);
   return (
     <div
-      onContextMenu={onContextMenu}
       className={classnames(
         'form-control',
         'form-control-sm',
         'RealmBrowser__Content__ObjectCell',
       )}
-      title={formatedValue}
+      title={displayValue}
     >
-      {formatedValue}
+      {displayValue}
     </div>
   );
 };
