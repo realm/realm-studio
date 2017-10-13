@@ -9,8 +9,6 @@ export const StringCell = ({
   onFocus,
   value,
   temporalValue,
-  onContextMenu,
-  onClick,
   property,
 }: {
   isEditing: boolean;
@@ -20,13 +18,14 @@ export const StringCell = ({
   onFocus: () => void;
   value: string;
   temporalValue: string;
-  onContextMenu: (e: React.SyntheticEvent<any>) => void;
-  onClick: (property: Realm.ObjectSchemaProperty, value: any) => void;
 }) => {
   let textInput: HTMLInputElement;
   return isEditing ? (
     <Input
-      className="RealmBrowser__Content__Input"
+      className={classnames(
+        'RealmBrowser__Content__Input',
+        `RealmBrowser__Content__Input--${property.type}`,
+      )}
       size="sm"
       getRef={input => {
         textInput = input;
@@ -35,7 +34,6 @@ export const StringCell = ({
       onChange={e => onChange(e.target.value)}
       onBlur={e => onBlur(textInput)}
       onKeyPress={e => e.key === 'Enter' && onBlur(textInput)}
-      onContextMenu={onContextMenu}
       autoFocus={true}
     />
   ) : (
@@ -45,11 +43,10 @@ export const StringCell = ({
         'form-control-sm',
         'RealmBrowser__Content__Input',
         'RealmBrowser__Content__Input--unselectable',
+        `RealmBrowser__Content__Input--${property.type}`,
         { 'RealmBrowser__Content__Input--null': value === null },
       )}
-      onClick={() => onClick(property, value)}
       onDoubleClick={onFocus}
-      onContextMenu={onContextMenu}
     >
       {value === null ? 'null' : value.toString()}
     </div>
