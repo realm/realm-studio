@@ -20,44 +20,34 @@
       "./build/**/*",
       "./static/**/*",
       "./node_modules/**/*",
-      "./package.json"
+      "./package.json",
+      "!node_modules/realm/android${/*}",
+      "!node_modules/realm/build${/*}",
+      "!node_modules/realm/react-native${/*}",
+      "!node_modules/realm/scripts${/*}",
+      "!node_modules/realm/src${/*}",
+      "!node_modules/realm/vendor${/*}"
     ],
     "mac": {
       "category": "public.app-category.developer-tools",
-      "target": "zip"
+      "target": [
+        "dmg",
+        "zip"
+      ]
     },
     "linux": {
       "target": [
         "AppImage",
-        "deb",
-        "rpm",
         "tar.gz"
-      ],
-      "files": [
-        "!node_modules/realm/android${/*}",
-        "!node_modules/realm/build${/*}",
-        "!node_modules/realm/react-native${/*}",
-        "!node_modules/realm/scripts${/*}",
-        "!node_modules/realm/src${/*}",
-        "!node_modules/realm/vendor${/*}"
       ]
     },
     "win": {
       "target": [
         "nsis",
-        "zip",
-        "portable"
+        "portable",
+        "zip"
       ],
-      "files": [
-        "!node_modules/realm/android${/*}",
-        "!node_modules/realm/build${/*}",
-        "!node_modules/realm/react-native${/*}",
-        "!node_modules/realm/scripts${/*}",
-        "!node_modules/realm/src${/*}",
-        "!node_modules/realm/vendor${/*}"
-      ],
-      "icon": "static/icons/win/realm-studio.ico",
-      "verifyUpdateCodeSignature": false
+      "icon": "static/icons/win/realm-studio.ico"
     },
     "nsis": {
       "installerIcon": "static/icons/win/realm-studio.ico"
@@ -146,8 +136,8 @@
     "css-loader": "^0.28.4",
     "devtron": "^1.4.0",
     "electron": "^1.8.1",
-    "electron-builder": "^19.34.2",
-    "electron-publisher-s3": "^19.34.0",
+    "electron-builder": "^19.37.2",
+    "electron-publisher-s3": "^19.37.0",
     "file-loader": "^0.11.2",
     "husky": "^0.14.3",
     "jsdom": "^11.3.0",
