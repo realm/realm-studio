@@ -1,6 +1,7 @@
 const _ = require("lodash");
 const path = require("path");
 const webpack = require("webpack");
+const Visualizer = require('webpack-visualizer-plugin');
 
 module.exports = (env) => {
   const baseConfig = require("./webpack.base.config.js")(env);
@@ -53,6 +54,11 @@ module.exports = (env) => {
       filename: "renderer.bundle.js",
       publicPath: isProduction ? "" : "http://localhost:8080/"
     },
+    plugins: baseConfig.plugins.concat(isProduction ? [] : [
+      new Visualizer({
+        filename: './renderer.statistics.html',
+      }),
+    ]),
     target: "electron-renderer"
   });
 };

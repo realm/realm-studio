@@ -1,4 +1,6 @@
 const _ = require("lodash");
+const path = require("path");
+const Visualizer = require('webpack-visualizer-plugin');
 
 module.exports = (env) => {
   const baseConfig = require("./webpack.base.config.js")(env);
@@ -34,6 +36,11 @@ module.exports = (env) => {
       // See https://github.com/webpack/hot-node-example#real-app
       libraryTarget: "commonjs2"
     },
+    plugins: baseConfig.plugins.concat(isProduction ? [] : [
+      new Visualizer({
+        filename: './main.statistics.html',
+      }),
+    ]),
     target: "electron-main",
     watch: !isProduction,
   });
