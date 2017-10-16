@@ -1,9 +1,8 @@
 import * as electron from 'electron';
-import * as Realm from 'realm';
 
 import { ActionReceiver } from '../actions/ActionReceiver';
 import { MainTransport } from '../actions/transports/MainTransport';
-import { RealmLoadingMode } from '../services/ros';
+import { RealmLoadingMode } from '../services/ros/types';
 import {
   IRealmBrowserOptions,
   IServerAdministrationOptions,
