@@ -65,12 +65,12 @@ def packageOthers(boolean doRelease) {
           {
             sh 'node_modules/.bin/electron-builder --linux --windows --publish always'
           }
-
-          archiveArtifacts 'dist/*'
         } else {
           sh './node_modules/.bin/xvfb-maybe npm test'
         }
       }
+
+      archiveArtifacts 'dist/*'
     }
   }
 }
