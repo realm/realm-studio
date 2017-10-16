@@ -24,13 +24,14 @@
     ],
     "mac": {
       "category": "public.app-category.developer-tools",
-      "target": "zip"
+      "target": [
+        "dmg",
+        "zip"
+      ]
     },
     "linux": {
       "target": [
         "AppImage",
-        "deb",
-        "rpm",
         "tar.gz"
       ],
       "files": [
@@ -45,8 +46,8 @@
     "win": {
       "target": [
         "nsis",
-        "zip",
-        "portable"
+        "portable",
+        "zip"
       ],
       "files": [
         "!node_modules/realm/android${/*}",
@@ -56,8 +57,7 @@
         "!node_modules/realm/src${/*}",
         "!node_modules/realm/vendor${/*}"
       ],
-      "icon": "static/icons/win/realm-studio.ico",
-      "verifyUpdateCodeSignature": false
+      "icon": "static/icons/win/realm-studio.ico"
     },
     "nsis": {
       "installerIcon": "static/icons/win/realm-studio.ico"
