@@ -63,7 +63,6 @@ def packageOthers() {
     node('docker') {
       rlmCheckout scm
 
-      def packageHash = getPackageHash()
       def workarea = pwd()
       def image = docker.pull('electronuserland/builder:wine-chrome')
       image.inside("-e HOME=${workarea}") {
