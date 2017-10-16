@@ -20,7 +20,13 @@
       "./build/**/*",
       "./static/**/*",
       "./node_modules/**/*",
-      "./package.json"
+      "./package.json",
+      "!node_modules/realm/android${/*}",
+      "!node_modules/realm/build${/*}",
+      "!node_modules/realm/react-native${/*}",
+      "!node_modules/realm/scripts${/*}",
+      "!node_modules/realm/src${/*}",
+      "!node_modules/realm/vendor${/*}"
     ],
     "mac": {
       "category": "public.app-category.developer-tools",
@@ -33,14 +39,6 @@
       "target": [
         "AppImage",
         "tar.gz"
-      ],
-      "files": [
-        "!node_modules/realm/android${/*}",
-        "!node_modules/realm/build${/*}",
-        "!node_modules/realm/react-native${/*}",
-        "!node_modules/realm/scripts${/*}",
-        "!node_modules/realm/src${/*}",
-        "!node_modules/realm/vendor${/*}"
       ]
     },
     "win": {
@@ -48,14 +46,6 @@
         "nsis",
         "portable",
         "zip"
-      ],
-      "files": [
-        "!node_modules/realm/android${/*}",
-        "!node_modules/realm/build${/*}",
-        "!node_modules/realm/react-native${/*}",
-        "!node_modules/realm/scripts${/*}",
-        "!node_modules/realm/src${/*}",
-        "!node_modules/realm/vendor${/*}"
       ],
       "icon": "static/icons/win/realm-studio.ico"
     },
