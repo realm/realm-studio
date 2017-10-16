@@ -34,9 +34,11 @@ jobWrapper {
         sh 'npm run build'
         // eletron-build check credentials even for --publish never, so will always specify it.
         withCredentials([
-          [$class: 'StringBinding', credentialsId: 'github-release-token', variable: 'GH_TOKEN'],
-          [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-s3-user-key', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']
-        ]) {
+          file(credentialsId: 'cose-sign-certificate-windows', variable: 'CSC_LINK'),
+          string(credentialsId: 'cose-sign-password-windows', variable: 'CSC_KEY_PASSWORD'),
+          string(credentialsId: 'github-release-token', variable: 'GH_TOKEN'),
+          [$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-s3-user-key', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']])
+        {
           sh 'node_modules/.bin/electron-builder --publish onTagOrDraft'
         }
       }
