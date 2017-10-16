@@ -64,7 +64,7 @@ def packageOthers() {
       rlmCheckout scm
 
       def workarea = pwd()
-      def image = docker.pull('electronuserland/builder:wine-chrome')
+      def image = docker.image('electronuserland/builder:wine-chrome')
       image.inside("-e HOME=${workarea}") {
         sh 'npm install'
         sh 'npm run build'
