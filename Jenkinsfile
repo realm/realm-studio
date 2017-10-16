@@ -63,7 +63,7 @@ def packageOthers(boolean doRelease) {
             string(credentialsId: 'github-release-token', variable: 'GH_TOKEN'),
             [$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-s3-user-key', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']])
           {
-            sh 'DEBUG=electron-builder node_modules/.bin/electron-builder --linux --windows --publish always'
+            sh 'node_modules/.bin/electron-builder --linux --windows --publish always'
           }
 
           archiveArtifacts 'dist/*'
