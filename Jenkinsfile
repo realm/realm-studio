@@ -35,7 +35,7 @@ jobWrapper {
         }
       }
     } else {
-      def doRelease = env.BRANCH_NAME == 'releases' || env.BRANCH_NAME.startsWith('release/')
+      def doRelease = env.BRANCH_NAME == 'releases' || env.BRANCH_NAME.startsWith('release/')
       parallel (
         macos: packageOnMacos(doRelease),
         others: packageOthers(doRelease)
