@@ -94,7 +94,7 @@ def packageOnMacos(boolean doRelease) {
             sh 'node_modules/.bin/electron-builder --publish always'
           }
 
-          archiveArtifacts 'dist/*.zip'
+          archiveArtifacts 'dist/*'
         } else {
           sh 'npm run test'
         }
