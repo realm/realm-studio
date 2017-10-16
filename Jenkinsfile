@@ -67,7 +67,7 @@ def packageOthers() {
 
           archiveArtifacts 'dist/*'
         } else {
-          sh 'npm run test'
+          sh './node_modules/.bin/xvfb-maybe npm test'
         }
       }
     }
