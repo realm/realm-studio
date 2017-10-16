@@ -75,7 +75,7 @@ def packageOthers(boolean doRelease) {
   }
 }
 
-def packageOnMacos(doRelease) {
+def packageOnMacos(boolean doRelease) {
   return {
     node('macos') {
       rlmCheckout scm
