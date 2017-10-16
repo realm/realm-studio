@@ -35,15 +35,16 @@ jobWrapper {
         }
       }
     } else {
+      def doRelease = env.BRANCH_NAME == 'releases' || env.BRANCH_NAME.startsWith('release/')
       parallel (
-        macos: packageOnMacos(),
-        others: packageOthers()
+        macos: packageOnMacos(doRelease),
+        others: packageOthers(doRelease)
       )
     }
   }
 }
 
-def packageOthers() {
+def packageOthers(boolean doRelease) {
   return {
     node('docker') {
       rlmCheckout scm
@@ -54,7 +55,7 @@ def packageOthers() {
         sh 'npm install'
         sh 'npm run build'
 
-        if (env.BRANCH_NAME == 'releases') {
+        if (doRelease) {
           // eletron-build check credentials even for --publish never, so will always specify it.
           withCredentials([
             file(credentialsId: 'cose-sign-certificate-windows', variable: 'CSC_LINK'),
@@ -74,7 +75,7 @@ def packageOthers() {
   }
 }
 
-def packageOnMacos() {
+def packageOnMacos(doRelease) {
   return {
     node('macos') {
       rlmCheckout scm
@@ -84,7 +85,7 @@ def packageOnMacos() {
         sh 'npm install --quiet'
         sh 'npm run build'
 
-        if (env.BRANCH_NAME == 'releases') {
+        if (doRelease) {
           // eletron-build check credentials even for --publish never, so will always specify it.
           withCredentials([
             [$class: 'StringBinding', credentialsId: 'github-release-token', variable: 'GH_TOKEN'],
