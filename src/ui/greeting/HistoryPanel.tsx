@@ -7,7 +7,7 @@ const Empty = () => (
     <p>Welcome to Realm Studio!</p>
     <p>
       <a
-        href="https://realm.gitbooks.io/realm-object-server/content/getting-started.html"
+        href="https://realm.io/docs/realm-object-server/"
         target="_blank"
       >
         Download and start the Realm Object Server
