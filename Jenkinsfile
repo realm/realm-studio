@@ -14,6 +14,8 @@ jobWrapper {
       // This is a PR
 
       node('docker') {
+        rlmCheckout scm
+
         // Computing a packageHash from the package-lock.json
         def packageHash = sh(
           script: "git ls-files -s package-lock.json | cut -d ' ' -f 2",
