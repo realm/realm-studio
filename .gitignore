@@ -9,3 +9,6 @@ data/
 
 # Created by mocha-webpack
 .tmp
+
+# Secrets
+secrets.sh
