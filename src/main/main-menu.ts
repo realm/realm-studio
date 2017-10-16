@@ -63,7 +63,7 @@ export default class MainMenu {
             label: 'Learn More...',
             click: () => {
               electron.shell.openExternal(
-                'https://github.com/realm/realm-browser-js',
+                'https://realm.io/docs',
               );
             },
           },
