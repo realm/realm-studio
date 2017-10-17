@@ -59,7 +59,7 @@ async function checkHasModifiedFiles() {
 }
 
 async function updateDependencies() {
-  await runProcess('npm', ['update']);
+  await runProcess('npm', ['update', '--save']);
   try {
     console.log('Consider upgrading these packages:');
     await runProcess('npm', ['outdated', '--depth=0']);
