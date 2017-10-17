@@ -15,6 +15,10 @@ const semver = require('semver');
 const PROJECT_PATH = path.resolve(__dirname, '..');
 const git = require('simple-git')();
 
+// Determine the path of the package and package lock files
+const packageJsonPath = path.resolve(PROJECT_PATH, 'package.json');
+const packageLockJsonPath = path.resolve(PROJECT_PATH, 'package-lock.json');
+
 // const REALM_REGISTRY_URL = 'https://registry.npmjs.org/realm';
 
 // Wrapping callbacks in a promise
@@ -64,15 +68,17 @@ async function updateDependencies() {
   }
 }
 
-async function bumpMinorVersion() {
-  // Determine the path of the two files
-  const packageJsonPath = path.resolve(PROJECT_PATH, 'package.json');
-  const packageLockJsonPath = path.resolve(PROJECT_PATH, 'package-lock.json');
+function getNextVersion() {
+  // Read the package
+  const packageJson = require(packageJsonPath);
+  return semver.inc(packageJson.version, 'minor');
+}
+
+async function writeVersion(nextVersion) {
   // Read the two files
   const packageJson = require(packageJsonPath);
   const packageLockJson = require(packageLockJsonPath);
-  // Increase the version
-  const nextVersion = semver.inc(packageJson.version, 'minor');
+  // Override the version
   const nextPackageJson = {
     ...packageJson,
     version: nextVersion,
@@ -86,22 +92,35 @@ async function bumpMinorVersion() {
   fs.writeFileSync(packageLockJsonPath, JSON.stringify(nextPackageLockJson, undefined, 2));
   // And the package lock json
   console.log(`Bumped version to ${nextVersion} - saved package.json and package-lock.json`);
-  return nextVersion;
 }
 
-async function createBranch(newVersion) {
-  const branchName = `prepare-${newVersion}`;
+async function doesBranchExist(name) {
+  try {
+    await promised(callback => git.show(['--quiet', `refs/heads/${name}`], callback));
+    // If it succeeds - the branch did exist
+    return true;
+  } catch (err) {
+    // If it fails - the branch did not exist
+    return false;
+  }
+}
+
+async function createBranch(nextVersion) {
+  const branchName = `prepare-${nextVersion}`;
+  // Check if the branch already exists
+  const branchExists = await doesBranchExist(branchName);
+  assert(!branchExists, `The release branch ${branchName} already exists!`);
+  // Create the branch
   await promised(callback => git.checkoutBranch(branchName, 'master', callback));
 }
 
 // The main script that runs
 async function run() {
-  // Make sure the project does not have modified files
-  // await checkHasModifiedFiles();
-  // await updateDependencies();
-  // const nextVersion = await bumpMinorVersion();
-  nextVersion = '1.1.0';
+  await checkHasModifiedFiles();
+  nextVersion = getNextVersion();
   await createBranch(nextVersion);
+  await writeVersion(nextVersion);
+  await updateDependencies();
 }
 
 // Invoke the script and log progress and errors.
