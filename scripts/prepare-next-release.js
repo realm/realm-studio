@@ -94,23 +94,9 @@ async function writeVersion(nextVersion) {
   console.log(`Bumped version to ${nextVersion} - saved package.json and package-lock.json`);
 }
 
-async function doesBranchExist(name) {
-  try {
-    await promised(callback => git.show(['--quiet', `refs/heads/${name}`], callback));
-    // If it succeeds - the branch did exist
-    return true;
-  } catch (err) {
-    // If it fails - the branch did not exist
-    return false;
-  }
-}
-
 async function createBranch(nextVersion) {
   const branchName = `prepare-${nextVersion}`;
-  // Check if the branch already exists
-  const branchExists = await doesBranchExist(branchName);
-  assert(!branchExists, `The release branch ${branchName} already exists!`);
-  // Create the branch
+  // Create the branch - it will fail if it already exists
   await promised(callback => git.checkoutBranch(branchName, 'master', callback));
 }
 
