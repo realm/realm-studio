@@ -67,7 +67,7 @@
   },
   "scripts": {
     "build": "webpack --env.NODE_ENV=production",
-    "check:package-lock": "node ./checking/package-lock.js",
+    "check:package-lock": "node ./scripts/check-package-lock.js",
     "dev:ros": "ros start",
     "dev": "rm -rf ./build && concurrently --names \"WEBPACK:M,WEBPACK:R,ELECTRON\" \"npm run webpack:main\" \"npm run webpack:renderer\" \"npm run wait-for-bundle && npm run electron\"",
     "pack": "rm -rf ./build ./dist && npm run build && npm run electron:pack",
@@ -80,6 +80,7 @@
     "lint": "npm run lint:ts && npm run lint:sass && echo 'Everything looks good!'",
     "postinstall": "electron-builder install-app-deps",
     "precommit": "lint-staged",
+    "prepare-next-release": "node ./scripts/prepare-next-release.js",
     "start": "rm -rf ./build && npm run build && npm run electron",
     "test": "mocha-webpack",
     "tslint-prettier": "tslint --fix 'src/**/*.ts' 'src/**/*.tsx'",
