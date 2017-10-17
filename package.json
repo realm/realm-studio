@@ -80,6 +80,7 @@
     "lint": "npm run lint:ts && npm run lint:sass && echo 'Everything looks good!'",
     "postinstall": "electron-builder install-app-deps",
     "precommit": "lint-staged",
+    "prepare-next-release": "node ./scripts/prepare-next-release.js",
     "start": "rm -rf ./build && npm run build && npm run electron",
     "test": "mocha-webpack",
     "tslint-prettier": "tslint --fix 'src/**/*.ts' 'src/**/*.tsx'",
