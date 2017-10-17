@@ -88,8 +88,8 @@ async function writeVersion(nextVersion) {
     version: nextVersion,
   };
   // Write back the two files
-  fs.writeFileSync(packageJsonPath, JSON.stringify(nextPackageJson, undefined, 2));
-  fs.writeFileSync(packageLockJsonPath, JSON.stringify(nextPackageLockJson, undefined, 2));
+  fs.writeFileSync(packageJsonPath, JSON.stringify(nextPackageJson, undefined, 2) + "\n");
+  fs.writeFileSync(packageLockJsonPath, JSON.stringify(nextPackageLockJson, undefined, 2) + "\n");
   // And the package lock json
   console.log(`Bumped version to ${nextVersion} - saved package.json and package-lock.json`);
 }
