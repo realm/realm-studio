@@ -98,7 +98,7 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
-    "electron-updater": "^2.14.0",
+    "electron-updater": "^2.13.0",
     "faker": "^4.1.0",
     "font-awesome": "^4.7.0",
     "fs-extra": "^4.0.2",
@@ -173,7 +173,6 @@
     "webpack-visualizer-plugin": "^0.1.11",
     "xvfb-maybe": "^0.2.1"
   },
-  "false": {},
   "engines": {
     "node": "^8"
   }
