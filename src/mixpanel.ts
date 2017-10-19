@@ -24,6 +24,10 @@ mixpanel.init('bbadd422d2866fc9431cb63baa70bb1a', {
   track_pageview: false,
 });
 
+mixpanel.disable([
+  '$web_event', // This was tracking every click - potentially transfering confirdential data
+]);
+
 settings.getSettings().then(({ identity }) => {
   mixpanel.identify(identity);
   mixpanel.people.set({
