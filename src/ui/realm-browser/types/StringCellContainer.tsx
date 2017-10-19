@@ -2,11 +2,13 @@ import { remote } from 'electron';
 import * as moment from 'moment';
 import * as React from 'react';
 import * as Realm from 'realm';
+
+import { IPropertyWithName } from '../ContentContainer';
 import { StringCell } from './StringCell';
 
 export interface IStringCellContainerProps {
   onUpdateValue: (value: any) => void;
-  property: Realm.ObjectSchemaProperty;
+  property: IPropertyWithName;
   value: string;
 }
 
@@ -45,7 +47,10 @@ export class StringCellContainer extends React.Component<
   }
 
   public onFocus = (): void => {
-    this.setState({ isEditing: true });
+    // We can only edit cells that is not readOnly
+    if (!this.props.property.readOnly) {
+      this.setState({ isEditing: true });
+    }
   };
 
   public onChange = (newValue: string): void => {

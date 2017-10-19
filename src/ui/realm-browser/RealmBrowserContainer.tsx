@@ -305,20 +305,35 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     }
   };
 
-  protected derivePropertiesFromProperty(property: IPropertyWithName) {
+  protected derivePropertiesFromProperty(
+    property: IPropertyWithName,
+  ): IPropertyWithName[] {
     // Determine the properties
     if (property.type === 'list' && property.objectType) {
+      const properties: IPropertyWithName[] = [
+        { name: '#', type: 'int', readOnly: true },
+      ];
       if (primitives.TYPES.indexOf(property.objectType) >= 0) {
-        return [{ name: null, type: property.objectType }];
+        return properties.concat([
+          {
+            name: null,
+            type: property.objectType,
+            readOnly: false,
+          },
+        ]);
       } else {
-        return this.derivePropertiesFromClassName(property.objectType);
+        return properties.concat(
+          this.derivePropertiesFromClassName(property.objectType),
+        );
       }
     } else {
       throw new Error(`Expected a list property with an objectType`);
     }
   }
 
-  protected derivePropertiesFromClassName(className: string) {
+  protected derivePropertiesFromClassName(
+    className: string,
+  ): IPropertyWithName[] {
     // Deriving the ObjectSchema from the className
     const objectSchema = this.realm.schema.find(schema => {
       return schema.name === className;
@@ -332,6 +347,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       if (typeof property === 'object') {
         return {
           name: propertyName,
+          readOnly: false,
           ...property,
         };
       } else {

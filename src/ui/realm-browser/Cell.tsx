@@ -6,6 +6,7 @@ import { IPropertyWithName } from './ContentContainer';
 import { DataCell } from './types/DataCell';
 import { DefaultCell } from './types/DefaultCell';
 import { ListCell } from './types/ListCell';
+import { ListIndexCell } from './types/ListIndexCell';
 import { ObjectCell } from './types/ObjectCell';
 import { StringCellContainer } from './types/StringCellContainer';
 
@@ -15,9 +16,14 @@ const getCellContent = ({
   value,
 }: {
   onUpdateValue: (value: string) => void;
-  property: Realm.ObjectSchemaProperty;
+  property: IPropertyWithName;
   value: any;
 }) => {
+  // A special cell for the list index
+  if (property.name === '#' && property.type === 'int' && property.readOnly) {
+    return <ListIndexCell value={value} />;
+  }
+  // Alternatively - based on type
   switch (property.type) {
     case 'int':
     case 'float':
@@ -55,7 +61,7 @@ export const Cell = ({
   onContextMenu,
 }: {
   onUpdateValue: (value: string) => void;
-  onCellClick: (property: Realm.ObjectSchemaProperty, value: any) => void;
+  onCellClick: () => void;
   property: IPropertyWithName;
   style: React.CSSProperties;
   value: any;
@@ -73,9 +79,7 @@ export const Cell = ({
       className={classnames('RealmBrowser__Content__Cell', {
         'RealmBrowser__Content__Cell--highlighted': isHighlighted,
       })}
-      onClick={() => {
-        onCellClick(property, value);
-      }}
+      onClick={onCellClick}
       onContextMenu={onContextMenu}
       style={style}
     >

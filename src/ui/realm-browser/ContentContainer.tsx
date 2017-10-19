@@ -42,6 +42,7 @@ export interface IRendererParams {
 // has a name parameter in its type definition.
 export interface IPropertyWithName extends Realm.ObjectSchemaProperty {
   name: string | null;
+  readOnly: boolean;
 }
 
 export interface IContentContainerProps {
@@ -120,18 +121,14 @@ export class ContentContainer extends React.Component<
   }
 
   public componentWillMount() {
-    if (this.props.focus && this.props.focus.kind === 'class') {
+    if (this.props.focus) {
       const properties = this.props.focus.properties;
       this.setDefaultColumnWidths(properties);
     }
   }
 
   public componentWillReceiveProps(props: IContentContainerProps) {
-    if (
-      props.focus &&
-      this.props.focus !== props.focus &&
-      props.focus.kind === 'class'
-    ) {
+    if (props.focus && this.props.focus !== props.focus) {
       const properties = props.focus.properties;
       this.setDefaultColumnWidths(properties);
       this.setState({ sort: null, query: null });
@@ -186,8 +183,10 @@ export class ContentContainer extends React.Component<
       filter: this.state.query || undefined,
     });
 
-    if (filteredSortedResults) {
-      const properties = this.props.focus ? this.props.focus.properties : [];
+    const focus = this.props.focus;
+
+    if (filteredSortedResults && focus) {
+      const properties = focus.properties;
       const headerRenderers = properties.map(property => {
         return (cellProps: GridCellProps) => {
           return (
@@ -209,16 +208,18 @@ export class ContentContainer extends React.Component<
       const valueRenderers = properties.map(property => {
         return (cellProps: GridCellProps) => {
           const result = filteredSortedResults[cellProps.rowIndex];
+          // The value is either the list row index or a value based on property
+          const value =
+            focus.kind === 'list' && property.name === '#'
+              ? cellProps.rowIndex
+              : this.getValue(result, property);
 
           return (
             <Cell
               key={cellProps.key}
               width={this.state.columnWidths[cellProps.columnIndex]}
               style={cellProps.style}
-              onCellClick={(
-                property: Realm.ObjectSchemaProperty, // tslint:disable-line:no-shadowed-variable
-                value: any,
-              ) => {
+              onCellClick={() => {
                 if (this.props.onCellClick) {
                   this.props.onCellClick(
                     result,
@@ -229,15 +230,15 @@ export class ContentContainer extends React.Component<
                   );
                 }
               }}
-              value={this.getValue(result, property)}
+              value={value}
               property={property}
-              onUpdateValue={value => {
+              onUpdateValue={newValue => {
                 if (this.props.onCellChange) {
                   this.props.onCellChange({
                     parent: filteredSortedResults,
                     rowIndex: cellProps.rowIndex,
                     propertyName: property.name,
-                    value,
+                    value: newValue,
                   });
                 }
               }}
@@ -317,11 +318,11 @@ export class ContentContainer extends React.Component<
     return property.name ? result[property.name] : result;
   }
 
-  private setDefaultColumnWidths(properties: Realm.ObjectSchemaProperty[]) {
+  private setDefaultColumnWidths(properties: IPropertyWithName[]) {
     const columnWidths = properties.map(property => {
       switch (property.type) {
         case 'int':
-          return 100;
+          return property.name === '#' ? 50 : 100;
         case 'bool':
           return 100;
         case 'string':
