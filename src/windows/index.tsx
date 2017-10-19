@@ -10,7 +10,7 @@ import {
 export function getWindow(type: WindowType): React.ReactElement<{}> {
   // Strip away the "?" of the location.search
   const queryString = location.search.substr(1);
-  const query = querystring.parse(queryString);
+  const query = querystring.parse<{ options: string }>(queryString);
   const options = query.options ? JSON.parse(query.options) as object : {};
 
   // We're using calls to require here, to prevent loading anything that does not
@@ -42,6 +42,6 @@ export function getWindow(type: WindowType): React.ReactElement<{}> {
 export function CurrentWindow(): React.ReactElement<{}> {
   // Strip away the "?" of the location.search
   const queryString = location.search.substr(1);
-  const query = querystring.parse(queryString);
+  const query = querystring.parse<{ windowType: WindowType }>(queryString);
   return getWindow(query.windowType);
 }
