@@ -2,7 +2,7 @@ import * as classnames from 'classnames';
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import { IPropertyWithName } from './focus';
+import { IPropertyWithName } from './ContentContainer';
 import { DataCell } from './types/DataCell';
 import { DefaultCell } from './types/DefaultCell';
 import { ListCell } from './types/ListCell';
