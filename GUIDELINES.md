@@ -5,6 +5,11 @@ It should be flexible, updated and a topic for discussions.
 
 ---
 
+# Versioning and GitHub flow
+
+This project uses [semantic versioning](http://semver.org/)
+and [GitHub-flow](http://scottchacon.com/2011/08/31/github-flow.html).
+
 # Linters
 
 This document describes guidelines, some of which can be checked by static code analysis tools called linters.

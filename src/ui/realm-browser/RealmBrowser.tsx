@@ -5,7 +5,7 @@ import { ConfirmModal } from '../reusable/confirm-modal';
 import { ContextMenu } from '../reusable/context-menu';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
 import { ContentContainer } from './ContentContainer';
-import { ClassFocus, Focus } from './focus';
+import { IFocus } from './focus';
 import { ICellChangeOptions } from './RealmBrowserContainer';
 import { SelectObject } from './SelectObject';
 import { Sidebar } from './Sidebar';
@@ -37,7 +37,7 @@ export const RealmBrowser = ({
     no: () => void;
   };
   contextMenu: any;
-  focus: Focus | null;
+  focus: IFocus | null;
   getSchemaLength: (name: string) => number;
   onCellChange: (options: ICellChangeOptions) => void;
   onCellClick: (
