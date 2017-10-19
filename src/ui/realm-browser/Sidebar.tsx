@@ -3,41 +3,51 @@ import * as React from 'react';
 import { Badge } from 'reactstrap';
 
 import { ILoadingProgress } from '../reusable/loading-overlay';
-import { ClassFocus, Focus, ListFocus } from './focus';
+import { IClassFocus, IFocus, IListFocus } from './focus';
 import * as objectCell from './types/ObjectCell';
 
 import './RealmBrowser.scss';
 
 import * as util from 'util';
 
+const isSelected = (focus: IFocus | null, schemaName: string) => {
+  if (focus && focus.kind === 'class') {
+    return (focus as IClassFocus).className === schemaName;
+  } else if (focus && focus.kind === 'list') {
+    return (focus as IListFocus).parent.objectSchema().name === schemaName;
+  } else {
+    return false;
+  }
+};
+
 const ListFocusComponent = ({
   focus,
   onSchemaSelected,
 }: {
-  focus: ListFocus;
+  focus: IListFocus;
   onSchemaSelected: (name: string, objectToScroll?: any) => void;
 }) => {
-  const parent = focus.getParent();
   return (
     <div className={classnames('RealmBrowser__Sidebar__List')}>
       <div className="RealmBrowser__Sidebar__List__Name">
         <span className="RealmBrowser__Sidebar__List__Name__Text">
-          List of {focus.getObjectType()}
+          List of {focus.property.objectType}
         </span>
-        <Badge color="primary">{focus.getResultCount()}</Badge>
+        <Badge color="primary">{focus.results.length}</Badge>
       </div>
       <div className="RealmBrowser__Sidebar__List__Parent">
         <div>
-          <strong>{focus.getPropertyName()}</strong> on
+          <strong>{focus.property.name}</strong> on
         </div>
         <div>
-          {!parent.objectSchema().primaryKey ? 'a ' : null}
+          {!focus.parent.objectSchema().primaryKey ? 'a ' : null}
           <span
-            onClick={() => onSchemaSelected(parent.objectSchema().name, parent)}
+            onClick={() =>
+              onSchemaSelected(focus.parent.objectSchema().name, focus.parent)}
             className="RealmBrowser__Sidebar__List__ParentObject"
-            title={objectCell.display(parent, true)}
+            title={objectCell.display(focus.parent, true)}
           >
-            {objectCell.display(parent, false)}
+            {objectCell.display(focus.parent, false)}
           </span>
         </div>
       </div>
@@ -52,7 +62,7 @@ export const Sidebar = ({
   progress,
   schemas,
 }: {
-  focus: Focus | null;
+  focus: IFocus | null;
   getSchemaLength: (name: string) => number;
   onSchemaSelected: (name: string, objectToScroll?: any) => void;
   progress: ILoadingProgress;
@@ -63,11 +73,11 @@ export const Sidebar = ({
     {schemas && schemas.length > 0 ? (
       <ul className="RealmBrowser__Sidebar__SchemaList">
         {schemas.map(schema => {
-          const hasFocus = focus && focus.isFocussingOn(schema.name);
+          const selected = isSelected(focus, schema.name);
           const schemaClass = classnames(
             'RealmBrowser__Sidebar__Schema__Info',
             {
-              'RealmBrowser__Sidebar__Schema__Info--selected': hasFocus,
+              'RealmBrowser__Sidebar__Schema__Info--selected': selected,
             },
           );
           return (
@@ -85,9 +95,9 @@ export const Sidebar = ({
                 </span>
                 <Badge color="primary">{getSchemaLength(schema.name)}</Badge>
               </div>
-              {hasFocus && focus instanceof ListFocus ? (
+              {selected && focus && focus.kind === 'list' ? (
                 <ListFocusComponent
-                  focus={focus}
+                  focus={focus as IListFocus}
                   onSchemaSelected={onSchemaSelected}
                 />
               ) : null}
