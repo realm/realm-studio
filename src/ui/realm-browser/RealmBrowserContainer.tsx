@@ -10,7 +10,9 @@ import {
   IRealmLoadingComponentState,
   RealmLoadingComponent,
 } from '../reusable/realm-loading-component';
-import { ClassFocus, Focus, IPropertyWithName, ListFocus } from './focus';
+import { IPropertyWithName } from './ContentContainer';
+import { IClassFocus, IFocus, IListFocus } from './focus';
+import * as primitives from './types/primitives';
 
 import { RealmBrowser } from './RealmBrowser';
 
@@ -26,7 +28,7 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
     object: any;
     actions: IContextMenuAction[];
   } | null;
-  focus: Focus | null;
+  focus: IFocus | null;
   rowToHighlight?: number;
   // The schemas are only supposed to be used to produce a list of schemas in the sidebar
   schemas: Realm.ObjectSchema[];
@@ -105,17 +107,19 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     }
   };
 
-  public onSchemaSelected = (name: string, objectToScroll?: any) => {
+  public onSchemaSelected = (className: string, objectToScroll?: any) => {
     // TODO: Re-implement objectToScroll
     const rowToHighlight = objectToScroll
-      ? this.realm.objects(name).indexOf(objectToScroll)
+      ? this.realm.objects(className).indexOf(objectToScroll)
       : undefined;
-    const { focus } = this.state;
+    const focus: IClassFocus = {
+      kind: 'class',
+      className,
+      results: this.realm.objects(className),
+      properties: this.derivePropertiesFromClassName(className),
+    };
     this.setState({
-      focus: new ClassFocus({
-        realm: this.realm,
-        className: name,
-      }),
+      focus,
       rowToHighlight,
       columnToHighlight: undefined,
     });
@@ -156,28 +160,35 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     value: any,
   ) => {
     if (property.type === 'list') {
+      const focus: IListFocus = {
+        kind: 'list',
+        parent: object,
+        property,
+        properties: this.derivePropertiesFromProperty(property),
+        results: value,
+      };
       this.setState({
-        focus: new ListFocus({
-          realm: this.realm,
-          parent: object,
-          property,
-          list: value,
-        }),
+        focus,
         rowToHighlight: undefined,
         columnToHighlight: undefined,
       });
     } else if (property.type === 'object' && value) {
-      const index = this.realm
-        .objects(property.objectType || '')
-        .indexOf(value);
-      this.setState({
-        focus: new ClassFocus({
-          realm: this.realm,
-          className: property.objectType,
-        }),
-        rowToHighlight: index,
-        columnToHighlight: 0,
-      });
+      const className = property.objectType;
+      if (className) {
+        const results = this.realm.objects(className);
+        const index = results.indexOf(value);
+        const focus: IClassFocus = {
+          kind: 'class',
+          className,
+          results,
+          properties: this.derivePropertiesFromClassName(className),
+        };
+        this.setState({
+          focus,
+          rowToHighlight: index,
+          columnToHighlight: 0,
+        });
+      }
     }
   };
 
@@ -207,7 +218,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       });
     }
 
-    if (!(this.state.focus instanceof ListFocus)) {
+    if (this.state.focus && this.state.focus.kind === 'class') {
       actions.push({
         label: 'Delete',
         onClick: () => this.openConfirmModal(object),
@@ -293,6 +304,41 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       this.onSchemaSelected(firstSchemaName);
     }
   };
+
+  protected derivePropertiesFromProperty(property: IPropertyWithName) {
+    // Determine the properties
+    if (property.type === 'list' && property.objectType) {
+      if (primitives.TYPES.indexOf(property.objectType) >= 0) {
+        return [{ name: null, type: property.objectType }];
+      } else {
+        return this.derivePropertiesFromClassName(property.objectType);
+      }
+    } else {
+      throw new Error(`Expected a list property with an objectType`);
+    }
+  }
+
+  protected derivePropertiesFromClassName(className: string) {
+    // Deriving the ObjectSchema from the className
+    const objectSchema = this.realm.schema.find(schema => {
+      return schema.name === className;
+    });
+    if (!objectSchema) {
+      throw new Error(`Found no object schema named '${className}'`);
+    }
+    // Derive the properties from the objectSchema
+    return Object.keys(objectSchema.properties).map(propertyName => {
+      const property = objectSchema.properties[propertyName];
+      if (typeof property === 'object') {
+        return {
+          name: propertyName,
+          ...property,
+        };
+      } else {
+        throw new Error(`Object schema had a string describing its property`);
+      }
+    });
+  }
 
   private addRealmChangeListener() {
     if (this.realm) {

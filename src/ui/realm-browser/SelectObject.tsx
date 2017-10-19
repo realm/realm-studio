@@ -2,10 +2,10 @@ import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 
 import { ContentContainer } from './ContentContainer';
-import { Focus } from './focus';
+import { IFocus } from './focus';
 
 export interface IProps {
-  focus: Focus;
+  focus: IFocus;
   status: boolean;
   close: () => void;
   schemaName: string;

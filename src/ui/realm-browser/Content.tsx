@@ -1,85 +1,46 @@
 import * as React from 'react';
 import {
   AutoSizer,
-  Dimensions as IAutoSizerDimensions,
   Grid,
+  GridCellRenderer,
   ScrollSync,
 } from 'react-virtualized';
 import { Input, InputGroup, InputGroupAddon } from 'reactstrap';
 import * as Realm from 'realm';
 
 import { ILoadingProgress } from '../reusable/loading-overlay';
-import { Cell } from './Cell';
-import { Focus, IRendererParams } from './focus';
-import { HeaderCell } from './HeaderCell';
+import { IFocus } from './focus';
 import { MoreIndicators } from './MoreIndicators';
-import { ICellChangeOptions } from './RealmBrowserContainer';
 
 export const Content = ({
+  columnCount,
   columnWidths,
   focus,
   gridContentRef,
   gridHeaderRef,
-  onCellChange,
-  onCellClick,
-  onColumnWidthChanged,
-  onContextMenu,
+  headerRenderers,
   onQueryChange,
-  onSortClick,
   progress,
   query,
-  rowToHighlight,
-  sort,
+  rowCount,
+  valueRenderers,
 }: {
   columnWidths: number[];
-  focus: Focus | null;
+  columnCount: number;
+  focus: IFocus | null;
   gridContentRef: (grid: Grid) => void;
   gridHeaderRef: (grid: Grid) => void;
-  onCellChange?: (options: ICellChangeOptions) => void;
-  onCellClick?: (
-    object: any,
-    property: Realm.ObjectSchemaProperty,
-    value: any,
-    rowIndex: number,
-    columnIndex: number,
-  ) => void;
-  onColumnWidthChanged: (index: number, width: number) => void;
-  onContextMenu?: (
-    e: React.SyntheticEvent<any>,
-    object: any,
-    rowIndex: number,
-    property: Realm.ObjectSchemaProperty,
-  ) => void;
+  headerRenderers: GridCellRenderer[];
   onQueryChange: (e: React.SyntheticEvent<any>) => void;
-  onSortClick: (property: string) => void;
   progress?: ILoadingProgress;
   query: string | null;
-  rowToHighlight?: number;
-  sort: string | null;
+  rowCount: number;
+  valueRenderers: GridCellRenderer[];
 }) => {
   if (focus) {
     const headerHeight = 40;
     const rowHeight = 26;
     const scrollBarWidth = 20;
-
-    const rendererParams: IRendererParams = {
-      columnWidths,
-      onCellChange,
-      onCellClick,
-      onColumnWidthChanged,
-      onContextMenu,
-      onSortClick,
-      rowToHighlight,
-      filter: query ? query : undefined,
-      sort: sort ? { propertyName: sort } : undefined,
-    };
-
-    const {
-      columnCount,
-      rowCount,
-      headerRenderers,
-      valueRenderers,
-    } = focus.generateRenderers(rendererParams);
 
     return (
       <div className="RealmBrowser__Content">
