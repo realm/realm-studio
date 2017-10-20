@@ -78,7 +78,8 @@ export class LogContainer extends React.Component<
     }
 
     const url = this.generateLogUrl();
-    this.socket = new WebSocket(url);
+    const userRefreshToken = this.props.user.token;
+    this.socket = new WebSocket(url, [`refresh_token=${userRefreshToken}}`]);
     this.socket.addEventListener('message', this.onLogMessage);
   }
 
