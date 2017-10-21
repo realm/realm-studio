@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {
   AutoSizer,
+  defaultCellRangeRenderer,
   Grid,
   GridCellRenderer,
   ScrollSync,
@@ -11,6 +12,15 @@ import * as Realm from 'realm';
 import { ILoadingProgress } from '../reusable/loading-overlay';
 import { IFocus } from './focus';
 import { MoreIndicators } from './MoreIndicators';
+import { GridRowRenderer, rowCellRangeRenderer } from './rowCellRangeRenderer';
+
+const rowRenderer: GridRowRenderer = ({ children, key, rowIndex, style }) => {
+  return (
+    <div style={style} key={key}>
+      {children}
+    </div>
+  );
+};
 
 export const Content = ({
   columnCount,
@@ -40,7 +50,8 @@ export const Content = ({
   if (focus) {
     const headerHeight = 40;
     const rowHeight = 26;
-    const scrollBarWidth = 20;
+
+    const cellRangeRenderer = rowCellRangeRenderer(rowRenderer);
 
     return (
       <div className="RealmBrowser__Content">
@@ -110,6 +121,7 @@ export const Content = ({
                           rowCount={rowCount}
                           columnCount={columnCount}
                           columnWidth={({ index }) => columnWidths[index]}
+                          cellRangeRenderer={cellRangeRenderer}
                           cellRenderer={props =>
                             valueRenderers[props.columnIndex](props)}
                           onScroll={onScroll}

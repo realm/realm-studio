@@ -3,7 +3,7 @@ import * as moment from 'moment';
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import { IPropertyWithName } from '../ContentContainer';
+import { IPropertyWithName } from '..';
 import { StringCell } from './StringCell';
 
 export interface IStringCellContainerProps {

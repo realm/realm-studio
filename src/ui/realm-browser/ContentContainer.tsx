@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Grid, GridCellProps } from 'react-virtualized';
 
+import { IPropertyWithName } from '.';
 import { ILoadingProgress } from '../reusable/loading-overlay';
 import { Cell } from './Cell';
 import { Content } from './Content';
@@ -36,13 +37,6 @@ export interface IRendererParams {
   rowToHighlight?: number;
   sort?: ISortOptions;
   filter?: string;
-}
-
-// TODO: Remove this interface once the Realm.ObjectSchemaProperty
-// has a name parameter in its type definition.
-export interface IPropertyWithName extends Realm.ObjectSchemaProperty {
-  name: string | null;
-  readOnly: boolean;
 }
 
 export interface IContentContainerProps {

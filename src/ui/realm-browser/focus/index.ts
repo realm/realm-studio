@@ -6,7 +6,7 @@ export * from './ListFocus';
 
 import { GridCellRenderer } from 'react-virtualized';
 
-import { IPropertyWithName } from '../ContentContainer';
+import { IPropertyWithName } from '..';
 import { ICellChangeOptions } from '../RealmBrowserContainer';
 
 export interface IRenderers {

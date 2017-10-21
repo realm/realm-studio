@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as Realm from 'realm';
 import * as util from 'util';
 
+import { IPropertyWithName } from '.';
 import { IRealmBrowserOptions } from '../../windows/WindowType';
 import { IContextMenuAction } from '../reusable/context-menu';
 import { showError } from '../reusable/errors';
@@ -10,7 +11,6 @@ import {
   IRealmLoadingComponentState,
   RealmLoadingComponent,
 } from '../reusable/realm-loading-component';
-import { IPropertyWithName } from './ContentContainer';
 import { IClassFocus, IFocus, IListFocus } from './focus';
 import * as primitives from './types/primitives';
 
