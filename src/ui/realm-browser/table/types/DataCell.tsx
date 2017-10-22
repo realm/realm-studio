@@ -18,8 +18,8 @@ export const DataCell = ({
     className={classnames(
       'form-control',
       'form-control-sm',
-      'RealmBrowser__Content__Input',
-      'RealmBrowser__Content__Input--disabled',
+      'RealmBrowser__Table__Input',
+      'RealmBrowser__Table__Input--disabled',
     )}
   >
     {displayValue(value)}

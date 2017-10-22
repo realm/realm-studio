@@ -78,13 +78,13 @@ export const ListCell = ({
     className={classnames(
       'form-control',
       'form-control-sm',
-      'RealmBrowser__Content__ListCell',
+      'RealmBrowser__Table__ListCell',
     )}
   >
-    <span className="RealmBrowser__Content__ListCell__Value">
+    <span className="RealmBrowser__Table__ListCell__Value">
       {displayValue(property, value)}
     </span>
-    <span className="RealmBrowser__Content__ListCell__Count">
+    <span className="RealmBrowser__Table__ListCell__Count">
       <Badge color="primary">{value.length}</Badge>
     </span>
   </div>
