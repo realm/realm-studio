@@ -1,7 +1,13 @@
 import * as React from 'react';
 import { AutoSizer, Grid, GridCellProps, ScrollSync } from 'react-virtualized';
 
-import { CellChangeHandler, CellClickHandler, IHighlight, ISorting } from '.';
+import {
+  CellChangeHandler,
+  CellClickHandler,
+  IHighlight,
+  ISorting,
+  SortEndHandler,
+} from '.';
 import { IPropertyWithName } from '..';
 import { IFocus } from '../focus';
 import { ContentGrid } from './ContentGrid';
@@ -15,7 +21,7 @@ const rowHeights = {
 
 export interface ITableProps {
   columnWidths: number[];
-  filteredSortedResults: Realm.Results<any>;
+  filteredSortedResults: Realm.Collection<any>;
   focus: IFocus;
   getCellValue: (object: any, props: GridCellProps) => string;
   gridContentRef: (grid: Grid) => void;
@@ -25,6 +31,7 @@ export interface ITableProps {
   onCellClick?: CellClickHandler;
   onColumnWidthChanged: (index: number, width: number) => void;
   onSortClick: (property: IPropertyWithName) => void;
+  onSortEnd?: SortEndHandler;
   sorting?: ISorting;
 }
 
@@ -40,6 +47,7 @@ export const Table = ({
   onCellClick,
   onColumnWidthChanged,
   onSortClick,
+  onSortEnd,
   sorting,
 }: ITableProps) => (
   <div className="RealmBrowser__Table">
@@ -88,13 +96,15 @@ export const Table = ({
                     columnWidths={columnWidths}
                     filteredSortedResults={filteredSortedResults}
                     getCellValue={getCellValue}
+                    gridRef={gridContentRef}
                     height={height - rowHeights.header}
                     highlight={highlight}
+                    isSortable={focus.kind === 'list' && !sorting}
                     onCellChange={onCellChange}
                     onCellClick={onCellClick}
                     onScroll={onScroll}
+                    onSortEnd={onSortEnd}
                     properties={focus.properties}
-                    gridRef={gridContentRef}
                     rowHeight={rowHeights.content}
                     width={width}
                   />

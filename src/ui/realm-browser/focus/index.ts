@@ -17,12 +17,13 @@ export interface IRenderers {
 
 export interface IFocus {
   kind: string;
-  results: Realm.Results<any>;
   properties: IPropertyWithName[];
+  results: Realm.Collection<any>;
 }
 
 export interface IClassFocus extends IFocus {
   kind: 'class';
+  results: Realm.Results<any>;
   className: string;
 }
 
@@ -30,4 +31,5 @@ export interface IListFocus extends IFocus {
   kind: 'list';
   parent: Realm.Object;
   property: IPropertyWithName;
+  results: Realm.List<any>;
 }

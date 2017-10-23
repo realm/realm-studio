@@ -5,7 +5,12 @@ import { IPropertyWithName } from '.';
 import { ILoadingProgress } from '../reusable/loading-overlay';
 import { Content } from './Content';
 import { IFocus } from './focus';
-import { CellChangeHandler, CellClickHandler, IHighlight } from './table';
+import {
+  CellChangeHandler,
+  CellClickHandler,
+  IHighlight,
+  SortEndHandler,
+} from './table';
 import { Cell } from './table/Cell';
 import { HeaderCell } from './table/HeaderCell';
 
@@ -14,6 +19,7 @@ export interface IContentContainerProps {
   highlight?: IHighlight;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
+  onSortEnd?: SortEndHandler;
   progress?: ILoadingProgress;
   onContextMenu?: (
     e: React.SyntheticEvent<any>,

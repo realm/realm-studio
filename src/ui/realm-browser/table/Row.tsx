@@ -17,6 +17,7 @@ export const Row = ({
     <div
       className={classnames('RealmBrowser__Table__Row', {
         'RealmBrowser__Table__Row--highlighted': isHighlighted,
+        'RealmBrowser__Table__Row--striped': rowIndex % 2 === 1,
       })}
       style={style}
     >

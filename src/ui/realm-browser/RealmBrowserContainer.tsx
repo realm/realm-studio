@@ -12,7 +12,12 @@ import {
   RealmLoadingComponent,
 } from '../reusable/realm-loading-component';
 import { IClassFocus, IFocus, IListFocus } from './focus';
-import { CellChangeHandler, CellClickHandler, IHighlight } from './table';
+import {
+  CellChangeHandler,
+  CellClickHandler,
+  IHighlight,
+  SortEndHandler,
+} from './table';
 import * as primitives from './table/types/primitives';
 
 import { RealmBrowser } from './RealmBrowser';
@@ -122,13 +127,6 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     rowIndex,
     columnIndex,
   }) => {
-    this.setState({
-      highlight: {
-        row: rowIndex,
-        column: columnIndex,
-      },
-    });
-
     if (this.clickTimeout) {
       clearTimeout(this.clickTimeout);
       this.onCellDoubleClick(rowObject, property, cellValue);
@@ -223,6 +221,16 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
           object,
           actions,
         },
+      });
+    }
+  };
+
+  public onSortEnd: SortEndHandler = ({ oldIndex, newIndex }) => {
+    if (this.state.focus && this.state.focus.kind === 'list') {
+      const results = (this.state.focus.results as any) as Realm.List<any>;
+      this.realm.write(() => {
+        const movedElements = results.splice(oldIndex, 1);
+        results.splice(newIndex, 0, movedElements[0]);
       });
     }
   };

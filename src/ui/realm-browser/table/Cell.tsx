@@ -59,7 +59,7 @@ export const Cell = ({
   onContextMenu,
 }: {
   onUpdateValue: (value: string) => void;
-  onCellClick: () => void;
+  onCellClick: (e: React.MouseEvent<any>) => void;
   property: IPropertyWithName;
   style: React.CSSProperties;
   value: any;

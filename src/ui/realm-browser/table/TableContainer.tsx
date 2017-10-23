@@ -1,7 +1,13 @@
 import * as React from 'react';
 import { Grid, GridCellProps } from 'react-virtualized';
 
-import { CellChangeHandler, CellClickHandler, IHighlight, ISorting } from '.';
+import {
+  CellChangeHandler,
+  CellClickHandler,
+  IHighlight,
+  ISorting,
+  SortEndHandler,
+} from '.';
 import { IPropertyWithName } from '..';
 import { IFocus } from '../focus';
 import { Table } from './Table';
@@ -13,6 +19,7 @@ export interface ITableContainerProps {
   highlight?: IHighlight;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
+  onSortEnd?: SortEndHandler;
   query: string;
   // isLoading: boolean;
 }
@@ -54,6 +61,7 @@ export class TableContainer extends React.Component<
         onCellChange={this.props.onCellChange}
         onCellClick={this.props.onCellClick}
         onColumnWidthChanged={this.onColumnWidthChanged}
+        onSortEnd={this.props.onSortEnd}
         onSortClick={this.onSortClick}
         sorting={this.state.sorting}
       />
@@ -154,7 +162,7 @@ export class TableContainer extends React.Component<
   }: {
     query?: string;
     sorting?: ISorting;
-  }): Realm.Results<any> | null {
+  }): Realm.Collection<any> | null {
     if (this.props.focus) {
       let results = this.props.focus.results;
       if (query) {

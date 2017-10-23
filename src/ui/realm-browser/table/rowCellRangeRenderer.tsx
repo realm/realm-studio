@@ -22,7 +22,7 @@ export interface IGridRowProps {
   style: React.CSSProperties;
 }
 
-export type GridRowRenderer = (props: IGridRowProps) => React.ReactNode;
+export type GridRowRenderer = (props: IGridRowProps) => JSX.Element;
 
 export const rowCellRangeRenderer = (rowRenderer: GridRowRenderer) => ({
   cellCache,
@@ -220,7 +220,7 @@ export const rowCellRangeRenderer = (rowRenderer: GridRowRenderer) => ({
     }
     */
 
-    if (renderedRow == null || renderedRow === false) {
+    if (renderedRow == null) {
       continue;
     }
 

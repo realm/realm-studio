@@ -1,3 +1,5 @@
+export { SortEndHandler } from 'react-sortable-hoc';
+
 import { IPropertyWithName } from '..';
 
 export type CellChangeHandler = (

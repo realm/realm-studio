@@ -10,7 +10,12 @@ import * as Realm from 'realm';
 
 import { ILoadingProgress } from '../reusable/loading-overlay';
 import { IFocus } from './focus';
-import { CellChangeHandler, CellClickHandler, IHighlight } from './table';
+import {
+  CellChangeHandler,
+  CellClickHandler,
+  IHighlight,
+  SortEndHandler,
+} from './table';
 import { TableContainer } from './table/TableContainer';
 import { Topbar } from './Topbar';
 
@@ -20,6 +25,7 @@ export const Content = ({
   onCellChange,
   onCellClick,
   onQueryChange,
+  onSortEnd,
   progress,
   query,
 }: {
@@ -28,6 +34,7 @@ export const Content = ({
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
   onQueryChange: (query: string) => void;
+  onSortEnd?: SortEndHandler;
   progress?: ILoadingProgress;
   query: string;
 }) => {
@@ -43,6 +50,7 @@ export const Content = ({
           highlight={highlight}
           onCellChange={onCellChange}
           onCellClick={onCellClick}
+          onSortEnd={onSortEnd}
           query={query}
         />
       </div>

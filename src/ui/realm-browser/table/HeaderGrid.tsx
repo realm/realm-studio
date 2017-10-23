@@ -40,7 +40,6 @@ export const HeaderGrid = (props: IHeaderGridProps) => {
         <HeaderCell
           key={cellProps.key}
           property={property}
-          propertyName={property.name}
           width={columnWidths[cellProps.columnIndex]}
           style={cellProps.style}
           onSortClick={() => onSortClick(property)}

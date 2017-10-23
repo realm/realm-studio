@@ -8,7 +8,12 @@ import { ContentContainer } from './ContentContainer';
 import { IFocus } from './focus';
 import { SelectObject } from './SelectObject';
 import { Sidebar } from './Sidebar';
-import { CellChangeHandler, CellClickHandler, IHighlight } from './table';
+import {
+  CellChangeHandler,
+  CellClickHandler,
+  IHighlight,
+  SortEndHandler,
+} from './table';
 
 import './RealmBrowser.scss';
 
@@ -25,6 +30,7 @@ export const RealmBrowser = ({
   onContextMenu,
   onContextMenuClose,
   onSchemaSelected,
+  onSortEnd,
   progress,
   rowToHighlight,
   schemas,
@@ -50,6 +56,7 @@ export const RealmBrowser = ({
     property: Realm.ObjectSchemaProperty,
   ) => void;
   onContextMenuClose: () => void;
+  onSortEnd: SortEndHandler;
   onSchemaSelected: (name: string, objectToScroll: any) => void;
   progress: ILoadingProgress;
   rowToHighlight?: number;
@@ -73,6 +80,7 @@ export const RealmBrowser = ({
           onCellChange={onCellChange}
           onCellClick={onCellClick}
           onContextMenu={onContextMenu}
+          onSortEnd={onSortEnd}
           progress={progress}
         />
       </div>

@@ -1,5 +1,10 @@
 import * as React from 'react';
 import {
+  SortableContainer,
+  SortableElement,
+  SortEndHandler,
+} from 'react-sortable-hoc';
+import {
   Grid,
   GridCellProps,
   GridCellRenderer,
@@ -10,17 +15,28 @@ import { CellChangeHandler, CellClickHandler, IHighlight, ISorting } from '.';
 import { IPropertyWithName } from '..';
 import { Cell } from './Cell';
 import { Row } from './Row';
-import { rowCellRangeRenderer } from './rowCellRangeRenderer';
+import {
+  GridRowRenderer,
+  IGridRowProps,
+  rowCellRangeRenderer,
+} from './rowCellRangeRenderer';
+
+// Must pass Grid as any - due to a bug in the types
+const SortableGrid = SortableContainer<GridProps>(Grid as any, {
+  withRef: true,
+});
 
 export interface IContentGridProps extends Partial<GridProps> {
   columnWidths: number[];
-  filteredSortedResults: Realm.Results<any>;
+  filteredSortedResults: Realm.Collection<any>;
   getCellValue: (object: any, props: GridCellProps) => string;
   gridRef: (ref: React.ReactNode) => void;
   height: number;
   highlight?: IHighlight;
+  isSortable?: boolean;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
+  onSortEnd?: SortEndHandler;
   properties: IPropertyWithName[];
   rowHeight: number;
   width: number;
@@ -34,18 +50,33 @@ export const ContentGrid = (props: IContentGridProps) => {
     gridRef,
     height,
     highlight,
+    isSortable,
     onCellChange,
     onCellClick,
+    onSortEnd,
     properties,
     rowHeight,
     width,
   } = props;
 
-  const cellRangeRenderer = rowCellRangeRenderer(rowProps => {
+  const rowRenderer: GridRowRenderer = (rowProps: IGridRowProps) => {
     const isHighlighted =
       (highlight && highlight.row === rowProps.rowIndex) || false;
     return (
       <Row isHighlighted={isHighlighted} key={rowProps.key} {...rowProps} />
+    );
+  };
+
+  const SortableRow = SortableElement<IGridRowProps>(rowRenderer);
+
+  const cellRangeRenderer = rowCellRangeRenderer(rowProps => {
+    return (
+      <SortableRow
+        disabled={!isSortable}
+        index={rowProps.rowIndex}
+        key={rowProps.rowIndex}
+        {...rowProps}
+      />
     );
   });
 
@@ -60,7 +91,7 @@ export const ContentGrid = (props: IContentGridProps) => {
           key={cellProps.key}
           width={columnWidths[cellProps.columnIndex]}
           style={cellProps.style}
-          onCellClick={() => {
+          onCellClick={e => {
             if (onCellClick) {
               onCellClick({
                 cellValue,
@@ -102,15 +133,23 @@ export const ContentGrid = (props: IContentGridProps) => {
   });
 
   return (
-    <Grid
+    <SortableGrid
       {...props}
+      lockAxis="y"
+      helperClass="RealmBrowser__Table__Row--sorting"
       cellRangeRenderer={cellRangeRenderer}
       cellRenderer={cellProps =>
         cellRenderers[cellProps.columnIndex](cellProps)}
       className="RealmBrowser__Table__ContentGrid"
       columnCount={properties.length}
       columnWidth={({ index }) => columnWidths[index]}
-      ref={gridRef}
+      distance={5}
+      onSortEnd={onSortEnd}
+      ref={(sortableContainer: any) => {
+        if (sortableContainer) {
+          gridRef(sortableContainer.getWrappedInstance());
+        }
+      }}
       rowCount={filteredSortedResults.length}
     />
   );
