@@ -17,7 +17,7 @@ export interface ITableProps {
   columnWidths: number[];
   filteredSortedResults: Realm.Results<any>;
   focus: IFocus;
-  getCellValue: (props: GridCellProps) => string;
+  getCellValue: (object: any, props: GridCellProps) => string;
   gridContentRef: (grid: Grid) => void;
   gridHeaderRef: (grid: Grid) => void;
   highlight?: IHighlight;
@@ -63,7 +63,7 @@ export const Table = ({
                   onColumnWidthChanged={onColumnWidthChanged}
                   onSortClick={onSortClick}
                   properties={focus.properties}
-                  ref={gridHeaderRef}
+                  gridRef={gridHeaderRef}
                   scrollLeft={scrollLeft}
                   sorting={sorting}
                   width={width}
@@ -94,7 +94,7 @@ export const Table = ({
                     onCellClick={onCellClick}
                     onScroll={onScroll}
                     properties={focus.properties}
-                    ref={gridContentRef}
+                    gridRef={gridContentRef}
                     rowHeight={rowHeights.content}
                     width={width}
                   />

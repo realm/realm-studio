@@ -102,13 +102,12 @@ export class TableContainer extends React.Component<
     }
   }
 
-  private getCellValue = (props: GridCellProps) => {
+  private getCellValue = (object: any, props: GridCellProps) => {
     const property = this.props.focus.properties[props.columnIndex];
     if (this.props.focus.kind === 'list' && property.name === '#') {
       return props.rowIndex;
     } else {
-      const result = this.props.focus.results[props.rowIndex];
-      return property.name ? result[property.name] : result;
+      return property.name ? object[property.name] : object;
     }
   };
 

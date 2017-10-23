@@ -28,3 +28,5 @@ export interface ISorting {
   property: IPropertyWithName;
   reverse: boolean;
 }
+
+export type SortClickHandler = (property: IPropertyWithName) => void;

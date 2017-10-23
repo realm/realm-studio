@@ -10,7 +10,6 @@ export interface IRowProps extends IGridRowProps {
 export const Row = ({
   children,
   isHighlighted,
-  key,
   rowIndex,
   style,
 }: IRowProps) => {
@@ -20,7 +19,6 @@ export const Row = ({
         'RealmBrowser__Table__Row--highlighted': isHighlighted,
       })}
       style={style}
-      key={key}
     >
       {children}
     </div>

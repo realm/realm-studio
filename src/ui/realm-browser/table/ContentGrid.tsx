@@ -15,7 +15,8 @@ import { rowCellRangeRenderer } from './rowCellRangeRenderer';
 export interface IContentGridProps extends Partial<GridProps> {
   columnWidths: number[];
   filteredSortedResults: Realm.Results<any>;
-  getCellValue: (props: GridCellProps) => string;
+  getCellValue: (object: any, props: GridCellProps) => string;
+  gridRef: (ref: React.ReactNode) => void;
   height: number;
   highlight?: IHighlight;
   onCellChange?: CellChangeHandler;
@@ -30,6 +31,7 @@ export const ContentGrid = (props: IContentGridProps) => {
     columnWidths,
     filteredSortedResults,
     getCellValue,
+    gridRef,
     height,
     highlight,
     onCellChange,
@@ -42,14 +44,16 @@ export const ContentGrid = (props: IContentGridProps) => {
   const cellRangeRenderer = rowCellRangeRenderer(rowProps => {
     const isHighlighted =
       (highlight && highlight.row === rowProps.rowIndex) || false;
-    return <Row isHighlighted={isHighlighted} {...rowProps} />;
+    return (
+      <Row isHighlighted={isHighlighted} key={rowProps.key} {...rowProps} />
+    );
   });
 
   const cellRenderers = properties.map(property => {
     return (cellProps: GridCellProps) => {
       const { rowIndex, columnIndex } = cellProps;
       const result = filteredSortedResults[cellProps.rowIndex];
-      const cellValue = getCellValue(cellProps);
+      const cellValue = getCellValue(result, cellProps);
 
       return (
         <Cell
@@ -106,6 +110,7 @@ export const ContentGrid = (props: IContentGridProps) => {
       className="RealmBrowser__Table__ContentGrid"
       columnCount={properties.length}
       columnWidth={({ index }) => columnWidths[index]}
+      ref={gridRef}
       rowCount={filteredSortedResults.length}
     />
   );

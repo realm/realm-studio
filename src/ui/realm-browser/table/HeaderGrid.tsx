@@ -12,17 +12,19 @@ import { HeaderCell } from './HeaderCell';
 
 export interface IHeaderGridProps extends Partial<GridProps> {
   columnWidths: number[];
+  gridRef: (ref: React.ReactNode) => void;
+  height: number;
   onColumnWidthChanged: (index: number, width: number) => void;
   onSortClick: (property: IPropertyWithName) => void;
   properties: IPropertyWithName[];
   sorting?: ISorting;
-  height: number;
   width: number;
 }
 
 export const HeaderGrid = (props: IHeaderGridProps) => {
   const {
     columnWidths,
+    gridRef,
     height,
     onColumnWidthChanged,
     onSortClick,
@@ -59,6 +61,7 @@ export const HeaderGrid = (props: IHeaderGridProps) => {
       columnWidth={({ index }) => columnWidths[index]}
       cellRenderer={cellProps =>
         cellRenderers[cellProps.columnIndex](cellProps)}
+      ref={gridRef}
       rowHeight={height}
       style={{
         // TODO: Consider if this could be moved to the CSS

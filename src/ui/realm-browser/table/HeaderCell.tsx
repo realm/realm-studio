@@ -3,7 +3,8 @@ import * as React from 'react';
 import Draggable, { DraggableData } from 'react-draggable';
 import * as Realm from 'realm';
 
-import { ISorting } from '.';
+import { ISorting, SortClickHandler } from '.';
+import { IPropertyWithName } from '..';
 
 // This constant should match the $realm-browser-header-handle-width in scss
 const HANDLE_WIDTH = 7;
@@ -29,46 +30,67 @@ export const getPropertyDisplayed = (property: Realm.ObjectSchemaProperty) => {
   return getPropertyDescription(property) + getPropertyPostfix(property);
 };
 
+const isPropertySortable = (property: IPropertyWithName) => {
+  if (property.name === '#') {
+    return false;
+  } else if (property.type === 'data') {
+    return false;
+  } else {
+    return true;
+  }
+};
+
 export const HeaderCell = ({
   onWidthChanged,
   property,
-  propertyName,
   style,
   width,
   onSortClick,
   sorting,
 }: {
   onWidthChanged: (width: number) => void;
-  property: Realm.ObjectSchemaProperty;
-  propertyName: string | null;
+  property: IPropertyWithName;
   style: React.CSSProperties;
   width: number;
-  onSortClick: (property: string) => void;
+  onSortClick: SortClickHandler;
   sorting?: ISorting;
 }) => {
+  const isSortable = isPropertySortable(property);
   const sortClass = classNames('RealmBrowser__Table__HeaderSort', {
     'RealmBrowser__Table__HeaderSort--active':
-      sorting && sorting.property.name === propertyName,
+      sorting && sorting.property.name === property.name,
   });
   return (
     <div
       style={style}
       className="RealmBrowser__Table__HeaderCell"
-      title={propertyName || ''}
+      title={property.name || ''}
     >
       <div
         className={classNames('RealmBrowser__Table__HeaderName', {
-          'RealmBrowser__Table__HeaderName--primitive': propertyName === null,
+          'RealmBrowser__Table__HeaderName--primitive': property.name === null,
         })}
       >
-        {propertyName}
+        {property.name}
       </div>
       <div className="RealmBrowser__Table__HeaderType">
         {getPropertyDisplayed(property)}
       </div>
-      {propertyName ? (
-        <div className={sortClass} onClick={() => onSortClick(propertyName)}>
-          <i className="fa fa-sort" />
+      {isSortable ? (
+        <div className={sortClass} onClick={() => onSortClick(property)}>
+          <i
+            className={classNames('fa', {
+              'fa-sort': !sorting || sorting.property.name !== property.name,
+              'fa-sort-asc':
+                sorting &&
+                sorting.property.name === property.name &&
+                !sorting.reverse,
+              'fa-sort-desc':
+                sorting &&
+                sorting.property.name === property.name &&
+                sorting.reverse,
+            })}
+          />
         </div>
       ) : null}
       <Draggable
