@@ -11,8 +11,8 @@ jobWrapper {
 
   stage('Build & test') {
     parallel (
-      macos: packageOnMacos(doRelease),
-      others: packageOthers(doRelease)
+      macos: packageOnMacos(),
+      others: packageOthers()
     )
   }
 }
