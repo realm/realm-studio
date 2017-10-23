@@ -1,8 +1,7 @@
-import * as classnames from 'classnames';
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import { IPropertyWithName } from '.';
+import { IPropertyWithName } from '..';
 import { DataCell } from './types/DataCell';
 import { DefaultCell } from './types/DefaultCell';
 import { ListCell } from './types/ListCell';
@@ -57,7 +56,6 @@ export const Cell = ({
   style,
   value,
   width,
-  isHighlighted,
   onContextMenu,
 }: {
   onUpdateValue: (value: string) => void;
@@ -66,7 +64,6 @@ export const Cell = ({
   style: React.CSSProperties;
   value: any;
   width: number;
-  isHighlighted: boolean;
   onContextMenu: (e: React.SyntheticEvent<any>) => void;
 }) => {
   const content = getCellContent({
@@ -76,9 +73,7 @@ export const Cell = ({
   });
   return (
     <div
-      className={classnames('RealmBrowser__Content__Cell', {
-        'RealmBrowser__Content__Cell--highlighted': isHighlighted,
-      })}
+      className="RealmBrowser__Table__Cell"
       onClick={onCellClick}
       onContextMenu={onContextMenu}
       style={style}

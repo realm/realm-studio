@@ -188,7 +188,10 @@ export const rowCellRangeRenderer = (rowRenderer: GridRowRenderer) => ({
       style: rowStyle,
     };
 
-    let renderedRow: React.ReactNode;
+    // The cache block is commented out - as caching rows when scrolling horizontally wont
+    // render correctly when scrolling to new columns.
+    // If re-enabled, its cache key should contain the range of column indecies that it shows.
+    const renderedRow = rowRenderer(rowRendererParams);
 
     // Avoid re-creating cells while scrolling.
     // This can lead to the same cell being created many times and can cause performance issues for "heavy" cells.
@@ -197,6 +200,8 @@ export const rowCellRangeRenderer = (rowRenderer: GridRowRenderer) => ({
     // However if we are scaling scroll positions and sizes, we should also avoid caching.
     // This is because the offset changes slightly as scroll position changes and caching leads to stale values.
     // For more info refer to issue #395
+
+    /*
     if (
       isScrolling &&
       !horizontalOffsetAdjustment &&
@@ -213,6 +218,7 @@ export const rowCellRangeRenderer = (rowRenderer: GridRowRenderer) => ({
     } else {
       renderedRow = rowRenderer(rowRendererParams);
     }
+    */
 
     if (renderedRow == null || renderedRow === false) {
       continue;

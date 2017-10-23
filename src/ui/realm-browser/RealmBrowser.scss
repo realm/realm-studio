@@ -160,14 +160,20 @@ $realm-browser-more-indicator-light-color: rgba(0, 0, 0, 0);
         }
       }
     }
+  }
 
-    &__AutoSizer {
-      height: 100%;
-    }
+  &__Table {
+    height: 100%;
 
     &__HeaderGrid {
       overflow-x: hidden;
       z-index: 4;
+    }
+
+    &__Row {
+      &--highlighted {
+        background: $color-dove;
+      }
     }
 
     &__HeaderCell,
@@ -175,10 +181,6 @@ $realm-browser-more-indicator-light-color: rgba(0, 0, 0, 0);
       border-bottom: 1px solid $color-dove;
       border-right: 1px solid $color-dove;
       position: relative;
-
-      &--highlighted {
-        background: $color-dove;
-      }
 
       // We need to do this, because reactstrap adds the form-control class
       // after the classNames that we provide.
@@ -308,7 +310,8 @@ $realm-browser-more-indicator-light-color: rgba(0, 0, 0, 0);
       }
     }
 
-    &__ValueGridContainer {
+    &__Content {
+      // This is needed to contain the MoreIndicators
       position: relative;
     }
 

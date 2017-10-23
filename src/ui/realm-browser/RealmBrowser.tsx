@@ -6,9 +6,9 @@ import { ContextMenu } from '../reusable/context-menu';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
 import { ContentContainer } from './ContentContainer';
 import { IFocus } from './focus';
-import { ICellChangeOptions } from './RealmBrowserContainer';
 import { SelectObject } from './SelectObject';
 import { Sidebar } from './Sidebar';
+import { CellChangeHandler, CellClickHandler, IHighlight } from './table';
 
 import './RealmBrowser.scss';
 
@@ -19,6 +19,7 @@ export const RealmBrowser = ({
   contextMenu,
   focus,
   getSchemaLength,
+  highlight,
   onCellChange,
   onCellClick,
   onContextMenu,
@@ -39,14 +40,9 @@ export const RealmBrowser = ({
   contextMenu: any;
   focus: IFocus | null;
   getSchemaLength: (name: string) => number;
-  onCellChange: (options: ICellChangeOptions) => void;
-  onCellClick: (
-    object: any,
-    property: Realm.ObjectSchemaProperty,
-    value: any,
-    rowIndex: number,
-    columnIndex: number,
-  ) => void;
+  highlight?: IHighlight;
+  onCellChange: CellChangeHandler;
+  onCellClick: CellClickHandler;
   onContextMenu: (
     e: React.SyntheticEvent<any>,
     object: any,
@@ -72,13 +68,12 @@ export const RealmBrowser = ({
       />
       <div className="RealmBrowser__Wrapper">
         <ContentContainer
-          columnToHighlight={columnToHighlight}
           focus={focus}
+          highlight={highlight}
           onCellChange={onCellChange}
           onCellClick={onCellClick}
           onContextMenu={onContextMenu}
           progress={progress}
-          rowToHighlight={rowToHighlight}
         />
       </div>
       {contextMenu && (

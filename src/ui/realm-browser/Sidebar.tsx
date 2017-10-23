@@ -4,7 +4,7 @@ import { Badge } from 'reactstrap';
 
 import { ILoadingProgress } from '../reusable/loading-overlay';
 import { IClassFocus, IFocus, IListFocus } from './focus';
-import * as objectCell from './types/ObjectCell';
+import * as objectCell from './table/types/ObjectCell';
 
 import './RealmBrowser.scss';
 

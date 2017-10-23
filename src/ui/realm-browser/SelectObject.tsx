@@ -3,8 +3,9 @@ import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 
 import { ContentContainer } from './ContentContainer';
 import { IFocus } from './focus';
+import { CellClickHandler, IHighlight } from './table';
 
-export interface IProps {
+export interface ISelectObjectProps {
   focus: IFocus;
   status: boolean;
   close: () => void;
@@ -13,30 +14,30 @@ export interface IProps {
   optional: boolean;
 }
 
-export interface IState {
-  rowToHighlight?: number;
-  columnToHighlight?: number;
+export interface ISelectObjectState {
+  highlight?: IHighlight;
   objectToAdd?: Realm.ObjectSchema;
 }
 
-export class SelectObject extends React.Component<IProps, IState> {
-  public state = {
-    rowToHighlight: undefined,
-    columnToHighlight: undefined,
-    objectToAdd: undefined,
-  };
+export class SelectObject extends React.Component<
+  ISelectObjectProps,
+  ISelectObjectState
+> {
+  public state: ISelectObjectState = {};
 
-  public onCellClick = (
-    object: any,
-    property: Realm.ObjectSchemaProperty,
-    value: any,
-    rowIndex: number,
-    columnIndex: number,
-  ) => {
+  public onCellClick: CellClickHandler = ({
+    rowObject,
+    property,
+    cellValue,
+    rowIndex,
+    columnIndex,
+  }) => {
     this.setState({
-      rowToHighlight: rowIndex,
-      columnToHighlight: columnIndex,
-      objectToAdd: object,
+      highlight: {
+        column: columnIndex,
+        row: rowIndex,
+      },
+      objectToAdd: rowObject,
     });
   };
 
@@ -44,7 +45,7 @@ export class SelectObject extends React.Component<IProps, IState> {
 
   public render() {
     const { focus, status, close, schemaName, optional } = this.props;
-    const { rowToHighlight, objectToAdd, columnToHighlight } = this.state;
+    const { objectToAdd, highlight } = this.state;
     return (
       <Modal size="lg" isOpen={status} toggle={close} className="ConfirmModal">
         <ModalHeader toggle={close}>Select a new {schemaName}</ModalHeader>
@@ -52,9 +53,8 @@ export class SelectObject extends React.Component<IProps, IState> {
           {focus && (
             <ContentContainer
               focus={focus}
+              highlight={highlight}
               onCellClick={this.onCellClick}
-              rowToHighlight={rowToHighlight}
-              columnToHighlight={columnToHighlight}
             />
           )}
         </ModalBody>

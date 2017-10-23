@@ -3,6 +3,8 @@ import * as React from 'react';
 import Draggable, { DraggableData } from 'react-draggable';
 import * as Realm from 'realm';
 
+import { ISorting } from '.';
+
 // This constant should match the $realm-browser-header-handle-width in scss
 const HANDLE_WIDTH = 7;
 const HANDLE_OFFSET = Math.ceil(HANDLE_WIDTH / 2);
@@ -34,7 +36,7 @@ export const HeaderCell = ({
   style,
   width,
   onSortClick,
-  sort,
+  sorting,
 }: {
   onWidthChanged: (width: number) => void;
   property: Realm.ObjectSchemaProperty;
@@ -42,25 +44,26 @@ export const HeaderCell = ({
   style: React.CSSProperties;
   width: number;
   onSortClick: (property: string) => void;
-  sort: string | null;
+  sorting?: ISorting;
 }) => {
-  const sortClass = classNames('RealmBrowser__Content__HeaderSort', {
-    'RealmBrowser__Content__HeaderSort--active': sort === propertyName,
+  const sortClass = classNames('RealmBrowser__Table__HeaderSort', {
+    'RealmBrowser__Table__HeaderSort--active':
+      sorting && sorting.property.name === propertyName,
   });
   return (
     <div
       style={style}
-      className="RealmBrowser__Content__HeaderCell"
+      className="RealmBrowser__Table__HeaderCell"
       title={propertyName || ''}
     >
       <div
-        className={classNames('RealmBrowser__Content__HeaderName', {
-          'RealmBrowser__Content__HeaderName--primitive': propertyName === null,
+        className={classNames('RealmBrowser__Table__HeaderName', {
+          'RealmBrowser__Table__HeaderName--primitive': propertyName === null,
         })}
       >
         {propertyName}
       </div>
-      <div className="RealmBrowser__Content__HeaderType">
+      <div className="RealmBrowser__Table__HeaderType">
         {getPropertyDisplayed(property)}
       </div>
       {propertyName ? (
@@ -78,7 +81,7 @@ export const HeaderCell = ({
           y: 0,
         }}
       >
-        <div className="RealmBrowser__Content__HeaderHandle" />
+        <div className="RealmBrowser__Table__HeaderHandle" />
       </Draggable>
     </div>
   );
