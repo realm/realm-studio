@@ -1,0 +1,65 @@
+#!groovy
+
+@Library('realm-ci') _
+
+jobWrapper {
+  stage('SCM') {
+    node('docker') {
+      rlmCheckout scm
+    }
+  }
+
+  stage('Build & test') {
+    parallel (
+      macos: packageOnMacos(doRelease),
+      others: packageOthers(doRelease)
+    )
+  }
+}
+
+def packageOthers(boolean doRelease) {
+  return {
+    node('docker') {
+      rlmCheckout scm
+
+      def workarea = pwd()
+      def image = docker.image('electronuserland/builder:wine-chrome')
+      image.inside("-e HOME=${workarea}") {
+        sh 'npm install'
+        sh 'npm run build'
+
+        // eletron-build check credentials even for --publish never, so will always specify it.
+        withCredentials([
+          file(credentialsId: 'cose-sign-certificate-windows', variable: 'CSC_LINK'),
+          string(credentialsId: 'cose-sign-password-windows', variable: 'CSC_KEY_PASSWORD')
+        {
+          sh 'node_modules/.bin/electron-builder --linux --windows'
+        }
+
+        archiveArtifacts 'dist/*'
+      }
+    }
+  }
+}
+
+def packageOnMacos() {
+  return {
+    node('macos') {
+      rlmCheckout scm
+
+      def nodeVersion = readFile('.nvmrc').trim()
+      nvm(version: nodeVersion) {
+        sh 'npm install --quiet'
+        sh 'npm run build'
+
+        // Run the tests
+        sh 'node_modules/.bin/xvfb-maybe npm test'
+
+        // Build the package
+        sh 'node_modules/.bin/electron-builder'
+
+        archiveArtifacts 'dist/*'
+      }
+    }
+  }
+}
