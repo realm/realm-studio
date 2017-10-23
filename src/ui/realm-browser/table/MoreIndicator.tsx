@@ -10,10 +10,10 @@ export const MoreIndicator = ({
 }) => (
   <div
     className={classnames(
-      'RealmBrowser__Content__More',
-      `RealmBrowser__Content__More--${position}`,
+      'RealmBrowser__Table__More',
+      `RealmBrowser__Table__More--${position}`,
       {
-        'RealmBrowser__Content__More--visible': visible,
+        'RealmBrowser__Table__More--visible': visible,
       },
     )}
   />

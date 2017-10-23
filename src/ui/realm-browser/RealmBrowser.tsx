@@ -1,14 +1,21 @@
 import * as React from 'react';
 import * as Realm from 'realm';
 
+import { ISelectObjectState } from '.';
 import { ConfirmModal } from '../reusable/confirm-modal';
 import { ContextMenu } from '../reusable/context-menu';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
 import { ContentContainer } from './ContentContainer';
 import { IFocus } from './focus';
-import { ICellChangeOptions } from './RealmBrowserContainer';
-import { SelectObject } from './SelectObject';
+import { ObjectSelectorContainer } from './object-selector/ObjectSelectorContainer';
 import { Sidebar } from './Sidebar';
+import {
+  CellChangeHandler,
+  CellClickHandler,
+  CellContextMenuHandler,
+  IHighlight,
+  SortEndHandler,
+} from './table';
 
 import './RealmBrowser.scss';
 
@@ -19,11 +26,13 @@ export const RealmBrowser = ({
   contextMenu,
   focus,
   getSchemaLength,
+  highlight,
   onCellChange,
   onCellClick,
   onContextMenu,
   onContextMenuClose,
   onSchemaSelected,
+  onSortEnd,
   progress,
   rowToHighlight,
   schemas,
@@ -39,26 +48,17 @@ export const RealmBrowser = ({
   contextMenu: any;
   focus: IFocus | null;
   getSchemaLength: (name: string) => number;
-  onCellChange: (options: ICellChangeOptions) => void;
-  onCellClick: (
-    object: any,
-    property: Realm.ObjectSchemaProperty,
-    value: any,
-    rowIndex: number,
-    columnIndex: number,
-  ) => void;
-  onContextMenu: (
-    e: React.SyntheticEvent<any>,
-    object: any,
-    rowIndex: number,
-    property: Realm.ObjectSchemaProperty,
-  ) => void;
+  highlight?: IHighlight;
+  onCellChange: CellChangeHandler;
+  onCellClick: CellClickHandler;
+  onContextMenu: CellContextMenuHandler;
   onContextMenuClose: () => void;
+  onSortEnd: SortEndHandler;
   onSchemaSelected: (name: string, objectToScroll: any) => void;
   progress: ILoadingProgress;
   rowToHighlight?: number;
   schemas: Realm.ObjectSchema[];
-  selectObject?: any;
+  selectObject?: ISelectObjectState;
   updateObjectReference: (object: any) => void;
 }) => {
   return (
@@ -72,13 +72,13 @@ export const RealmBrowser = ({
       />
       <div className="RealmBrowser__Wrapper">
         <ContentContainer
-          columnToHighlight={columnToHighlight}
           focus={focus}
+          highlight={highlight}
           onCellChange={onCellChange}
           onCellClick={onCellClick}
           onContextMenu={onContextMenu}
+          onSortEnd={onSortEnd}
           progress={progress}
-          rowToHighlight={rowToHighlight}
         />
       </div>
       {contextMenu && (
@@ -93,18 +93,16 @@ export const RealmBrowser = ({
           no={confirmModal.no}
         />
       )}
-      {/* TODO: Reimplement this */}
-      {/*selectObject && (
-        <SelectObject
-          status={true}
-          schema={selectObject.schema}
-          data={selectObject.data}
-          optional={selectObject.optional}
-          schemaName={selectObject.schemaName}
-          updateReference={updateObjectReference}
+
+      {selectObject && (
+        <ObjectSelectorContainer
+          focus={selectObject.focus}
+          property={selectObject.property}
+          status={!!selectObject}
+          onObjectSelected={updateObjectReference}
           close={closeSelectObject}
         />
-      )*/}
+      )}
 
       <LoadingOverlay progress={progress} fade={true} />
     </div>

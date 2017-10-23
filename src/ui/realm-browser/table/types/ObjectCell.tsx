@@ -37,7 +37,7 @@ export const ObjectCell = ({
       className={classnames(
         'form-control',
         'form-control-sm',
-        'RealmBrowser__Content__ObjectCell',
+        'RealmBrowser__Table__ObjectCell',
       )}
       title={displayValue}
     >
