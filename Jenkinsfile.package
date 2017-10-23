@@ -32,7 +32,7 @@ def packageOthers() {
           file(credentialsId: 'cose-sign-certificate-windows', variable: 'CSC_LINK'),
           string(credentialsId: 'cose-sign-password-windows', variable: 'CSC_KEY_PASSWORD')
         ]) {
-          sh 'node_modules/.bin/electron-builder --linux --windows'
+          sh 'node_modules/.bin/electron-builder --linux --windows --publish never'
         }
 
         archiveArtifacts 'dist/*'
@@ -55,7 +55,7 @@ def packageOnMacos() {
         sh 'node_modules/.bin/xvfb-maybe npm test'
 
         // Build the package
-        sh 'node_modules/.bin/electron-builder'
+        sh 'node_modules/.bin/electron-builder --publish never'
 
         archiveArtifacts 'dist/*'
       }
