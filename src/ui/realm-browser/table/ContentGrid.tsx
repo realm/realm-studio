@@ -11,7 +11,13 @@ import {
   GridProps,
 } from 'react-virtualized';
 
-import { CellChangeHandler, CellClickHandler, IHighlight, ISorting } from '.';
+import {
+  CellChangeHandler,
+  CellClickHandler,
+  CellContextMenuHandler,
+  IHighlight,
+  ISorting,
+} from '.';
 import { IPropertyWithName } from '..';
 import { Cell } from './Cell';
 import { Row } from './Row';
@@ -36,6 +42,7 @@ export interface IContentGridProps extends Partial<GridProps> {
   isSortable?: boolean;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
+  onContextMenu?: CellContextMenuHandler;
   onSortEnd?: SortEndHandler;
   properties: IPropertyWithName[];
   rowHeight: number;
@@ -53,6 +60,7 @@ export const ContentGrid = (props: IContentGridProps) => {
     isSortable,
     onCellChange,
     onCellClick,
+    onContextMenu,
     onSortEnd,
     properties,
     rowHeight,
@@ -83,8 +91,8 @@ export const ContentGrid = (props: IContentGridProps) => {
   const cellRenderers = properties.map(property => {
     return (cellProps: GridCellProps) => {
       const { rowIndex, columnIndex } = cellProps;
-      const result = filteredSortedResults[cellProps.rowIndex];
-      const cellValue = getCellValue(result, cellProps);
+      const rowObject = filteredSortedResults[cellProps.rowIndex];
+      const cellValue = getCellValue(rowObject, cellProps);
 
       return (
         <Cell
@@ -98,7 +106,7 @@ export const ContentGrid = (props: IContentGridProps) => {
                 columnIndex,
                 property,
                 rowIndex,
-                rowObject: result,
+                rowObject,
               });
             }
           }}
@@ -115,17 +123,15 @@ export const ContentGrid = (props: IContentGridProps) => {
             }
           }}
           onContextMenu={e => {
-            // TODO: Fix this
-            /*
             if (onContextMenu) {
-              onContextMenu(
-                e,
-                result,
-                cellProps.rowIndex,
+              onContextMenu(e, {
+                cellValue,
+                columnIndex,
                 property,
-              );
+                rowIndex,
+                rowObject,
+              });
             }
-            */
           }}
         />
       );

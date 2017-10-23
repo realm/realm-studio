@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as Realm from 'realm';
 import * as util from 'util';
 
-import { IPropertyWithName } from '.';
+import { IPropertyWithName, ISelectObjectState } from '.';
 import { IRealmBrowserOptions } from '../../windows/WindowType';
 import { IContextMenuAction } from '../reusable/context-menu';
 import { showError } from '../reusable/errors';
@@ -15,6 +15,7 @@ import { IClassFocus, IFocus, IListFocus } from './focus';
 import {
   CellChangeHandler,
   CellClickHandler,
+  CellContextMenuHandler,
   IHighlight,
   SortEndHandler,
 } from './table';
@@ -38,14 +39,7 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   // The schemas are only supposed to be used to produce a list of schemas in the sidebar
   schemas: Realm.ObjectSchema[];
   // TODO: Rename - Unclear if this is this an action or a piece of data
-  selectObject?: {
-    schema: Realm.ObjectSchema | null;
-    data: Realm.Results<any> | any;
-    property: any;
-    schemaName: string;
-    object: any;
-    optional: boolean;
-  } | null;
+  selectObject?: ISelectObjectState;
 }
 
 export class RealmBrowserContainer extends RealmLoadingComponent<
@@ -62,7 +56,6 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       focus: null,
       progress: { done: false },
       schemas: [],
-      selectObject: null,
     };
   }
 
@@ -187,11 +180,9 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     }
   };
 
-  public onContextMenu = (
+  public onContextMenu: CellContextMenuHandler = (
     e: React.MouseEvent<any>,
-    object: Realm.Object,
-    rowIndex: number,
-    property: Realm.ObjectSchemaProperty,
+    { rowObject, rowIndex, property },
   ) => {
     e.preventDefault();
     const actions = [];
@@ -199,14 +190,14 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     if (property.type === 'object') {
       actions.push({
         label: 'Update reference',
-        onClick: () => this.openSelectObject(object, property),
+        onClick: () => this.openSelectObject(rowObject, property),
       });
     }
 
     if (this.state.focus && this.state.focus.kind === 'class') {
       actions.push({
         label: 'Delete',
-        onClick: () => this.openConfirmModal(object),
+        onClick: () => this.openConfirmModal(rowObject),
       });
     }
 
@@ -218,7 +209,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         contextMenu: {
           x: e.clientX,
           y: e.clientY,
-          object,
+          object: rowObject,
           actions,
         },
       });
@@ -235,38 +226,49 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     }
   };
 
-  public openSelectObject = (object: any, property: any) => {
+  public openSelectObject = (
+    object: Realm.Object,
+    property: IPropertyWithName,
+  ) => {
     const { schemas } = this.state;
 
-    const objectSchema =
-      schemas.find(schema => schema.name === property.objectType) || null;
-    const data = this.realm.objects(property.objectType) || null;
-
-    this.setState({
-      selectObject: {
-        property,
-        object,
-        optional: property.optional,
-        schemaName: property.objectType,
-        schema: objectSchema,
-        data,
-      },
-    });
+    if (property.objectType) {
+      const className = property.objectType;
+      const results = this.realm.objects(className) || null;
+      const focus: IClassFocus = {
+        kind: 'class',
+        className,
+        properties: this.derivePropertiesFromClassName(className),
+        results,
+      };
+      this.setState({
+        selectObject: {
+          focus,
+          property,
+          object,
+        },
+      });
+    } else {
+      throw new Error('Expected a property with an objectType');
+    }
   };
 
   public updateObjectReference = (reference: any) => {
     const { selectObject } = this.state;
     if (selectObject) {
-      const { property, object } = selectObject;
+      const object: any = selectObject.object;
+      const propertyName = selectObject.property.name;
       this.realm.write(() => {
-        object[property.name] = reference;
+        if (propertyName) {
+          object[propertyName] = reference;
+        }
       });
-      this.setState({ selectObject: null });
+      this.setState({ selectObject: undefined });
     }
   };
 
   public closeSelectObject = () => {
-    this.setState({ selectObject: null });
+    this.setState({ selectObject: undefined });
   };
 
   public openConfirmModal = (object: any) => {

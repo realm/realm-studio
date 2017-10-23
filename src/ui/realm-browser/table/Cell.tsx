@@ -64,7 +64,7 @@ export const Cell = ({
   style: React.CSSProperties;
   value: any;
   width: number;
-  onContextMenu: (e: React.SyntheticEvent<any>) => void;
+  onContextMenu: (e: React.MouseEvent<any>) => void;
 }) => {
   const content = getCellContent({
     onUpdateValue,

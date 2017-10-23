@@ -165,7 +165,7 @@ $color-row-stripe: mix($white, $color-dove, 50%);
   }
 
   &__Table {
-    height: 100%;
+    flex: 1 0 0;
 
     &__HeaderGrid {
       overflow-x: hidden;

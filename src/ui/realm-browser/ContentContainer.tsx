@@ -8,6 +8,7 @@ import { IFocus } from './focus';
 import {
   CellChangeHandler,
   CellClickHandler,
+  CellContextMenuHandler,
   IHighlight,
   SortEndHandler,
 } from './table';
@@ -19,14 +20,9 @@ export interface IContentContainerProps {
   highlight?: IHighlight;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
+  onContextMenu?: CellContextMenuHandler;
   onSortEnd?: SortEndHandler;
   progress?: ILoadingProgress;
-  onContextMenu?: (
-    e: React.SyntheticEvent<any>,
-    object: any,
-    rowIndex: number,
-    property: Realm.ObjectSchemaProperty,
-  ) => void;
 }
 
 export interface IContentContainerState {

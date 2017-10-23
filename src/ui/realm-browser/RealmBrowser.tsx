@@ -1,16 +1,18 @@
 import * as React from 'react';
 import * as Realm from 'realm';
 
+import { ISelectObjectState } from '.';
 import { ConfirmModal } from '../reusable/confirm-modal';
 import { ContextMenu } from '../reusable/context-menu';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
 import { ContentContainer } from './ContentContainer';
 import { IFocus } from './focus';
-import { SelectObject } from './SelectObject';
+import { ObjectSelectorContainer } from './object-selector/ObjectSelectorContainer';
 import { Sidebar } from './Sidebar';
 import {
   CellChangeHandler,
   CellClickHandler,
+  CellContextMenuHandler,
   IHighlight,
   SortEndHandler,
 } from './table';
@@ -49,19 +51,14 @@ export const RealmBrowser = ({
   highlight?: IHighlight;
   onCellChange: CellChangeHandler;
   onCellClick: CellClickHandler;
-  onContextMenu: (
-    e: React.SyntheticEvent<any>,
-    object: any,
-    rowIndex: number,
-    property: Realm.ObjectSchemaProperty,
-  ) => void;
+  onContextMenu: CellContextMenuHandler;
   onContextMenuClose: () => void;
   onSortEnd: SortEndHandler;
   onSchemaSelected: (name: string, objectToScroll: any) => void;
   progress: ILoadingProgress;
   rowToHighlight?: number;
   schemas: Realm.ObjectSchema[];
-  selectObject?: any;
+  selectObject?: ISelectObjectState;
   updateObjectReference: (object: any) => void;
 }) => {
   return (
@@ -96,18 +93,16 @@ export const RealmBrowser = ({
           no={confirmModal.no}
         />
       )}
-      {/* TODO: Reimplement this */}
-      {/*selectObject && (
-        <SelectObject
-          status={true}
-          schema={selectObject.schema}
-          data={selectObject.data}
-          optional={selectObject.optional}
-          schemaName={selectObject.schemaName}
-          updateReference={updateObjectReference}
+
+      {selectObject && (
+        <ObjectSelectorContainer
+          focus={selectObject.focus}
+          property={selectObject.property}
+          status={!!selectObject}
+          onObjectSelected={updateObjectReference}
           close={closeSelectObject}
         />
-      )*/}
+      )}
 
       <LoadingOverlay progress={progress} fade={true} />
     </div>

@@ -21,6 +21,17 @@ export type CellClickHandler = (
   },
 ) => void;
 
+export type CellContextMenuHandler = (
+  e: React.MouseEvent<any>,
+  params: {
+    rowObject: any;
+    property: IPropertyWithName;
+    cellValue: any;
+    rowIndex: number;
+    columnIndex: number;
+  },
+) => void;
+
 export interface IHighlight {
   row?: number;
   column?: number;

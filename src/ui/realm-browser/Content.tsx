@@ -13,6 +13,7 @@ import { IFocus } from './focus';
 import {
   CellChangeHandler,
   CellClickHandler,
+  CellContextMenuHandler,
   IHighlight,
   SortEndHandler,
 } from './table';
@@ -24,6 +25,7 @@ export const Content = ({
   highlight,
   onCellChange,
   onCellClick,
+  onContextMenu,
   onQueryChange,
   onSortEnd,
   progress,
@@ -33,6 +35,7 @@ export const Content = ({
   highlight?: IHighlight;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
+  onContextMenu?: CellContextMenuHandler;
   onQueryChange: (query: string) => void;
   onSortEnd?: SortEndHandler;
   progress?: ILoadingProgress;
@@ -50,6 +53,7 @@ export const Content = ({
           highlight={highlight}
           onCellChange={onCellChange}
           onCellClick={onCellClick}
+          onContextMenu={onContextMenu}
           onSortEnd={onSortEnd}
           query={query}
         />

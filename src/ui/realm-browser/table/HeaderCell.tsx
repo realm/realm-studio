@@ -35,6 +35,10 @@ const isPropertySortable = (property: IPropertyWithName) => {
     return false;
   } else if (property.type === 'data') {
     return false;
+  } else if (property.type === 'object') {
+    // Technically - this is possible,
+    // @see https://github.com/realm/realm-studio/issues/310
+    return false;
   } else {
     return true;
   }

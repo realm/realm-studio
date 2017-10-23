@@ -4,6 +4,7 @@ import { Grid, GridCellProps } from 'react-virtualized';
 import {
   CellChangeHandler,
   CellClickHandler,
+  CellContextMenuHandler,
   IHighlight,
   ISorting,
   SortEndHandler,
@@ -19,6 +20,7 @@ export interface ITableContainerProps {
   highlight?: IHighlight;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
+  onContextMenu?: CellContextMenuHandler;
   onSortEnd?: SortEndHandler;
   query: string;
   // isLoading: boolean;
@@ -61,6 +63,7 @@ export class TableContainer extends React.Component<
         onCellChange={this.props.onCellChange}
         onCellClick={this.props.onCellClick}
         onColumnWidthChanged={this.onColumnWidthChanged}
+        onContextMenu={this.props.onContextMenu}
         onSortEnd={this.props.onSortEnd}
         onSortClick={this.onSortClick}
         sorting={this.state.sorting}
@@ -100,6 +103,13 @@ export class TableContainer extends React.Component<
           rowIndex: this.props.highlight.row || 0,
         });
       }
+    } else if (this.gridContent && this.props.focus !== prevProps.focus) {
+      // When the focus change - we reset the grid scrolling
+      // if no highlight was explicitly sat
+      this.gridContent.scrollToCell({
+        columnIndex: 0,
+        rowIndex: 0,
+      });
     }
 
     if (this.state.columnWidths !== prevState.columnWidths) {

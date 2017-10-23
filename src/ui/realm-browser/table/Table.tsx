@@ -4,6 +4,7 @@ import { AutoSizer, Grid, GridCellProps, ScrollSync } from 'react-virtualized';
 import {
   CellChangeHandler,
   CellClickHandler,
+  CellContextMenuHandler,
   IHighlight,
   ISorting,
   SortEndHandler,
@@ -29,6 +30,7 @@ export interface ITableProps {
   highlight?: IHighlight;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
+  onContextMenu?: CellContextMenuHandler;
   onColumnWidthChanged: (index: number, width: number) => void;
   onSortClick: (property: IPropertyWithName) => void;
   onSortEnd?: SortEndHandler;
@@ -46,6 +48,7 @@ export const Table = ({
   onCellChange,
   onCellClick,
   onColumnWidthChanged,
+  onContextMenu,
   onSortClick,
   onSortEnd,
   sorting,
@@ -102,6 +105,7 @@ export const Table = ({
                     isSortable={focus.kind === 'list' && !sorting}
                     onCellChange={onCellChange}
                     onCellClick={onCellClick}
+                    onContextMenu={onContextMenu}
                     onScroll={onScroll}
                     onSortEnd={onSortEnd}
                     properties={focus.properties}
