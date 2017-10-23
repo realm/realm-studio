@@ -3,7 +3,7 @@
 @Library('realm-ci') _
 
 jobWrapper {
-  stage('SCM') {
+  stage('Checkout') {
     node('docker') {
       rlmCheckout scm
     }
@@ -17,7 +17,7 @@ jobWrapper {
   }
 }
 
-def packageOthers(boolean doRelease) {
+def packageOthers() {
   return {
     node('docker') {
       rlmCheckout scm
@@ -28,11 +28,10 @@ def packageOthers(boolean doRelease) {
         sh 'npm install'
         sh 'npm run build'
 
-        // eletron-build check credentials even for --publish never, so will always specify it.
         withCredentials([
           file(credentialsId: 'cose-sign-certificate-windows', variable: 'CSC_LINK'),
           string(credentialsId: 'cose-sign-password-windows', variable: 'CSC_KEY_PASSWORD')
-        {
+        ]) {
           sh 'node_modules/.bin/electron-builder --linux --windows'
         }
 

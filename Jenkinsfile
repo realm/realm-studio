@@ -3,16 +3,15 @@
 @Library('realm-ci') _
 
 jobWrapper {
-  stage('SCM') {
+  stage('Checkout') {
     node('docker') {
       rlmCheckout scm
     }
   }
 
-  stage('Build') {
+  stage('Build & test') {
     if (env.CHANGE_TARGET) {
       // This is a PR
-
       node('docker') {
         rlmCheckout scm
 
