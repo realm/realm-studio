@@ -17,7 +17,7 @@ jobWrapper {
         // Push the change to GitHub
         input(message: "Push ${nextVersion} and start a release?", id: 'push')
         // Add the package.json and package-lock.json and commit
-        sh "git add package.json package-lock.json && git commit -m 'Prepare version ${nextVersion}"
+        sh "git add package.json package-lock.json && git commit -m 'Prepare version ${nextVersion}'"
         sshagent(['realm-ci-ssh']) {
           // Push with tags
           sh "git push --follow-tags origin HEAD"
