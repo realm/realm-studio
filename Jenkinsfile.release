@@ -57,7 +57,6 @@ def checkoutAtVersion() {
       [$class: 'CleanCheckout'],
     ],
     gitTool: 'native git',
-    submoduleCfg: [],
     userRemoteConfigs: [[
       credentialsId: 'realm-ci-ssh',
       name: 'origin',

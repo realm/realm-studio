@@ -5,7 +5,7 @@
 jobWrapper {
   stage('Bump version and tag commit') {
     node('docker') {
-      rlmCheckout scm
+      doCheckout
 
       docker.image('node:6.11.2').inside("-e HOME=/tmp -v /etc/passwd:/etc/passwd:ro") {
         // Set the email and name used when committing
@@ -34,4 +34,23 @@ jobWrapper {
       }
     }
   }
+}
+
+def doCheckout() {
+  return checkout([
+    $class: 'GitSCM',
+    branches: [[name: 'origin/master']],
+    doGenerateSubmoduleConfigurations: false,
+    extensions: [
+      [$class: 'WipeWorkspace'],
+      [$class: 'CleanCheckout'],
+    ],
+    gitTool: 'native git',
+    userRemoteConfigs: [[
+      credentialsId: 'realm-ci-ssh',
+      name: 'origin',
+      refspec: '+refs/tags/*:refs/remotes/origin/tags/* +refs/heads/*:refs/remotes/origin/*',
+      url: 'git@github.com:realm/realm-studio.git'
+    ]]
+  ])
 }
