@@ -7,8 +7,7 @@ jobWrapper {
     node('docker') {
       rlmCheckout scm
 
-      def nodeVersion = readFile('.nvmrc').trim()
-      docker.image('node:6.11.2').inside() {
+      docker.image('node:6.11.2').inside("-e HOME=/tmp -v /etc/passwd:/etc/passwd:ro") {
         // Set the email and name used when committing
         sh 'git config --global user.email "ci@realm.io"'
         sh 'git config --global user.name "Jenkins CI"'
@@ -16,7 +15,7 @@ jobWrapper {
         nextVersion = sh script: "npm version ${NEXT_VERSION} -m 'Preparing v%s release'", returnStdout: true
         // Push the change to GitHub
         echo "Prepared release of Realm Studio ${nextVersion}"
-        sh 'git push'
+        sh "git push origin ${nextVersion}"
         // Start a release job
         build(
           job: 'realm-studio/release',
