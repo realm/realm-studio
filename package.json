@@ -83,6 +83,7 @@
     "prepare-next-release": "node ./scripts/prepare-next-release.js",
     "start": "rm -rf ./build && npm run build && npm run electron",
     "test": "mocha-webpack",
+    "test:ci": "mocha-webpack --reporter mocha-junit-reporter",
     "tslint-prettier": "tslint --fix 'src/**/*.ts' 'src/**/*.tsx'",
     "wait-for-bundle": "node ./webpack.wait-for-bundle.js",
     "webpack:main": "webpack --config=webpack.main.config.js",
