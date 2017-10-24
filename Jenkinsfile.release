@@ -35,31 +35,27 @@ jobWrapper {
       // Wait for input
       input(message: "Ready to publish v${packageJson.version}?", id: 'publish')
 
-      step('Uploading artifacts to S3') {
-        // Unstash the artifacts from the builds
-        unstash name: 'macos-artifacts'
-        unstash name: 'other-artifacts'
+      // Unstash the artifacts from the builds
+      unstash name: 'macos-artifacts'
+      unstash name: 'other-artifacts'
 
-        // Upload the build artifacts to S3
-        def s3Config = packageJson.build.publish[0]
-        def bucket = "${s3Config.bucket}/${s3Config.path}/ci"
-        dir('dist') {
-          rlmS3Put(bucket: bucket)
-        }
+      // Upload the build artifacts to S3
+      def s3Config = packageJson.build.publish[0]
+      def bucket = "${s3Config.bucket}/${s3Config.path}/ci"
+      dir('dist') {
+        rlmS3Put(bucket: bucket)
       }
 
-      step('Notify on slack') {
-        // Notify by posting to Slack
-        def url = "https://github.com/realm/realm-studio/releases/tag/${env.VERSION_TAG}"
-        def slackPost = [[
-          'title': "Realm Studio ${env.VERSION_TAG} has been released!",
-          'title_link': url,
-          'text': "Github Release and artifacts are available <${url}|here>",
-          'color': 'good',
-          'unfurl_links': false
-        ]]
-        postToSlack('slack-studio-team-url', slackPost)
-      }
+      // Notify by posting to Slack
+      def url = "https://github.com/realm/realm-studio/releases/tag/${env.VERSION_TAG}"
+      def slackPost = [[
+        'title': "Realm Studio ${env.VERSION_TAG} has been released!",
+        'title_link': url,
+        'text': "Github Release and artifacts are available <${url}|here>",
+        'color': 'good',
+        'unfurl_links': false
+      ]]
+      postToSlack('slack-studio-team-url', slackPost)
     }
   }
 }
