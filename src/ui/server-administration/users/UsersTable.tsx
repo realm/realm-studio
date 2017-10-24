@@ -71,7 +71,15 @@ export const UsersTable = ({
 }) => {
   return (
     <div className="UsersTable">
-      <div className="UsersTable__table">
+      <div
+        className="UsersTable__table"
+        onClick={event => {
+          if (!!selectedUserId) {
+            onUserSelected(null);
+          }
+          event.preventDefault();
+        }}
+      >
         <AutoSizer>
           {({ width, height }: IAutoSizerDimensions) => (
             <Table
