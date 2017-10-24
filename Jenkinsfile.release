@@ -10,13 +10,17 @@ jobWrapper {
     }
   }
 
-  input(message: 'Ready to publish?', id: 'publish')
-
   stage('Build & test') {
     parallel (
       macos: packageOnMacos(),
       others: packageOthers()
     )
+  }
+
+  input(message: 'Ready to publish?', id: 'publish')
+
+  stage('Publish') {
+    
   }
 }
 
