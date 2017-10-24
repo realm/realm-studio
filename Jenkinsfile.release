@@ -48,22 +48,19 @@ jobWrapper {
 }
 
 def checkoutAtVersion() {
-  return checkout([
+  return checkout scm: [
     $class: 'GitSCM',
-    branches: [[name: 'refs/tags/${VERSION_TAG}']],
-    doGenerateSubmoduleConfigurations: false,
+    userRemoteConfigs: [[
+      credentialsId: 'realm-ci-ssh',
+      url: 'git@github.com:realm/realm-studio.git'
+    ]],
+    branches: [[name: "refs/tags/${VERSION_TAG}"]],
     extensions: [
       [$class: 'WipeWorkspace'],
       [$class: 'CleanCheckout']
     ],
     gitTool: 'native git',
-    userRemoteConfigs: [[
-      credentialsId: 'realm-ci-ssh',
-      name: 'origin',
-      refspec: '+refs/tags/*:refs/remotes/origin/tags/* +refs/heads/*:refs/remotes/origin/*',
-      url: 'git@github.com:realm/realm-studio.git'
-    ]]
-  ])
+  ], poll: false
 }
 
 def packageOthers() {
