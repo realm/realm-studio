@@ -48,19 +48,19 @@ jobWrapper {
 }
 
 def checkoutAtVersion() {
-  return checkout scm: [
+  return checkout([
     $class: 'GitSCM',
-    userRemoteConfigs: [[
-      credentialsId: 'realm-ci-ssh',
-      url: 'git@github.com:realm/realm-studio.git'
-    ]],
     branches: [[name: "refs/tags/${VERSION_TAG}"]],
     extensions: [
       [$class: 'WipeWorkspace'],
       [$class: 'CleanCheckout']
     ],
     gitTool: 'native git',
-  ], poll: false
+    userRemoteConfigs: [[
+      credentialsId: 'realm-ci-ssh',
+      url: 'git@github.com:realm/realm-studio.git'
+    ]]
+  ])
 }
 
 def packageOthers() {
