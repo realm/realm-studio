@@ -8,7 +8,8 @@ jobWrapper {
       rlmCheckout scm
 
       def nodeVersion = readFile('.nvmrc').trim()
-      nvm(version: nodeVersion) {
+      nvm() {
+        sh 'nvm install'
         // Bump the version and tag the branch
         nextversion = sh script: "npm version ${NEXT_VERSION}", returnStdout: true
         echo "Preparing release of Realm Studio ${nextversion}"
