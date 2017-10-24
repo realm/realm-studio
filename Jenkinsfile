@@ -3,26 +3,23 @@
 @Library('realm-ci') _
 
 jobWrapper {
-  stage('Checkout') {
-    node('docker') {
+  node('docker') {
+    stage('Checkout') {
       rlmCheckout scm
     }
-  }
 
-  stage('Build & test') {
     if (env.CHANGE_TARGET) {
-      // This is a PR
-      node('docker') {
-        rlmCheckout scm
-
+      stage('Build') {
         // Computing a packageHash from the package-lock.json
         def packageHash = sh(
           script: "git ls-files -s package-lock.json | cut -d ' ' -f 2",
           returnStdout: true
         ).trim()
-
         // Using buildDockerEnv ensures that the image is pushed
         image = buildDockerEnv("ci/realm-studio:pr-${packageHash}", extra_args: '-f Dockerfile.testing')
+      }
+
+      stage('Test') {
         image.inside("-e HOME=${env.WORKSPACE} -v /etc/passwd:/etc/passwd:ro") {
           // Link in the node_modules from the image
           sh 'ln -s /tmp/node_modules .'
