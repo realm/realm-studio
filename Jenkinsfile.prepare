@@ -14,7 +14,7 @@ jobWrapper {
         // Bump the version and tag the branch
         nextVersion = sh script: "npm version ${NEXT_VERSION} -m 'Preparing v%s release'", returnStdout: true
         // Push the change to GitHub
-        echo "Prepared release of Realm Studio ${nextVersion}"
+        input(message: "Push ${nextVersion} and start a release?", id: 'push')
         sshagent(['realm-ci-ssh']) {
           // Delete any existing tags - locally and remote
           sh "(git rev-parse v${nextVersion} >/dev/null 2>&1 && git tag -d v${nextVersion} && git push origin --delete v${nextVersion}) || true"
