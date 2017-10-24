@@ -5,7 +5,7 @@
 jobWrapper {
   stage('Bump version and tag commit') {
     node('docker') {
-      doCheckout
+      doCheckout()
 
       docker.image('node:6.11.2').inside("-e HOME=/tmp -v /etc/passwd:/etc/passwd:ro") {
         // Set the email and name used when committing
