@@ -8,12 +8,23 @@ jobWrapper {
       rlmCheckout scm
 
       def nodeVersion = readFile('.nvmrc').trim()
-      nvm() {
-        sh 'nvm install'
+      docker.image('node:6.11.2').inside() {
+        // Set the email and name used when committing
+        sh 'git config --global user.email "ci@realm.io"'
+        sh 'git config --global user.name "Jenkins CI"'
         // Bump the version and tag the branch
-        nextversion = sh script: "npm version ${NEXT_VERSION}", returnStdout: true
-        echo "Preparing release of Realm Studio ${nextversion}"
-        sh 'git log'
+        nextVersion = sh script: "npm version ${NEXT_VERSION} -m 'Preparing v%s release'", returnStdout: true
+        // Push the change to GitHub
+        echo "Prepared release of Realm Studio ${nextVersion}"
+        sh 'git push'
+        // Start a release job
+        build job: 'realm-studio/release',
+          parameters: [
+            [$class: 'GitParameterValue', name: 'VERSION_TAG', value: nextVersion]
+          ],
+          propagate: false,
+          wait: false
+        }
       }
     }
   }
