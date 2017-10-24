@@ -8,7 +8,7 @@ jobWrapper {
       checkoutAtVersion()
       // TODO: Check that the tag matches the package.json version
       def packageJson = readJSON(file: 'package.json')
-      assert packageJson.version == env.VERSION_TAG : "Tag doesn't match package.json version"
+      assert "v${packageJson.version}" == env.VERSION_TAG : "Tag doesn't match package.json version"
     }
   }
 
