@@ -18,13 +18,14 @@ jobWrapper {
         echo "Prepared release of Realm Studio ${nextVersion}"
         sh 'git push'
         // Start a release job
-        build job: 'realm-studio/release',
+        build(
+          job: 'realm-studio/release',
           parameters: [
             [$class: 'GitParameterValue', name: 'VERSION_TAG', value: nextVersion]
           ],
           propagate: false,
           wait: false
-        }
+        )
       }
     }
   }
