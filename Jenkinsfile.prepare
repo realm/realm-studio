@@ -14,6 +14,10 @@ jobWrapper {
           script: "npm version --no-git-tag-version ${NEXT_VERSION}",
           returnStdout: true
         ).trim()
+        // Update the version in the package lock
+        def lock = readJSON(file: 'package-lock.json')
+        lock.version = nextVersion
+        writeJSON(file: 'package-lock.json', json: lock)
       }
       // Push the change to GitHub
       input(message: "Push ${nextVersion} and start a release?", id: 'push')
