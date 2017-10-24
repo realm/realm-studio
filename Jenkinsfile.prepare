@@ -7,9 +7,6 @@ jobWrapper {
     node('docker') {
       doCheckout()
 
-      // Checkout the git repository on the local branch
-      sh "git checkout ${env.GIT_LOCAL_BRANCH}"
-
       docker.image('node:6.11.2').inside("-e HOME=${env.WORKSPACE} -v /etc/passwd:/etc/passwd:ro") {
         // Bump the version and tag the branch
         // Using --no-git-tag-version because the default does not add the package-lock.json
@@ -27,7 +24,7 @@ jobWrapper {
 
       sshagent(['realm-ci-ssh']) {
         // Push with tags
-        sh "git push --follow-tags origin ${env.GIT_LOCAL_BRANCH}"
+        sh "git push --follow-tags origin ${env.BRANCH_NAME}"
       }
       // Start a release job
       build(
@@ -50,6 +47,7 @@ def doCheckout() {
     extensions: [
       [$class: 'WipeWorkspace'],
       [$class: 'CleanCheckout'],
+      [$class: 'LocalBranch']
     ],
     gitTool: 'native git',
     userRemoteConfigs: [[
