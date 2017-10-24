@@ -6,10 +6,14 @@ jobWrapper {
   stage('Bump version and tag commit') {
     node('docker') {
       rlmCheckout scm
-      // Bump the version and tag the branch
-      nextversion = sh script: "npm version ${NEXT_VERSION}", returnStdout: true
-      echo "Preparing release of Realm Studio ${nextversion}"
-      sh 'git log'
+
+      def nodeVersion = readFile('.nvmrc').trim()
+      nvm(version: nodeVersion) {
+        // Bump the version and tag the branch
+        nextversion = sh script: "npm version ${NEXT_VERSION}", returnStdout: true
+        echo "Preparing release of Realm Studio ${nextversion}"
+        sh 'git log'
+      }
     }
   }
 }
