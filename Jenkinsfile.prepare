@@ -7,8 +7,8 @@ jobWrapper {
     node('docker') {
       doCheckout()
 
-      // Checkout the branch - or we'll be on a detached head
-      sh "git checkout ${env.BRANCH_NAME}"
+      // Checkout the git repository on the local branch
+      sh "git checkout ${env.GIT_LOCAL_BRANCH}"
 
       docker.image('node:6.11.2').inside("-e HOME=${env.WORKSPACE} -v /etc/passwd:/etc/passwd:ro") {
         // Bump the version and tag the branch
@@ -27,7 +27,7 @@ jobWrapper {
 
       sshagent(['realm-ci-ssh']) {
         // Push with tags
-        sh "git push --follow-tags origin ${env.BRANCH_NAME}"
+        sh "git push --follow-tags origin ${env.GIT_LOCAL_BRANCH}"
       }
       // Start a release job
       build(
