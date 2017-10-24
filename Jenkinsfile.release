@@ -41,7 +41,7 @@ jobWrapper {
 
       // Upload the build artifacts to S3
       def s3Config = packageJson.build.publish[0]
-      def bucket = "${s3Config.bucket}/${s3Config.path}/ci"
+      def bucket = "${s3Config.bucket}/${s3Config.path}"
       dir('dist') {
         rlmS3Put(bucket: bucket)
       }
