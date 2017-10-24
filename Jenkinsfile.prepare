@@ -39,7 +39,7 @@ jobWrapper {
 def doCheckout() {
   return checkout([
     $class: 'GitSCM',
-    branches: [[name: 'origin/master']],
+    branches: [[name: env.BRANCH_NAME]],
     doGenerateSubmoduleConfigurations: false,
     extensions: [
       [$class: 'WipeWorkspace'],
