@@ -12,3 +12,6 @@ data/
 
 # Secrets
 secrets.sh
+
+# Test results from JUnit
+test-results.xml

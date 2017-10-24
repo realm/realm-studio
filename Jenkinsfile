@@ -26,8 +26,8 @@ jobWrapper {
           // Test that the package-lock has changed while building the image
           // - if it has, a dependency was changed in package.json but not updated in the lock
           sh 'npm run check:package-lock'
-          // Run the tests with xvfb to allow opening windows virtually
-          sh './node_modules/.bin/xvfb-maybe npm test'
+          // Run the tests with xvfb to allow opening windows virtually, and report using the junit reporter
+          sh './node_modules/.bin/xvfb-maybe npm test -- --reporter mocha-junit-reporter'
         }
       }
     }
