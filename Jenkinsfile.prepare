@@ -24,7 +24,7 @@ jobWrapper {
 
       sshagent(['realm-ci-ssh']) {
         // Push with tags
-        sh "git push --follow-tags origin ${env.BRANCH_NAME}"
+        sh "git push --follow-tags origin HEAD"
       }
       // Start a release job
       build(
