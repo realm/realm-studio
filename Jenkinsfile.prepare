@@ -12,12 +12,13 @@ jobWrapper {
         sh 'git config --global user.email "ci@realm.io"'
         sh 'git config --global user.name "Jenkins CI"'
         // Bump the version and tag the branch
-        nextVersion = sh script: "npm version ${NEXT_VERSION} -m 'Preparing v%s release'", returnStdout: true
+        // Using --no-git-tag-version because the default does not add the package-lock.json
+        nextVersion = sh script: "npm version --no-git-tag-version ${NEXT_VERSION}", returnStdout: true
         // Push the change to GitHub
         input(message: "Push ${nextVersion} and start a release?", id: 'push')
+        // Add the package.json and package-lock.json and commit
+        sh "git add package.json package-lock.json && git commit -m 'Prepare version ${nextVersion}"
         sshagent(['realm-ci-ssh']) {
-          // Delete any existing tags - locally and remote
-          sh "(git rev-parse v${nextVersion} >/dev/null 2>&1 && git tag -d v${nextVersion} && git push origin --delete v${nextVersion}) || true"
           // Push with tags
           sh "git push --follow-tags origin HEAD"
         }
