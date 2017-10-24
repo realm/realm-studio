@@ -6,8 +6,9 @@ jobWrapper {
   stage('Checkout') {
     node('docker') {
       checkoutAtVersion()
-      def package = readJSON file: 'package.json'
-      assert package.version == $VERSION_TAG : "Tag doesn't match package.json version"
+      // TODO: Check that the tag matches the package.json version
+      def packageJson = readJSON(file: 'package.json')
+      assert packageJson.version == $VERSION_TAG : "Tag doesn't match package.json version"
     }
   }
 
