@@ -1,0 +1,67 @@
+#!groovy
+
+@Library('realm-ci') _
+
+jobWrapper {
+  stage('Bump version and tag commit') {
+    node('docker') {
+      doCheckout()
+
+      docker.image('node:6.11.2').inside("-e HOME=${env.WORKSPACE} -v /etc/passwd:/etc/passwd:ro") {
+        // Bump the version and tag the branch
+        // Using --no-git-tag-version because the default does not add the package-lock.json
+        nextVersion = sh(
+          script: "npm version --no-git-tag-version ${NEXT_VERSION}",
+          returnStdout: true
+        ).trim()
+        // Update the version in the package lock
+        def lock = readJSON(file: 'package-lock.json')
+        lock.version = nextVersion
+        writeJSON(file: 'package-lock.json', json: lock, pretty: 2)
+      }
+      // Push the change to GitHub
+      input(message: "Push ${nextVersion} and start a release?", id: 'push')
+      // Set the email and name used when committing
+      sh 'git config --global user.email "ci@realm.io"'
+      sh 'git config --global user.name "Jenkins CI"'
+      // Stage the updates to the files, commit and tag the commit
+      sh 'git add package.json package-lock.json'
+      sh "git commit -m 'Prepare version ${nextVersion}'"
+      sh "git tag ${nextVersion}"
+
+      sshagent(['realm-ci-ssh']) {
+        // Push with tags
+        sh "git push --tags origin HEAD"
+      }
+      // Start a release job
+      build(
+        job: 'realm-studio/release',
+        parameters: [
+          [$class: 'GitParameterValue', name: 'VERSION_TAG', value: nextVersion]
+        ],
+        propagate: false,
+        wait: false
+      )
+    }
+  }
+}
+
+def doCheckout() {
+  return checkout([
+    $class: 'GitSCM',
+    branches: [[name: env.BRANCH_NAME]],
+    doGenerateSubmoduleConfigurations: false,
+    extensions: [
+      [$class: 'WipeWorkspace'],
+      [$class: 'CleanCheckout'],
+      [$class: 'LocalBranch']
+    ],
+    gitTool: 'native git',
+    userRemoteConfigs: [[
+      credentialsId: 'realm-ci-ssh',
+      name: 'origin',
+      refspec: '+refs/tags/*:refs/remotes/origin/tags/* +refs/heads/*:refs/remotes/origin/*',
+      url: 'git@github.com:realm/realm-studio.git'
+    ]]
+  ])
+}
