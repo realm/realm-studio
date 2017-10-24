@@ -5,9 +5,12 @@
 jobWrapper {
   stage('Checkout') {
     node('docker') {
-      rlmCheckout scm
+      checkoutAtVersion()
+      // TODO: Check that the tag matches the package.json version
     }
   }
+
+  input(message: 'Ready to publish?', id: 'publish')
 
   stage('Build & test') {
     parallel (
@@ -17,10 +20,25 @@ jobWrapper {
   }
 }
 
+def checkoutAtVersion() {
+  checkout([
+    $class: 'GitSCM',
+    branches: [[name: 'refs/tags/${VERSION_TAG}']],
+    doGenerateSubmoduleConfigurations: false,
+    extensions: [
+      [$class: 'WipeWorkspace'],
+      [$class: 'CleanCheckout'],
+    ],
+    gitTool: 'native git',
+    submoduleCfg: [],
+    userRemoteConfigs: [[url: 'git@github.com:realm/realm-studio.git']]
+  ])
+}
+
 def packageOthers() {
   return {
     node('docker') {
-      rlmCheckout scm
+      checkoutAtVersion()
 
       def workarea = pwd()
       def image = docker.image('electronuserland/builder:wine-chrome')
@@ -44,7 +62,7 @@ def packageOthers() {
 def packageOnMacos() {
   return {
     node('macos') {
-      rlmCheckout scm
+      checkoutAtVersion()
 
       def nodeVersion = readFile('.nvmrc').trim()
       nvm(version: nodeVersion) {
