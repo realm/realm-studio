@@ -12,14 +12,12 @@ jobWrapper {
     }
   }
 
-  /*
   stage('Build, test and package') {
     parallel (
       macos: packageOnMacos(),
       others: packageOthers()
     )
   }
-  */
 
   stage('Publish') {
     node('docker') {
@@ -27,10 +25,12 @@ jobWrapper {
       // Upload the build artifacts to S3
       def packageJson = readJSON file: 'package.json'
       input(message: "Ready to publish v${packageJson.version}?", id: 'publish')
+
       def s3Config = packageJson.build.publish[0]
-      def bucket = "${s3Config.bucket}/${s3Config.path}"
-      echo bucket
-      // rlmS3Put(source: 'myfile.txt', bucket: 'static.realm.io/some/folder')
+      def bucket = "${s3Config.bucket}/${s3Config.path}/ci"
+      dir('dist') {
+        rlmS3Put(bucket: bucket)
+      }
     }
   }
 }
@@ -94,6 +94,8 @@ def packageOnMacos() {
 
         // Build the package
         sh 'node_modules/.bin/electron-builder --publish never'
+
+        // TODO: Run a post-package test, to see if the packaged app boots
 
         archiveArtifacts 'dist/*'
       }
