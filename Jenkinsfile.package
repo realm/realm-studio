@@ -31,7 +31,12 @@ def checkoutAtVersion() {
     ],
     gitTool: 'native git',
     submoduleCfg: [],
-    userRemoteConfigs: [[url: 'git@github.com:realm/realm-studio.git']]
+    userRemoteConfigs: [[
+      credentialsId: 'realm-ci-ssh',
+      name: 'origin',
+      refspec: '+refs/tags/*:refs/remotes/origin/tags/* +refs/heads/*:refs/remotes/origin/*',
+      url: 'git@github.com:realm/realm-studio.git'
+    ]]
   ])
 }
 
