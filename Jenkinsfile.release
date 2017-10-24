@@ -7,10 +7,12 @@ jobWrapper {
     node('docker') {
       checkoutAtVersion()
       // TODO: Check that the tag matches the package.json version
+      def package = readJSON file: 'package.json'
+      assert package.version == $VERSION_TAG : "Tag doesn't match package.json version"
     }
   }
 
-  stage('Build & test') {
+  stage('Build, test and package') {
     parallel (
       macos: packageOnMacos(),
       others: packageOthers()
@@ -20,7 +22,7 @@ jobWrapper {
   input(message: 'Ready to publish?', id: 'publish')
 
   stage('Publish') {
-    
+    // Upload the build artifacts to S3
   }
 }
 
