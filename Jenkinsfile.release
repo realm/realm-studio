@@ -30,6 +30,7 @@ jobWrapper {
         'title_link': inputUrl,
         'text': "Proceed with the release by clicking <${inputUrl}|here>",
         'color': 'warning',
+        'unfurl_links': false
       ]])
       // Wait for input
       input(message: "Ready to publish v${packageJson.version}?", id: 'publish')
@@ -51,7 +52,6 @@ jobWrapper {
         // Notify by posting to Slack
         def url = "https://github.com/realm/realm-studio/releases/tag/${env.VERSION_TAG}"
         def slackPost = [[
-          ''
           'title': "Realm Studio ${env.VERSION_TAG} has been released!",
           'title_link': url,
           'text': "Github Release and artifacts are available <${url}|here>",
