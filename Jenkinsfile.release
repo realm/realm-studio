@@ -25,7 +25,7 @@ jobWrapper {
     node('docker') {
       checkoutAtVersion()
       // Upload the build artifacts to S3
-      def packageJson = readJSON(file: 'package.json')
+      def packageJson = readJSON file: 'package.json'
       input(message: "Ready to publish v${packageJson.version}?", id: 'publish')
       def s3Config = packageJson.build.publish[0]
       def bucket = "${s3Config.bucket}/${s3Config.path}"
