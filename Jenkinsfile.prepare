@@ -16,7 +16,7 @@ jobWrapper {
         ).trim()
         // Update the version in the package lock
         def lock = readJSON(file: 'package-lock.json')
-        lock.version = nextVersion
+        lock.version = nextVersion.substring(1) // Removing the v-prefix
         writeJSON(file: 'package-lock.json', json: lock, pretty: 2)
       }
       // Push the change to GitHub
