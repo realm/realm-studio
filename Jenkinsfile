@@ -44,10 +44,3 @@ jobWrapper {
     }
   }
 }
-
-post {
-  always {
-    // Record the result of the tests
-    junit 'test-results.xml'
-  }
-}
