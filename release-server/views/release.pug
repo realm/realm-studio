@@ -1,0 +1,20 @@
+extends layout
+
+block content
+  h1= title
+  hr
+  h3
+    span.name= name
+    span.tag= tag_name
+  section.body!= body_html
+  h3 Downloads
+  section.downloads
+    each artifactType, key in artifactTypes
+      p
+        if key in s3_objects
+          - const object = s3_objects[key]
+          a(href=`/${tag_name}/download/${key}`)= artifactType.title
+          span.size= object.prettySize
+        else
+          span= artifactType.title
+          span.not-available Not available

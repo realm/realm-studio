@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  h1= title
+  hr
+  each release in releases
+    section
+      h3
+        span.name= release.name
+        a(href=`${release.tag_name}`).tag= release.tag_name
