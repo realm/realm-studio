@@ -3,11 +3,14 @@
 Realm Studio is the tool, any developer or system administrator would use when building and maintaining their app built
 on the Realm Mobile Platform.
 
+Visit https://realm.io/products/realm-studio/ for more information on Realm Studio.
+
 ## Installing
 
-Realm Studio has not yet been officially released.
-
-Once it has - this section should contain links from where it can be downloaded and installed.
+Click the links below to download the latest version of Realm Studio for
+- [MacOS](https://studio-releases.realm.io/latest/mac-dmg)
+- [Windows](https://studio-releases.realm.io/latest/win-setup)
+- [Linux](https://studio-releases.realm.io/latest/linux-appimage)
 
 ## Running
 
