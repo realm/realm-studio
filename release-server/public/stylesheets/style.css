@@ -1,0 +1,29 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  /* mulberry */
+  color: #d34ca3;
+}
+
+.tag {
+  float: right;
+  font-family: monospace;
+  white-space: pre;
+}
+
+.body {
+  /* dove */
+  background: #ebebf2;
+  border-radius: .5rem;
+  /* elephant */
+  border: 1px solid #9a9ba5;
+  padding: 1rem;
+}
+
+.size,
+.not-available {
+  margin-left: .5rem;
+}
