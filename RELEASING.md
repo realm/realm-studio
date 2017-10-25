@@ -23,7 +23,8 @@ choose the next version based on what changes the master has compared to the lat
 
 To prepare a release, go to https://ci.realm.io/job/realm-studio/job/prepare/build.
 
-To see what the prepare job does, see https://github.com/realm/realm-studio/blob/master/Jenkinsfile.prepare.
+To see what the prepare job does, see https://github.com/realm/realm-studio/blob/master/Jenkinsfile.prepare - this is
+what it's basically doing:
 
 1. Checkout the branch
 2. Run `npm version` with the next version specified
@@ -41,7 +42,19 @@ To see what the prepare job does, see https://github.com/realm/realm-studio/blob
 To publish the release, go to https://ci.realm.io/job/realm-studio/job/release/build and select the version tag that
 you want to build and release for.
 
-To see what the release job does, see https://github.com/realm/realm-studio/blob/master/Jenkinsfile.release.
+To see what the release job does, see https://github.com/realm/realm-studio/blob/master/Jenkinsfile.release - this is
+what it's basically doing:
+
+1. Checkout the branch
+2. Check that the version tag matches the version in package.json
+3. Build, test and package in two parallel tracks "MacOS" and "Others" (the latter being Windows + Linux).
+    1. Installing dependencies (`npm install`)
+    2. Build the app (`npm run build`)
+    3. Package up the app (`electron-builder`) - never publishing.
+    4. Archive + stash artifacts
+4. Once packaged - it'll post a message to Slack notifying that the job is awaiting approval to continue.
+5. If approved - unstash and upload artifacts to S3
+6. Post the release to Slack!
 
 ## Publish on GitHub
 
