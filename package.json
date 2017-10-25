@@ -92,7 +92,7 @@
     "*.{ts,tsx}": [
       "tslint --fix"
     ],
-    "package.json,!release-server/package.json": [
+    "package.json": [
       "check:package-lock"
     ]
   },
