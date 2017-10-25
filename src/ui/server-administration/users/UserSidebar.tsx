@@ -173,7 +173,7 @@ export const UserSidebar = ({
       {user && (
         <Card className="UserSidebar__Card">
           <CardBlock className="UserSidebar__Top">
-            <CardTitle className="UserSidebar__title">
+            <CardTitle className="UserSidebar__Title">
               <span title={user.userId}>{user.userId}</span>
             </CardTitle>
             <ButtonDropdown
