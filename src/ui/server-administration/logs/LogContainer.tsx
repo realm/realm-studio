@@ -80,6 +80,16 @@ export class LogContainer extends React.Component<
     const url = this.generateLogUrl();
     const userRefreshToken = this.props.user.token;
     this.socket = new WebSocket(url);
+    this.socket.addEventListener('open', e => {
+      if (this.socket) {
+        this.socket.send(
+          JSON.stringify({
+            action: 'authenticate',
+            token: this.props.user.token,
+          }),
+        );
+      }
+    });
     this.socket.addEventListener('message', this.onLogMessage);
   }
 
@@ -92,9 +102,6 @@ export class LogContainer extends React.Component<
 
   private generateLogUrl() {
     const url = new URL(this.props.user.server);
-    // Add in the users identity and token
-    url.username = this.props.user.identity;
-    url.password = this.props.user.token;
     // Use ws instead of http
     url.protocol = url.protocol.replace('http', 'ws');
     // Replace the path
@@ -103,9 +110,9 @@ export class LogContainer extends React.Component<
   }
 
   private onLogMessage = (e: MessageEvent) => {
-    const newEntries = JSON.parse(e.data);
+    const newEntries = JSON.parse(e.data).reverse();
     this.setState({
-      entries: newEntries.concat(this.state.entries),
+      entries: this.state.entries.concat(newEntries),
     });
   };
 }
