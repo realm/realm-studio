@@ -10,6 +10,7 @@ $realm-browser-more-indicator-dark-color: rgba(0, 0, 0, .2);
 $realm-browser-more-indicator-light-color: rgba(0, 0, 0, 0);
 
 $color-row-stripe: mix($white, $color-dove, 50%);
+$highlight-row-bg: mix($color-dove, $color-elephant, 75%);
 
 .RealmBrowser {
   display: flex;
@@ -181,7 +182,7 @@ $color-row-stripe: mix($white, $color-dove, 50%);
 
       &--highlighted,
       &--sorting {
-        background: $color-dove;
+        background: $highlight-row-bg;
       }
     }
 
