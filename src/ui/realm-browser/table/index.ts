@@ -35,6 +35,7 @@ export type CellContextMenuHandler = (
 export interface IHighlight {
   row?: number;
   column?: number;
+  center?: boolean;
 }
 
 export interface ISorting {

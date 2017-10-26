@@ -157,6 +157,7 @@ export const ContentGrid = (props: IContentGridProps) => {
         }
       }}
       rowCount={filteredSortedResults.length}
+      scrollToAlignment={highlight && highlight.center ? 'center' : 'auto'}
     />
   );
 };

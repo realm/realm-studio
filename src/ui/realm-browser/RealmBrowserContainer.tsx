@@ -80,14 +80,18 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
 
   public onCellChange: CellChangeHandler = params => {
     if (this.realm) {
-      this.realm.write(() => {
-        const { parent, property, rowIndex, cellValue } = params;
-        if (property.name !== null) {
-          parent[rowIndex][property.name] = cellValue;
-        } else {
-          parent[rowIndex] = cellValue;
-        }
-      });
+      try {
+        this.realm.write(() => {
+          const { parent, property, rowIndex, cellValue } = params;
+          if (property.name !== null) {
+            parent[rowIndex][property.name] = cellValue;
+          } else {
+            parent[rowIndex] = cellValue;
+          }
+        });
+      } catch (err) {
+        showError('Failed when saving the value', err);
+      }
     }
   };
 
@@ -130,6 +134,15 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         this.clickTimeout = null;
       }, 200);
     }
+    /*
+    // TODO: Re-enable this, once cells are not re-rendering and forgetting their focus state
+    this.setState({
+      highlight: {
+        column: columnIndex,
+        row: rowIndex,
+      },
+    });
+    */
   };
 
   public onCellSingleClick = (
@@ -164,6 +177,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
           focus,
           highlight: {
             row: index,
+            center: true,
           },
         });
       }
