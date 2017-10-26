@@ -92,9 +92,6 @@ export class LogContainer extends React.Component<
 
   private generateLogUrl() {
     const url = new URL(this.props.user.server);
-    // Add in the users identity and token
-    url.username = this.props.user.identity;
-    url.password = this.props.user.token;
     // Use ws instead of http
     url.protocol = url.protocol.replace('http', 'ws');
     // Replace the path
