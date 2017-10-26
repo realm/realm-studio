@@ -111,8 +111,9 @@ export class LogContainer extends React.Component<
 
   private onLogMessage = (e: MessageEvent) => {
     const newEntries = JSON.parse(e.data);
+    const entries: ILogEntry[] = [];
     this.setState({
-      entries: newEntries.concat(this.state.entries),
+      entries: entries.concat(this.state.entries, newEntries),
     });
   };
 }
