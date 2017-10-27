@@ -38,7 +38,6 @@ export default class Updater {
     });
 
     autoUpdater.on('update-available', info => {
-      // TODO: Consider reading the size from info here
       this.nextVersion = info.version;
       this.sendUpdateStatus({
         state: 'available',
@@ -56,6 +55,7 @@ export default class Updater {
     autoUpdater.on('download-progress', progress => {
       this.sendUpdateStatus({
         state: 'downloading',
+        nextVersion: this.nextVersion,
         progress: {
           total: progress.total,
           downloaded: progress.transferred,
