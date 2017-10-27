@@ -50,7 +50,7 @@ what it's basically doing:
 3. Build, test and package in two parallel tracks "MacOS" and "Others" (the latter being Windows + Linux).
     1. Installing dependencies (`npm install`)
     2. Build the app (`npm run build`)
-    3. Package up the app (`electron-builder`) - never publishing.
+    3. Package up the app (`electron-builder`) - never publishing and cryptographically signing the result
     4. Archive + stash artifacts
 4. Once packaged - it'll post a message to Slack notifying that the job is awaiting approval to continue.
 5. If approved - unstash and upload artifacts to S3
