@@ -2,48 +2,90 @@ import * as electron from 'electron';
 import { autoUpdater } from 'electron-updater';
 import * as path from 'path';
 
+const isProduction = process.env.NODE_ENV === 'production';
+
+export interface IDownloadProgress {
+  total: number;
+  downloaded: number;
+}
+
 export interface IUpdateStatus {
-  checking: boolean;
-  available?: boolean;
+  state:
+    | 'checking'
+    | 'failed'
+    | 'up-to-date'
+    | 'available'
+    | 'downloading'
+    | 'downloaded'
+    | 'installing';
+  progress?: IDownloadProgress;
   error?: string;
+  nextVersion?: string;
 }
 
 export default class Updater {
+  private static PROGRESS_POLL_DELAY = 250;
+  private static EXPECTED_PACKAGE_SIZE = 65 * 1024 * 1024; // ~65mb
+
+  private isBusy = false;
   private quite = false;
   private listeningWindows: Electron.BrowserWindow[] = [];
+  private progressTimer: number;
+  private memoryUsageAtStart?: number;
+  private nextVersion?: string;
 
   constructor() {
     autoUpdater.on('checking-for-update', () => {
+      this.isBusy = true;
       this.sendUpdateStatus({
-        checking: true,
+        state: 'checking',
       });
+
+      // If we are developing - perform a fake update
+      if (!isProduction) {
+        this.performFakeUpdate();
+      }
     });
 
     autoUpdater.on('update-available', info => {
+      // Consider reading the size from info
+      this.nextVersion = info.version;
       this.sendUpdateStatus({
-        checking: false,
-        available: true,
+        state: 'available',
+        nextVersion: this.nextVersion,
       });
+      this.startProgressPolling();
     });
 
     autoUpdater.on('update-not-available', info => {
+      this.isBusy = false;
       this.sendUpdateStatus({
-        checking: false,
-        available: false,
+        state: 'up-to-date',
       });
     });
 
     autoUpdater.on('error', err => {
+      this.isBusy = false;
+      this.stopProgressPolling();
       if (!this.quite) {
         this.showError('Error occurred while updating', err.message);
       }
       this.sendUpdateStatus({
-        checking: false,
+        state: 'failed',
         error: err.message,
       });
     });
 
     autoUpdater.on('update-downloaded', info => {
+      this.sendUpdateStatus({
+        state: 'downloaded',
+        nextVersion: this.nextVersion,
+        progress: {
+          total: Updater.EXPECTED_PACKAGE_SIZE,
+          downloaded: Updater.EXPECTED_PACKAGE_SIZE,
+        },
+      });
+      this.stopProgressPolling();
       this.onUpdateAvailable(info);
     });
   }
@@ -66,8 +108,11 @@ export default class Updater {
   }
 
   public checkForUpdates(quiet: boolean = false) {
-    this.quite = quiet;
-    autoUpdater.checkForUpdates();
+    // Checking this prevents two updates at the same time
+    if (!this.isBusy) {
+      this.quite = quiet;
+      autoUpdater.checkForUpdates();
+    }
   }
 
   private onUpdateAvailable(info: any) {
@@ -96,6 +141,39 @@ export default class Updater {
     autoUpdater.quitAndInstall();
   }
 
+  private pollForProgress() {
+    const usage = process.memoryUsage().rss;
+    const total = Updater.EXPECTED_PACKAGE_SIZE;
+    if (this.memoryUsageAtStart) {
+      const atStart = this.memoryUsageAtStart;
+      // Calculate a bounded estimate on the downloaded bytes
+      const downloaded = Math.min(Math.max(0, usage - atStart), total);
+      this.sendUpdateStatus({
+        state: 'downloading',
+        nextVersion: this.nextVersion,
+        progress: {
+          downloaded,
+          total,
+        },
+      });
+    }
+  }
+
+  private startProgressPolling() {
+    // Save the memory usage before the download begins
+    this.memoryUsageAtStart = process.memoryUsage().rss;
+    // Start an interval timer polling for changes in memory usage
+    this.progressTimer = setInterval(
+      this.pollForProgress.bind(this),
+      Updater.PROGRESS_POLL_DELAY,
+    );
+  }
+
+  private stopProgressPolling() {
+    clearTimeout(this.progressTimer);
+    this.memoryUsageAtStart = undefined;
+  }
+
   private showError(message: string, detail: string = '') {
     electron.dialog.showMessageBox({
       type: 'error',
@@ -108,5 +186,54 @@ export default class Updater {
     this.listeningWindows.forEach(window => {
       window.webContents.send('update-status', status);
     });
+  }
+
+  private performFakeUpdate() {
+    // Wait 1 second
+    setTimeout(() => {
+      this.nextVersion = 'v.1.2.3';
+      this.sendUpdateStatus({
+        state: 'available',
+        nextVersion: this.nextVersion,
+      });
+      const total = Updater.EXPECTED_PACKAGE_SIZE;
+      const duration = 10000;
+      let downloaded = 0;
+      const timer = setInterval(() => {
+        downloaded += total / duration * Updater.PROGRESS_POLL_DELAY;
+        downloaded = Math.min(total, downloaded); // Enforcing the upper bound
+        this.sendUpdateStatus({
+          state: 'downloading',
+          nextVersion: this.nextVersion,
+          progress: {
+            downloaded,
+            total,
+          },
+        });
+        // Stop the timer - and go to installing
+        if (downloaded === total) {
+          clearTimeout(timer);
+          this.sendUpdateStatus({
+            state: 'downloaded',
+            nextVersion: this.nextVersion,
+            progress: {
+              total: Updater.EXPECTED_PACKAGE_SIZE,
+              downloaded: Updater.EXPECTED_PACKAGE_SIZE,
+            },
+          });
+          setTimeout(() => {
+            this.sendUpdateStatus({
+              state: 'installing',
+              nextVersion: this.nextVersion,
+            });
+            setTimeout(() => {
+              this.sendUpdateStatus({
+                state: 'up-to-date',
+              });
+            }, 2000);
+          }, 5000);
+        }
+      }, Updater.PROGRESS_POLL_DELAY);
+    }, 1000);
   }
 }

@@ -32,10 +32,36 @@ $history-panel-icon-size: 20px;
   }
 
   &__UpdateStatusIndicator {
-    display: inline-block;
+    cursor: pointer;
     font-size: .8rem;
-    padding: 0 ($spacer / 4);
-    width: 1em;
+    width: 80%;
+
+    &--busy {
+      cursor: wait;
+    }
+
+    &__Status {
+      margin: 0;
+      padding: $spacer / 4;
+      text-align: center;
+    }
+
+    &__Icon {
+      margin-right: $spacer / 2;
+    }
+
+    &__Progress {
+      height: .33rem;
+    }
+
+    &__Rail {
+      height: 100%;
+    }
+
+    &__Bar {
+      // The .25s matches the delay constant in updater.ts
+      transition: width .25s linear;
+    }
   }
 
   &__Actions {

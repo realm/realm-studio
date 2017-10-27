@@ -1,9 +1,68 @@
+import * as classNames from 'classnames';
 import * as React from 'react';
-import { Badge } from 'reactstrap';
+import { Progress } from 'reactstrap';
 
 import { IUpdateStatus } from '../../main/updater';
 
 import { LoadingDots } from '../reusable/loading-dots/LoadingDots';
+
+const getDisplayText = (status: IUpdateStatus) => {
+  switch (status.state) {
+    case 'checking':
+      return 'Checking for update';
+    case 'failed':
+      return 'Failed to update';
+    case 'up-to-date':
+      return 'This is the latest version';
+    case 'available':
+      return 'A newer version is available';
+    case 'downloading':
+      return status.nextVersion
+        ? `Downloading ${status.nextVersion}`
+        : 'Downloading a newer version';
+    case 'downloaded':
+      return status.nextVersion
+        ? `Downloaded ${status.nextVersion}`
+        : 'Downloaded a newer version';
+    case 'installing':
+      return status.nextVersion
+        ? `Installing ${status.nextVersion}`
+        : 'Installing a newer version';
+    default:
+      return '';
+  }
+};
+
+const getIconClass = (status: IUpdateStatus) => {
+  switch (status.state) {
+    case 'checking':
+      return 'fa-refresh';
+    case 'failed':
+      return 'fa-exclamation-circle';
+    case 'up-to-date':
+      return 'fa-check-circle';
+    case 'available':
+      return 'fa-arrow-circle-up';
+    case 'downloading':
+      return 'fa-cloud-download';
+    case 'downloaded':
+      return 'fa-cloud-download';
+    case 'installing':
+      return 'fa-rocket';
+    default:
+      return 'fa-question-circle';
+  }
+};
+
+const getIsBusy = (status: IUpdateStatus) => {
+  switch (status.state) {
+    case 'failed':
+    case 'up-to-date':
+      return false;
+    default:
+      return true;
+  }
+};
 
 export const UpdateStatusIndicator = ({
   onCheckForUpdates,
@@ -11,31 +70,40 @@ export const UpdateStatusIndicator = ({
 }: {
   onCheckForUpdates: () => void;
   status: IUpdateStatus;
-}) => (
-  <span className="Greeting__UpdateStatusIndicator" onClick={onCheckForUpdates}>
-    {status.checking && (
-      <LoadingDots className="Greeting__UpdateStatusIndicator__dots" />
-    )}
-    {status.available === true && (
-      <i
-        className="Greeting__UpdateStatusIndicator__icon fa fa-arrow-circle-up"
-        aria-hidden="true"
-        title="A newer version is available"
-      />
-    )}
-    {status.available === false && (
-      <i
-        className="Greeting__UpdateStatusIndicator__icon fa fa-check-circle"
-        aria-hidden="true"
-        title="This is the latest version"
-      />
-    )}
-    {status.error && (
-      <i
-        className="Greeting__UpdateStatusIndicator__icon fa fa-exclamation-circle"
-        aria-hidden="true"
-        title={`Error occurred while updating:\n${status.error}`}
-      />
-    )}
-  </span>
-);
+}) => {
+  const isBusy = getIsBusy(status);
+  const icon = getIconClass(status);
+  const text = getDisplayText(status);
+  return (
+    <div
+      className={classNames('Greeting__UpdateStatusIndicator', {
+        'Greeting__UpdateStatusIndicator--busy': isBusy,
+      })}
+      onClick={!isBusy ? onCheckForUpdates : undefined}
+    >
+      <p className="Greeting__UpdateStatusIndicator__Status">
+        <i
+          className={classNames(
+            'Greeting__UpdateStatusIndicator__Icon',
+            'fa',
+            icon,
+          )}
+          aria-hidden="true"
+        />
+        {text}
+      </p>
+      <div className="Greeting__UpdateStatusIndicator__Progress">
+        {status.progress && (
+          <Progress
+            className="Greeting__UpdateStatusIndicator__Rail"
+            barClassName="Greeting__UpdateStatusIndicator__Bar"
+            animated={status.state === 'downloading'}
+            color="primary"
+            value={status.progress.downloaded}
+            max={status.progress.total}
+          />
+        )}
+      </div>
+    </div>
+  );
+};
