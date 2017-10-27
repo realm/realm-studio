@@ -1,6 +1,7 @@
 import * as os from 'os';
 import * as React from 'react';
 import { Button } from 'reactstrap';
+import * as util from 'util';
 
 import { IUpdateStatus } from '../../main/updater';
 
@@ -33,16 +34,12 @@ export const Greeting = ({
           <use xlinkHref={realmLogo.url} />
         </svg>
         <h3 className="Greeting__Title">Realm Studio</h3>
-        <p>
-          Version {version}
-          {updateStatus && (
-            <UpdateStatusIndicator
-              status={updateStatus}
-              onCheckForUpdates={onCheckForUpdates}
-            />
-          )}
-        </p>
+        <div>Version {version}</div>
       </div>
+      <UpdateStatusIndicator
+        status={updateStatus}
+        onCheckForUpdates={onCheckForUpdates}
+      />
       <div className="Greeting__Actions">
         <Button className="Greeting__Action" onClick={onOpenLocalRealm}>
           Open a local Realm
