@@ -2,7 +2,7 @@ import * as classnames from 'classnames';
 import * as React from 'react';
 import { Button, Navbar } from 'reactstrap';
 
-import realmLogo from 'realm-studio-svgs/realm-logo.svg';
+import realmLogo from '../../../static/svgs/realm-logo.svg';
 
 import { LoadingOverlay } from '../reusable/loading-overlay';
 import { LogContainer } from './logs/LogContainer';

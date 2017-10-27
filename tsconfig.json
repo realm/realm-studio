@@ -12,9 +12,6 @@
       "es6"
     ],
     "noImplicitAny": true,
-    "paths": {
-      "realm-studio-svgs/*": ["./static/svgs/*"]
-    },
     "removeComments": true,
     "sourceMap": true,
     "strict": true,

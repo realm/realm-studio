@@ -81,7 +81,7 @@ export const getRealm = async (
   }
 
   // Return a promise that resolves once the entire synced Realm has been downloaded
-  return await Promise.race<Realm>([realm, timeoutPromise(url)]);
+  return Promise.race<Realm>([realm, timeoutPromise(url)]);
 };
 
 export const createUser = async (

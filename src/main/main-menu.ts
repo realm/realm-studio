@@ -62,9 +62,7 @@ export default class MainMenu {
           {
             label: 'Learn More...',
             click: () => {
-              electron.shell.openExternal(
-                'https://realm.io/docs',
-              );
+              electron.shell.openExternal('https://realm.io/docs');
             },
           },
         ],

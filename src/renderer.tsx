@@ -25,7 +25,7 @@ window.addEventListener('beforeunload', e => {
   fs.removeSync(processDir);
 });
 
-import 'realm-studio-styles';
+import '../styles/index.scss';
 
 import { CurrentWindow } from './windows';
 
