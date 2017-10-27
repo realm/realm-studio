@@ -14,8 +14,11 @@
     "jsx-no-lambda": false,
     "no-submodule-imports": [
       true,
-      "realm-studio-svgs",
       "realm-studio-styles"
+    ],
+    "no-implicit-dependencies": [
+      true,
+      "dev"
     ],
     "prettier": [
       true,

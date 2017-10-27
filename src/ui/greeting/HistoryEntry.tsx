@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import serverIcon from 'realm-studio-svgs/server-icon.svg';
-import syncedRealmFileIcon from 'realm-studio-svgs/synced-realm-icon.svg';
+import serverIcon from '../../../static/svgs/server-icon.svg';
+import syncedRealmFileIcon from '../../../static/svgs/synced-realm-icon.svg';
 
 export type HistoryEntryType = 'server' | 'local-realm' | 'synced-realm';
 

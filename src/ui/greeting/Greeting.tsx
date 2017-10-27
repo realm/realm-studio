@@ -4,7 +4,7 @@ import { Button } from 'reactstrap';
 
 import { IUpdateStatus } from '../../main/updater';
 
-import realmLogo from 'realm-studio-svgs/realm-logo.svg';
+import realmLogo from '../../../static/svgs/realm-logo.svg';
 import { HistoryPanelContainer } from './HistoryPanelContainer';
 import { SignupOverlayContainer } from './SignupOverlayContainer';
 import { UpdateStatusIndicator } from './UpdateStatusIndicator';

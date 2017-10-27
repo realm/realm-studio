@@ -76,7 +76,7 @@
     "electron:dist": "electron-builder",
     "electron": "electron .",
     "lint:sass": "sass-lint -c .sass-lint.yml 'src/**/*.scss' -v",
-    "lint:ts": "tslint --project tsconfig.json --type-check 'src/**/*.ts' 'src/**/*.tsx'",
+    "lint:ts": "tslint --project tsconfig.json 'src/**/*.ts' 'src/**/*.tsx'",
     "lint": "npm run lint:ts && npm run lint:sass && echo 'Everything looks good!'",
     "postinstall": "electron-builder install-app-deps",
     "precommit": "lint-staged",
