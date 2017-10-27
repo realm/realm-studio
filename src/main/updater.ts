@@ -25,6 +25,7 @@ export interface IUpdateStatus {
 
 export default class Updater {
   private static PROGRESS_POLL_DELAY = 250;
+  // TODO: We should read the actual size from the available update to be downloaded.
   private static EXPECTED_PACKAGE_SIZE = 65 * 1024 * 1024; // ~65mb
 
   private isBusy = false;
@@ -48,7 +49,7 @@ export default class Updater {
     });
 
     autoUpdater.on('update-available', info => {
-      // Consider reading the size from info
+      // TODO: Consider reading the size from info here
       this.nextVersion = info.version;
       this.sendUpdateStatus({
         state: 'available',
@@ -142,6 +143,11 @@ export default class Updater {
   }
 
   private pollForProgress() {
+    // We are estimating the progress by comparing the rise of memory usage to the size of the
+    // package being downloaded. This is because update progress notifications is currently not
+    // supported by the autoUpdater on all platforms.
+    // This is a somewhat bold assumption as garbage collection might free memory elsewhere
+    // while we're downloading.
     const usage = process.memoryUsage().rss;
     const total = Updater.EXPECTED_PACKAGE_SIZE;
     if (this.memoryUsageAtStart) {
