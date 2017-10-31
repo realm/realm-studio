@@ -77,8 +77,12 @@ export class ConnectToServerContainer extends React.Component<
         // and close this window
         electron.remote.getCurrentWindow().close();
       } catch (err) {
+        const sslWarning =
+          preparedUrl.indexOf('https:') === 0
+            ? '\nNote: SSL certificates should be signed by a trusted CA.'
+            : '';
         showError(`Couldn't connect to Realm Object Server`, err, {
-          'Failed to fetch': 'Could not reach the server',
+          'Failed to fetch': 'Could not reach the server.' + sslWarning,
         });
       } finally {
         this.setState({
@@ -118,13 +122,23 @@ export class ConnectToServerContainer extends React.Component<
     });
   };
 
-  private prepareUrl(url: string) {
-    if (url === '') {
+  private prepareUrl(urlString: string) {
+    if (urlString === '') {
       return 'http://localhost:9080';
-    } else if (url.indexOf('http') !== 0) {
-      return `http://${url}`;
     } else {
-      return url;
+      const url = new URL(urlString);
+      // Replace the realm: with http:
+      if (url.protocol === 'realm:') {
+        url.protocol = 'http:';
+      }
+      // Set the default ports
+      if (url.protocol === 'http:' && !url.port) {
+        url.port = '9080';
+      }
+      if (url.protocol === 'https:' && !url.port) {
+        url.port = '9443';
+      }
+      return url.toString();
     }
   }
 
