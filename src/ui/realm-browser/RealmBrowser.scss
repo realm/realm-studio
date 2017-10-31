@@ -16,6 +16,12 @@ $highlight-row-bg: mix($color-dove, $color-elephant, 75%);
   display: flex;
   height: 100%;
 
+  &__Sidebar,
+  &__Table__HeaderGrid,
+  &__Content__Actions {
+    z-index: 1; // Overlay when drag-reordering elements in lists
+  }
+
   &__Sidebar {
     background: $window-background;
     display: flex;
@@ -26,7 +32,7 @@ $highlight-row-bg: mix($color-dove, $color-elephant, 75%);
 
     &__Header {
       border-bottom: 1px solid $color-dove;
-      color: #9A9BA5;
+      color: $color-elephant;
       font-size: .9rem;
       font-weight: bold;
       height: 2rem;
@@ -155,6 +161,8 @@ $highlight-row-bg: mix($color-dove, $color-elephant, 75%);
     }
 
     &__Actions {
+      background: $white;
+
       &__Filter {
         &,
         input,
@@ -169,8 +177,8 @@ $highlight-row-bg: mix($color-dove, $color-elephant, 75%);
     flex: 1 0 0;
 
     &__HeaderGrid {
+      background: $white;
       overflow-x: hidden;
-      z-index: 4;
     }
 
     &__Row {
