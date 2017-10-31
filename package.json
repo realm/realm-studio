@@ -47,10 +47,10 @@
         "portable",
         "zip"
       ],
-      "icon": "static/icons/win/realm-studio.ico"
+      "icon": "resources/icon.ico"
     },
     "nsis": {
-      "installerIcon": "static/icons/win/realm-studio.ico"
+      "installerIcon": "resources/icon.ico"
     },
     "publish": [
       {
