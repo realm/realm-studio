@@ -34,7 +34,9 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
     object: any;
     actions: IContextMenuAction[];
   } | null;
+  encryptionKey?: string;
   focus: IFocus | null;
+  isEncryptionDialogVisible: boolean;
   highlight?: IHighlight;
   // The schemas are only supposed to be used to produce a list of schemas in the sidebar
   schemas: Realm.ObjectSchema[];
@@ -54,24 +56,14 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       confirmModal: undefined,
       contextMenu: null,
       focus: null,
+      isEncryptionDialogVisible: false,
       progress: { done: false },
       schemas: [],
     };
   }
 
   public async componentDidMount() {
-    try {
-      this.loadRealm(this.props.realm);
-    } catch (err) {
-      showError('Failed to open the Realm', err);
-    }
-  }
-
-  public componentWillUnmount() {
-    if (this.realm) {
-      this.removeRealmChangeListener();
-      this.realm.close();
-    }
+    this.loadRealm(this.props.realm);
   }
 
   public render() {
@@ -303,6 +295,16 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     this.setState({ contextMenu: null });
   };
 
+  public onHideEncryptionDialog = () => {
+    this.setState({ isEncryptionDialogVisible: false });
+  };
+
+  public onOpenWithEncryption = (key: string) => {
+    this.setState({ encryptionKey: key });
+    const keyBuffer = Buffer.from(key, 'hex');
+    this.loadRealm(this.props.realm, keyBuffer);
+  };
+
   protected generateHighlight(object?: Realm.Object): IHighlight | undefined {
     if (object) {
       const className = object.objectSchema().name;
@@ -381,15 +383,18 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     });
   }
 
-  private addRealmChangeListener() {
-    if (this.realm) {
-      this.realm.addListener('change', this.onRealmChanged);
-    }
-  }
-
-  private removeRealmChangeListener() {
-    if (this.realm) {
-      this.realm.removeListener('change', this.onRealmChanged);
+  protected loadingRealmFailed(err: Error) {
+    const message = err.message || '';
+    const mightBeEncrypted = message.indexOf('Not a Realm file.') >= 0;
+    if (mightBeEncrypted) {
+      this.setState({
+        isEncryptionDialogVisible: true,
+        progress: {
+          done: true,
+        },
+      });
+    } else {
+      super.loadingRealmFailed(err);
     }
   }
 }

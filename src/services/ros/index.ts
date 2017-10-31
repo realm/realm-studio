@@ -66,10 +66,12 @@ export const timeoutPromise = (
 export const getRealm = async (
   user: Realm.Sync.User,
   realmPath: string,
+  encryptionKey?: Uint8Array,
   progressCallback?: Realm.Sync.ProgressNotificationCallback,
 ): Promise<Realm> => {
   const url = getRealmUrl(user, realmPath);
   const realm = Realm.open({
+    encryptionKey,
     sync: {
       url,
       user,

@@ -6,6 +6,7 @@ import { ConfirmModal } from '../reusable/confirm-modal';
 import { ContextMenu } from '../reusable/context-menu';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
 import { ContentContainer } from './ContentContainer';
+import { EncryptionDialog } from './encryption-dialog';
 import { IFocus } from './focus';
 import { ObjectSelectorContainer } from './object-selector/ObjectSelectorContainer';
 import { Sidebar } from './Sidebar';
@@ -27,10 +28,13 @@ export const RealmBrowser = ({
   focus,
   getSchemaLength,
   highlight,
+  isEncryptionDialogVisible,
   onCellChange,
   onCellClick,
   onContextMenu,
   onContextMenuClose,
+  onHideEncryptionDialog,
+  onOpenWithEncryption,
   onSchemaSelected,
   onSortEnd,
   progress,
@@ -49,12 +53,15 @@ export const RealmBrowser = ({
   focus: IFocus | null;
   getSchemaLength: (name: string) => number;
   highlight?: IHighlight;
+  isEncryptionDialogVisible: boolean;
   onCellChange: CellChangeHandler;
   onCellClick: CellClickHandler;
   onContextMenu: CellContextMenuHandler;
   onContextMenuClose: () => void;
-  onSortEnd: SortEndHandler;
+  onHideEncryptionDialog: () => void;
+  onOpenWithEncryption: (key: string) => void;
   onSchemaSelected: (name: string, objectToScroll: any) => void;
+  onSortEnd: SortEndHandler;
   progress: ILoadingProgress;
   rowToHighlight?: number;
   schemas: Realm.ObjectSchema[];
@@ -103,6 +110,12 @@ export const RealmBrowser = ({
           close={closeSelectObject}
         />
       )}
+
+      <EncryptionDialog
+        onHide={onHideEncryptionDialog}
+        onOpenWithEncryption={onOpenWithEncryption}
+        visible={isEncryptionDialogVisible}
+      />
 
       <LoadingOverlay progress={progress} fade={true} />
     </div>

@@ -59,7 +59,7 @@ export const Content = ({
         />
       </div>
     );
-  } else if (progress && progress.done) {
+  } else if (progress && progress.done && !progress.failure) {
     return <div className="RealmBrowser__Content--no-schema-selected" />;
   } else {
     return null;
