@@ -46,7 +46,10 @@ export abstract class RealmLoadingComponent<
     this.cancellations.forEach(cancel => cancel());
   }
 
-  protected async loadRealm(realm: ISyncedRealmToLoad | ILocalRealmToLoad) {
+  protected async loadRealm(
+    realm: ISyncedRealmToLoad | ILocalRealmToLoad,
+    encryptionKey?: Uint8Array,
+  ) {
     // Remove any existing a change listeners
     if (this.realm) {
       this.realm.removeListener('change', this.onRealmChanged);
@@ -56,7 +59,7 @@ export abstract class RealmLoadingComponent<
       try {
         this.setState({ progress: { done: false } });
         // Get the realms from the ROS interface
-        this.realm = await this.openRealm(realm);
+        this.realm = await this.openRealm(realm, encryptionKey);
         // Register change listeners
         this.realm.addListener('change', this.onRealmChanged);
         this.onRealmLoaded();
@@ -64,26 +67,36 @@ export abstract class RealmLoadingComponent<
         this.setState({ progress: { done: true } });
       } catch (err) {
         if (!err.wasCancelled) {
-          showError('Failed open the Realm', err);
-          const failure = err.message || 'Failed to open the Realm';
-          this.setState({ progress: { failure, done: true } });
+          this.loadingRealmFailed(err);
         }
       }
     }
   }
 
+  protected loadingRealmFailed(err: Error) {
+    showError('Failed open the Realm', err);
+    const failure = err.message || 'Failed to open the Realm';
+    this.setState({ progress: { failure, done: true } });
+  }
+
   private async openRealm(
     realm: ISyncedRealmToLoad | ILocalRealmToLoad | undefined,
+    encryptionKey?: Uint8Array,
   ): Promise<Realm> {
     if (realm && realm.mode === RealmLoadingMode.Local) {
-      return new Realm({ path: realm.path });
+      return new Realm({ path: realm.path, encryptionKey });
     } else if (realm && realm.mode === RealmLoadingMode.Synced) {
       const props = (realm as any) as ISyncedRealmToLoad;
       const user =
         props.authentication instanceof Realm.Sync.User
           ? props.authentication
           : await this.getRealmLoadingUser(props.authentication);
-      const realmPromise = getRealm(user, realm.path, this.progressChanged);
+      const realmPromise = getRealm(
+        user,
+        realm.path,
+        encryptionKey,
+        this.progressChanged,
+      );
       // Save a wrapping promise so this can be cancelled
       return new Promise<Realm>((resolve, reject) => {
         this.cancellations.push(() => reject({ wasCancelled: true }));

@@ -38,4 +38,16 @@
     margin: $spacer;
     width: 60vw;
   }
+
+  &__Failure {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+  }
+
+  &__FailureIcon {
+    font-size: 4rem;
+    margin-bottom: $spacer;
+  }
 }
