@@ -19,7 +19,7 @@ export class GreetingContainer extends React.Component<
     super();
     this.state = {
       updateStatus: {
-        checking: false,
+        state: 'up-to-date',
       },
       isSyncEnabled: false,
       version: electron.remote.app.getVersion() || 'unknown',
