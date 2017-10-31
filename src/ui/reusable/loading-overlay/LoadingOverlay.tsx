@@ -1,3 +1,4 @@
+import * as classNames from 'classnames';
 import * as React from 'react';
 import { Progress } from 'reactstrap';
 
@@ -20,24 +21,33 @@ export const LoadingOverlay = ({
   progress?: ILoadingProgress;
   fade?: boolean;
 }) => {
-  const classNames = ['LoadingOverlay'];
-  if (!fade) {
-    classNames.push('LoadingOverlay--no-fade');
-  }
   // If a progress has been supplied, it overrides loading
-  if (progress) {
-    loading = !progress.done;
-  }
-  return loading ? (
-    <div className={classNames.join(' ')}>
-      <LoadingDots />
-      {progress && (
-        <Progress
-          className="LoadingOverlay__Progress"
-          value={progress.transferred}
-          max={progress.transferable}
-        />
-      )}
+  const isVisible = progress ? !progress.done || progress.failure : loading;
+  return isVisible ? (
+    <div
+      className={classNames('LoadingOverlay', {
+        'LoadingOverlay--no-fade': !fade,
+      })}
+    >
+      {(progress ? !progress.done : loading) ? <LoadingDots /> : null}
+      {progress &&
+        progress.transferable &&
+        progress.transferred && (
+          <Progress
+            className="LoadingOverlay__Progress"
+            value={progress.transferred}
+            max={progress.transferable}
+          />
+        )}
+      {progress && progress.failure ? (
+        <section className="LoadingOverlay__Failure">
+          <i
+            className="LoadingOverlay__FailureIcon fa fa-exclamation-triangle"
+            aria-hidden="true"
+          />
+          {progress.failure}
+        </section>
+      ) : null}
     </div>
   ) : null;
 };
