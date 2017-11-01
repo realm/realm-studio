@@ -8,9 +8,9 @@ Visit https://realm.io/products/realm-studio/ for more information on Realm Stud
 ## Installing
 
 Click the links below to download the latest version of Realm Studio for
-- [MacOS](https://studio-releases.realm.io/latest/mac-dmg)
-- [Windows](https://studio-releases.realm.io/latest/win-setup)
-- [Linux](https://studio-releases.realm.io/latest/linux-appimage)
+- [MacOS](https://studio-releases.realm.io/latest/download/mac-dmg)
+- [Windows](https://studio-releases.realm.io/latest/download/win-setup)
+- [Linux](https://studio-releases.realm.io/latest/download/linux-appimage)
 
 ## Running
 
