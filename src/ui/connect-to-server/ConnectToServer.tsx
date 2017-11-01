@@ -15,10 +15,12 @@ export const ConnectToServer = ({
   onUsernameChanged,
   onPasswordChanged,
   onTokenChanged,
+  onOtherOptionsChanged,
   url,
   username,
   password,
   token,
+  otherOptions,
   isConnecting,
 }: {
   method: AuthenticationMethod;
@@ -29,10 +31,12 @@ export const ConnectToServer = ({
   onUsernameChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onPasswordChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onTokenChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onOtherOptionsChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
   url: string;
   username: string;
   password: string;
   token: string;
+  otherOptions: string;
   isConnecting: boolean;
 }) => {
   return (
@@ -61,9 +65,11 @@ export const ConnectToServer = ({
         onMethodChanged={onMethodChanged}
         username={username}
         password={password}
+        token={token}
+        otherOptions={otherOptions}
         onUsernameChanged={onUsernameChanged}
         onPasswordChanged={onPasswordChanged}
-        token={token}
+        onOtherOptionsChanged={onOtherOptionsChanged}
         onTokenChanged={onTokenChanged}
       />
       <div className="ConnectToServer__Controls">
