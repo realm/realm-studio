@@ -2,7 +2,12 @@ import { remote as electron } from 'electron';
 import * as path from 'path';
 import * as Realm from 'realm';
 
+import { IServerCredentials } from './ros-authentication';
+
+export * from './ros-authentication';
 export * from './types';
+
+// These interfaces are copied from ROS
 
 export interface IUser {
   userId: string;
@@ -44,12 +49,34 @@ export enum AccessLevel {
   admin,
 }
 
-// These schemas are copied from ROS
-
 const getRealmUrl = (user: Realm.Sync.User, realmPath: string) => {
   const url = new URL(realmPath, user.server);
   url.protocol = 'realm:';
   return url.toString();
+};
+
+export const authenticate = async (
+  credentials: IServerCredentials,
+): Promise<Realm.Sync.User> => {
+  if (credentials.kind === 'password') {
+    return Realm.Sync.User.login(
+      credentials.url,
+      credentials.username,
+      credentials.password,
+    );
+  } else if (credentials.kind === 'token') {
+    return Realm.Sync.User.adminUser(credentials.token, credentials.url);
+  } else if (credentials.kind === 'other') {
+    const options = credentials.options as any;
+    // TODO: Remove this when the registerWithProvider has a simpler interface
+    // @see https://github.com/realm/realm-js/issues/1451
+    if (!options.providerToken && options.data) {
+      options.providerToken = options.data;
+    }
+    return Realm.Sync.User.registerWithProvider(credentials.url, options);
+  } else {
+    throw new Error(`Unexpected kind of credentials`);
+  }
 };
 
 export const timeoutPromise = (

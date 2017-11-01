@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import {
+  authenticate,
   createUser,
   getRealm,
   IAdminTokenCredentials,
@@ -90,7 +91,7 @@ export abstract class RealmLoadingComponent<
       const user =
         props.authentication instanceof Realm.Sync.User
           ? props.authentication
-          : await this.getRealmLoadingUser(props.authentication);
+          : await authenticate(props.authentication);
       const realmPromise = getRealm(
         user,
         realm.path,
