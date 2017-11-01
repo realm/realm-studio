@@ -4,6 +4,7 @@ import * as Realm from 'realm';
 
 import { main } from '../../actions/main';
 import {
+  authenticate,
   IAdminTokenCredentials,
   ISyncedRealmToLoad,
   IUsernamePasswordCredentials,
@@ -35,30 +36,10 @@ export class ServerAdministrationContainer extends React.Component<
   }
 
   public async componentDidMount() {
-    const serverUrl = this.props.credentials.url;
-    if ('token' in this.props.credentials) {
-      const credentials = this.props.credentials as IAdminTokenCredentials;
-      const user = Realm.Sync.User.adminUser(credentials.token, serverUrl);
-      this.setState({ user });
-    } else if (
-      'username' in this.props.credentials &&
-      'password' in this.props.credentials
-    ) {
-      const credentials = this.props
-        .credentials as IUsernamePasswordCredentials;
-      try {
-        const user = await Realm.Sync.User.login(
-          serverUrl,
-          credentials.username,
-          credentials.password,
-        );
-        this.setState({ user });
-      } catch (err) {
-        showError(`Couldn't connect to Realm Object Server`, err, {
-          'Failed to fetch': 'Could not reach the server',
-        });
-      }
-    }
+    const user = await authenticate(this.props.credentials);
+    this.setState({
+      user,
+    });
   }
 
   public render() {

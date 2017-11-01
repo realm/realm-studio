@@ -3,35 +3,60 @@ import { Button } from 'reactstrap';
 
 import { AuthenticationMethod } from './AuthenticationForm';
 
+export type MethodChangedHandler = (method: AuthenticationMethod) => void;
+
+const AuthenticationMethodButton = ({
+  activeMethod,
+  children,
+  method,
+  onMethodChanged,
+}: {
+  activeMethod: AuthenticationMethod;
+  children: React.ReactNode;
+  method: AuthenticationMethod;
+  onMethodChanged: MethodChangedHandler;
+}) => (
+  <Button
+    className="ConnectToServer__AuthenticationMethodSelector__Btn"
+    size="sm"
+    color={method === activeMethod ? 'primary' : 'secondary'}
+    onClick={e => {
+      e.preventDefault();
+      onMethodChanged(method);
+    }}
+  >
+    {children}
+  </Button>
+);
+
 export const AuthenticationMethodSelector = ({
   method,
   onMethodChanged,
 }: {
   method: AuthenticationMethod;
-  onMethodChanged: (method: AuthenticationMethod) => void;
+  onMethodChanged: MethodChangedHandler;
 }) => (
   <div className="ConnectToServer__AuthenticationMethodSelector">
-    <Button
-      className="ConnectToServer__AuthenticationMethodSelector__Btn"
-      size="sm"
-      active={method === AuthenticationMethod.usernamePassword}
-      onClick={e => {
-        e.preventDefault();
-        onMethodChanged(AuthenticationMethod.usernamePassword);
-      }}
+    <AuthenticationMethodButton
+      activeMethod={method}
+      method={AuthenticationMethod.usernamePassword}
+      onMethodChanged={onMethodChanged}
     >
       Username / password
-    </Button>
-    <Button
-      className="ConnectToServer__AuthenticationMethodSelector__Btn"
-      size="sm"
-      active={method === AuthenticationMethod.adminToken}
-      onClick={e => {
-        e.preventDefault();
-        onMethodChanged(AuthenticationMethod.adminToken);
-      }}
+    </AuthenticationMethodButton>
+    <AuthenticationMethodButton
+      activeMethod={method}
+      method={AuthenticationMethod.adminToken}
+      onMethodChanged={onMethodChanged}
     >
       Admin token
-    </Button>
+    </AuthenticationMethodButton>
+    <AuthenticationMethodButton
+      activeMethod={method}
+      method={AuthenticationMethod.other}
+      onMethodChanged={onMethodChanged}
+    >
+      Other
+    </AuthenticationMethodButton>
   </div>
 );

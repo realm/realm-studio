@@ -3,11 +3,13 @@ import { Col, FormGroup, Input, Label, Row } from 'reactstrap';
 
 import { AdminTokenForm } from './AdminTokenForm';
 import { AuthenticationMethodSelector } from './AuthenticationMethodSelector';
+import { OtherForm } from './OtherForm';
 import { UsernamePasswordForm } from './UsernamePasswordForm';
 
 export enum AuthenticationMethod {
   usernamePassword,
   adminToken,
+  other,
 }
 
 export const AuthenticationForm = ({
@@ -15,19 +17,23 @@ export const AuthenticationForm = ({
   username,
   password,
   token,
+  otherOptions,
   onMethodChanged,
   onUsernameChanged,
   onPasswordChanged,
   onTokenChanged,
+  onOtherOptionsChanged,
 }: {
   method: AuthenticationMethod;
   username: string;
   password: string;
   token: string;
+  otherOptions: string;
   onMethodChanged: (method: AuthenticationMethod) => void;
   onUsernameChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onPasswordChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onTokenChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onOtherOptionsChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
   let form;
   if (method === AuthenticationMethod.usernamePassword) {
@@ -46,6 +52,13 @@ export const AuthenticationForm = ({
         token={token}
         onTokenChanged={onTokenChanged}
         isRequired={!username}
+      />
+    );
+  } else if (method === AuthenticationMethod.other) {
+    form = (
+      <OtherForm
+        options={otherOptions}
+        onOptionsChanged={onOtherOptionsChanged}
       />
     );
   }
