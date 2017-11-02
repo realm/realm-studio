@@ -1,4 +1,5 @@
 import * as electron from 'electron';
+import * as keytar from 'keytar';
 import * as React from 'react';
 import * as Realm from 'realm';
 
@@ -12,6 +13,29 @@ import { ConnectToServer } from './ConnectToServer';
 const MISSING_PARAMS_MESSAGE =
   'Your request did not validate because of missing parameters.';
 
+const getKeytarPassword = (credentials: ros.IServerCredentials) => {
+  if (credentials.kind === 'password') {
+    return credentials.password;
+  } else if (credentials.kind === 'token') {
+    return credentials.token;
+  } else if (credentials.kind === 'other') {
+    return JSON.stringify(credentials.options, undefined, 0);
+  } else {
+    throw new Error(`Unexpected kind of credentials`);
+  }
+};
+
+const getKeytarOptions = (credentials: ros.IServerCredentials) => {
+  return {
+    service: credentials.url,
+    account:
+      credentials.kind === 'password'
+        ? credentials.username
+        : `![${credentials.kind}]`,
+    password: getKeytarPassword(credentials),
+  };
+};
+
 export class ConnectToServerContainer extends React.Component<
   {},
   {
@@ -22,6 +46,7 @@ export class ConnectToServerContainer extends React.Component<
     password: string;
     token: string;
     otherOptions: string;
+    saveCredentials: boolean;
   }
 > {
   constructor() {
@@ -34,6 +59,7 @@ export class ConnectToServerContainer extends React.Component<
       password: '',
       token: '',
       otherOptions: '',
+      saveCredentials: false,
     };
   }
 
@@ -56,10 +82,16 @@ export class ConnectToServerContainer extends React.Component<
       if (!user.isAdmin) {
         throw new Error('You must be an administrator');
       }
+      if (this.state.saveCredentials) {
+        const { service, account, password } = getKeytarOptions(credentials);
+        await keytar.setPassword(service, account, password);
+      }
+      /*
       await main.showServerAdministration({
         credentials,
       });
       electron.remote.getCurrentWindow().close();
+      */
     } catch (err) {
       if (err.message === MISSING_PARAMS_MESSAGE) {
         const missingParams = (err.invalid_params || [])
@@ -115,6 +147,12 @@ export class ConnectToServerContainer extends React.Component<
   public onOtherOptionsChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({
       otherOptions: e.target.value,
+    });
+  };
+
+  public onSaveCredentialsChanged = (saveCredentials: boolean) => {
+    this.setState({
+      saveCredentials,
     });
   };
 
