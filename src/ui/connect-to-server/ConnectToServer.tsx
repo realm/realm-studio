@@ -16,11 +16,13 @@ export const ConnectToServer = ({
   onPasswordChanged,
   onTokenChanged,
   onOtherOptionsChanged,
+  onSaveCredentialsChanged,
   url,
   username,
   password,
   token,
   otherOptions,
+  saveCredentials,
   isConnecting,
 }: {
   method: AuthenticationMethod;
@@ -32,11 +34,13 @@ export const ConnectToServer = ({
   onPasswordChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onTokenChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onOtherOptionsChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSaveCredentialsChanged: (saveCredentials: boolean) => void;
   url: string;
   username: string;
   password: string;
   token: string;
   otherOptions: string;
+  saveCredentials: boolean;
   isConnecting: boolean;
 }) => {
   return (
@@ -73,24 +77,38 @@ export const ConnectToServer = ({
         onTokenChanged={onTokenChanged}
       />
       <div className="ConnectToServer__Controls">
-        <Button
-          color="secondary"
-          size="sm"
-          className="ConnectToServer__ControlBtn"
-          onClick={e => {
-            e.preventDefault();
-            onCancel();
-          }}
-        >
-          Cancel
-        </Button>
-        <Button
-          color="primary"
-          size="sm"
-          className="ConnectToServer__ControlBtn"
-        >
-          Connect
-        </Button>
+        <div className="ConnectToServer__SaveCredentials">
+          <Label check className="ConnectToServer__SaveCredentialsLabel">
+            <Input
+              type="checkbox"
+              checked={saveCredentials}
+              onChange={e => {
+                onSaveCredentialsChanged(e.target.checked);
+              }}
+            />{' '}
+            Save credentials for this server
+          </Label>
+        </div>
+        <div className="ConnectToServer__Actions">
+          <Button
+            color="secondary"
+            size="sm"
+            className="ConnectToServer__ControlBtn"
+            onClick={e => {
+              e.preventDefault();
+              onCancel();
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            color="primary"
+            size="sm"
+            className="ConnectToServer__ControlBtn"
+          >
+            Connect
+          </Button>
+        </div>
       </div>
       <LoadingOverlay loading={isConnecting} />
     </Form>

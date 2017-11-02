@@ -3,6 +3,11 @@ import * as React from 'react';
 import * as Realm from 'realm';
 
 import { main } from '../../actions/main';
+import {
+  getCredentials,
+  setCredentials,
+  unsetCredentials,
+} from '../../services/keytar';
 import * as ros from '../../services/ros';
 import { showError } from '../reusable/errors';
 
@@ -12,33 +17,47 @@ import { ConnectToServer } from './ConnectToServer';
 const MISSING_PARAMS_MESSAGE =
   'Your request did not validate because of missing parameters.';
 
+interface IConnectToServerContainerState {
+  isConnecting: boolean;
+  method: AuthenticationMethod;
+  url: string;
+  username: string;
+  password: string;
+  token: string;
+  otherOptions: string;
+  saveCredentials: boolean;
+}
+
 export class ConnectToServerContainer extends React.Component<
   {},
-  {
-    isConnecting: boolean;
-    method: AuthenticationMethod;
-    url: string;
-    username: string;
-    password: string;
-    token: string;
-    otherOptions: string;
-  }
+  IConnectToServerContainerState
 > {
   constructor() {
     super();
     this.state = {
       isConnecting: false,
       method: AuthenticationMethod.usernamePassword,
-      url: '',
+      url: this.getLatestUrl(),
       username: '',
       password: '',
       token: '',
       otherOptions: '',
+      saveCredentials: false,
     };
+    this.restoreCredentials(this.state.url);
   }
 
   public render() {
     return <ConnectToServer {...this.state} {...this} />;
+  }
+
+  public componentDidUpdate(
+    prevProps: {},
+    prevState: IConnectToServerContainerState,
+  ) {
+    if (this.state.url !== prevState.url) {
+      this.restoreCredentials(this.state.url);
+    }
   }
 
   public onCancel = () => {
@@ -56,6 +75,12 @@ export class ConnectToServerContainer extends React.Component<
       if (!user.isAdmin) {
         throw new Error('You must be an administrator');
       }
+      if (this.state.saveCredentials) {
+        await setCredentials(credentials);
+      } else {
+        await unsetCredentials(credentials.url);
+      }
+      this.setLatestUrl(credentials.url);
       await main.showServerAdministration({
         credentials,
       });
@@ -118,23 +143,42 @@ export class ConnectToServerContainer extends React.Component<
     });
   };
 
+  public onSaveCredentialsChanged = (saveCredentials: boolean) => {
+    this.setState({
+      saveCredentials,
+    });
+  };
+
   private prepareUrl(urlString: string) {
     if (urlString === '') {
-      return 'http://localhost:9080';
+      return 'http://localhost:9080/';
     } else {
-      const url = new URL(urlString);
-      // Replace the realm: with http:
-      if (url.protocol === 'realm:') {
-        url.protocol = 'http:';
+      try {
+        if (urlString.indexOf('://') === -1) {
+          // If there is no "://", we assume the user forgot the protocol
+          urlString = `http://${urlString}`;
+        }
+        const url = new URL(urlString);
+        // Replace the realm: with http:
+        if (!url.protocol || url.protocol === 'realm:') {
+          url.protocol = 'http:';
+        }
+        // Set the default ports
+        if (url.protocol === 'http:' && !url.port) {
+          url.port = '9080';
+        }
+        if (url.protocol === 'https:' && !url.port) {
+          url.port = '9443';
+        }
+        return url.toString();
+      } catch (err) {
+        if (err.message.indexOf(`Failed to construct 'URL'`) >= 0) {
+          // Return null, if the URL does not parse
+          return null;
+        } else {
+          throw err;
+        }
       }
-      // Set the default ports
-      if (url.protocol === 'http:' && !url.port) {
-        url.port = '9080';
-      }
-      if (url.protocol === 'https:' && !url.port) {
-        url.port = '9443';
-      }
-      return url.toString();
     }
   }
 
@@ -149,6 +193,9 @@ export class ConnectToServerContainer extends React.Component<
   private prepareCredentials(): ros.IServerCredentials {
     const { url, method } = this.state;
     const preparedUrl = this.prepareUrl(url);
+    if (!preparedUrl) {
+      throw new Error(`Couldn't prepare credentials, the URL is malformed.`);
+    }
     if (method === AuthenticationMethod.usernamePassword) {
       const username = this.prepareUsername(this.state.username);
       const password = this.state.password;
@@ -183,5 +230,55 @@ export class ConnectToServerContainer extends React.Component<
     } else {
       throw new Error(`The method is not supported: ${method}`);
     }
+  }
+
+  private getMethodFromCredentials(credentials: ros.IServerCredentials) {
+    if (credentials.kind === 'password') {
+      return AuthenticationMethod.usernamePassword;
+    } else if (credentials.kind === 'token') {
+      return AuthenticationMethod.adminToken;
+    } else if (credentials.kind === 'other') {
+      return AuthenticationMethod.other;
+    } else {
+      throw new Error('Unexpected authentication method');
+    }
+  }
+
+  private async restoreCredentials(url: string) {
+    const preparedUrl = this.prepareUrl(url);
+    const credentials = await getCredentials(preparedUrl);
+    if (credentials) {
+      const method = this.getMethodFromCredentials(credentials);
+      // The default state is to reset everything
+      const state: any = {
+        method,
+        username: '',
+        password: '',
+        token: '',
+        otherOptions: '',
+        saveCredentials: true,
+      };
+      if (credentials.kind === 'password') {
+        state.username = credentials.username;
+        state.password = credentials.password;
+      } else if (credentials.kind === 'token') {
+        state.token = credentials.token;
+      } else if (credentials.kind === 'other') {
+        state.otherOptions = JSON.stringify(credentials.options, undefined, 2);
+      }
+      this.setState(state);
+    } else {
+      this.setState({
+        saveCredentials: false,
+      });
+    }
+  }
+
+  private setLatestUrl(url: string) {
+    localStorage.setItem('latest-ros-url', url);
+  }
+
+  private getLatestUrl() {
+    return localStorage.getItem('latest-ros-url') || '';
   }
 }

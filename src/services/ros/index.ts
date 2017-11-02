@@ -2,7 +2,10 @@ import { remote as electron } from 'electron';
 import * as path from 'path';
 import * as Realm from 'realm';
 
-import { IServerCredentials } from './ros-authentication';
+import {
+  IServerCredentials,
+  ServerCredentialsKind,
+} from './ros-authentication';
 
 export * from './ros-authentication';
 export * from './types';
@@ -67,9 +70,11 @@ export const authenticate = async (
   } else if (credentials.kind === 'token') {
     return Realm.Sync.User.adminUser(credentials.token, credentials.url);
   } else if (credentials.kind === 'other') {
-    const options = credentials.options as any;
     // TODO: Remove this when the registerWithProvider has a simpler interface
     // @see https://github.com/realm/realm-js/issues/1451
+    const options: any = {
+      ...credentials.options,
+    };
     if (!options.providerToken && options.data) {
       options.providerToken = options.data;
     }
