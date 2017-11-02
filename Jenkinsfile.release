@@ -89,11 +89,11 @@ def packageOthers() {
       checkoutAtVersion()
 
       def workarea = pwd()
-      def image = docker.image('electronuserland/builder:wine-chrome')
-      image.inside("-e HOME=${workarea}") {
-        // Install libsecret-1 which is needed for the keytar package
-        sh 'apt-get -qq update && apt-get -qq install -y libsecret-1-dev'
 
+      buildDockerEnv(
+        "ci/realm-studio:releasing",
+        extra_args: '-f Dockerfile.releasing'
+      ).inside("-e HOME=${workarea}") {
         sh 'npm install'
         sh 'npm run build'
 

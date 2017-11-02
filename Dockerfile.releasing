@@ -1,0 +1,6 @@
+FROM electronuserland/builder:wine-chrome
+
+# Install libsecret-1 and remove the apt-get cache afterwards
+RUN apt-get -qq update && apt-get -qq install -y \
+  libsecret-1-dev \
+ && rm -rf /var/lib/apt/lists/*
