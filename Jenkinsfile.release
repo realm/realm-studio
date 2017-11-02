@@ -92,7 +92,7 @@ def packageOthers() {
       def image = docker.image('electronuserland/builder:wine-chrome')
       image.inside("-e HOME=${workarea}") {
         // Install libsecret-1 which is needed for the keytar package
-        sh 'apt-get install libsecret-1-dev'
+        sh 'apt-get -qq update && apt-get -qq install -y libsecret-1-dev'
 
         sh 'npm install'
         sh 'npm run build'
