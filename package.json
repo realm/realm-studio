@@ -102,6 +102,7 @@
     "font-awesome": "^4.7.0",
     "fs-extra": "^4.0.2",
     "keytar": "^4.0.5",
+    "keytar-prebuild": "^4.0.4",
     "lodash": "^4.17.4",
     "mixpanel-browser": "^2.13.0",
     "moment": "^2.19.1",
