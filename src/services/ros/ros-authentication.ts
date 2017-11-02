@@ -1,5 +1,7 @@
+export type ServerCredentialsKind = 'password' | 'token' | 'other';
+
 interface ICredentials {
-  kind: string;
+  kind: ServerCredentialsKind;
   url: string;
 }
 
