@@ -1,6 +1,9 @@
 FROM electronuserland/builder:wine-chrome
 
-RUN apt-get update && apt-get install libsecret-1-dev
+# Install libsecret-1 and remove the apt-get cache afterwards
+RUN apt-get update && apt-get install -y \
+  libsecret-1-dev \
+ && rm -rf /var/lib/apt/lists/*
 
 ADD package.json /tmp/package.json
 ADD package-lock.json /tmp/package-lock.json
