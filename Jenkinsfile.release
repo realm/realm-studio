@@ -119,9 +119,8 @@ def packageOnMacos() {
 
       def nodeVersion = readFile('.nvmrc').trim()
       nvm(version: nodeVersion) {
-        // Using an exact version of node when installing and building
-        // @see https://github.com/realm/ci/issues/227
-        sh "nvm use ${nodeVersion} && npm install --quiet && npm run build"
+        sh 'npm install --quiet'
+        sh 'npm run build'
 
         // Run the tests
         sh 'node_modules/.bin/xvfb-maybe npm test'
