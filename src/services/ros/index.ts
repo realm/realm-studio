@@ -2,6 +2,7 @@ import { remote as electron } from 'electron';
 import * as path from 'path';
 import * as Realm from 'realm';
 
+import { showError } from '../../ui/reusable/errors';
 import {
   IServerCredentials,
   ServerCredentialsKind,
@@ -54,7 +55,7 @@ export enum AccessLevel {
 
 const getRealmUrl = (user: Realm.Sync.User, realmPath: string) => {
   const url = new URL(realmPath, user.server);
-  url.protocol = 'realm:';
+  url.protocol = url.protocol === 'https:' ? 'realms:' : 'realm:';
   return url.toString();
 };
 
@@ -107,6 +108,9 @@ export const getRealm = async (
     sync: {
       url,
       user,
+      error: (err: any) => {
+        showError('Error while synchronizing Realm', err);
+      },
     },
   });
 
@@ -140,8 +144,9 @@ export const updateUserPassword = async (
   password: string,
 ) => {
   const server = adminUser.server;
+  const url = new URL('/auth/password', server);
   // TODO: This could be moved to Realm-JS instead
-  const request = new Request(`${server}/auth/password`, {
+  const request = new Request(url.toString(), {
     method: 'PUT',
     headers: new Headers({
       Authorization: adminUser.token,
