@@ -55,7 +55,7 @@ export enum AccessLevel {
 
 const getRealmUrl = (user: Realm.Sync.User, realmPath: string) => {
   const url = new URL(realmPath, user.server);
-  url.protocol = 'realm:';
+  url.protocol = url.protocol === 'https:' ? 'realms:' : 'realm:';
   return url.toString();
 };
 
