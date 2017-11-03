@@ -12,3 +12,8 @@ declare module '*.svg' {
 declare module 'mixpanel-browser' {
   export = mixpanel;
 }
+
+declare module 'keytar-prebuild' {
+  import * as keytar from 'keytar';
+  export = keytar;
+}

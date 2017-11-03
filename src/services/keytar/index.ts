@@ -1,5 +1,5 @@
 import * as electron from 'electron';
-import * as keytar from 'keytar';
+import * as keytar from 'keytar-prebuild';
 
 import * as ros from '../../services/ros';
 
