@@ -144,8 +144,9 @@ export const updateUserPassword = async (
   password: string,
 ) => {
   const server = adminUser.server;
+  const url = new URL('/auth/password', server);
   // TODO: This could be moved to Realm-JS instead
-  const request = new Request(`${server}/auth/password`, {
+  const request = new Request(url.toString(), {
     method: 'PUT',
     headers: new Headers({
       Authorization: adminUser.token,
