@@ -2,6 +2,7 @@ import { remote as electron } from 'electron';
 import * as path from 'path';
 import * as Realm from 'realm';
 
+import { showError } from '../../ui/reusable/errors';
 import {
   IServerCredentials,
   ServerCredentialsKind,
@@ -107,6 +108,9 @@ export const getRealm = async (
     sync: {
       url,
       user,
+      error: (err: any) => {
+        showError('Error while synchronizing Realm', err);
+      },
     },
   });
 
