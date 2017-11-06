@@ -212,6 +212,7 @@ export class UsersTableContainer extends RealmLoadingComponent<
       authentication: this.props.user,
       mode: RealmLoadingMode.Synced,
       path: '__admin',
+      validateCertificates: true,
     });
   }
 

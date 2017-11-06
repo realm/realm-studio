@@ -301,8 +301,11 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
 
   public onOpenWithEncryption = (key: string) => {
     this.setState({ encryptionKey: key });
-    const keyBuffer = Buffer.from(key, 'hex');
-    this.loadRealm(this.props.realm, keyBuffer);
+    const encryptionKey = Buffer.from(key, 'hex');
+    this.loadRealm({
+      ...this.props.realm,
+      encryptionKey,
+    });
   };
 
   protected generateHighlight(object?: Realm.Object): IHighlight | undefined {

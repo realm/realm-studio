@@ -49,8 +49,6 @@ export class RealmsTableContainer extends RealmLoadingComponent<
   }
 
   public componentDidMount() {
-    // Tell the RealmLoadingComponent to not validate certificates based on the property
-    this.validateCertificates = this.props.validateCertificates;
     if (this.props.user) {
       this.gotUser(this.props.user);
     }
@@ -106,19 +104,21 @@ export class RealmsTableContainer extends RealmLoadingComponent<
       authentication: this.props.user,
       mode: RealmLoadingMode.Synced,
       path: '__admin',
+      validateCertificates: this.props.validateCertificates,
     });
   }
 
-  protected async loadRealm(
-    realm: ISyncedRealmToLoad | ILocalRealmToLoad,
-    encryptionKey?: Uint8Array,
-  ) {
-    if (this.certificateWasRejected && !this.validateCertificates) {
+  protected async loadRealm(realm: ISyncedRealmToLoad | ILocalRealmToLoad) {
+    if (
+      this.certificateWasRejected &&
+      realm.mode === 'synced' &&
+      !realm.validateCertificates
+    ) {
       // TODO: Remove this hack once this Realm JS issue has resolved:
       // https://github.com/realm/realm-js/issues/1469
-      this.props.onValidateCertificatesChange(this.validateCertificates);
+      this.props.onValidateCertificatesChange(realm.validateCertificates);
     } else {
-      return super.loadRealm(realm, encryptionKey);
+      return super.loadRealm(realm);
     }
   }
 

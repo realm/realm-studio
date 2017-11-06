@@ -38,7 +38,6 @@ export abstract class RealmLoadingComponent<
 
   protected realm: Realm;
   protected cancellations: Array<() => void> = [];
-  protected validateCertificates: boolean = true;
   protected certificateWasRejected: boolean;
 
   public componentWillUnmount() {
@@ -54,14 +53,14 @@ export abstract class RealmLoadingComponent<
     this.cancellations.forEach(cancel => cancel());
   }
 
-  protected async loadRealm(
-    realm: ISyncedRealmToLoad | ILocalRealmToLoad,
-    encryptionKey?: Uint8Array,
-  ) {
+  protected async loadRealm(realm: ISyncedRealmToLoad | ILocalRealmToLoad) {
     // Remove any existing a change listeners
     if (this.realm) {
       this.realm.removeListener('change', this.onRealmChanged);
     }
+
+    const validateCertificates =
+      realm.mode === 'synced' && realm.validateCertificates;
 
     if (realm) {
       try {
@@ -69,14 +68,12 @@ export abstract class RealmLoadingComponent<
         // Reset the state that captures rejected certificates
         this.certificateWasRejected = false;
         // Get the realms from the ROS interface
-        this.realm = await this.openRealm(realm, encryptionKey, {
+        this.realm = await this.openRealm(realm, {
           errorCallback: this.onSyncError,
-          validateCertificates: this.validateCertificates,
+          validateCertificates,
           // Uncomment the line below to test failing certificate validation
-          /*
           certificatePath:
             '/Users/kraenhansen/Repositories/realm-studio/data/keys/server.crt',
-          */
         });
         // Register change listeners
         this.realm.addListener('change', this.onRealmChanged);
@@ -87,7 +84,7 @@ export abstract class RealmLoadingComponent<
         // Ignore an error that originates from the load being cancelled
         if (!err.wasCancelled) {
           // Could this error originate from an untrusted SSL certificate?
-          if (this.validateCertificates && this.certificateWasRejected) {
+          if (validateCertificates && this.certificateWasRejected) {
             // Ask the user if they want to trust the certificate
             const result = electron.remote.dialog.showMessageBox(
               electron.remote.getCurrentWindow(),
@@ -98,8 +95,10 @@ export abstract class RealmLoadingComponent<
               },
             );
             if (result === 0) {
-              this.validateCertificates = false;
-              this.loadRealm(realm, encryptionKey);
+              this.loadRealm({
+                ...realm,
+                validateCertificates: false,
+              });
             } else {
               this.loadingRealmFailed(err);
             }
@@ -134,11 +133,13 @@ export abstract class RealmLoadingComponent<
 
   private async openRealm(
     realm: ISyncedRealmToLoad | ILocalRealmToLoad | undefined,
-    encryptionKey?: Uint8Array,
     ssl: ISslConfiguration = { validateCertificates: true },
   ): Promise<Realm> {
     if (realm && realm.mode === RealmLoadingMode.Local) {
-      return new Realm({ path: realm.path, encryptionKey });
+      return new Realm({
+        path: realm.path,
+        encryptionKey: realm.encryptionKey,
+      });
     } else if (realm && realm.mode === RealmLoadingMode.Synced) {
       const props = (realm as any) as ISyncedRealmToLoad;
       const user =
@@ -148,7 +149,7 @@ export abstract class RealmLoadingComponent<
       const realmPromise = getRealm(
         user,
         realm.path,
-        encryptionKey,
+        realm.encryptionKey,
         ssl,
         this.progressChanged,
       );

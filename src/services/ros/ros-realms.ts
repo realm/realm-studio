@@ -9,11 +9,13 @@ export enum RealmLoadingMode {
 export interface IRealmToLoad {
   mode: RealmLoadingMode;
   path: string;
+  encryptionKey?: Uint8Array;
 }
 
 export interface ISyncedRealmToLoad extends IRealmToLoad {
   mode: RealmLoadingMode.Synced;
   authentication: IServerCredentials | Realm.Sync.User;
+  validateCertificates: boolean;
 }
 
 export interface ILocalRealmToLoad extends IRealmToLoad {

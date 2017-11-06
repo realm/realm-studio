@@ -70,8 +70,11 @@ export class ServerAdministrationContainer extends React.Component<
         authentication: this.props.credentials,
         mode: RealmLoadingMode.Synced,
         path,
+        validateCertificates: this.props.validateCertificates,
       };
-      await main.showRealmBrowser({ realm });
+      await main.showRealmBrowser({
+        realm,
+      });
       this.setState({ isRealmOpening: false });
     }
   };
