@@ -36,4 +36,24 @@ settings.getSettings().then(({ identity }) => {
   });
 });
 
+// Track every click on external links
+
+const linkClickedHandler = (e: MouseEvent) => {
+  if (
+    e.target instanceof HTMLAnchorElement &&
+    e.target.href.indexOf('http') === 0
+  ) {
+    mixpanel.track('Link clicked', {
+      href: e.target.href,
+    });
+  }
+};
+
+document.addEventListener('click', linkClickedHandler);
+if (module.hot) {
+  module.hot.dispose(() => {
+    document.removeEventListener('click', linkClickedHandler);
+  });
+}
+
 export = mixpanel;
