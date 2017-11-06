@@ -36,9 +36,4 @@ settings.getSettings().then(({ identity }) => {
   });
 });
 
-mixpanel.register({
-  $browser: 'Realm Studio',
-  $browser_version: electron.remote.app.getVersion() || 'unknown',
-});
-
 export = mixpanel;
