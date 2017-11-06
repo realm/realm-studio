@@ -8,6 +8,10 @@ import * as mixpanel from './mixpanel';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
+// Don't report Realm JS analytics data
+// @see https://github.com/realm/realm-js/blob/master/lib/submit-analytics.js#L28
+process.env.REALM_DISABLE_ANALYTICS = 'true';
+
 // Create and change working directory to aviod conflicts of opening two realms twice
 // FIXME: see https://github.com/realm/realm-js/issues/818
 // This needs to happen before realm is loaded
