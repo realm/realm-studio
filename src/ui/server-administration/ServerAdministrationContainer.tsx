@@ -16,15 +16,23 @@ import {
 } from '../../windows/WindowType';
 import { showError } from '../reusable/errors';
 
+import { ValidateCertificatesChangeHandler } from './realms/RealmsTableContainer';
 import { ServerAdministration, Tab } from './ServerAdministration';
 
+export interface IServerAdministrationContainerProps
+  extends IServerAdministrationOptions {
+  onValidateCertificatesChange: ValidateCertificatesChangeHandler;
+}
+
+export interface IServerAdministrationContainerState {
+  activeTab: Tab;
+  isRealmOpening: boolean;
+  user: Realm.Sync.User | null;
+}
+
 export class ServerAdministrationContainer extends React.Component<
-  IServerAdministrationOptions,
-  {
-    activeTab: Tab;
-    isRealmOpening: boolean;
-    user: Realm.Sync.User | null;
-  }
+  IServerAdministrationContainerProps,
+  IServerAdministrationContainerState
 > {
   constructor() {
     super();
@@ -43,7 +51,14 @@ export class ServerAdministrationContainer extends React.Component<
   }
 
   public render() {
-    return <ServerAdministration {...this.state} {...this} />;
+    return (
+      <ServerAdministration
+        {...this.state}
+        {...this}
+        validateCertificates={this.props.validateCertificates}
+        onValidateCertificatesChange={this.props.onValidateCertificatesChange}
+      />
+    );
   }
 
   // TODO: Once the user serializes better, this method should be moved to the ./realms/RealmsTableContainer.tsx

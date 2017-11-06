@@ -16,6 +16,7 @@ export enum WindowType {
 
 export interface IServerAdministrationOptions {
   credentials: IServerCredentials;
+  validateCertificates: boolean;
 }
 
 export interface IRealmBrowserOptions {
