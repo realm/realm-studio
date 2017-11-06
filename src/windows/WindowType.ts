@@ -1,7 +1,11 @@
 // These enums and interfaces are not in index.tsx to enable the main process to import this without importing
 // React components.
 
-import { IRealmToLoad, IServerCredentials } from '../services/ros';
+import {
+  ILocalRealmToLoad,
+  IServerCredentials,
+  ISyncedRealmToLoad,
+} from '../services/ros';
 
 export enum WindowType {
   ConnectToServer = 'connect-to-server',
@@ -15,7 +19,7 @@ export interface IServerAdministrationOptions {
 }
 
 export interface IRealmBrowserOptions {
-  realm: IRealmToLoad;
+  realm: ISyncedRealmToLoad | ILocalRealmToLoad;
 }
 
 export function getWindowOptions(

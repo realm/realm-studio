@@ -12,8 +12,10 @@ export interface IRealmToLoad {
 }
 
 export interface ISyncedRealmToLoad extends IRealmToLoad {
+  mode: RealmLoadingMode.Synced;
   authentication: IServerCredentials | Realm.Sync.User;
 }
 
-// tslint:disable-next-line:no-empty-interface
-export interface ILocalRealmToLoad extends IRealmToLoad {}
+export interface ILocalRealmToLoad extends IRealmToLoad {
+  mode: RealmLoadingMode.Local;
+}
