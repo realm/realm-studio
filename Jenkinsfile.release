@@ -119,7 +119,10 @@ def packageOnMacos() {
 
       def nodeVersion = readFile('.nvmrc').trim()
       nvm(version: nodeVersion) {
-        assert sh("node --version", returnStdout: true).trim() == nodeVersion
+        assert sh(
+          script: 'node --version',
+          returnStdout: true
+        ).trim() == nodeVersion
         
         sh 'npm install --quiet'
         sh 'npm run build'
