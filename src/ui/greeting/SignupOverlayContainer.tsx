@@ -1,3 +1,4 @@
+import * as electron from 'electron';
 import * as React from 'react';
 import * as mixpanel from '../../mixpanel';
 
@@ -38,16 +39,20 @@ export class SignupOverlayContainer extends React.Component<
   };
 
   public onSignup = () => {
-    mixpanel.register({
-      has_signed_up: true,
-    });
-    mixpanel.people.set({
-      $email: this.state.email,
-      newsletter: this.state.newsletter,
-    });
-    this.setState({
-      isVisible: false,
-    });
+    mixpanel.people.set(
+      {
+        $browser: 'Realm Studio',
+        $browser_version: electron.remote.app.getVersion() || 'unknown',
+        $email: this.state.email,
+        newsletter: this.state.newsletter,
+        signupDate: new Date(),
+      },
+      () => {
+        this.setState({
+          isVisible: false,
+        });
+      },
+    );
   };
 
   public onSkip = () => {
