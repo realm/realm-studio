@@ -72,8 +72,9 @@ export abstract class RealmLoadingComponent<
           errorCallback: this.onSyncError,
           validateCertificates,
           // Uncomment the line below to test failing certificate validation
-          certificatePath:
-            '/Users/kraenhansen/Repositories/realm-studio/data/keys/server.crt',
+          /*
+          certificatePath: '... some path of a valid but failing certificate',
+          */
         });
         // Register change listeners
         this.realm.addListener('change', this.onRealmChanged);
