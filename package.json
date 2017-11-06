@@ -69,6 +69,7 @@
     "build": "webpack --env.NODE_ENV=production",
     "check:package-lock": "node ./scripts/check-package-lock.js",
     "dev:ros": "ros start",
+    "dev:ros-https": "ros start --https --https-key ./data/keys/server.key --https-cert ./data/keys/server.crt",
     "dev": "rm -rf ./build && concurrently --names \"WEBPACK:M,WEBPACK:R,ELECTRON\" \"npm run webpack:main\" \"npm run webpack:renderer\" \"npm run wait-for-bundle && electron .\"",
     "prepackage": "rm -rf ./build && npm run build",
     "package": "electron-builder --publish=never",

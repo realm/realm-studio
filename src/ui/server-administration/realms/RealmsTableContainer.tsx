@@ -4,7 +4,9 @@ import * as Realm from 'realm';
 
 import {
   deleteRealm,
+  ILocalRealmToLoad,
   IRealmFile,
+  ISyncedRealmToLoad,
   RealmLoadingMode,
 } from '../../../services/ros';
 import { showError } from '../../reusable/errors';
@@ -15,9 +17,15 @@ import {
 
 import { RealmsTable } from './RealmsTable';
 
+export type ValidateCertificatesChangeHandler = (
+  validateCertificates: boolean,
+) => void;
+
 export interface IRealmTableContainerProps {
-  user: Realm.Sync.User;
   onRealmOpened: (path: string) => void;
+  user: Realm.Sync.User;
+  validateCertificates: boolean;
+  onValidateCertificatesChange: ValidateCertificatesChangeHandler;
 }
 
 export interface IRealmTableContainerState extends IRealmLoadingComponentState {
@@ -96,7 +104,22 @@ export class RealmsTableContainer extends RealmLoadingComponent<
       authentication: this.props.user,
       mode: RealmLoadingMode.Synced,
       path: '__admin',
+      validateCertificates: this.props.validateCertificates,
     });
+  }
+
+  protected async loadRealm(realm: ISyncedRealmToLoad | ILocalRealmToLoad) {
+    if (
+      this.certificateWasRejected &&
+      realm.mode === 'synced' &&
+      !realm.validateCertificates
+    ) {
+      // TODO: Remove this hack once this Realm JS issue has resolved:
+      // https://github.com/realm/realm-js/issues/1469
+      this.props.onValidateCertificatesChange(realm.validateCertificates);
+    } else {
+      return super.loadRealm(realm);
+    }
   }
 
   protected onRealmChanged = () => {

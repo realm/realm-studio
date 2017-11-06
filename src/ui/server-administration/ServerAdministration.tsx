@@ -6,7 +6,10 @@ import realmLogo from '../../../static/svgs/realm-logo.svg';
 
 import { LoadingOverlay } from '../reusable/loading-overlay';
 import { LogContainer } from './logs/LogContainer';
-import { RealmsTableContainer } from './realms/RealmsTableContainer';
+import {
+  RealmsTableContainer,
+  ValidateCertificatesChangeHandler,
+} from './realms/RealmsTableContainer';
 import { ToolsContainer } from './tools/ToolsContainer';
 import { UsersTableContainer } from './users/UsersTableContainer';
 
@@ -25,17 +28,26 @@ export const ServerAdministration = ({
   onRealmOpened,
   onTabChanged,
   user,
+  validateCertificates,
+  onValidateCertificatesChange,
 }: {
   activeTab: Tab;
   isRealmOpening: boolean;
   onRealmOpened: (path: string) => void;
   onTabChanged: (tab: Tab) => void;
   user: Realm.Sync.User | null;
+  validateCertificates: boolean;
+  onValidateCertificatesChange: ValidateCertificatesChangeHandler;
 }) => {
   let content = null;
   if (user && activeTab === Tab.Realms) {
     content = (
-      <RealmsTableContainer user={user} onRealmOpened={onRealmOpened} />
+      <RealmsTableContainer
+        user={user}
+        onRealmOpened={onRealmOpened}
+        validateCertificates={validateCertificates}
+        onValidateCertificatesChange={onValidateCertificatesChange}
+      />
     );
   } else if (user && activeTab === Tab.Users) {
     content = <UsersTableContainer user={user} />;

@@ -96,10 +96,21 @@ export const timeoutPromise = (
   });
 };
 
+export interface ISslConfiguration {
+  validateCertificates: boolean;
+  errorCallback?: Realm.Sync.ErrorCallback;
+  certificatePath?: string;
+}
+
+export const defaultSyncErrorCallback = (sender: any, err: any) => {
+  showError('Error while synchronizing Realm', err);
+};
+
 export const getRealm = async (
   user: Realm.Sync.User,
   realmPath: string,
   encryptionKey?: Uint8Array,
+  ssl: ISslConfiguration = { validateCertificates: true },
   progressCallback?: Realm.Sync.ProgressNotificationCallback,
 ): Promise<Realm> => {
   const url = getRealmUrl(user, realmPath);
@@ -108,9 +119,9 @@ export const getRealm = async (
     sync: {
       url,
       user,
-      error: (err: any) => {
-        showError('Error while synchronizing Realm', err);
-      },
+      error: ssl.errorCallback || defaultSyncErrorCallback,
+      validate_ssl: ssl.validateCertificates,
+      ssl_trust_certificate_path: ssl.certificatePath,
     },
   });
 

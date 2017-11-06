@@ -7,15 +7,15 @@ import { IServerAdministrationOptions } from './WindowType';
 // TODO: Consider if we can have the window not show before a connection has been established.
 
 export abstract class Window<P, S> extends React.Component<P, S> {
-  public getTrackedProperties(): { [n: string]: any } {
-    return {};
-  }
-
   public componentDidMount() {
     const trackedProperties = this.getTrackedProperties();
     mixpanel.track('Window opened', {
       ...trackedProperties,
       type: this.constructor.name,
     });
+  }
+
+  protected getTrackedProperties(): { [n: string]: any } {
+    return {};
   }
 }

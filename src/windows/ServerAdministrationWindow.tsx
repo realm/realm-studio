@@ -13,12 +13,25 @@ export class ServerAdministrationWindow extends Window<
   {}
 > {
   public render() {
-    return <ServerAdministrationContainer {...this.props.options} />;
+    return (
+      <ServerAdministrationContainer
+        {...this.props.options}
+        onValidateCertificatesChange={this.onValidateCertificatesChange}
+      />
+    );
   }
 
-  public getTrackedProperties() {
+  protected getTrackedProperties() {
     return {
       url: this.props.options.credentials.url,
     };
   }
+
+  protected onValidateCertificatesChange = (validateCertificates: boolean) => {
+    const url = new URL(location.href);
+    const options = { ...this.props.options };
+    options.validateCertificates = validateCertificates;
+    url.searchParams.set('options', JSON.stringify(options));
+    location.replace(url.toString());
+  };
 }
