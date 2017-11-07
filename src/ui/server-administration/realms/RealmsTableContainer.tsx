@@ -2,13 +2,7 @@ import * as electron from 'electron';
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import {
-  deleteRealm,
-  ILocalRealmToLoad,
-  IRealmFile,
-  ISyncedRealmToLoad,
-  RealmLoadingMode,
-} from '../../../services/ros';
+import * as ros from '../../../services/ros';
 import { showError } from '../../reusable/errors';
 import {
   IRealmLoadingComponentState,
@@ -29,7 +23,7 @@ export interface IRealmTableContainerProps {
 }
 
 export interface IRealmTableContainerState extends IRealmLoadingComponentState {
-  realms: Realm.Results<IRealmFile> | null;
+  realms: Realm.Results<ros.IRealmFile> | null;
   selectedRealmPath: string | null;
 }
 
@@ -74,16 +68,16 @@ export class RealmsTableContainer extends RealmLoadingComponent<
     );
   }
 
-  public getRealm = (index: number): IRealmFile | null => {
+  public getRealm = (index: number): ros.IRealmFile | null => {
     return this.state.realms ? this.state.realms[index] : null;
   };
 
-  public getRealmFromId = (path: string): IRealmFile | null => {
-    return this.realm.objectForPrimaryKey<IRealmFile>('RealmFile', path);
+  public getRealmFromId = (path: string): ros.IRealmFile | null => {
+    return this.realm.objectForPrimaryKey<ros.IRealmFile>('RealmFile', path);
   };
 
-  public onRealmDeleted = (path: string) => {
-    deleteRealm(path);
+  public onRealmDeleted = async (path: string) => {
+    await ros.realms.remove(path);
     if (path === this.state.selectedRealmPath) {
       this.onRealmSelected(null);
     }
@@ -102,13 +96,15 @@ export class RealmsTableContainer extends RealmLoadingComponent<
   protected gotUser(user: Realm.Sync.User) {
     this.loadRealm({
       authentication: this.props.user,
-      mode: RealmLoadingMode.Synced,
+      mode: ros.realms.RealmLoadingMode.Synced,
       path: '__admin',
       validateCertificates: this.props.validateCertificates,
     });
   }
 
-  protected async loadRealm(realm: ISyncedRealmToLoad | ILocalRealmToLoad) {
+  protected async loadRealm(
+    realm: ros.realms.ISyncedRealmToLoad | ros.realms.ILocalRealmToLoad,
+  ) {
     if (
       this.certificateWasRejected &&
       realm.mode === 'synced' &&
@@ -129,7 +125,7 @@ export class RealmsTableContainer extends RealmLoadingComponent<
   protected onRealmLoaded = () => {
     // Get the realms and save them in the state
     this.setState({
-      realms: this.realm.objects<IRealmFile>('RealmFile'),
+      realms: this.realm.objects<ros.IRealmFile>('RealmFile'),
     });
   };
 }

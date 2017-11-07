@@ -5,7 +5,6 @@ import * as React from 'react';
 // tslint:disable-next-line:no-submodule-imports because this is how their guide sais to load it
 import * as ReactTestUtils from 'react-dom/test-utils';
 import * as Realm from 'realm';
-import { RealmLoadingMode } from '../../../services/ros';
 // import { TestRealmObjectServer } from '../../../testing/TestRealmObjectServer';
 
 import {
