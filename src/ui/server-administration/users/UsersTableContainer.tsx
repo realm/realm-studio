@@ -224,20 +224,22 @@ export class UsersTableContainer extends RealmLoadingComponent<
     });
   };
 
-  private confirmUserDeletion(userId: string): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      electron.remote.dialog.showMessageBox(
-        electron.remote.getCurrentWindow(),
-        {
-          type: 'warning',
-          message: `Are you sure you want to delete this user?`,
-          title: `Deleting ${userId}`,
-          buttons: ['Cancel', 'Delete'],
-        },
-        response => {
-          resolve(response === 1);
-        },
-      );
-    });
+  private confirmUserDeletion(userId: string): boolean {
+    const isCurrentUser = userId === this.props.user.identity;
+    const extraMessage = isCurrentUser
+      ? '\n\nThis will delete the user on which you are currently logged in!'
+      : '';
+
+    const result = electron.remote.dialog.showMessageBox(
+      electron.remote.getCurrentWindow(),
+      {
+        type: 'warning',
+        message: 'Are you sure you want to delete the user?' + extraMessage,
+        title: `Deleting ${userId}`,
+        buttons: ['Cancel', isCurrentUser ? 'Delete my user' : 'Delete'],
+      },
+    );
+
+    return result === 1;
   }
 }
