@@ -119,13 +119,9 @@ def packageOnMacos() {
 
       def nodeVersion = readFile('.nvmrc').trim()
       nvm(version: nodeVersion) {
-        assert sh(
-          script: 'node --version',
-          returnStdout: true
-        ).trim() == nodeVersion
-        
-        sh 'npm install --quiet'
-        sh 'npm run build'
+        // Using via-nvm.sh wraps ensures the correct version of node and npm.
+        sh './scripts/via-nvm.sh npm install --quiet'
+        sh './scripts/via-nvm.sh npm run build'
 
         // Run the tests
         sh 'node_modules/.bin/xvfb-maybe npm test'
