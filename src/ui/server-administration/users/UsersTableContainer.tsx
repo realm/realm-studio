@@ -129,10 +129,8 @@ export class UsersTableContainer extends RealmLoadingComponent<
   public onUserDeletion = async (userId: string) => {
     const confirmed = await this.confirmUserDeletion(userId);
     if (confirmed) {
-      this.realm.write(() => {
-        const user = this.realm.objectForPrimaryKey<IUser>('User', userId);
-        this.realm.delete(user);
-      });
+      // Use the ROS API to delete a user, instead of changing the realm directly
+      await ros.users.remove(this.props.user, userId);
       if (userId === this.state.selectedUserId) {
         this.onUserSelected(null);
       }
