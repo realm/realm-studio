@@ -2,7 +2,7 @@ import * as electron from 'electron';
 
 import { ActionReceiver } from '../actions/ActionReceiver';
 import { MainTransport } from '../actions/transports/MainTransport';
-import { RealmLoadingMode } from '../services/ros/types';
+import { realms } from '../services/ros';
 import {
   IRealmBrowserOptions,
   IServerAdministrationOptions,
@@ -107,7 +107,7 @@ export default class Application {
             selectedPaths.forEach(path => {
               const options: IRealmBrowserOptions = {
                 realm: {
-                  mode: RealmLoadingMode.Local,
+                  mode: realms.RealmLoadingMode.Local,
                   path,
                 },
               };

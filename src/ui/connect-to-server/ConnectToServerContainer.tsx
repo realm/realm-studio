@@ -71,7 +71,7 @@ export class ConnectToServerContainer extends React.Component<
 
     try {
       const credentials = this.prepareCredentials();
-      const user = await ros.authenticate(credentials);
+      const user = await ros.users.authenticate(credentials);
       if (!user.isAdmin) {
         throw new Error('You must be an administrator');
       }

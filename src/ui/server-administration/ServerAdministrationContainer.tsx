@@ -4,11 +4,10 @@ import * as Realm from 'realm';
 
 import { main } from '../../actions/main';
 import {
-  authenticate,
   IAdminTokenCredentials,
-  ISyncedRealmToLoad,
   IUsernamePasswordCredentials,
-  RealmLoadingMode,
+  realms,
+  users,
 } from '../../services/ros';
 import {
   IRealmBrowserOptions,
@@ -44,7 +43,7 @@ export class ServerAdministrationContainer extends React.Component<
   }
 
   public async componentDidMount() {
-    const user = await authenticate(this.props.credentials);
+    const user = await users.authenticate(this.props.credentials);
     this.setState({
       user,
     });
@@ -66,9 +65,9 @@ export class ServerAdministrationContainer extends React.Component<
     if (!this.state.isRealmOpening) {
       this.setState({ isRealmOpening: true });
       // Let the UI update before sync waiting on the window to appear
-      const realm: ISyncedRealmToLoad = {
+      const realm: realms.ISyncedRealmToLoad = {
         authentication: this.props.credentials,
-        mode: RealmLoadingMode.Synced,
+        mode: realms.RealmLoadingMode.Synced,
         path,
         validateCertificates: this.props.validateCertificates,
       };

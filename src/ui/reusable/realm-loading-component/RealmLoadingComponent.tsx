@@ -2,20 +2,14 @@ import * as electron from 'electron';
 import * as React from 'react';
 
 import {
-  authenticate,
-  createUser,
-  getRealm,
   IAdminTokenCredentials,
-  ILocalRealmToLoad,
   IRealmFile,
   IServerCredentials,
-  ISslConfiguration,
-  ISyncedRealmToLoad,
   IUser,
   IUserMetadataRow,
   IUsernamePasswordCredentials,
-  RealmLoadingMode,
-  updateUserPassword,
+  realms,
+  users,
 } from '../../../services/ros';
 
 import { showError } from '../errors';
@@ -23,7 +17,7 @@ import { ILoadingProgress } from '../loading-overlay';
 
 export interface IRealmLoadingComponentState {
   progress: ILoadingProgress;
-  realm?: ISyncedRealmToLoad | ILocalRealmToLoad;
+  realm?: realms.ISyncedRealmToLoad | realms.ILocalRealmToLoad;
 }
 
 const TRUST_DIALOG_MESSAGE =
@@ -53,7 +47,9 @@ export abstract class RealmLoadingComponent<
     this.cancellations.forEach(cancel => cancel());
   }
 
-  protected async loadRealm(realm: ISyncedRealmToLoad | ILocalRealmToLoad) {
+  protected async loadRealm(
+    realm: realms.ISyncedRealmToLoad | realms.ILocalRealmToLoad,
+  ) {
     // Remove any existing a change listeners
     if (this.realm) {
       this.realm.removeListener('change', this.onRealmChanged);
@@ -133,21 +129,21 @@ export abstract class RealmLoadingComponent<
   };
 
   private async openRealm(
-    realm: ISyncedRealmToLoad | ILocalRealmToLoad | undefined,
-    ssl: ISslConfiguration = { validateCertificates: true },
+    realm: realms.ISyncedRealmToLoad | realms.ILocalRealmToLoad | undefined,
+    ssl: realms.ISslConfiguration = { validateCertificates: true },
   ): Promise<Realm> {
-    if (realm && realm.mode === RealmLoadingMode.Local) {
+    if (realm && realm.mode === realms.RealmLoadingMode.Local) {
       return new Realm({
         path: realm.path,
         encryptionKey: realm.encryptionKey,
       });
-    } else if (realm && realm.mode === RealmLoadingMode.Synced) {
-      const props = (realm as any) as ISyncedRealmToLoad;
+    } else if (realm && realm.mode === realms.RealmLoadingMode.Synced) {
+      const props = (realm as any) as realms.ISyncedRealmToLoad;
       const user =
         props.authentication instanceof Realm.Sync.User
           ? props.authentication
-          : await authenticate(props.authentication);
-      const realmPromise = getRealm(
+          : await users.authenticate(props.authentication);
+      const realmPromise = realms.open(
         user,
         realm.path,
         realm.encryptionKey,
