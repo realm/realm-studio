@@ -48,3 +48,10 @@ export enum AccessLevel {
   write,
   admin,
 }
+
+// An enum to describe a users role
+
+export enum UserRole {
+  Administrator = 'administrator',
+  Regular = 'regular',
+}

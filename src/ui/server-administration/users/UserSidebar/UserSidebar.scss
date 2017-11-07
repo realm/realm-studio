@@ -1,5 +1,5 @@
 @import "~realm-studio-styles/variables";
-@import "../variables";
+@import "../../variables";
 
 .UserSidebar {
   background: $white;
@@ -35,6 +35,7 @@
     text-overflow: ellipsis;
   }
 
+  &__AccountsTable,
   &__MetadataTable,
   &__RealmsTable {
     table-layout: fixed;

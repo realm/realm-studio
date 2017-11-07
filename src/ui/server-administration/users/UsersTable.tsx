@@ -8,7 +8,7 @@ import {
 } from 'react-virtualized';
 import { Button } from 'reactstrap';
 
-import { IRealmFile, IUser, IUserMetadataRow } from '../../../services/ros';
+import * as ros from '../../../services/ros';
 
 import {
   ILoadingProgress,
@@ -16,15 +16,13 @@ import {
 } from '../../reusable/loading-overlay';
 import { ChangePasswordDialogContainer } from './ChangePasswordDialogContainer';
 import { CreateUserDialogContainer } from './CreateUserDialogContainer';
-import { UserRole, UserSidebarContainer } from './UserSidebarContainer';
-export { UserRole };
+import { UserSidebar } from './UserSidebar';
 
 import './UsersTable.scss';
 
 export const UsersTable = ({
   getUser,
   getUserFromId,
-  getUsersMetadatas,
   getUsersRealms,
   isChangePasswordOpen,
   isCreateUserOpen,
@@ -43,10 +41,9 @@ export const UsersTable = ({
   toggleCreateUser,
   userCount,
 }: {
-  getUser: (index: number) => IUser | null;
-  getUserFromId: (userId: string) => IUser | null;
-  getUsersMetadatas: (userId: string) => IUserMetadataRow[];
-  getUsersRealms: (userId: string) => IRealmFile[];
+  getUser: (index: number) => ros.IUser | null;
+  getUserFromId: (userId: string) => ros.IUser | null;
+  getUsersRealms: (userId: string) => ros.IRealmFile[];
   isChangePasswordOpen: boolean;
   isCreateUserOpen: boolean;
   onUserChangePassword: (userId: string) => void;
@@ -61,7 +58,7 @@ export const UsersTable = ({
   ) => void;
   onUserMetadataDeleted: (userId: string, index: number) => void;
   onUserPasswordChanged: (userId: string, password: string) => void;
-  onUserRoleChanged: (userId: string, role: UserRole) => void;
+  onUserRoleChanged: (userId: string, role: ros.UserRole) => void;
   onUserSelected: (userId: string | null) => void;
   progress: ILoadingProgress;
   selectedUserId: string | null;
@@ -101,11 +98,28 @@ export const UsersTable = ({
                 event.stopPropagation();
               }}
             >
-              <Column label="ID" dataKey="userId" width={300} />
+              <Column
+                label="Provider Id(s)"
+                dataKey="accounts"
+                width={200}
+                cellRenderer={({ cellData }) => {
+                  const accounts = cellData as ros.IAccount[];
+                  return (
+                    <span>
+                      {accounts.map(account => (
+                        <span title={`Provider: ${account.provider}`}>
+                          {account.providerId}
+                        </span>
+                      ))}
+                    </span>
+                  );
+                }}
+              />
+              <Column label="User Id" dataKey="userId" width={200} />
               <Column
                 label="Role"
                 dataKey="isAdmin"
-                width={150}
+                width={100}
                 cellRenderer={({ cellData }) => {
                   return cellData ? 'Administrator' : 'Regular user';
                 }}
@@ -113,7 +127,7 @@ export const UsersTable = ({
               <Column
                 label="# Realms"
                 dataKey="userId"
-                width={150}
+                width={100}
                 cellRenderer={({ cellData }) => {
                   const userId = cellData as string;
                   return getUsersRealms(userId).length;
@@ -132,13 +146,10 @@ export const UsersTable = ({
         <Button onClick={toggleCreateUser}>Create new user</Button>
       </div>
 
-      <UserSidebarContainer
+      <UserSidebar
         className={classnames('UsersTable__selected-user', {
           'UsersTable__selected-user--active': selectedUserId !== null,
         })}
-        metadatas={
-          selectedUserId !== null ? getUsersMetadatas(selectedUserId) : []
-        }
         onUserChangePassword={onUserChangePassword}
         onUserDeletion={onUserDeletion}
         onUserMetadataAppended={onUserMetadataAppended}

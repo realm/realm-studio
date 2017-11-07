@@ -2,15 +2,13 @@ import * as electron from 'electron';
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import { IRealmFile, IUser, IUserMetadataRow } from '../../../services/ros';
+import * as ros from '../../../../services/ros';
 
-import { UserRole, UserSidebar } from './UserSidebar';
-export { UserRole };
+import { UserSidebar } from './UserSidebar';
 
 export interface IUserSidebarContainerProps {
   className: string | null;
-  metadatas: IUserMetadataRow[];
-  realms: IRealmFile[];
+  realms: ros.IRealmFile[];
   onUserChangePassword: (userId: string) => void;
   onUserDeletion: (userId: string) => void;
   onUserMetadataAppended: (userId: string) => void;
@@ -21,8 +19,8 @@ export interface IUserSidebarContainerProps {
     value: string,
   ) => void;
   onUserMetadataDeleted: (userId: string, index: number) => void;
-  onUserRoleChanged: (userId: string, role: UserRole) => void;
-  user: IUser | null;
+  onUserRoleChanged: (userId: string, role: ros.UserRole) => void;
+  user: ros.IUser | null;
 }
 
 export interface IUserSidebarContainerState {
@@ -50,7 +48,7 @@ export class UserSidebarContainer extends React.Component<
     });
   };
 
-  public onRoleChanged = (role: UserRole) => {
+  public onRoleChanged = (role: ros.UserRole) => {
     if (this.props.user) {
       this.props.onUserRoleChanged(this.props.user.userId, role);
     }

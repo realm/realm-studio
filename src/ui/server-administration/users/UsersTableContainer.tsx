@@ -10,7 +10,7 @@ import {
   RealmLoadingComponent,
 } from '../../reusable/realm-loading-component';
 
-import { UserRole, UsersTable } from './UsersTable';
+import { UsersTable } from './UsersTable';
 
 export interface IUsersTableContainerProps {
   user: Realm.Sync.User;
@@ -91,11 +91,6 @@ export class UsersTableContainer extends RealmLoadingComponent<
     } else {
       return [];
     }
-  };
-
-  public getUsersMetadatas = (userId: string): ros.IUserMetadataRow[] => {
-    const user = this.getUserFromId(userId);
-    return user ? user.metadata.slice() : [];
   };
 
   public toggleChangePassword = () => {
@@ -191,11 +186,11 @@ export class UsersTableContainer extends RealmLoadingComponent<
     }
   };
 
-  public onUserRoleChanged = (userId: string, role: UserRole) => {
+  public onUserRoleChanged = (userId: string, role: ros.UserRole) => {
     const user = this.realm.objectForPrimaryKey<ros.IUser>('User', userId);
     if (user) {
       this.realm.write(() => {
-        user.isAdmin = role === UserRole.Administrator;
+        user.isAdmin = role === ros.UserRole.Administrator;
       });
     } else {
       throw new Error(`Found no user with the id ${userId}`);
