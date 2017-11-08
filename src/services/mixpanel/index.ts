@@ -1,7 +1,7 @@
 import * as electron from 'electron';
 import * as mixpanel from 'mixpanel-browser';
 
-import * as settings from './settings';
+import * as settings from '../../settings';
 
 const isProduction = process.env.NODE_ENV === 'production';
 

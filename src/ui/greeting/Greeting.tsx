@@ -1,6 +1,6 @@
 import * as os from 'os';
 import * as React from 'react';
-import { Button } from 'reactstrap';
+import { Button, ButtonGroup } from 'reactstrap';
 import * as util from 'util';
 
 import { IUpdateStatus } from '../../main/updater';
@@ -17,6 +17,7 @@ export const Greeting = ({
   onCheckForUpdates,
   onConnectToServer,
   onOpenLocalRealm,
+  onShowCloudAdministration,
   updateStatus,
   version,
 }: {
@@ -24,6 +25,7 @@ export const Greeting = ({
   onCheckForUpdates: () => void;
   onConnectToServer: () => void;
   onOpenLocalRealm: () => void;
+  onShowCloudAdministration: () => void;
   updateStatus: IUpdateStatus;
   version: string;
 }) => (
@@ -44,18 +46,28 @@ export const Greeting = ({
         <Button className="Greeting__Action" onClick={onOpenLocalRealm}>
           Open a local Realm
         </Button>
-        <Button
-          className="Greeting__Action"
-          onClick={onConnectToServer}
-          disabled={!isSyncEnabled}
-          title={
-            isSyncEnabled
-              ? 'Click to connect to Realm Object Server'
-              : `This feature is currently not available on ${os.type()}`
-          }
-        >
-          Connect to Realm Object Server
-        </Button>
+        <ButtonGroup>
+          <Button
+            className="Greeting__Action"
+            onClick={onConnectToServer}
+            disabled={!isSyncEnabled}
+            color="primary"
+            title={
+              isSyncEnabled
+                ? 'Click to connect to Realm Object Server'
+                : `This feature is currently not available on ${os.type()}`
+            }
+          >
+            Connect to Realm Object Server
+          </Button>
+          <Button
+            className="Greeting__Action"
+            onClick={onShowCloudAdministration}
+            size="sm"
+          >
+            via Realm Cloud
+          </Button>
+        </ButtonGroup>
       </div>
     </div>
     <HistoryPanelContainer />

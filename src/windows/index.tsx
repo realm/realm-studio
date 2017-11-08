@@ -2,6 +2,7 @@ import * as querystring from 'querystring';
 import * as React from 'react';
 
 import {
+  IConnectToServerDialogOptions,
   IRealmBrowserOptions,
   IServerAdministrationOptions,
   WindowType,
@@ -22,7 +23,11 @@ export function getWindow(type: WindowType): React.ReactElement<{}> {
   } else if (type === WindowType.ConnectToServer) {
     const ConnectToServerDialog = require('./ConnectToServerDialog')
       .ConnectToServerDialog;
-    return <ConnectToServerDialog />;
+    return (
+      <ConnectToServerDialog
+        options={options as IConnectToServerDialogOptions}
+      />
+    );
   } else if (type === WindowType.ServerAdministration) {
     const ServerAdministrationWindow = require('./ServerAdministrationWindow')
       .ServerAdministrationWindow;
@@ -34,6 +39,10 @@ export function getWindow(type: WindowType): React.ReactElement<{}> {
   } else if (type === WindowType.Greeting) {
     const GreetingWindow = require('./GreetingWindow').GreetingWindow;
     return <GreetingWindow />;
+  } else if (type === WindowType.CloudAdministration) {
+    const CloudAdministrationWindow = require('./CloudAdministrationWindow')
+      .CloudAdministrationWindow;
+    return <CloudAdministrationWindow />;
   } else {
     throw new Error(`Unexpected window type: ${type}`);
   }

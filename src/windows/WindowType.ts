@@ -4,6 +4,7 @@
 import * as ros from '../services/ros';
 
 export enum WindowType {
+  CloudAdministration = 'cloud-administration',
   ConnectToServer = 'connect-to-server',
   Greeting = 'greeting',
   RealmBrowser = 'realm-browser',
@@ -13,6 +14,10 @@ export enum WindowType {
 export interface IServerAdministrationOptions {
   credentials: ros.IServerCredentials;
   validateCertificates: boolean;
+}
+
+export interface IConnectToServerDialogOptions {
+  url?: string;
 }
 
 export interface IRealmBrowserOptions {
@@ -44,9 +49,15 @@ export function getWindowOptions(
   } else if (type === WindowType.Greeting) {
     return {
       title: `Realm Studio`,
-      width: 600,
+      width: 700,
       height: 400,
       resizable: false,
+    };
+  } else if (type === WindowType.CloudAdministration) {
+    return {
+      title: `Realm Cloud`,
+      width: 800,
+      height: 400,
     };
   }
   return {};
