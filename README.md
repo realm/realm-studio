@@ -65,11 +65,11 @@ of a test that will run every time a file in the project gets saved.
 
 ## Building
 
-To build the app into resources that will be included into a releasable package, run the `build` command:
+To build the app into resources that will be included into a releasable package, run the `build` script:
 
     npm run build
 
-To build releasable packages for the various installable formats, run the `dist` command:
+To build releasable packages for the various installable formats, run the `package` script:
 
     npm run package
 
