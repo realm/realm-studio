@@ -14,16 +14,20 @@ import './Greeting.scss';
 
 export const Greeting = ({
   isSyncEnabled,
+  isCloudVisible,
   onCheckForUpdates,
   onConnectToServer,
+  onLogoClick,
   onOpenLocalRealm,
   onShowCloudAdministration,
   updateStatus,
   version,
 }: {
   isSyncEnabled: boolean;
+  isCloudVisible: boolean;
   onCheckForUpdates: () => void;
   onConnectToServer: () => void;
+  onLogoClick: () => void;
   onOpenLocalRealm: () => void;
   onShowCloudAdministration: () => void;
   updateStatus: IUpdateStatus;
@@ -32,7 +36,11 @@ export const Greeting = ({
   <div className="Greeting">
     <div className="Greeting__ActionsPanel">
       <div className="Greeting__Brand">
-        <svg viewBox={realmLogo.viewBox} className="Greeting__Logo">
+        <svg
+          className="Greeting__Logo"
+          viewBox={realmLogo.viewBox}
+          onClick={onLogoClick}
+        >
           <use xlinkHref={realmLogo.url} />
         </svg>
         <h3 className="Greeting__Title">Realm Studio</h3>
@@ -60,13 +68,15 @@ export const Greeting = ({
           >
             Connect to Realm Object Server
           </Button>
-          <Button
-            className="Greeting__Action"
-            onClick={onShowCloudAdministration}
-            size="sm"
-          >
-            via Realm Cloud
-          </Button>
+          {isCloudVisible ? (
+            <Button
+              className="Greeting__Action"
+              onClick={onShowCloudAdministration}
+              size="sm"
+            >
+              via Realm Cloud
+            </Button>
+          ) : null}
         </ButtonGroup>
       </div>
     </div>
