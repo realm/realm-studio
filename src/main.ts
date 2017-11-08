@@ -2,7 +2,7 @@ import { app, dialog } from 'electron';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 
-import Application from './main/application';
+import { Application } from './main/Application';
 
 // TODO: Submit these to a service like opbeat instead.
 process.on('uncaughtException', error => {
@@ -24,8 +24,8 @@ Application.sharedApplication.run();
 
 // Look for changes to application
 if (module.hot) {
-  module.hot.accept('./main/application', () => {
-    const NewApplication = require('./main/application').default;
+  module.hot.accept('./main/Application', () => {
+    const NewApplication = require('./main/Application').Application;
     NewApplication.sharedApplication.run();
   });
 } else if (!isProduction) {

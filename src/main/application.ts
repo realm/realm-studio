@@ -8,14 +8,14 @@ import {
   IServerAdministrationOptions,
   WindowType,
 } from '../windows/WindowType';
-import MainMenu from './main-menu';
 import { MainActions } from './MainActions';
-import Updater from './updater';
-import WindowManager from './window-manager';
+import { MainMenu } from './MainMenu';
+import { Updater } from './Updater';
+import { WindowManager } from './WindowManager';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-export default class Application {
+export class Application {
   public static sharedApplication = new Application();
 
   private mainMenu = new MainMenu();

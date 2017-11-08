@@ -23,7 +23,7 @@ export interface IUpdateStatus {
   nextVersion?: string;
 }
 
-export default class Updater {
+export class Updater {
   private isBusy = false;
   private quite = false;
   private listeningWindows: Electron.BrowserWindow[] = [];
