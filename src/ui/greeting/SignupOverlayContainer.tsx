@@ -1,6 +1,6 @@
 import * as electron from 'electron';
 import * as React from 'react';
-import * as mixpanel from '../../mixpanel';
+import * as mixpanel from '../../services/mixpanel';
 
 import { SignupOverlay } from './SignupOverlay';
 

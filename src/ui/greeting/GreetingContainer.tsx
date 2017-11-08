@@ -53,6 +53,10 @@ export class GreetingContainer extends React.Component<
     main.showConnectToServer();
   };
 
+  public onShowCloudAdministration = () => {
+    main.showCloudAdministration();
+  };
+
   public onOpenLocalRealm = () => {
     main.showOpenLocalRealm();
   };

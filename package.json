@@ -52,6 +52,12 @@
     "nsis": {
       "installerIcon": "resources/icon.ico"
     },
+    "protocols": [
+      {
+        "name": "Realm Studio",
+        "schemes": ["x-realm-studio"]
+      }
+    ],
     "publish": [
       {
         "provider": "s3",

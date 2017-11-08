@@ -1,7 +1,10 @@
 import * as electron from 'electron';
+import { URL } from 'url';
 
 import { ActionReceiver } from '../actions/ActionReceiver';
 import { MainTransport } from '../actions/transports/MainTransport';
+import { PROTOCOL } from '../constants';
+import * as github from '../services/github';
 import { realms } from '../services/ros';
 import {
   IRealmBrowserOptions,
@@ -23,11 +26,17 @@ export class Application {
   private windowManager = new WindowManager();
 
   private actionHandlers = {
+    [MainActions.AuthenticateWithGitHub]: () => {
+      return github.authenticate();
+    },
     [MainActions.CheckForUpdates]: () => {
       this.checkForUpdates();
     },
-    [MainActions.ShowConnectToServer]: () => {
-      return this.showConnectToServer();
+    [MainActions.ShowCloudAdministration]: () => {
+      return this.showCloudAdministration();
+    },
+    [MainActions.ShowConnectToServer]: (url?: string) => {
+      return this.showConnectToServer(url);
     },
     [MainActions.ShowGreeting]: () => {
       return this.showGreeting();
@@ -46,6 +55,7 @@ export class Application {
   };
 
   public run() {
+    // this.makeSingleton(); // TODO: Re-enable and test on windows
     this.addAppListeners();
     // If its already ready - the handler won't be called
     if (electron.app.isReady()) {
@@ -55,6 +65,7 @@ export class Application {
 
   public destroy() {
     this.removeAppListeners();
+    this.unregisterProtocols();
     this.updater.destroy();
     this.windowManager.closeAllWindows();
   }
@@ -65,10 +76,13 @@ export class Application {
 
   // Implementation of action handlers below
 
-  public async showConnectToServer() {
+  public async showConnectToServer(url?: string) {
     return new Promise(resolve => {
       const window = this.windowManager.createWindow(
         WindowType.ConnectToServer,
+        {
+          url,
+        },
       );
       window.show();
       window.webContents.once('did-finish-load', () => {
@@ -148,6 +162,18 @@ export class Application {
     });
   }
 
+  public showCloudAdministration() {
+    return new Promise(resolve => {
+      const window = this.windowManager.createWindow(
+        WindowType.CloudAdministration,
+      );
+      window.show();
+      window.webContents.once('did-finish-load', () => {
+        resolve();
+      });
+    });
+  }
+
   public checkForUpdates() {
     this.updater.checkForUpdates();
   }
@@ -156,6 +182,7 @@ export class Application {
     electron.app.addListener('ready', this.onReady);
     electron.app.addListener('activate', this.onActivate);
     electron.app.addListener('open-file', this.onOpenFile);
+    electron.app.addListener('open-url', this.onOpenUrl);
     electron.app.addListener('window-all-closed', this.onWindowAllClosed);
     electron.app.addListener('web-contents-created', this.onWebContentsCreated);
   }
@@ -164,6 +191,7 @@ export class Application {
     electron.app.removeListener('ready', this.onReady);
     electron.app.removeListener('activate', this.onActivate);
     electron.app.removeListener('open-file', this.onOpenFile);
+    electron.app.removeListener('open-url', this.onOpenUrl);
     electron.app.removeListener('window-all-closed', this.onWindowAllClosed);
     electron.app.removeListener(
       'web-contents-created',
@@ -173,10 +201,9 @@ export class Application {
 
   private onReady = () => {
     this.mainMenu.set();
-    // this.showOpenLocalRealm();
-    // this.showConnectToServer();
     this.showGreeting();
     electron.app.focus();
+    this.registerProtocols();
   };
 
   private onActivate = () => {
@@ -187,6 +214,23 @@ export class Application {
 
   private onOpenFile = () => {
     this.showOpenLocalRealm();
+  };
+
+  private onOpenUrl = (event: Event, urlString: string) => {
+    const url = new URL(urlString);
+    if (url.protocol === `${PROTOCOL}:`) {
+      // The protocol stores the action as the URL hostname
+      const action = url.hostname;
+      if (action === github.OPEN_URL_ACTION) {
+        const code = url.searchParams.get('code');
+        const state = url.searchParams.get('state');
+        if (!code || !state) {
+          throw new Error('Missing the code or state');
+        } else {
+          github.handleOauthCallback({ code, state });
+        }
+      }
+    }
   };
 
   private onWindowAllClosed = () => {
@@ -201,6 +245,34 @@ export class Application {
   ) => {
     const receiver = new ActionReceiver(this.actionHandlers);
     receiver.setTransport(new MainTransport(webContents));
+  };
+
+  private registerProtocols() {
+    // Register this app as the default client for 'x-realm-studio://'
+    const success = electron.app.setAsDefaultProtocolClient(PROTOCOL);
+
+    if (success) {
+      electron.dialog.showErrorBox(
+        'Failed when registering protocols',
+        'For some reason, Studio could not register the x-realm-studio:// protocol. For this reason, you might not be able to log into Studio.',
+      );
+    }
+  }
+
+  private unregisterProtocols() {
+    electron.app.removeAsDefaultProtocolClient(PROTOCOL);
+  }
+
+  private makeSingleton() {
+    const isSecond = electron.app.makeSingleInstance(this.onInstanceStarted);
+    if (isSecond) {
+      // Quit the app if started multiple times
+      electron.app.quit();
+    }
+  }
+
+  private onInstanceStarted = (argv: string[], workingDirectory: string) => {
+    // TODO: Restore and focus the GreetingWindow
   };
 }
 

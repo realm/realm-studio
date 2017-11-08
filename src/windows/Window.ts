@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as mixpanel from '../mixpanel';
+import * as mixpanel from '../services/mixpanel';
 
 import { ServerAdministrationContainer } from '../ui/server-administration/ServerAdministrationContainer';
 import { IServerAdministrationOptions } from './WindowType';
