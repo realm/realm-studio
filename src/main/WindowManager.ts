@@ -14,7 +14,7 @@ function getRendererHtmlPath() {
   return path.resolve(__dirname, indexPath);
 }
 
-export default class WindowManager {
+export class WindowManager {
   public windows: Electron.BrowserWindow[] = [];
 
   public createWindow(windowType: WindowType, options: any = {}) {

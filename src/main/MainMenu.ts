@@ -1,9 +1,9 @@
 import * as electron from 'electron';
-import Application from './application';
+import { Application } from './Application';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-export default class MainMenu {
+export class MainMenu {
   private menu = electron.Menu.buildFromTemplate(this.menuTemplate());
 
   public set() {
