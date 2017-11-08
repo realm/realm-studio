@@ -1,7 +1,7 @@
 import * as electron from 'electron';
 import * as React from 'react';
 
-import { IUpdateStatus } from '../../main/updater';
+import { IUpdateStatus } from '../../main/Updater';
 
 import { main } from '../../actions/main';
 
