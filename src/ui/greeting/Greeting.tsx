@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Button, ButtonGroup } from 'reactstrap';
 import * as util from 'util';
 
-import { IUpdateStatus } from '../../main/updater';
+import { IUpdateStatus } from '../../main/Updater';
 
 import realmLogo from '../../../static/svgs/realm-logo.svg';
 import { HistoryPanelContainer } from './HistoryPanelContainer';
