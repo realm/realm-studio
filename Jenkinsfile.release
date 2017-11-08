@@ -124,7 +124,7 @@ def packageOnMacos() {
         sh './scripts/via-nvm.sh npm run build'
 
         // Run the tests
-        sh 'node_modules/.bin/xvfb-maybe npm test'
+        sh './scripts/via-nvm.sh node_modules/.bin/xvfb-maybe npm test'
 
         // Build the package: Never publishing and failing if missing code signing
         sh 'node_modules/.bin/electron-builder -c.forceCodeSigning --publish never'
