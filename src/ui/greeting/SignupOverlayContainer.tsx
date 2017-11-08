@@ -4,6 +4,8 @@ import * as mixpanel from '../../services/mixpanel';
 
 import { SignupOverlay } from './SignupOverlay';
 
+const HAS_SIGNED_UP_STORAGE_KEY = 'has-signed-up';
+
 export class SignupOverlayContainer extends React.Component<
   {},
   {
@@ -14,7 +16,9 @@ export class SignupOverlayContainer extends React.Component<
 > {
   constructor() {
     super();
-    const hasSignedUp = mixpanel.get_property('has_signed_up');
+    const hasSignedUp =
+      mixpanel.get_property('has_signed_up') ||
+      localStorage.getItem(HAS_SIGNED_UP_STORAGE_KEY) === 'true';
     this.state = {
       email: '',
       newsletter: false,
@@ -48,6 +52,7 @@ export class SignupOverlayContainer extends React.Component<
         signupDate: new Date(),
       },
       () => {
+        localStorage.setItem(HAS_SIGNED_UP_STORAGE_KEY, 'true');
         this.setState({
           isVisible: false,
         });
