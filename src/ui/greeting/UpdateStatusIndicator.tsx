@@ -2,7 +2,7 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 import { Progress } from 'reactstrap';
 
-import { IUpdateStatus } from '../../main/updater';
+import { IUpdateStatus } from '../../main/Updater';
 
 import { LoadingDots } from '../reusable/loading-dots/LoadingDots';
 
