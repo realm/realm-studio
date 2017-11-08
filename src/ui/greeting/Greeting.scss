@@ -18,7 +18,7 @@ $history-panel-icon-size: 20px;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    width: 60%;
+    width: 65%;
   }
 
   &__Brand {
@@ -71,14 +71,14 @@ $history-panel-icon-size: 20px;
   }
 
   &__Action {
-    margin: $spacer / 4;
+    margin-bottom: $spacer / 2;
   }
 
   &__HistoryPanel {
     background: $color-charcoal;
     color: $color-dove;
     font-size: .9rem;
-    width: 40%;
+    width: 35%;
 
     a {
       color: $color-dove;
