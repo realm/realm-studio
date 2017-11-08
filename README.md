@@ -71,7 +71,7 @@ To build the app into resources that will be included into a releasable package,
 
 To build releasable packages for the various installable formats, run the `dist` command:
 
-    npm run dist
+    npm run package
 
 This will clean the `./build` folder and run `build` internally, before using
 [electron-builder](https://www.npmjs.com/package/electron-builder) to produce an Electron app ready for distribution.
