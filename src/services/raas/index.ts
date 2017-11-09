@@ -8,7 +8,7 @@ export interface IRaasAuthenticationResponse {
 
 export interface ICreateTenantOptions {
   id: string;
-  password: string;
+  initialPassword: string;
 }
 
 // {"id":"test1","owner":"github/alebsack","status":"Running","url":"https://test1.ie1.raas.realmlab.net"}
