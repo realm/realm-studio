@@ -254,7 +254,7 @@ export class Application {
     if (success) {
       electron.dialog.showErrorBox(
         'Failed when registering protocols',
-        'For some reason, Studio could not register the x-realm-studio:// protocol. For this reason, you might not be able to log into Studio.',
+        'Studio could not register the x-realm-studio:// protocol. For this reason, you might not be able to log into Studio.',
       );
     }
   }
