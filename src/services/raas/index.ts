@@ -60,6 +60,10 @@ export const setToken = (token: string) => {
   localStorage.setItem(TOKEN_STORAGE_KEY, token);
 };
 
+export const forgetToken = () => {
+  localStorage.removeItem(TOKEN_STORAGE_KEY);
+};
+
 export const authenticate = async (
   githubCode: string,
 ): Promise<IRaasAuthenticationResponse> => {

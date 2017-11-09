@@ -15,6 +15,7 @@ export const Tenants = ({
   onConnectToTenant,
   onCreateTenant,
   onDeleteTenant,
+  onLogout,
   onToggleCreateTenantModal,
   serviceShards,
 }: {
@@ -22,6 +23,7 @@ export const Tenants = ({
   onConnectToTenant: (url: string) => void;
   onCreateTenant: CreateTenantHandler;
   onDeleteTenant: (controllerUrl: string, id: string) => void;
+  onLogout: () => void;
   onToggleCreateTenantModal: () => void;
   serviceShards: IServiceShard[];
 }) => (
@@ -91,7 +93,16 @@ export const Tenants = ({
           onToggleCreateTenantModal();
         }}
       >
-        &nbsp;Start a new Realm Object Server
+        Start a new Realm Object Server
+      </Button>
+      &nbsp;
+      <Button
+        color="primary"
+        onClick={() => {
+          onLogout();
+        }}
+      >
+        Logout
       </Button>
     </div>
 

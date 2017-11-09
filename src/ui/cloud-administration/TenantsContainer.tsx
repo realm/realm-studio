@@ -35,6 +35,7 @@ export class TenantsContainer extends React.Component<
         onConnectToTenant={this.onConnectToTenant}
         onCreateTenant={this.onCreateTenant}
         onDeleteTenant={this.onDeleteTenant}
+        onLogout={this.onLogout}
         onToggleCreateTenantModal={this.onToggleCreateTenantModal}
         serviceShards={this.state.serviceShards}
       />
@@ -82,5 +83,9 @@ export class TenantsContainer extends React.Component<
   ) => {
     await raas.createTenant(controllerUrl, options);
     this.fetchShardsAndTenants();
+  };
+
+  private onLogout = () => {
+    raas.forgetToken();
   };
 }
