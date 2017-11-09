@@ -22,7 +22,7 @@ export interface IOAuthCallbackOptions {
 }
 
 export const authenticate = (scope: string = 'user') => {
-  return new Promise((resolve, reject) => {
+  return new Promise<string>((resolve, reject) => {
     // Create a temporary uuid that will transfered back to the callback when authenticated
     const state = uuid();
     // Save the promise resolve function - so the callback can call it

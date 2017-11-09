@@ -1,4 +1,5 @@
 import * as electron from 'electron';
+
 import { Application } from './Application';
 
 const isProduction = process.env.NODE_ENV === 'production';
