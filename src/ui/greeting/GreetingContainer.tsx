@@ -11,7 +11,6 @@ export class GreetingContainer extends React.Component<
   {},
   {
     isSyncEnabled: boolean;
-    logoClicks: number;
     updateStatus: IUpdateStatus;
     version: string;
   }
@@ -20,7 +19,6 @@ export class GreetingContainer extends React.Component<
     super();
     this.state = {
       isSyncEnabled: false,
-      logoClicks: 0,
       updateStatus: {
         state: 'up-to-date',
       },
@@ -48,13 +46,7 @@ export class GreetingContainer extends React.Component<
   }
 
   public render() {
-    return (
-      <Greeting
-        {...this.state}
-        {...this}
-        isCloudVisible={this.state.logoClicks >= 6}
-      />
-    );
+    return <Greeting {...this.state} {...this} />;
   }
 
   public onConnectToServer = () => {
@@ -78,9 +70,5 @@ export class GreetingContainer extends React.Component<
     status: IUpdateStatus,
   ) => {
     this.setState({ updateStatus: status });
-  };
-
-  public onLogoClick = () => {
-    this.setState({ logoClicks: this.state.logoClicks + 1 });
   };
 }
