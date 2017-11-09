@@ -2,6 +2,32 @@ import { GITHUB_CLIENT_ID, GITHUB_REDIRECT_URI } from '../github';
 
 const TOKEN_STORAGE_KEY = 'realm-cloud-token';
 
+export interface IRaasAuthenticationResponse {
+  token: string;
+}
+
+export interface ICreateTenantOptions {
+  id: string;
+  password: string;
+}
+
+// {"id":"test1","owner":"github/alebsack","status":"Running","url":"https://test1.ie1.raas.realmlab.net"}
+export interface ITenant {
+  id: string;
+  owner: string;
+  status: string;
+  url: string;
+}
+
+// {"id":"ie1","controllerUrl":"https://ie1.raas.realmlab.net","region":"ireland","label":"Ireland Dev 1"}
+export interface IServiceShard {
+  id: string;
+  controllerUrl: string;
+  region: string;
+  label: string;
+  tenants: ITenant[];
+}
+
 const buildUrl = (path: string) => {
   return `https://raas.realmlab.net${path}`;
 };
@@ -25,10 +51,6 @@ const getErrorMessage = async (response: Response): Promise<string> => {
     return 'Error without a message from RaaS';
   }
 };
-
-export interface IRaasAuthenticationResponse {
-  token: string;
-}
 
 export const hasToken = () => {
   return localStorage.getItem(TOKEN_STORAGE_KEY) ? true : false;
@@ -65,7 +87,7 @@ export const getServiceShards = async () => {
     method: 'GET',
   });
   if (response.ok) {
-    return response.json();
+    return (await response.json()) as IServiceShard[];
   } else {
     const message = await getErrorMessage(response);
     throw new Error(message);
@@ -78,6 +100,34 @@ export const getTenants = async (controllerUrl: string) => {
   });
   if (response.ok) {
     return response.json();
+  } else {
+    const message = await getErrorMessage(response);
+    throw new Error(message);
+  }
+};
+
+export const deleteTenant = async (controllerUrl: string, id: string) => {
+  const response = await fetchAuthenticated(`${controllerUrl}/tenants/${id}`, {
+    method: 'DELETE',
+  });
+  if (response.ok) {
+    return true;
+  } else {
+    const message = await getErrorMessage(response);
+    throw new Error(message);
+  }
+};
+
+export const createTenant = async (
+  controllerUrl: string,
+  options: ICreateTenantOptions,
+) => {
+  const response = await fetchAuthenticated(`${controllerUrl}/tenants`, {
+    method: 'POST',
+    body: JSON.stringify(options),
+  });
+  if (response.ok) {
+    return true;
   } else {
     const message = await getErrorMessage(response);
     throw new Error(message);

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Button, Input, Label } from 'reactstrap';
 
-import { Footer } from './Footer';
-import { TenantTableContainer } from './TenantTableContainer';
+import { AuthenticationFooter } from './AuthenticationFooter';
+import { TenantsContainer } from './TenantsContainer';
 
 import './CloudAdministration.scss';
 
@@ -23,7 +23,7 @@ export const CloudAdministration = ({
 }) =>
   hasToken ? (
     <div className="CloudAdministration">
-      <TenantTableContainer />
+      <TenantsContainer />
     </div>
   ) : (
     <div className="CloudAdministration">
@@ -41,7 +41,7 @@ export const CloudAdministration = ({
               Please check back here, to see the progress!
             </p>
           </div>
-          <Footer
+          <AuthenticationFooter
             hasSentMessage={hasSentMessage}
             onAuthenticate={onAuthenticate}
             onSendMessage={onSendMessage}
@@ -71,7 +71,7 @@ export const CloudAdministration = ({
             value={message}
             onChange={onMessageChange}
           />
-          <Footer
+          <AuthenticationFooter
             hasSentMessage={hasSentMessage}
             onAuthenticate={onAuthenticate}
             onSendMessage={onSendMessage}
