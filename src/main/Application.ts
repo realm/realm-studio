@@ -250,17 +250,22 @@ export class Application {
   private registerProtocols() {
     // Register this app as the default client for 'x-realm-studio://'
     const success = electron.app.setAsDefaultProtocolClient(PROTOCOL);
-
-    if (success) {
+    if (!success) {
       electron.dialog.showErrorBox(
         'Failed when registering protocols',
-        'For some reason, Studio could not register the x-realm-studio:// protocol. For this reason, you might not be able to log into Studio.',
+        'Studio could not register the x-realm-studio:// protocol. For this reason, you might not be able to log into Studio.',
       );
     }
   }
 
   private unregisterProtocols() {
-    electron.app.removeAsDefaultProtocolClient(PROTOCOL);
+    const success = electron.app.removeAsDefaultProtocolClient(PROTOCOL);
+    if (!success) {
+      electron.dialog.showErrorBox(
+        'Failed when unregistering protocols',
+        'Studio could not unregister the x-realm-studio:// protocol.',
+      );
+    }
   }
 
   private makeSingleton() {

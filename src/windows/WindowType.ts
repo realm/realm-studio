@@ -49,15 +49,15 @@ export function getWindowOptions(
   } else if (type === WindowType.Greeting) {
     return {
       title: `Realm Studio`,
-      width: 700,
+      width: 750,
       height: 400,
       resizable: false,
     };
   } else if (type === WindowType.CloudAdministration) {
     return {
       title: `Realm Cloud`,
-      width: 800,
-      height: 400,
+      width: 1024,
+      height: 500,
     };
   }
   return {};

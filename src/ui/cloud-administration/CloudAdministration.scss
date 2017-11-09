@@ -54,15 +54,37 @@ $cloud-color: rgba($color-dove, .2);
     width: 100%;
   }
 
-  &__Footer {
+  &__AuthenticationFooter {
     padding-top: $spacer;
     text-align: center;
   }
 
-  &__InstanceAdministration {
-    background: transparent;
+  &__Tenants {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
     a {
       color: $color-dove;
+    }
+
+    &__TableWrapper {
+      flex-grow: 1;
+      overflow: auto;
+    }
+
+    &__Table {
+      background: transparent;
+      width: 100%;
+    }
+
+    &__Controls {
+      text-align: right;
+    }
+
+    &__Footer {
+      padding-top: $spacer;
+      text-align: center;
     }
   }
 

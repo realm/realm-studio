@@ -21,6 +21,9 @@ if (!isProduction) {
 }
 
 Application.sharedApplication.run();
+app.on('will-quit', e => {
+  Application.sharedApplication.destroy();
+});
 
 // Look for changes to application
 if (module.hot) {

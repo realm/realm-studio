@@ -71,7 +71,7 @@ $history-panel-icon-size: 20px;
   }
 
   &__Action {
-    margin-bottom: $spacer / 2;
+    margin-bottom: $spacer * .75;
   }
 
   &__HistoryPanel {
