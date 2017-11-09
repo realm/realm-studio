@@ -11,13 +11,17 @@ export type CreateTenantHandler = (
   options: raas.ICreateTenantOptions,
 ) => void;
 
+interface ITenantsContainerProps {
+  onLogout: () => void;
+}
+
 interface ITenantsContainerState {
   serviceShards: raas.IServiceShard[];
   isCreateTenantModalOpen: boolean;
 }
 
 export class TenantsContainer extends React.Component<
-  {},
+  ITenantsContainerProps,
   ITenantsContainerState
 > {
   constructor() {
@@ -35,7 +39,7 @@ export class TenantsContainer extends React.Component<
         onConnectToTenant={this.onConnectToTenant}
         onCreateTenant={this.onCreateTenant}
         onDeleteTenant={this.onDeleteTenant}
-        onLogout={this.onLogout}
+        onLogout={this.props.onLogout}
         onToggleCreateTenantModal={this.onToggleCreateTenantModal}
         serviceShards={this.state.serviceShards}
       />
@@ -83,9 +87,5 @@ export class TenantsContainer extends React.Component<
   ) => {
     await raas.createTenant(controllerUrl, options);
     this.fetchShardsAndTenants();
-  };
-
-  private onLogout = () => {
-    raas.forgetToken();
   };
 }

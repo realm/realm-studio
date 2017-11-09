@@ -11,6 +11,7 @@ export const CloudAdministration = ({
   hasToken,
   message,
   onAuthenticate,
+  onLogout,
   onMessageChange,
   onSendMessage,
 }: {
@@ -18,12 +19,13 @@ export const CloudAdministration = ({
   hasToken: boolean;
   message: string;
   onAuthenticate: () => void;
+  onLogout: () => void;
   onMessageChange: (e: React.ChangeEvent<any>) => void;
   onSendMessage: () => void;
 }) =>
   hasToken ? (
     <div className="CloudAdministration">
-      <TenantsContainer />
+      <TenantsContainer onLogout={onLogout} />
     </div>
   ) : (
     <div className="CloudAdministration">

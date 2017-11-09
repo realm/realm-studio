@@ -32,7 +32,7 @@ export class CloudAdministrationContainer extends React.Component<
   }
 
   public componentDidMount() {
-    this.refreshAuthenticationStatus();
+    this.refreshMessageStatus();
     this.refreshTokenStatus();
   }
 
@@ -46,7 +46,7 @@ export class CloudAdministrationContainer extends React.Component<
       message: this.state.message,
     });
     localStorage.setItem(SENT_MESSAGE_STORAGE_KEY, 'true');
-    this.refreshAuthenticationStatus();
+    this.refreshMessageStatus();
   };
 
   public onAuthenticate = async () => {
@@ -63,7 +63,14 @@ export class CloudAdministrationContainer extends React.Component<
     }
   };
 
-  private refreshAuthenticationStatus() {
+  public onLogout = () => {
+    raas.forgetToken();
+    localStorage.removeItem(SENT_MESSAGE_STORAGE_KEY);
+    this.refreshTokenStatus();
+    this.refreshMessageStatus();
+  };
+
+  private refreshMessageStatus() {
     const hasSentMessage =
       localStorage.getItem(SENT_MESSAGE_STORAGE_KEY) === 'true';
     this.setState({ hasSentMessage });
