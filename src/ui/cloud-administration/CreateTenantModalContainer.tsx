@@ -38,7 +38,7 @@ export class CreateTenantModalContainer extends React.Component<
         onIdChange={this.onIdChange}
         onPasswordChange={this.onPasswordChange}
         onShardChange={this.onShardChange}
-        onToggle={this.props.onToggle}
+        onToggle={this.onToggle}
         shards={this.props.shards}
         {...this.state}
       />
@@ -53,7 +53,7 @@ export class CreateTenantModalContainer extends React.Component<
     if (selectedShard) {
       this.props.onCreateTenant(selectedShard.controllerUrl, {
         id: this.state.id,
-        password: this.state.password,
+        initialPassword: this.state.password,
       });
     } else {
       throw new Error(`Unexpected shard ${this.state.selectedShardId}`);
@@ -70,5 +70,13 @@ export class CreateTenantModalContainer extends React.Component<
 
   private onPasswordChange = (password: string) => {
     this.setState({ password });
+  };
+
+  private onToggle = () => {
+    this.setState({
+      id: '',
+      password: '',
+    });
+    this.props.onToggle();
   };
 }

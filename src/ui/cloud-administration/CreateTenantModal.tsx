@@ -53,6 +53,7 @@ export const CreateTenantModal = ({
           <Input
             id="createTenantId"
             pattern="[a-z0-9\-]+"
+            value={id}
             onChange={e => {
               onIdChange(e.target.value);
             }}
@@ -81,6 +82,7 @@ export const CreateTenantModal = ({
           <Input
             id="createTenantPassword"
             type="password"
+            value={password}
             onChange={e => {
               onPasswordChange(e.target.value);
             }}
