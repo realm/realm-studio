@@ -36,7 +36,9 @@ export class CertificateManager {
         // The showCertificateTrustDialog is not supported on Linux
         process.platform !== 'linux',
       );
-      this.trustedFingerprints.push(certificate.fingerprint);
+      if (isTrusted) {
+        this.trustedFingerprints.push(certificate.fingerprint);
+      }
       callback(isTrusted);
     }
   };
