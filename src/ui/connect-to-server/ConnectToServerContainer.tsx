@@ -98,8 +98,7 @@ export class ConnectToServerContainer extends React.Component<
         err = new Error(`${err.message}\n\n${missingParams}`);
       }
       showError(`Couldn't connect to Realm Object Server`, err, {
-        'Failed to fetch':
-          'Could not reach the server.\nNote: SSL certificates must be signed by a trusted CA.',
+        'Failed to fetch': 'Could not reach the server.',
       });
     } finally {
       this.setState({
