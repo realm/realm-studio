@@ -12,5 +12,5 @@ npm install
 # Build the app
 npm run build
 
-# Package the app for windows
-./node_modules/.bin/electron-builder --linux --windows --publish never
+# Package the app for windows and linux
+./node_modules/.bin/electron-builder --dir --linux --windows --publish never
