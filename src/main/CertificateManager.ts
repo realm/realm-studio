@@ -33,6 +33,8 @@ export class CertificateManager {
         window,
         url,
         certificate,
+        // The showCertificateTrustDialog is not supported on Linux
+        process.platform !== 'linux',
       );
       this.trustedFingerprints.push(certificate.fingerprint);
       callback(isTrusted);
