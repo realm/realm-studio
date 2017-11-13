@@ -4,6 +4,8 @@ import * as React from 'react';
 import { IUpdateStatus } from '../../main/Updater';
 
 import { main } from '../../actions/main';
+import * as github from '../../services/github';
+import * as raas from '../../services/raas';
 
 import { Greeting } from './Greeting';
 
@@ -53,8 +55,15 @@ export class GreetingContainer extends React.Component<
     main.showConnectToServer();
   };
 
-  public onShowCloudAdministration = () => {
-    main.showCloudAdministration();
+  public onShowCloudAdministration = async () => {
+    // main.showCloudAdministration();
+    // Authenticate with GitHub
+    const code = await github.authenticate();
+    const response = await raas.authenticate(code);
+    // Now that we're authenticated - let's create a tenant
+    // Poll the tenant for it's availability
+    // this.setState();
+    // Connect to the tenant
   };
 
   public onOpenLocalRealm = () => {

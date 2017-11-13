@@ -43,30 +43,33 @@ export const Greeting = ({
         onCheckForUpdates={onCheckForUpdates}
       />
       <div className="Greeting__Actions">
-        <Button className="Greeting__Action" onClick={onOpenLocalRealm}>
+        <Button
+          className="Greeting__Action"
+          onClick={onShowCloudAdministration}
+          color="primary"
+        >
+          <i className="fa fa-github" /> GitHub
+        </Button>
+        <Button
+          className="Greeting__Action"
+          size="sm"
+          onClick={onConnectToServer}
+          disabled={!isSyncEnabled}
+          title={
+            isSyncEnabled
+              ? 'Click to connect to Realm Object Server'
+              : `This feature is currently not available on ${os.type()}`
+          }
+        >
+          Connect to Realm Object Server
+        </Button>
+        <Button
+          className="Greeting__Action"
+          size="sm"
+          onClick={onOpenLocalRealm}
+        >
           Open a local Realm
         </Button>
-        <ButtonGroup>
-          <Button
-            className="Greeting__Action"
-            onClick={onConnectToServer}
-            disabled={!isSyncEnabled}
-            color="primary"
-            title={
-              isSyncEnabled
-                ? 'Click to connect to Realm Object Server'
-                : `This feature is currently not available on ${os.type()}`
-            }
-          >
-            Connect to Realm Object Server
-          </Button>
-          <Button
-            className="Greeting__Action"
-            onClick={onShowCloudAdministration}
-          >
-            via Realm Cloud
-          </Button>
-        </ButtonGroup>
       </div>
     </div>
     <HistoryPanelContainer />
