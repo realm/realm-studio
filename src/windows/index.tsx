@@ -24,9 +24,7 @@ export function getWindow(type: WindowType): React.ReactElement<{}> {
     const ConnectToServerDialog = require('./ConnectToServerDialog')
       .ConnectToServerDialog;
     return (
-      <ConnectToServerDialog
-        options={options as IConnectToServerOptions}
-      />
+      <ConnectToServerDialog options={options as IConnectToServerOptions} />
     );
   } else if (type === WindowType.ServerAdministration) {
     const ServerAdministrationWindow = require('./ServerAdministrationWindow')
