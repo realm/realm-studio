@@ -22,6 +22,10 @@ export interface IOAuthCallbackOptions {
 }
 
 export const authenticate = (scope: string = 'user') => {
+  // Throw an error if accessed from the renderer
+  if (process.type !== 'browser') {
+    throw new Error('This API is supposed to be called from the main process.');
+  }
   return new Promise<string>((resolve, reject) => {
     // Create a temporary uuid that will transfered back to the callback when authenticated
     const state = uuid();
@@ -38,6 +42,10 @@ export const authenticate = (scope: string = 'user') => {
 };
 
 export const handleOauthCallback = (options: IOAuthCallbackOptions) => {
+  // Throw an error if accessed from the renderer
+  if (process.type !== 'browser') {
+    throw new Error('This API is supposed to be called from the main process.');
+  }
   if (options.state in authenticationPromises) {
     // If the callback was expected - resolve the appropriate promise
     const promise = authenticationPromises[options.state];

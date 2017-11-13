@@ -16,7 +16,7 @@ export interface IServerAdministrationOptions {
   validateCertificates: boolean;
 }
 
-export interface IConnectToServerDialogOptions {
+export interface IConnectToServerOptions {
   url?: string;
 }
 
@@ -49,7 +49,7 @@ export function getWindowOptions(
   } else if (type === WindowType.Greeting) {
     return {
       title: `Realm Studio`,
-      width: 750,
+      width: 600,
       height: 400,
       resizable: false,
     };

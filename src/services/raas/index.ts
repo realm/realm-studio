@@ -1,6 +1,7 @@
 import { GITHUB_CLIENT_ID, GITHUB_REDIRECT_URI } from '../github';
 
 const TOKEN_STORAGE_KEY = 'realm-cloud-token';
+export const DEFAULT_CREDENTIALS_KEY = 'realm-cloud-default-credentials';
 
 export interface IRaasAuthenticationResponse {
   token: string;

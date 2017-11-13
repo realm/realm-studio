@@ -30,6 +30,9 @@ The application has support for some parameters that can be supplied when starti
 
       DISPLAY=1 npm start
 
+- If the `OPEN_DEV_TOOLS` environment variable is sat every window being opened will have the developer tools opened.
+
+      OPEN_DEV_TOOLS=true npm start
 
 ## Developing
 

@@ -4,8 +4,10 @@ import { Button, ButtonGroup } from 'reactstrap';
 import * as util from 'util';
 
 import { IUpdateStatus } from '../../main/Updater';
+import { IServerCredentials } from '../../services/ros';
 
 import realmLogo from '../../../static/svgs/realm-logo.svg';
+import { CloudOverlayContainer } from './CloudOverlayContainer';
 import { HistoryPanelContainer } from './HistoryPanelContainer';
 import { SignupOverlayContainer } from './SignupOverlayContainer';
 import { UpdateStatusIndicator } from './UpdateStatusIndicator';
@@ -13,19 +15,29 @@ import { UpdateStatusIndicator } from './UpdateStatusIndicator';
 import './Greeting.scss';
 
 export const Greeting = ({
+  defaultCloudCrendentials,
+  hasAuthenticated,
+  isCloudOverlayVisible,
   isSyncEnabled,
+  onAuthenticate,
+  onAuthenticated,
   onCheckForUpdates,
+  onConnectToDefaultRealmCloud,
   onConnectToServer,
   onOpenLocalRealm,
-  onShowCloudAdministration,
   updateStatus,
   version,
 }: {
+  defaultCloudCrendentials?: IServerCredentials;
+  hasAuthenticated: boolean;
+  isCloudOverlayVisible: boolean;
   isSyncEnabled: boolean;
+  onAuthenticate: () => void;
+  onAuthenticated: () => void;
   onCheckForUpdates: () => void;
+  onConnectToDefaultRealmCloud: () => void;
   onConnectToServer: () => void;
   onOpenLocalRealm: () => void;
-  onShowCloudAdministration: () => void;
   updateStatus: IUpdateStatus;
   version: string;
 }) => (
@@ -43,33 +55,50 @@ export const Greeting = ({
         onCheckForUpdates={onCheckForUpdates}
       />
       <div className="Greeting__Actions">
-        <Button className="Greeting__Action" onClick={onOpenLocalRealm}>
+        {hasAuthenticated && defaultCloudCrendentials ? (
+          <Button
+            className="Greeting__Action"
+            onClick={onConnectToDefaultRealmCloud}
+            color="primary"
+          >
+            Connect to Realm Cloud
+          </Button>
+        ) : (
+          <Button
+            className="Greeting__Action"
+            onClick={onAuthenticate}
+            color="primary"
+          >
+            <i className="fa fa-github" /> GitHub
+          </Button>
+        )}
+        <Button
+          className="Greeting__Action"
+          size="sm"
+          onClick={onConnectToServer}
+          disabled={!isSyncEnabled}
+          title={
+            isSyncEnabled
+              ? 'Click to connect to Realm Object Server'
+              : `This feature is currently not available on ${os.type()}`
+          }
+        >
+          Connect to Realm Object Server
+        </Button>
+        <Button
+          className="Greeting__Action"
+          size="sm"
+          onClick={onOpenLocalRealm}
+        >
           Open a local Realm
         </Button>
-        <ButtonGroup>
-          <Button
-            className="Greeting__Action"
-            onClick={onConnectToServer}
-            disabled={!isSyncEnabled}
-            color="primary"
-            title={
-              isSyncEnabled
-                ? 'Click to connect to Realm Object Server'
-                : `This feature is currently not available on ${os.type()}`
-            }
-          >
-            Connect to Realm Object Server
-          </Button>
-          <Button
-            className="Greeting__Action"
-            onClick={onShowCloudAdministration}
-          >
-            via Realm Cloud
-          </Button>
-        </ButtonGroup>
       </div>
     </div>
     <HistoryPanelContainer />
+    <CloudOverlayContainer
+      onAuthenticated={onAuthenticated}
+      visible={isCloudOverlayVisible}
+    />
     <SignupOverlayContainer />
   </div>
 );

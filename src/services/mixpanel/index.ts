@@ -28,12 +28,18 @@ mixpanel.disable([
   '$web_event', // This was tracking every click - potentially transfering confirdential data
 ]);
 
+const browserParams = {
+  $browser: 'Realm Studio',
+  $browser_version: electron.remote.app.getVersion() || 'unknown',
+};
+
+// Sends the browser version on every request
+mixpanel.register(browserParams);
+
 settings.getSettings().then(({ identity }) => {
   mixpanel.identify(identity);
-  mixpanel.people.set({
-    $browser: 'Realm Studio',
-    $browser_version: electron.remote.app.getVersion() || 'unknown',
-  });
+  // Update the persons latest browser version
+  mixpanel.people.set(browserParams);
 });
 
 // Track every click on external links

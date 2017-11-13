@@ -28,7 +28,7 @@ export class WindowManager {
     });
 
     // Open up the dev tools, if not in production mode
-    if (!isProduction) {
+    if (!isProduction && process.env.OPEN_DEV_TOOLS) {
       window.webContents.once('did-finish-load', () => {
         window.webContents.openDevTools({
           mode: 'detach',
