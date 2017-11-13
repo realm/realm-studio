@@ -11,6 +11,7 @@ import {
   IServerAdministrationOptions,
   WindowType,
 } from '../windows/WindowType';
+import { CertificateManager } from './CertificateManager';
 import { MainActions } from './MainActions';
 import { MainMenu } from './MainMenu';
 import { Updater } from './Updater';
@@ -24,6 +25,7 @@ export class Application {
   private mainMenu = new MainMenu();
   private updater = new Updater();
   private windowManager = new WindowManager();
+  private certificateManager = new CertificateManager();
 
   private actionHandlers = {
     [MainActions.AuthenticateWithGitHub]: () => {
@@ -68,6 +70,7 @@ export class Application {
     this.unregisterProtocols();
     this.updater.destroy();
     this.windowManager.closeAllWindows();
+    this.certificateManager.destroy();
   }
 
   public userDataPath(): string {
