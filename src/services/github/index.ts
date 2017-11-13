@@ -23,7 +23,7 @@ export interface IOAuthCallbackOptions {
 
 export const authenticate = (scope: string = 'user') => {
   // Throw an error if accessed from the renderer
-  if (process.type !== 'main') {
+  if (process.type !== 'browser') {
     throw new Error('This API is supposed to be called from the main process.');
   }
   return new Promise<string>((resolve, reject) => {
@@ -43,7 +43,7 @@ export const authenticate = (scope: string = 'user') => {
 
 export const handleOauthCallback = (options: IOAuthCallbackOptions) => {
   // Throw an error if accessed from the renderer
-  if (process.type !== 'main') {
+  if (process.type !== 'browser') {
     throw new Error('This API is supposed to be called from the main process.');
   }
   if (options.state in authenticationPromises) {

@@ -16,7 +16,7 @@ export interface IServerAdministrationOptions {
   validateCertificates: boolean;
 }
 
-export interface IConnectToServerDialogOptions {
+export interface IConnectToServerOptions {
   url?: string;
 }
 

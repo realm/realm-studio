@@ -2,7 +2,7 @@ import * as querystring from 'querystring';
 import * as React from 'react';
 
 import {
-  IConnectToServerDialogOptions,
+  IConnectToServerOptions,
   IRealmBrowserOptions,
   IServerAdministrationOptions,
   WindowType,
@@ -25,7 +25,7 @@ export function getWindow(type: WindowType): React.ReactElement<{}> {
       .ConnectToServerDialog;
     return (
       <ConnectToServerDialog
-        options={options as IConnectToServerDialogOptions}
+        options={options as IConnectToServerOptions}
       />
     );
   } else if (type === WindowType.ServerAdministration) {

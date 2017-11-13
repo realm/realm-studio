@@ -29,10 +29,15 @@ export const LoadingOverlay = ({
         'LoadingOverlay--no-fade': !fade,
       })}
     >
+      {progress && progress.activity ? (
+        <section className="LoadingOverlay__Activity">
+          {progress.activity}
+        </section>
+      ) : null}
       {(progress ? !progress.done : loading) ? <LoadingDots /> : null}
       {progress &&
-        progress.transferable &&
-        progress.transferred && (
+        typeof progress.transferable === 'number' &&
+        typeof progress.transferred === 'number' && (
           <Progress
             className="LoadingOverlay__Progress"
             value={progress.transferred}

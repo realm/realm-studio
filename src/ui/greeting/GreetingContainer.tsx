@@ -4,22 +4,29 @@ import * as React from 'react';
 import { IUpdateStatus } from '../../main/Updater';
 
 import { main } from '../../actions/main';
-import * as github from '../../services/github';
 import * as raas from '../../services/raas';
+import { IServerCredentials } from '../../services/ros';
 
 import { Greeting } from './Greeting';
 
+interface IGreetingContainerState {
+  defaultCloudCrendentials?: IServerCredentials;
+  hasAuthenticated: boolean;
+  isCloudOverlayVisible: boolean;
+  isSyncEnabled: boolean;
+  updateStatus: IUpdateStatus;
+  version: string;
+}
+
 export class GreetingContainer extends React.Component<
   {},
-  {
-    isSyncEnabled: boolean;
-    updateStatus: IUpdateStatus;
-    version: string;
-  }
+  IGreetingContainerState
 > {
   constructor() {
     super();
     this.state = {
+      hasAuthenticated: false,
+      isCloudOverlayVisible: false,
       isSyncEnabled: false,
       updateStatus: {
         state: 'up-to-date',
@@ -38,6 +45,8 @@ export class GreetingContainer extends React.Component<
         isSyncEnabled: !!Realm.Sync,
       });
     });
+    this.updateCloudCredentials();
+    this.updateHasAuthenticated();
   }
 
   public componentWillUnmount() {
@@ -51,19 +60,42 @@ export class GreetingContainer extends React.Component<
     return <Greeting {...this.state} {...this} />;
   }
 
+  public onAuthenticate = async () => {
+    // Authenticate with GitHub
+    const code = await main.authenticateWithGitHub();
+    const response = await raas.authenticate(code);
+    if (response.token) {
+      this.setState({
+        hasAuthenticated: true,
+        // Show the cloud overlay if the user has no default credentials
+        isCloudOverlayVisible: !this.state.defaultCloudCrendentials,
+      });
+    }
+  };
+
+  public onAuthenticated = () => {
+    this.setState({ isCloudOverlayVisible: false });
+    this.updateHasAuthenticated();
+    this.updateCloudCredentials();
+  };
+
+  public onConnectToDefaultRealmCloud = () => {
+    if (this.state.defaultCloudCrendentials) {
+      main.showServerAdministration({
+        credentials: this.state.defaultCloudCrendentials,
+        validateCertificates: true,
+      });
+    } else {
+      throw new Error(`Missing credentials`);
+    }
+  };
+
   public onConnectToServer = () => {
     main.showConnectToServer();
   };
 
-  public onShowCloudAdministration = async () => {
-    // main.showCloudAdministration();
-    // Authenticate with GitHub
-    const code = await github.authenticate();
-    const response = await raas.authenticate(code);
-    // Now that we're authenticated - let's create a tenant
-    // Poll the tenant for it's availability
-    // this.setState();
-    // Connect to the tenant
+  public onShowCloudAdministration = () => {
+    this.setState({ isCloudOverlayVisible: true });
   };
 
   public onOpenLocalRealm = () => {
@@ -80,4 +112,23 @@ export class GreetingContainer extends React.Component<
   ) => {
     this.setState({ updateStatus: status });
   };
+
+  protected updateCloudCredentials() {
+    const credentials = localStorage.getItem(raas.DEFAULT_CREDENTIALS_KEY);
+    if (credentials) {
+      this.setState({
+        defaultCloudCrendentials: JSON.parse(credentials),
+      });
+    } else {
+      this.setState({
+        defaultCloudCrendentials: undefined,
+      });
+    }
+  }
+
+  protected updateHasAuthenticated() {
+    this.setState({
+      hasAuthenticated: raas.hasToken(),
+    });
+  }
 }
