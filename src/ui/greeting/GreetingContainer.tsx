@@ -65,6 +65,7 @@ export class GreetingContainer extends React.Component<
     const code = await main.authenticateWithGitHub();
     const response = await raas.authenticate(code);
     if (response.token) {
+      raas.setToken(response.token);
       this.setState({
         hasAuthenticated: true,
         // Show the cloud overlay if the user has no default credentials
