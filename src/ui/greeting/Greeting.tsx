@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Button, ButtonGroup } from 'reactstrap';
 import * as util from 'util';
 
+import { ICloudStatus } from '../../main/CloudManager';
 import { IUpdateStatus } from '../../main/Updater';
 import { IServerCredentials } from '../../services/ros';
 
@@ -15,9 +16,8 @@ import { UpdateStatusIndicator } from './UpdateStatusIndicator';
 import './Greeting.scss';
 
 export const Greeting = ({
-  defaultCloudCrendentials,
-  hasAuthenticated,
-  isCloudOverlayVisible,
+  cloudStatus,
+  isCloudOverlayActivated,
   isSyncEnabled,
   onAuthenticate,
   onAuthenticated,
@@ -28,9 +28,8 @@ export const Greeting = ({
   updateStatus,
   version,
 }: {
-  defaultCloudCrendentials?: IServerCredentials;
-  hasAuthenticated: boolean;
-  isCloudOverlayVisible: boolean;
+  cloudStatus?: ICloudStatus;
+  isCloudOverlayActivated: boolean;
   isSyncEnabled: boolean;
   onAuthenticate: () => void;
   onAuthenticated: () => void;
@@ -55,7 +54,7 @@ export const Greeting = ({
         onCheckForUpdates={onCheckForUpdates}
       />
       <div className="Greeting__Actions">
-        {hasAuthenticated && defaultCloudCrendentials ? (
+        {cloudStatus && cloudStatus.raasToken && cloudStatus.defaultTenant ? (
           <Button
             className="Greeting__Action"
             onClick={onConnectToDefaultRealmCloud}
@@ -72,32 +71,12 @@ export const Greeting = ({
             <i className="fa fa-github" /> GitHub
           </Button>
         )}
-        <Button
-          className="Greeting__Action"
-          size="sm"
-          onClick={onConnectToServer}
-          disabled={!isSyncEnabled}
-          title={
-            isSyncEnabled
-              ? 'Click to connect to Realm Object Server'
-              : `This feature is currently not available on ${os.type()}`
-          }
-        >
-          Connect to Realm Object Server
-        </Button>
-        <Button
-          className="Greeting__Action"
-          size="sm"
-          onClick={onOpenLocalRealm}
-        >
-          Open a local Realm
-        </Button>
       </div>
     </div>
     <HistoryPanelContainer />
     <CloudOverlayContainer
+      activated={isCloudOverlayActivated}
       onAuthenticated={onAuthenticated}
-      visible={isCloudOverlayVisible}
     />
     <SignupOverlayContainer />
   </div>
