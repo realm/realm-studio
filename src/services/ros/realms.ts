@@ -40,17 +40,6 @@ export const getUrl = (user: Realm.Sync.User, realmPath: string) => {
   return url.toString();
 };
 
-export const timeoutPromise = (
-  url: string,
-  delay: number = 30000,
-): Promise<Realm> => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      reject(new Error(`Timed out opening Realm: ${url}`));
-    }, delay);
-  });
-};
-
 export const open = async (
   user: Realm.Sync.User,
   realmPath: string,
@@ -74,8 +63,7 @@ export const open = async (
     realm.progress(progressCallback);
   }
 
-  // Return a promise that resolves once the entire synced Realm has been downloaded
-  return Promise.race<Realm>([realm, timeoutPromise(url)]);
+  return realm;
 };
 
 export const remove = (realmId: string) => {
