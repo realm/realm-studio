@@ -5,6 +5,7 @@ import { ActionReceiver } from '../actions/ActionReceiver';
 import { MainTransport } from '../actions/transports/MainTransport';
 import { PROTOCOL } from '../constants';
 import * as github from '../services/github';
+import * as raas from '../services/raas';
 import { realms } from '../services/ros';
 import {
   IRealmBrowserOptions,
@@ -12,6 +13,7 @@ import {
   WindowType,
 } from '../windows/WindowType';
 import { CertificateManager } from './CertificateManager';
+import { CloudManager, ICloudStatus } from './CloudManager';
 import { MainActions } from './MainActions';
 import { MainMenu } from './MainMenu';
 import { Updater } from './Updater';
@@ -26,13 +28,17 @@ export class Application {
   private updater = new Updater();
   private windowManager = new WindowManager();
   private certificateManager = new CertificateManager();
+  private cloudManager = new CloudManager();
 
   private actionHandlers = {
     [MainActions.AuthenticateWithGitHub]: () => {
-      return github.authenticate();
+      return this.authenticateWithGitHub();
     },
     [MainActions.CheckForUpdates]: () => {
       this.checkForUpdates();
+    },
+    [MainActions.RefreshCloudStatus]: () => {
+      this.cloudManager.refresh();
     },
     [MainActions.ShowCloudAdministration]: () => {
       return this.showCloudAdministration();
@@ -59,6 +65,7 @@ export class Application {
   public run() {
     // this.makeSingleton(); // TODO: Re-enable and test on windows
     this.addAppListeners();
+    this.cloudManager.addListener(this.onCloudStatusChange);
     // If its already ready - the handler won't be called
     if (electron.app.isReady()) {
       this.onReady();
@@ -69,8 +76,9 @@ export class Application {
     this.removeAppListeners();
     this.unregisterProtocols();
     this.updater.destroy();
-    this.windowManager.closeAllWindows();
     this.certificateManager.destroy();
+    this.cloudManager.removeListener(this.onCloudStatusChange);
+    this.windowManager.closeAllWindows();
   }
 
   public userDataPath(): string {
@@ -78,6 +86,14 @@ export class Application {
   }
 
   // Implementation of action handlers below
+
+  public async authenticateWithGitHub() {
+    return this.cloudManager.authenticateWithGitHub();
+  }
+
+  public deauthenticate() {
+    return this.cloudManager.deauthenticate();
+  }
 
   public async showConnectToServer(url?: string) {
     return new Promise(resolve => {
@@ -104,10 +120,13 @@ export class Application {
       // Check for updates, every time the contents has loaded
       window.webContents.on('did-finish-load', () => {
         this.updater.checkForUpdates(true);
+        this.cloudManager.refresh();
       });
       this.updater.addListeningWindow(window);
+      this.cloudManager.addListeningWindow(window);
       window.once('close', () => {
         this.updater.removeListeningWindow(window);
+        this.cloudManager.removeListeningWindow(window);
       });
     });
   }
@@ -248,6 +267,11 @@ export class Application {
   ) => {
     const receiver = new ActionReceiver(this.actionHandlers);
     receiver.setTransport(new MainTransport(webContents));
+  };
+
+  private onCloudStatusChange = (status: ICloudStatus) => {
+    // Refresh the menu, as the authentication state might have changed
+    this.mainMenu.refresh();
   };
 
   private registerProtocols() {

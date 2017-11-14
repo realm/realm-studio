@@ -7,12 +7,16 @@ import {
 } from '../../windows/WindowType';
 
 export class Sender extends ActionSender {
-  public authenticateWithGitHub() {
+  public authenticateWithGitHub(): Promise<void> {
     return this.send(MainActions.AuthenticateWithGitHub);
   }
 
   public checkForUpdates() {
     return this.send(MainActions.CheckForUpdates);
+  }
+
+  public refreshCloudStatus() {
+    return this.send(MainActions.RefreshCloudStatus);
   }
 
   public showCloudAdministration() {
