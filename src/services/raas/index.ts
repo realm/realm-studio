@@ -1,7 +1,9 @@
+import { store } from '../../store';
 import { GITHUB_CLIENT_ID, GITHUB_REDIRECT_URI } from '../github';
+import { IServerCredentials } from '../ros';
 
-const TOKEN_STORAGE_KEY = 'realm-cloud-token';
-export const DEFAULT_CREDENTIALS_KEY = 'realm-cloud-default-credentials';
+const TOKEN_STORAGE_KEY = 'cloud.token';
+export const DEFAULT_TENANT_KEY = 'cloud.defaultTenant';
 
 export interface IRaasAuthenticationResponse {
   token: string;
@@ -29,12 +31,21 @@ export interface IServiceShard {
   tenants: ITenant[];
 }
 
+export interface IDefaultTenant {
+  controllerUrl: string;
+  id: string;
+  credentials: IServerCredentials;
+}
+
 const buildUrl = (path: string) => {
   return `https://raas.realmlab.net${path}`;
 };
 
 const fetchAuthenticated = (url: string, options: RequestInit) => {
-  const token = localStorage.getItem(TOKEN_STORAGE_KEY);
+  const token = store.get(TOKEN_STORAGE_KEY);
+  if (!token) {
+    throw new Error('Missing the Cloud token - please authenticate first');
+  }
   const headers = new Headers({
     authorization: `Bearer ${token}`,
     'Content-Type': 'application/json',
@@ -53,16 +64,36 @@ const getErrorMessage = async (response: Response): Promise<string> => {
   }
 };
 
+export const hasDefaultTenant = () => {
+  return store.has(DEFAULT_TENANT_KEY);
+};
+
+export const getDefaultTenant = (): IDefaultTenant => {
+  return store.get(DEFAULT_TENANT_KEY);
+};
+
+export const setDefaultTenant = (tenant: IDefaultTenant) => {
+  store.set(DEFAULT_TENANT_KEY, tenant);
+};
+
+export const forgetDefaultTenant = () => {
+  store.delete(DEFAULT_TENANT_KEY);
+};
+
 export const hasToken = () => {
-  return localStorage.getItem(TOKEN_STORAGE_KEY) ? true : false;
+  return store.has(TOKEN_STORAGE_KEY);
+};
+
+export const getToken = (): string => {
+  return store.get(TOKEN_STORAGE_KEY);
 };
 
 export const setToken = (token: string) => {
-  localStorage.setItem(TOKEN_STORAGE_KEY, token);
+  store.set(TOKEN_STORAGE_KEY, token);
 };
 
 export const forgetToken = () => {
-  localStorage.removeItem(TOKEN_STORAGE_KEY);
+  store.delete(TOKEN_STORAGE_KEY);
 };
 
 export const authenticate = async (
