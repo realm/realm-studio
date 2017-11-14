@@ -162,13 +162,8 @@ export class ConnectToServerContainer extends React.Component<
         // Replace the realm: with http:
         if (!url.protocol || url.protocol === 'realm:') {
           url.protocol = 'http:';
-        }
-        // Set the default ports
-        if (url.protocol === 'http:' && !url.port) {
-          url.port = '9080';
-        }
-        if (url.protocol === 'https:' && !url.port) {
-          url.port = '9443';
+        } else if (url.protocol === 'realms:') {
+          url.protocol = 'https:';
         }
         return url.toString();
       } catch (err) {
