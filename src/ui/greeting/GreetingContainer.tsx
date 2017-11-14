@@ -106,6 +106,10 @@ export class GreetingContainer extends React.Component<
     status: ICloudStatus,
   ) => {
     const isCloudOverlayActivated = !!status.raasToken && !status.defaultTenant;
+    if (isCloudOverlayActivated) {
+      // Focus the window
+      electron.remote.getCurrentWindow().focus();
+    }
     this.setState({
       cloudStatus: status,
       // Show the cloud overlay if the user has no default credentials
