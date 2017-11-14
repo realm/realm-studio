@@ -54,11 +54,12 @@ export const Greeting = ({
         onCheckForUpdates={onCheckForUpdates}
       />
       <div className="Greeting__Actions">
-        {cloudStatus && cloudStatus.raasToken && cloudStatus.defaultTenant ? (
+        {cloudStatus && cloudStatus.raasToken ? (
           <Button
             className="Greeting__Action"
             onClick={onConnectToDefaultRealmCloud}
             color="primary"
+            disabled={!cloudStatus.defaultTenant}
           >
             Connect to Realm Cloud
           </Button>
