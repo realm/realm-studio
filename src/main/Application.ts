@@ -181,6 +181,12 @@ export class Application {
       window.webContents.once('did-finish-load', () => {
         resolve();
       });
+      if (options.isCloudTenant) {
+        this.cloudManager.addListeningWindow(window);
+        window.once('close', () => {
+          this.cloudManager.removeListeningWindow(window);
+        });
+      }
     });
   }
 

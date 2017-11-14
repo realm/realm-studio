@@ -75,6 +75,7 @@ export class GreetingContainer extends React.Component<
       main.showServerAdministration({
         credentials: this.state.cloudStatus.defaultTenant.credentials,
         validateCertificates: true,
+        isCloudTenant: true,
       });
     } else {
       throw new Error(`Missing a default tenant`);
@@ -105,6 +106,10 @@ export class GreetingContainer extends React.Component<
     status: ICloudStatus,
   ) => {
     const isCloudOverlayActivated = !!status.raasToken && !status.defaultTenant;
+    if (isCloudOverlayActivated) {
+      // Focus the window
+      electron.remote.getCurrentWindow().focus();
+    }
     this.setState({
       cloudStatus: status,
       // Show the cloud overlay if the user has no default credentials
