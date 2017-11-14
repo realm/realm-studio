@@ -8,7 +8,7 @@ import * as ros from '../../services/ros';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
 
 interface ICloudOverlayContainerProps {
-  visible: boolean;
+  activated: boolean;
   onAuthenticated: () => void;
 }
 
@@ -30,7 +30,7 @@ export class CloudOverlayContainer extends React.Component<
   }
 
   public componentWillReceiveProps(nextProps: ICloudOverlayContainerProps) {
-    if (!this.props.visible && nextProps.visible) {
+    if (!this.props.activated && nextProps.activated) {
       this.authenticate();
     }
   }
@@ -84,10 +84,11 @@ export class CloudOverlayContainer extends React.Component<
         password: initialPassword,
       };
 
-      localStorage.setItem(
-        raas.DEFAULT_CREDENTIALS_KEY,
-        JSON.stringify(credentials),
-      );
+      raas.setDefaultTenant({
+        controllerUrl: selectedShard.controllerUrl,
+        id,
+        credentials,
+      });
 
       // Poll the tenant for it's availability
       // We expect this to take 17 secound
@@ -111,17 +112,22 @@ export class CloudOverlayContainer extends React.Component<
         },
       });
 
-      // Connect to the tenant
-      await main.showServerAdministration({
-        credentials,
-        validateCertificates: true,
-      });
+      // Wait a sec.
+      // TODO: remove this once /health does a better check
+      // @see https://github.com/realm/realm-object-server-private/issues/695
+      setTimeout(async () => {
+        // Connect to the tenant
+        await main.showServerAdministration({
+          credentials,
+          validateCertificates: true,
+        });
 
-      this.setState({
-        progress: { done: true },
-      });
+        this.setState({
+          progress: { done: true },
+        });
 
-      this.props.onAuthenticated();
+        this.props.onAuthenticated();
+      }, 1000);
     } catch (err) {
       this.setState({
         progress: {

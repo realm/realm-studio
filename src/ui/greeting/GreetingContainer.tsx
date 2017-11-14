@@ -1,18 +1,17 @@
 import * as electron from 'electron';
 import * as React from 'react';
 
-import { IUpdateStatus } from '../../main/Updater';
-
 import { main } from '../../actions/main';
-import * as raas from '../../services/raas';
+import { ICloudStatus } from '../../main/CloudManager';
+import { IUpdateStatus } from '../../main/Updater';
 import { IServerCredentials } from '../../services/ros';
+import { store } from '../../store';
 
 import { Greeting } from './Greeting';
 
 interface IGreetingContainerState {
-  defaultCloudCrendentials?: IServerCredentials;
-  hasAuthenticated: boolean;
-  isCloudOverlayVisible: boolean;
+  cloudStatus?: ICloudStatus;
+  isCloudOverlayActivated: boolean;
   isSyncEnabled: boolean;
   updateStatus: IUpdateStatus;
   version: string;
@@ -25,8 +24,7 @@ export class GreetingContainer extends React.Component<
   constructor() {
     super();
     this.state = {
-      hasAuthenticated: false,
-      isCloudOverlayVisible: false,
+      isCloudOverlayActivated: false,
       isSyncEnabled: false,
       updateStatus: {
         state: 'up-to-date',
@@ -36,6 +34,7 @@ export class GreetingContainer extends React.Component<
   }
 
   public componentDidMount() {
+    electron.ipcRenderer.on('cloud-status', this.cloudStatusChanged);
     electron.ipcRenderer.on('update-status', this.updateStatusChanged);
     // Require realm and check update state with the sync support
     // Using nextTick to prevent blocking when loading realm
@@ -45,11 +44,13 @@ export class GreetingContainer extends React.Component<
         isSyncEnabled: !!Realm.Sync,
       });
     });
-    this.updateCloudCredentials();
-    this.updateHasAuthenticated();
   }
 
   public componentWillUnmount() {
+    electron.ipcRenderer.removeListener(
+      'cloud-status',
+      this.cloudStatusChanged,
+    );
     electron.ipcRenderer.removeListener(
       'update-status',
       this.updateStatusChanged,
@@ -62,41 +63,26 @@ export class GreetingContainer extends React.Component<
 
   public onAuthenticate = async () => {
     // Authenticate with GitHub
-    const code = await main.authenticateWithGitHub();
-    const response = await raas.authenticate(code);
-    if (response.token) {
-      raas.setToken(response.token);
-      this.setState({
-        hasAuthenticated: true,
-        // Show the cloud overlay if the user has no default credentials
-        isCloudOverlayVisible: !this.state.defaultCloudCrendentials,
-      });
-    }
+    await main.authenticateWithGitHub();
   };
 
-  public onAuthenticated = () => {
-    this.setState({ isCloudOverlayVisible: false });
-    this.updateHasAuthenticated();
-    this.updateCloudCredentials();
+  public onAuthenticated = async () => {
+    await main.refreshCloudStatus();
   };
 
   public onConnectToDefaultRealmCloud = () => {
-    if (this.state.defaultCloudCrendentials) {
+    if (this.state.cloudStatus && this.state.cloudStatus.defaultTenant) {
       main.showServerAdministration({
-        credentials: this.state.defaultCloudCrendentials,
+        credentials: this.state.cloudStatus.defaultTenant.credentials,
         validateCertificates: true,
       });
     } else {
-      throw new Error(`Missing credentials`);
+      throw new Error(`Missing a default tenant`);
     }
   };
 
   public onConnectToServer = () => {
     main.showConnectToServer();
-  };
-
-  public onShowCloudAdministration = () => {
-    this.setState({ isCloudOverlayVisible: true });
   };
 
   public onOpenLocalRealm = () => {
@@ -114,22 +100,15 @@ export class GreetingContainer extends React.Component<
     this.setState({ updateStatus: status });
   };
 
-  protected updateCloudCredentials() {
-    const credentials = localStorage.getItem(raas.DEFAULT_CREDENTIALS_KEY);
-    if (credentials) {
-      this.setState({
-        defaultCloudCrendentials: JSON.parse(credentials),
-      });
-    } else {
-      this.setState({
-        defaultCloudCrendentials: undefined,
-      });
-    }
-  }
-
-  protected updateHasAuthenticated() {
+  public cloudStatusChanged = (
+    e: Electron.IpcMessageEvent,
+    status: ICloudStatus,
+  ) => {
+    const isCloudOverlayActivated = !!status.raasToken && !status.defaultTenant;
     this.setState({
-      hasAuthenticated: raas.hasToken(),
+      cloudStatus: status,
+      // Show the cloud overlay if the user has no default credentials
+      isCloudOverlayActivated,
     });
-  }
+  };
 }

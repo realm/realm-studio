@@ -1,7 +1,10 @@
 import * as electron from 'electron';
+import * as fs from 'fs-extra';
 import * as mixpanel from 'mixpanel-browser';
+import * as path from 'path';
+import { v4 as uuid } from 'uuid';
 
-import * as settings from '../../settings';
+import { store } from '../../store';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -36,11 +39,35 @@ const browserParams = {
 // Sends the browser version on every request
 mixpanel.register(browserParams);
 
-settings.getSettings().then(({ identity }) => {
-  mixpanel.identify(identity);
-  // Update the persons latest browser version
-  mixpanel.people.set(browserParams);
-});
+const getOrCreateIdentity = () => {
+  // Get the identity from the settings file - in case the localStorage was cleared
+  const identityFromStore = store.get('identity');
+  if (identityFromStore) {
+    return identityFromStore;
+  } else {
+    // Try migrating from the old settings
+    const settingsPath = path.resolve(
+      electron.remote.app.getPath('userData'),
+      'settings.json',
+    );
+    const legacySettings = fs.readJsonSync(settingsPath);
+    if (legacySettings && legacySettings.identity) {
+      store.set('identity', legacySettings.identity);
+      return legacySettings.identity;
+    } else {
+      // Generate a new idendity
+      const newIdentity = uuid();
+      store.set('identity', newIdentity);
+      return newIdentity;
+    }
+  }
+};
+
+const identity = getOrCreateIdentity();
+// Tell mixpanel about the identity
+mixpanel.identify(identity);
+// Update the persons latest browser version
+mixpanel.people.set(browserParams);
 
 // Track every click on external links
 

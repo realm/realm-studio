@@ -36,6 +36,8 @@ export class ActionReceiver {
         const result = await this.handlers[action](...args);
         this.transport.sendResponse(requestId, result);
       } catch (err) {
+        // tslint:disable-next-line:no-console
+        console.error(err);
         throw new Error(`Failed to perform "${action}": ${err.message}`);
       }
     } else {

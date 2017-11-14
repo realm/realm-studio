@@ -51,9 +51,7 @@ export class CloudAdministrationContainer extends React.Component<
 
   public onAuthenticate = async () => {
     try {
-      const code = await main.authenticateWithGitHub();
-      const raasResponse = await raas.authenticate(code);
-      raas.setToken(raasResponse.token);
+      await main.authenticateWithGitHub();
       this.refreshTokenStatus();
     } catch (err) {
       electron.remote.dialog.showErrorBox(
