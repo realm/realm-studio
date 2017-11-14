@@ -122,6 +122,7 @@ export class CloudOverlayContainer extends React.Component<
         await main.showServerAdministration({
           credentials,
           validateCertificates: true,
+          isCloudTenant: true,
         });
 
         this.setState({

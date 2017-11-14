@@ -75,6 +75,7 @@ export class GreetingContainer extends React.Component<
       main.showServerAdministration({
         credentials: this.state.cloudStatus.defaultTenant.credentials,
         validateCertificates: true,
+        isCloudTenant: true,
       });
     } else {
       throw new Error(`Missing a default tenant`);

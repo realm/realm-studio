@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as Realm from 'realm';
 
 import { main } from '../../actions/main';
+import { ICloudStatus } from '../../main/CloudManager';
 import {
   IAdminTokenCredentials,
   IUsernamePasswordCredentials,
@@ -43,10 +44,20 @@ export class ServerAdministrationContainer extends React.Component<
   }
 
   public async componentDidMount() {
+    // Start listening on changes to the cloud-status
+    electron.ipcRenderer.on('cloud-status', this.cloudStatusChanged);
+    // Authenticate towards the server
     const user = await users.authenticate(this.props.credentials);
     this.setState({
       user,
     });
+  }
+
+  public componentWillUnmount() {
+    electron.ipcRenderer.removeListener(
+      'cloud-status',
+      this.cloudStatusChanged,
+    );
   }
 
   public render() {
@@ -82,5 +93,15 @@ export class ServerAdministrationContainer extends React.Component<
     this.setState({
       activeTab: tab,
     });
+  };
+
+  protected cloudStatusChanged = (
+    e: Electron.IpcMessageEvent,
+    status: ICloudStatus,
+  ) => {
+    // If the user is deauthenticated - close the window if it's administering a cloud tenant
+    if (this.props.isCloudTenant && !status.defaultTenant) {
+      electron.remote.getCurrentWindow().close();
+    }
   };
 }

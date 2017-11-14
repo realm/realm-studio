@@ -14,6 +14,7 @@ export enum WindowType {
 export interface IServerAdministrationOptions {
   credentials: ros.IServerCredentials;
   validateCertificates: boolean;
+  isCloudTenant?: boolean;
 }
 
 export interface IConnectToServerOptions {
