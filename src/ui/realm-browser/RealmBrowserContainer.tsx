@@ -6,7 +6,6 @@ import * as util from 'util';
 
 import { IPropertyWithName, ISelectObjectState } from '.';
 import { IRealmBrowserOptions } from '../../windows/WindowType';
-import { IContextMenuAction } from '../reusable/context-menu';
 import { showError } from '../reusable/errors';
 import {
   IRealmLoadingComponentState,
@@ -29,12 +28,6 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
     yes: () => void;
     no: () => void;
   };
-  contextMenu: {
-    x: number;
-    y: number;
-    object: any;
-    actions: IContextMenuAction[];
-  } | null;
   encryptionKey?: string;
   focus: IFocus | null;
   isEncryptionDialogVisible: boolean;
@@ -55,7 +48,6 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     super();
     this.state = {
       confirmModal: undefined,
-      contextMenu: null,
       focus: null,
       isEncryptionDialogVisible: false,
       progress: { done: false },
@@ -291,10 +283,6 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   public deleteObject = (object: Realm.Object) => {
     this.realm.write(() => this.realm.delete(object));
     this.setState({ highlight: undefined, confirmModal: undefined });
-  };
-
-  public onContextMenuClose = (): void => {
-    this.setState({ contextMenu: null });
   };
 
   public onHideEncryptionDialog = () => {
