@@ -8,7 +8,37 @@ export class MainMenu {
 
   public set() {
     electron.Menu.setApplicationMenu(this.menu);
+    this.enableModelDefinitions(false);
   }
+
+  public enableModelDefinitions(enable: boolean) {
+    const FileMenu = this.getMenuItem(this.menu, 'File');
+
+    if (FileMenu && FileMenu.submenu) {
+      const ModelDefinitions = this.getMenuItem(
+          (FileMenu.submenu as Electron.Menu),
+          'Save model definitions',
+      );
+
+      if (ModelDefinitions && ModelDefinitions.submenu) {
+          (ModelDefinitions.submenu as Electron.Menu).items.map(
+              item =>
+                  ((item as Electron.MenuItemConstructorOptions).enabled = enable),
+          );
+      }
+
+    }
+
+
+  }
+
+  private getMenuItem = (
+    menu: Electron.Menu,
+    name: string,
+  ): Electron.MenuItemConstructorOptions =>
+    (menu.items.find(
+      item => (item as Electron.MenuItemConstructorOptions).label === name,
+    ) as Electron.MenuItemConstructorOptions;
 
   private menuTemplate(): Electron.MenuItemConstructorOptions[] {
     const template: Electron.MenuItemConstructorOptions[] = [
@@ -24,6 +54,23 @@ export class MainMenu {
           },
           { type: 'separator' },
           { role: 'close' },
+          {
+            label: 'Save model definitions',
+            submenu: [
+              {
+                label: 'Swift',
+                click: () => {
+                  electron.dialog.showSaveDialog({}, selectedPaths => {
+                    // const exp = new exporter.SwiftSchemaExporter();
+                    // const realm = 'get realm object from the focused window';
+                    // console.log('focused window', electron.BrowserWindow.getFocusedWindow().webContents);
+                    // exp.exportSchema(realm);
+                    // exp.writeFilesToDisk(selectedPaths);
+                  });
+                },
+              },
+            ],
+          },
         ],
       },
       {
