@@ -26,6 +26,7 @@ $highlight-row-bg: mix($color-dove, $color-elephant, 75%);
 
   &__Sidebar {
     background: $window-background;
+    border-right: 1px solid $color-dove;
     display: flex;
     flex-direction: column;
     padding: $spacer / 2;
