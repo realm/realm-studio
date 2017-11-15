@@ -16,20 +16,17 @@ export class MainMenu {
 
     if (FileMenu && FileMenu.submenu) {
       const ModelDefinitions = this.getMenuItem(
-          (FileMenu.submenu as Electron.Menu),
-          'Save model definitions',
+        (FileMenu.submenu as Electron.Menu),
+        'Save model definitions',
       );
 
       if (ModelDefinitions && ModelDefinitions.submenu) {
-          (ModelDefinitions.submenu as Electron.Menu).items.map(
-              item =>
-                  ((item as Electron.MenuItemConstructorOptions).enabled = enable),
-          );
+        (ModelDefinitions.submenu as Electron.Menu).items.map(
+          item =>
+            ((item as Electron.MenuItemConstructorOptions).enabled = enable),
+        );
       }
-
     }
-
-
   }
 
   private getMenuItem = (
