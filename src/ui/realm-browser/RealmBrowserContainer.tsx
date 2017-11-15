@@ -1,4 +1,5 @@
 import * as assert from 'assert';
+import { remote } from 'electron';
 import * as React from 'react';
 import * as Realm from 'realm';
 import * as util from 'util';
@@ -191,33 +192,34 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     { rowObject, rowIndex, property },
   ) => {
     e.preventDefault();
-    const actions = [];
 
+    const menu = new remote.Menu();
     if (property.type === 'object') {
-      actions.push({
-        label: 'Update reference',
-        onClick: () => this.openSelectObject(rowObject, property),
-      });
+      menu.append(
+        new remote.MenuItem({
+          label: 'Update reference',
+          click: () => {
+            this.openSelectObject(rowObject, property);
+          },
+        }),
+      );
     }
 
     if (this.state.focus && this.state.focus.kind === 'class') {
-      actions.push({
-        label: 'Delete',
-        onClick: () => this.openConfirmModal(rowObject),
-      });
+      menu.append(
+        new remote.MenuItem({
+          label: 'Delete',
+          click: () => {
+            this.openConfirmModal(rowObject);
+          },
+        }),
+      );
     }
 
-    if (actions.length > 0) {
-      this.setState({
-        highlight: {
-          row: rowIndex,
-        },
-        contextMenu: {
-          x: e.clientX,
-          y: e.clientY,
-          object: rowObject,
-          actions,
-        },
+    if (menu.items.length > 0) {
+      menu.popup(remote.getCurrentWindow(), {
+        x: e.clientX,
+        y: e.clientY,
       });
     }
   };
