@@ -68,6 +68,14 @@ export const Table = ({
           }) => {
             return (
               <div>
+                <MoreIndicators
+                  scrollTop={scrollTop}
+                  scrollLeft={scrollLeft}
+                  scrollRight={scrollWidth - width - scrollLeft}
+                  scrollBottom={
+                    rowHeights.header + scrollHeight - height - scrollTop
+                  }
+                />
                 <HeaderGrid
                   columnWidths={columnWidths}
                   height={rowHeights.header}
@@ -86,14 +94,6 @@ export const Table = ({
                     height: height - rowHeights.header,
                   }}
                 >
-                  <MoreIndicators
-                    scrollTop={scrollTop}
-                    scrollLeft={scrollLeft}
-                    scrollRight={scrollWidth - width - scrollLeft}
-                    scrollBottom={
-                      rowHeights.header + scrollHeight - height - scrollTop
-                    }
-                  />
                   <ContentGrid
                     className="RealmBrowser__Table__ValueGrid"
                     columnWidths={columnWidths}

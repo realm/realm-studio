@@ -2,6 +2,8 @@
 
 // This constant should match the HANDLE_WIDTH in HeaderCell.tsx
 $realm-browser-header-handle-width: 7px;
+// This constant should match the rowHeights.header constant in Table.tsx
+$realm-browser-header-height: 40px;
 $realm-browser-header-icon-space: 24px;
 $realm-browser-header-handle-hover-bg: rgba(0, 0, 0, .1);
 
@@ -362,7 +364,7 @@ $highlight-row-bg: mix($color-dove, $color-elephant, 75%);
           $realm-browser-more-indicator-dark-color,
           $realm-browser-more-indicator-light-color
         );
-        top: 0;
+        top: $realm-browser-header-height;
       }
 
       &--bottom {
