@@ -16,7 +16,7 @@ export class MainMenu {
 
     if (FileMenu && FileMenu.submenu) {
       const ModelDefinitions = this.getMenuItem(
-        (FileMenu.submenu as Electron.Menu),
+        FileMenu.submenu as Electron.Menu,
         'Save model definitions',
       );
 
@@ -33,7 +33,7 @@ export class MainMenu {
     menu: Electron.Menu,
     name: string,
   ): Electron.MenuItemConstructorOptions =>
-    (menu.items.find(
+    menu.items.find(
       item => (item as Electron.MenuItemConstructorOptions).label === name,
     ) as Electron.MenuItemConstructorOptions;
 
