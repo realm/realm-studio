@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import electron = require('electron');
+import { remote } from 'electron';
 import * as React from 'react';
 import * as Realm from 'realm';
 import * as util from 'util';
@@ -7,7 +7,6 @@ import * as util from 'util';
 import { IPropertyWithName, ISelectObjectState } from '.';
 import * as exporter from '../../services/schema-export/src/schema-exporter';
 import { IRealmBrowserOptions } from '../../windows/WindowType';
-import { IContextMenuAction } from '../reusable/context-menu';
 import { showError } from '../reusable/errors';
 import {
   IRealmLoadingComponentState,
@@ -30,12 +29,6 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
     yes: () => void;
     no: () => void;
   };
-  contextMenu: {
-    x: number;
-    y: number;
-    object: any;
-    actions: IContextMenuAction[];
-  } | null;
   encryptionKey?: string;
   focus: IFocus | null;
   isEncryptionDialogVisible: boolean;
@@ -56,7 +49,6 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     super();
     this.state = {
       confirmModal: undefined,
-      contextMenu: null,
       focus: null,
       isEncryptionDialogVisible: false,
       progress: { done: false },
@@ -196,33 +188,34 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     { rowObject, rowIndex, property },
   ) => {
     e.preventDefault();
-    const actions = [];
 
+    const menu = new remote.Menu();
     if (property.type === 'object') {
-      actions.push({
-        label: 'Update reference',
-        onClick: () => this.openSelectObject(rowObject, property),
-      });
+      menu.append(
+        new remote.MenuItem({
+          label: 'Update reference',
+          click: () => {
+            this.openSelectObject(rowObject, property);
+          },
+        }),
+      );
     }
 
     if (this.state.focus && this.state.focus.kind === 'class') {
-      actions.push({
-        label: 'Delete',
-        onClick: () => this.openConfirmModal(rowObject),
-      });
+      menu.append(
+        new remote.MenuItem({
+          label: 'Delete',
+          click: () => {
+            this.openConfirmModal(rowObject);
+          },
+        }),
+      );
     }
 
-    if (actions.length > 0) {
-      this.setState({
-        highlight: {
-          row: rowIndex,
-        },
-        contextMenu: {
-          x: e.clientX,
-          y: e.clientY,
-          object: rowObject,
-          actions,
-        },
+    if (menu.items.length > 0) {
+      menu.popup(remote.getCurrentWindow(), {
+        x: e.clientX,
+        y: e.clientY,
       });
     }
   };
@@ -294,10 +287,6 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   public deleteObject = (object: Realm.Object) => {
     this.realm.write(() => this.realm.delete(object));
     this.setState({ highlight: undefined, confirmModal: undefined });
-  };
-
-  public onContextMenuClose = (): void => {
-    this.setState({ contextMenu: null });
   };
 
   public onHideEncryptionDialog = () => {

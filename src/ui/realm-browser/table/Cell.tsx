@@ -28,12 +28,20 @@ const getCellContent = ({
     case 'float':
     case 'double':
     case 'bool':
-    case 'string':
-    case 'date': {
+    case 'string': {
       return (
         <StringCellContainer
           property={property}
           value={value}
+          onUpdateValue={onUpdateValue}
+        />
+      );
+    }
+    case 'date': {
+      return (
+        <StringCellContainer
+          property={property}
+          value={value !== null ? value.toISOString() : value}
           onUpdateValue={onUpdateValue}
         />
       );
