@@ -1,4 +1,5 @@
 import * as faker from 'faker';
+import * as jwt from 'jsonwebtoken';
 import * as moment from 'moment';
 import * as React from 'react';
 
@@ -49,11 +50,12 @@ export class CloudOverlayContainer extends React.Component<
         throw new Error(`Unable to select the default german service shard`);
       }
       // Now that we're authenticated - let's create a tenant
-      const id = [
-        faker.internet.domainWord(),
-        faker.internet.domainWord(),
-        faker.internet.domainWord(),
-      ].join('-');
+      const token = raas.getToken();
+      const payload = jwt.decode(token) as any;
+      if (!payload || typeof payload.sub !== 'string') {
+        throw new Error(`Expected a sub field in the JWT token from RaaS`);
+      }
+      const id = (payload.sub as string).replace('/', '-');
       const initialPassword = faker.internet.password();
 
       this.setState({
@@ -91,10 +93,10 @@ export class CloudOverlayContainer extends React.Component<
       });
 
       // Poll the tenant for it's availability
-      // We expect this to take 17 secound - but we're making to 22 secs to be safe
+      // We expect this to take 17 secound - but we're making to 27 secs to be safe
       // TODO: Make it 17 when the ROS health API has improved
       // @see https://github.com/realm/realm-object-server-private/issues/695
-      const ETA = 22;
+      const ETA = 27;
       await this.performCountdown(ETA, async secondsRemaining => {
         this.setState({
           progress: {
@@ -114,7 +116,7 @@ export class CloudOverlayContainer extends React.Component<
         },
       });
 
-      // Wait a sec (or five).
+      // Wait a sec (or ten).
       // TODO: remove this once /health does a better check
       // @see https://github.com/realm/realm-object-server-private/issues/695
       setTimeout(async () => {
@@ -130,7 +132,7 @@ export class CloudOverlayContainer extends React.Component<
         });
 
         this.props.onAuthenticated();
-      }, 5000);
+      }, 10000);
     } catch (err) {
       this.setState({
         progress: {
