@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { remote } from 'electron';
+import { ipcRenderer, remote } from 'electron';
 import * as React from 'react';
 import * as Realm from 'realm';
 import * as util from 'util';
@@ -55,8 +55,8 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       schemas: [],
     };
 
-    electron.ipcRenderer.on('exportSwiftSchema', this.onExportSwiftSchema);
-    electron.ipcRenderer.on('exportJSSchema', this.onExportJSSchema);
+    ipcRenderer.on('exportSwiftSchema', this.onExportSwiftSchema);
+    ipcRenderer.on('exportJSSchema', this.onExportJSSchema);
   }
 
   public async componentDidMount() {
@@ -396,7 +396,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   }
 
   private onExportSwiftSchema = (): void => {
-    electron.remote.dialog.showSaveDialog({}, selectedPaths => {
+    remote.dialog.showSaveDialog({}, selectedPaths => {
       const exp = new exporter.SwiftSchemaExporter();
       exp.exportSchema(this.realm);
       exp.writeFilesToDisk(selectedPaths);
@@ -404,7 +404,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   };
 
   private onExportJSSchema = (): void => {
-    electron.remote.dialog.showSaveDialog({}, selectedPaths => {
+    remote.dialog.showSaveDialog({}, selectedPaths => {
       const exp = new exporter.JSSchemaExporter();
       exp.exportSchema(this.realm);
       exp.writeFilesToDisk(selectedPaths);
