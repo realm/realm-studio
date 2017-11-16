@@ -1,5 +1,6 @@
 // These enums and interfaces are not in index.tsx to enable the main process to import this without importing
 // React components.
+import { URL } from 'url';
 
 import * as ros from '../services/ros';
 
@@ -19,13 +20,28 @@ export interface IRealmBrowserOptions {
   realm: ros.realms.ISyncedRealmToLoad | ros.realms.ILocalRealmToLoad;
 }
 
+const getRealmUrl = (realm: ros.realms.ISyncedRealmToLoad) => {
+  const url = new URL(
+    realm.authentication instanceof Realm.Sync.User
+      ? realm.authentication.server
+      : realm.authentication.url,
+  );
+  url.pathname = realm.path;
+  return url.toString();
+};
+
 export function getWindowOptions(
   type: WindowType,
   context: any,
 ): Partial<Electron.BrowserWindowConstructorOptions> {
   if (type === WindowType.RealmBrowser) {
+    const browserOptions: IRealmBrowserOptions = context;
+    const title =
+      browserOptions.realm.mode === 'synced'
+        ? getRealmUrl(browserOptions.realm)
+        : browserOptions.realm.path;
     return {
-      title: typeof context.path === 'string' ? context.path : 'Realm Browser',
+      title,
     };
   } else if (type === WindowType.ConnectToServer) {
     return {
@@ -35,7 +51,8 @@ export function getWindowOptions(
       resizable: false,
     };
   } else if (type === WindowType.ServerAdministration) {
-    const url = typeof context.url === 'string' ? context.url : 'http://...';
+    const credentials = context.credentials;
+    const url = credentials ? credentials.url : 'http://...';
     return {
       title: `Realm Object Server: ${url}`,
       width: 1024,
