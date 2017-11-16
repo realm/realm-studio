@@ -1,4 +1,5 @@
 import * as faker from 'faker';
+import * as jwt from 'jsonwebtoken';
 import * as moment from 'moment';
 import * as React from 'react';
 
@@ -49,11 +50,12 @@ export class CloudOverlayContainer extends React.Component<
         throw new Error(`Unable to select the default german service shard`);
       }
       // Now that we're authenticated - let's create a tenant
-      const id = [
-        faker.internet.domainWord(),
-        faker.internet.domainWord(),
-        faker.internet.domainWord(),
-      ].join('-');
+      const token = raas.getToken();
+      const payload = jwt.decode(token) as any;
+      if (!payload || typeof payload.sub !== 'string') {
+        throw new Error(`Expected a sub field in the JWT token from RaaS`);
+      }
+      const id = (payload.sub as string).replace('/', '-');
       const initialPassword = faker.internet.password();
 
       this.setState({
