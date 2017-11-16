@@ -4,6 +4,7 @@ import {
   GridCellProps,
   GridCellRangeProps,
   List,
+  SizeAndPositionData,
   Table,
 } from 'react-virtualized';
 
@@ -24,24 +25,152 @@ export interface IGridRowProps {
 
 export type GridRowRenderer = (props: IGridRowProps) => JSX.Element;
 
-export const rowCellRangeRenderer = (rowRenderer: GridRowRenderer) => ({
-  cellCache,
-  cellRenderer,
-  columnSizeAndPositionManager,
-  columnStartIndex,
-  columnStopIndex,
-  deferredMeasurementCache,
-  horizontalOffsetAdjustment,
-  isScrolling,
-  parent, // Grid (or List or Table)
-  rowSizeAndPositionManager,
-  rowStartIndex,
-  rowStopIndex,
-  styleCache,
-  verticalOffsetAdjustment,
-  visibleColumnIndices,
-  visibleRowIndices,
-}: GridCellRangeProps) => {
+export const cellRangeRenderer = (
+  rowIndex: number,
+  rowDatum: SizeAndPositionData,
+  canCacheStyle: boolean,
+  {
+    cellCache,
+    cellRenderer,
+    columnSizeAndPositionManager,
+    columnStartIndex,
+    columnStopIndex,
+    deferredMeasurementCache,
+    horizontalOffsetAdjustment,
+    isScrolling,
+    parent, // Grid (or List or Table)
+    rowSizeAndPositionManager,
+    styleCache,
+    verticalOffsetAdjustment,
+    visibleColumnIndices,
+    visibleRowIndices,
+  }: GridCellRangeProps,
+) => {
+  const renderedCells: React.ReactNode[] = [];
+
+  // We render all the columns to be able to cache the rows.
+  for (
+    let columnIndex = columnStartIndex;
+    columnIndex <= columnStopIndex;
+    columnIndex++
+  ) {
+    const columnDatum = columnSizeAndPositionManager.getSizeAndPositionOfCell(
+      columnIndex,
+    );
+    const isCellVisible =
+      columnIndex >= visibleColumnIndices.start &&
+      columnIndex <= visibleColumnIndices.stop &&
+      rowIndex >= visibleRowIndices.start &&
+      rowIndex <= visibleRowIndices.stop;
+    const cellKey = `${rowIndex}-${columnIndex}`;
+    let cellStyle: React.CSSProperties;
+
+    // Cache style objects so shallow-compare doesn't re-render unnecessarily.
+    if (canCacheStyle && styleCache[cellKey]) {
+      cellStyle = styleCache[cellKey];
+    } else {
+      // In deferred mode, cells will be initially rendered before we know their size.
+      // Don't interfere with CellMeasurer's measurements by setting an invalid size.
+      if (
+        deferredMeasurementCache &&
+        !deferredMeasurementCache.has(rowIndex, columnIndex)
+      ) {
+        // Position not-yet-measured cells at top/left 0,0,
+        // And give them width/height of 'auto' so they can grow larger than the parent Grid if necessary.
+        // Positioning them further to the right/bottom influences their measured size.
+        cellStyle = {
+          height: 'auto',
+          left: 0,
+          position: 'absolute',
+          top: 0,
+          width: 'auto',
+        };
+      } else {
+        cellStyle = {
+          height: rowDatum.size,
+          left: columnDatum.offset + horizontalOffsetAdjustment,
+          position: 'absolute',
+          top: 0,
+          width: columnDatum.size,
+        };
+
+        styleCache[cellKey] = cellStyle;
+      }
+    }
+
+    const cellRendererParams: GridCellProps = {
+      columnIndex,
+      isScrolling,
+      isVisible: isCellVisible,
+      key: cellKey,
+      parent,
+      rowIndex,
+      style: cellStyle,
+    };
+
+    let renderedCell: React.ReactNode;
+
+    // Avoid re-creating cells while scrolling.
+    // This can lead to the same cell being created many times and can cause performance issues for "heavy" cells.
+    // If a scroll is in progress- cache and reuse cells.
+    // This cache will be thrown away once scrolling completes.
+    // However if we are scaling scroll positions and sizes, we should also avoid caching.
+    // This is because the offset changes slightly as scroll position changes and caching leads to stale values.
+    // For more info refer to issue #395
+    if (
+      isScrolling &&
+      !horizontalOffsetAdjustment &&
+      !verticalOffsetAdjustment
+    ) {
+      if (!cellCache[cellKey]) {
+        cellCache[cellKey] = cellRenderer(cellRendererParams);
+      }
+
+      renderedCell = cellCache[cellKey];
+
+      // If the user is no longer scrolling, don't cache cells.
+      // This makes dynamic cell content difficult for users and would also lead to a heavier memory footprint.
+    } else {
+      renderedCell = cellRenderer(cellRendererParams);
+    }
+
+    if (renderedCell == null || renderedCell === false) {
+      continue;
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+      warnAboutMissingStyle(parent, renderedCell);
+    }
+
+    renderedCells.push(renderedCell);
+  }
+
+  return renderedCells;
+};
+
+export const rowCellRangeRenderer = (rowRenderer: GridRowRenderer) => (
+  props: GridCellRangeProps,
+) => {
+  // Extract the props as local variables
+  const {
+    cellCache,
+    cellRenderer,
+    columnSizeAndPositionManager,
+    columnStartIndex,
+    columnStopIndex,
+    deferredMeasurementCache,
+    horizontalOffsetAdjustment,
+    isScrolling,
+    parent, // Grid (or List or Table)
+    rowSizeAndPositionManager,
+    rowStartIndex,
+    rowStopIndex,
+    styleCache,
+    verticalOffsetAdjustment,
+    visibleColumnIndices,
+    visibleRowIndices,
+  } = props;
+
   const renderedRows: React.ReactNode[] = [];
 
   // Browsers have native size limits for elements (eg Chrome 33M pixels, IE 1.5M pixes).
@@ -60,104 +189,7 @@ export const rowCellRangeRenderer = (rowRenderer: GridRowRenderer) => ({
       rowIndex,
     );
 
-    const renderedCells: React.ReactNode[] = [];
     const rowKey = `${rowIndex}`;
-
-    for (
-      let columnIndex = columnStartIndex;
-      columnIndex <= columnStopIndex;
-      columnIndex++
-    ) {
-      const columnDatum = columnSizeAndPositionManager.getSizeAndPositionOfCell(
-        columnIndex,
-      );
-      const isCellVisible =
-        columnIndex >= visibleColumnIndices.start &&
-        columnIndex <= visibleColumnIndices.stop &&
-        rowIndex >= visibleRowIndices.start &&
-        rowIndex <= visibleRowIndices.stop;
-      const cellKey = `${rowIndex}-${columnIndex}`;
-      let cellStyle: React.CSSProperties;
-
-      // Cache style objects so shallow-compare doesn't re-render unnecessarily.
-      if (canCacheStyle && styleCache[cellKey]) {
-        cellStyle = styleCache[cellKey];
-      } else {
-        // In deferred mode, cells will be initially rendered before we know their size.
-        // Don't interfere with CellMeasurer's measurements by setting an invalid size.
-        if (
-          deferredMeasurementCache &&
-          !deferredMeasurementCache.has(rowIndex, columnIndex)
-        ) {
-          // Position not-yet-measured cells at top/left 0,0,
-          // And give them width/height of 'auto' so they can grow larger than the parent Grid if necessary.
-          // Positioning them further to the right/bottom influences their measured size.
-          cellStyle = {
-            height: 'auto',
-            left: 0,
-            position: 'absolute',
-            top: 0,
-            width: 'auto',
-          };
-        } else {
-          cellStyle = {
-            height: rowDatum.size,
-            left: columnDatum.offset + horizontalOffsetAdjustment,
-            position: 'absolute',
-            top: 0,
-            width: columnDatum.size,
-          };
-
-          styleCache[cellKey] = cellStyle;
-        }
-      }
-
-      const cellRendererParams: GridCellProps = {
-        columnIndex,
-        isScrolling,
-        isVisible: isCellVisible,
-        key: cellKey,
-        parent,
-        rowIndex,
-        style: cellStyle,
-      };
-
-      let renderedCell: React.ReactNode;
-
-      // Avoid re-creating cells while scrolling.
-      // This can lead to the same cell being created many times and can cause performance issues for "heavy" cells.
-      // If a scroll is in progress- cache and reuse cells.
-      // This cache will be thrown away once scrolling completes.
-      // However if we are scaling scroll positions and sizes, we should also avoid caching.
-      // This is because the offset changes slightly as scroll position changes and caching leads to stale values.
-      // For more info refer to issue #395
-      if (
-        isScrolling &&
-        !horizontalOffsetAdjustment &&
-        !verticalOffsetAdjustment
-      ) {
-        if (!cellCache[cellKey]) {
-          cellCache[cellKey] = cellRenderer(cellRendererParams);
-        }
-
-        renderedCell = cellCache[cellKey];
-
-        // If the user is no longer scrolling, don't cache cells.
-        // This makes dynamic cell content difficult for users and would also lead to a heavier memory footprint.
-      } else {
-        renderedCell = cellRenderer(cellRendererParams);
-      }
-
-      if (renderedCell == null || renderedCell === false) {
-        continue;
-      }
-
-      if (process.env.NODE_ENV !== 'production') {
-        warnAboutMissingStyle(parent, renderedCell);
-      }
-
-      renderedCells.push(renderedCell);
-    }
 
     const isRowVisible =
       rowIndex >= visibleRowIndices.start && rowIndex <= visibleRowIndices.stop;
@@ -178,22 +210,24 @@ export const rowCellRangeRenderer = (rowRenderer: GridRowRenderer) => ({
       styleCache[rowKey] = rowStyle;
     }
 
-    const rowRendererParams: IGridRowProps = {
-      children: renderedCells,
-      isScrolling,
-      isVisible: isRowVisible,
-      key: rowKey,
-      parent,
-      rowIndex,
-      style: rowStyle,
+    const renderRow = () => {
+      const rowRendererParams: IGridRowProps = {
+        children: cellRangeRenderer(rowIndex, rowDatum, canCacheStyle, {
+          ...props,
+          columnStartIndex: 0,
+          columnStopIndex: columnSizeAndPositionManager.getCellCount() - 1,
+        }),
+        isScrolling,
+        isVisible: isRowVisible,
+        key: rowKey,
+        parent,
+        rowIndex,
+        style: rowStyle,
+      };
+      return rowRenderer(rowRendererParams);
     };
 
-    // The cache block is commented out - as caching rows when scrolling horizontally wont
-    // render correctly when scrolling to new columns.
-    // If re-enabled, its cache key should contain the range of column indecies that it shows.
-    const renderedRow = rowRenderer(rowRendererParams);
-
-    // Avoid re-creating cells while scrolling.
+    // Avoid re-creating rows of cells while scrolling.
     // This can lead to the same cell being created many times and can cause performance issues for "heavy" cells.
     // If a scroll is in progress- cache and reuse cells.
     // This cache will be thrown away once scrolling completes.
@@ -201,14 +235,15 @@ export const rowCellRangeRenderer = (rowRenderer: GridRowRenderer) => ({
     // This is because the offset changes slightly as scroll position changes and caching leads to stale values.
     // For more info refer to issue #395
 
-    /*
+    let renderedRow;
+
     if (
       isScrolling &&
       !horizontalOffsetAdjustment &&
       !verticalOffsetAdjustment
     ) {
       if (!cellCache[rowKey]) {
-        cellCache[rowKey] = rowRenderer(rowRendererParams);
+        cellCache[rowKey] = renderRow();
       }
 
       renderedRow = cellCache[rowKey];
@@ -216,9 +251,8 @@ export const rowCellRangeRenderer = (rowRenderer: GridRowRenderer) => ({
       // If the user is no longer scrolling, don't cache cells.
       // This makes dynamic cell content difficult for users and would also lead to a heavier memory footprint.
     } else {
-      renderedRow = rowRenderer(rowRendererParams);
+      renderedRow = renderRow();
     }
-    */
 
     if (renderedRow == null) {
       continue;

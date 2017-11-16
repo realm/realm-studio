@@ -3,7 +3,6 @@ import * as Realm from 'realm';
 
 import { ISelectObjectState } from '.';
 import { ConfirmModal } from '../reusable/confirm-modal';
-import { ContextMenu } from '../reusable/context-menu';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
 import { ContentContainer } from './ContentContainer';
 import { EncryptionDialog } from './encryption-dialog';
@@ -24,7 +23,6 @@ export const RealmBrowser = ({
   closeSelectObject,
   columnToHighlight,
   confirmModal,
-  contextMenu,
   focus,
   getSchemaLength,
   highlight,
@@ -32,7 +30,6 @@ export const RealmBrowser = ({
   onCellChange,
   onCellClick,
   onContextMenu,
-  onContextMenuClose,
   onHideEncryptionDialog,
   onOpenWithEncryption,
   onSchemaSelected,
@@ -49,7 +46,6 @@ export const RealmBrowser = ({
     yes: () => void;
     no: () => void;
   };
-  contextMenu: any;
   focus: IFocus | null;
   getSchemaLength: (name: string) => number;
   highlight?: IHighlight;
@@ -57,7 +53,6 @@ export const RealmBrowser = ({
   onCellChange: CellChangeHandler;
   onCellClick: CellClickHandler;
   onContextMenu: CellContextMenuHandler;
-  onContextMenuClose: () => void;
   onHideEncryptionDialog: () => void;
   onOpenWithEncryption: (key: string) => void;
   onSchemaSelected: (name: string, objectToScroll: any) => void;
@@ -88,9 +83,6 @@ export const RealmBrowser = ({
           progress={progress}
         />
       </div>
-      {contextMenu && (
-        <ContextMenu {...contextMenu} close={onContextMenuClose} />
-      )}
       {confirmModal && (
         <ConfirmModal
           title="Deleting object ..."

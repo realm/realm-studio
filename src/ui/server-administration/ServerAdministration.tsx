@@ -89,7 +89,8 @@ export const ServerAdministration = ({
         {/* <TabButton tab={Tab.Tools} label="Tools" /> */}
         {user && (
           <p className="ServerAdministration__status">
-            Connected to {user.server}
+            Connected to&nbsp;
+            <span className="ServerAdministration__server">{user.server}</span>
           </p>
         )}
       </Navbar>

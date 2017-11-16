@@ -41,6 +41,10 @@
     text-align: right;
   }
 
+  &__server {
+    user-select: text;
+  }
+
   &__content {
     background: $white;
     display: flex;
