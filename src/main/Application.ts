@@ -79,6 +79,7 @@ export class Application {
     this.certificateManager.destroy();
     this.cloudManager.removeListener(this.onCloudStatusChange);
     this.windowManager.closeAllWindows();
+    this.certificateManager.destroy();
   }
 
   public userDataPath(): string {
