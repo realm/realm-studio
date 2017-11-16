@@ -91,10 +91,10 @@ export class CloudOverlayContainer extends React.Component<
       });
 
       // Poll the tenant for it's availability
-      // We expect this to take 17 secound - but we're making to 22 secs to be safe
+      // We expect this to take 17 secound - but we're making to 27 secs to be safe
       // TODO: Make it 17 when the ROS health API has improved
       // @see https://github.com/realm/realm-object-server-private/issues/695
-      const ETA = 22;
+      const ETA = 27;
       await this.performCountdown(ETA, async secondsRemaining => {
         this.setState({
           progress: {
@@ -114,7 +114,7 @@ export class CloudOverlayContainer extends React.Component<
         },
       });
 
-      // Wait a sec (or five).
+      // Wait a sec (or ten).
       // TODO: remove this once /health does a better check
       // @see https://github.com/realm/realm-object-server-private/issues/695
       setTimeout(async () => {
@@ -130,7 +130,7 @@ export class CloudOverlayContainer extends React.Component<
         });
 
         this.props.onAuthenticated();
-      }, 5000);
+      }, 10000);
     } catch (err) {
       this.setState({
         progress: {
