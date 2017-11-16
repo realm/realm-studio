@@ -129,6 +129,19 @@ export class Application {
         WindowType.RealmBrowser,
         options,
       );
+
+      window.on('blur', () => {
+        this.mainMenu.enableModelDefinitions(false);
+      });
+
+      window.on('focus', () => {
+        this.mainMenu.enableModelDefinitions(true);
+      });
+
+      window.on('close', () => {
+        this.mainMenu.enableModelDefinitions(false);
+      });
+
       window.show();
       window.webContents.once('did-finish-load', () => {
         resolve();

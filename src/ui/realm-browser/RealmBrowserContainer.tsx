@@ -1,9 +1,11 @@
 import * as assert from 'assert';
+import electron = require('electron');
 import * as React from 'react';
 import * as Realm from 'realm';
 import * as util from 'util';
 
 import { IPropertyWithName, ISelectObjectState } from '.';
+import * as exporter from '../../services/schema-export/src/schema-exporter';
 import { IRealmBrowserOptions } from '../../windows/WindowType';
 import { IContextMenuAction } from '../reusable/context-menu';
 import { showError } from '../reusable/errors';
@@ -60,6 +62,9 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       progress: { done: false },
       schemas: [],
     };
+
+    electron.ipcRenderer.on('exportSwiftSchema', this.onExportSwiftSchema);
+    electron.ipcRenderer.on('exportJSSchema', this.onExportJSSchema);
   }
 
   public async componentDidMount() {
@@ -400,4 +405,20 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       super.loadingRealmFailed(err);
     }
   }
+
+  private onExportSwiftSchema = (): void => {
+    electron.remote.dialog.showSaveDialog({}, selectedPaths => {
+      const exp = new exporter.SwiftSchemaExporter();
+      exp.exportSchema(this.realm);
+      exp.writeFilesToDisk(selectedPaths);
+    });
+  };
+
+  private onExportJSSchema = (): void => {
+    electron.remote.dialog.showSaveDialog({}, selectedPaths => {
+      const exp = new exporter.JSSchemaExporter();
+      exp.exportSchema(this.realm);
+      exp.writeFilesToDisk(selectedPaths);
+    });
+  };
 }

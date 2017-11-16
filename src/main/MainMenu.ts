@@ -57,13 +57,17 @@ export class MainMenu {
               {
                 label: 'Swift',
                 click: () => {
-                  electron.dialog.showSaveDialog({}, selectedPaths => {
-                    // const exp = new exporter.SwiftSchemaExporter();
-                    // const realm = 'get realm object from the focused window';
-                    // console.log('focused window', electron.BrowserWindow.getFocusedWindow().webContents);
-                    // exp.exportSchema(realm);
-                    // exp.writeFilesToDisk(selectedPaths);
-                  });
+                  electron.BrowserWindow
+                    .getFocusedWindow()
+                    .webContents.send('exportSwiftSchema', {});
+                },
+              },
+              {
+                label: 'JavaScript',
+                click: () => {
+                  electron.BrowserWindow
+                    .getFocusedWindow()
+                    .webContents.send('exportJSSchema', {});
                 },
               },
             ],
