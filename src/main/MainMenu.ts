@@ -33,10 +33,11 @@ export class MainMenu {
   private getMenuItem = (
     menu: Electron.Menu,
     name: string,
-  ): Electron.MenuItemConstructorOptions =>
-    menu.items.find(
+  ): Electron.MenuItemConstructorOptions => {
+    return menu.items.find(
       item => (item as Electron.MenuItemConstructorOptions).label === name,
     ) as Electron.MenuItemConstructorOptions;
+  };
 
   private menuTemplate(): Electron.MenuItemConstructorOptions[] {
     const template: Electron.MenuItemConstructorOptions[] = [
