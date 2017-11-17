@@ -5,7 +5,10 @@ import * as Realm from 'realm';
 import * as util from 'util';
 
 import { IPropertyWithName, ISelectObjectState } from '.';
-import * as exporter from '../../services/schema-export/src/schema-exporter';
+import {
+  Language,
+  SchemaExporter,
+} from '../../services/schema-export/src/schema-exporter';
 import { IRealmBrowserOptions } from '../../windows/WindowType';
 import { showError } from '../reusable/errors';
 import {
@@ -55,8 +58,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       schemas: [],
     };
 
-    ipcRenderer.on('exportSwiftSchema', this.onExportSwiftSchema);
-    ipcRenderer.on('exportJSSchema', this.onExportJSSchema);
+    ipcRenderer.on('exportSchema', this.onExportSchema);
   }
 
   public async componentDidMount() {
@@ -395,19 +397,13 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     }
   }
 
-  private onExportSwiftSchema = (): void => {
+  private onExportSchema = (event: any, data: { language: Language }): void => {
     remote.dialog.showSaveDialog({}, selectedPaths => {
-      const exp = new exporter.SwiftSchemaExporter();
-      exp.exportSchema(this.realm);
-      exp.writeFilesToDisk(selectedPaths);
-    });
-  };
-
-  private onExportJSSchema = (): void => {
-    remote.dialog.showSaveDialog({}, selectedPaths => {
-      const exp = new exporter.JSSchemaExporter();
-      exp.exportSchema(this.realm);
-      exp.writeFilesToDisk(selectedPaths);
+      if (selectedPaths) {
+        const exp = SchemaExporter(data.language);
+        exp.exportSchema(this.realm);
+        exp.writeFilesToDisk(selectedPaths);
+      }
     });
   };
 }
