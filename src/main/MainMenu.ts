@@ -1,4 +1,5 @@
 import * as electron from 'electron';
+import { Language } from '../services/schema-export/src/schema-exporter';
 import { Application } from './Application';
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -59,7 +60,9 @@ export class MainMenu {
                 click: () => {
                   electron.BrowserWindow
                     .getFocusedWindow()
-                    .webContents.send('exportSwiftSchema', {});
+                    .webContents.send('exportSchema', {
+                      language: Language.Swift,
+                    });
                 },
               },
               {
@@ -67,7 +70,9 @@ export class MainMenu {
                 click: () => {
                   electron.BrowserWindow
                     .getFocusedWindow()
-                    .webContents.send('exportJSSchema', {});
+                    .webContents.send('exportSchema', {
+                      language: Language.JS,
+                    });
                 },
               },
             ],
