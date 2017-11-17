@@ -12,7 +12,7 @@ export interface ISchemaFile {
   content: string;
 }
 
-export class AbstractSchemaExporter implements ISchemaExporter {
+export abstract class SchemaExporter implements ISchemaExporter {
   public realm: Realm;
   public realmName: string;
   public files: ISchemaFile[];
@@ -34,7 +34,7 @@ export class AbstractSchemaExporter implements ISchemaExporter {
     });
   }
 
-  public makeSchema(schema: Realm.ObjectSchema) {} // tslint:disable-line
+  public abstract makeSchema(schema: Realm.ObjectSchema): void;
 
   public exportSchema(realm: Realm): ISchemaFile[] {
     this.realmName = fsPath.parse(realm.path).name;

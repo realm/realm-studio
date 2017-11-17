@@ -1,7 +1,7 @@
 import * as fsPath from 'path';
-import { AbstractSchemaExporter, ISchemaFile } from '../abstractSchemaExporter';
+import { ISchemaFile, SchemaExporter } from '../schemaExporter';
 
-export default class JSSchemaExporter extends AbstractSchemaExporter {
+export default class JSSchemaExporter extends SchemaExporter {
   constructor() {
     super();
   }

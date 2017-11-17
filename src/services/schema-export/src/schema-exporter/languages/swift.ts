@@ -1,7 +1,7 @@
 import * as fsPath from 'path';
-import { AbstractSchemaExporter, ISchemaFile } from '../abstractSchemaExporter';
+import { ISchemaFile, SchemaExporter } from '../schemaExporter';
 
-export default class SwiftSchemaExporter extends AbstractSchemaExporter {
+export default class SwiftSchemaExporter extends SchemaExporter {
   constructor() {
     super();
   }

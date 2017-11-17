@@ -1,7 +1,4 @@
-import {
-  AbstractSchemaExporter,
-  ISchemaExporter,
-} from './abstractSchemaExporter';
+import { ISchemaExporter } from './SchemaExporter';
 import JSSchemaExporter from './languages/javascript';
 import SwiftSchemaExporter from './languages/swift';
 
@@ -9,7 +6,7 @@ export enum Language {
   ObjC = 'objC',
   Swift = 'swift',
   Java = 'java',
-  CS = 'CS',
+  CS = 'C#',
   JS = 'JS',
 }
 
@@ -20,6 +17,6 @@ export const SchemaExporter = (language: Language): ISchemaExporter => {
     case Language.JS:
       return new JSSchemaExporter();
     default:
-      return new AbstractSchemaExporter();
+      throw new Error('Language not supported');
   }
 };
