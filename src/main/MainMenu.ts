@@ -9,10 +9,10 @@ export class MainMenu {
 
   public set() {
     electron.Menu.setApplicationMenu(this.menu);
-    this.enableModelDefinitions(false);
+    this.enableExportSchemaOption(false);
   }
 
-  public enableModelDefinitions(enable: boolean) {
+  public enableExportSchemaOption(enable: boolean) {
     const FileMenu = this.getMenuItem(this.menu, 'File');
 
     if (FileMenu && FileMenu.submenu) {

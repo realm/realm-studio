@@ -131,15 +131,15 @@ export class Application {
       );
 
       window.on('blur', () => {
-        this.mainMenu.enableModelDefinitions(false);
+        this.mainMenu.enableExportSchemaOption(false);
       });
 
       window.on('focus', () => {
-        this.mainMenu.enableModelDefinitions(true);
+        this.mainMenu.enableExportSchemaOption(true);
       });
 
       window.on('close', () => {
-        this.mainMenu.enableModelDefinitions(false);
+        this.mainMenu.enableExportSchemaOption(false);
       });
 
       window.show();
