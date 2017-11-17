@@ -1,6 +1,6 @@
-import { ISchemaExporter } from './SchemaExporter';
 import JSSchemaExporter from './languages/javascript';
 import SwiftSchemaExporter from './languages/swift';
+import { ISchemaExporter } from './schemaExporter';
 
 export enum Language {
   ObjC = 'objC',
