@@ -1,4 +1,4 @@
-import * as exporter from './schema-exporter';
+/* import * as exporter from './schema-exporter/';
 
 const Realm = require('realm');
 
@@ -21,7 +21,7 @@ let file2 = 'realms/all/AllTypes.realm'
 testRealm(file2)
 
 setTimeout(() => process.exit(0), 3000);
-
+*/
 /*
 
 

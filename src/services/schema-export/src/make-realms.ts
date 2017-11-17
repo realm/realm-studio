@@ -1,4 +1,4 @@
-import * as exporter from './schema-exporter';
+/* import * as exporter from './schema-exporter/schema-exporter';
 import * as models2 from './tests/models/all/AllTypes'
 import * as models1 from './tests/models/sample/SampleTypes'
 
@@ -22,4 +22,4 @@ makeRealm('realms/all/AllTypes.realm',
     models2.ReverseType]
 )
 
-setTimeout(() => process.exit(0), 1000);
+setTimeout(() => process.exit(0), 1000); */

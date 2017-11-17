@@ -1,4 +1,4 @@
-import * as mocha from 'mocha'
+/* import * as mocha from 'mocha'
 import { expect } from 'chai'
 
 describe('Export Tests', function () {
@@ -11,4 +11,4 @@ describe('Export Tests', function () {
         console.log('test done')
         //expect().to.eq('hi')
     })
-}
+} */
