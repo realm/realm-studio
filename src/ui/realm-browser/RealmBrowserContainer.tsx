@@ -42,6 +42,7 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   schemas: Realm.ObjectSchema[];
   // TODO: Rename - Unclear if this is this an action or a piece of data
   selectObject?: ISelectObjectState;
+  isAutoSaveEnabled: boolean;
 }
 
 export class RealmBrowserContainer extends RealmLoadingComponent<
@@ -56,6 +57,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       confirmModal: undefined,
       dataVersion: 0,
       focus: null,
+      isAutoSaveEnabled: false,
       isEncryptionDialogVisible: false,
       progress: { done: false },
       schemas: [],
@@ -72,24 +74,57 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   }
 
   public render() {
-    return <RealmBrowser {...this.state} {...this} />;
+    return (
+      <RealmBrowser
+        {...this.state}
+        {...this}
+        hasUnsavedChanges={this.realm && this.realm.isInTransaction}
+      />
+    );
   }
 
   public onCellChange: CellChangeHandler = params => {
+    const updateValue = () => {
+      const { parent, property, rowIndex, cellValue } = params;
+      if (property.name !== null) {
+        parent[rowIndex][property.name] = cellValue;
+      } else {
+        parent[rowIndex] = cellValue;
+      }
+    };
+
     if (this.realm) {
-      try {
-        this.realm.write(() => {
-          const { parent, property, rowIndex, cellValue } = params;
-          if (property.name !== null) {
-            parent[rowIndex][property.name] = cellValue;
-          } else {
-            parent[rowIndex] = cellValue;
-          }
-        });
-      } catch (err) {
-        showError('Failed when saving the value', err);
+      if (this.state.isAutoSaveEnabled) {
+        try {
+          this.realm.write(updateValue);
+        } catch (err) {
+          showError('Failed when saving the value', err);
+        }
+      } else {
+        if (!this.realm.isInTransaction) {
+          this.realm.beginTransaction();
+        }
+        updateValue();
+        this.forceUpdate();
       }
     }
+  };
+
+  public onSaveChanges = () => {
+    if (this.realm && this.realm.isInTransaction) {
+      this.realm.commitTransaction();
+    }
+  };
+
+  public onDiscardChanges = () => {
+    if (this.realm && this.realm.isInTransaction) {
+      this.realm.cancelTransaction();
+      this.forceUpdate();
+    }
+  };
+
+  public onAutoSaveChange = (autoSave: boolean) => {
+    this.setState({ isAutoSaveEnabled: autoSave });
   };
 
   public onSchemaSelected = (className: string, objectToScroll?: any) => {

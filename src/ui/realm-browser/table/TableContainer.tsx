@@ -75,6 +75,7 @@ export class TableContainer extends React.PureComponent<
         gridContentRef={this.gridContentRef}
         gridHeaderRef={this.gridHeaderRef}
         highlight={this.props.highlight}
+        isAutoSaveEnabled={this.props.isAutoSaveEnabled}
         isSorting={this.state.isSorting}
         onCellChange={this.props.onCellChange}
         onCellClick={this.props.onCellClick}

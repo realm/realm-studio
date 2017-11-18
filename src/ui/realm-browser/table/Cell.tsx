@@ -10,10 +10,14 @@ import { ObjectCell } from './types/ObjectCell';
 import { StringCellContainer } from './types/StringCellContainer';
 
 const getCellContent = ({
+  isAutoSaveEnabled,
+  isScrolling,
   onUpdateValue,
   property,
   value,
 }: {
+  isAutoSaveEnabled: boolean;
+  isScrolling: boolean;
   onUpdateValue: (value: string) => void;
   property: IPropertyWithName;
   value: any;
@@ -31,6 +35,7 @@ const getCellContent = ({
     case 'string': {
       return (
         <StringCellContainer
+          isAutoSaveEnabled={isAutoSaveEnabled}
           property={property}
           value={value}
           onUpdateValue={onUpdateValue}
@@ -40,6 +45,7 @@ const getCellContent = ({
     case 'date': {
       return (
         <StringCellContainer
+          isAutoSaveEnabled={isAutoSaveEnabled}
           property={property}
           value={value !== null ? value.toISOString() : value}
           onUpdateValue={onUpdateValue}
@@ -47,7 +53,9 @@ const getCellContent = ({
       );
     }
     case 'data':
-      return <DataCell property={property} value={value} />;
+      return (
+        <DataCell isScrolling={isScrolling} property={property} value={value} />
+      );
     case 'list':
       return <ListCell property={property} value={value} />;
     case 'object':
@@ -58,23 +66,29 @@ const getCellContent = ({
 };
 
 export const Cell = ({
-  onUpdateValue,
+  isAutoSaveEnabled,
+  isScrolling,
   onCellClick,
+  onContextMenu,
+  onUpdateValue,
   property,
   style,
   value,
   width,
-  onContextMenu,
 }: {
-  onUpdateValue: (value: string) => void;
+  isAutoSaveEnabled: boolean;
+  isScrolling: boolean;
   onCellClick: (e: React.MouseEvent<any>) => void;
+  onContextMenu: (e: React.MouseEvent<any>) => void;
+  onUpdateValue: (value: string) => void;
   property: IPropertyWithName;
   style: React.CSSProperties;
   value: any;
   width: number;
-  onContextMenu: (e: React.MouseEvent<any>) => void;
 }) => {
   const content = getCellContent({
+    isAutoSaveEnabled,
+    isScrolling,
     onUpdateValue,
     property,
     value,

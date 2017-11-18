@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import { ISelectObjectState } from '.';
+import { AutoSaveChangeHandler, ISelectObjectState } from '.';
 import { ConfirmModal } from '../reusable/confirm-modal';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
 import { ContentContainer } from './ContentContainer';
@@ -30,18 +30,22 @@ export interface IRealmBrowserProps {
   dataVersion: number;
   focus: IFocus | null;
   getSchemaLength: (name: string) => number;
+  hasUnsavedChanges: boolean;
   highlight?: IHighlight;
+  isAutoSaveEnabled: boolean;
   isEncryptionDialogVisible: boolean;
+  onAutoSaveChange: AutoSaveChangeHandler;
   onCellChange: CellChangeHandler;
   onCellClick: CellClickHandler;
   onContextMenu: CellContextMenuHandler;
+  onDiscardChanges: () => void;
   onHideEncryptionDialog: () => void;
   onOpenWithEncryption: (key: string) => void;
+  onSaveChanges: () => void;
   onSchemaSelected: (name: string, objectToScroll: any) => void;
   onSortEnd: SortEndHandler;
   onSortStart: SortStartHandler;
   progress: ILoadingProgress;
-  rowToHighlight?: number;
   schemas: Realm.ObjectSchema[];
   selectObject?: ISelectObjectState;
   updateObjectReference: (object: any) => void;
@@ -54,18 +58,22 @@ export const RealmBrowser = ({
   dataVersion,
   focus,
   getSchemaLength,
+  hasUnsavedChanges,
   highlight,
+  isAutoSaveEnabled,
   isEncryptionDialogVisible,
+  onAutoSaveChange,
   onCellChange,
   onCellClick,
   onContextMenu,
+  onDiscardChanges,
   onHideEncryptionDialog,
   onOpenWithEncryption,
+  onSaveChanges,
   onSchemaSelected,
   onSortEnd,
   onSortStart,
   progress,
-  rowToHighlight,
   schemas,
   selectObject,
   updateObjectReference,
@@ -75,6 +83,11 @@ export const RealmBrowser = ({
       <Sidebar
         focus={focus}
         getSchemaLength={getSchemaLength}
+        hasUnsavedChanges={hasUnsavedChanges}
+        isAutoSaveEnabled={isAutoSaveEnabled}
+        onAutoSaveChange={onAutoSaveChange}
+        onDiscardChanges={onDiscardChanges}
+        onSaveChanges={onSaveChanges}
         onSchemaSelected={onSchemaSelected}
         progress={progress}
         schemas={schemas}
@@ -84,6 +97,7 @@ export const RealmBrowser = ({
           dataVersion={dataVersion}
           focus={focus}
           highlight={highlight}
+          isAutoSaveEnabled={isAutoSaveEnabled}
           onCellChange={onCellChange}
           onCellClick={onCellClick}
           onContextMenu={onContextMenu}

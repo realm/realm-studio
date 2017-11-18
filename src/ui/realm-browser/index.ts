@@ -12,3 +12,5 @@ export interface ISelectObjectState {
   property: IPropertyWithName;
   object: Realm.Object;
 }
+
+export type AutoSaveChangeHandler = (autoSave: boolean) => void;

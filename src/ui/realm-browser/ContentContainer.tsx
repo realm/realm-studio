@@ -1,7 +1,8 @@
+import * as electron from 'electron';
 import * as React from 'react';
 import { Grid, GridCellProps } from 'react-virtualized';
 
-import { IPropertyWithName } from '.';
+import { AutoSaveChangeHandler, IPropertyWithName } from '.';
 import { ILoadingProgress } from '../reusable/loading-overlay';
 import { Content } from './Content';
 import { IFocus } from './focus';
@@ -20,6 +21,7 @@ export interface IContentContainerProps {
   dataVersion?: number;
   focus: IFocus | null;
   highlight?: IHighlight;
+  isAutoSaveEnabled: boolean;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
   onContextMenu?: CellContextMenuHandler;
@@ -43,11 +45,17 @@ export class ContentContainer extends React.Component<
     };
   }
 
+  public render() {
+    return <Content {...this.state} {...this.props} {...this} />;
+  }
+
   public onQueryChange = (query: string) => {
     this.setState({ query });
   };
 
-  public render() {
-    return <Content {...this.state} {...this.props} {...this} />;
-  }
+  public onQueryHelp = () => {
+    const url =
+      'https://realm.io/docs/javascript/latest/api/tutorial-query-language.html';
+    electron.shell.openExternal(url);
+  };
 }

@@ -47,6 +47,7 @@ $highlight-row-color: $black;
     }
 
     &__SchemaList {
+      flex-grow: 1;
       margin: 0 (-$spacer / 2);
       overflow-x: hidden;
       overflow-y: auto;
@@ -132,6 +133,21 @@ $highlight-row-color: $black;
         text-decoration: underline;
       }
     }
+
+    &__UnsavedChanges {
+      font-size: .8rem;
+      text-align: center;
+    }
+
+    &__Controls {
+      display: flex;
+      justify-content: center;
+      padding: ($spacer / 2) 0;
+    }
+
+    &__ControlButton {
+      margin: $spacer / 4;
+    }
   }
 
   &__Wrapper {
@@ -164,17 +180,22 @@ $highlight-row-color: $black;
         content: "No schema selected";
       }
     }
+  }
 
-    &__Actions {
-      background: $white;
+  &__Topbar {
+    align-items: center;
+    background: $window-background;
+    display: flex;
+    padding: $spacer / 2;
 
-      &__Filter {
-        &,
-        input,
-        .input-group-addon {
-          border-radius: 0;
-        }
-      }
+    &__Changes {
+      align-items: center;
+      display: flex;
+      margin-right: $spacer / 2;
+    }
+
+    &__Filter {
+      flex-grow: 1;
     }
   }
 
@@ -324,10 +345,12 @@ $highlight-row-color: $black;
 
     &__StringCell {
       &--int {
+        overflow: hidden;
         position: absolute;
         right: $spacer / 2;
         text-align: right;
-        width: auto;
+        text-overflow: ellipsis;
+        width: 100%;
       }
     }
 

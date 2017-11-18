@@ -8,6 +8,7 @@ import {
 } from 'react-virtualized';
 import * as Realm from 'realm';
 
+import { AutoSaveChangeHandler } from '.';
 import { ILoadingProgress } from '../reusable/loading-overlay';
 import { IFocus } from './focus';
 import {
@@ -25,10 +26,12 @@ export const Content = ({
   dataVersion,
   focus,
   highlight,
+  isAutoSaveEnabled,
   onCellChange,
   onCellClick,
   onContextMenu,
   onQueryChange,
+  onQueryHelp,
   onSortEnd,
   onSortStart,
   progress,
@@ -37,10 +40,12 @@ export const Content = ({
   dataVersion?: number;
   focus: IFocus | null;
   highlight?: IHighlight;
+  isAutoSaveEnabled: boolean;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
   onContextMenu?: CellContextMenuHandler;
   onQueryChange: (query: string) => void;
+  onQueryHelp: () => void;
   onSortEnd?: SortEndHandler;
   onSortStart?: SortStartHandler;
   progress?: ILoadingProgress;
@@ -52,11 +57,16 @@ export const Content = ({
 
     return (
       <div className="RealmBrowser__Content">
-        <Topbar onQueryChange={onQueryChange} query={query} />
+        <Topbar
+          onQueryChange={onQueryChange}
+          onQueryHelp={onQueryHelp}
+          query={query}
+        />
         <ResponsiveTable
           dataVersion={dataVersion}
           focus={focus}
           highlight={highlight}
+          isAutoSaveEnabled={isAutoSaveEnabled}
           onCellChange={onCellChange}
           onCellClick={onCellClick}
           onContextMenu={onContextMenu}
