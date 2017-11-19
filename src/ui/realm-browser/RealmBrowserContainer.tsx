@@ -119,7 +119,6 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         this.clickTimeout = null;
       }, 200);
     }
-    /*
     // TODO: Re-enable this, once cells are not re-rendering and forgetting their focus state
     this.setState({
       highlight: {
@@ -127,7 +126,6 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         row: rowIndex,
       },
     });
-    */
   };
 
   public onCellSingleClick = (
