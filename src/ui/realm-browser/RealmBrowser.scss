@@ -1,11 +1,12 @@
 @import "~realm-studio-styles/variables";
 
 // This constant should match the HANDLE_WIDTH in HeaderCell.tsx
-$realm-browser-header-handle-width: 7px;
+$realm-browser-header-handle-width: 5px;
 // This constant should match the rowHeights.header constant in Table.tsx
 $realm-browser-header-height: 40px;
 $realm-browser-header-icon-space: 24px;
 $realm-browser-header-handle-hover-bg: rgba(0, 0, 0, .1);
+$realm-browser-header-handle-dragging-bg: rgba($color-ultramarine, .5);
 
 $realm-browser-more-indicator-size: $spacer;
 $realm-browser-more-indicator-dark-color: rgba(0, 0, 0, .2);
@@ -265,8 +266,14 @@ $highlight-row-bg: mix($color-dove, $color-elephant, 75%);
       width: $realm-browser-header-handle-width;
       z-index: 1;
 
-      &:hover {
-        background: $realm-browser-header-handle-hover-bg;
+      &--dragging {
+        background: $realm-browser-header-handle-dragging-bg;
+      }
+
+      &:not(&--dragging) {
+        &:hover {
+          background: $realm-browser-header-handle-hover-bg;
+        }
       }
     }
 

@@ -7,7 +7,7 @@ import { ISorting, SortClickHandler } from '.';
 import { IPropertyWithName } from '..';
 
 // This constant should match the $realm-browser-header-handle-width in scss
-const HANDLE_WIDTH = 7;
+const HANDLE_WIDTH = 5;
 const HANDLE_OFFSET = Math.ceil(HANDLE_WIDTH / 2);
 
 const getPropertyDescription = (property: Realm.ObjectSchemaProperty) => {
@@ -106,6 +106,7 @@ export const HeaderCell = ({
           x: width - HANDLE_OFFSET,
           y: 0,
         }}
+        defaultClassNameDragging="RealmBrowser__Table__HeaderHandle--dragging"
       >
         <div className="RealmBrowser__Table__HeaderHandle" />
       </Draggable>
