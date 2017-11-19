@@ -78,11 +78,12 @@ export const Table = ({
                 />
                 <HeaderGrid
                   columnWidths={columnWidths}
+                  gridRef={gridHeaderRef}
                   height={rowHeights.header}
                   onColumnWidthChanged={onColumnWidthChanged}
                   onSortClick={onSortClick}
+                  overscanColumnCount={2}
                   properties={focus.properties}
-                  gridRef={gridHeaderRef}
                   scrollLeft={scrollLeft}
                   sorting={sorting}
                   width={width}
@@ -108,8 +109,8 @@ export const Table = ({
                     onContextMenu={onContextMenu}
                     onScroll={onScroll}
                     onSortEnd={onSortEnd}
+                    overscanColumnCount={2}
                     overscanRowCount={50}
-                    overscanColumnCount={10}
                     properties={focus.properties}
                     rowHeight={rowHeights.content}
                     width={width}
