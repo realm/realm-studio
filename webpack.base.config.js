@@ -13,6 +13,7 @@ module.exports = (env) => {
       // Anyting related to webpack, we want to keep in the bundle
       whitelist: [
         /webpack(\/.*)?/,
+        'electron-devtools-installer',
       ]
     }),
   ];
@@ -49,6 +50,8 @@ module.exports = (env) => {
       new SpriteLoaderPlugin(),
     ].concat(isProduction ? [
       // Plugins for production
+      // The UglifyJs expects the JS to be of an older version than es6
+      // new webpack.optimize.UglifyJsPlugin(),
     ] : [
       // Plugins for development
       new webpack.NamedModulesPlugin(),

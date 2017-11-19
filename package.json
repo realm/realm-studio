@@ -144,6 +144,7 @@
     "devtron": "^1.4.0",
     "electron": "^1.8.1",
     "electron-builder": "^19.37.2",
+    "electron-devtools-installer": "^2.2.1",
     "electron-publisher-s3": "^19.37.0",
     "file-loader": "^1.1.5",
     "husky": "^0.14.3",

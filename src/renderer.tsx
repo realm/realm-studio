@@ -67,6 +67,12 @@ if (isProduction) {
   // Load devtron - if not in production
   // tslint:disable-next-line:no-var-requires
   require('devtron').install();
+  // tslint:disable-next-line:no-var-requires
+  const devtools = require('electron-devtools-installer');
+  devtools.default(devtools.REACT_DEVELOPER_TOOLS).then((name: string) => {
+    // tslint:disable-next-line:no-console
+    console.log(`${name} loaded`);
+  });
 }
 
 // Using process.nextTick - as requiring realm blocks rendering
