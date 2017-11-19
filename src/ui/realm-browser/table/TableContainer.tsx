@@ -25,6 +25,7 @@ export interface IBaseTableContainerProps {
   dataVersion?: number;
   focus: IFocus;
   highlight?: IHighlight;
+  isAutoSaveEnabled: boolean;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
   onContextMenu?: CellContextMenuHandler;
