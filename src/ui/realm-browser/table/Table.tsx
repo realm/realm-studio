@@ -109,6 +109,7 @@ export const Table = ({
                     onScroll={onScroll}
                     onSortEnd={onSortEnd}
                     overscanRowCount={50}
+                    overscanColumnCount={10}
                     properties={focus.properties}
                     rowHeight={rowHeights.content}
                     width={width}
