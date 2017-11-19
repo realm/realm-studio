@@ -3,16 +3,17 @@ import * as React from 'react';
 import * as Realm from 'realm';
 import * as util from 'util';
 
-export const displayValue = (value: ArrayBuffer) => {
-  return value ? `[${value.byteLength} bytes of data]` : 'null';
-};
+const display = (value: ArrayBuffer | null) =>
+  value ? `[${value.byteLength} bytes of data]` : 'null';
 
 export const DataCell = ({
+  isScrolling,
   property,
   value,
 }: {
+  isScrolling: boolean;
   property: Realm.ObjectSchemaProperty;
-  value: any;
+  value: ArrayBuffer | null;
 }) => (
   <div
     className={classnames(
@@ -22,6 +23,6 @@ export const DataCell = ({
       'RealmBrowser__Table__Input--disabled',
     )}
   >
-    {displayValue(value)}
+    {display(value)}
   </div>
 );

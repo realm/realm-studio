@@ -11,8 +11,8 @@ export const StringCell = ({
   property,
 }: {
   isEditing: boolean;
-  onChange: (newValue: string) => void;
-  onBlur: (input: HTMLInputElement) => void;
+  onChange: (value: string, input: HTMLInputElement) => void;
+  onBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
   property: Realm.ObjectSchemaProperty;
   onFocus: () => void;
   value: string;
@@ -29,9 +29,9 @@ export const StringCell = ({
         textInput = input;
       }}
       value={value}
-      onChange={e => onChange(e.target.value)}
-      onBlur={e => onBlur(textInput)}
-      onKeyPress={e => e.key === 'Enter' && onBlur(textInput)}
+      onChange={e => onChange(e.target.value, e.target)}
+      onBlur={e => onBlur(e)}
+      onKeyPress={e => e.key === 'Enter' && e.currentTarget.blur()}
       autoFocus={true}
     />
   ) : (
