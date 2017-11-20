@@ -128,19 +128,18 @@ export class Application {
       const window = this.windowManager.createWindow(
         WindowType.RealmBrowser,
         options,
+        {
+          blur: () => {
+            this.mainMenu.enableExportSchemaOption(false);
+          },
+          focus: () => {
+            this.mainMenu.enableExportSchemaOption(true);
+          },
+          closed: () => {
+            this.mainMenu.enableExportSchemaOption(false);
+          },
+        },
       );
-
-      window.on('blur', () => {
-        this.mainMenu.enableExportSchemaOption(false);
-      });
-
-      window.on('focus', () => {
-        this.mainMenu.enableExportSchemaOption(true);
-      });
-
-      window.on('close', () => {
-        this.mainMenu.enableExportSchemaOption(false);
-      });
 
       window.show();
       window.webContents.once('did-finish-load', () => {

@@ -1,5 +1,5 @@
 import * as electron from 'electron';
-import { Language } from '../services/schema-export/src/schema-exporter';
+import { Language } from '../services/schema-export';
 import { Application } from './Application';
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -39,6 +39,13 @@ export class MainMenu {
     ) as Electron.MenuItemConstructorOptions;
   };
 
+  private exportSchema = (language: Language) => {
+    const focusedWindow = electron.BrowserWindow.getFocusedWindow();
+    focusedWindow.webContents.send('exportSchema', {
+      language,
+    });
+  };
+
   private menuTemplate(): Electron.MenuItemConstructorOptions[] {
     const template: Electron.MenuItemConstructorOptions[] = [
       {
@@ -58,23 +65,11 @@ export class MainMenu {
             submenu: [
               {
                 label: 'Swift',
-                click: () => {
-                  electron.BrowserWindow
-                    .getFocusedWindow()
-                    .webContents.send('exportSchema', {
-                      language: Language.Swift,
-                    });
-                },
+                click: () => this.exportSchema(Language.Swift),
               },
               {
                 label: 'JavaScript',
-                click: () => {
-                  electron.BrowserWindow
-                    .getFocusedWindow()
-                    .webContents.send('exportSchema', {
-                      language: Language.JS,
-                    });
-                },
+                click: () => this.exportSchema(Language.JS),
               },
               {
                 label: 'Java',
