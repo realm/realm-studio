@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { AutoSizer, Grid, GridCellProps, ScrollSync } from 'react-virtualized';
+import {
+  AutoSizer,
+  AutoSizerProps,
+  Grid,
+  GridCellProps,
+  ScrollSync,
+  ScrollSyncProps,
+} from 'react-virtualized';
 
 import {
   CellChangeHandler,
@@ -13,7 +20,7 @@ import { IPropertyWithName } from '..';
 import { IFocus } from '../focus';
 import { ContentGrid } from './ContentGrid';
 import { HeaderGrid } from './HeaderGrid';
-import { MoreIndicators } from './MoreIndicators';
+import { MoreIndicator } from './MoreIndicator';
 
 const rowHeights = {
   header: 40,
@@ -30,10 +37,12 @@ export interface ITableProps {
   highlight?: IHighlight;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
-  onContextMenu?: CellContextMenuHandler;
   onColumnWidthChanged: (index: number, width: number) => void;
+  onContextMenu?: CellContextMenuHandler;
   onSortClick: (property: IPropertyWithName) => void;
   onSortEnd?: SortEndHandler;
+  scrollProps: ScrollSyncProps;
+  sizeProps: AutoSizerProps;
   sorting?: ISorting;
 }
 
@@ -51,76 +60,57 @@ export const Table = ({
   onContextMenu,
   onSortClick,
   onSortEnd,
+  scrollProps,
+  sizeProps,
   sorting,
-}: ITableProps) => (
-  <div className="RealmBrowser__Table">
-    <AutoSizer>
-      {({ width, height }) => (
-        <ScrollSync>
-          {({
-            clientHeight,
-            clientWidth,
-            onScroll,
-            scrollHeight,
-            scrollLeft,
-            scrollTop,
-            scrollWidth,
-          }) => {
-            return (
-              <div>
-                <MoreIndicators
-                  scrollTop={scrollTop}
-                  scrollLeft={scrollLeft}
-                  scrollRight={scrollWidth - width - scrollLeft}
-                  scrollBottom={
-                    rowHeights.header + scrollHeight - height - scrollTop
-                  }
-                />
-                <HeaderGrid
-                  columnWidths={columnWidths}
-                  gridRef={gridHeaderRef}
-                  height={rowHeights.header}
-                  onColumnWidthChanged={onColumnWidthChanged}
-                  onSortClick={onSortClick}
-                  overscanColumnCount={2}
-                  properties={focus.properties}
-                  scrollLeft={scrollLeft}
-                  sorting={sorting}
-                  width={width}
-                />
-                <div
-                  className="RealmBrowser__Table__Content"
-                  style={{
-                    width,
-                    height: height - rowHeights.header,
-                  }}
-                >
-                  <ContentGrid
-                    className="RealmBrowser__Table__ValueGrid"
-                    columnWidths={columnWidths}
-                    filteredSortedResults={filteredSortedResults}
-                    getCellValue={getCellValue}
-                    gridRef={gridContentRef}
-                    height={height - rowHeights.header}
-                    highlight={highlight}
-                    isSortable={focus.kind === 'list' && !sorting}
-                    onCellChange={onCellChange}
-                    onCellClick={onCellClick}
-                    onContextMenu={onContextMenu}
-                    onScroll={onScroll}
-                    onSortEnd={onSortEnd}
-                    overscanColumnCount={2}
-                    overscanRowCount={50}
-                    properties={focus.properties}
-                    rowHeight={rowHeights.content}
-                    width={width}
-                  />
-                </div>
-              </div>
-            );
-          }}
-        </ScrollSync>
-      )}
-    </AutoSizer>
-  </div>
-);
+}: ITableProps) => {
+  const {
+    onScroll,
+    scrollHeight,
+    scrollLeft,
+    scrollTop,
+    scrollWidth,
+  } = scrollProps;
+  const { height, width } = sizeProps;
+  const scrollBottom = rowHeights.header + scrollHeight - height - scrollTop;
+  const scrollRight = scrollWidth - width - scrollLeft;
+  return (
+    <div>
+      <MoreIndicator position="bottom" visible={scrollBottom > 0} />
+      <MoreIndicator position="left" visible={scrollLeft > 0} />
+      <MoreIndicator position="right" visible={scrollRight > 0} />
+      <MoreIndicator position="top" visible={scrollTop > 0} />
+      <HeaderGrid
+        columnWidths={columnWidths}
+        gridRef={gridHeaderRef}
+        height={rowHeights.header}
+        onColumnWidthChanged={onColumnWidthChanged}
+        onSortClick={onSortClick}
+        overscanColumnCount={2}
+        properties={focus.properties}
+        scrollLeft={scrollLeft}
+        sorting={sorting}
+        width={width}
+      />
+      <ContentGrid
+        className="RealmBrowser__Table__ValueGrid"
+        columnWidths={columnWidths}
+        filteredSortedResults={filteredSortedResults}
+        getCellValue={getCellValue}
+        gridRef={gridContentRef}
+        height={height - rowHeights.header}
+        highlight={highlight}
+        isSortable={focus.kind === 'list' && !sorting}
+        onCellChange={onCellChange}
+        onCellClick={onCellClick}
+        onContextMenu={onContextMenu}
+        onScroll={onScroll}
+        onSortEnd={onSortEnd}
+        overscanRowCount={30}
+        properties={focus.properties}
+        rowHeight={rowHeights.content}
+        width={width}
+      />
+    </div>
+  );
+};

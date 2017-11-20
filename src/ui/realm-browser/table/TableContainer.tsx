@@ -1,5 +1,10 @@
 import * as React from 'react';
-import { Grid, GridCellProps } from 'react-virtualized';
+import {
+  AutoSizerProps,
+  Grid,
+  GridCellProps,
+  ScrollSyncProps,
+} from 'react-virtualized';
 
 import {
   CellChangeHandler,
@@ -15,7 +20,7 @@ import { Table } from './Table';
 
 const MINIMUM_COLUMN_WIDTH = 20;
 
-export interface ITableContainerProps {
+export interface IBaseTableContainerProps {
   focus: IFocus;
   highlight?: IHighlight;
   onCellChange?: CellChangeHandler;
@@ -23,7 +28,11 @@ export interface ITableContainerProps {
   onContextMenu?: CellContextMenuHandler;
   onSortEnd?: SortEndHandler;
   query: string;
-  // isLoading: boolean;
+}
+
+export interface ITableContainerProps extends IBaseTableContainerProps {
+  scrollProps: ScrollSyncProps;
+  sizeProps: AutoSizerProps;
 }
 
 export interface ITableContainerState {
@@ -53,6 +62,8 @@ export class TableContainer extends React.Component<
     });
     return filteredSortedResults ? (
       <Table
+        sizeProps={this.props.sizeProps}
+        scrollProps={this.props.scrollProps}
         columnWidths={this.state.columnWidths}
         filteredSortedResults={filteredSortedResults}
         focus={this.props.focus}

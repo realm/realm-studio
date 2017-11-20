@@ -17,7 +17,7 @@ import {
   IHighlight,
   SortEndHandler,
 } from './table';
-import { TableContainer } from './table/TableContainer';
+import { ResponsiveTable } from './table/ResponsiveTable';
 import { Topbar } from './Topbar';
 
 export const Content = ({
@@ -48,7 +48,7 @@ export const Content = ({
     return (
       <div className="RealmBrowser__Content">
         <Topbar onQueryChange={onQueryChange} query={query} />
-        <TableContainer
+        <ResponsiveTable
           focus={focus}
           highlight={highlight}
           onCellChange={onCellChange}
