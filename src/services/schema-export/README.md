@@ -11,7 +11,10 @@ linkingObjects and default values are NOT stored in Realm files.
 - Add comment to generated files that linkingObjects and       default values are not represented in the models.
 - Add CS generator
 - Add ObjC generator
-- Add Java generator
+- Add tests for Java generator
 
 Swift
   types of an array: can they not be optional? (see https://realm.io/docs/swift/latest/#property-cheatsheet)
+
+Java 
+  MutableRealmInteger https://realm.io/docs/java/latest/#counters are implemented as Long in schema, so we can't extrapolate this type from the schema.
