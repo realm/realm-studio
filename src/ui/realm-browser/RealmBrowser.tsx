@@ -23,6 +23,7 @@ export const RealmBrowser = ({
   closeSelectObject,
   columnToHighlight,
   confirmModal,
+  dataVersion,
   focus,
   getSchemaLength,
   highlight,
@@ -46,6 +47,7 @@ export const RealmBrowser = ({
     yes: () => void;
     no: () => void;
   };
+  dataVersion: number;
   focus: IFocus | null;
   getSchemaLength: (name: string) => number;
   highlight?: IHighlight;
@@ -74,6 +76,7 @@ export const RealmBrowser = ({
       />
       <div className="RealmBrowser__Wrapper">
         <ContentContainer
+          dataVersion={dataVersion}
           focus={focus}
           highlight={highlight}
           onCellChange={onCellChange}

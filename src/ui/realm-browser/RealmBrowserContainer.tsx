@@ -28,6 +28,8 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
     yes: () => void;
     no: () => void;
   };
+  // A number that we can use to make components update on changes to data
+  dataVersion: number;
   encryptionKey?: string;
   focus: IFocus | null;
   isEncryptionDialogVisible: boolean;
@@ -48,6 +50,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     super();
     this.state = {
       confirmModal: undefined,
+      dataVersion: 0,
       focus: null,
       isEncryptionDialogVisible: false,
       progress: { done: false },
@@ -309,7 +312,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   }
 
   protected onRealmChanged = () => {
-    this.forceUpdate();
+    this.setState({ dataVersion: this.state.dataVersion + 1 });
   };
 
   protected onRealmLoaded = () => {

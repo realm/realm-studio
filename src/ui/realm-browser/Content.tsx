@@ -21,6 +21,7 @@ import { ResponsiveTable } from './table/ResponsiveTable';
 import { Topbar } from './Topbar';
 
 export const Content = ({
+  dataVersion,
   focus,
   highlight,
   onCellChange,
@@ -31,6 +32,7 @@ export const Content = ({
   progress,
   query,
 }: {
+  dataVersion?: number;
   focus: IFocus | null;
   highlight?: IHighlight;
   onCellChange?: CellChangeHandler;
@@ -49,6 +51,7 @@ export const Content = ({
       <div className="RealmBrowser__Content">
         <Topbar onQueryChange={onQueryChange} query={query} />
         <ResponsiveTable
+          dataVersion={dataVersion}
           focus={focus}
           highlight={highlight}
           onCellChange={onCellChange}

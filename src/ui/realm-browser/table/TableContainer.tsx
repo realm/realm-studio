@@ -21,6 +21,7 @@ import { Table } from './Table';
 const MINIMUM_COLUMN_WIDTH = 20;
 
 export interface IBaseTableContainerProps {
+  dataVersion?: number;
   focus: IFocus;
   highlight?: IHighlight;
   onCellChange?: CellChangeHandler;
@@ -40,7 +41,7 @@ export interface ITableContainerState {
   sorting?: ISorting;
 }
 
-export class TableContainer extends React.Component<
+export class TableContainer extends React.PureComponent<
   ITableContainerProps,
   ITableContainerState
 > {
@@ -62,9 +63,8 @@ export class TableContainer extends React.Component<
     });
     return filteredSortedResults ? (
       <Table
-        sizeProps={this.props.sizeProps}
-        scrollProps={this.props.scrollProps}
         columnWidths={this.state.columnWidths}
+        dataVersion={this.props.dataVersion}
         filteredSortedResults={filteredSortedResults}
         focus={this.props.focus}
         getCellValue={this.getCellValue}
@@ -75,8 +75,10 @@ export class TableContainer extends React.Component<
         onCellClick={this.props.onCellClick}
         onColumnWidthChanged={this.onColumnWidthChanged}
         onContextMenu={this.props.onContextMenu}
-        onSortEnd={this.props.onSortEnd}
         onSortClick={this.onSortClick}
+        onSortEnd={this.props.onSortEnd}
+        scrollProps={this.props.scrollProps}
+        sizeProps={this.props.sizeProps}
         sorting={this.state.sorting}
       />
     ) : null;

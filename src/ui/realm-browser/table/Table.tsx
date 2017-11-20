@@ -29,6 +29,7 @@ const rowHeights = {
 
 export interface ITableProps {
   columnWidths: number[];
+  dataVersion?: number;
   filteredSortedResults: Realm.Collection<any>;
   focus: IFocus;
   getCellValue: (object: any, props: GridCellProps) => string;
@@ -47,6 +48,7 @@ export interface ITableProps {
 }
 
 export const Table = ({
+  dataVersion,
   columnWidths,
   filteredSortedResults,
   focus,
@@ -95,6 +97,7 @@ export const Table = ({
       <ContentGrid
         className="RealmBrowser__Table__ValueGrid"
         columnWidths={columnWidths}
+        dataVersion={dataVersion}
         filteredSortedResults={filteredSortedResults}
         getCellValue={getCellValue}
         gridRef={gridContentRef}
