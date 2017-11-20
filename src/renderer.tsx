@@ -71,8 +71,16 @@ if (isProduction) {
   const devtools = require('electron-devtools-installer');
   devtools.default(devtools.REACT_DEVELOPER_TOOLS).then((name: string) => {
     // tslint:disable-next-line:no-console
-    console.log(`${name} loaded`);
+    console.warn(`${name} loaded`);
   });
+  // Add a tool that will notify us when components update
+  if (process.env.WHY_DID_YOU_UPDATE) {
+    // tslint:disable-next-line:no-console
+    console.warn('Loading why-did-you-update');
+    // tslint:disable-next-line:no-var-requires
+    const { whyDidYouUpdate } = require('why-did-you-update');
+    whyDidYouUpdate(React);
+  }
 }
 
 // Using process.nextTick - as requiring realm blocks rendering
