@@ -81,11 +81,10 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
         lockAxis="y"
         helperClass="RealmBrowser__Table__Row--sorting"
         cellRangeRenderer={this.cellRangeRenderer}
-        cellRenderer={cellProps =>
-          this.cellRenderers[cellProps.columnIndex](cellProps)}
+        cellRenderer={this.getCellRenderer}
         className="RealmBrowser__Table__ContentGrid"
         columnCount={properties.length}
-        columnWidth={this.columnWidth}
+        columnWidth={this.getColumnWidth}
         distance={5}
         onSortEnd={onSortEnd}
         ref={(sortableContainer: any) => {
@@ -184,5 +183,11 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
     });
   }
 
-  private columnWidth = ({ index }: Index) => this.props.columnWidths[index];
+  private getColumnWidth = ({ index }: Index) => {
+    return this.props.columnWidths[index];
+  };
+
+  private getCellRenderer = (cellProps: GridCellProps) => {
+    return this.cellRenderers[cellProps.columnIndex](cellProps);
+  };
 }
