@@ -4,6 +4,12 @@ import * as url from 'url';
 
 import { getWindowOptions, WindowType } from '../windows/WindowType';
 
+export interface IEventListenerCallbacks {
+  blur?: () => void;
+  focus?: () => void;
+  closed?: () => void;
+}
+
 const isProduction = process.env.NODE_ENV === 'production';
 
 function getRendererHtmlPath() {
@@ -20,7 +26,7 @@ export class WindowManager {
   public createWindow(
     windowType: WindowType,
     options: any = {},
-    callbacksEvent: any = {},
+    eventListenerCallbacks?: IEventListenerCallbacks,
   ) {
     const window = new BrowserWindow({
       title: 'Realm Studio',
@@ -78,14 +84,14 @@ export class WindowManager {
     });
 
     window.on('blur', () => {
-      if (callbacksEvent.blur) {
-        callbacksEvent.blur();
+      if (eventListenerCallbacks && eventListenerCallbacks.blur) {
+        eventListenerCallbacks.blur();
       }
     });
 
     window.on('focus', () => {
-      if (callbacksEvent.focus) {
-        callbacksEvent.focus();
+      if (eventListenerCallbacks && eventListenerCallbacks.focus) {
+        eventListenerCallbacks.focus();
       }
     });
 
@@ -94,8 +100,8 @@ export class WindowManager {
       if (index > -1) {
         this.windows.splice(index, 1);
       }
-      if (callbacksEvent.closed) {
-        callbacksEvent.closed();
+      if (eventListenerCallbacks && eventListenerCallbacks.closed) {
+        eventListenerCallbacks.closed();
       }
     });
 
