@@ -41,13 +41,8 @@ export class MainMenu {
 
   private exportSchema = (language: Language) => {
     const focusedWindow = electron.BrowserWindow.getFocusedWindow();
-    electron.dialog.showSaveDialog(focusedWindow, {}, selectedPaths => {
-      if (selectedPaths) {
-        focusedWindow.webContents.send('exportSchema', {
-          path: selectedPaths,
-          language,
-        });
-      }
+    focusedWindow.webContents.send('exportSchema', {
+      language,
     });
   };
 
