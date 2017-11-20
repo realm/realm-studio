@@ -17,7 +17,11 @@ function getRendererHtmlPath() {
 export class WindowManager {
   public windows: Electron.BrowserWindow[] = [];
 
-  public createWindow(windowType: WindowType, options: any = {}) {
+  public createWindow(
+    windowType: WindowType,
+    options: any = {},
+    callbacksEvent: any = {},
+  ) {
     const window = new BrowserWindow({
       title: 'Realm Studio',
       width: 800,
@@ -73,10 +77,25 @@ export class WindowManager {
       }
     });
 
+    window.on('blur', () => {
+      if (callbacksEvent.blur) {
+        callbacksEvent.blur();
+      }
+    });
+
+    window.on('focus', () => {
+      if (callbacksEvent.focus) {
+        callbacksEvent.focus();
+      }
+    });
+
     window.on('closed', () => {
       const index = this.windows.indexOf(window);
       if (index > -1) {
         this.windows.splice(index, 1);
+      }
+      if (callbacksEvent.closed) {
+        callbacksEvent.closed();
       }
     });
 
