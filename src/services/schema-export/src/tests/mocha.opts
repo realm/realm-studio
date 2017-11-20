@@ -1,5 +1,0 @@
---require source-map-support/register
---compilers ts:ts-node/register
---full-trace
---timeout 5000
-src/**/*.spec.ts
