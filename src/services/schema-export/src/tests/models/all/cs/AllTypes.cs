@@ -4,98 +4,137 @@ using Realms;
 
 public class IndexedTypes : RealmObject
 {
-    public bool boolIndexed { get; set; }
+    [Indexed]
+    [MapTo("boolIndexed")]
+    public bool BoolIndexed { get; set; }
 
-    public long intIndexed { get; set; }
+    [Indexed]
+    [MapTo("intIndexed")]
+    public long IntIndexed { get; set; }
 
-    [Required]
-    public string stringIndexed { get; set; }
+    [Indexed]
+    [MapTo("stringIndexed")]
+    public string StringIndexed { get; set; }
 
-    public DateTimeOffset dateIndexed { get; set; }
+    [Indexed]
+    [MapTo("dateIndexed")]
+    public DateTimeOffset DateIndexed { get; set; }
 }
 
 public class LinkTypes : RealmObject
 {
-    public ReverseType objectType { get; set; }
+    [MapTo("objectType")]
+    public ReverseType ObjectType { get; set; }
 
-    public ReverseType objectType2 { get; set; }
+    [MapTo("objectType2")]
+    public ReverseType ObjectType2 { get; set; }
 
-    [Required]
-    public IList<ReverseType> listType { get; }
+    [MapTo("listType")]
+    public IList<ReverseType> ListType { get; }
 }
 
 public class OptionalTypes : RealmObject
 {
-    public bool? boolOptional { get; set; }
+    [MapTo("boolOptional")]
+    public bool? BoolOptional { get; set; }
 
-    public long? intOptional { get; set; }
+    [MapTo("intOptional")]
+    public long? IntOptional { get; set; }
 
-    public float? floatOptional { get; set; }
+    [MapTo("floatOptional")]
+    public float? FloatOptional { get; set; }
 
-    public double? doubleOptional { get; set; }
+    [MapTo("doubleOptional")]
+    public double? DoubleOptional { get; set; }
 
-    public string stringOptional { get; set; }
+    [MapTo("stringOptional")]
+    public string StringOptional { get; set; }
 
-    public DateTimeOffset? dateOptional { get; set; }
+    [MapTo("dateOptional")]
+    public DateTimeOffset? DateOptional { get; set; }
 
-    public byte[] dataOptional { get; set; }
+    [MapTo("dataOptional")]
+    public byte[] DataOptional { get; set; }
 
-    public RequiredTypes objectOptional { get; set; }
+    [MapTo("objectOptional")]
+    public RequiredTypes ObjectOptional { get; set; }
 
-    public IList<bool?> boolOptionalArray { get; }
+    [MapTo("boolOptionalArray")]
+    public IList<bool?> BoolOptionalArray { get; }
 
-    public IList<long?> intOptionalArray { get; }
+    [MapTo("intOptionalArray")]
+    public IList<long?> IntOptionalArray { get; }
 
-    public IList<float?> floatOptionalArray { get; }
+    [MapTo("floatOptionalArray")]
+    public IList<float?> FloatOptionalArray { get; }
 
-    public IList<double?> doubleOptionalArray { get; }
+    [MapTo("doubleOptionalArray")]
+    public IList<double?> DoubleOptionalArray { get; }
 
-    public IList<string> stringOptionalArray { get; }
+    [MapTo("stringOptionalArray")]
+    public IList<string> StringOptionalArray { get; }
 
-    public IList<DateTimeOffset?> dateOptionalArray { get; }
+    [MapTo("dateOptionalArray")]
+    public IList<DateTimeOffset?> DateOptionalArray { get; }
 
-    public IList<byte[]> dataOptionalArray { get; }
+    [MapTo("dataOptionalArray")]
+    public IList<byte[]> DataOptionalArray { get; }
 }
 
 public class RequiredTypes : RealmObject
 {
-    public bool boolRequired { get; set; }
+    [MapTo("boolRequired")]
+    public bool BoolRequired { get; set; }
 
-    public long intRequired { get; set; }
+    [MapTo("intRequired")]
+    public long IntRequired { get; set; }
 
-    public float floatRequired { get; set; }
+    [MapTo("floatRequired")]
+    public float FloatRequired { get; set; }
 
-    public double doubleRequired { get; set; }
-
-    [Required]
-    public string stringRequired { get; set; }
-
-    public DateTimeOffset dateRequired { get; set; }
-
-    [Required]
-    public byte[] dataRequired { get; set; }
-
-    public IList<bool> boolRequiredArray { get; }
-
-    public IList<long> intRequiredArray { get; }
-
-    public IList<float> floatRequiredArray { get; }
-
-    public IList<double> doubleRequiredArray { get; }
+    [MapTo("doubleRequired")]
+    public double DoubleRequired { get; set; }
 
     [Required]
-    public IList<string> stringRequiredArray { get; }
+    [MapTo("stringRequired")]
+    public string StringRequired { get; set; }
 
-    public IList<DateTimeOffset> dateRequiredArray { get; }
+    [MapTo("dateRequired")]
+    public DateTimeOffset DateRequired { get; set; }
 
     [Required]
-    public IList<byte[]> dataRequiredArray { get; }
+    [MapTo("dataRequired")]
+    public byte[] DataRequired { get; set; }
+
+    [MapTo("boolRequiredArray")]
+    public IList<bool> BoolRequiredArray { get; }
+
+    [MapTo("intRequiredArray")]
+    public IList<long> IntRequiredArray { get; }
+
+    [MapTo("floatRequiredArray")]
+    public IList<float> FloatRequiredArray { get; }
+
+    [MapTo("doubleRequiredArray")]
+    public IList<double> DoubleRequiredArray { get; }
 
     [Required]
-    public IList<RequiredTypes> objectRequiredArray { get; }
+    [MapTo("stringRequiredArray")]
+    public IList<string> StringRequiredArray { get; }
+
+    [MapTo("dateRequiredArray")]
+    public IList<DateTimeOffset> DateRequiredArray { get; }
+
+    [Required]
+    [MapTo("dataRequiredArray")]
+    public IList<byte[]> DataRequiredArray { get; }
+
+    [MapTo("objectRequiredArray")]
+    public IList<RequiredTypes> ObjectRequiredArray { get; }
 }
 
 public class ReverseType : RealmObject
 {
-    public LinkTypes links { get; set; }
+    [MapTo("links")]
+    public LinkTypes Links { get; set; }
 }
