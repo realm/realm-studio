@@ -394,13 +394,12 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     }
   }
 
-  private onExportSchema = (event: any, data: { language: Language }): void => {
-    remote.dialog.showSaveDialog({}, selectedPaths => {
-      if (selectedPaths) {
-        const exp = SchemaExporter(data.language);
-        exp.exportSchema(this.realm);
-        exp.writeFilesToDisk(selectedPaths);
-      }
-    });
+  private onExportSchema = (
+    event: any,
+    data: { path: string; language: Language },
+  ): void => {
+    const exp = SchemaExporter(data.language);
+    exp.exportSchema(this.realm);
+    exp.writeFilesToDisk(data.path);
   };
 }
