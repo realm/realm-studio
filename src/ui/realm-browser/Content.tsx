@@ -16,11 +16,13 @@ import {
   CellContextMenuHandler,
   IHighlight,
   SortEndHandler,
+  SortStartHandler,
 } from './table';
-import { TableContainer } from './table/TableContainer';
+import { ResponsiveTable } from './table/ResponsiveTable';
 import { Topbar } from './Topbar';
 
 export const Content = ({
+  dataVersion,
   focus,
   highlight,
   onCellChange,
@@ -28,9 +30,11 @@ export const Content = ({
   onContextMenu,
   onQueryChange,
   onSortEnd,
+  onSortStart,
   progress,
   query,
 }: {
+  dataVersion?: number;
   focus: IFocus | null;
   highlight?: IHighlight;
   onCellChange?: CellChangeHandler;
@@ -38,6 +42,7 @@ export const Content = ({
   onContextMenu?: CellContextMenuHandler;
   onQueryChange: (query: string) => void;
   onSortEnd?: SortEndHandler;
+  onSortStart?: SortStartHandler;
   progress?: ILoadingProgress;
   query: string;
 }) => {
@@ -48,13 +53,15 @@ export const Content = ({
     return (
       <div className="RealmBrowser__Content">
         <Topbar onQueryChange={onQueryChange} query={query} />
-        <TableContainer
+        <ResponsiveTable
+          dataVersion={dataVersion}
           focus={focus}
           highlight={highlight}
           onCellChange={onCellChange}
           onCellClick={onCellClick}
           onContextMenu={onContextMenu}
           onSortEnd={onSortEnd}
+          onSortStart={onSortStart}
           query={query}
         />
       </div>

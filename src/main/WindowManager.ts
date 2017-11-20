@@ -48,14 +48,20 @@ export class WindowManager {
       window.setRepresentedFilename(options.path);
     }
 
+    const query: { [key: string]: string } = {
+      windowType,
+      options: JSON.stringify(options),
+    };
+
+    if (!isProduction && process.env.REACT_PERF) {
+      query.react_perf = 'enabled';
+    }
+
     window.loadURL(
       url.format({
         pathname: getRendererHtmlPath(),
         protocol: 'file:',
-        query: {
-          windowType,
-          options: JSON.stringify(options),
-        },
+        query,
         slashes: true,
       }),
     );

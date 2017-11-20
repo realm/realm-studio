@@ -34,6 +34,17 @@ The application has support for some parameters that can be supplied when starti
 
       OPEN_DEV_TOOLS=true npm start
 
+- If the `REACT_PERF` environment variable is sat, the window URLs will get "?react_perf" appended, which will
+activate profiling of React components on the Chrome timeline:
+https://reactjs.org/blog/2016/11/16/react-v15.4.0.html#profiling-components-with-chrome-timeline
+
+      REACT_PERF=true npm start
+
+- If the `WHY_DID_YOU_UPDATE` environment variable is sat, the renderer process React will be instrumented with a
+tool that prints the props before and after an update of a component.
+
+      WHY_DID_YOU_UPDATE=true npm start
+
 ## Developing
 
 Check out this git repository.
