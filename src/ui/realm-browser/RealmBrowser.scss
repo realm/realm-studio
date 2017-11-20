@@ -297,13 +297,15 @@ $highlight-row-bg: mix($color-dove, $color-elephant, 75%);
         color: $color-elephant;
       }
 
-      &--unselectable {
-        user-select: none;
+      &--int {
+        text-align: right;
       }
+    }
 
+    &__StringCell {
       &--int {
         position: absolute;
-        right: 0;
+        right: $spacer / 2;
         text-align: right;
         width: auto;
       }
