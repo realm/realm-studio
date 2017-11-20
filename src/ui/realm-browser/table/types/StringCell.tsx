@@ -8,7 +8,6 @@ export const StringCell = ({
   onBlur,
   onFocus,
   value,
-  temporalValue,
   property,
 }: {
   isEditing: boolean;
@@ -17,7 +16,6 @@ export const StringCell = ({
   property: Realm.ObjectSchemaProperty;
   onFocus: () => void;
   value: string;
-  temporalValue: string;
 }) => {
   let textInput: HTMLInputElement;
   return isEditing ? (
@@ -30,7 +28,7 @@ export const StringCell = ({
       getRef={input => {
         textInput = input;
       }}
-      value={temporalValue}
+      value={value}
       onChange={e => onChange(e.target.value)}
       onBlur={e => onBlur(textInput)}
       onKeyPress={e => e.key === 'Enter' && onBlur(textInput)}
