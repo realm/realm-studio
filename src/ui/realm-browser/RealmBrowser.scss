@@ -260,8 +260,8 @@ $highlight-row-bg: mix($color-dove, $color-elephant, 75%);
     &__HeaderHandle {
       cursor: ew-resize;
       height: 100%;
-      left: 0;
       position: absolute;
+      right: -$realm-browser-header-handle-width / 2;
       top: 0;
       width: $realm-browser-header-handle-width;
       z-index: 1;

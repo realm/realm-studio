@@ -4,6 +4,7 @@ import {
   GridCellProps,
   GridCellRenderer,
   GridProps,
+  Index,
 } from 'react-virtualized';
 
 import { ISorting } from '.';
@@ -44,9 +45,8 @@ export class HeaderGrid extends React.PureComponent<IHeaderGridProps, {}> {
         className="RealmBrowser__Table__HeaderGrid"
         rowCount={1}
         columnCount={properties.length}
-        columnWidth={({ index }) => columnWidths[index]}
-        cellRenderer={cellProps =>
-          this.cellRenderers[cellProps.columnIndex](cellProps)}
+        columnWidth={this.getColumnWidth}
+        cellRenderer={this.getCellRenderer}
         ref={gridRef}
         rowHeight={height}
         style={{
@@ -57,20 +57,29 @@ export class HeaderGrid extends React.PureComponent<IHeaderGridProps, {}> {
     );
   }
 
+  private getColumnWidth = ({ index }: Index) => {
+    return this.props.columnWidths[index];
+  };
+
+  private getCellRenderer = (cellProps: GridCellProps) => {
+    return this.cellRenderers[cellProps.columnIndex](cellProps);
+  };
+
   private generateRenderers(props: IHeaderGridProps) {
     const { properties } = props;
 
-    this.cellRenderers = properties.map(property => {
+    this.cellRenderers = properties.map((property, index) => {
+      const onWidthChanged = (newWidth: number) =>
+        this.props.onColumnWidthChanged(index, newWidth);
+      const onSortClick = () => this.props.onSortClick(property);
       return (cellProps: GridCellProps) => {
         return (
           <HeaderCell
             key={cellProps.key}
             property={property}
-            width={this.props.columnWidths[cellProps.columnIndex]}
             style={cellProps.style}
-            onSortClick={() => this.props.onSortClick(property)}
-            onWidthChanged={newWidth =>
-              this.props.onColumnWidthChanged(cellProps.columnIndex, newWidth)}
+            onSortClick={onSortClick}
+            onWidthChanged={onWidthChanged}
             sorting={this.props.sorting}
           />
         );
