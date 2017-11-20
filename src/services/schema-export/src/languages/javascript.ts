@@ -20,7 +20,7 @@ export default class JSSchemaExporter extends SchemaExporter {
     this.appendLine(`  name: '${schema.name}',`);
 
     if (schema.primaryKey) {
-      this.appendLine(`  primaryKey: '${schema.primaryKey}'`);
+      this.appendLine(`  primaryKey: '${schema.primaryKey}',`);
     }
 
     // properties

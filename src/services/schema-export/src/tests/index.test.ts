@@ -2,48 +2,64 @@ import * as assert from 'assert';
 import fs = require('fs-extra');
 import * as Realm from 'realm';
 import { Language, SchemaExporter } from '../index';
+import { ISchemaExporter } from '../schemaExporter';
+import * as models1 from './models/sample/SampleTypes';
 
 const TESTS_PATH = './src/services/schema-export/src/tests';
 
+const makeRealm = (path: string, schema: Realm.ObjectSchema[]): Realm => {
+  return new Realm({
+    path,
+    schema,
+    deleteRealmIfMigrationNeeded: true,
+  });
+};
+
 describe('Export schema tests', () => {
-  let realm: Realm;
+  let sampleRealm: Realm;
+  let exp: ISchemaExporter;
 
   before(() => {
-    fs.removeSync(`${TESTS_PATH}/generatedSchemas`);
-    realm = new Realm({ path: `${TESTS_PATH}/demo.realm` });
+    fs.removeSync(`${TESTS_PATH}/realms`);
+    fs.removeSync(`${TESTS_PATH}/temporal`);
+    sampleRealm = makeRealm(`${TESTS_PATH}/realms/sample/SampleTypes.realm`, [
+      models1.SampleTypes,
+    ]);
   });
 
-  it('JS exporter', () => {
-    const expectedSchema = fs.readFileSync(
-      `${TESTS_PATH}/demo-model.js`,
+  it('JS exporter model with sample types', () => {
+    const expected = fs.readFileSync(
+      `${TESTS_PATH}/models/sample/js/SampleTypes.js`,
       'utf8',
     );
-    const exp = SchemaExporter(Language.JS);
-    exp.exportSchema(realm);
-    exp.writeFilesToDisk(`${TESTS_PATH}/generatedSchemas/${Language.JS}`);
-    const generatedSchema = fs.readFileSync(
-      `${TESTS_PATH}/generatedSchemas/${Language.JS}/demo-model.js`,
+    exp = SchemaExporter(Language.JS);
+    exp.exportSchema(sampleRealm);
+    exp.writeFilesToDisk(`${TESTS_PATH}/temporal/${Language.JS}`);
+    const generated = fs.readFileSync(
+      `${TESTS_PATH}/temporal/${Language.JS}/SampleTypes-model.js`,
       'utf8',
     );
-    assert.equal(expectedSchema, generatedSchema);
+    assert.equal(expected, generated);
   });
 
-  it('Swift exporter', () => {
-    const expectedSchema = fs.readFileSync(
-      `${TESTS_PATH}/demo-model.swift`,
+  it('Swift exporter model with sample types', () => {
+    const expected = fs.readFileSync(
+      `${TESTS_PATH}/models/sample/swift/SampleTypes.swift`,
       'utf8',
     );
-    const exp = SchemaExporter(Language.Swift);
-    exp.exportSchema(realm);
-    exp.writeFilesToDisk(`${TESTS_PATH}/generatedSchemas/${Language.Swift}`);
-    const generatedSchema = fs.readFileSync(
-      `${TESTS_PATH}/generatedSchemas/${Language.Swift}/demo-model.swift`,
+    exp = SchemaExporter(Language.Swift);
+
+    exp.exportSchema(sampleRealm);
+    exp.writeFilesToDisk(`${TESTS_PATH}/temporal/${Language.Swift}`);
+    const generated = fs.readFileSync(
+      `${TESTS_PATH}/temporal/${Language.Swift}/SampleTypes-model.swift`,
       'utf8',
     );
-    assert.equal(expectedSchema, generatedSchema);
+    assert.equal(expected, generated);
   });
 
   after(() => {
-    fs.removeSync(`${TESTS_PATH}/generatedSchemas`);
+    fs.removeSync(`${TESTS_PATH}/realms`);
+    fs.removeSync(`${TESTS_PATH}/temporal`);
   });
 });
