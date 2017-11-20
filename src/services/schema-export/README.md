@@ -8,7 +8,6 @@ linkingObjects and default values are NOT stored in Realm files.
 
 
 # TODO
-- Add tests (for JS and Swift generators)
 - Add comment to generated files that linkingObjects and       default values are not represented in the models.
 - Add CS generator
 - Add ObjC generator
@@ -16,13 +15,3 @@ linkingObjects and default values are NOT stored in Realm files.
 
 Swift
   types of an array: can they not be optional? (see https://realm.io/docs/swift/latest/#property-cheatsheet)
-
-
-# Commands for Building, Cleaning, Testing, and Linting
-
-After `npm install`
-
-1. To Build `npm run build`
-2. To Clean Artifacts `npm run clean`
-3. To Test `npm run test`
-4. To Lint `npm run lint`

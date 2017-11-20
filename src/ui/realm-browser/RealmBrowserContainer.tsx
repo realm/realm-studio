@@ -5,10 +5,7 @@ import * as Realm from 'realm';
 import * as util from 'util';
 
 import { IPropertyWithName, ISelectObjectState } from '.';
-import {
-  Language,
-  SchemaExporter,
-} from '../../services/schema-export/src/schema-exporter';
+import { Language, SchemaExporter } from '../../services/schema-export/src';
 import { IRealmBrowserOptions } from '../../windows/WindowType';
 import { showError } from '../reusable/errors';
 import {

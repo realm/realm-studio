@@ -1,5 +1,5 @@
 import * as electron from 'electron';
-import { Language } from '../services/schema-export/src/schema-exporter';
+import { Language } from '../services/schema-export/src';
 import { Application } from './Application';
 
 const isProduction = process.env.NODE_ENV === 'production';
