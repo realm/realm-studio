@@ -76,6 +76,16 @@ export class MainMenu {
                     });
                 },
               },
+              {
+                label: 'Java',
+                click: () => {
+                  electron.BrowserWindow
+                    .getFocusedWindow()
+                    .webContents.send('exportSchema', {
+                      language: Language.Java,
+                    });
+                },
+              },
             ],
           },
         ],
