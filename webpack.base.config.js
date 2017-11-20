@@ -50,8 +50,8 @@ module.exports = (env) => {
       new SpriteLoaderPlugin(),
     ].concat(isProduction ? [
       // Plugins for production
-      // The UglifyJs expects the JS to be of an older version than es6
-      // new webpack.optimize.UglifyJsPlugin(),
+      // @see https://reactjs.org/docs/optimizing-performance.html#webpack
+      new webpack.optimize.UglifyJsPlugin(),
     ] : [
       // Plugins for development
       new webpack.NamedModulesPlugin(),
