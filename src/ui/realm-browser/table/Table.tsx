@@ -15,6 +15,7 @@ import {
   IHighlight,
   ISorting,
   SortEndHandler,
+  SortStartHandler,
 } from '.';
 import { IPropertyWithName } from '..';
 import { IFocus } from '../focus';
@@ -36,12 +37,14 @@ export interface ITableProps {
   gridContentRef: (grid: Grid) => void;
   gridHeaderRef: (grid: Grid) => void;
   highlight?: IHighlight;
+  isSorting: boolean;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
   onColumnWidthChanged: (index: number, width: number) => void;
   onContextMenu?: CellContextMenuHandler;
   onSortClick: (property: IPropertyWithName) => void;
   onSortEnd?: SortEndHandler;
+  onSortStart?: SortStartHandler;
   scrollProps: ScrollSyncProps;
   sizeProps: AutoSizerProps;
   sorting?: ISorting;
@@ -56,12 +59,14 @@ export const Table = ({
   gridContentRef,
   gridHeaderRef,
   highlight,
+  isSorting,
   onCellChange,
   onCellClick,
   onColumnWidthChanged,
   onContextMenu,
   onSortClick,
   onSortEnd,
+  onSortStart,
   scrollProps,
   sizeProps,
   sorting,
@@ -104,11 +109,13 @@ export const Table = ({
         height={height - rowHeights.header}
         highlight={highlight}
         isSortable={focus.kind === 'list' && !sorting}
+        isSorting={isSorting}
         onCellChange={onCellChange}
         onCellClick={onCellClick}
         onContextMenu={onContextMenu}
         onScroll={onScroll}
         onSortEnd={onSortEnd}
+        onSortStart={onSortStart}
         overscanRowCount={30}
         properties={focus.properties}
         rowHeight={rowHeights.content}

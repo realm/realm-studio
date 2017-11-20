@@ -16,6 +16,7 @@ import {
   CellContextMenuHandler,
   IHighlight,
   SortEndHandler,
+  SortStartHandler,
 } from './table';
 import { ResponsiveTable } from './table/ResponsiveTable';
 import { Topbar } from './Topbar';
@@ -29,6 +30,7 @@ export const Content = ({
   onContextMenu,
   onQueryChange,
   onSortEnd,
+  onSortStart,
   progress,
   query,
 }: {
@@ -40,6 +42,7 @@ export const Content = ({
   onContextMenu?: CellContextMenuHandler;
   onQueryChange: (query: string) => void;
   onSortEnd?: SortEndHandler;
+  onSortStart?: SortStartHandler;
   progress?: ILoadingProgress;
   query: string;
 }) => {
@@ -58,6 +61,7 @@ export const Content = ({
           onCellClick={onCellClick}
           onContextMenu={onContextMenu}
           onSortEnd={onSortEnd}
+          onSortStart={onSortStart}
           query={query}
         />
       </div>

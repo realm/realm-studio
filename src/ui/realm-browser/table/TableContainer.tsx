@@ -13,6 +13,7 @@ import {
   IHighlight,
   ISorting,
   SortEndHandler,
+  SortStartHandler,
 } from '.';
 import { IPropertyWithName } from '..';
 import { IFocus } from '../focus';
@@ -28,6 +29,7 @@ export interface IBaseTableContainerProps {
   onCellClick?: CellClickHandler;
   onContextMenu?: CellContextMenuHandler;
   onSortEnd?: SortEndHandler;
+  onSortStart?: SortStartHandler;
   query: string;
 }
 
@@ -38,6 +40,7 @@ export interface ITableContainerProps extends IBaseTableContainerProps {
 
 export interface ITableContainerState {
   columnWidths: number[];
+  isSorting: boolean;
   sorting?: ISorting;
 }
 
@@ -53,6 +56,7 @@ export class TableContainer extends React.PureComponent<
     super();
     this.state = {
       columnWidths: [],
+      isSorting: false,
     };
   }
 
@@ -71,12 +75,14 @@ export class TableContainer extends React.PureComponent<
         gridContentRef={this.gridContentRef}
         gridHeaderRef={this.gridHeaderRef}
         highlight={this.props.highlight}
+        isSorting={this.state.isSorting}
         onCellChange={this.props.onCellChange}
         onCellClick={this.props.onCellClick}
         onColumnWidthChanged={this.onColumnWidthChanged}
         onContextMenu={this.props.onContextMenu}
         onSortClick={this.onSortClick}
-        onSortEnd={this.props.onSortEnd}
+        onSortEnd={this.onSortEnd}
+        onSortStart={this.onSortStart}
         scrollProps={this.props.scrollProps}
         sizeProps={this.props.sizeProps}
         sorting={this.state.sorting}
@@ -176,6 +182,20 @@ export class TableContainer extends React.PureComponent<
       });
     } else {
       this.setState({ sorting: undefined });
+    }
+  };
+
+  private onSortEnd: SortEndHandler = (sortEvent, e) => {
+    this.setState({ isSorting: false });
+    if (this.props.onSortEnd) {
+      this.props.onSortEnd(sortEvent, e);
+    }
+  };
+
+  private onSortStart: SortStartHandler = (sortEvent, e) => {
+    this.setState({ isSorting: true });
+    if (this.props.onSortStart) {
+      this.props.onSortStart(sortEvent, e);
     }
   };
 

@@ -3,6 +3,7 @@ import {
   SortableContainer,
   SortableElement,
   SortEndHandler,
+  SortStartHandler,
 } from 'react-sortable-hoc';
 import {
   Grid,
@@ -43,10 +44,12 @@ export interface IContentGridProps extends Partial<GridProps> {
   height: number;
   highlight?: IHighlight;
   isSortable?: boolean;
+  isSorting: boolean;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
   onContextMenu?: CellContextMenuHandler;
   onSortEnd?: SortEndHandler;
+  onSortStart?: SortStartHandler;
   properties: IPropertyWithName[];
   rowHeight: number;
   width: number;
@@ -73,6 +76,7 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
       gridRef,
       highlight,
       onSortEnd,
+      onSortStart,
       properties,
     } = this.props;
 
@@ -80,7 +84,7 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
       <SortableGrid
         {...this.props}
         lockAxis="y"
-        helperClass="RealmBrowser__Table__Row--sorting"
+        helperClass="RealmBrowser__Table__Row--sorting-selected"
         cellRangeRenderer={this.cellRangeRenderer}
         cellRenderer={this.getCellRenderer}
         className="RealmBrowser__Table__ContentGrid"
@@ -88,6 +92,7 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
         columnWidth={this.getColumnWidth}
         distance={5}
         onSortEnd={onSortEnd}
+        onSortStart={onSortStart}
         ref={(sortableContainer: any) => {
           if (sortableContainer) {
             gridRef(sortableContainer.getWrappedInstance());
@@ -103,11 +108,16 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
     const { properties } = props;
 
     const rowRenderer: GridRowRenderer = (rowProps: IGridRowProps) => {
-      const { highlight } = this.props;
+      const { highlight, isSorting } = this.props;
       const isHighlighted =
         (highlight && highlight.row === rowProps.rowIndex) || false;
       return (
-        <Row isHighlighted={isHighlighted} key={rowProps.key} {...rowProps} />
+        <Row
+          isHighlighted={isHighlighted}
+          key={rowProps.key}
+          isSorting={isSorting}
+          {...rowProps}
+        />
       );
     };
 

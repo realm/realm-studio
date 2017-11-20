@@ -13,7 +13,8 @@ $realm-browser-more-indicator-dark-color: rgba(0, 0, 0, .2);
 $realm-browser-more-indicator-light-color: rgba(0, 0, 0, 0);
 
 $color-row-stripe: mix($white, $color-dove, 50%);
-$highlight-row-bg: mix($color-dove, $color-elephant, 75%);
+$highlight-row-bg: mix($white, $color-indigo, 70%);
+$highlight-row-color: $black;
 
 .RealmBrowser {
   display: flex;
@@ -187,14 +188,28 @@ $highlight-row-bg: mix($color-dove, $color-elephant, 75%);
 
     &__Row {
       background: $white;
+      transition: background-color 400ms;
 
       &--striped {
         background: $color-row-stripe;
       }
 
-      &--highlighted,
       &--sorting {
+        background: mix($color-row-stripe, $white, 40%);
+        border-top: 1px solid $color-dove;
+        margin-top: -1px;
+        transition: transform 300ms;
+        user-select: none;
+      }
+
+      &--highlighted,
+      &--sorting-selected {
         background: $highlight-row-bg;
+        color: $highlight-row-color;
+      }
+
+      &--sorting-selected {
+        box-shadow: 0 0 10px $highlight-row-bg;
       }
     }
 
@@ -286,6 +301,7 @@ $highlight-row-bg: mix($color-dove, $color-elephant, 75%);
     &__Input {
       background: transparent;
       border: 0;
+      color: inherit;
       height: 100%;
       white-space: nowrap;
 
@@ -299,6 +315,10 @@ $highlight-row-bg: mix($color-dove, $color-elephant, 75%);
 
       &--int {
         text-align: right;
+      }
+
+      &:focus {
+        color: inherit;
       }
     }
 

@@ -18,6 +18,7 @@ import {
   CellContextMenuHandler,
   IHighlight,
   SortEndHandler,
+  SortStartHandler,
 } from './table';
 import * as primitives from './table/types/primitives';
 
@@ -217,6 +218,13 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     }
   };
 
+  public onSortStart: SortStartHandler = ({ index }) => {
+    // Removing any highlight
+    this.setState({
+      highlight: undefined,
+    });
+  };
+
   public onSortEnd: SortEndHandler = ({ oldIndex, newIndex }) => {
     if (this.state.focus && this.state.focus.kind === 'list') {
       const results = (this.state.focus.results as any) as Realm.List<any>;
@@ -225,6 +233,11 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         results.splice(newIndex, 0, movedElements[0]);
       });
     }
+    this.setState({
+      highlight: {
+        row: newIndex,
+      },
+    });
   };
 
   public openSelectObject = (
