@@ -10,7 +10,7 @@ import {
 
 import { IBaseTableContainerProps, TableContainer } from './TableContainer';
 
-export class ResponsiveTable extends React.Component<
+export class ResponsiveTable extends React.PureComponent<
   IBaseTableContainerProps,
   {}
 > {
