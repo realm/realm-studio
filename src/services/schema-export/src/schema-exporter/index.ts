@@ -1,6 +1,6 @@
+import JavaSchemaExporter from './languages/java';
 import JSSchemaExporter from './languages/javascript';
 import SwiftSchemaExporter from './languages/swift';
-import JavaSchemaExporter from './languages/java'
 
 import { ISchemaExporter } from './schemaExporter';
 
@@ -19,7 +19,7 @@ export const SchemaExporter = (language: Language): ISchemaExporter => {
     case Language.JS:
       return new JSSchemaExporter();
     case Language.Java:
-      return new JavaSchemaExporter();  
+      return new JavaSchemaExporter();
     default:
       throw new Error('Language not supported');
   }

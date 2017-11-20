@@ -24,7 +24,9 @@ export default class JavaSchemaExporter extends SchemaExporter {
   }
 
   public makeSchema(schema: Realm.ObjectSchema) {
-    this.appendLine("// Please note : @LinkingObjects and default values are not represented in the schema and thus will not be part of the generated models");
+    this.appendLine(
+      '// Please note : @LinkingObjects and default values are not represented in the schema and thus will not be part of the generated models',
+    );
     this.appendLine('package your.package.name.here;');
     this.appendLine('');
 
@@ -42,7 +44,10 @@ export default class JavaSchemaExporter extends SchemaExporter {
           realmImports.add('import io.realm.annotations.Index;');
         }
 
-        if (!prop.optional && this.javaPropertyTypeCanBeMarkedRequired(prop.type)) {
+        if (
+          !prop.optional &&
+          this.javaPropertyTypeCanBeMarkedRequired(prop.type)
+        ) {
           realmImports.add('import io.realm.annotations.Required;');
         }
       }
@@ -53,8 +58,8 @@ export default class JavaSchemaExporter extends SchemaExporter {
       realmImports.add('import io.realm.annotations.PrimaryKey;');
     }
 
-    // Add all Realm imports 
-    for (let realmImport of realmImports) {
+    // Add all Realm imports
+    for (const realmImport of realmImports) {
       this.appendLine(realmImport);
     }
     this.appendLine('');
@@ -80,7 +85,7 @@ export default class JavaSchemaExporter extends SchemaExporter {
   }
 
   private propertyLine(prop: any, primaryKey: string | undefined): void {
-    if (prop.name == primaryKey) {
+    if (prop.name === primaryKey) {
       this.fieldsContent += `${JavaSchemaExporter.PADDING}@PrimaryKey\n`;
     } else if (prop.indexed) {
       this.fieldsContent += `${JavaSchemaExporter.PADDING}@Index\n`;
@@ -89,13 +94,21 @@ export default class JavaSchemaExporter extends SchemaExporter {
       this.fieldsContent += `${JavaSchemaExporter.PADDING}@Required\n`;
     }
 
-    this.fieldsContent += `${JavaSchemaExporter.PADDING}private ${this.javaNameForProperty(prop)} ${prop.name};\n`;
+    this.fieldsContent += `${JavaSchemaExporter.PADDING}private ${this.javaNameForProperty(
+      prop,
+    )} ${prop.name};\n`;
 
-    this.gettersContent += `${JavaSchemaExporter.PADDING}public ${this.javaNameForProperty(prop)} ${(prop.type == 'bool') ? 'is' : 'get'}${this.capitalizedString(prop.name)}() {
+    this.gettersContent += `${JavaSchemaExporter.PADDING}public ${this.javaNameForProperty(
+      prop,
+    )} ${prop.type === 'bool' ? 'is' : 'get'}${this.capitalizedString(
+      prop.name,
+    )}() {
   ${JavaSchemaExporter.PADDING}return ${prop.name};
     }\n`;
 
-    this.settersContent += `${JavaSchemaExporter.PADDING}public void set${this.capitalizedString(prop.name)}(${this.javaNameForProperty(prop)} ${prop.name}) {
+    this.settersContent += `${JavaSchemaExporter.PADDING}public void set${this.capitalizedString(
+      prop.name,
+    )}(${this.javaNameForProperty(prop)} ${prop.name}) {
   ${JavaSchemaExporter.PADDING}${JavaSchemaExporter.PADDING}this.${prop.name} = ${prop.name};
     }\n`;
   }
@@ -121,42 +134,42 @@ export default class JavaSchemaExporter extends SchemaExporter {
     if (property.type === 'list') {
       switch (property.objectType) {
         case 'bool':
-          return "RealmList<Boolean>";
+          return 'RealmList<Boolean>';
         case 'int':
-          return "RealmList<Long>";
+          return 'RealmList<Long>';
         case 'float':
-          return "RealmList<Float>";
+          return 'RealmList<Float>';
         case 'double':
-          return "RealmList<Double>";
+          return 'RealmList<Double>';
         case 'string':
-          return "RealmList<String>";
+          return 'RealmList<String>';
         case 'data':
-          return "RealmList<byte[]>";
+          return 'RealmList<byte[]>';
         case 'date':
-          return "RealmList<java.util.Date>";
+          return 'RealmList<java.util.Date>';
         default:
           return `RealmList<${property.objectType}>`;
       }
     }
     switch (property.type) {
       case 'bool':
-        return property.optional ? "Boolean" : "boolean";
+        return property.optional ? 'Boolean' : 'boolean';
       case 'int':
-        return property.optional ? "Long" : "long";
+        return property.optional ? 'Long' : 'long';
       case 'float':
-        return property.optional ? "Float" : "float";
+        return property.optional ? 'Float' : 'float';
       case 'double':
-        return property.optional ? "Double" : "double";
+        return property.optional ? 'Double' : 'double';
       case 'string':
-        return "String";
+        return 'String';
       case 'data':
-        return "byte[]";
+        return 'byte[]';
       case 'date':
-        return "java.util.Date";
+        return 'java.util.Date';
       case 'object':
         return property.objectType;
       case 'linkingObjects':
-        return "RealmList";
+        return 'RealmList';
     }
 
     return null;
