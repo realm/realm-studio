@@ -5,7 +5,7 @@ import { Language, SchemaExporter } from '../index';
 import { ISchemaExporter } from '../schemaExporter';
 import * as models1 from './models/sample/SampleTypes';
 
-const TESTS_PATH = './src/services/schema-export/src/tests';
+const TESTS_PATH = './src/services/schema-export/tests';
 
 const makeRealm = (path: string, schema: Realm.ObjectSchema[]): Realm => {
   return new Realm({
