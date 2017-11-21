@@ -85,6 +85,7 @@ export const RealmsTable = ({
         realm={
           selectedRealmPath !== null ? getRealmFromId(selectedRealmPath) : null
         }
+        onRealmDeleted={onRealmDeleted}
       />
 
       <LoadingOverlay progress={progress} fade={true} />
