@@ -64,9 +64,10 @@ const ListFocusComponent = ({
 };
 
 export const Sidebar = ({
+  dataVersion,
+  dataVersionAtBeginning,
   focus,
   getSchemaLength,
-  hasUnsavedChanges,
   isAutoSaveEnabled,
   onAutoSaveChange,
   onDiscardChanges,
@@ -75,9 +76,10 @@ export const Sidebar = ({
   progress,
   schemas,
 }: {
+  dataVersion: number;
+  dataVersionAtBeginning?: number;
   focus: IFocus | null;
   getSchemaLength: (name: string) => number;
-  hasUnsavedChanges: boolean;
   isAutoSaveEnabled: boolean;
   onAutoSaveChange: AutoSaveChangeHandler;
   onDiscardChanges: () => void;
@@ -85,86 +87,94 @@ export const Sidebar = ({
   onSchemaSelected: (name: string, objectToScroll?: any) => void;
   progress: ILoadingProgress;
   schemas: Realm.ObjectSchema[];
-}) => (
-  <div className="RealmBrowser__Sidebar">
-    <div className="RealmBrowser__Sidebar__Header">Classes</div>
-    {schemas && schemas.length > 0 ? (
-      <ul className="RealmBrowser__Sidebar__SchemaList">
-        {schemas.map(schema => {
-          const selected = isSelected(focus, schema.name);
-          const schemaClass = classnames(
-            'RealmBrowser__Sidebar__Schema__Info',
-            {
-              'RealmBrowser__Sidebar__Schema__Info--selected': selected,
-            },
-          );
-          return (
-            <li
-              key={schema.name}
-              className="RealmBrowser__Sidebar__Schema"
-              title={schema.name}
-            >
-              <div
-                className={schemaClass}
-                onClick={() => onSchemaSelected(schema.name)}
+}) => {
+  const versionDifference =
+    typeof dataVersionAtBeginning === 'number'
+      ? dataVersion - dataVersionAtBeginning
+      : 0;
+  const hasUnsavedChanges = versionDifference > 0;
+  return (
+    <div className="RealmBrowser__Sidebar">
+      <div className="RealmBrowser__Sidebar__Header">Classes</div>
+      {schemas && schemas.length > 0 ? (
+        <ul className="RealmBrowser__Sidebar__SchemaList">
+          {schemas.map(schema => {
+            const selected = isSelected(focus, schema.name);
+            const schemaClass = classnames(
+              'RealmBrowser__Sidebar__Schema__Info',
+              {
+                'RealmBrowser__Sidebar__Schema__Info--selected': selected,
+              },
+            );
+            return (
+              <li
+                key={schema.name}
+                className="RealmBrowser__Sidebar__Schema"
+                title={schema.name}
               >
-                <span className="RealmBrowser__Sidebar__Schema__Name">
-                  {schema.name}
-                </span>
-                <Badge color="primary">{getSchemaLength(schema.name)}</Badge>
-              </div>
-              {selected && focus && focus.kind === 'list' ? (
-                <ListFocusComponent
-                  focus={focus as IListFocus}
-                  onSchemaSelected={onSchemaSelected}
-                />
-              ) : null}
-            </li>
-          );
-        })}
-      </ul>
-    ) : progress.done ? (
-      <div className="RealmBrowser__Sidebar__SchemaList--empty" />
-    ) : null}
+                <div
+                  className={schemaClass}
+                  onClick={() => onSchemaSelected(schema.name)}
+                >
+                  <span className="RealmBrowser__Sidebar__Schema__Name">
+                    {schema.name}
+                  </span>
+                  <Badge color="primary">{getSchemaLength(schema.name)}</Badge>
+                </div>
+                {selected && focus && focus.kind === 'list' ? (
+                  <ListFocusComponent
+                    focus={focus as IListFocus}
+                    onSchemaSelected={onSchemaSelected}
+                  />
+                ) : null}
+              </li>
+            );
+          })}
+        </ul>
+      ) : progress.done ? (
+        <div className="RealmBrowser__Sidebar__SchemaList--empty" />
+      ) : null}
 
-    {hasUnsavedChanges ? (
-      <section className="RealmBrowser__Sidebar__UnsavedChanges">
-        You have unsaved changes
-      </section>
-    ) : null}
+      {hasUnsavedChanges ? (
+        <section className="RealmBrowser__Sidebar__UnsavedChanges">
+          You have {versionDifference} unsaved
+          {versionDifference > 1 ? ' changes' : ' change'}
+        </section>
+      ) : null}
 
-    {hasUnsavedChanges ? (
-      <section className="RealmBrowser__Sidebar__Controls">
-        <Button
-          className="RealmBrowser__Sidebar__ControlButton"
-          color="secondary"
-          onClick={onDiscardChanges}
-          size="sm"
-        >
-          Cancel
-        </Button>
-        <Button
-          className="RealmBrowser__Sidebar__ControlButton"
-          size="sm"
-          color="primary"
-          onClick={onSaveChanges}
-        >
-          Save
-        </Button>
-      </section>
-    ) : (
-      <section className="RealmBrowser__Sidebar__Controls">
-        <Button
-          className="RealmBrowser__Sidebar__ControlButton"
-          size="sm"
-          color={isAutoSaveEnabled ? 'primary' : 'secondary'}
-          onClick={e => {
-            onAutoSaveChange(!isAutoSaveEnabled);
-          }}
-        >
-          {isAutoSaveEnabled ? 'Saving automatically' : 'Save automatically'}
-        </Button>
-      </section>
-    )}
-  </div>
-);
+      {hasUnsavedChanges ? (
+        <section className="RealmBrowser__Sidebar__Controls">
+          <Button
+            className="RealmBrowser__Sidebar__ControlButton"
+            color="secondary"
+            onClick={onDiscardChanges}
+            size="sm"
+          >
+            Cancel
+          </Button>
+          <Button
+            className="RealmBrowser__Sidebar__ControlButton"
+            size="sm"
+            color="primary"
+            onClick={onSaveChanges}
+          >
+            Save
+          </Button>
+        </section>
+      ) : (
+        <section className="RealmBrowser__Sidebar__Controls">
+          <Button
+            className="RealmBrowser__Sidebar__ControlButton"
+            size="sm"
+            color={isAutoSaveEnabled ? 'primary' : 'secondary'}
+            onClick={e => {
+              onAutoSaveChange(!isAutoSaveEnabled);
+            }}
+          >
+            {isAutoSaveEnabled ? 'Saving automatically' : 'Save automatically'}
+          </Button>
+        </section>
+      )}
+    </div>
+  );
+};

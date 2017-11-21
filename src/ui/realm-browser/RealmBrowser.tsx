@@ -28,9 +28,9 @@ export interface IRealmBrowserProps {
     no: () => void;
   };
   dataVersion: number;
+  dataVersionAtBeginning?: number;
   focus: IFocus | null;
   getSchemaLength: (name: string) => number;
-  hasUnsavedChanges: boolean;
   highlight?: IHighlight;
   isAutoSaveEnabled: boolean;
   isEncryptionDialogVisible: boolean;
@@ -56,9 +56,9 @@ export const RealmBrowser = ({
   columnToHighlight,
   confirmModal,
   dataVersion,
+  dataVersionAtBeginning,
   focus,
   getSchemaLength,
-  hasUnsavedChanges,
   highlight,
   isAutoSaveEnabled,
   isEncryptionDialogVisible,
@@ -81,9 +81,10 @@ export const RealmBrowser = ({
   return (
     <div className="RealmBrowser">
       <Sidebar
+        dataVersion={dataVersion}
+        dataVersionAtBeginning={dataVersionAtBeginning}
         focus={focus}
         getSchemaLength={getSchemaLength}
-        hasUnsavedChanges={hasUnsavedChanges}
         isAutoSaveEnabled={isAutoSaveEnabled}
         onAutoSaveChange={onAutoSaveChange}
         onDiscardChanges={onDiscardChanges}

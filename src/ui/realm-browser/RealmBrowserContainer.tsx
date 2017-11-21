@@ -34,6 +34,7 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   };
   // A number that we can use to make components update on changes to data
   dataVersion: number;
+  dataVersionAtBeginning?: number;
   encryptionKey?: string;
   focus: IFocus | null;
   isEncryptionDialogVisible: boolean;
@@ -74,52 +75,35 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   }
 
   public render() {
-    return (
-      <RealmBrowser
-        {...this.state}
-        {...this}
-        hasUnsavedChanges={this.realm && this.realm.isInTransaction}
-      />
-    );
+    return <RealmBrowser {...this.state} {...this} />;
   }
 
   public onCellChange: CellChangeHandler = params => {
-    const updateValue = () => {
-      const { parent, property, rowIndex, cellValue } = params;
-      if (property.name !== null) {
-        parent[rowIndex][property.name] = cellValue;
-      } else {
-        parent[rowIndex] = cellValue;
-      }
-    };
-
-    if (this.realm) {
-      if (this.state.isAutoSaveEnabled) {
-        try {
-          this.realm.write(updateValue);
-        } catch (err) {
-          showError('Failed when saving the value', err);
+    try {
+      this.writeOrBeginTransaction(() => {
+        const { parent, property, rowIndex, cellValue } = params;
+        if (property.name !== null) {
+          parent[rowIndex][property.name] = cellValue;
+        } else {
+          parent[rowIndex] = cellValue;
         }
-      } else {
-        if (!this.realm.isInTransaction) {
-          this.realm.beginTransaction();
-        }
-        updateValue();
-        this.forceUpdate();
-      }
+      });
+    } catch (err) {
+      showError('Failed when saving the value', err);
     }
   };
 
   public onSaveChanges = () => {
     if (this.realm && this.realm.isInTransaction) {
       this.realm.commitTransaction();
+      this.resetDataVersion();
     }
   };
 
   public onDiscardChanges = () => {
     if (this.realm && this.realm.isInTransaction) {
       this.realm.cancelTransaction();
-      this.forceUpdate();
+      this.resetDataVersion();
     }
   };
 
@@ -271,7 +255,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   public onSortEnd: SortEndHandler = ({ oldIndex, newIndex }) => {
     if (this.state.focus && this.state.focus.kind === 'list') {
       const results = (this.state.focus.results as any) as Realm.List<any>;
-      this.realm.write(() => {
+      this.writeOrBeginTransaction(() => {
         const movedElements = results.splice(oldIndex, 1);
         results.splice(newIndex, 0, movedElements[0]);
       });
@@ -315,7 +299,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     if (selectObject) {
       const object: any = selectObject.object;
       const propertyName = selectObject.property.name;
-      this.realm.write(() => {
+      this.writeOrBeginTransaction(() => {
         if (propertyName) {
           object[propertyName] = reference;
         }
@@ -338,7 +322,9 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   };
 
   public deleteObject = (object: Realm.Object) => {
-    this.realm.write(() => this.realm.delete(object));
+    this.writeOrBeginTransaction(() => {
+      this.realm.delete(object);
+    });
     this.setState({ highlight: undefined, confirmModal: undefined });
   };
 
@@ -445,6 +431,31 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       });
     } else {
       super.loadingRealmFailed(err);
+    }
+  }
+
+  protected writeOrBeginTransaction(callback: () => void) {
+    if (this.state.isAutoSaveEnabled) {
+      this.realm.write(callback);
+    } else {
+      if (!this.realm.isInTransaction) {
+        this.realm.beginTransaction();
+        this.setState({
+          dataVersionAtBeginning: this.state.dataVersion,
+        });
+      }
+      callback();
+      // We have to signal changes manually
+      this.onRealmChanged();
+    }
+  }
+
+  protected resetDataVersion() {
+    if (typeof this.state.dataVersionAtBeginning === 'number') {
+      this.setState({
+        dataVersion: this.state.dataVersionAtBeginning,
+        dataVersionAtBeginning: undefined,
+      });
     }
   }
 
