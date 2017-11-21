@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as Realm from 'realm';
 import * as util from 'util';
 
-const display = (value: ArrayBuffer | null) =>
+export const display = (value: ArrayBuffer | null) =>
   value ? `[${value.byteLength} bytes of data]` : 'null';
 
 export const DataCell = ({
