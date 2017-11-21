@@ -37,7 +37,12 @@ export const RealmsTable = ({
 }) => {
   return (
     <div className="RealmsTable">
-      <div className="RealmsTable__table">
+      <div
+        className="RealmsTable__table"
+        onClick={event => {
+          onRealmSelected(null);
+        }}
+      >
         <AutoSizer>
           {({ width, height }: IAutoSizerDimensions) => (
             <Table
