@@ -12,6 +12,7 @@ import {
   ILoadingProgress,
   LoadingOverlay,
 } from '../../reusable/loading-overlay';
+import { RealmSidebar } from "./RealmSidebar";
 
 import './RealmsTable.scss';
 
@@ -65,6 +66,8 @@ export const RealmsTable = ({
           )}
         </AutoSizer>
       </div>
+
+      <RealmSidebar isOpen={true} />
 
       <LoadingOverlay progress={progress} fade={true} />
     </div>
