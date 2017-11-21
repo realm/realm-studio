@@ -1,40 +1,6 @@
 @import "~realm-studio-styles/variables";
-@import "../../variables";
 
-.UserSidebar {
-  background: $white;
-
-  &__Card {
-    // Defining its width makes sure it doesn't collapse when sliding in / out
-    border-bottom: 0;
-    border-radius: 0;
-    border-right: 0;
-    border-top: 0;
-    display: flex;
-    height: 100%;
-    width: $sidebar-width;
-  }
-
-  &__Top,
-  &__Tables {
-    padding-bottom: 0;
-  }
-
-  &__Top,
-  &__Controls {
-    flex: 0 0 auto;
-  }
-
-  &__Tables {
-    overflow-y: scroll;
-  }
-
-  &__Title {
-    line-height: 1.5;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
+.Sidebar {
   &__AccountsTable,
   &__MetadataTable,
   &__RealmsTable {
@@ -64,17 +30,5 @@
     color: $color-elephant;
     font-size: .9rem;
     text-align: center;
-  }
-
-  &__Controls {
-    display: block;
-    text-align: center;
-
-    // Add spacing between the controls
-    * {
-      &:not(:first-child) {
-        margin-left: $spacer / 2;
-      }
-    }
   }
 }

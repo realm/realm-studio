@@ -49,9 +49,9 @@ export const UserSidebar = ({
   return (
     <Sidebar isOpen={isOpen}>
       {user && (
-        <Card className="UserSidebar__Card">
-          <CardBlock className="UserSidebar__Top">
-            <CardTitle className="UserSidebar__Title">
+        <Card className="Sidebar__Card">
+          <CardBlock className="Sidebar__Top">
+            <CardTitle className="Sidebar__Title">
               <span title={user.userId}>{user.userId}</span>
             </CardTitle>
             <ButtonDropdown
@@ -75,7 +75,7 @@ export const UserSidebar = ({
               </DropdownMenu>
             </ButtonDropdown>
           </CardBlock>
-          <CardBlock className="UserSidebar__Tables">
+          <CardBlock className="Sidebar__Tables">
             <AccountsTable accounts={user.accounts} />
             <MetadataTable
               metadatas={user.metadata}
@@ -85,7 +85,7 @@ export const UserSidebar = ({
             />
             <RealmsTable realms={realms} />
           </CardBlock>
-          <CardBlock className="UserSidebar__Controls">
+          <CardBlock className="Sidebar__Controls">
             <Button size="sm" onClick={() => onChangePassword()}>
               Change password
             </Button>

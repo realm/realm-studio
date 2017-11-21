@@ -15,13 +15,13 @@ export const MetadataTable = ({
   onMetadataDeleted: (index: number) => void;
 }) => {
   return (
-    <Table size="sm" className="UserSidebar__MetadataTable">
+    <Table size="sm" className="Sidebar__MetadataTable">
       <thead>
         <tr>
           {/* We mention "Metadata" in this header, so we don't need a separate header */}
           <th>Metadata key</th>
           <th>Value</th>
-          <th className="UserSidebar__MetadataTableControlCell">
+          <th className="Sidebar__MetadataTableControlCell">
             <Button
               size="sm"
               onClick={onMetadataAppended}
@@ -35,7 +35,7 @@ export const MetadataTable = ({
       <tbody>
         {metadatas.length === 0 ? (
           <tr>
-            <td colSpan={3} className="UserSidebar__EmptyTableExplanation">
+            <td colSpan={3} className="Sidebar__EmptyTableExplanation">
               This user has no metadata
             </td>
           </tr>
@@ -69,10 +69,10 @@ export const MetadataTable = ({
                     }}
                   />
                 </td>
-                <td className="UserSidebar__MetadataTableControlCell">
+                <td className="Sidebar__MetadataTableControlCell">
                   <Button
                     size="sm"
-                    className="UserSidebar__MetadataTableDeleteButton"
+                    className="Sidebar__MetadataTableDeleteButton"
                     title={
                       metadata.key
                         ? `Click to delete "${metadata.key}"`

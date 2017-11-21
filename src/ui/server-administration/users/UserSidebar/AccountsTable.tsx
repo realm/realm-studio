@@ -4,7 +4,7 @@ import { Table } from 'reactstrap';
 import * as ros from '../../../../services/ros';
 
 export const AccountsTable = ({ accounts }: { accounts: ros.IAccount[] }) => (
-  <Table size="sm" className="UserSidebar__AccountsTable">
+  <Table size="sm" className="Sidebar__AccountsTable">
     <thead>
       <tr>
         <th>ID</th>
@@ -14,7 +14,7 @@ export const AccountsTable = ({ accounts }: { accounts: ros.IAccount[] }) => (
     <tbody>
       {accounts.length === 0 ? (
         <tr>
-          <td colSpan={2} className="UserSidebar__EmptyTableExplanation">
+          <td colSpan={2} className="Sidebar__EmptyTableExplanation">
             This user has no accounts
           </td>
         </tr>
