@@ -150,7 +150,7 @@ export const Sidebar = ({
             onClick={onDiscardChanges}
             size="sm"
           >
-            Cancel
+            Discard
           </Button>
           <Button
             className="RealmBrowser__Sidebar__ControlButton"
