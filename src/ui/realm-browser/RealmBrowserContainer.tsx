@@ -70,16 +70,14 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
 
   public componentDidMount() {
     this.loadRealm(this.props.realm);
-    ipcRenderer.addListener('export-schema', this.onExportSchema);
-    window.addEventListener<'beforeunload'>(
-      'beforeunload',
-      this.onBeforeUnload,
-    );
+    this.addListeners();
   }
 
   public componentWillUnmount() {
-    ipcRenderer.removeListener('export-schema', this.onExportSchema);
-    window.removeEventListener('beforeunload', this.onBeforeUnload);
+    this.removeListeners();
+    if (this.realm && this.realm.isInTransaction) {
+      this.realm.cancelTransaction();
+    }
   }
 
   public render() {
@@ -415,6 +413,27 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       );
     }
   };
+
+  protected onKeyDown = (e: KeyboardEvent) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+      this.onSaveChanges();
+    }
+  };
+
+  protected addListeners() {
+    ipcRenderer.addListener('export-schema', this.onExportSchema);
+    window.addEventListener<'beforeunload'>(
+      'beforeunload',
+      this.onBeforeUnload,
+    );
+    window.addEventListener<'keydown'>('keydown', this.onKeyDown);
+  }
+
+  protected removeListeners() {
+    ipcRenderer.removeListener('export-schema', this.onExportSchema);
+    window.removeEventListener('beforeunload', this.onBeforeUnload);
+    window.removeEventListener('keydown', this.onKeyDown);
+  }
 
   protected derivePropertiesFromProperty(
     property: IPropertyWithName,
