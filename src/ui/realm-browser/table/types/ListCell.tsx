@@ -27,7 +27,7 @@ const displayValue = (
       .map((v: any) => {
         // Turn the value into a string representation
         const representation =
-          property.objectType === 'data' ? DataCell.displayValue(v) : String(v);
+          property.objectType === 'data' ? DataCell.display(v) : String(v);
         // If the representation is too long, limit it
         if (representation.length > VALUE_STRING_LENGTH_LIMIT) {
           const limited = representation.substring(
