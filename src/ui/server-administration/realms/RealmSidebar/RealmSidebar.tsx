@@ -1,15 +1,9 @@
 import * as React from 'react';
 import {
   Button,
-  ButtonDropdown,
   Card,
   CardBlock,
-  CardSubtitle,
-  CardText,
   CardTitle,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle,
 } from 'reactstrap';
 
 import { Sidebar } from '../../sidebar';

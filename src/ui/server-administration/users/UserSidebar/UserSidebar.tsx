@@ -4,8 +4,6 @@ import {
   ButtonDropdown,
   Card,
   CardBlock,
-  CardSubtitle,
-  CardText,
   CardTitle,
   DropdownItem,
   DropdownMenu,
