@@ -1,4 +1,3 @@
-import * as classnames from 'classnames';
 import * as React from 'react';
 import {
   Button,
@@ -15,6 +14,7 @@ import {
 
 import * as ros from '../../../../services/ros';
 
+import { Sidebar } from '../../sidebar';
 import { AccountsTable } from './AccountsTable';
 import { MetadataTable } from './MetadataTable';
 import { RealmsTable } from './RealmsTable';
@@ -34,7 +34,7 @@ export interface IUserSidebarProps extends IUserSidebarContainerProps {
 }
 
 export const UserSidebar = ({
-  className,
+  isOpen,
   onChangePassword,
   onDeletion,
   onMetadataAppended,
@@ -47,7 +47,7 @@ export const UserSidebar = ({
   user,
 }: IUserSidebarProps) => {
   return (
-    <div className={classnames(className, 'UserSidebar')}>
+    <Sidebar isOpen={isOpen}>
       {user && (
         <Card className="UserSidebar__Card">
           <CardBlock className="UserSidebar__Top">
@@ -95,6 +95,6 @@ export const UserSidebar = ({
           </CardBlock>
         </Card>
       )}
-    </div>
+    </Sidebar>
   );
 };

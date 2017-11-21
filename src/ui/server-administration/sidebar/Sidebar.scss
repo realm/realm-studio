@@ -1,0 +1,17 @@
+@import "~realm-studio-styles/variables";
+@import "../variables";
+
+.Sidebar {
+  box-shadow: -5px 0 5px $sidebar-shadow;
+  flex: 0 0 0;
+  height: 100%;
+  overflow: hidden;
+  transition-duration: $sidebar-transition-duration;
+  transition-property: flex-basis;
+  transition-timing-function: ease-in-out;
+  z-index: 1;
+
+  &--active {
+    flex-basis: $sidebar-width;
+  }
+}
