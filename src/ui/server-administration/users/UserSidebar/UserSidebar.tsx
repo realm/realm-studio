@@ -18,8 +18,6 @@ import { MetadataTable } from './MetadataTable';
 import { RealmsTable } from './RealmsTable';
 import { IUserSidebarContainerProps } from './UserSidebarContainer';
 
-import './UserSidebar.scss';
-
 export interface IUserSidebarProps extends IUserSidebarContainerProps {
   onChangePassword: () => void;
   onDeletion: () => void;

@@ -1,0 +1,30 @@
+@import "~realm-studio-styles/variables";
+
+.SidebarTable {
+  table-layout: fixed;
+
+  th {
+    border-top: 0;
+  }
+
+  td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.SidebarTableControlCell {
+  text-align: right;
+  width: 35px;
+
+  * {
+    width: 100%;
+  }
+}
+
+.SidebarTableEmptyExplanation {
+  color: $color-elephant;
+  font-size: .9rem;
+  text-align: center;
+}

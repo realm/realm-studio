@@ -2,9 +2,10 @@ import * as React from 'react';
 import { Table } from 'reactstrap';
 
 import * as ros from '../../../../services/ros';
+import '../../sidebar/SidebarTable.scss';
 
 export const RealmsTable = ({ realms }: { realms: ros.IRealmFile[] }) => (
-  <Table size="sm" className="Sidebar__RealmsTable">
+  <Table size="sm" className="SidebarTable">
     <thead>
       <tr>
         {/* We mention "Realm" in this header, so we don't need a separate header */}
@@ -14,7 +15,7 @@ export const RealmsTable = ({ realms }: { realms: ros.IRealmFile[] }) => (
     <tbody>
       {realms.length === 0 ? (
         <tr>
-          <td colSpan={1} className="Sidebar__EmptyTableExplanation">
+          <td colSpan={1} className="SidebarTableEmptyExplanation">
             This user has no realms
           </td>
         </tr>
