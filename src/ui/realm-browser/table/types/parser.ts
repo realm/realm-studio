@@ -44,7 +44,7 @@ export const parseDate = (value: string) => {
 
 export const parse = (value: string, property: Realm.ObjectSchemaProperty) => {
   // If optional
-  if (property.optional && value === '') {
+  if (!property.optional && value === '') {
     throw new Error('This field is not optional');
   }
   // For every type
