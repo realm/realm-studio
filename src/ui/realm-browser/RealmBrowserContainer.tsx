@@ -68,10 +68,15 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   public componentDidMount() {
     this.loadRealm(this.props.realm);
     ipcRenderer.addListener('export-schema', this.onExportSchema);
+    window.addEventListener<'beforeunload'>(
+      'beforeunload',
+      this.onBeforeUnload,
+    );
   }
 
   public componentWillUnmount() {
     ipcRenderer.removeListener('export-schema', this.onExportSchema);
+    window.removeEventListener('beforeunload', this.onBeforeUnload);
   }
 
   public render() {
@@ -365,6 +370,42 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     });
     if (firstSchemaName) {
       this.onSchemaSelected(firstSchemaName);
+    }
+  };
+
+  protected onBeforeUnload = (e: BeforeUnloadEvent) => {
+    if (this.realm && this.realm.isInTransaction) {
+      e.returnValue = false;
+
+      const { dataVersionAtBeginning, dataVersion } = this.state;
+      const unsavedChanges =
+        typeof dataVersionAtBeginning === 'number'
+          ? dataVersion - dataVersionAtBeginning
+          : 0;
+      // Show a dialog
+      const currentWindow = remote.getCurrentWindow();
+      const plural = unsavedChanges > 1 ? 's' : '';
+      remote.dialog.showMessageBox(
+        currentWindow,
+        {
+          type: 'warning',
+          message: `You have ${unsavedChanges} unsaved change${plural}`,
+          buttons: ['Save and close', 'Discard and close', 'Cancel'],
+        },
+        result => {
+          if (result === 0 || result === 1) {
+            if (result === 0) {
+              this.onSaveChanges();
+            } else if (result === 1) {
+              this.onDiscardChanges();
+            }
+            // Allow the for the state to update
+            process.nextTick(() => {
+              window.close();
+            });
+          }
+        },
+      );
     }
   };
 
