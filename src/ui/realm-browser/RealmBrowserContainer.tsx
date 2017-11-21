@@ -27,6 +27,8 @@ import * as primitives from './table/types/primitives';
 
 import { RealmBrowser } from './RealmBrowser';
 
+const AUTO_SAVE_STORAGE_KEY = 'realm-browser-auto-save';
+
 export interface IRealmBrowserState extends IRealmLoadingComponentState {
   confirmModal?: {
     yes: () => void;
@@ -58,7 +60,8 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       confirmModal: undefined,
       dataVersion: 0,
       focus: null,
-      isAutoSaveEnabled: false,
+      isAutoSaveEnabled:
+        localStorage.getItem(AUTO_SAVE_STORAGE_KEY) === 'enabled',
       isEncryptionDialogVisible: false,
       progress: { done: false },
       schemas: [],
@@ -114,6 +117,10 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
 
   public onAutoSaveChange = (autoSave: boolean) => {
     this.setState({ isAutoSaveEnabled: autoSave });
+    localStorage.setItem(
+      AUTO_SAVE_STORAGE_KEY,
+      autoSave ? 'enabled' : 'disabled',
+    );
   };
 
   public onSchemaSelected = (className: string, objectToScroll?: any) => {
