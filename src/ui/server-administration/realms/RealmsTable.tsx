@@ -12,7 +12,7 @@ import {
   ILoadingProgress,
   LoadingOverlay,
 } from '../../reusable/loading-overlay';
-import { RealmSidebar } from "./RealmSidebar";
+import { RealmSidebar } from './RealmSidebar';
 
 import './RealmsTable.scss';
 
@@ -56,9 +56,17 @@ export const RealmsTable = ({
               rowGetter={({ index }) => getRealm(index)}
               onRowClick={({ event, index }) => {
                 const realm = getRealm(index);
+                onRealmSelected(
+                  realm && realm.path !== selectedRealmPath ? realm.path : null,
+                );
+                event.stopPropagation();
+              }}
+              onRowDoubleClick={({ event, index }) => {
+                const realm = getRealm(index);
                 if (realm) {
                   onRealmOpened(realm.path);
                 }
+                event.stopPropagation();
               }}
             >
               <Column label="Path" dataKey="path" width={width} />
@@ -67,7 +75,12 @@ export const RealmsTable = ({
         </AutoSizer>
       </div>
 
-      <RealmSidebar isOpen={true} />
+      <RealmSidebar
+        isOpen={selectedRealmPath !== null}
+        realm={
+          selectedRealmPath !== null ? getRealmFromId(selectedRealmPath) : null
+        }
+      />
 
       <LoadingOverlay progress={progress} fade={true} />
     </div>

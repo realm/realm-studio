@@ -1,9 +1,7 @@
-import * as electron from 'electron';
 import * as React from 'react';
 import * as Realm from 'realm';
 
 import * as ros from '../../../services/ros';
-import { showError } from '../../reusable/errors';
 import {
   IRealmLoadingComponentState,
   RealmLoadingComponent,
