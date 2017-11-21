@@ -7,7 +7,7 @@ import { parse } from './parser';
 import { StringCell } from './StringCell';
 
 export interface IStringCellContainerProps {
-  isAutoSaveEnabled: boolean;
+  isAutoSaveEnabled?: boolean;
   onUpdateValue: (value: any) => void;
   property: IPropertyWithName;
   value: string;

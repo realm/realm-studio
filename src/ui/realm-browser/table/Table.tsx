@@ -37,6 +37,7 @@ export interface ITableProps {
   gridContentRef: (grid: Grid) => void;
   gridHeaderRef: (grid: Grid) => void;
   highlight?: IHighlight;
+  isAutoSaveEnabled?: boolean;
   isSorting: boolean;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
@@ -59,6 +60,7 @@ export const Table = ({
   gridContentRef,
   gridHeaderRef,
   highlight,
+  isAutoSaveEnabled,
   isSorting,
   onCellChange,
   onCellClick,
@@ -108,6 +110,7 @@ export const Table = ({
         gridRef={gridContentRef}
         height={height - rowHeights.header}
         highlight={highlight}
+        isAutoSaveEnabled={isAutoSaveEnabled}
         isSortable={focus.kind === 'list' && !sorting}
         isSorting={isSorting}
         onCellChange={onCellChange}

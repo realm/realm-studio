@@ -40,7 +40,7 @@ export const Content = ({
   dataVersion?: number;
   focus: IFocus | null;
   highlight?: IHighlight;
-  isAutoSaveEnabled: boolean;
+  isAutoSaveEnabled?: boolean;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
   onContextMenu?: CellContextMenuHandler;

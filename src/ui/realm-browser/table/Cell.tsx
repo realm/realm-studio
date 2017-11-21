@@ -16,8 +16,8 @@ const getCellContent = ({
   property,
   value,
 }: {
-  isAutoSaveEnabled: boolean;
-  isScrolling: boolean;
+  isAutoSaveEnabled?: boolean;
+  isScrolling?: boolean;
   onUpdateValue: (value: string) => void;
   property: IPropertyWithName;
   value: any;
@@ -76,8 +76,8 @@ export const Cell = ({
   value,
   width,
 }: {
-  isAutoSaveEnabled: boolean;
-  isScrolling: boolean;
+  isAutoSaveEnabled?: boolean;
+  isScrolling?: boolean;
   onCellClick: (e: React.MouseEvent<any>) => void;
   onContextMenu: (e: React.MouseEvent<any>) => void;
   onUpdateValue: (value: string) => void;

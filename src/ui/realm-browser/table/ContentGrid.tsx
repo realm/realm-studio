@@ -43,8 +43,9 @@ export interface IContentGridProps extends Partial<GridProps> {
   gridRef: (ref: React.ReactNode) => void;
   height: number;
   highlight?: IHighlight;
+  isAutoSaveEnabled?: boolean;
   isSortable?: boolean;
-  isSorting: boolean;
+  isSorting?: boolean;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
   onContextMenu?: CellContextMenuHandler;
@@ -141,6 +142,8 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
           columnWidths,
           filteredSortedResults,
           getCellValue,
+          isAutoSaveEnabled,
+          isScrolling,
           onCellChange,
           onCellClick,
           onContextMenu,
@@ -152,8 +155,8 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
         return (
           <Cell
             key={cellProps.key}
-            width={columnWidths[cellProps.columnIndex]}
-            style={cellProps.style}
+            isAutoSaveEnabled={isAutoSaveEnabled}
+            isScrolling={isScrolling || false}
             onCellClick={e => {
               if (onCellClick) {
                 onCellClick({
@@ -165,8 +168,6 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
                 });
               }
             }}
-            value={cellValue}
-            property={property}
             onUpdateValue={value => {
               if (onCellChange) {
                 onCellChange({
@@ -188,6 +189,10 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
                 });
               }
             }}
+            property={property}
+            style={cellProps.style}
+            value={cellValue}
+            width={columnWidths[cellProps.columnIndex]}
           />
         );
       };

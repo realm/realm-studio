@@ -11,7 +11,7 @@ export const DataCell = ({
   property,
   value,
 }: {
-  isScrolling: boolean;
+  isScrolling?: boolean;
   property: Realm.ObjectSchemaProperty;
   value: ArrayBuffer | null;
 }) => (
