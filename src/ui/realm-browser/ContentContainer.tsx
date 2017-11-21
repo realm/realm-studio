@@ -11,17 +11,20 @@ import {
   CellContextMenuHandler,
   IHighlight,
   SortEndHandler,
+  SortStartHandler,
 } from './table';
 import { Cell } from './table/Cell';
 import { HeaderCell } from './table/HeaderCell';
 
 export interface IContentContainerProps {
+  dataVersion?: number;
   focus: IFocus | null;
   highlight?: IHighlight;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
   onContextMenu?: CellContextMenuHandler;
   onSortEnd?: SortEndHandler;
+  onSortStart?: SortStartHandler;
   progress?: ILoadingProgress;
 }
 

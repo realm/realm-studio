@@ -4,6 +4,7 @@ import {
   GridCellProps,
   GridCellRenderer,
   GridProps,
+  Index,
 } from 'react-virtualized';
 
 import { ISorting } from '.';
@@ -21,51 +22,68 @@ export interface IHeaderGridProps extends Partial<GridProps> {
   width: number;
 }
 
-export const HeaderGrid = (props: IHeaderGridProps) => {
-  const {
-    columnWidths,
-    gridRef,
-    height,
-    onColumnWidthChanged,
-    onSortClick,
-    properties,
-    scrollLeft,
-    sorting,
-    width,
-  } = props;
+export class HeaderGrid extends React.PureComponent<IHeaderGridProps, {}> {
+  private cellRenderers: GridCellRenderer[];
 
-  const cellRenderers = properties.map(property => {
-    return (cellProps: GridCellProps) => {
-      return (
-        <HeaderCell
-          key={cellProps.key}
-          property={property}
-          width={columnWidths[cellProps.columnIndex]}
-          style={cellProps.style}
-          onSortClick={() => onSortClick(property)}
-          onWidthChanged={newWidth =>
-            onColumnWidthChanged(cellProps.columnIndex, newWidth)}
-          sorting={sorting}
-        />
-      );
-    };
-  });
+  public componentWillMount() {
+    this.generateRenderers(this.props);
+  }
 
-  return (
-    <Grid
-      {...props}
-      className="RealmBrowser__Table__HeaderGrid"
-      rowCount={1}
-      columnCount={properties.length}
-      columnWidth={({ index }) => columnWidths[index]}
-      cellRenderer={cellProps =>
-        cellRenderers[cellProps.columnIndex](cellProps)}
-      ref={gridRef}
-      rowHeight={height}
-      style={{
-        // TODO: Consider if this could be moved to the CSS
-        overflowX: 'hidden',
-      }}
-    />
-  );
-};
+  public componentWillUpdate(nextProps: IHeaderGridProps) {
+    if (this.props.properties !== nextProps.properties) {
+      this.generateRenderers(nextProps);
+    }
+  }
+
+  public render() {
+    const { columnWidths, gridRef, height, properties } = this.props;
+
+    return (
+      <Grid
+        /* TODO: Omit the props that are irrellevant for the grid */
+        {...this.props}
+        className="RealmBrowser__Table__HeaderGrid"
+        rowCount={1}
+        columnCount={properties.length}
+        columnWidth={this.getColumnWidth}
+        cellRenderer={this.getCellRenderer}
+        ref={gridRef}
+        rowHeight={height}
+        style={{
+          // TODO: Consider if this could be moved to the CSS
+          overflowX: 'hidden',
+        }}
+      />
+    );
+  }
+
+  private getColumnWidth = ({ index }: Index) => {
+    return this.props.columnWidths[index];
+  };
+
+  private getCellRenderer = (cellProps: GridCellProps) => {
+    return this.cellRenderers[cellProps.columnIndex](cellProps);
+  };
+
+  private generateRenderers(props: IHeaderGridProps) {
+    const { properties } = props;
+
+    this.cellRenderers = properties.map((property, index) => {
+      const onWidthChanged = (newWidth: number) =>
+        this.props.onColumnWidthChanged(index, newWidth);
+      const onSortClick = () => this.props.onSortClick(property);
+      return (cellProps: GridCellProps) => {
+        return (
+          <HeaderCell
+            key={cellProps.key}
+            property={property}
+            style={cellProps.style}
+            onSortClick={onSortClick}
+            onWidthChanged={onWidthChanged}
+            sorting={this.props.sorting}
+          />
+        );
+      };
+    });
+  }
+}
