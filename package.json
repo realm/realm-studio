@@ -1,7 +1,7 @@
 {
   "name": "realm-studio",
   "productName": "Realm Studio",
-  "version": "1.7.4",
+  "version": "1.7.5",
   "description": "A tool for everything Realm.",
   "author": {
     "name": "Realm Inc.",
@@ -144,6 +144,7 @@
     "devtron": "^1.4.0",
     "electron": "^1.8.1",
     "electron-builder": "^19.37.2",
+    "electron-devtools-installer": "^2.2.1",
     "electron-publisher-s3": "^19.37.0",
     "file-loader": "^1.1.5",
     "husky": "^0.14.3",
@@ -178,6 +179,7 @@
     "webpack-dev-server": "^2.9.2",
     "webpack-node-externals": "^1.6.0",
     "webpack-visualizer-plugin": "^0.1.11",
+    "why-did-you-update": "^0.1.0",
     "xvfb-maybe": "^0.2.1"
   },
   "engines": {

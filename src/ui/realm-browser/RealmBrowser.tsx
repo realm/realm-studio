@@ -15,37 +15,19 @@ import {
   CellContextMenuHandler,
   IHighlight,
   SortEndHandler,
+  SortStartHandler,
 } from './table';
 
 import './RealmBrowser.scss';
 
-export const RealmBrowser = ({
-  closeSelectObject,
-  columnToHighlight,
-  confirmModal,
-  focus,
-  getSchemaLength,
-  highlight,
-  isEncryptionDialogVisible,
-  onCellChange,
-  onCellClick,
-  onContextMenu,
-  onHideEncryptionDialog,
-  onOpenWithEncryption,
-  onSchemaSelected,
-  onSortEnd,
-  progress,
-  rowToHighlight,
-  schemas,
-  selectObject,
-  updateObjectReference,
-}: {
+export interface IRealmBrowserProps {
   closeSelectObject: () => void;
   columnToHighlight?: number;
   confirmModal?: {
     yes: () => void;
     no: () => void;
   };
+  dataVersion: number;
   focus: IFocus | null;
   getSchemaLength: (name: string) => number;
   highlight?: IHighlight;
@@ -57,12 +39,37 @@ export const RealmBrowser = ({
   onOpenWithEncryption: (key: string) => void;
   onSchemaSelected: (name: string, objectToScroll: any) => void;
   onSortEnd: SortEndHandler;
+  onSortStart: SortStartHandler;
   progress: ILoadingProgress;
   rowToHighlight?: number;
   schemas: Realm.ObjectSchema[];
   selectObject?: ISelectObjectState;
   updateObjectReference: (object: any) => void;
-}) => {
+}
+
+export const RealmBrowser = ({
+  closeSelectObject,
+  columnToHighlight,
+  confirmModal,
+  dataVersion,
+  focus,
+  getSchemaLength,
+  highlight,
+  isEncryptionDialogVisible,
+  onCellChange,
+  onCellClick,
+  onContextMenu,
+  onHideEncryptionDialog,
+  onOpenWithEncryption,
+  onSchemaSelected,
+  onSortEnd,
+  onSortStart,
+  progress,
+  rowToHighlight,
+  schemas,
+  selectObject,
+  updateObjectReference,
+}: IRealmBrowserProps) => {
   return (
     <div className="RealmBrowser">
       <Sidebar
@@ -74,12 +81,14 @@ export const RealmBrowser = ({
       />
       <div className="RealmBrowser__Wrapper">
         <ContentContainer
+          dataVersion={dataVersion}
           focus={focus}
           highlight={highlight}
           onCellChange={onCellChange}
           onCellClick={onCellClick}
           onContextMenu={onContextMenu}
           onSortEnd={onSortEnd}
+          onSortStart={onSortStart}
           progress={progress}
         />
       </div>

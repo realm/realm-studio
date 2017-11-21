@@ -8,7 +8,6 @@ export const StringCell = ({
   onBlur,
   onFocus,
   value,
-  temporalValue,
   property,
 }: {
   isEditing: boolean;
@@ -17,7 +16,6 @@ export const StringCell = ({
   property: Realm.ObjectSchemaProperty;
   onFocus: () => void;
   value: string;
-  temporalValue: string;
 }) => {
   let textInput: HTMLInputElement;
   return isEditing ? (
@@ -30,7 +28,7 @@ export const StringCell = ({
       getRef={input => {
         textInput = input;
       }}
-      value={temporalValue}
+      value={value}
       onChange={e => onChange(e.target.value)}
       onBlur={e => onBlur(textInput)}
       onKeyPress={e => e.key === 'Enter' && onBlur(textInput)}
@@ -42,13 +40,19 @@ export const StringCell = ({
         'form-control',
         'form-control-sm',
         'RealmBrowser__Table__Input',
-        'RealmBrowser__Table__Input--unselectable',
         `RealmBrowser__Table__Input--${property.type}`,
         { 'RealmBrowser__Table__Input--null': value === null },
       )}
       onDoubleClick={onFocus}
     >
-      {value === null ? 'null' : value.toString()}
+      <span
+        className={classnames(
+          'RealmBrowser__Table__StringCell',
+          `RealmBrowser__Table__StringCell--${property.type}`,
+        )}
+      >
+        {value === null ? 'null' : value.toString()}
+      </span>
     </div>
   );
 };

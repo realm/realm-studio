@@ -12,12 +12,14 @@ export interface IStringCellContainerProps {
   value: string;
 }
 
+interface IStringCellContainerState {
+  temporalValue: string;
+  isEditing: boolean;
+}
+
 export class StringCellContainer extends React.Component<
   IStringCellContainerProps,
-  {
-    temporalValue: string;
-    isEditing: boolean;
-  }
+  IStringCellContainerState
 > {
   constructor(props: IStringCellContainerProps) {
     super();
@@ -42,7 +44,23 @@ export class StringCellContainer extends React.Component<
     const { value, property } = this.props;
 
     return (
-      <StringCell value={value} property={property} {...this.state} {...this} />
+      <StringCell
+        isEditing={this.state.isEditing}
+        property={property}
+        value={this.state.isEditing ? this.state.temporalValue : value}
+        {...this}
+      />
+    );
+  }
+
+  public shouldComponentUpdate(
+    nextProps: IStringCellContainerProps,
+    nextState: IStringCellContainerState,
+  ) {
+    return (
+      this.props.value !== nextProps.value ||
+      this.state.isEditing !== nextState.isEditing ||
+      this.state.temporalValue !== nextState.temporalValue
     );
   }
 

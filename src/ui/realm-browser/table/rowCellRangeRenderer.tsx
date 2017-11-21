@@ -190,7 +190,7 @@ export const rowCellRangeRenderer = (rowRenderer: GridRowRenderer) => (
     );
 
     // Including the columnStartIndex and columnStopIndex in the row cache key.
-    const rowKey = `row-${rowIndex}-${columnStartIndex}-${columnStopIndex}`;
+    const rowKey = `row-${rowIndex}`;
 
     const isRowVisible =
       rowIndex >= visibleRowIndices.start && rowIndex <= visibleRowIndices.stop;
@@ -215,8 +215,8 @@ export const rowCellRangeRenderer = (rowRenderer: GridRowRenderer) => (
       const rowRendererParams: IGridRowProps = {
         children: cellRangeRenderer(rowIndex, rowDatum, canCacheStyle, {
           ...props,
-          columnStartIndex,
-          columnStopIndex,
+          columnStartIndex: 0,
+          columnStopIndex: columnSizeAndPositionManager.getCellCount() - 1,
         }),
         isScrolling,
         isVisible: isRowVisible,

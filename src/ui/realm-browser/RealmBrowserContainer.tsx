@@ -19,6 +19,7 @@ import {
   CellContextMenuHandler,
   IHighlight,
   SortEndHandler,
+  SortStartHandler,
 } from './table';
 import * as primitives from './table/types/primitives';
 
@@ -29,6 +30,8 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
     yes: () => void;
     no: () => void;
   };
+  // A number that we can use to make components update on changes to data
+  dataVersion: number;
   encryptionKey?: string;
   focus: IFocus | null;
   isEncryptionDialogVisible: boolean;
@@ -49,6 +52,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     super();
     this.state = {
       confirmModal: undefined,
+      dataVersion: 0,
       focus: null,
       isEncryptionDialogVisible: false,
       progress: { done: false },
@@ -122,7 +126,6 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         this.clickTimeout = null;
       }, 200);
     }
-    /*
     // TODO: Re-enable this, once cells are not re-rendering and forgetting their focus state
     this.setState({
       highlight: {
@@ -130,7 +133,6 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         row: rowIndex,
       },
     });
-    */
   };
 
   public onCellSingleClick = (
@@ -219,6 +221,13 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     }
   };
 
+  public onSortStart: SortStartHandler = ({ index }) => {
+    // Removing any highlight
+    this.setState({
+      highlight: undefined,
+    });
+  };
+
   public onSortEnd: SortEndHandler = ({ oldIndex, newIndex }) => {
     if (this.state.focus && this.state.focus.kind === 'list') {
       const results = (this.state.focus.results as any) as Realm.List<any>;
@@ -227,6 +236,11 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         results.splice(newIndex, 0, movedElements[0]);
       });
     }
+    this.setState({
+      highlight: {
+        row: newIndex,
+      },
+    });
   };
 
   public openSelectObject = (
@@ -314,7 +328,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   }
 
   protected onRealmChanged = () => {
-    this.forceUpdate();
+    this.setState({ dataVersion: this.state.dataVersion + 1 });
   };
 
   protected onRealmLoaded = () => {
