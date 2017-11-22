@@ -12,19 +12,19 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-}
 
-.SidebarTableControlCell {
-  text-align: right;
-  width: 35px;
+  &__ControlCell {
+    text-align: right;
+    width: 35px;
 
-  * {
-    width: 100%;
+    * {
+      width: 100%;
+    }
   }
-}
 
-.SidebarTableEmptyExplanation {
-  color: $color-elephant;
-  font-size: .9rem;
-  text-align: center;
+  &__EmptyExplanation {
+    color: $color-elephant;
+    font-size: .9rem;
+    text-align: center;
+  }
 }

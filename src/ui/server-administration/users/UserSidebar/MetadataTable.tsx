@@ -22,7 +22,7 @@ export const MetadataTable = ({
           {/* We mention "Metadata" in this header, so we don't need a separate header */}
           <th>Metadata key</th>
           <th>Value</th>
-          <th className="SidebarTableControlCell">
+          <th className="SidebarTable__ControlCell">
             <Button
               size="sm"
               onClick={onMetadataAppended}
@@ -36,7 +36,7 @@ export const MetadataTable = ({
       <tbody>
         {metadatas.length === 0 ? (
           <tr>
-            <td colSpan={3} className="SidebarTableEmptyExplanation">
+            <td colSpan={3} className="SidebarTable__EmptyExplanation">
               This user has no metadata
             </td>
           </tr>
@@ -70,7 +70,7 @@ export const MetadataTable = ({
                     }}
                   />
                 </td>
-                <td className="SidebarTableControlCell">
+                <td className="SidebarTable__ControlCell">
                   <Button
                     size="sm"
                     title={

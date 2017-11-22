@@ -15,7 +15,7 @@ export const RealmsTable = ({ realms }: { realms: ros.IRealmFile[] }) => (
     <tbody>
       {realms.length === 0 ? (
         <tr>
-          <td colSpan={1} className="SidebarTableEmptyExplanation">
+          <td colSpan={1} className="SidebarTable__EmptyExplanation">
             This user has no realms
           </td>
         </tr>
