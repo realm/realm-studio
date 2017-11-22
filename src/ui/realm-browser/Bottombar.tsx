@@ -33,10 +33,10 @@ export const Bottombar = ({
 
     {inTransaction ? (
       <section className="RealmBrowser__Bottombar__Controls">
-        <Button color="secondary" onClick={onCancelTransaction} size="sm">
+        <Button color="primary" onClick={onCancelTransaction} size="sm">
           Cancel
         </Button>
-        <Button size="sm" color="primary" onClick={onCommitTransaction}>
+        <Button size="sm" color="secondary" onClick={onCommitTransaction}>
           Commit transaction
         </Button>
       </section>

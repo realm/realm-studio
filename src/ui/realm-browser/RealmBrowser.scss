@@ -438,14 +438,15 @@ $highlight-row-color: $black;
 
   &__Bottombar {
     align-items: center;
-    background: $window-background;
+    background: $color-ultramarine;
+    color: $color-dove;
     display: flex;
     height: 0;
     justify-content: space-between;
     transition: height 100ms;
 
     &--visible {
-      height: 2.5rem;
+      height: 2.8rem;
     }
 
     &__UnsavedChanges,
@@ -455,6 +456,7 @@ $highlight-row-color: $black;
 
     &__UnsavedChanges {
       font-size: .8rem;
+      padding: 0 $spacer;
       text-align: center;
     }
 
