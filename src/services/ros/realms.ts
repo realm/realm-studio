@@ -66,9 +66,20 @@ export const open = async (
   return realm;
 };
 
-export const remove = (realmId: string) => {
-  // mocked.deleteRealm(realmId);
-  throw new Error('Not yet implemented');
+export const remove = async (user: Realm.Sync.User, realmPath: string) => {
+  const server = user.server;
+  const url = new URL(`/realms/files${realmPath}`, server);
+  const request = new Request(url.toString(), {
+    method: 'DELETE',
+    headers: new Headers({
+      Authorization: user.token,
+      Accept: 'application/json, text/plain, */*',
+      'Content-Type': 'application/json',
+    }),
+  });
+  // Perform the request
+  const response = await fetch(request);
+  return response.status === 200;
 };
 
 export const update = (realmId: string, values: Partial<IRealmFile>) => {

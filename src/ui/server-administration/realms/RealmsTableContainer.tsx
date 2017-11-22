@@ -75,7 +75,7 @@ export class RealmsTableContainer extends RealmLoadingComponent<
   };
 
   public onRealmDeleted = async (path: string) => {
-    await ros.realms.remove(path);
+    await ros.realms.remove(this.props.user, path);
     if (path === this.state.selectedRealmPath) {
       this.onRealmSelected(null);
     }
