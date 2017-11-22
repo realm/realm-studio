@@ -5,7 +5,12 @@ import * as React from 'react';
 import * as Realm from 'realm';
 import * as util from 'util';
 
-import { IPropertyWithName, ISelectObjectState } from '.';
+import {
+  EditMode,
+  EditModeChangeHandler,
+  IPropertyWithName,
+  ISelectObjectState,
+} from '.';
 import { IExportSchemaOptions } from '../../main/MainMenu';
 import { Language, SchemaExporter } from '../../services/schema-export';
 import { IRealmBrowserOptions } from '../../windows/WindowType';
@@ -27,7 +32,7 @@ import * as primitives from './table/types/primitives';
 
 import { RealmBrowser } from './RealmBrowser';
 
-const AUTO_SAVE_STORAGE_KEY = 'realm-browser-auto-save';
+const EDIT_MODE_STORAGE_KEY = 'realm-browser-edit-mode';
 
 export interface IRealmBrowserState extends IRealmLoadingComponentState {
   confirmModal?: {
@@ -37,6 +42,7 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   // A number that we can use to make components update on changes to data
   dataVersion: number;
   dataVersionAtBeginning?: number;
+  editMode: EditMode;
   encryptionKey?: string;
   focus: IFocus | null;
   isEncryptionDialogVisible: boolean;
@@ -45,7 +51,6 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   schemas: Realm.ObjectSchema[];
   // TODO: Rename - Unclear if this is this an action or a piece of data
   selectObject?: ISelectObjectState;
-  isAutoSaveEnabled: boolean;
 }
 
 export class RealmBrowserContainer extends RealmLoadingComponent<
@@ -56,12 +61,12 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
 
   constructor() {
     super();
+    const editMode = localStorage.getItem(EDIT_MODE_STORAGE_KEY) as EditMode;
     this.state = {
       confirmModal: undefined,
+      editMode: editMode || EditMode.InputBlur,
       dataVersion: 0,
       focus: null,
-      isAutoSaveEnabled:
-        localStorage.getItem(AUTO_SAVE_STORAGE_KEY) === 'enabled',
       isEncryptionDialogVisible: false,
       progress: { done: false },
       schemas: [],
@@ -81,12 +86,18 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   }
 
   public render() {
-    return <RealmBrowser {...this.state} {...this} />;
+    return (
+      <RealmBrowser
+        inTransaction={this.realm && this.realm.isInTransaction}
+        {...this.state}
+        {...this}
+      />
+    );
   }
 
   public onCellChange: CellChangeHandler = params => {
     try {
-      this.writeOrBeginTransaction(() => {
+      this.write(() => {
         const { parent, property, rowIndex, cellValue } = params;
         if (property.name !== null) {
           parent[rowIndex][property.name] = cellValue;
@@ -99,26 +110,33 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     }
   };
 
-  public onSaveChanges = () => {
+  public onBeginTransaction = () => {
+    if (this.realm && !this.realm.isInTransaction) {
+      this.realm.beginTransaction();
+      this.setState({
+        dataVersionAtBeginning: this.state.dataVersion,
+      });
+    } else {
+      throw new Error(`Realm is not ready or already in transaction`);
+    }
+  };
+
+  public onCommitTransaction = () => {
     if (this.realm && this.realm.isInTransaction) {
       this.realm.commitTransaction();
       this.resetDataVersion();
+    } else {
+      throw new Error('Cannot commit when not in a transaction');
     }
   };
 
-  public onDiscardChanges = () => {
+  public onCancelTransaction = () => {
     if (this.realm && this.realm.isInTransaction) {
       this.realm.cancelTransaction();
       this.resetDataVersion();
+    } else {
+      throw new Error('Cannot cancel when not in a transaction');
     }
-  };
-
-  public onAutoSaveChange = (autoSave: boolean) => {
-    this.setState({ isAutoSaveEnabled: autoSave });
-    localStorage.setItem(
-      AUTO_SAVE_STORAGE_KEY,
-      autoSave ? 'enabled' : 'disabled',
-    );
   };
 
   public onSchemaSelected = (className: string, objectToScroll?: any) => {
@@ -255,6 +273,11 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     }
   };
 
+  public onEditModeChange: EditModeChangeHandler = editMode => {
+    localStorage.setItem(EDIT_MODE_STORAGE_KEY, editMode);
+    this.setState({ editMode });
+  };
+
   public onSortStart: SortStartHandler = ({ index }) => {
     // Removing any highlight
     this.setState({
@@ -265,7 +288,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   public onSortEnd: SortEndHandler = ({ oldIndex, newIndex }) => {
     if (this.state.focus && this.state.focus.kind === 'list') {
       const results = (this.state.focus.results as any) as Realm.List<any>;
-      this.writeOrBeginTransaction(() => {
+      this.write(() => {
         const movedElements = results.splice(oldIndex, 1);
         results.splice(newIndex, 0, movedElements[0]);
       });
@@ -309,7 +332,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     if (selectObject) {
       const object: any = selectObject.object;
       const propertyName = selectObject.property.name;
-      this.writeOrBeginTransaction(() => {
+      this.write(() => {
         if (propertyName) {
           object[propertyName] = reference;
         }
@@ -332,7 +355,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   };
 
   public deleteObject = (object: Realm.Object) => {
-    this.writeOrBeginTransaction(() => {
+    this.write(() => {
       this.realm.delete(object);
     });
     this.setState({ highlight: undefined, confirmModal: undefined });
@@ -400,9 +423,9 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         result => {
           if (result === 0 || result === 1) {
             if (result === 0) {
-              this.onSaveChanges();
+              this.onCommitTransaction();
             } else if (result === 1) {
-              this.onDiscardChanges();
+              this.onCancelTransaction();
             }
             // Allow the for the state to update
             process.nextTick(() => {
@@ -415,8 +438,12 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   };
 
   protected onKeyDown = (e: KeyboardEvent) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-      this.onSaveChanges();
+    const savePress = (e.ctrlKey || e.metaKey) && e.key === 's';
+    const transactionPress = (e.ctrlKey || e.metaKey) && e.key === 't';
+    if (this.realm && this.realm.isInTransaction && savePress) {
+      this.onCommitTransaction();
+    } else if (this.realm && !this.realm.isInTransaction && transactionPress) {
+      this.onBeginTransaction();
     }
   };
 
@@ -501,19 +528,13 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     }
   }
 
-  protected writeOrBeginTransaction(callback: () => void) {
-    if (this.state.isAutoSaveEnabled) {
-      this.realm.write(callback);
-    } else {
-      if (!this.realm.isInTransaction) {
-        this.realm.beginTransaction();
-        this.setState({
-          dataVersionAtBeginning: this.state.dataVersion,
-        });
-      }
+  protected write(callback: () => void) {
+    if (this.realm && this.realm.isInTransaction) {
       callback();
       // We have to signal changes manually
       this.onRealmChanged();
+    } else {
+      this.realm.write(callback);
     }
   }
 

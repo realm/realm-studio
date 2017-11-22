@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import { AutoSaveChangeHandler, ISelectObjectState } from '.';
+import { EditMode, ISelectObjectState } from '.';
 import { ConfirmModal } from '../reusable/confirm-modal';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
 import { ContentContainer } from './ContentContainer';
@@ -29,19 +29,19 @@ export interface IRealmBrowserProps {
   };
   dataVersion: number;
   dataVersionAtBeginning?: number;
+  editMode: EditMode;
   focus: IFocus | null;
   getSchemaLength: (name: string) => number;
   highlight?: IHighlight;
-  isAutoSaveEnabled: boolean;
+  inTransaction: boolean;
   isEncryptionDialogVisible: boolean;
-  onAutoSaveChange: AutoSaveChangeHandler;
+  onCancelTransaction: () => void;
   onCellChange: CellChangeHandler;
   onCellClick: CellClickHandler;
+  onCommitTransaction: () => void;
   onContextMenu: CellContextMenuHandler;
-  onDiscardChanges: () => void;
   onHideEncryptionDialog: () => void;
   onOpenWithEncryption: (key: string) => void;
-  onSaveChanges: () => void;
   onSchemaSelected: (name: string, objectToScroll: any) => void;
   onSortEnd: SortEndHandler;
   onSortStart: SortStartHandler;
@@ -57,19 +57,19 @@ export const RealmBrowser = ({
   confirmModal,
   dataVersion,
   dataVersionAtBeginning,
+  editMode,
   focus,
   getSchemaLength,
   highlight,
-  isAutoSaveEnabled,
+  inTransaction,
   isEncryptionDialogVisible,
-  onAutoSaveChange,
+  onCancelTransaction,
   onCellChange,
   onCellClick,
   onContextMenu,
-  onDiscardChanges,
+  onCommitTransaction,
   onHideEncryptionDialog,
   onOpenWithEncryption,
-  onSaveChanges,
   onSchemaSelected,
   onSortEnd,
   onSortStart,
@@ -78,29 +78,31 @@ export const RealmBrowser = ({
   selectObject,
   updateObjectReference,
 }: IRealmBrowserProps) => {
+  const changeCount =
+    typeof dataVersionAtBeginning === 'number'
+      ? dataVersion - dataVersionAtBeginning
+      : 0;
   return (
     <div className="RealmBrowser">
       <Sidebar
-        dataVersion={dataVersion}
-        dataVersionAtBeginning={dataVersionAtBeginning}
         focus={focus}
         getSchemaLength={getSchemaLength}
-        isAutoSaveEnabled={isAutoSaveEnabled}
-        onAutoSaveChange={onAutoSaveChange}
-        onDiscardChanges={onDiscardChanges}
-        onSaveChanges={onSaveChanges}
         onSchemaSelected={onSchemaSelected}
         progress={progress}
         schemas={schemas}
       />
       <div className="RealmBrowser__Wrapper">
         <ContentContainer
+          changeCount={changeCount}
           dataVersion={dataVersion}
+          editMode={editMode}
           focus={focus}
           highlight={highlight}
-          isAutoSaveEnabled={isAutoSaveEnabled}
+          inTransaction={inTransaction}
+          onCancelTransaction={onCancelTransaction}
           onCellChange={onCellChange}
           onCellClick={onCellClick}
+          onCommitTransaction={onCommitTransaction}
           onContextMenu={onContextMenu}
           onSortEnd={onSortEnd}
           onSortStart={onSortStart}

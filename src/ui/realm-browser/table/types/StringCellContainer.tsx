@@ -2,12 +2,12 @@ import { remote } from 'electron';
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import { IPropertyWithName } from '../..';
+import { EditMode, IPropertyWithName } from '../..';
 import { parse } from './parser';
 import { StringCell } from './StringCell';
 
 export interface IStringCellContainerProps {
-  isAutoSaveEnabled?: boolean;
+  editMode: EditMode;
   onUpdateValue: (value: any) => void;
   property: IPropertyWithName;
   value: string;
@@ -74,7 +74,7 @@ export class StringCellContainer extends React.Component<
 
   public onChange = (value: string, input: HTMLInputElement): void => {
     this.setState({ temporalValue: value });
-    if (this.props.isAutoSaveEnabled) {
+    if (this.props.editMode === EditMode.KeyPress) {
       try {
         const parsedValue = parse(value, this.props.property);
         this.props.onUpdateValue(parsedValue);

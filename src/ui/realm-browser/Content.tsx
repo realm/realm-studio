@@ -8,8 +8,9 @@ import {
 } from 'react-virtualized';
 import * as Realm from 'realm';
 
-import { AutoSaveChangeHandler } from '.';
+import { EditMode } from '.';
 import { ILoadingProgress } from '../reusable/loading-overlay';
+import { Bottombar } from './Bottombar';
 import { IFocus } from './focus';
 import {
   CellChangeHandler,
@@ -23,12 +24,16 @@ import { ResponsiveTable } from './table/ResponsiveTable';
 import { Topbar } from './Topbar';
 
 export const Content = ({
+  changeCount,
   dataVersion,
+  editMode,
   focus,
   highlight,
-  isAutoSaveEnabled,
+  inTransaction,
+  onCancelTransaction,
   onCellChange,
   onCellClick,
+  onCommitTransaction,
   onContextMenu,
   onQueryChange,
   onQueryHelp,
@@ -37,12 +42,16 @@ export const Content = ({
   progress,
   query,
 }: {
+  changeCount: number;
   dataVersion?: number;
+  editMode: EditMode;
   focus: IFocus | null;
   highlight?: IHighlight;
-  isAutoSaveEnabled?: boolean;
+  inTransaction: boolean;
+  onCancelTransaction: () => void;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
+  onCommitTransaction: () => void;
   onContextMenu?: CellContextMenuHandler;
   onQueryChange: (query: string) => void;
   onQueryHelp: () => void;
@@ -64,15 +73,21 @@ export const Content = ({
         />
         <ResponsiveTable
           dataVersion={dataVersion}
+          editMode={editMode}
           focus={focus}
           highlight={highlight}
-          isAutoSaveEnabled={isAutoSaveEnabled}
           onCellChange={onCellChange}
           onCellClick={onCellClick}
           onContextMenu={onContextMenu}
           onSortEnd={onSortEnd}
           onSortStart={onSortStart}
           query={query}
+        />
+        <Bottombar
+          changeCount={changeCount}
+          onCancelTransaction={onCancelTransaction}
+          onCommitTransaction={onCommitTransaction}
+          inTransaction={inTransaction}
         />
       </div>
     );

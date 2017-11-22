@@ -21,7 +21,7 @@ import {
   IHighlight,
   ISorting,
 } from '.';
-import { IPropertyWithName } from '..';
+import { EditMode, IPropertyWithName } from '..';
 import { Cell } from './Cell';
 import { Row } from './Row';
 import {
@@ -36,14 +36,14 @@ const SortableGrid = SortableContainer<GridProps>(Grid as any, {
 });
 
 export interface IContentGridProps extends Partial<GridProps> {
-  dataVersion?: number;
   columnWidths: number[];
+  dataVersion?: number;
+  editMode: EditMode;
   filteredSortedResults: Realm.Collection<any>;
   getCellValue: (object: any, props: GridCellProps) => string;
   gridRef: (ref: React.ReactNode) => void;
   height: number;
   highlight?: IHighlight;
-  isAutoSaveEnabled?: boolean;
   isSortable?: boolean;
   isSorting?: boolean;
   onCellChange?: CellChangeHandler;
@@ -140,9 +140,9 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
       return (cellProps: GridCellProps) => {
         const {
           columnWidths,
+          editMode,
           filteredSortedResults,
           getCellValue,
-          isAutoSaveEnabled,
           isScrolling,
           onCellChange,
           onCellClick,
@@ -155,7 +155,7 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
         return (
           <Cell
             key={cellProps.key}
-            isAutoSaveEnabled={isAutoSaveEnabled}
+            editMode={editMode}
             isScrolling={isScrolling || false}
             onCellClick={e => {
               if (onCellClick) {

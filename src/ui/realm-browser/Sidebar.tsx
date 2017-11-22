@@ -64,35 +64,18 @@ const ListFocusComponent = ({
 };
 
 export const Sidebar = ({
-  dataVersion,
-  dataVersionAtBeginning,
   focus,
   getSchemaLength,
-  isAutoSaveEnabled,
-  onAutoSaveChange,
-  onDiscardChanges,
-  onSaveChanges,
   onSchemaSelected,
   progress,
   schemas,
 }: {
-  dataVersion: number;
-  dataVersionAtBeginning?: number;
   focus: IFocus | null;
   getSchemaLength: (name: string) => number;
-  isAutoSaveEnabled: boolean;
-  onAutoSaveChange: AutoSaveChangeHandler;
-  onDiscardChanges: () => void;
-  onSaveChanges: () => void;
   onSchemaSelected: (name: string, objectToScroll?: any) => void;
   progress: ILoadingProgress;
   schemas: Realm.ObjectSchema[];
 }) => {
-  const versionDifference =
-    typeof dataVersionAtBeginning === 'number'
-      ? dataVersion - dataVersionAtBeginning
-      : 0;
-  const hasUnsavedChanges = versionDifference > 0;
   return (
     <div className="RealmBrowser__Sidebar">
       <div className="RealmBrowser__Sidebar__Header">Classes</div>
@@ -134,47 +117,6 @@ export const Sidebar = ({
       ) : progress.done ? (
         <div className="RealmBrowser__Sidebar__SchemaList--empty" />
       ) : null}
-
-      {hasUnsavedChanges ? (
-        <section className="RealmBrowser__Sidebar__UnsavedChanges">
-          You have {versionDifference} unsaved
-          {versionDifference > 1 ? ' changes' : ' change'}
-        </section>
-      ) : null}
-
-      {hasUnsavedChanges ? (
-        <section className="RealmBrowser__Sidebar__Controls">
-          <Button
-            className="RealmBrowser__Sidebar__ControlButton"
-            color="secondary"
-            onClick={onDiscardChanges}
-            size="sm"
-          >
-            Discard
-          </Button>
-          <Button
-            className="RealmBrowser__Sidebar__ControlButton"
-            size="sm"
-            color="primary"
-            onClick={onSaveChanges}
-          >
-            Save
-          </Button>
-        </section>
-      ) : (
-        <section className="RealmBrowser__Sidebar__Controls">
-          <Button
-            className="RealmBrowser__Sidebar__ControlButton"
-            size="sm"
-            color={isAutoSaveEnabled ? 'primary' : 'secondary'}
-            onClick={e => {
-              onAutoSaveChange(!isAutoSaveEnabled);
-            }}
-          >
-            {isAutoSaveEnabled ? 'Saving automatically' : 'Save automatically'}
-          </Button>
-        </section>
-      )}
     </div>
   );
 };

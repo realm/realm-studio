@@ -17,7 +17,7 @@ import {
   SortEndHandler,
   SortStartHandler,
 } from '.';
-import { IPropertyWithName } from '..';
+import { EditMode, IPropertyWithName } from '..';
 import { IFocus } from '../focus';
 import { ContentGrid } from './ContentGrid';
 import { HeaderGrid } from './HeaderGrid';
@@ -31,13 +31,13 @@ const rowHeights = {
 export interface ITableProps {
   columnWidths: number[];
   dataVersion?: number;
+  editMode: EditMode;
   filteredSortedResults: Realm.Collection<any>;
   focus: IFocus;
   getCellValue: (object: any, props: GridCellProps) => string;
   gridContentRef: (grid: Grid) => void;
   gridHeaderRef: (grid: Grid) => void;
   highlight?: IHighlight;
-  isAutoSaveEnabled?: boolean;
   isSorting: boolean;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
@@ -54,13 +54,13 @@ export interface ITableProps {
 export const Table = ({
   dataVersion,
   columnWidths,
+  editMode,
   filteredSortedResults,
   focus,
   getCellValue,
   gridContentRef,
   gridHeaderRef,
   highlight,
-  isAutoSaveEnabled,
   isSorting,
   onCellChange,
   onCellClick,
@@ -105,12 +105,12 @@ export const Table = ({
         className="RealmBrowser__Table__ValueGrid"
         columnWidths={columnWidths}
         dataVersion={dataVersion}
+        editMode={editMode}
         filteredSortedResults={filteredSortedResults}
         getCellValue={getCellValue}
         gridRef={gridContentRef}
         height={height - rowHeights.header}
         highlight={highlight}
-        isAutoSaveEnabled={isAutoSaveEnabled}
         isSortable={focus.kind === 'list' && !sorting}
         isSorting={isSorting}
         onCellChange={onCellChange}

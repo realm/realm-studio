@@ -2,7 +2,7 @@ import * as electron from 'electron';
 import * as React from 'react';
 import { Grid, GridCellProps } from 'react-virtualized';
 
-import { AutoSaveChangeHandler, IPropertyWithName } from '.';
+import { EditMode, IPropertyWithName } from '.';
 import { ILoadingProgress } from '../reusable/loading-overlay';
 import { Content } from './Content';
 import { IFocus } from './focus';
@@ -18,12 +18,16 @@ import { Cell } from './table/Cell';
 import { HeaderCell } from './table/HeaderCell';
 
 export interface IContentContainerProps {
+  changeCount: number;
   dataVersion?: number;
+  editMode: EditMode;
   focus: IFocus | null;
   highlight?: IHighlight;
-  isAutoSaveEnabled?: boolean;
+  inTransaction: boolean;
+  onCancelTransaction: () => void;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
+  onCommitTransaction: () => void;
   onContextMenu?: CellContextMenuHandler;
   onSortEnd?: SortEndHandler;
   onSortStart?: SortStartHandler;

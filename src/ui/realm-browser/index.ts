@@ -13,4 +13,9 @@ export interface ISelectObjectState {
   object: Realm.Object;
 }
 
-export type AutoSaveChangeHandler = (autoSave: boolean) => void;
+export enum EditMode {
+  KeyPress = 'key-press',
+  InputBlur = 'input-blur',
+}
+
+export type EditModeChangeHandler = (editMode: EditMode) => void;

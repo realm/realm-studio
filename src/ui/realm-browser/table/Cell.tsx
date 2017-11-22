@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import { IPropertyWithName } from '..';
+import { EditMode, IPropertyWithName } from '..';
 import { DataCell } from './types/DataCell';
 import { DefaultCell } from './types/DefaultCell';
 import { ListCell } from './types/ListCell';
@@ -10,13 +10,13 @@ import { ObjectCell } from './types/ObjectCell';
 import { StringCellContainer } from './types/StringCellContainer';
 
 const getCellContent = ({
-  isAutoSaveEnabled,
+  editMode,
   isScrolling,
   onUpdateValue,
   property,
   value,
 }: {
-  isAutoSaveEnabled?: boolean;
+  editMode: EditMode;
   isScrolling?: boolean;
   onUpdateValue: (value: string) => void;
   property: IPropertyWithName;
@@ -35,7 +35,7 @@ const getCellContent = ({
     case 'string': {
       return (
         <StringCellContainer
-          isAutoSaveEnabled={isAutoSaveEnabled}
+          editMode={editMode}
           property={property}
           value={value}
           onUpdateValue={onUpdateValue}
@@ -45,7 +45,7 @@ const getCellContent = ({
     case 'date': {
       return (
         <StringCellContainer
-          isAutoSaveEnabled={isAutoSaveEnabled}
+          editMode={editMode}
           property={property}
           value={value !== null ? value.toISOString() : value}
           onUpdateValue={onUpdateValue}
@@ -66,7 +66,7 @@ const getCellContent = ({
 };
 
 export const Cell = ({
-  isAutoSaveEnabled,
+  editMode,
   isScrolling,
   onCellClick,
   onContextMenu,
@@ -76,7 +76,7 @@ export const Cell = ({
   value,
   width,
 }: {
-  isAutoSaveEnabled?: boolean;
+  editMode: EditMode;
   isScrolling?: boolean;
   onCellClick: (e: React.MouseEvent<any>) => void;
   onContextMenu: (e: React.MouseEvent<any>) => void;
@@ -87,7 +87,7 @@ export const Cell = ({
   width: number;
 }) => {
   const content = getCellContent({
-    isAutoSaveEnabled,
+    editMode,
     isScrolling,
     onUpdateValue,
     property,

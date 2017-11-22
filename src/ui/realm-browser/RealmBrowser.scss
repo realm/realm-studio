@@ -133,21 +133,6 @@ $highlight-row-color: $black;
         text-decoration: underline;
       }
     }
-
-    &__UnsavedChanges {
-      font-size: .8rem;
-      text-align: center;
-    }
-
-    &__Controls {
-      display: flex;
-      justify-content: center;
-      padding: ($spacer / 2) 0;
-    }
-
-    &__ControlButton {
-      margin: $spacer / 4;
-    }
   }
 
   &__Wrapper {
@@ -449,5 +434,37 @@ $highlight-row-color: $black;
     }
 
     @import "../reusable/ReactVirtualized";
+  }
+
+  &__Bottombar {
+    align-items: center;
+    background: $window-background;
+    display: flex;
+    height: 0;
+    justify-content: space-between;
+    transition: height 100ms;
+
+    &--visible {
+      height: 2.5rem;
+    }
+
+    &__UnsavedChanges,
+    &__Controls {
+      padding: $spacer / 2;
+    }
+
+    &__UnsavedChanges {
+      font-size: .8rem;
+      text-align: center;
+    }
+
+    &__Controls {
+      display: flex;
+      justify-content: center;
+
+      * {
+        margin-left: $spacer / 2;
+      }
+    }
   }
 }
