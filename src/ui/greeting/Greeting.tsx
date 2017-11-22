@@ -58,10 +58,10 @@ export const Greeting = ({
         </Button>
       </div>
       <div className="Greeting__DownloadDemo">
-        <p>New to realm?</p>&nbsp;
+        <span>New to realm? </span>
         <a
           href="https://static.realm.io/downloads/realm-studio/demo.realm"
-          className="Greeting__DownloadDemo__Link"
+          className="Link"
         >
           Download a demo Realm file
         </a>
