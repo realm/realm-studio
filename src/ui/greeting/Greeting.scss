@@ -74,6 +74,22 @@ $history-panel-icon-size: 20px;
     margin: $spacer / 4;
   }
 
+  &__DownloadDemo {
+    margin-top: $spacer / 2;
+
+    * {
+      display: inline-block;
+      font-size: .7rem;
+      margin: 0;
+    }
+
+    &__Link {
+      color: $brand-primary;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
+
   &__HistoryPanel {
     background: $color-charcoal;
     color: $color-dove;

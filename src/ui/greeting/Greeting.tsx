@@ -57,6 +57,16 @@ export const Greeting = ({
           Connect to Realm Object Server
         </Button>
       </div>
+      <div className="Greeting__DownloadDemo">
+        <p>New to realm?</p>&nbsp;
+        <a
+          target="_blank"
+          href="[url_demo_realm]"
+          className="Greeting__DownloadDemo__Link"
+        >
+          Download a demo Realm file
+        </a>
+      </div>
     </div>
     <HistoryPanelContainer />
     <SignupOverlayContainer />
