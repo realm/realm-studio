@@ -15,7 +15,7 @@ export const AccountsTable = ({ accounts }: { accounts: ros.IAccount[] }) => (
     <tbody>
       {accounts.length === 0 ? (
         <tr>
-          <td colSpan={2} className="SidebarTableEmptyExplanation">
+          <td colSpan={2} className="SidebarTable__EmptyExplanation">
             This user has no accounts
           </td>
         </tr>
