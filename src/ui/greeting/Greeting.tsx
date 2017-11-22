@@ -60,8 +60,7 @@ export const Greeting = ({
       <div className="Greeting__DownloadDemo">
         <p>New to realm?</p>&nbsp;
         <a
-          target="_blank"
-          href="[url_demo_realm]"
+          href="https://static.realm.io/downloads/realm-studio/demo.realm"
           className="Greeting__DownloadDemo__Link"
         >
           Download a demo Realm file
