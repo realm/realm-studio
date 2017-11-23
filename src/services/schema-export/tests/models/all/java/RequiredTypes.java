@@ -1,9 +1,10 @@
+// Please note : @LinkingObjects and default values are not represented in the schema and thus will not be part of the generated models
 package your.package.name.here;
 
 import io.realm.RealmObject;
 import io.realm.annotations.Required;
+import java.util.Date;
 import io.realm.RealmList;
-import RequiredTypes;
 
 public class RequiredTypes extends RealmObject {
     private boolean boolRequired;
@@ -16,9 +17,13 @@ public class RequiredTypes extends RealmObject {
     private Date dateRequired;
     @Required
     private byte[] dataRequired;
+    @Required
     private RealmList<Boolean> boolRequiredArray;
+    @Required
     private RealmList<Long> intRequiredArray;
+    @Required
     private RealmList<Float> floatRequiredArray;
+    @Required
     private RealmList<Double> doubleRequiredArray;
     @Required
     private RealmList<String> stringRequiredArray;
@@ -26,66 +31,68 @@ public class RequiredTypes extends RealmObject {
     private RealmList<Date> dateRequiredArray;
     @Required
     private RealmList<byte[]> dataRequiredArray;
+    @Required
     private RealmList<RequiredTypes> objectRequiredArray;
 
-    public boolean isBoolrequired() { return boolRequired; }
+    public boolean isBoolRequired() { return boolRequired; }
 
-    public void setBoolrequired(boolean boolRequired) { this.boolRequired = boolRequired; } 
+    public void setBoolRequired(boolean boolRequired) { this.boolRequired = boolRequired; }
 
-    public long getIntrequired() { return intRequired; }
+    public long getIntRequired() { return intRequired; }
 
-    public void setIntrequired(long intRequired) { this.intRequired = intRequired; } 
+    public void setIntRequired(long intRequired) { this.intRequired = intRequired; }
 
-    public float getFloatrequired() { return floatRequired; }
+    public float getFloatRequired() { return floatRequired; }
 
-    public void setFloatrequired(float floatRequired) { this.floatRequired = floatRequired; } 
+    public void setFloatRequired(float floatRequired) { this.floatRequired = floatRequired; }
 
-    public double getDoublerequired() { return doubleRequired; }
+    public double getDoubleRequired() { return doubleRequired; }
 
-    public void setDoublerequired(double doubleRequired) { this.doubleRequired = doubleRequired; } 
+    public void setDoubleRequired(double doubleRequired) { this.doubleRequired = doubleRequired; }
 
-    public String getStringrequired() { return stringRequired; }
+    public String getStringRequired() { return stringRequired; }
 
-    public void setStringrequired(String stringRequired) { this.stringRequired = stringRequired; } 
+    public void setStringRequired(String stringRequired) { this.stringRequired = stringRequired; }
 
-    public Date getDaterequired() { return dateRequired; }
+    public Date getDateRequired() { return dateRequired; }
 
-    public void setDaterequired(Date dateRequired) { this.dateRequired = dateRequired; } 
+    public void setDateRequired(Date dateRequired) { this.dateRequired = dateRequired; }
 
-    public byte[] getDatarequired() { return dataRequired; }
+    public byte[] getDataRequired() { return dataRequired; }
 
-    public void setDatarequired(byte[] dataRequired) { this.dataRequired = dataRequired; } 
+    public void setDataRequired(byte[] dataRequired) { this.dataRequired = dataRequired; }
 
-    public RealmList<Boolean> isBoolrequiredarray() { return boolRequiredArray; }
+    public RealmList<Boolean> getBoolRequiredArray() { return boolRequiredArray; }
 
-    public void setBoolrequiredarray(RealmList<Boolean> boolRequiredArray) { this.boolRequiredArray = boolRequiredArray; } 
+    public void setBoolRequiredArray(RealmList<Boolean> boolRequiredArray) { this.boolRequiredArray = boolRequiredArray; }
 
-    public RealmList<Long> getIntrequiredarray() { return intRequiredArray; }
+    public RealmList<Long> getIntRequiredArray() { return intRequiredArray; }
 
-    public void setIntrequiredarray(RealmList<Long> intRequiredArray) { this.intRequiredArray = intRequiredArray; } 
+    public void setIntRequiredArray(RealmList<Long> intRequiredArray) { this.intRequiredArray = intRequiredArray; }
 
-    public RealmList<Float> getFloatrequiredarray() { return floatRequiredArray; }
+    public RealmList<Float> getFloatRequiredArray() { return floatRequiredArray; }
 
-    public void setFloatrequiredarray(RealmList<Float> floatRequiredArray) { this.floatRequiredArray = floatRequiredArray; } 
+    public void setFloatRequiredArray(RealmList<Float> floatRequiredArray) { this.floatRequiredArray = floatRequiredArray; }
 
-    public RealmList<Double> getDoublerequiredarray() { return doubleRequiredArray; }
+    public RealmList<Double> getDoubleRequiredArray() { return doubleRequiredArray; }
 
-    public void setDoublerequiredarray(RealmList<Double> doubleRequiredArray) { this.doubleRequiredArray = doubleRequiredArray; } 
+    public void setDoubleRequiredArray(RealmList<Double> doubleRequiredArray) { this.doubleRequiredArray = doubleRequiredArray; }
 
-    public RealmList<String> getStringrequiredarray() { return stringRequiredArray; }
+    public RealmList<String> getStringRequiredArray() { return stringRequiredArray; }
 
-    public void setStringrequiredarray(RealmList<String> stringRequiredArray) { this.stringRequiredArray = stringRequiredArray; } 
+    public void setStringRequiredArray(RealmList<String> stringRequiredArray) { this.stringRequiredArray = stringRequiredArray; }
 
-    public RealmList<Date> getDaterequiredarray() { return dateRequiredArray; }
+    public RealmList<Date> getDateRequiredArray() { return dateRequiredArray; }
 
-    public void setDaterequiredarray(RealmList<Date> dateRequiredArray) { this.dateRequiredArray = dateRequiredArray; } 
+    public void setDateRequiredArray(RealmList<Date> dateRequiredArray) { this.dateRequiredArray = dateRequiredArray; }
 
-    public RealmList<byte[]> getDatarequiredarray() { return dataRequiredArray; }
+    public RealmList<byte[]> getDataRequiredArray() { return dataRequiredArray; }
 
-    public void setDatarequiredarray(RealmList<byte[]> dataRequiredArray) { this.dataRequiredArray = dataRequiredArray; } 
+    public void setDataRequiredArray(RealmList<byte[]> dataRequiredArray) { this.dataRequiredArray = dataRequiredArray; }
 
-    public RealmList<RequiredTypes> getObjectrequiredarray() { return objectRequiredArray; }
+    public RealmList<RequiredTypes> getObjectRequiredArray() { return objectRequiredArray; }
 
-    public void setObjectrequiredarray(RealmList<RequiredTypes> objectRequiredArray) { this.objectRequiredArray = objectRequiredArray; } 
+    public void setObjectRequiredArray(RealmList<RequiredTypes> objectRequiredArray) { this.objectRequiredArray = objectRequiredArray; }
+
 
 }

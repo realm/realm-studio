@@ -1,44 +1,45 @@
-const IndexedTypesSchema = {
+exports.IndexedTypes = {
   name: 'IndexedTypes',
+  primaryKey: 'intIndexed',
   properties: {
-    boolIndexed: { type: 'bool',  indexed: true },
-    intIndexed: { type: 'int',  indexed: true },
-    stringIndexed: { type: 'string',  indexed: true },
-    dateIndexed: { type: 'date',  indexed: true }
+    boolIndexed: { type: 'bool', indexed: true },
+    intIndexed: 'int',
+    stringIndexed: { type: 'string', indexed: true },
+    dateIndexed: { type: 'date', indexed: true }
   }
-};
+}
 
-const LinkTypesSchema = {
+exports.LinkTypes = {
   name: 'LinkTypes',
   properties: {
-    objectType: { type: 'ReverseType',  optional: true },
-    objectType2: { type: 'ReverseType',  optional: true },
-    listType: 'ReverseType[]'
+    objectType: 'ReverseType',
+    objectType2: 'ReverseType',
+    listType: 'ReverseType[]',
   }
-};
+}
 
-const OptionalTypesSchema = {
+exports.OptionalTypes = {
   name: 'OptionalTypes',
   properties: {
-    boolOptional: { type: 'bool',  optional: true },
-    intOptional: { type: 'int',  optional: true },
-    floatOptional: { type: 'float',  optional: true },
-    doubleOptional: { type: 'double',  optional: true },
-    stringOptional: { type: 'string',  optional: true },
-    dateOptional: { type: 'date',  optional: true },
-    dataOptional: { type: 'data',  optional: true },
-    objectOptional: { type: 'RequiredTypes',  optional: true },
-    boolOptionalArray: { type: 'bool[]',  optional: true },
-    intOptionalArray: { type: 'int[]',  optional: true },
-    floatOptionalArray: { type: 'float[]',  optional: true },
-    doubleOptionalArray: { type: 'double[]',  optional: true },
-    stringOptionalArray: { type: 'string[]',  optional: true },
-    dateOptionalArray: { type: 'date[]',  optional: true },
-    dataOptionalArray: { type: 'data[]',  optional: true }
+    boolOptional: 'bool?',
+    intOptional: 'int?',
+    floatOptional: 'float?',
+    doubleOptional: 'double?',
+    stringOptional: 'string?',
+    dateOptional: 'date?',
+    dataOptional: 'data?',
+    objectOptional: 'RequiredTypes',
+    boolOptionalArray: 'bool?[]',
+    intOptionalArray: 'int?[]',
+    floatOptionalArray: 'float?[]',
+    doubleOptionalArray: 'double?[]',
+    stringOptionalArray: 'string?[]',
+    dateOptionalArray: 'date?[]',
+    dataOptionalArray: 'data?[]'
   }
-};
+}
 
-const RequiredTypesSchema = {
+exports.RequiredTypes = {
   name: 'RequiredTypes',
   properties: {
     boolRequired: 'bool',
@@ -57,19 +58,12 @@ const RequiredTypesSchema = {
     dataRequiredArray: 'data[]',
     objectRequiredArray: 'RequiredTypes[]'
   }
-};
+}
 
-const ReverseTypeSchema = {
+exports.ReverseType = {
   name: 'ReverseType',
   properties: {
-    links: { type: 'LinkTypes',  optional: true }
+    links: 'LinkTypes'
   }
-};
+}
 
-module.exports = {
-  IndexedTypesSchema,
-  LinkTypesSchema,
-  OptionalTypesSchema,
-  RequiredTypesSchema,
-  ReverseTypeSchema
-};

@@ -31,7 +31,13 @@ export default class JSSchemaExporter extends SchemaExporter {
     for (const key in schema.properties) {
       if (schema.properties.hasOwnProperty(key)) {
         const primaryKey = key === schema.primaryKey;
-        line = '    ' + this.propertyLine(schema.properties[key], primaryKey);
+        const prop: any = schema.properties[key];
+        // Ignoring 'linkingObjects' https://github.com/realm/realm-js/issues/1519
+        // happens only tests, when opening a Realm using schema that includes 'linkingObjects'
+        if (prop.type === 'linkingObjects') {
+          continue;
+        }
+        line = '    ' + this.propertyLine(prop, primaryKey);
         if (i++ < lastIdx) {
           line += ',';
         }
@@ -48,7 +54,6 @@ export default class JSSchemaExporter extends SchemaExporter {
     switch (prop.type) {
       case 'list':
       case 'object':
-      case 'linkingObjects':
         typeStr = prop.objectType;
         break;
       default:

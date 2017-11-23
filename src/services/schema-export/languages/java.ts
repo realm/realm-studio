@@ -5,14 +5,14 @@ export default class JavaSchemaExporter extends SchemaExporter {
   private static readonly PADDING = '    ';
 
   private fieldsContent = '';
-  private gettersContent = '';
-  private settersContent = '';
+  private gettersSetterContent = '';
+  private realmImports : Set<string>;
 
   constructor() {
     super();
     this.fieldsContent = '';
-    this.gettersContent = '';
-    this.settersContent = '';
+    this.gettersSetterContent = '';
+    this.realmImports = new Set<string>();
   }
 
   public exportSchema(realm: Realm): ISchemaFile[] {
@@ -30,36 +30,40 @@ export default class JavaSchemaExporter extends SchemaExporter {
     this.appendLine('package your.package.name.here;');
     this.appendLine('');
 
-    const realmImports = new Set<string>();
-    realmImports.add('import io.realm.RealmObject;');
+    this.realmImports.add('import io.realm.RealmObject;');
 
-    this.fieldsContent += `public class ${schema.name} extends RealmObject {\n\n`;
+    this.fieldsContent += `public class ${schema.name} extends RealmObject {\n`;
 
     // Properties
     for (const key in schema.properties) {
       if (schema.properties.hasOwnProperty(key)) {
         const prop: any = schema.properties[key];
+        // Ignoring 'linkingObjects' https://github.com/realm/realm-js/issues/1519
+        // happens only tests, when opening a Realm using schema that includes 'linkingObjects'
+        if (prop.type === 'linkingObjects') {
+          continue;
+        }
         this.propertyLine(prop, schema.primaryKey);
         if (prop.indexed && prop.name !== schema.primaryKey) {
-          realmImports.add('import io.realm.annotations.Index;');
+          this.realmImports.add('import io.realm.annotations.Index;');
         }
 
         if (
           !prop.optional &&
           this.javaPropertyTypeCanBeMarkedRequired(prop.type)
         ) {
-          realmImports.add('import io.realm.annotations.Required;');
+          this.realmImports.add('import io.realm.annotations.Required;');
         }
       }
     }
 
     // Primary key
     if (schema.primaryKey) {
-      realmImports.add('import io.realm.annotations.PrimaryKey;');
+      this.realmImports.add('import io.realm.annotations.PrimaryKey;');
     }
 
     // Add all Realm imports
-    for (const realmImport of realmImports) {
+    for (const realmImport of this.realmImports) {
       this.appendLine(realmImport);
     }
     this.appendLine('');
@@ -68,20 +72,18 @@ export default class JavaSchemaExporter extends SchemaExporter {
     this.appendLine(this.fieldsContent);
 
     // Add getters and setters
-    this.appendLine(this.gettersContent);
-    this.appendLine(this.settersContent);
+    this.appendLine(this.gettersSetterContent);
 
     // End class
     this.appendLine('}');
-    this.appendLine('');
 
     this.addFile(schema.name + '.java', this.content);
 
     // reset content for next Schema
     this.content = '';
     this.fieldsContent = '';
-    this.gettersContent = '';
-    this.settersContent = '';
+    this.gettersSetterContent = '';
+    this.realmImports.clear();
   }
 
   private propertyLine(prop: any, primaryKey: string | undefined): void {
@@ -98,19 +100,13 @@ export default class JavaSchemaExporter extends SchemaExporter {
       prop,
     )} ${prop.name};\n`;
 
-    this.gettersContent += `${JavaSchemaExporter.PADDING}public ${this.javaNameForProperty(
+    this.gettersSetterContent += `${JavaSchemaExporter.PADDING}public ${this.javaNameForProperty(
       prop,
     )} ${prop.type === 'bool' ? 'is' : 'get'}${this.capitalizedString(
-      prop.name,
-    )}() {
-  ${JavaSchemaExporter.PADDING}return ${prop.name};
-    }\n`;
+      prop.name,)}() { return ${prop.name}; }\n\n`;
 
-    this.settersContent += `${JavaSchemaExporter.PADDING}public void set${this.capitalizedString(
-      prop.name,
-    )}(${this.javaNameForProperty(prop)} ${prop.name}) {
-  ${JavaSchemaExporter.PADDING}${JavaSchemaExporter.PADDING}this.${prop.name} = ${prop.name};
-    }\n`;
+    this.gettersSetterContent += `${JavaSchemaExporter.PADDING}public void set${this.capitalizedString(
+      prop.name,)}(${this.javaNameForProperty(prop)} ${prop.name}) { this.${prop.name} = ${prop.name}; }\n\n`;
   }
 
   private javaPropertyTypeCanBeMarkedRequired(type: any): boolean {
@@ -124,7 +120,7 @@ export default class JavaSchemaExporter extends SchemaExporter {
       case 'string':
       case 'data':
       case 'date':
-      case 'linkingObjects':
+      case 'list':
         return true;
     }
     return false;
@@ -132,6 +128,7 @@ export default class JavaSchemaExporter extends SchemaExporter {
 
   private javaNameForProperty(property: any): any {
     if (property.type === 'list') {
+      this.realmImports.add('import io.realm.RealmList;');
       switch (property.objectType) {
         case 'bool':
           return 'RealmList<Boolean>';
@@ -146,7 +143,8 @@ export default class JavaSchemaExporter extends SchemaExporter {
         case 'data':
           return 'RealmList<byte[]>';
         case 'date':
-          return 'RealmList<java.util.Date>';
+          this.realmImports.add('import java.util.Date;');
+          return 'RealmList<Date>';
         default:
           return `RealmList<${property.objectType}>`;
       }
@@ -165,13 +163,11 @@ export default class JavaSchemaExporter extends SchemaExporter {
       case 'data':
         return 'byte[]';
       case 'date':
-        return 'java.util.Date';
+        this.realmImports.add('import java.util.Date;');
+        return 'Date';
       case 'object':
         return property.objectType;
-      case 'linkingObjects':
-        return 'RealmList';
     }
-
     return null;
   }
 
