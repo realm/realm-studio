@@ -4,6 +4,12 @@ import * as url from 'url';
 
 import { getWindowOptions, WindowType } from '../windows/WindowType';
 
+export interface IEventListenerCallbacks {
+  blur?: () => void;
+  focus?: () => void;
+  closed?: () => void;
+}
+
 const isProduction = process.env.NODE_ENV === 'production';
 
 function getRendererHtmlPath() {
