@@ -14,7 +14,7 @@ import {
   IRealmLoadingComponentState,
   RealmLoadingComponent,
 } from '../reusable/realm-loading-component';
-import { IClassFocus, IFocus, IListFocus } from './focus';
+import { Focus, IClassFocus, IListFocus } from './focus';
 import {
   CellChangeHandler,
   CellClickHandler,
@@ -32,10 +32,11 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
     yes: () => void;
     no: () => void;
   };
+  createObjectSchema?: Realm.ObjectSchema;
   // A number that we can use to make components update on changes to data
   dataVersion: number;
   encryptionKey?: string;
-  focus: IFocus | null;
+  focus: Focus | null;
   isEncryptionDialogVisible: boolean;
   highlight?: IHighlight;
   // The schemas are only supposed to be used to produce a list of schemas in the sidebar
@@ -90,6 +91,13 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         showError('Failed when saving the value', err);
       }
     }
+  };
+
+  public onCreateObject = (className: string, values: {}) => {
+    // console.log('onCreateObject called with', values);
+    this.realm.write(() => {
+      this.realm.create(className, values);
+    });
   };
 
   public onSchemaSelected = (className: string, objectToScroll?: any) => {
@@ -207,12 +215,22 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       );
     }
 
-    if (this.state.focus && this.state.focus.kind === 'class') {
+    const { focus } = this.state;
+
+    if (focus && focus.kind === 'class') {
       menu.append(
         new remote.MenuItem({
           label: 'Delete',
           click: () => {
             this.openConfirmModal(rowObject);
+          },
+        }),
+      );
+      menu.append(
+        new remote.MenuItem({
+          label: `Create new ${focus.className}`,
+          click: () => {
+            this.onCreateDialogToggle(focus.className);
           },
         }),
       );
@@ -223,6 +241,17 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         x: e.clientX,
         y: e.clientY,
       });
+    }
+  };
+
+  public onCreateDialogToggle = (className?: string) => {
+    if (this.realm && className) {
+      const createObjectSchema = this.realm.schema.find(
+        schema => schema.name === className,
+      );
+      this.setState({ createObjectSchema });
+    } else {
+      this.setState({ createObjectSchema: undefined });
     }
   };
 
@@ -320,18 +349,6 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     });
   };
 
-  protected generateHighlight(object?: Realm.Object): IHighlight | undefined {
-    if (object) {
-      const className = object.objectSchema().name;
-      const row = this.realm.objects(className).indexOf(object);
-      if (row) {
-        return {
-          row,
-        };
-      }
-    }
-  }
-
   protected onRealmChanged = () => {
     this.setState({ dataVersion: this.state.dataVersion + 1 });
   };
@@ -396,6 +413,18 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         throw new Error(`Object schema had a string describing its property`);
       }
     });
+  }
+
+  protected generateHighlight(object?: Realm.Object): IHighlight | undefined {
+    if (object) {
+      const className = object.objectSchema().name;
+      const row = this.realm.objects(className).indexOf(object);
+      if (row) {
+        return {
+          row,
+        };
+      }
+    }
   }
 
   protected loadingRealmFailed(err: Error) {

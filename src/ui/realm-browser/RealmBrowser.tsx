@@ -1,10 +1,11 @@
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import { ISelectObjectState } from '.';
+import { CreateObjectHandler, ISelectObjectState } from '.';
 import { ConfirmModal } from '../reusable/confirm-modal';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
 import { ContentContainer } from './ContentContainer';
+import { CreateObjectDialog } from './create-object-dialog';
 import { EncryptionDialog } from './encryption-dialog';
 import { IFocus } from './focus';
 import { ObjectSelectorContainer } from './object-selector/ObjectSelectorContainer';
@@ -27,6 +28,7 @@ export interface IRealmBrowserProps {
     yes: () => void;
     no: () => void;
   };
+  createObjectSchema?: Realm.ObjectSchema;
   dataVersion: number;
   focus: IFocus | null;
   getSchemaLength: (name: string) => number;
@@ -35,6 +37,8 @@ export interface IRealmBrowserProps {
   onCellChange: CellChangeHandler;
   onCellClick: CellClickHandler;
   onContextMenu: CellContextMenuHandler;
+  onCreateDialogToggle: () => void;
+  onCreateObject: CreateObjectHandler;
   onHideEncryptionDialog: () => void;
   onOpenWithEncryption: (key: string) => void;
   onSchemaSelected: (name: string, objectToScroll: any) => void;
@@ -51,6 +55,7 @@ export const RealmBrowser = ({
   closeSelectObject,
   columnToHighlight,
   confirmModal,
+  createObjectSchema,
   dataVersion,
   focus,
   getSchemaLength,
@@ -59,6 +64,8 @@ export const RealmBrowser = ({
   onCellChange,
   onCellClick,
   onContextMenu,
+  onCreateDialogToggle,
+  onCreateObject,
   onHideEncryptionDialog,
   onOpenWithEncryption,
   onSchemaSelected,
@@ -116,6 +123,13 @@ export const RealmBrowser = ({
         onHide={onHideEncryptionDialog}
         onOpenWithEncryption={onOpenWithEncryption}
         visible={isEncryptionDialogVisible}
+      />
+
+      <CreateObjectDialog
+        isOpen={!!createObjectSchema}
+        onCreate={onCreateObject}
+        schema={createObjectSchema}
+        toggle={onCreateDialogToggle}
       />
 
       <LoadingOverlay progress={progress} fade={true} />
