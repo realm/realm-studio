@@ -23,11 +23,11 @@ export interface IContentContainerProps {
   editMode?: EditMode;
   focus: IFocus | null;
   highlight?: IHighlight;
-  inTransaction: boolean;
-  onCancelTransaction: () => void;
+  inTransaction?: boolean;
+  onCancelTransaction?: () => void;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
-  onCommitTransaction: () => void;
+  onCommitTransaction?: () => void;
   onContextMenu?: CellContextMenuHandler;
   onSortEnd?: SortEndHandler;
   onSortStart?: SortStartHandler;

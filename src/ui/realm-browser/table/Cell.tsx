@@ -16,7 +16,7 @@ const getCellContent = ({
   property,
   value,
 }: {
-  editMode: EditMode;
+  editMode?: EditMode;
   isScrolling?: boolean;
   onUpdateValue: (value: string) => void;
   property: IPropertyWithName;
@@ -76,7 +76,7 @@ export const Cell = ({
   value,
   width,
 }: {
-  editMode: EditMode;
+  editMode?: EditMode;
   isScrolling?: boolean;
   onCellClick: (e: React.MouseEvent<any>) => void;
   onContextMenu: (e: React.MouseEvent<any>) => void;

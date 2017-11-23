@@ -4,9 +4,9 @@ import { Button, Input, InputGroup, InputGroupButton } from 'reactstrap';
 
 export interface IBottombarProps {
   changeCount?: number;
-  inTransaction: boolean;
-  onCancelTransaction: () => void;
-  onCommitTransaction: () => void;
+  inTransaction?: boolean;
+  onCancelTransaction?: () => void;
+  onCommitTransaction?: () => void;
 }
 
 export const Bottombar = ({
