@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as Realm from 'realm';
 
 import { IPropertyWithName } from '../..';
-import { parse } from './parser';
+import { parse } from '../../parsers';
 import { StringCell } from './StringCell';
 
 export interface IStringCellContainerProps {
