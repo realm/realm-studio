@@ -5,11 +5,12 @@ import SwiftSchemaExporter from './languages/swift';
 import { ISchemaExporter } from './schemaExporter';
 
 export enum Language {
-  ObjC = 'objC',
-  Swift = 'swift',
-  Java = 'java',
   CS = 'C#',
-  JS = 'JS',
+  Java = 'Java',
+  JS = 'JavaScript',
+  ObjC = 'Objective-C',
+  Swift = 'Swift',
+  TS = 'TypeScript',
 }
 
 export const SchemaExporter = (language: Language): ISchemaExporter => {
