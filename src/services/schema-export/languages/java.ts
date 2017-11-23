@@ -63,9 +63,9 @@ export default class JavaSchemaExporter extends SchemaExporter {
     }
 
     // Add all Realm imports
-    for (const realmImport of this.realmImports) {
-      this.appendLine(realmImport);
-    }
+    this.realmImports.forEach(line => {
+      this.appendLine(line);
+    });
     this.appendLine('');
 
     // Add class body
