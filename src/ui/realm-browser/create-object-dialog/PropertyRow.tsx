@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormGroup, Input, Label } from 'reactstrap';
+import { Badge, FormGroup, Input, Label } from 'reactstrap';
 
 import { TypeControl } from './types/TypeControl';
 
@@ -12,13 +12,23 @@ interface IPropertyRowProps {
 }
 
 export const PropertyRow = ({
+  isPrimary,
   onValueChange,
   property,
   propertyName,
   value,
 }: IPropertyRowProps) => (
   <FormGroup>
-    <Label for={propertyName}>{propertyName}</Label>
+    <Label
+      className="CreateObjectDialog__PropertyRow__Label"
+      for={propertyName}
+    >
+      {propertyName}
+      <span className="CreateObjectDialog__PropertyRow__Badges">
+        {!property.optional ? <Badge>required</Badge> : null}
+        {isPrimary ? <Badge>primary key</Badge> : null}
+      </span>
+    </Label>
     <TypeControl onChange={onValueChange} property={property} value={value} />
   </FormGroup>
 );
