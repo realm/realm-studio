@@ -2,22 +2,26 @@ import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import * as Realm from 'realm';
 
+import { IClassFocus } from '../focus';
+
 import { PropertyRow } from './PropertyRow';
 
 export interface ICreateObjectDialogProps {
-  schema?: Realm.ObjectSchema;
   isOpen: boolean;
   onCreate: () => void;
   onValueChange: (propertyName: string, value: any) => void;
+  getClassFocus: (className: string) => IClassFocus;
+  schema?: Realm.ObjectSchema;
   toggle: () => void;
   values: { [propertyName: string]: any };
 }
 
 export const CreateObjectDialog = ({
-  schema,
   isOpen,
   onCreate,
   onValueChange,
+  getClassFocus,
+  schema,
   toggle,
   values,
 }: ICreateObjectDialogProps) =>
@@ -27,10 +31,11 @@ export const CreateObjectDialog = ({
       <ModalBody>
         {Object.keys(schema.properties).map(propertyName => (
           <PropertyRow
+            getClassFocus={getClassFocus}
             isPrimary={schema.primaryKey === propertyName}
             key={propertyName}
-            value={values[propertyName]}
             onValueChange={value => onValueChange(propertyName, value)}
+            value={values[propertyName]}
             property={
               schema.properties[propertyName] as Realm.ObjectSchemaProperty
             }
