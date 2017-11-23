@@ -4,30 +4,23 @@ import { Application } from './Application';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
+export interface IMainMenuOptions {
+  enableExportSchema?: boolean;
+}
+
+const DEFAULT_OPTIONS: IMainMenuOptions = {
+  enableExportSchema: false,
+};
+
+export interface IExportSchemaOptions {
+  language: Language;
+}
+
 export class MainMenu {
-  private menu = electron.Menu.buildFromTemplate(this.menuTemplate());
-
-  public set() {
-    electron.Menu.setApplicationMenu(this.menu);
-    this.enableExportSchemaOption(false);
-  }
-
-  public enableExportSchemaOption(enable: boolean) {
-    const FileMenu = this.getMenuItem(this.menu, 'File');
-
-    if (FileMenu && FileMenu.submenu) {
-      const ModelDefinitions = this.getMenuItem(
-        FileMenu.submenu as Electron.Menu,
-        'Save model definitions',
-      );
-
-      if (ModelDefinitions && ModelDefinitions.submenu) {
-        (ModelDefinitions.submenu as Electron.Menu).items.map(
-          item =>
-            ((item as Electron.MenuItemConstructorOptions).enabled = enable),
-        );
-      }
-    }
+  public update(options: IMainMenuOptions = DEFAULT_OPTIONS) {
+    const template = this.menuTemplate(options);
+    const menu = electron.Menu.buildFromTemplate(template);
+    electron.Menu.setApplicationMenu(menu);
   }
 
   private getMenuItem = (
@@ -41,12 +34,17 @@ export class MainMenu {
 
   private exportSchema = (language: Language) => {
     const focusedWindow = electron.BrowserWindow.getFocusedWindow();
-    focusedWindow.webContents.send('exportSchema', {
+    const options: IExportSchemaOptions = {
       language,
-    });
+    };
+    focusedWindow.webContents.send('export-schema', options);
   };
 
-  private menuTemplate(): Electron.MenuItemConstructorOptions[] {
+  private menuTemplate(
+    options?: IMainMenuOptions,
+  ): Electron.MenuItemConstructorOptions[] {
+    const enableExportSchema = (options && options.enableExportSchema) || false;
+
     const template: Electron.MenuItemConstructorOptions[] = [
       {
         label: 'File',
@@ -66,14 +64,17 @@ export class MainMenu {
               {
                 label: 'Swift',
                 click: () => this.exportSchema(Language.Swift),
+                enabled: enableExportSchema,
               },
               {
                 label: 'JavaScript',
                 click: () => this.exportSchema(Language.JS),
+                enabled: enableExportSchema,
               },
               {
                 label: 'Java',
                 click: () => this.exportSchema(Language.Java),
+                enabled: enableExportSchema,
               },
             ],
           },
