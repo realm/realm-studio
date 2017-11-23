@@ -35,6 +35,21 @@
         "zip"
       ]
     },
+    "dmg": {
+      "iconSize": 90,
+      "contents": [
+        {
+          "x": 95,
+          "y": 200
+        },
+        {
+          "x": 430,
+          "y": 200,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
     "linux": {
       "target": [
         "AppImage",
