@@ -1,10 +1,12 @@
 import * as assert from 'assert';
 import { ipcRenderer, remote } from 'electron';
+import * as path from 'path';
 import * as React from 'react';
 import * as Realm from 'realm';
 import * as util from 'util';
 
 import { IPropertyWithName, ISelectObjectState } from '.';
+import { IExportSchemaOptions } from '../../main/MainMenu';
 import { Language, SchemaExporter } from '../../services/schema-export';
 import { IRealmBrowserOptions } from '../../windows/WindowType';
 import { showError } from '../reusable/errors';
@@ -411,13 +413,23 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     }
   }
 
-  private onExportSchema = (event: any, data: { language: Language }): void => {
-    remote.dialog.showSaveDialog({}, selectedPaths => {
-      if (selectedPaths) {
-        const exp = SchemaExporter(data.language);
-        exp.exportSchema(this.realm);
-        exp.writeFilesToDisk(selectedPaths);
-      }
-    });
+  private onExportSchema = (
+    event: any,
+    { language }: IExportSchemaOptions,
+  ): void => {
+    const basename = path.basename(this.props.realm.path, '.realm');
+    remote.dialog.showSaveDialog(
+      {
+        defaultPath: `${basename}-schemas`,
+        message: `Select a directory to store the ${language} schema files`,
+      },
+      selectedPath => {
+        if (selectedPath) {
+          const exporter = SchemaExporter(language);
+          exporter.exportSchema(this.realm);
+          exporter.writeFilesToDisk(selectedPath);
+        }
+      },
+    );
   };
 }
