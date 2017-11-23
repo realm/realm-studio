@@ -1,13 +1,16 @@
+// Please note : @LinkingObjects and default values are not represented in the schema and thus will not be part of the generated models
 package your.package.name.here;
 
 import io.realm.RealmObject;
 import io.realm.annotations.Index;
 import io.realm.annotations.Required;
+import java.util.Date;
+import io.realm.annotations.PrimaryKey;
 
 public class IndexedTypes extends RealmObject {
     @Index
     private boolean boolIndexed;
-    @Index
+    @PrimaryKey
     private long intIndexed;
     @Index
     @Required
@@ -16,20 +19,21 @@ public class IndexedTypes extends RealmObject {
     @Required
     private Date dateIndexed;
 
-    public boolean isBoolindexed() { return boolIndexed; }
+    public boolean isBoolIndexed() { return boolIndexed; }
 
-    public void setBoolindexed(boolean boolIndexed) { this.boolIndexed = boolIndexed; } 
+    public void setBoolIndexed(boolean boolIndexed) { this.boolIndexed = boolIndexed; }
 
-    public long getIntindexed() { return intIndexed; }
+    public long getIntIndexed() { return intIndexed; }
 
-    public void setIntindexed(long intIndexed) { this.intIndexed = intIndexed; } 
+    public void setIntIndexed(long intIndexed) { this.intIndexed = intIndexed; }
 
-    public String getStringindexed() { return stringIndexed; }
+    public String getStringIndexed() { return stringIndexed; }
 
-    public void setStringindexed(String stringIndexed) { this.stringIndexed = stringIndexed; } 
+    public void setStringIndexed(String stringIndexed) { this.stringIndexed = stringIndexed; }
 
-    public Date getDateindexed() { return dateIndexed; }
+    public Date getDateIndexed() { return dateIndexed; }
 
-    public void setDateindexed(Date dateIndexed) { this.dateIndexed = dateIndexed; } 
+    public void setDateIndexed(Date dateIndexed) { this.dateIndexed = dateIndexed; }
+
 
 }

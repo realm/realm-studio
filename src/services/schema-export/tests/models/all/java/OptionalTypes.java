@@ -1,8 +1,9 @@
+// Please note : @LinkingObjects and default values are not represented in the schema and thus will not be part of the generated models
 package your.package.name.here;
 
 import io.realm.RealmObject;
+import java.util.Date;
 import io.realm.RealmList;
-import RequiredTypes;
 
 public class OptionalTypes extends RealmObject {
     private Boolean boolOptional;
@@ -21,64 +22,65 @@ public class OptionalTypes extends RealmObject {
     private RealmList<Date> dateOptionalArray;
     private RealmList<byte[]> dataOptionalArray;
 
-    public Boolean isBooloptional() { return boolOptional; }
+    public Boolean isBoolOptional() { return boolOptional; }
 
-    public void setBooloptional(Boolean boolOptional) { this.boolOptional = boolOptional; } 
+    public void setBoolOptional(Boolean boolOptional) { this.boolOptional = boolOptional; }
 
-    public Long getIntoptional() { return intOptional; }
+    public Long getIntOptional() { return intOptional; }
 
-    public void setIntoptional(Long intOptional) { this.intOptional = intOptional; } 
+    public void setIntOptional(Long intOptional) { this.intOptional = intOptional; }
 
-    public Float getFloatoptional() { return floatOptional; }
+    public Float getFloatOptional() { return floatOptional; }
 
-    public void setFloatoptional(Float floatOptional) { this.floatOptional = floatOptional; } 
+    public void setFloatOptional(Float floatOptional) { this.floatOptional = floatOptional; }
 
-    public Double getDoubleoptional() { return doubleOptional; }
+    public Double getDoubleOptional() { return doubleOptional; }
 
-    public void setDoubleoptional(Double doubleOptional) { this.doubleOptional = doubleOptional; } 
+    public void setDoubleOptional(Double doubleOptional) { this.doubleOptional = doubleOptional; }
 
-    public String getStringoptional() { return stringOptional; }
+    public String getStringOptional() { return stringOptional; }
 
-    public void setStringoptional(String stringOptional) { this.stringOptional = stringOptional; } 
+    public void setStringOptional(String stringOptional) { this.stringOptional = stringOptional; }
 
-    public Date getDateoptional() { return dateOptional; }
+    public Date getDateOptional() { return dateOptional; }
 
-    public void setDateoptional(Date dateOptional) { this.dateOptional = dateOptional; } 
+    public void setDateOptional(Date dateOptional) { this.dateOptional = dateOptional; }
 
-    public byte[] getDataoptional() { return dataOptional; }
+    public byte[] getDataOptional() { return dataOptional; }
 
-    public void setDataoptional(byte[] dataOptional) { this.dataOptional = dataOptional; } 
+    public void setDataOptional(byte[] dataOptional) { this.dataOptional = dataOptional; }
 
-    public RequiredTypes getObjectoptional() { return objectOptional; }
+    public RequiredTypes getObjectOptional() { return objectOptional; }
 
-    public void setObjectoptional(RequiredTypes objectOptional) { this.objectOptional = objectOptional; } 
+    public void setObjectOptional(RequiredTypes objectOptional) { this.objectOptional = objectOptional; }
 
-    public RealmList<Boolean> isBooloptionalarray() { return boolOptionalArray; }
+    public RealmList<Boolean> getBoolOptionalArray() { return boolOptionalArray; }
 
-    public void setBooloptionalarray(RealmList<Boolean> boolOptionalArray) { this.boolOptionalArray = boolOptionalArray; } 
+    public void setBoolOptionalArray(RealmList<Boolean> boolOptionalArray) { this.boolOptionalArray = boolOptionalArray; }
 
-    public RealmList<Long> getIntoptionalarray() { return intOptionalArray; }
+    public RealmList<Long> getIntOptionalArray() { return intOptionalArray; }
 
-    public void setIntoptionalarray(RealmList<Long> intOptionalArray) { this.intOptionalArray = intOptionalArray; } 
+    public void setIntOptionalArray(RealmList<Long> intOptionalArray) { this.intOptionalArray = intOptionalArray; }
 
-    public RealmList<Float> getFloatoptionalarray() { return floatOptionalArray; }
+    public RealmList<Float> getFloatOptionalArray() { return floatOptionalArray; }
 
-    public void setFloatoptionalarray(RealmList<Float> floatOptionalArray) { this.floatOptionalArray = floatOptionalArray; } 
+    public void setFloatOptionalArray(RealmList<Float> floatOptionalArray) { this.floatOptionalArray = floatOptionalArray; }
 
-    public RealmList<Double> getDoubleoptionalarray() { return doubleOptionalArray; }
+    public RealmList<Double> getDoubleOptionalArray() { return doubleOptionalArray; }
 
-    public void setDoubleoptionalarray(RealmList<Double> doubleOptionalArray) { this.doubleOptionalArray = doubleOptionalArray; } 
+    public void setDoubleOptionalArray(RealmList<Double> doubleOptionalArray) { this.doubleOptionalArray = doubleOptionalArray; }
 
-    public RealmList<String> getStringoptionalarray() { return stringOptionalArray; }
+    public RealmList<String> getStringOptionalArray() { return stringOptionalArray; }
 
-    public void setStringoptionalarray(RealmList<String> stringOptionalArray) { this.stringOptionalArray = stringOptionalArray; } 
+    public void setStringOptionalArray(RealmList<String> stringOptionalArray) { this.stringOptionalArray = stringOptionalArray; }
 
-    public RealmList<Date> getDateoptionalarray() { return dateOptionalArray; }
+    public RealmList<Date> getDateOptionalArray() { return dateOptionalArray; }
 
-    public void setDateoptionalarray(RealmList<Date> dateOptionalArray) { this.dateOptionalArray = dateOptionalArray; } 
+    public void setDateOptionalArray(RealmList<Date> dateOptionalArray) { this.dateOptionalArray = dateOptionalArray; }
 
-    public RealmList<byte[]> getDataoptionalarray() { return dataOptionalArray; }
+    public RealmList<byte[]> getDataOptionalArray() { return dataOptionalArray; }
 
-    public void setDataoptionalarray(RealmList<byte[]> dataOptionalArray) { this.dataOptionalArray = dataOptionalArray; } 
+    public void setDataOptionalArray(RealmList<byte[]> dataOptionalArray) { this.dataOptionalArray = dataOptionalArray; }
+
 
 }

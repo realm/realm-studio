@@ -1,11 +1,12 @@
+// Please note : @LinkingObjects and default values are not represented in the schema and thus will not be part of the generated models
 package your.package.name.here;
 
 import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
 import io.realm.RealmList;
 import io.realm.annotations.Required;
+import java.util.Date;
 import io.realm.annotations.Index;
-import SampleTypes;
+import io.realm.annotations.PrimaryKey;
 
 public class SampleTypes extends RealmObject {
     @PrimaryKey
@@ -17,34 +18,36 @@ public class SampleTypes extends RealmObject {
     @Index
     private long indexedInt;
     private SampleTypes linkToObject;
+    @Required
     private RealmList<SampleTypes> listOfObjects;
 
     public long getPrimary() { return primary; }
 
-    public void setPrimary(long primary) { this.primary = primary; } 
+    public void setPrimary(long primary) { this.primary = primary; }
 
-    public Float getArrayfloatvalue() { return ArrayFloatValue; }
+    public Float getArrayFloatValue() { return ArrayFloatValue; }
 
-    public void setArrayfloatvalue(Float ArrayFloatValue) { this.ArrayFloatValue = ArrayFloatValue; } 
+    public void setArrayFloatValue(Float ArrayFloatValue) { this.ArrayFloatValue = ArrayFloatValue; }
 
-    public RealmList<String> getListofstrings() { return listOfStrings; }
+    public RealmList<String> getListOfStrings() { return listOfStrings; }
 
-    public void setListofstrings(RealmList<String> listOfStrings) { this.listOfStrings = listOfStrings; } 
+    public void setListOfStrings(RealmList<String> listOfStrings) { this.listOfStrings = listOfStrings; }
 
-    public RealmList<Date> getListofoptionaldates() { return listOfOptionalDates; }
+    public RealmList<Date> getListOfOptionalDates() { return listOfOptionalDates; }
 
-    public void setListofoptionaldates(RealmList<Date> listOfOptionalDates) { this.listOfOptionalDates = listOfOptionalDates; } 
+    public void setListOfOptionalDates(RealmList<Date> listOfOptionalDates) { this.listOfOptionalDates = listOfOptionalDates; }
 
-    public long getIndexedint() { return indexedInt; }
+    public long getIndexedInt() { return indexedInt; }
 
-    public void setIndexedint(long indexedInt) { this.indexedInt = indexedInt; } 
+    public void setIndexedInt(long indexedInt) { this.indexedInt = indexedInt; }
 
-    public SampleTypes getLinktoobject() { return linkToObject; }
+    public SampleTypes getLinkToObject() { return linkToObject; }
 
-    public void setLinktoobject(SampleTypes linkToObject) { this.linkToObject = linkToObject; } 
+    public void setLinkToObject(SampleTypes linkToObject) { this.linkToObject = linkToObject; }
 
-    public RealmList<SampleTypes> getListofobjects() { return listOfObjects; }
+    public RealmList<SampleTypes> getListOfObjects() { return listOfObjects; }
 
-    public void setListofobjects(RealmList<SampleTypes> listOfObjects) { this.listOfObjects = listOfObjects; } 
+    public void setListOfObjects(RealmList<SampleTypes> listOfObjects) { this.listOfObjects = listOfObjects; }
+
 
 }

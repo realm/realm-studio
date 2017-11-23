@@ -51,6 +51,16 @@ exports.RequiredTypes = {
   }
 }
 
+exports.LinkTypes = {
+  name: 'LinkTypes',
+  properties: {
+    objectType: { type: 'ReverseType',  optional: true },
+    objectType2: { type: 'ReverseType',  optional: true },
+    listType: 'ReverseType[]',
+    linkingObjects: {type: 'linkingObjects', objectType: 'ReverseType', property: 'links'}
+  }
+}
+
 exports.ReverseType = {
   name: 'ReverseType',
   properties: {

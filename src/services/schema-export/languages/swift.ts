@@ -26,6 +26,11 @@ export default class SwiftSchemaExporter extends SchemaExporter {
     for (const key in schema.properties) {
       if (schema.properties.hasOwnProperty(key)) {
         const prop: any = schema.properties[key];
+        // Ignoring 'linkingObjects' https://github.com/realm/realm-js/issues/1519
+        // happens only tests, when opening a Realm using schema that includes 'linkingObjects'
+        if (prop.type === 'linkingObjects') {
+          continue;
+        }
         this.appendLine('    ' + this.propertyLine(prop));
         if (prop.indexed && prop.name !== schema.primaryKey) {
           indexedProp.push(prop);
@@ -136,8 +141,6 @@ export default class SwiftSchemaExporter extends SchemaExporter {
         return str + 'Date()';
       case 'object':
         return 'Objects must always be optional. Something is not right in this model!';
-      case 'linkingObjects':
-        return 'linkingObjects Unexpected!!!';
     }
   }
 }

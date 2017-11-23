@@ -1,24 +1,27 @@
+// Please note : @LinkingObjects and default values are not represented in the schema and thus will not be part of the generated models
 package your.package.name.here;
 
 import io.realm.RealmObject;
 import io.realm.RealmList;
-import ReverseType;
+import io.realm.annotations.Required;
 
 public class LinkTypes extends RealmObject {
     private ReverseType objectType;
     private ReverseType objectType2;
+    @Required
     private RealmList<ReverseType> listType;
 
-    public ReverseType getObjecttype() { return objectType; }
+    public ReverseType getObjectType() { return objectType; }
 
-    public void setObjecttype(ReverseType objectType) { this.objectType = objectType; } 
+    public void setObjectType(ReverseType objectType) { this.objectType = objectType; }
 
-    public ReverseType getObjecttype2() { return objectType2; }
+    public ReverseType getObjectType2() { return objectType2; }
 
-    public void setObjecttype2(ReverseType objectType2) { this.objectType2 = objectType2; } 
+    public void setObjectType2(ReverseType objectType2) { this.objectType2 = objectType2; }
 
-    public RealmList<ReverseType> getListtype() { return listType; }
+    public RealmList<ReverseType> getListType() { return listType; }
 
-    public void setListtype(RealmList<ReverseType> listType) { this.listType = listType; } 
+    public void setListType(RealmList<ReverseType> listType) { this.listType = listType; }
+
 
 }

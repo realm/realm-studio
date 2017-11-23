@@ -9,6 +9,6 @@ exports.SampleTypes = {
     indexedInt: { type: 'int', indexed: true },
     linkToObject: 'SampleTypes',
     listOfObjects: 'SampleTypes[]',
-    objectsLinkingToThisObject: { type: 'linkingObjects', objectType: 'SampleTypes', property: 'linkToObject' }
   }
 }
+
