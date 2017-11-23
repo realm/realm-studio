@@ -7,11 +7,9 @@ const display = (value: ArrayBuffer | null) =>
   value ? `[${value.byteLength} bytes of data]` : 'null';
 
 export const DataCell = ({
-  isScrolling,
   property,
   value,
 }: {
-  isScrolling: boolean;
   property: Realm.ObjectSchemaProperty;
   value: ArrayBuffer | null;
 }) => (
