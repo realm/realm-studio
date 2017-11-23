@@ -94,7 +94,6 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   };
 
   public onCreateObject = (className: string, values: {}) => {
-    // console.log('onCreateObject called with', values);
     this.realm.write(() => {
       this.realm.create(className, values);
     });

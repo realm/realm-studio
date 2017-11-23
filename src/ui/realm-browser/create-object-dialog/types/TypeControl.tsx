@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as Realm from 'realm';
 
 import { DefaultControl } from './DefaultControl';
+import { NummericControl } from './NummericControl';
 import { StringControl } from './StringControl';
 
 export interface ITypeControlProps {
@@ -23,7 +24,19 @@ export const TypeControl = ({
         onChange={onChange}
       />
     );
+  } else if (
+    property.type === 'int' ||
+    property.type === 'float' ||
+    property.type === 'double'
+  ) {
+    return (
+      <NummericControl
+        property={property}
+        value={value as number | null}
+        onChange={onChange}
+      />
+    );
   } else {
-    return <DefaultControl />;
+    return <DefaultControl property={property} />;
   }
 };

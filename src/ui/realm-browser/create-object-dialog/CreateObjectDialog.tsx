@@ -42,7 +42,7 @@ export const CreateObjectDialog = ({
         <Button color="secondary" onClick={toggle}>
           Cancel
         </Button>{' '}
-        <Button color="primary" onClick={toggle}>
+        <Button color="primary" onClick={onCreate}>
           Create
         </Button>
       </ModalFooter>
