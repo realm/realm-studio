@@ -1,7 +1,10 @@
+import * as electron from 'electron';
 import * as React from 'react';
 import * as Realm from 'realm';
 
 import { CreateObjectHandler } from '..';
+import { showError } from '../../reusable/errors';
+import { IClassFocus } from '../focus';
 import { parse } from '../parsers';
 import { CreateObjectDialog } from './CreateObjectDialog';
 
@@ -12,9 +15,10 @@ interface IRealmObject {
 }
 
 export interface ICreateObjectDialogContainerProps {
-  schema?: Realm.ObjectSchema;
   isOpen: boolean;
   onCreate: CreateObjectHandler;
+  getClassFocus: (className: string) => IClassFocus;
+  schema?: Realm.ObjectSchema;
   toggle: () => void;
 }
 
@@ -51,6 +55,7 @@ export class CreateObjectDialogContainer extends React.PureComponent<
         isOpen={this.props.isOpen}
         onCreate={this.onCreate}
         onValueChange={this.onValueChange}
+        getClassFocus={this.props.getClassFocus}
         schema={this.props.schema}
         toggle={this.props.toggle}
         values={this.state.values}
@@ -74,12 +79,31 @@ export class CreateObjectDialogContainer extends React.PureComponent<
 
   protected generateInitialValue(property: Realm.ObjectSchemaProperty) {
     // TODO: Initialize the values based on their property
-    return property.type === 'string' ? '' : null;
+    if (property.optional) {
+      return null;
+    } else if (
+      property.type === 'int' ||
+      property.type === 'float' ||
+      property.type === 'double'
+    ) {
+      return 0;
+    } else if (property.type === 'string') {
+      return '';
+    } else {
+      // Best guess is null - even with if required
+      return null;
+    }
   }
 
   protected onCreate = () => {
     if (this.props.schema) {
-      this.props.onCreate(this.props.schema.name, this.state.values);
+      try {
+        this.props.onCreate(this.props.schema.name, this.state.values);
+        this.props.toggle();
+      } catch (err) {
+        const className = this.props.schema.name;
+        showError(`Couldn't create the ${className}:\n\n${err.message}`, err);
+      }
     } else {
       throw new Error('Expected a schema');
     }

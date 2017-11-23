@@ -8,8 +8,27 @@
 
     &__Badges {
       float: right;
-      font-size: .9rem;
-      vertical-align: super;
+      font-size: 1rem;
+    }
+  }
+
+  &__ObjectControl {
+    &__FormControl {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    &__Display {
+      font-size: .8rem;
+    }
+  }
+
+  &__StringControl {
+    &__Input {
+      &::placeholder {
+        font-style: italic;
+      }
     }
   }
 }

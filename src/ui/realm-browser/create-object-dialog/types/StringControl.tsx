@@ -1,21 +1,28 @@
 import * as React from 'react';
-import { Input } from 'reactstrap';
+import { Button, Input, InputGroup, InputGroupButton } from 'reactstrap';
 import * as Realm from 'realm';
 
-export interface IStringControlProps {
-  onChange: (value: string) => void;
-  property: Realm.ObjectSchemaProperty;
-  value: string;
-}
+import { IBaseControlProps } from './TypeControl';
 
 export const StringControl = ({
   onChange,
   property,
   value,
-}: IStringControlProps) => (
-  <Input
-    onChange={e => onChange(e.target.value)}
-    required={!property.optional}
-    value={value}
-  />
+}: IBaseControlProps) => (
+  <InputGroup className="CreateObjectDialog__StringControl">
+    <Input
+      className="CreateObjectDialog__StringControl__Input"
+      onChange={e => onChange(e.target.value)}
+      required={!property.optional}
+      placeholder={value === null ? 'null' : ''}
+      value={value ? value : ''}
+    />
+    {value !== null ? (
+      <InputGroupButton>
+        <Button size="sm" onClick={() => onChange(null)}>
+          <i className="fa fa-close" />
+        </Button>
+      </InputGroupButton>
+    ) : null}
+  </InputGroup>
 );

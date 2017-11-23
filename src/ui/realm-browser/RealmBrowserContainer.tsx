@@ -95,7 +95,22 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
 
   public onCreateObject = (className: string, values: {}) => {
     this.realm.write(() => {
-      this.realm.create(className, values);
+      const object = this.realm.create(className, values);
+      const { focus } = this.state;
+      if (focus && focus.kind === 'class') {
+        if (focus.className === className) {
+          const rowIndex = focus.results.indexOf(object);
+          if (rowIndex >= 0) {
+            this.setState({
+              highlight: {
+                row: rowIndex,
+              },
+            });
+          }
+        } else {
+          // TODO: If objects are created on a list - insert it into the list
+        }
+      }
     });
   };
 
@@ -111,6 +126,17 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       focus,
       highlight: this.generateHighlight(objectToScroll),
     });
+  };
+
+  public getClassFocus = (className: string) => {
+    const results = this.realm.objects(className);
+    const focus: IClassFocus = {
+      kind: 'class',
+      className,
+      results,
+      properties: this.derivePropertiesFromClassName(className),
+    };
+    return focus;
   };
 
   public getSchemaLength = (name: string) => {
@@ -167,14 +193,8 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     } else if (property.type === 'object' && value) {
       const className = property.objectType;
       if (className) {
-        const results = this.realm.objects(className);
-        const index = results.indexOf(value);
-        const focus: IClassFocus = {
-          kind: 'class',
-          className,
-          results,
-          properties: this.derivePropertiesFromClassName(className),
-        };
+        const focus = this.getClassFocus(className);
+        const index = focus.results.indexOf(value);
         this.setState({
           focus,
           highlight: {
@@ -317,7 +337,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     }
   };
 
-  public closeSelectObject = () => {
+  public toggleSelectObject = () => {
     this.setState({ selectObject: undefined });
   };
 

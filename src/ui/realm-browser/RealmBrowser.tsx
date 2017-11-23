@@ -7,8 +7,8 @@ import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
 import { ContentContainer } from './ContentContainer';
 import { CreateObjectDialog } from './create-object-dialog';
 import { EncryptionDialog } from './encryption-dialog';
-import { IFocus } from './focus';
-import { ObjectSelectorContainer } from './object-selector/ObjectSelectorContainer';
+import { Focus, IClassFocus } from './focus';
+import { ObjectSelector } from './object-selector';
 import { Sidebar } from './Sidebar';
 import {
   CellChangeHandler,
@@ -22,7 +22,7 @@ import {
 import './RealmBrowser.scss';
 
 export interface IRealmBrowserProps {
-  closeSelectObject: () => void;
+  toggleSelectObject: () => void;
   columnToHighlight?: number;
   confirmModal?: {
     yes: () => void;
@@ -30,7 +30,8 @@ export interface IRealmBrowserProps {
   };
   createObjectSchema?: Realm.ObjectSchema;
   dataVersion: number;
-  focus: IFocus | null;
+  focus: Focus | null;
+  getClassFocus: (className: string) => IClassFocus;
   getSchemaLength: (name: string) => number;
   highlight?: IHighlight;
   isEncryptionDialogVisible: boolean;
@@ -52,12 +53,13 @@ export interface IRealmBrowserProps {
 }
 
 export const RealmBrowser = ({
-  closeSelectObject,
+  toggleSelectObject,
   columnToHighlight,
   confirmModal,
   createObjectSchema,
   dataVersion,
   focus,
+  getClassFocus,
   getSchemaLength,
   highlight,
   isEncryptionDialogVisible,
@@ -110,12 +112,12 @@ export const RealmBrowser = ({
       )}
 
       {selectObject && (
-        <ObjectSelectorContainer
+        <ObjectSelector
+          toggle={toggleSelectObject}
           focus={selectObject.focus}
-          property={selectObject.property}
-          status={!!selectObject}
+          isOpen={!!selectObject}
+          isOptional={selectObject.property.optional}
           onObjectSelected={updateObjectReference}
-          close={closeSelectObject}
         />
       )}
 
@@ -126,6 +128,7 @@ export const RealmBrowser = ({
       />
 
       <CreateObjectDialog
+        getClassFocus={getClassFocus}
         isOpen={!!createObjectSchema}
         onCreate={onCreateObject}
         schema={createObjectSchema}

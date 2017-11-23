@@ -7,11 +7,11 @@ import { CellClickHandler, IHighlight } from '../table';
 import { ObjectSelector } from './ObjectSelector';
 
 export interface ISelectObjectProps {
-  close: () => void;
+  toggle: () => void;
   focus: IClassFocus;
+  isOptional?: boolean;
   onObjectSelected: (object: Realm.Object | null) => void;
-  property: IPropertyWithName;
-  status: boolean;
+  isOpen: boolean;
 }
 
 export interface ISelectObjectState {
@@ -30,9 +30,12 @@ export class ObjectSelectorContainer extends React.Component<
   public render() {
     return (
       <ObjectSelector
-        onSelectObject={this.onSelectObject}
+        focus={this.props.focus}
+        isOpen={this.props.isOpen}
+        isOptional={this.props.isOptional || false}
         onCellClick={this.onCellClick}
-        {...this.props}
+        onSelectObject={this.onSelectObject}
+        toggle={this.props.toggle}
         {...this.state}
       />
     );
@@ -40,7 +43,6 @@ export class ObjectSelectorContainer extends React.Component<
 
   private onCellClick: CellClickHandler = ({
     rowObject,
-    property,
     cellValue,
     rowIndex,
     columnIndex,

@@ -4,21 +4,18 @@ import * as Realm from 'realm';
 
 import { parseNumber } from '../../parsers';
 
-export interface INummericControlProps {
-  onChange: (value: any) => void;
-  property: Realm.ObjectSchemaProperty;
-  value: number | null;
-}
+import { IBaseControlProps } from './TypeControl';
 
 export const NummericControl = ({
   onChange,
   property,
   value,
-}: INummericControlProps) => (
+}: IBaseControlProps) => (
   <Input
     type="number"
+    step={property.type === 'int' ? 1 : 'any'}
     onChange={e => onChange(parseNumber(e.target.value, property))}
     required={!property.optional}
-    value={value ? value : ''}
+    value={typeof value === 'number' ? value : ''}
   />
 );
