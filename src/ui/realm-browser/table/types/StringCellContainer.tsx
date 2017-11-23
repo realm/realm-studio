@@ -7,7 +7,6 @@ import { parse } from './parser';
 import { StringCell } from './StringCell';
 
 export interface IStringCellContainerProps {
-  isAutoSaveEnabled: boolean;
   onUpdateValue: (value: any) => void;
   property: IPropertyWithName;
   value: string;
@@ -74,16 +73,6 @@ export class StringCellContainer extends React.Component<
 
   public onChange = (value: string, input: HTMLInputElement): void => {
     this.setState({ temporalValue: value });
-    if (this.props.isAutoSaveEnabled) {
-      try {
-        const parsedValue = parse(value, this.props.property);
-        this.props.onUpdateValue(parsedValue);
-      } catch (err) {
-        // Probably a parsing error
-        // tslint:disable-next-line:no-console
-        console.warn(`Error parsing the input: ${err.message}`);
-      }
-    }
   };
 
   public onBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
