@@ -4,12 +4,16 @@ export const parseNumber = (
   value: string,
   property: Realm.ObjectSchemaProperty,
 ) => {
-  const parsedValue =
-    property.type === 'int' ? parseInt(value, 10) : parseFloat(value);
-  if (isNaN(parsedValue)) {
-    throw new Error(`"${value}" is not a proper ${property.type}`);
+  if (value === '' && property.optional) {
+    return null;
   } else {
-    return parsedValue;
+    const parsedValue =
+      property.type === 'int' ? parseInt(value, 10) : parseFloat(value);
+    if (isNaN(parsedValue)) {
+      throw new Error(`"${value}" is not a proper ${property.type}`);
+    } else {
+      return parsedValue;
+    }
   }
 };
 
@@ -33,12 +37,19 @@ export const parseBoolean = (value: string) => {
   }
 };
 
-export const parseDate = (value: string) => {
-  const parsed = moment(value);
-  if (parsed.isValid()) {
-    return parsed.toDate();
+export const parseDate = (
+  value: string,
+  property: Realm.ObjectSchemaProperty,
+) => {
+  if (value === '' && property.optional) {
+    return null;
   } else {
-    throw new Error(`"${value}" is not a date: Use the ISO format`);
+    const parsed = moment(value);
+    if (parsed.isValid()) {
+      return parsed.toDate();
+    } else {
+      throw new Error(`"${value}" is not a date: Use the ISO format`);
+    }
   }
 };
 
@@ -58,7 +69,7 @@ export const parse = (value: string, property: Realm.ObjectSchemaProperty) => {
       return parseBoolean(value);
     }
     case 'date':
-      return parseDate(value);
+      return parseDate(value, property);
     case 'string':
       return value;
     default:

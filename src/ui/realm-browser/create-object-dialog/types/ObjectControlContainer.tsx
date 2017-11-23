@@ -50,7 +50,8 @@ export class ObjectControlContainer extends React.Component<
               onClick={this.toggleObjectSelector}
               size="sm"
             >
-              {this.props.value ? 'Select another' : `Select`}
+              {/*this.props.value ? 'Select another' : `Select`*/}
+              <i className="fa fa-link" />
             </Button>
           </InputGroupButton>
           {this.props.value !== null ? (
