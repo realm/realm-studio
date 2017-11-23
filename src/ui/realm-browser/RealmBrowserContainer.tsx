@@ -58,12 +58,15 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       progress: { done: false },
       schemas: [],
     };
-
-    ipcRenderer.on('exportSchema', this.onExportSchema);
   }
 
-  public async componentDidMount() {
+  public componentDidMount() {
     this.loadRealm(this.props.realm);
+    ipcRenderer.addListener('export-schema', this.onExportSchema);
+  }
+
+  public componentWillUnmount() {
+    ipcRenderer.removeListener('export-schema', this.onExportSchema);
   }
 
   public render() {
