@@ -24,11 +24,24 @@
     }
   }
 
-  &__StringControl {
+  &__StringControl,
+  &__DateControl {
     &__Input {
       &::placeholder {
         font-style: italic;
       }
+
+      &::-webkit-clear-button { // sass-lint:disable-line no-vendor-prefixes
+        -webkit-appearance: none; // sass-lint:disable-line no-vendor-prefixes
+        display: none;
+      }
+    }
+  }
+
+  &__DateControl {
+    &__Input {
+      // Overriding the bootstrap default as this produces columns
+      flex-direction: row !important; // sass-lint:disable-line no-important
     }
   }
 }
