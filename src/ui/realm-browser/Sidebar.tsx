@@ -9,7 +9,6 @@ import {
   InputGroupButton,
 } from 'reactstrap';
 
-import { AutoSaveChangeHandler } from '.';
 import { ILoadingProgress } from '../reusable/loading-overlay';
 import { IClassFocus, IFocus, IListFocus } from './focus';
 import * as objectCell from './table/types/ObjectCell';

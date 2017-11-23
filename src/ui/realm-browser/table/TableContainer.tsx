@@ -23,7 +23,7 @@ const MINIMUM_COLUMN_WIDTH = 20;
 
 export interface IBaseTableContainerProps {
   dataVersion?: number;
-  editMode: EditMode;
+  editMode?: EditMode;
   focus: IFocus;
   highlight?: IHighlight;
   onCellChange?: CellChangeHandler;

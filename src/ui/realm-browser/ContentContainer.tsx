@@ -18,9 +18,9 @@ import { Cell } from './table/Cell';
 import { HeaderCell } from './table/HeaderCell';
 
 export interface IContentContainerProps {
-  changeCount: number;
+  changeCount?: number;
   dataVersion?: number;
-  editMode: EditMode;
+  editMode?: EditMode;
   focus: IFocus | null;
   highlight?: IHighlight;
   inTransaction: boolean;

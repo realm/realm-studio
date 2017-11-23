@@ -42,9 +42,9 @@ export const Content = ({
   progress,
   query,
 }: {
-  changeCount: number;
+  changeCount?: number;
   dataVersion?: number;
-  editMode: EditMode;
+  editMode?: EditMode;
   focus: IFocus | null;
   highlight?: IHighlight;
   inTransaction: boolean;

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Button, Input, InputGroup, InputGroupButton } from 'reactstrap';
 
 export interface IBottombarProps {
-  changeCount: number;
+  changeCount?: number;
   inTransaction: boolean;
   onCancelTransaction: () => void;
   onCommitTransaction: () => void;

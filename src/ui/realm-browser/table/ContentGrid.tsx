@@ -38,7 +38,7 @@ const SortableGrid = SortableContainer<GridProps>(Grid as any, {
 export interface IContentGridProps extends Partial<GridProps> {
   columnWidths: number[];
   dataVersion?: number;
-  editMode: EditMode;
+  editMode?: EditMode;
   filteredSortedResults: Realm.Collection<any>;
   getCellValue: (object: any, props: GridCellProps) => string;
   gridRef: (ref: React.ReactNode) => void;

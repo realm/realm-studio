@@ -31,7 +31,7 @@ const rowHeights = {
 export interface ITableProps {
   columnWidths: number[];
   dataVersion?: number;
-  editMode: EditMode;
+  editMode?: EditMode;
   filteredSortedResults: Realm.Collection<any>;
   focus: IFocus;
   getCellValue: (object: any, props: GridCellProps) => string;
