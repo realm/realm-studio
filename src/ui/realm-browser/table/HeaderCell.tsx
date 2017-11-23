@@ -74,6 +74,7 @@ export class HeaderCell extends React.Component<
     nextState: IHeaderCellState,
   ) {
     return (
+      this.props.property !== nextProps.property ||
       this.props.sorting !== nextProps.sorting ||
       this.props.style.width !== nextProps.style.width ||
       this.props.style.left !== nextProps.style.left ||
