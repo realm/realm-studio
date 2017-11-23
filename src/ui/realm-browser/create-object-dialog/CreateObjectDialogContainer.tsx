@@ -89,6 +89,8 @@ export class CreateObjectDialogContainer extends React.PureComponent<
       return 0;
     } else if (property.type === 'string') {
       return '';
+    } else if (property.type === 'list') {
+      return [];
     } else {
       // Best guess is null - even with if required
       return null;
