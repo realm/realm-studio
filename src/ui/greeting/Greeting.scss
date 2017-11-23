@@ -74,6 +74,11 @@ $history-panel-icon-size: 20px;
     margin: $spacer / 4;
   }
 
+  &__DownloadDemo {
+    margin-top: $spacer / 2;
+    font-size: .7rem;
+  }
+
   &__HistoryPanel {
     background: $color-charcoal;
     color: $color-dove;
