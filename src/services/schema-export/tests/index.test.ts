@@ -3,15 +3,15 @@ import fs = require('fs-extra');
 import * as Realm from 'realm';
 import { Language, SchemaExporter } from '../index';
 import { ISchemaExporter } from '../schemaExporter';
-import * as model from './models/sample/SampleTypes';
 import * as modelAll from './models/all/AllTypes';
+import * as model from './models/sample/SampleTypes';
 
 const TESTS_PATH = './src/services/schema-export/tests';
 const makeRealm = (path: string, schema: Realm.ObjectSchema[]): Realm => {
   return new Realm({
     path,
     schema,
-    deleteRealmIfMigrationNeeded: true
+    deleteRealmIfMigrationNeeded: true,
   });
 };
 
@@ -26,8 +26,12 @@ describe('Export schema tests', () => {
     sampleRealm = makeRealm(`${TESTS_PATH}/realms/sample/SampleTypes.realm`, [
       model.SampleTypes,
     ]);
-    allRealm  = makeRealm(`${TESTS_PATH}/realms/all/AllTypes.realm`, [
-      modelAll.IndexedTypes, modelAll.LinkTypes, modelAll.OptionalTypes, modelAll.RequiredTypes, modelAll.ReverseType
+    allRealm = makeRealm(`${TESTS_PATH}/realms/all/AllTypes.realm`, [
+      modelAll.IndexedTypes,
+      modelAll.LinkTypes,
+      modelAll.OptionalTypes,
+      modelAll.RequiredTypes,
+      modelAll.ReverseType,
     ]);
   });
 
