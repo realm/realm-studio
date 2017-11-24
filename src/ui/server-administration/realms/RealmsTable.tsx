@@ -6,6 +6,7 @@ import {
   Dimensions as IAutoSizerDimensions,
   Table,
 } from 'react-virtualized';
+import { Button } from 'reactstrap';
 
 import { IRealmFile } from '../../../services/ros';
 import {
@@ -71,6 +72,14 @@ export const RealmsTable = ({
             </Table>
           )}
         </AutoSizer>
+      </div>
+
+      <div
+        className={classnames('UsersTable__overlayed-controls', {
+          'UsersTable__overlayed-controls--hidden': selectedRealmPath !== null,
+        })}
+      >
+        <Button onClick={toggleCreateRealm}>Create new realm</Button>
       </div>
 
       <CreateRealmDialogContainer
