@@ -13,7 +13,7 @@ export interface IStringCellContainerProps {
 }
 
 interface IStringCellContainerState {
-  temporalValue: string;
+  temporalValue: any;
   isEditing: boolean;
 }
 
@@ -80,7 +80,7 @@ export class StringCellContainer extends React.Component<
       const value = parse(this.state.temporalValue, this.props.property);
       if (value !== this.props.value) {
         this.props.onUpdateValue(value);
-        this.setState({ temporalValue: value.toString(), isEditing: false });
+        this.setState({ temporalValue: value, isEditing: false });
       }
     } catch (err) {
       const leave = this.showInvalidValueError(err.message);
