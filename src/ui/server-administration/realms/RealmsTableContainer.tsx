@@ -25,6 +25,7 @@ export interface IRealmTableContainerProps {
 export interface IRealmTableContainerState extends IRealmLoadingComponentState {
   realms: Realm.Results<ros.IRealmFile> | null;
   selectedRealmPath: string | null;
+  isCreateRealmOpen: boolean;
 }
 
 export class RealmsTableContainer extends RealmLoadingComponent<
@@ -35,6 +36,7 @@ export class RealmsTableContainer extends RealmLoadingComponent<
     super();
     this.state = {
       realms: null,
+      isCreateRealmOpen: false,
       selectedRealmPath: null,
       progress: {
         done: false,
@@ -81,6 +83,17 @@ export class RealmsTableContainer extends RealmLoadingComponent<
     if (path === this.state.selectedRealmPath) {
       this.onRealmSelected(null);
     }
+  };
+
+  public onRealmCreated = async (path: string) => {
+    await ros.realms.create(path);
+    this.onRealmSelected(path);
+  };
+
+  public toggleCreateRealm = () => {
+    this.setState({
+      isCreateRealmOpen: !this.state.isCreateRealmOpen,
+    });
   };
 
   public onRealmOpened = (path: string) => {

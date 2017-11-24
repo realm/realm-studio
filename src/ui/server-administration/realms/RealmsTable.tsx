@@ -12,6 +12,7 @@ import {
   ILoadingProgress,
   LoadingOverlay,
 } from '../../reusable/loading-overlay';
+import { CreateRealmDialogContainer } from './CreateRealmDialogContainer';
 
 import './RealmsTable.scss';
 
@@ -21,18 +22,24 @@ export const RealmsTable = ({
   onRealmDeleted,
   onRealmOpened,
   onRealmSelected,
+  onRealmCreated,
   progress,
   realmCount,
   selectedRealmPath,
+  isCreateRealmOpen,
+  toggleCreateRealm,
 }: {
   getRealm: (index: number) => IRealmFile | null;
   getRealmFromId: (path: string) => IRealmFile | null;
   onRealmDeleted: (path: string) => void;
   onRealmOpened: (path: string) => void;
+  onRealmCreated: (path: string) => void;
   onRealmSelected: (path: string | null) => void;
   progress: ILoadingProgress;
   realmCount: number;
   selectedRealmPath: string | null;
+  isCreateRealmOpen: boolean;
+  toggleCreateRealm: () => void;
 }) => {
   return (
     <div className="RealmsTable">
@@ -65,6 +72,12 @@ export const RealmsTable = ({
           )}
         </AutoSizer>
       </div>
+
+      <CreateRealmDialogContainer
+        isOpen={isCreateRealmOpen}
+        toggle={toggleCreateRealm}
+        onRealmCreated={onRealmCreated}
+      />
 
       <LoadingOverlay progress={progress} fade={true} />
     </div>

@@ -66,6 +66,11 @@ export const open = async (
   return realm;
 };
 
+export const create = async (realmPath: string): Promise<string> => {
+  const newRealm = await Realm.create(realmPath);
+  return newRealm;
+};
+
 export const remove = (realmId: string) => {
   // mocked.deleteRealm(realmId);
   throw new Error('Not yet implemented');
