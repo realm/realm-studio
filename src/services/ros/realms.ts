@@ -68,7 +68,10 @@ export const open = async (
 
 export const remove = async (user: Realm.Sync.User, realmPath: string) => {
   const server = user.server;
-  const url = new URL(`/realms/files${realmPath}`, server);
+  const encodedUrl = encodeURIComponent(
+    realmPath.startsWith('/') ? realmPath.substring(1) : realmPath,
+  );
+  const url = new URL(`/realms/files/${encodedUrl}`, server);
   const request = new Request(url.toString(), {
     method: 'DELETE',
     headers: new Headers({
