@@ -1,3 +1,4 @@
+import * as electron from 'electron';
 import * as React from 'react';
 import * as Realm from 'realm';
 
@@ -74,10 +75,13 @@ export class RealmsTableContainer extends RealmLoadingComponent<
     return this.realm.objectForPrimaryKey<ros.IRealmFile>('RealmFile', path);
   };
 
-  public onRealmDeleted = async (path: string) => {
-    await ros.realms.remove(this.props.user, path);
-    if (path === this.state.selectedRealmPath) {
-      this.onRealmSelected(null);
+  public onRealmDeletion = async (path: string) => {
+    const confirmed = await this.confirmRealmDeletion(path);
+    if (confirmed) {
+      await ros.realms.remove(this.props.user, path);
+      if (path === this.state.selectedRealmPath) {
+        this.onRealmSelected(null);
+      }
     }
   };
 
@@ -126,4 +130,19 @@ export class RealmsTableContainer extends RealmLoadingComponent<
       realms: this.realm.objects<ros.IRealmFile>('RealmFile'),
     });
   };
+
+  private confirmRealmDeletion(path: string): boolean {
+    const result = electron.remote.dialog.showMessageBox(
+      electron.remote.getCurrentWindow(),
+      {
+        type: 'warning',
+        message:
+          'Before deleting the Realm here, make sure that any / all clients (iOS, Android, Js, etc.) has already deleted the app or database locally. If this is not done, they will try to upload their copy of the database - which might have been replaced in the meantime.',
+        title: `Deleting ${path}`,
+        buttons: ['Cancel', 'Delete'],
+      },
+    );
+
+    return result === 1;
+  }
 }

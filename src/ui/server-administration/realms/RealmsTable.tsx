@@ -19,7 +19,7 @@ import './RealmsTable.scss';
 export const RealmsTable = ({
   getRealm,
   getRealmFromId,
-  onRealmDeleted,
+  onRealmDeletion,
   onRealmOpened,
   onRealmSelected,
   progress,
@@ -28,7 +28,7 @@ export const RealmsTable = ({
 }: {
   getRealm: (index: number) => IRealmFile | null;
   getRealmFromId: (path: string) => IRealmFile | null;
-  onRealmDeleted: (path: string) => void;
+  onRealmDeletion: (path: string) => void;
   onRealmOpened: (path: string) => void;
   onRealmSelected: (path: string | null) => void;
   progress: ILoadingProgress;
@@ -85,7 +85,7 @@ export const RealmsTable = ({
         realm={
           selectedRealmPath !== null ? getRealmFromId(selectedRealmPath) : null
         }
-        onRealmDeleted={onRealmDeleted}
+        onRealmDeletion={onRealmDeletion}
       />
 
       <LoadingOverlay progress={progress} fade={true} />
