@@ -93,7 +93,6 @@
     "postinstall": "electron-builder install-app-deps",
     "precommit": "lint-staged",
     "prepackage": "rm -rf ./build && npm run build",
-    "prepare-next-release": "node ./scripts/prepare-next-release.js",
     "prestart": "rm -rf ./build && npm run build",
     "generate-https-certificate": "openssl req -x509 -newkey rsa:4096 -keyout data/keys/server.key -out data/keys/server.crt -days 365 -nodes",
     "generate-all-types-realm": "node ./scripts/generate-realm.js",
