@@ -11,17 +11,18 @@ export const ObjectCell = ({
   property: Realm.ObjectSchemaProperty;
   value: Realm.Object;
 }) => {
-  const displayValue = displayObject(value);
   return (
     <div
       className={classnames(
         'form-control',
         'form-control-sm',
         'RealmBrowser__Table__ObjectCell',
+        {
+          'RealmBrowser__Table__ObjectCell--null': value === null,
+        },
       )}
-      title={displayValue}
     >
-      {displayValue}
+      {displayObject(value)}
     </div>
   );
 };

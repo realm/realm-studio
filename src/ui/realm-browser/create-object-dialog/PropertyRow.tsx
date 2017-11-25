@@ -7,6 +7,7 @@ import { IClassFocus } from '../focus';
 import { TypeControl } from './types/TypeControl';
 
 interface IPropertyRowProps {
+  generateInitialValue: (property: Realm.ObjectSchemaProperty) => any;
   getClassFocus: (className: string) => IClassFocus;
   isPrimary: boolean;
   onValueChange: (value: any) => void;
@@ -16,6 +17,7 @@ interface IPropertyRowProps {
 }
 
 export const PropertyRow = ({
+  generateInitialValue,
   getClassFocus,
   isPrimary,
   onValueChange,
@@ -30,14 +32,16 @@ export const PropertyRow = ({
     >
       {propertyName}
       <span className="CreateObjectDialog__PropertyRow__Badges">
-        {!property.optional ? <Badge>required</Badge> : null}
-        {isPrimary ? <Badge>primary key</Badge> : null}
+        <Badge>{property.type}</Badge>
+        {!property.optional ? <Badge color="primary">required</Badge> : null}
+        {isPrimary ? <Badge color="primary">primary key</Badge> : null}
       </span>
     </Label>
     <TypeControl
+      generateInitialValue={generateInitialValue}
+      getClassFocus={getClassFocus}
       onChange={onValueChange}
       property={property}
-      getClassFocus={getClassFocus}
       value={value}
     />
   </FormGroup>

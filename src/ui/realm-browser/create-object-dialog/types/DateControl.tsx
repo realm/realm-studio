@@ -10,6 +10,7 @@ import { IBaseControlProps } from './TypeControl';
 const DATETIME_LOCAL_FORMAT = 'YYYY-MM-DDThh:mm:ss.SSS';
 
 export const DateControl = ({
+  children,
   onChange,
   property,
   value,
@@ -29,12 +30,13 @@ export const DateControl = ({
         <i className="fa fa-clock-o" />
       </Button>
     </InputGroupButton>
-    {value !== null ? (
+    {value !== null && property.optional ? (
       <InputGroupButton>
         <Button size="sm" onClick={() => onChange(null)}>
           <i className="fa fa-close" />
         </Button>
       </InputGroupButton>
     ) : null}
+    {children}
   </InputGroup>
 );

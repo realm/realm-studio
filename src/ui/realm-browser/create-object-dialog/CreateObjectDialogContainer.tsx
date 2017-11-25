@@ -52,10 +52,11 @@ export class CreateObjectDialogContainer extends React.PureComponent<
   public render() {
     return (
       <CreateObjectDialog
+        generateInitialValue={this.generateInitialValue}
+        getClassFocus={this.props.getClassFocus}
         isOpen={this.props.isOpen}
         onCreate={this.onCreate}
         onValueChange={this.onValueChange}
-        getClassFocus={this.props.getClassFocus}
         schema={this.props.schema}
         toggle={this.props.toggle}
         values={this.state.values}
@@ -77,9 +78,12 @@ export class CreateObjectDialogContainer extends React.PureComponent<
     }
   }
 
-  protected generateInitialValue(property: Realm.ObjectSchemaProperty) {
+  protected generateInitialValue = (property: Realm.ObjectSchemaProperty) => {
     // TODO: Initialize the values based on their property
-    if (property.optional) {
+    if (property.type === 'list') {
+      // If a list is optional, it refers to the type of the elements
+      return [];
+    } else if (property.optional) {
       return null;
     } else if (
       property.type === 'int' ||
@@ -89,13 +93,17 @@ export class CreateObjectDialogContainer extends React.PureComponent<
       return 0;
     } else if (property.type === 'string') {
       return '';
-    } else if (property.type === 'list') {
-      return [];
+    } else if (property.type === 'bool') {
+      return false;
+    } else if (property.type === 'date') {
+      return new Date();
+    } else if (property.type === 'data') {
+      return new Buffer('');
     } else {
       // Best guess is null - even with if required
       return null;
     }
-  }
+  };
 
   protected onCreate = () => {
     if (this.props.schema) {
