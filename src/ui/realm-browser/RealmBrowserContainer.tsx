@@ -15,6 +15,7 @@ import {
   RealmLoadingComponent,
 } from '../reusable/realm-loading-component';
 import { Focus, IClassFocus, IListFocus } from './focus';
+import * as primitives from './primitives';
 import {
   CellChangeHandler,
   CellClickHandler,
@@ -23,7 +24,6 @@ import {
   SortEndHandler,
   SortStartHandler,
 } from './table';
-import * as primitives from './table/types/primitives';
 
 import { RealmBrowser } from './RealmBrowser';
 
@@ -391,7 +391,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       const properties: IPropertyWithName[] = [
         { name: '#', type: 'int', readOnly: true },
       ];
-      if (primitives.TYPES.indexOf(property.objectType) >= 0) {
+      if (primitives.isPrimitive(property.objectType)) {
         return properties.concat([
           {
             name: null,

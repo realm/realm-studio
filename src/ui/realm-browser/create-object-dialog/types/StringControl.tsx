@@ -5,6 +5,7 @@ import * as Realm from 'realm';
 import { IBaseControlProps } from './TypeControl';
 
 export const StringControl = ({
+  children,
   onChange,
   property,
   value,
@@ -17,12 +18,13 @@ export const StringControl = ({
       placeholder={value === null ? 'null' : ''}
       value={value ? value : ''}
     />
-    {value !== null ? (
+    {value !== null && property.optional ? (
       <InputGroupButton>
         <Button size="sm" onClick={() => onChange(null)}>
           <i className="fa fa-close" />
         </Button>
       </InputGroupButton>
     ) : null}
+    {children}
   </InputGroup>
 );

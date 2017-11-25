@@ -1,3 +1,4 @@
+import * as classNames from 'classnames';
 import * as React from 'react';
 import { Button, InputGroup, InputGroupButton } from 'reactstrap';
 import * as Realm from 'realm';
@@ -7,7 +8,11 @@ import { displayObject } from '../../display';
 import { IClassFocus } from '../../focus';
 import { ObjectSelector } from '../../object-selector';
 
-import { ITypeControlProps } from './TypeControl';
+import { IBaseControlProps } from './TypeControl';
+
+export interface IObjectControlContainerProps extends IBaseControlProps {
+  getClassFocus: (className: string) => IClassFocus;
+}
 
 export interface IObjectControlContainerState {
   isObjectSelectorOpen: boolean;
@@ -15,7 +20,7 @@ export interface IObjectControlContainerState {
 }
 
 export class ObjectControlContainer extends React.Component<
-  ITypeControlProps,
+  IObjectControlContainerProps,
   IObjectControlContainerState
 > {
   constructor() {
@@ -35,26 +40,27 @@ export class ObjectControlContainer extends React.Component<
   }
 
   public render() {
+    const { value, property } = this.props;
     return (
       <section className="CreateObjectDialog__ObjectControl">
         <InputGroup>
-          <div className="CreateObjectDialog__ObjectControl__FormControl form-control">
-            <span className="CreateObjectDialog__ObjectControl__Display">
-              {displayObject(this.props.value)}
+          <div
+            onClick={this.toggleObjectSelector}
+            className="CreateObjectDialog__ObjectControl__FormControl form-control"
+          >
+            <span
+              className={classNames(
+                'CreateObjectDialog__ObjectControl__Display',
+                {
+                  'CreateObjectDialog__ObjectControl__Display--null':
+                    value === null,
+                },
+              )}
+            >
+              {displayObject(value)}
             </span>
           </div>
-
-          <InputGroupButton>
-            <Button
-              className="CreateObjectDialog__ObjectControl__SelectButton"
-              onClick={this.toggleObjectSelector}
-              size="sm"
-            >
-              {/*this.props.value ? 'Select another' : `Select`*/}
-              <i className="fa fa-link" />
-            </Button>
-          </InputGroupButton>
-          {this.props.value !== null ? (
+          {value !== null && property.optional ? (
             <InputGroupButton>
               <Button
                 size="sm"
@@ -64,13 +70,14 @@ export class ObjectControlContainer extends React.Component<
               </Button>
             </InputGroupButton>
           ) : null}
+          {this.props.children}
         </InputGroup>
 
         {this.state.focus ? (
           <ObjectSelector
             focus={this.state.focus}
             isOpen={this.state.isObjectSelectorOpen}
-            isOptional={this.props.property.optional}
+            isOptional={property.optional}
             onObjectSelected={this.updateObjectReference}
             toggle={this.toggleObjectSelector}
           />

@@ -41,7 +41,6 @@ export const StringCell = ({
         'form-control-sm',
         'RealmBrowser__Table__Input',
         `RealmBrowser__Table__Input--${property.type}`,
-        { 'RealmBrowser__Table__Input--null': value === null },
       )}
       onDoubleClick={onFocus}
     >
@@ -49,6 +48,9 @@ export const StringCell = ({
         className={classnames(
           'RealmBrowser__Table__StringCell',
           `RealmBrowser__Table__StringCell--${property.type}`,
+          {
+            'RealmBrowser__Table__StringCell--null': value === null,
+          },
         )}
       >
         {value === null ? 'null' : value.toString()}

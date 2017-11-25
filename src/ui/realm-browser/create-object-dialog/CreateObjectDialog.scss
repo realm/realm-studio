@@ -9,31 +9,51 @@
     &__Badges {
       float: right;
       font-size: 1rem;
+
+      & > * {
+        margin-left: $spacer / 4;
+      }
     }
   }
 
   &__ObjectControl {
     &__FormControl {
       align-items: center;
+      cursor: pointer;
       display: flex;
       justify-content: space-between;
     }
 
     &__Display {
       font-size: .8rem;
+
+      &--null {
+        color: $color-elephant;
+        font-style: italic;
+      }
+    }
+  }
+
+  &__BooleanControl,
+  &__ListControl {
+    &__Buttons {
+      display: flex;
+      // Overriding the bootstrap default as this produces columns
+      flex-direction: row !important; // sass-lint:disable-line no-important
+      justify-content: center;
+
+      & > * {
+        margin: 0 ($spacer / 4);
+      }
     }
   }
 
   &__StringControl,
-  &__DateControl {
+  &__DateControl,
+  &__NummericControl {
     &__Input {
       &::placeholder {
         font-style: italic;
-      }
-
-      &::-webkit-clear-button { // sass-lint:disable-line no-vendor-prefixes
-        -webkit-appearance: none; // sass-lint:disable-line no-vendor-prefixes
-        display: none;
       }
     }
   }
@@ -42,6 +62,31 @@
     &__Input {
       // Overriding the bootstrap default as this produces columns
       flex-direction: row !important; // sass-lint:disable-line no-important
+
+      &::-webkit-clear-button { // sass-lint:disable-line no-vendor-prefixes
+        -webkit-appearance: none; // sass-lint:disable-line no-vendor-prefixes
+        display: none;
+      }
+    }
+  }
+
+  &__ListControl {
+    background: $window-background;
+    border-radius: $border-radius;
+    padding: $spacer / 2;
+
+    $list-control-gutter: $spacer / 2;
+
+    &__Items {
+      margin-right: -$list-control-gutter;
+    }
+
+    &__Item {
+      display: inline-block;
+      padding: $list-control-gutter;
+      width: 33%;
+      // Same as the model
+      z-index: 1050;
     }
   }
 }
