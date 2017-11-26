@@ -147,9 +147,7 @@ export const UsersTable = ({
       </div>
 
       <UserSidebar
-        className={classnames('UsersTable__selected-user', {
-          'UsersTable__selected-user--active': selectedUserId !== null,
-        })}
+        isOpen={selectedUserId !== null}
         onUserChangePassword={onUserChangePassword}
         onUserDeletion={onUserDeletion}
         onUserMetadataAppended={onUserMetadataAppended}

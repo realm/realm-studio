@@ -7,7 +7,7 @@ import * as ros from '../../../../services/ros';
 import { UserSidebar } from './UserSidebar';
 
 export interface IUserSidebarContainerProps {
-  className: string | null;
+  isOpen: boolean;
   realms: ros.IRealmFile[];
   onUserChangePassword: (userId: string) => void;
   onUserDeletion: (userId: string) => void;
