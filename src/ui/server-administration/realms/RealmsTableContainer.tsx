@@ -10,13 +10,6 @@ import {
 
 import { RealmsTable } from './RealmsTable';
 
-const PROTECTED_REALMS: string[] = [
-  '/__admin',
-  '/__revocation',
-  '/__wildcardpermissions',
-  '/__password',
-];
-
 export type ValidateCertificatesChangeHandler = (
   validateCertificates: boolean,
 ) => void;
@@ -83,24 +76,11 @@ export class RealmsTableContainer extends RealmLoadingComponent<
   };
 
   public onRealmDeletion = async (path: string) => {
-    const pathIsProtected = PROTECTED_REALMS.indexOf(path) !== -1;
-    if (pathIsProtected) {
-      electron.remote.dialog.showMessageBox(
-        electron.remote.getCurrentWindow(),
-        {
-          type: 'warning',
-          message: `This Realm can't be deleted, because the Realm Object Server depends on it.`,
-          title: `Deleting ${path}`,
-          buttons: ['Ok'],
-        },
-      );
-    } else {
-      const confirmed = await this.confirmRealmDeletion(path);
-      if (confirmed) {
-        await ros.realms.remove(this.props.user, path);
-        if (path === this.state.selectedRealmPath) {
-          this.onRealmSelected(null);
-        }
+    const confirmed = await this.confirmRealmDeletion(path);
+    if (confirmed) {
+      await ros.realms.remove(this.props.user, path);
+      if (path === this.state.selectedRealmPath) {
+        this.onRealmSelected(null);
       }
     }
   };
