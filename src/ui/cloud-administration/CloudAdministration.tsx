@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, Input, Label } from 'reactstrap';
 
 import { AuthenticationFooter } from './AuthenticationFooter';
-import { TenantsContainer } from './TenantsContainer';
+import { SubscriptionsContainer } from './SubscriptionsContainer';
 
 import './CloudAdministration.scss';
 
@@ -25,7 +25,7 @@ export const CloudAdministration = ({
 }) =>
   hasToken ? (
     <div className="CloudAdministration">
-      <TenantsContainer onLogout={onLogout} />
+      <SubscriptionsContainer onLogout={onLogout} />
     </div>
   ) : (
     <div className="CloudAdministration">

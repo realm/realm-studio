@@ -4,7 +4,8 @@ import * as ros from '../services/ros';
 
 export interface ICloudStatus {
   raasToken: string;
-  defaultTenant?: raas.IDefaultTenant;
+  primarySubscription?: raas.user.ISubscription;
+  primarySubscriptionCrednetials?: ros.IServerCredentials;
 }
 
 type CloudStatusListener = (status: ICloudStatus) => void;
@@ -18,19 +19,13 @@ export class CloudManager {
 
   public async authenticateWithGitHub() {
     const code = await github.authenticate();
-    const response = await raas.authenticate(code);
-    raas.setToken(response.token);
+    const response = await raas.user.authenticate(code);
+    raas.user.setToken(response.token);
     this.refresh();
   }
 
   public async deauthenticate() {
-    // Close any default cloud instance
-    const defaultTenant = raas.getDefaultTenant();
-    if (defaultTenant) {
-      await raas.deleteTenant(defaultTenant.controllerUrl, defaultTenant.id);
-      raas.forgetDefaultTenant();
-    }
-    raas.forgetToken();
+    raas.user.forgetToken();
     this.refresh();
   }
 
@@ -52,11 +47,22 @@ export class CloudManager {
     this.listeners.splice(index, 1);
   }
 
-  public refresh() {
-    this.sendCloudStatus({
-      raasToken: raas.getToken(),
-      defaultTenant: raas.getDefaultTenant(),
-    });
+  public async refresh() {
+    const raasToken = raas.user.getToken();
+    if (raasToken) {
+      const subscriptions = await raas.user.getSubscriptions();
+      const primarySubscription =
+        subscriptions.length >= 1 ? subscriptions[0] : undefined;
+      this.sendCloudStatus({
+        raasToken,
+        primarySubscription,
+        primarySubscriptionCrednetials: raas.user.getPrimarySubscriptionCredentials(),
+      });
+    } else {
+      this.sendCloudStatus({
+        raasToken,
+      });
+    }
   }
 
   protected sendCloudStatus(status: ICloudStatus) {

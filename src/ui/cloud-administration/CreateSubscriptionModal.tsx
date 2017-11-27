@@ -11,36 +11,36 @@ import {
   ModalHeader,
 } from 'reactstrap';
 
-import { IServiceShard } from '../../services/raas';
+import { ILocation } from '../../services/raas';
 
-export const CreateTenantModal = ({
+export const CreateSubscriptionModal = ({
   id,
   isOpen,
-  onCreateTenant,
+  locations,
+  onCreateSubscription,
   onIdChange,
   onPasswordChange,
-  onShardChange,
+  onLocationChange,
   onToggle,
   password,
-  selectedShardId,
-  shards,
+  selectedLocationId,
 }: {
   id: string;
   isOpen: boolean;
-  onCreateTenant: () => void;
+  locations: ILocation[];
+  onCreateSubscription: () => void;
   onIdChange: (id: string) => void;
   onPasswordChange: (password: string) => void;
-  onShardChange: (shardId: string) => void;
+  onLocationChange: (shardId: string) => void;
   onToggle: () => void;
   password: string;
-  selectedShardId?: string;
-  shards: IServiceShard[];
+  selectedLocationId?: string;
 }) => (
   <Modal isOpen={isOpen}>
     <Form
       onSubmit={e => {
         e.preventDefault();
-        onCreateTenant();
+        onCreateSubscription();
         onToggle();
       }}
     >
@@ -49,9 +49,11 @@ export const CreateTenantModal = ({
       </ModalHeader>
       <ModalBody>
         <FormGroup>
-          <Label for="createTenantId">Id (lowercase without spaces)</Label>
+          <Label for="createSubscriptionId">
+            Id (lowercase without spaces)
+          </Label>
           <Input
-            id="createTenantId"
+            id="createSubscriptionId"
             pattern="[a-z0-9\-]+"
             value={id}
             onChange={e => {
@@ -60,27 +62,27 @@ export const CreateTenantModal = ({
           />
         </FormGroup>
         <FormGroup>
-          <Label for="createTenantShard">Location</Label>
+          <Label for="createSubscriptionLocation">Location</Label>
           <Input
-            id="createTenantShard"
+            id="createSubscriptionLocation"
             name="select"
             onChange={e => {
-              onShardChange(e.target.value);
+              onLocationChange(e.target.value);
             }}
             type="select"
-            defaultValue={selectedShardId}
+            defaultValue={selectedLocationId}
           >
-            {shards.map(shard => (
-              <option key={shard.id} value={shard.id}>
-                {shard.label}
+            {locations.map(location => (
+              <option key={location.id} value={location.id}>
+                {location.label}
               </option>
             ))}
           </Input>
         </FormGroup>
         <FormGroup>
-          <Label for="createTenantPassword">Initial admin password</Label>
+          <Label for="createSubscriptionPassword">Initial admin password</Label>
           <Input
-            id="createTenantPassword"
+            id="createSubscriptionPassword"
             type="password"
             value={password}
             onChange={e => {

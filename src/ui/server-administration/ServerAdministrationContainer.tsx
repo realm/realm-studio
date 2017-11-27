@@ -100,7 +100,7 @@ export class ServerAdministrationContainer extends React.Component<
     status: ICloudStatus,
   ) => {
     // If the user is deauthenticated - close the window if it's administering a cloud tenant
-    if (this.props.isCloudTenant && !status.defaultTenant) {
+    if (this.props.isCloudTenant && !status.primarySubscription) {
       electron.remote.getCurrentWindow().close();
     }
   };

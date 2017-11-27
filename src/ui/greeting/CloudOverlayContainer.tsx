@@ -44,69 +44,70 @@ export class CloudOverlayContainer extends React.Component<
           done: false,
         },
       });
-      const shards = await raas.getServiceShards();
-      const selectedShard = shards.find(shard => shard.id === 'de1');
-      if (!selectedShard) {
+
+      const locations = await raas.user.getLocations();
+      const selectedLocation = locations.find(
+        location => location.id === 'us1',
+      );
+      if (!selectedLocation) {
         throw new Error(`Unable to select the default german service shard`);
       }
+
       // Now that we're authenticated - let's create a tenant
-      const token = raas.getToken();
+      // TODO: Use "const user = await raas.user.getAuth();" instead
+      // const user = await raas.user.getAuth();
+      // console.log(user);
+
+      const token = raas.user.getToken();
       const payload = jwt.decode(token) as any;
       if (!payload || typeof payload.sub !== 'string') {
         throw new Error(`Expected a sub field in the JWT token from RaaS`);
       }
-      const id = (payload.sub as string).replace('/', '-');
+      const identifier = (payload.sub as string).replace('/', '-');
       const initialPassword = faker.internet.password();
 
       this.setState({
         progress: {
-          activity: `Preparing a slice of Realm Cloud\n${id} sounds like a great name!`,
+          activity: `Preparing a slice of Realm Cloud\n${identifier} sounds like a great name!`,
           done: false,
         },
       });
 
-      const tenantCreated = await raas.createTenant(
-        selectedShard.controllerUrl,
-        {
-          id,
-          initialPassword,
-        },
-      );
+      const subscription = await raas.user.createSubscription({
+        identifier,
+        locationId: selectedLocation.id,
+        initialPassword,
+      });
 
-      if (!tenantCreated) {
+      if (!subscription) {
         throw new Error(`Unable to create the tenant`);
       }
 
-      const serverUrl = `https://${id}.${selectedShard.id}.realmlab.net:9443/`;
-
       const credentials: ros.IUsernamePasswordCredentials = {
         kind: 'password',
-        url: serverUrl,
+        url: subscription.tenantUrl,
         username: 'realm-admin',
         password: initialPassword,
       };
 
-      raas.setDefaultTenant({
-        controllerUrl: selectedShard.controllerUrl,
-        id,
-        credentials,
-      });
+      raas.user.setPrimarySubscriptionCredentials(credentials);
 
       // Poll the tenant for it's availability
       // We expect this to take 17 secound - but we're making to 27 secs to be safe
       // TODO: Make it 17 when the ROS health API has improved
       // @see https://github.com/realm/realm-object-server-private/issues/695
+      // TODO: Consider polling the RaaS API instead of the tenant
       const ETA = 27;
       await this.performCountdown(ETA, async secondsRemaining => {
         this.setState({
           progress: {
-            activity: `Preparing a slice of Realm Cloud\n${id} is ready in ~${secondsRemaining} seconds`,
+            activity: `Preparing a slice of Realm Cloud\n${identifier} is ready in ~${secondsRemaining} seconds`,
             done: false,
             transferable: ETA,
             transferred: ETA - secondsRemaining,
           },
         });
-        return ros.isAvailable(serverUrl);
+        return ros.isAvailable(subscription.tenantUrl);
       });
 
       this.setState({

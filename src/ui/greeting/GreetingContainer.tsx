@@ -70,15 +70,20 @@ export class GreetingContainer extends React.Component<
     await main.refreshCloudStatus();
   };
 
-  public onConnectToDefaultRealmCloud = () => {
-    if (this.state.cloudStatus && this.state.cloudStatus.defaultTenant) {
-      main.showServerAdministration({
-        credentials: this.state.cloudStatus.defaultTenant.credentials,
-        validateCertificates: true,
-        isCloudTenant: true,
-      });
+  public onConnectToPrimarySubscription = () => {
+    if (this.state.cloudStatus && this.state.cloudStatus.primarySubscription) {
+      const credentials = this.state.cloudStatus.primarySubscriptionCrednetials;
+      if (credentials) {
+        main.showServerAdministration({
+          credentials,
+          validateCertificates: true,
+          isCloudTenant: true,
+        });
+      } else {
+        throw new Error(`Missing a primary subscription credentials`);
+      }
     } else {
-      throw new Error(`Missing a default tenant`);
+      throw new Error(`Missing a primary subscription`);
     }
   };
 
@@ -105,7 +110,8 @@ export class GreetingContainer extends React.Component<
     e: Electron.IpcMessageEvent,
     status: ICloudStatus,
   ) => {
-    const isCloudOverlayActivated = !!status.raasToken && !status.defaultTenant;
+    const isCloudOverlayActivated =
+      !!status.raasToken && !status.primarySubscription;
     if (isCloudOverlayActivated) {
       // Focus the window
       electron.remote.getCurrentWindow().focus();

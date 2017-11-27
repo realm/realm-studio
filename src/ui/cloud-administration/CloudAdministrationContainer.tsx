@@ -62,7 +62,7 @@ export class CloudAdministrationContainer extends React.Component<
   };
 
   public onLogout = () => {
-    raas.forgetToken();
+    raas.user.forgetToken();
     localStorage.removeItem(SENT_MESSAGE_STORAGE_KEY);
     this.refreshTokenStatus();
     this.refreshMessageStatus();
@@ -75,6 +75,6 @@ export class CloudAdministrationContainer extends React.Component<
   }
 
   private refreshTokenStatus() {
-    this.setState({ hasToken: raas.hasToken() });
+    this.setState({ hasToken: raas.user.hasToken() });
   }
 }

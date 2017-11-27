@@ -22,7 +22,7 @@ export const Greeting = ({
   onAuthenticate,
   onAuthenticated,
   onCheckForUpdates,
-  onConnectToDefaultRealmCloud,
+  onConnectToPrimarySubscription,
   onConnectToServer,
   onOpenLocalRealm,
   updateStatus,
@@ -34,7 +34,7 @@ export const Greeting = ({
   onAuthenticate: () => void;
   onAuthenticated: () => void;
   onCheckForUpdates: () => void;
-  onConnectToDefaultRealmCloud: () => void;
+  onConnectToPrimarySubscription: () => void;
   onConnectToServer: () => void;
   onOpenLocalRealm: () => void;
   updateStatus: IUpdateStatus;
@@ -57,17 +57,18 @@ export const Greeting = ({
         {cloudStatus && cloudStatus.raasToken ? (
           <Button
             className="Greeting__Action"
-            onClick={onConnectToDefaultRealmCloud}
+            onClick={onConnectToPrimarySubscription}
             color="primary"
-            disabled={!cloudStatus.defaultTenant}
+            disabled={!cloudStatus.primarySubscription}
           >
             Connect to Realm Cloud
           </Button>
         ) : (
           <Button
             className="Greeting__Action"
-            onClick={onAuthenticate}
             color="primary"
+            disabled={!cloudStatus}
+            onClick={onAuthenticate}
           >
             <i className="fa fa-github" /> GitHub
           </Button>
