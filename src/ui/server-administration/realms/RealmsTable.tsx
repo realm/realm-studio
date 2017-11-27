@@ -12,13 +12,14 @@ import {
   ILoadingProgress,
   LoadingOverlay,
 } from '../../reusable/loading-overlay';
+import { RealmSidebar } from './RealmSidebar';
 
 import './RealmsTable.scss';
 
 export const RealmsTable = ({
   getRealm,
   getRealmFromId,
-  onRealmDeleted,
+  onRealmDeletion,
   onRealmOpened,
   onRealmSelected,
   progress,
@@ -27,7 +28,7 @@ export const RealmsTable = ({
 }: {
   getRealm: (index: number) => IRealmFile | null;
   getRealmFromId: (path: string) => IRealmFile | null;
-  onRealmDeleted: (path: string) => void;
+  onRealmDeletion: (path: string) => void;
   onRealmOpened: (path: string) => void;
   onRealmSelected: (path: string | null) => void;
   progress: ILoadingProgress;
@@ -36,7 +37,12 @@ export const RealmsTable = ({
 }) => {
   return (
     <div className="RealmsTable">
-      <div className="RealmsTable__table">
+      <div
+        className="RealmsTable__table"
+        onClick={event => {
+          onRealmSelected(null);
+        }}
+      >
         <AutoSizer>
           {({ width, height }: IAutoSizerDimensions) => (
             <Table
@@ -55,9 +61,17 @@ export const RealmsTable = ({
               rowGetter={({ index }) => getRealm(index)}
               onRowClick={({ event, index }) => {
                 const realm = getRealm(index);
+                onRealmSelected(
+                  realm && realm.path !== selectedRealmPath ? realm.path : null,
+                );
+                event.stopPropagation();
+              }}
+              onRowDoubleClick={({ event, index }) => {
+                const realm = getRealm(index);
                 if (realm) {
                   onRealmOpened(realm.path);
                 }
+                event.stopPropagation();
               }}
             >
               <Column label="Path" dataKey="path" width={width} />
@@ -65,6 +79,14 @@ export const RealmsTable = ({
           )}
         </AutoSizer>
       </div>
+
+      <RealmSidebar
+        isOpen={selectedRealmPath !== null}
+        realm={
+          selectedRealmPath !== null ? getRealmFromId(selectedRealmPath) : null
+        }
+        onRealmDeletion={onRealmDeletion}
+      />
 
       <LoadingOverlay progress={progress} fade={true} />
     </div>
