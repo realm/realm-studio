@@ -10,7 +10,12 @@ import {
 
 import { RealmsTable } from './RealmsTable';
 
-const PROTECTED_REALMS: string[] = ['/__admin'];
+const PROTECTED_REALMS: string[] = [
+  '/__admin',
+  '/__revocation',
+  '/__wildcardpermissions',
+  '/__password',
+];
 
 export type ValidateCertificatesChangeHandler = (
   validateCertificates: boolean,
@@ -84,7 +89,7 @@ export class RealmsTableContainer extends RealmLoadingComponent<
         electron.remote.getCurrentWindow(),
         {
           type: 'warning',
-          message: `This realm can't be deleted`,
+          message: `This Realm can't be deleted, because the Realm Object Server depends on it.`,
           title: `Deleting ${path}`,
           buttons: ['Ok'],
         },
