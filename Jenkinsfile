@@ -26,6 +26,12 @@ jobWrapper {
           // Test that the package-lock has changed while building the image
           // - if it has, a dependency was changed in package.json but not updated in the lock
           sh 'npm run check:package-lock'
+          try {
+            // Run the TS specific linting
+            sh 'npm run lint:ts'
+          } catch (err) {
+            error "TypeScript code doesn't lint correctly, run `npm run lint:ts` or see detailed output for the errors."
+          }
           // Trying to test - but that might fail
           try {
             // Run the tests with xvfb to allow opening windows virtually, and report using the junit reporter
