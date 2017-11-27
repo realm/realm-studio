@@ -66,9 +66,20 @@ export const open = async (
   return realm;
 };
 
-export const create = async (realmPath: string): Promise<string> => {
-  const newRealm = await Realm.create(realmPath);
-  return newRealm;
+export const create = (
+  user: Realm.Sync.User,
+  realmPath: string,
+  onCreatingError: (error: any) => void,
+): Realm => {
+  const config = {
+    sync: {
+      user,
+      url: realmPath,
+      error: onCreatingError,
+    },
+    schema: [],
+  };
+  return new Realm(config);
 };
 
 export const remove = (realmId: string) => {
