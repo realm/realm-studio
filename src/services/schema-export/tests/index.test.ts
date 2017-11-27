@@ -15,21 +15,32 @@ const makeRealm = (path: string, schema: Realm.ObjectSchema[]): Realm => {
   });
 };
 
-const test = (
+const assertGeneratedSchemaIsValid = (
   language: Language,
   expectedFilePath: string,
   generatedFilePath: string,
   realm: Realm,
 ) => {
-  const expected = fs.readFileSync(expectedFilePath, 'utf8');
+  assertGeneratedSchemaAreValid(language, Array<string>(expectedFilePath), Array<string>(generatedFilePath), realm);
+};
+
+const assertGeneratedSchemaAreValid = (
+  language: Language,
+  expectedFilePaths: string[],
+  generatedFilePaths: string[],
+  realm: Realm,
+) => {
+  assert.equal(expectedFilePaths.length, generatedFilePaths.length);
+
   const exporter = SchemaExporter(language);
   exporter.exportSchema(realm);
   exporter.writeFilesToDisk(`${TESTS_PATH}/temporal/${language}`);
-  const generated = fs.readFileSync(
-    `${TESTS_PATH}/temporal/${language}/${generatedFilePath}`,
-    'utf8',
-  );
-  assert.equal(generated, expected);
+  
+  for (let i = 0; i < expectedFilePaths.length; i++) {
+    const expected = fs.readFileSync(expectedFilePaths[i], 'utf8');
+    const generated = fs.readFileSync(generatedFilePaths[i], 'utf8');
+    assert.equal(generated, expected);
+  }
 };
 
 describe('Export schema tests', () => {
@@ -40,113 +51,79 @@ describe('Export schema tests', () => {
     fs.removeSync(`${TESTS_PATH}/realms`);
     fs.removeSync(`${TESTS_PATH}/temporal`);
     sampleRealm = makeRealm(`${TESTS_PATH}/realms/sample/SampleTypes.realm`, [
-      model.SampleTypes,
+      model.SampleTypes
     ]);
     allRealm = makeRealm(`${TESTS_PATH}/realms/all/AllTypes.realm`, [
       modelAll.IndexedTypes,
       modelAll.LinkTypes,
       modelAll.OptionalTypes,
       modelAll.RequiredTypes,
-      modelAll.ReverseType,
+      modelAll.ReverseType
     ]);
   });
 
   it('JS export with sample types', () => {
-    test(
+    assertGeneratedSchemaIsValid(
       Language.JS,
       `${TESTS_PATH}/models/sample/js/SampleTypes.js`,
-      'SampleTypes-model.js',
-      sampleRealm as Realm,
+      `${TESTS_PATH}/temporal/${Language.JS}/SampleTypes-model.js`,
+      sampleRealm as Realm
     );
   });
 
   it('JS export with all types', () => {
-    test(
+    assertGeneratedSchemaIsValid(
       Language.JS,
       `${TESTS_PATH}/models/all/js/AllTypes.js`,
-      'AllTypes-model.js',
-      allRealm as Realm,
+      `${TESTS_PATH}/temporal/${Language.JS}/AllTypes-model.js`,
+      allRealm as Realm
     );
   });
 
   it('Swift export with sample types', () => {
-    test(
+    assertGeneratedSchemaIsValid(
       Language.Swift,
       `${TESTS_PATH}/models/sample/swift/SampleTypes.swift`,
-      'SampleTypes-model.swift',
-      sampleRealm as Realm,
+      `${TESTS_PATH}/temporal/${Language.Swift}/SampleTypes-model.swift`,
+      sampleRealm as Realm
     );
   });
 
   it('Swift export with all types', () => {
-    test(
+    assertGeneratedSchemaIsValid(
       Language.Swift,
       `${TESTS_PATH}/models/all/swift/AllTypes.swift`,
-      'AllTypes-model.swift',
-      allRealm as Realm,
+      `${TESTS_PATH}/temporal/${Language.Swift}/AllTypes-model.swift`,
+      allRealm as Realm
     );
   });
 
   it('Java export with sample types', () => {
-    test(
+    assertGeneratedSchemaIsValid(
       Language.Java,
       `${TESTS_PATH}/models/sample/java/SampleTypes.java`,
-      'SampleTypes.java',
-      sampleRealm as Realm,
+      `${TESTS_PATH}/temporal/${Language.Java}/SampleTypes.java`,
+      sampleRealm as Realm
     );
   });
 
   it('Java exporter model with all types', () => {
-    const expectedIndexedTypes = fs.readFileSync(
+    assertGeneratedSchemaAreValid(
+      Language.Java,
+      Array<string>(
       `${TESTS_PATH}/models/all/java/IndexedTypes.java`,
-      'utf8',
-    );
-    const expectedLinkTypes = fs.readFileSync(
       `${TESTS_PATH}/models/all/java/LinkTypes.java`,
-      'utf8',
-    );
-    const expectedOptionalTypes = fs.readFileSync(
       `${TESTS_PATH}/models/all/java/OptionalTypes.java`,
-      'utf8',
-    );
-    const expectedRequiredTypes = fs.readFileSync(
       `${TESTS_PATH}/models/all/java/RequiredTypes.java`,
-      'utf8',
-    );
-    const expectedReverseType = fs.readFileSync(
-      `${TESTS_PATH}/models/all/java/ReverseType.java`,
-      'utf8',
-    );
-
-    const exp: ISchemaExporter = SchemaExporter(Language.Java);
-    exp.exportSchema(allRealm as Realm);
-    exp.writeFilesToDisk(`${TESTS_PATH}/temporal/${Language.Java}`);
-
-    const generatedIndexedTypes = fs.readFileSync(
+      `${TESTS_PATH}/models/all/java/ReverseType.java`),
+      Array<string>(
       `${TESTS_PATH}/temporal/${Language.Java}/IndexedTypes.java`,
-      'utf8',
-    );
-    const generatedLinkTypes = fs.readFileSync(
       `${TESTS_PATH}/temporal/${Language.Java}/LinkTypes.java`,
-      'utf8',
-    );
-    const generatedOptionalTypes = fs.readFileSync(
       `${TESTS_PATH}/temporal/${Language.Java}/OptionalTypes.java`,
-      'utf8',
-    );
-    const generatedRequiredTypes = fs.readFileSync(
       `${TESTS_PATH}/temporal/${Language.Java}/RequiredTypes.java`,
-      'utf8',
+      `${TESTS_PATH}/temporal/${Language.Java}/ReverseType.java`),
+       allRealm as Realm
     );
-    const generatedReverseType = fs.readFileSync(
-      `${TESTS_PATH}/temporal/${Language.Java}/ReverseType.java`,
-      'utf8',
-    );
-    assert.equal(generatedIndexedTypes, expectedIndexedTypes);
-    assert.equal(generatedLinkTypes, expectedLinkTypes);
-    assert.equal(generatedOptionalTypes, expectedOptionalTypes);
-    assert.equal(generatedRequiredTypes, expectedRequiredTypes);
-    assert.equal(generatedReverseType, expectedReverseType);
   });
 
   after(() => {
