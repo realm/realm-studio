@@ -174,8 +174,4 @@ export default class JavaSchemaExporter extends SchemaExporter {
     }
     return null;
   }
-
-  private capitalizedString(name: string): string {
-    return name.charAt(0).toUpperCase() + name.slice(1);
-  }
 }

@@ -1,23 +1,35 @@
+// Please note : [Backlink] properties and default values are not represented
+// in the schema and thus will not be part of the generated models
+
 using System;
 using System.Collections.Generic;
 using Realms;
 
-public class SampleTypes : RealmObject
+namespace MyProject.Models
 {
-    [PrimaryKey]
-    public long primary { get; set; }
+    public class SampleTypes : RealmObject
+    {
+        [PrimaryKey]
+        [MapTo("primary")]
+        public long Primary { get; set; }
 
-    public float? ArrayFloatValue { get; set; }
+        public float? ArrayFloatValue { get; set; }
 
-    [Required]
-    public IList<string> listOfStrings { get; }
+        [Required]
+        [MapTo("listOfStrings")]
+        public IList<string> ListOfStrings { get; }
 
-    public IList<DateTimeOffset?> listOfOptionalDates { get; }
+        [MapTo("listOfOptionalDates")]
+        public IList<DateTimeOffset?> ListOfOptionalDates { get; }
 
-    public long indexedInt { get; set; }
+        [Indexed]
+        [MapTo("indexedInt")]
+        public long IndexedInt { get; set; }
 
-    public SampleTypes linkToObject { get; set; }
+        [MapTo("linkToObject")]
+        public SampleTypes LinkToObject { get; set; }
 
-    [Required]
-    public IList<SampleTypes> listOfObjects { get; }
+        [MapTo("listOfObjects")]
+        public IList<SampleTypes> ListOfObjects { get; }
+    }
 }

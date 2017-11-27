@@ -52,4 +52,8 @@ export abstract class SchemaExporter implements ISchemaExporter {
       fs.outputFileSync(fullpath, file.content);
     });
   }
+
+  protected capitalizedString(name: string): string {
+    return name.charAt(0).toUpperCase() + name.slice(1);
+  }
 }
