@@ -78,13 +78,13 @@
     $list-control-gutter: $spacer / 2;
 
     &__Items {
-      margin-right: -$list-control-gutter;
+      // Tumbleweed
     }
 
     &__Item {
       display: inline-block;
-      padding: $list-control-gutter;
-      width: 33%;
+      padding-bottom: $list-control-gutter;
+      width: 100%;
       // Same as the model
       z-index: 1050;
     }
