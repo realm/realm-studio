@@ -7,7 +7,7 @@ import { Application } from './main/Application';
 // TODO: Submit these to a service like opbeat instead.
 process.on('uncaughtException', error => {
   dialog.showErrorBox('Uncaught exception', `${error.message}: ${error.stack}`);
-});
+})
 
 const isProduction = process.env.NODE_ENV === 'production';
 
