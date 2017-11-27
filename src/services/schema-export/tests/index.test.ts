@@ -165,6 +165,74 @@ describe('Export schema tests', () => {
     assert.equal(generatedReverseType, expectedReverseType);
   });
 
+  it('C# exporter model with sample types', () => {
+    const expected = fs.readFileSync(
+      `${TESTS_PATH}/models/sample/cs/SampleTypes.cs`,
+      'utf8',
+    );
+    exp = SchemaExporter(Language.CS);
+
+    exp.exportSchema(sampleRealm);
+    exp.writeFilesToDisk(`${TESTS_PATH}/temporal/${Language.CS}`);
+    const generated = fs.readFileSync(
+      `${TESTS_PATH}/temporal/${Language.CS}/SampleTypes.cs`,
+      'utf8',
+    );
+    assert.equal(generated, expected);
+  });
+
+  it('C# exporter model with all types', () => {
+    const expectedIndexedTypes = fs.readFileSync(
+      `${TESTS_PATH}/models/all/cs/IndexedTypes.cs`,
+      'utf8',
+    );
+    const expectedLinkTypes = fs.readFileSync(
+      `${TESTS_PATH}/models/all/cs/LinkTypes.cs`,
+      'utf8',
+    );
+    const expectedOptionalTypes = fs.readFileSync(
+      `${TESTS_PATH}/models/all/cs/OptionalTypes.cs`,
+      'utf8',
+    );
+    const expectedRequiredTypes = fs.readFileSync(
+      `${TESTS_PATH}/models/all/cs/RequiredTypes.cs`,
+      'utf8',
+    );
+    const expectedReverseType = fs.readFileSync(
+      `${TESTS_PATH}/models/all/cs/ReverseType.cs`,
+      'utf8',
+    );
+    exp = SchemaExporter(Language.CS);
+
+    exp.exportSchema(allRealm);
+    exp.writeFilesToDisk(`${TESTS_PATH}/temporal/${Language.CS}`);
+    const generatedIndexedTypes = fs.readFileSync(
+      `${TESTS_PATH}/temporal/${Language.CS}/IndexedTypes.cs`,
+      'utf8',
+    );
+    const generatedLinkTypes = fs.readFileSync(
+      `${TESTS_PATH}/temporal/${Language.CS}/LinkTypes.cs`,
+      'utf8',
+    );
+    const generatedOptionalTypes = fs.readFileSync(
+      `${TESTS_PATH}/temporal/${Language.CS}/OptionalTypes.cs`,
+      'utf8',
+    );
+    const generatedRequiredTypes = fs.readFileSync(
+      `${TESTS_PATH}/temporal/${Language.CS}/RequiredTypes.cs`,
+      'utf8',
+    );
+    const generatedReverseType = fs.readFileSync(
+      `${TESTS_PATH}/temporal/${Language.CS}/ReverseType.cs`,
+      'utf8',
+    );
+    assert.equal(generatedIndexedTypes, expectedIndexedTypes);
+    assert.equal(generatedLinkTypes, expectedLinkTypes);
+    assert.equal(generatedOptionalTypes, expectedOptionalTypes);
+    assert.equal(generatedRequiredTypes, expectedRequiredTypes);
+    assert.equal(generatedReverseType, expectedReverseType);
+  });
+
   after(() => {
     fs.removeSync(`${TESTS_PATH}/realms`);
     fs.removeSync(`${TESTS_PATH}/temporal`);
