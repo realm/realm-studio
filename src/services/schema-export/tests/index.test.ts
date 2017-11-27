@@ -21,7 +21,12 @@ const assertGeneratedSchemaIsValid = (
   generatedFilePath: string,
   realm: Realm,
 ) => {
-  assertGeneratedSchemaAreValid(language, Array<string>(expectedFilePath), Array<string>(generatedFilePath), realm);
+  assertGeneratedSchemaAreValid(
+    language,
+    Array<string>(expectedFilePath),
+    Array<string>(generatedFilePath),
+    realm,
+  );
 };
 
 const assertGeneratedSchemaAreValid = (
@@ -35,7 +40,7 @@ const assertGeneratedSchemaAreValid = (
   const exporter = SchemaExporter(language);
   exporter.exportSchema(realm);
   exporter.writeFilesToDisk(`${TESTS_PATH}/temporal/${language}`);
-  
+
   for (let i = 0; i < expectedFilePaths.length; i++) {
     const expected = fs.readFileSync(expectedFilePaths[i], 'utf8');
     const generated = fs.readFileSync(generatedFilePaths[i], 'utf8');
@@ -51,14 +56,14 @@ describe('Export schema tests', () => {
     fs.removeSync(`${TESTS_PATH}/realms`);
     fs.removeSync(`${TESTS_PATH}/temporal`);
     sampleRealm = makeRealm(`${TESTS_PATH}/realms/sample/SampleTypes.realm`, [
-      model.SampleTypes
+      model.SampleTypes,
     ]);
     allRealm = makeRealm(`${TESTS_PATH}/realms/all/AllTypes.realm`, [
       modelAll.IndexedTypes,
       modelAll.LinkTypes,
       modelAll.OptionalTypes,
       modelAll.RequiredTypes,
-      modelAll.ReverseType
+      modelAll.ReverseType,
     ]);
   });
 
@@ -67,7 +72,7 @@ describe('Export schema tests', () => {
       Language.JS,
       `${TESTS_PATH}/models/sample/js/SampleTypes.js`,
       `${TESTS_PATH}/temporal/${Language.JS}/SampleTypes-model.js`,
-      sampleRealm as Realm
+      sampleRealm as Realm,
     );
   });
 
@@ -76,7 +81,7 @@ describe('Export schema tests', () => {
       Language.JS,
       `${TESTS_PATH}/models/all/js/AllTypes.js`,
       `${TESTS_PATH}/temporal/${Language.JS}/AllTypes-model.js`,
-      allRealm as Realm
+      allRealm as Realm,
     );
   });
 
@@ -85,7 +90,7 @@ describe('Export schema tests', () => {
       Language.Swift,
       `${TESTS_PATH}/models/sample/swift/SampleTypes.swift`,
       `${TESTS_PATH}/temporal/${Language.Swift}/SampleTypes-model.swift`,
-      sampleRealm as Realm
+      sampleRealm as Realm,
     );
   });
 
@@ -94,7 +99,7 @@ describe('Export schema tests', () => {
       Language.Swift,
       `${TESTS_PATH}/models/all/swift/AllTypes.swift`,
       `${TESTS_PATH}/temporal/${Language.Swift}/AllTypes-model.swift`,
-      allRealm as Realm
+      allRealm as Realm,
     );
   });
 
@@ -103,7 +108,7 @@ describe('Export schema tests', () => {
       Language.Java,
       `${TESTS_PATH}/models/sample/java/SampleTypes.java`,
       `${TESTS_PATH}/temporal/${Language.Java}/SampleTypes.java`,
-      sampleRealm as Realm
+      sampleRealm as Realm,
     );
   });
 
@@ -111,18 +116,20 @@ describe('Export schema tests', () => {
     assertGeneratedSchemaAreValid(
       Language.Java,
       Array<string>(
-      `${TESTS_PATH}/models/all/java/IndexedTypes.java`,
-      `${TESTS_PATH}/models/all/java/LinkTypes.java`,
-      `${TESTS_PATH}/models/all/java/OptionalTypes.java`,
-      `${TESTS_PATH}/models/all/java/RequiredTypes.java`,
-      `${TESTS_PATH}/models/all/java/ReverseType.java`),
+        `${TESTS_PATH}/models/all/java/IndexedTypes.java`,
+        `${TESTS_PATH}/models/all/java/LinkTypes.java`,
+        `${TESTS_PATH}/models/all/java/OptionalTypes.java`,
+        `${TESTS_PATH}/models/all/java/RequiredTypes.java`,
+        `${TESTS_PATH}/models/all/java/ReverseType.java`,
+      ),
       Array<string>(
-      `${TESTS_PATH}/temporal/${Language.Java}/IndexedTypes.java`,
-      `${TESTS_PATH}/temporal/${Language.Java}/LinkTypes.java`,
-      `${TESTS_PATH}/temporal/${Language.Java}/OptionalTypes.java`,
-      `${TESTS_PATH}/temporal/${Language.Java}/RequiredTypes.java`,
-      `${TESTS_PATH}/temporal/${Language.Java}/ReverseType.java`),
-       allRealm as Realm
+        `${TESTS_PATH}/temporal/${Language.Java}/IndexedTypes.java`,
+        `${TESTS_PATH}/temporal/${Language.Java}/LinkTypes.java`,
+        `${TESTS_PATH}/temporal/${Language.Java}/OptionalTypes.java`,
+        `${TESTS_PATH}/temporal/${Language.Java}/RequiredTypes.java`,
+        `${TESTS_PATH}/temporal/${Language.Java}/ReverseType.java`,
+      ),
+      allRealm as Realm,
     );
   });
 
