@@ -130,7 +130,7 @@
     "react-sortable-hoc": "^0.6.8",
     "react-virtualized": "^9.11.1",
     "reactstrap": "^4.8.0",
-    "realm": "2.0.4",
+    "realm": "2.0.11",
     "uuid": "^3.1.0"
   },
   "devDependencies": {
@@ -173,7 +173,7 @@
     "prettier": "^1.7.4",
     "react-dom": "^15.6.2",
     "react-hot-loader": "^3.1.1",
-    "realm-object-server": "2.0.13",
+    "realm-object-server": "2.0.22",
     "resolve-url-loader": "^2.1.1",
     "sass-lint": "^1.12.1",
     "sass-loader": "^6.0.6",
