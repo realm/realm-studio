@@ -66,10 +66,7 @@ export const open = async (
   return realm;
 };
 
-export const remove = async (
-  user: Realm.Sync.User,
-  realmPath: string,
-): Promise<any> => {
+export const remove = async (user: Realm.Sync.User, realmPath: string) => {
   const server = user.server;
   const encodedUrl = encodeURIComponent(
     realmPath.startsWith('/') ? realmPath.substring(1) : realmPath,
@@ -84,15 +81,14 @@ export const remove = async (
     }),
   });
   const response = await fetch(request);
-  return new Promise((resolve, reject) => {
-    if (response.status === 200) {
-      resolve();
-    } else {
-      response.json().then(data => {
-        reject(data.message);
-      });
-    }
-  });
+  const body = await response.json();
+  if (response.ok) {
+    return body;
+  } else if (body && body.message) {
+    throw new Error(`Could not remove Realm: ${body.message}`);
+  } else {
+    throw new Error(`Could not remove Realm`);
+  }
 };
 
 export const update = (realmId: string, values: Partial<IRealmFile>) => {
