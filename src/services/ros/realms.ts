@@ -66,7 +66,10 @@ export const open = async (
   return realm;
 };
 
-export const remove = async (user: Realm.Sync.User, realmPath: string) => {
+export const remove = async (
+  user: Realm.Sync.User,
+  realmPath: string,
+): Promise<any> => {
   const server = user.server;
   const encodedUrl = encodeURIComponent(
     realmPath.startsWith('/') ? realmPath.substring(1) : realmPath,
@@ -80,9 +83,16 @@ export const remove = async (user: Realm.Sync.User, realmPath: string) => {
       'Content-Type': 'application/json',
     }),
   });
-  // Perform the request
   const response = await fetch(request);
-  return response.status === 200;
+  return new Promise((resolve, reject) => {
+    if (response.status === 200) {
+      resolve();
+    } else {
+      response.json().then(data => {
+        reject(data.message);
+      });
+    }
+  });
 };
 
 export const update = (realmId: string, values: Partial<IRealmFile>) => {

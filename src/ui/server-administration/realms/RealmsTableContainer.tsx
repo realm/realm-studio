@@ -8,6 +8,7 @@ import {
   RealmLoadingComponent,
 } from '../../reusable/realm-loading-component';
 
+import { showError } from '../../reusable/errors';
 import { RealmsTable } from './RealmsTable';
 
 export type ValidateCertificatesChangeHandler = (
@@ -78,10 +79,14 @@ export class RealmsTableContainer extends RealmLoadingComponent<
   public onRealmDeletion = async (path: string) => {
     const confirmed = await this.confirmRealmDeletion(path);
     if (confirmed) {
-      await ros.realms.remove(this.props.user, path);
-      if (path === this.state.selectedRealmPath) {
-        this.onRealmSelected(null);
-      }
+      ros.realms
+        .remove(this.props.user, path)
+        .then(() => {
+          if (path === this.state.selectedRealmPath) {
+            this.onRealmSelected(null);
+          }
+        })
+        .catch(err => showError('Error deleting realm', err));
     }
   };
 
