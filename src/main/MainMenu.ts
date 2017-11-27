@@ -77,14 +77,14 @@ export class MainMenu {
         submenu: [
           {
             label: 'Login with GitHub',
-            visible: !raas.hasToken(),
+            visible: !raas.user.hasToken(),
             click: () => {
               Application.sharedApplication.authenticateWithGitHub();
             },
           },
           {
             label: 'Logout',
-            visible: raas.hasToken(),
+            visible: raas.user.hasToken(),
             click: () => {
               Application.sharedApplication.deauthenticate();
             },
