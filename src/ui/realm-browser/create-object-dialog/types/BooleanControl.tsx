@@ -35,7 +35,7 @@ export const BooleanControl = ({
   value,
 }: IBaseControlProps) => (
   <InputGroup className="CreateObjectDialog__BooleanControl">
-    <div className="form-control CreateObjectDialog__BooleanControl__Buttons">
+    <div className="CreateObjectDialog__BooleanControl__Buttons form-control">
       <BooleanButton onChange={onChange} selectedValue={value} value={true}>
         True
       </BooleanButton>
