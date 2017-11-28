@@ -10,9 +10,7 @@ export const displayObject = (
       const pk = (object as { [property: string]: any })[schema.primaryKey];
       return `${schema.name} {${schema.primaryKey} = ${pk}}`;
     } else if (inspectOnMissingPk) {
-      const formatedValue = util
-        .inspect(object, false, 0)
-        .replace('RealmObject', ' ');
+      return util.inspect(object, false, 0).replace('RealmObject', schema.name);
     } else {
       return schema.name;
     }
