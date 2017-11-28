@@ -71,13 +71,11 @@ export const create = (
   realmPath: string,
   onCreatingError: (error: any) => void,
 ): Realm => {
-  const normalizedPath = realmPath.startsWith('/')
-    ? realmPath
-    : `/${realmPath}`;
+  const url = getUrl(user, realmPath);
   const config = {
     sync: {
       user,
-      url: normalizedPath,
+      url,
       error: onCreatingError,
     },
     schema: [],
