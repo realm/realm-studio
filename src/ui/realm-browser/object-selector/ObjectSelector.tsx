@@ -49,7 +49,7 @@ export const ObjectSelector = ({
         )}
       {selectedObject && (
         <Button color="primary" onClick={onSelectObject}>
-          Set
+          Select
         </Button>
       )}
       <Button color="secondary" onClick={toggle}>
