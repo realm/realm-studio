@@ -1,12 +1,9 @@
-import * as classnames from 'classnames';
 import * as React from 'react';
 import {
   Button,
   ButtonDropdown,
   Card,
   CardBlock,
-  CardSubtitle,
-  CardText,
   CardTitle,
   DropdownItem,
   DropdownMenu,
@@ -15,12 +12,11 @@ import {
 
 import * as ros from '../../../../services/ros';
 
+import { Sidebar } from '../../sidebar';
 import { AccountsTable } from './AccountsTable';
 import { MetadataTable } from './MetadataTable';
 import { RealmsTable } from './RealmsTable';
 import { IUserSidebarContainerProps } from './UserSidebarContainer';
-
-import './UserSidebar.scss';
 
 export interface IUserSidebarProps extends IUserSidebarContainerProps {
   onChangePassword: () => void;
@@ -34,7 +30,7 @@ export interface IUserSidebarProps extends IUserSidebarContainerProps {
 }
 
 export const UserSidebar = ({
-  className,
+  isOpen,
   onChangePassword,
   onDeletion,
   onMetadataAppended,
@@ -47,11 +43,11 @@ export const UserSidebar = ({
   user,
 }: IUserSidebarProps) => {
   return (
-    <div className={classnames(className, 'UserSidebar')}>
+    <Sidebar isOpen={isOpen}>
       {user && (
-        <Card className="UserSidebar__Card">
-          <CardBlock className="UserSidebar__Top">
-            <CardTitle className="UserSidebar__Title">
+        <Card className="Sidebar__Card">
+          <CardBlock className="Sidebar__Top">
+            <CardTitle className="Sidebar__Title">
               <span title={user.userId}>{user.userId}</span>
             </CardTitle>
             <ButtonDropdown
@@ -75,7 +71,7 @@ export const UserSidebar = ({
               </DropdownMenu>
             </ButtonDropdown>
           </CardBlock>
-          <CardBlock className="UserSidebar__Tables">
+          <CardBlock className="Sidebar__Tables">
             <AccountsTable accounts={user.accounts} />
             <MetadataTable
               metadatas={user.metadata}
@@ -85,7 +81,7 @@ export const UserSidebar = ({
             />
             <RealmsTable realms={realms} />
           </CardBlock>
-          <CardBlock className="UserSidebar__Controls">
+          <CardBlock className="Sidebar__Controls">
             <Button size="sm" onClick={() => onChangePassword()}>
               Change password
             </Button>
@@ -95,6 +91,6 @@ export const UserSidebar = ({
           </CardBlock>
         </Card>
       )}
-    </div>
+    </Sidebar>
   );
 };
