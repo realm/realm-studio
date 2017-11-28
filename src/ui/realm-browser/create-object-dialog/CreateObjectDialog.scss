@@ -43,7 +43,7 @@
       justify-content: center;
 
       & > * {
-        margin: 0 ($spacer / 4);
+        margin: 0 ($spacer / 2);
       }
     }
   }
@@ -71,15 +71,8 @@
   }
 
   &__ListControl {
-    background: $window-background;
-    border-radius: $border-radius;
-    padding: $spacer / 2;
-
     $list-control-gutter: $spacer / 2;
-
-    &__Items {
-      // Tumbleweed
-    }
+    background: $window-background;
 
     &__Item {
       display: inline-block;
