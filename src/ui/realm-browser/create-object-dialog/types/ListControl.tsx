@@ -138,7 +138,7 @@ export const ListControl = ({
               onChange(newList);
             }}
           >
-            Add {property.objectType} item
+            Add {property.objectType}
           </Button>
           {children}
         </section>
