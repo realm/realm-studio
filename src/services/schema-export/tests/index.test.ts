@@ -2,7 +2,6 @@ import * as assert from 'assert';
 import fs = require('fs-extra');
 import * as Realm from 'realm';
 import { Language, SchemaExporter } from '../index';
-import { ISchemaExporter } from '../schemaExporter';
 import * as modelAll from './models/all/AllTypes';
 import * as model from './models/sample/SampleTypes';
 
@@ -134,71 +133,33 @@ describe('Export schema tests', () => {
   });
 
   it('C# exporter model with sample types', () => {
-    const expected = fs.readFileSync(
+    assertGeneratedSchemaIsValid(
+      Language.CS,
       `${TESTS_PATH}/models/sample/cs/SampleTypes.cs`,
-      'utf8',
-    );
-    exp = SchemaExporter(Language.CS);
-
-    exp.exportSchema(sampleRealm);
-    exp.writeFilesToDisk(`${TESTS_PATH}/temporal/${Language.CS}`);
-    const generated = fs.readFileSync(
       `${TESTS_PATH}/temporal/${Language.CS}/SampleTypes.cs`,
-      'utf8',
+      sampleRealm as Realm,
     );
-    assert.equal(generated, expected);
   });
 
   it('C# exporter model with all types', () => {
-    const expectedIndexedTypes = fs.readFileSync(
-      `${TESTS_PATH}/models/all/cs/IndexedTypes.cs`,
-      'utf8',
+    assertGeneratedSchemaAreValid(
+      Language.CS,
+      Array<string>(
+        `${TESTS_PATH}/models/all/cs/IndexedTypes.cs`,
+        `${TESTS_PATH}/models/all/cs/LinkTypes.cs`,
+        `${TESTS_PATH}/models/all/cs/OptionalTypes.cs`,
+        `${TESTS_PATH}/models/all/cs/RequiredTypes.cs`,
+        `${TESTS_PATH}/models/all/cs/ReverseType.cs`,
+      ),
+      Array<string>(
+        `${TESTS_PATH}/temporal/${Language.CS}/IndexedTypes.cs`,
+        `${TESTS_PATH}/temporal/${Language.CS}/LinkTypes.cs`,
+        `${TESTS_PATH}/temporal/${Language.CS}/OptionalTypes.cs`,
+        `${TESTS_PATH}/temporal/${Language.CS}/RequiredTypes.cs`,
+        `${TESTS_PATH}/temporal/${Language.CS}/ReverseType.cs`,
+      ),
+      allRealm as Realm,
     );
-    const expectedLinkTypes = fs.readFileSync(
-      `${TESTS_PATH}/models/all/cs/LinkTypes.cs`,
-      'utf8',
-    );
-    const expectedOptionalTypes = fs.readFileSync(
-      `${TESTS_PATH}/models/all/cs/OptionalTypes.cs`,
-      'utf8',
-    );
-    const expectedRequiredTypes = fs.readFileSync(
-      `${TESTS_PATH}/models/all/cs/RequiredTypes.cs`,
-      'utf8',
-    );
-    const expectedReverseType = fs.readFileSync(
-      `${TESTS_PATH}/models/all/cs/ReverseType.cs`,
-      'utf8',
-    );
-    exp = SchemaExporter(Language.CS);
-
-    exp.exportSchema(allRealm);
-    exp.writeFilesToDisk(`${TESTS_PATH}/temporal/${Language.CS}`);
-    const generatedIndexedTypes = fs.readFileSync(
-      `${TESTS_PATH}/temporal/${Language.CS}/IndexedTypes.cs`,
-      'utf8',
-    );
-    const generatedLinkTypes = fs.readFileSync(
-      `${TESTS_PATH}/temporal/${Language.CS}/LinkTypes.cs`,
-      'utf8',
-    );
-    const generatedOptionalTypes = fs.readFileSync(
-      `${TESTS_PATH}/temporal/${Language.CS}/OptionalTypes.cs`,
-      'utf8',
-    );
-    const generatedRequiredTypes = fs.readFileSync(
-      `${TESTS_PATH}/temporal/${Language.CS}/RequiredTypes.cs`,
-      'utf8',
-    );
-    const generatedReverseType = fs.readFileSync(
-      `${TESTS_PATH}/temporal/${Language.CS}/ReverseType.cs`,
-      'utf8',
-    );
-    assert.equal(generatedIndexedTypes, expectedIndexedTypes);
-    assert.equal(generatedLinkTypes, expectedLinkTypes);
-    assert.equal(generatedOptionalTypes, expectedOptionalTypes);
-    assert.equal(generatedRequiredTypes, expectedRequiredTypes);
-    assert.equal(generatedReverseType, expectedReverseType);
   });
 
   after(() => {
