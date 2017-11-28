@@ -10,7 +10,7 @@ export interface IProps {
 export const Sidebar = ({ isOpen, children }: IProps) => (
   <ToggleClass
     isOpen={isOpen}
-    classUsedWhenOpened="Sidebar--active"
+    classUsedWhenOpened="Sidebar--active Sidebar"
     classUsedWhenClosed="Sidebar"
   >
     {children}
