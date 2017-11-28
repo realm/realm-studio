@@ -38,7 +38,7 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   focus: IFocus | null;
   isEncryptionDialogVisible: boolean;
   highlight?: IHighlight;
-  // The schemas are only supposed to be used to produce a list of schemas in the sidebar
+  // The schemas are only supposed to be used to produce a list of schemas in the Sidebar
   schemas: Realm.ObjectSchema[];
   // TODO: Rename - Unclear if this is this an action or a piece of data
   selectObject?: ISelectObjectState;

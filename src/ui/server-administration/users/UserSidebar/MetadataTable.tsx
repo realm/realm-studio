@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, Input, Table } from 'reactstrap';
 
 import * as ros from '../../../../services/ros';
-import '../../sidebar/SidebarTable.scss';
+import '../../shared/Sidebar/SidebarTable.scss';
 
 export const MetadataTable = ({
   metadatas,

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Card, CardBlock, CardTitle } from 'reactstrap';
 
-import { Sidebar } from '../../sidebar';
+import { Sidebar } from '../../shared/Sidebar';
 
 import * as ros from '../../../../services/ros';
 

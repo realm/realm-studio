@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ToggleClass } from '../../reusable/ToggleClass';
+import { ToggleClass } from '../../../reusable/ToggleClass';
 import './Sidebar.scss';
 
 export interface IProps {
@@ -7,7 +7,7 @@ export interface IProps {
   children: React.ReactNode;
 }
 
-const Sidebar = ({ isOpen, children }: IProps) => (
+export const Sidebar = ({ isOpen, children }: IProps) => (
   <ToggleClass
     isOpen={isOpen}
     classUsedWhenOpened="Sidebar--active"
@@ -16,5 +16,3 @@ const Sidebar = ({ isOpen, children }: IProps) => (
     {children}
   </ToggleClass>
 );
-
-export default Sidebar;
