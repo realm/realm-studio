@@ -14,7 +14,6 @@ export const StringControl = ({
     <Input
       className="CreateObjectDialog__StringControl__Input"
       onChange={e => onChange(e.target.value)}
-      required={!property.optional}
       placeholder={value === null ? 'null' : ''}
       value={value ? value : ''}
     />
