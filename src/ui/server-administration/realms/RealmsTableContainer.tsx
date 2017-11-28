@@ -93,11 +93,7 @@ export class RealmsTableContainer extends RealmLoadingComponent<
   };
 
   public onRealmCreated = async (path: string) => {
-    ros.realms.create(this.props.user, path, this.onRealmCreatedError);
-  };
-
-  public onRealmCreatedError = (error: any) => {
-    showError('Create new realm', error);
+    ros.realms.create(this.props.user, path);
   };
 
   public toggleCreateRealm = () => {

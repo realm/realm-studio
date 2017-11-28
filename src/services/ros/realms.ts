@@ -66,21 +66,21 @@ export const open = async (
   return realm;
 };
 
-export const create = (
-  user: Realm.Sync.User,
-  realmPath: string,
-  onCreatingError: (error: any) => void,
-): Realm => {
+export const create = (user: Realm.Sync.User, realmPath: string): Realm => {
   const url = getUrl(user, realmPath);
   const config = {
     sync: {
       user,
       url,
-      error: onCreatingError,
+      error: onCreateRealmErrorCallback,
     },
     schema: [],
   };
   return new Realm(config);
+};
+
+export const onCreateRealmErrorCallback = (err: any) => {
+  showError('Error while creating new synced realm', err);
 };
 
 export const remove = async (user: Realm.Sync.User, realmPath: string) => {
