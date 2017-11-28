@@ -7,7 +7,7 @@ export interface IProps {
   children: React.ReactNode;
 }
 
-export const Sidebar = ({ isOpen, children }: IProps) => (
+const Sidebar = ({ isOpen, children }: IProps) => (
   <ToggleClass
     isOpen={isOpen}
     classUsedWhenOpened="Sidebar--active"
@@ -16,3 +16,5 @@ export const Sidebar = ({ isOpen, children }: IProps) => (
     {children}
   </ToggleClass>
 );
+
+export default Sidebar;

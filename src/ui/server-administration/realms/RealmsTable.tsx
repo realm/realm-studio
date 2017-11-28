@@ -13,9 +13,9 @@ import {
   ILoadingProgress,
   LoadingOverlay,
 } from '../../reusable/loading-overlay';
+import { FloatingControls } from '../shared/FloatingControls';
 import { CreateRealmDialogContainer } from './CreateRealmDialogContainer';
 import { RealmSidebar } from './RealmSidebar';
-
 import './RealmsTable.scss';
 
 export const RealmsTable = ({
@@ -88,13 +88,9 @@ export const RealmsTable = ({
         </AutoSizer>
       </div>
 
-      <div
-        className={classnames('UsersTable__overlayed-controls', {
-          'UsersTable__overlayed-controls--hidden': selectedRealmPath !== null,
-        })}
-      >
+      <FloatingControls isOpen={selectedRealmPath === null}>
         <Button onClick={toggleCreateRealm}>Create new realm</Button>
-      </div>
+      </FloatingControls>
 
       <CreateRealmDialogContainer
         isOpen={isCreateRealmOpen}

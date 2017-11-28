@@ -1,0 +1,15 @@
+@import "~realm-studio-styles/variables";
+@import "../../variables";
+
+.FloatingControls {
+  bottom: $spacer;
+  opacity: 1;
+  position: absolute;
+  right: $spacer;
+  transition-duration: $sidebar-transition-duration;
+  transition-property: opacity;
+
+  &--hidden {
+    opacity: 0;
+  }
+}

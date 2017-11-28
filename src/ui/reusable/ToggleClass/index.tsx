@@ -15,7 +15,7 @@ export const ToggleClass = ({
   classUsedWhenClosed,
 }: IProps) => (
   <div
-    className={classnames(isOpen && classUsedWhenOpened, classUsedWhenClosed)}
+    className={classnames(isOpen ? classUsedWhenOpened : classUsedWhenClosed)}
   >
     {children}
   </div>
