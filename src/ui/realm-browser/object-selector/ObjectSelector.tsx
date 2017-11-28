@@ -35,6 +35,7 @@ export const ObjectSelector = ({
     <ModalBody className="RealmBrowser__SelectObject">
       <ContentContainer
         focus={focus}
+        hasEditingDisabled={true}
         highlight={highlight}
         onCellClick={onCellClick}
       />

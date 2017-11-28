@@ -10,10 +10,12 @@ import { ObjectCell } from './types/ObjectCell';
 import { StringCellContainer } from './types/StringCellContainer';
 
 const getCellContent = ({
+  hasEditingDisabled,
   onUpdateValue,
   property,
   value,
 }: {
+  hasEditingDisabled?: boolean;
   onUpdateValue: (value: string) => void;
   property: IPropertyWithName;
   value: any;
@@ -31,18 +33,20 @@ const getCellContent = ({
     case 'string': {
       return (
         <StringCellContainer
+          hasEditingDisabled={hasEditingDisabled}
+          onUpdateValue={onUpdateValue}
           property={property}
           value={value}
-          onUpdateValue={onUpdateValue}
         />
       );
     }
     case 'date': {
       return (
         <StringCellContainer
+          hasEditingDisabled={hasEditingDisabled}
+          onUpdateValue={onUpdateValue}
           property={property}
           value={value !== null ? value.toISOString() : value}
-          onUpdateValue={onUpdateValue}
         />
       );
     }
@@ -58,23 +62,26 @@ const getCellContent = ({
 };
 
 export const Cell = ({
-  onUpdateValue,
+  hasEditingDisabled,
   onCellClick,
+  onContextMenu,
+  onUpdateValue,
   property,
   style,
   value,
   width,
-  onContextMenu,
 }: {
-  onUpdateValue: (value: string) => void;
+  hasEditingDisabled?: boolean;
   onCellClick: (e: React.MouseEvent<any>) => void;
+  onContextMenu: (e: React.MouseEvent<any>) => void;
+  onUpdateValue: (value: string) => void;
   property: IPropertyWithName;
   style: React.CSSProperties;
   value: any;
   width: number;
-  onContextMenu: (e: React.MouseEvent<any>) => void;
 }) => {
   const content = getCellContent({
+    hasEditingDisabled,
     onUpdateValue,
     property,
     value,

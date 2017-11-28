@@ -19,6 +19,7 @@ import { HeaderCell } from './table/HeaderCell';
 export interface IContentContainerProps {
   dataVersion?: number;
   focus: IFocus | null;
+  hasEditingDisabled?: boolean;
   highlight?: IHighlight;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;

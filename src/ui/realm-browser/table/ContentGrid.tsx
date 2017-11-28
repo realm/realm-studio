@@ -36,11 +36,12 @@ const SortableGrid = SortableContainer<GridProps>(Grid as any, {
 });
 
 export interface IContentGridProps extends Partial<GridProps> {
-  dataVersion?: number;
   columnWidths: number[];
+  dataVersion?: number;
   filteredSortedResults: Realm.Collection<any>;
   getCellValue: (object: any, props: GridCellProps) => string;
   gridRef: (ref: React.ReactNode) => void;
+  hasEditingDisabled?: boolean;
   height: number;
   highlight?: IHighlight;
   isSortable?: boolean;
@@ -141,6 +142,7 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
           columnWidths,
           filteredSortedResults,
           getCellValue,
+          hasEditingDisabled,
           onCellChange,
           onCellClick,
           onContextMenu,
@@ -151,9 +153,8 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
 
         return (
           <Cell
+            hasEditingDisabled={hasEditingDisabled}
             key={cellProps.key}
-            width={columnWidths[cellProps.columnIndex]}
-            style={cellProps.style}
             onCellClick={e => {
               if (onCellClick) {
                 onCellClick({
@@ -162,18 +163,6 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
                   property,
                   rowIndex,
                   rowObject,
-                });
-              }
-            }}
-            value={cellValue}
-            property={property}
-            onUpdateValue={value => {
-              if (onCellChange) {
-                onCellChange({
-                  cellValue: value,
-                  parent: filteredSortedResults,
-                  property,
-                  rowIndex,
                 });
               }
             }}
@@ -188,6 +177,20 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
                 });
               }
             }}
+            onUpdateValue={value => {
+              if (onCellChange) {
+                onCellChange({
+                  cellValue: value,
+                  parent: filteredSortedResults,
+                  property,
+                  rowIndex,
+                });
+              }
+            }}
+            property={property}
+            style={cellProps.style}
+            value={cellValue}
+            width={columnWidths[cellProps.columnIndex]}
           />
         );
       };
