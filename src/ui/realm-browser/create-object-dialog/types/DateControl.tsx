@@ -19,7 +19,7 @@ export const DateControl = ({
     <Input
       className="CreateObjectDialog__DateControl__Input"
       type="datetime-local"
-      step={1}
+      step={0.001}
       onChange={e => onChange(parseDate(e.target.value, property))}
       required={!property.optional}
       placeholder={value === null ? 'null' : ''}
