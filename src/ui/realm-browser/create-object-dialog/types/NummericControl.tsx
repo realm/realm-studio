@@ -17,6 +17,8 @@ export const NummericControl = ({
       className="CreateObjectDialog__NummericControl__Input"
       type="number"
       step={property.type === 'int' ? 1 : 'any'}
+      max={property.type === 'int' ? Number.MAX_SAFE_INTEGER : undefined}
+      min={property.type === 'int' ? Number.MIN_SAFE_INTEGER : undefined}
       onChange={e => onChange(parseNumber(e.target.value, property))}
       required={!property.optional}
       placeholder={value === null ? 'null' : ''}
