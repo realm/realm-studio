@@ -36,6 +36,7 @@ export interface ITableProps {
   getCellValue: (object: any, props: GridCellProps) => string;
   gridContentRef: (grid: Grid) => void;
   gridHeaderRef: (grid: Grid) => void;
+  hasEditingDisabled?: boolean;
   highlight?: IHighlight;
   isSorting: boolean;
   onCellChange?: CellChangeHandler;
@@ -58,6 +59,7 @@ export const Table = ({
   getCellValue,
   gridContentRef,
   gridHeaderRef,
+  hasEditingDisabled,
   highlight,
   isSorting,
   onCellChange,
@@ -106,6 +108,7 @@ export const Table = ({
         filteredSortedResults={filteredSortedResults}
         getCellValue={getCellValue}
         gridRef={gridContentRef}
+        hasEditingDisabled={hasEditingDisabled}
         height={height - rowHeights.header}
         highlight={highlight}
         isSortable={focus.kind === 'list' && !sorting}

@@ -24,6 +24,7 @@ const MINIMUM_COLUMN_WIDTH = 20;
 export interface IBaseTableContainerProps {
   dataVersion?: number;
   focus: IFocus;
+  hasEditingDisabled?: boolean;
   highlight?: IHighlight;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
@@ -74,6 +75,7 @@ export class TableContainer extends React.PureComponent<
         getCellValue={this.getCellValue}
         gridContentRef={this.gridContentRef}
         gridHeaderRef={this.gridHeaderRef}
+        hasEditingDisabled={this.props.hasEditingDisabled}
         highlight={this.props.highlight}
         isSorting={this.state.isSorting}
         onCellChange={this.props.onCellChange}
