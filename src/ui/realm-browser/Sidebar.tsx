@@ -72,7 +72,10 @@ export const Sidebar = ({
 }) => (
   <div className="RealmBrowser__Sidebar">
     <div className="RealmBrowser__Sidebar__Header">
-      Classes <Button onClick={() => onAddModel('prueba2')}>+</Button>
+      <span>Classes</span>
+      <Button size="sm" onClick={() => onAddModel('prueba4')}>
+        +
+      </Button>
     </div>
     {schemas && schemas.length > 0 ? (
       <ul className="RealmBrowser__Sidebar__SchemaList">

@@ -36,11 +36,14 @@ $highlight-row-color: $black;
     width: 200px;
 
     &__Header {
+      align-items: baseline;
       border-bottom: 1px solid $color-dove;
       color: $color-elephant;
+      display: flex;
       font-size: .9rem;
       font-weight: bold;
       height: 2rem;
+      justify-content: space-between;
       line-height: 2em;
       margin-bottom: $spacer / 2;
       text-transform: uppercase;
