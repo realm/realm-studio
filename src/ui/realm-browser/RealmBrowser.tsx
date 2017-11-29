@@ -4,6 +4,7 @@ import * as Realm from 'realm';
 import { ISelectObjectState } from '.';
 import { ConfirmModal } from '../reusable/confirm-modal';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
+import { AddSchemaModal } from './AddSchemaModal';
 import { ContentContainer } from './ContentContainer';
 import { EncryptionDialog } from './encryption-dialog';
 import { IFocus } from './focus';
@@ -46,6 +47,8 @@ export interface IRealmBrowserProps {
   selectObject?: ISelectObjectState;
   updateObjectReference: (object: any) => void;
   onAddSchema: (name: string) => void;
+  isAddSchemaOpen: boolean;
+  toggleAddSchema: () => void;
 }
 
 export const RealmBrowser = ({
@@ -71,6 +74,8 @@ export const RealmBrowser = ({
   selectObject,
   updateObjectReference,
   onAddSchema,
+  isAddSchemaOpen,
+  toggleAddSchema,
 }: IRealmBrowserProps) => {
   return (
     <div className="RealmBrowser">
@@ -80,7 +85,7 @@ export const RealmBrowser = ({
         onSchemaSelected={onSchemaSelected}
         progress={progress}
         schemas={schemas}
-        onAddSchema={onAddSchema}
+        toggleAddSchema={toggleAddSchema}
       />
       <div className="RealmBrowser__Wrapper">
         <ContentContainer
@@ -114,6 +119,12 @@ export const RealmBrowser = ({
           close={closeSelectObject}
         />
       )}
+
+      <AddSchemaModal
+        isOpen={isAddSchemaOpen}
+        toggle={toggleAddSchema}
+        onAddSchema={onAddSchema}
+      />
 
       <EncryptionDialog
         onHide={onHideEncryptionDialog}

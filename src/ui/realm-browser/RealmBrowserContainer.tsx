@@ -40,6 +40,7 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   schemas: Realm.ObjectSchema[];
   // TODO: Rename - Unclear if this is this an action or a piece of data
   selectObject?: ISelectObjectState;
+  isAddSchemaOpen: boolean;
 }
 
 export class RealmBrowserContainer extends RealmLoadingComponent<
@@ -57,6 +58,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       isEncryptionDialogVisible: false,
       progress: { done: false },
       schemas: [],
+      isAddSchemaOpen: false,
     };
   }
 
@@ -88,6 +90,12 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         showError('Failed when saving the value', err);
       }
     }
+  };
+
+  public toggleAddSchema = () => {
+    this.setState({
+      isAddSchemaOpen: !this.state.isAddSchemaOpen,
+    });
   };
 
   public onAddSchema = (name: string) => {
