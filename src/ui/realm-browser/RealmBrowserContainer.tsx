@@ -90,7 +90,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     }
   };
 
-  public onAddModel = (name: string) => {
+  public onAddSchema = (name: string) => {
     if (this.realm) {
       try {
         this.loadRealm(this.props.realm, [

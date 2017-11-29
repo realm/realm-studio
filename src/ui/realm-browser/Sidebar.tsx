@@ -61,19 +61,19 @@ export const Sidebar = ({
   onSchemaSelected,
   progress,
   schemas,
-  onAddModel,
+  onAddSchema,
 }: {
   focus: IFocus | null;
   getSchemaLength: (name: string) => number;
   onSchemaSelected: (name: string, objectToScroll?: any) => void;
   progress: ILoadingProgress;
   schemas: Realm.ObjectSchema[];
-  onAddModel: (name: string) => void;
+  onAddSchema: (name: string) => void;
 }) => (
   <div className="RealmBrowser__Sidebar">
     <div className="RealmBrowser__Sidebar__Header">
       <span>Classes</span>
-      <Button size="sm" onClick={() => onAddModel('prueba4')}>
+      <Button size="sm" onClick={() => onAddSchema('prueba4')}>
         +
       </Button>
     </div>

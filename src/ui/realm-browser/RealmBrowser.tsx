@@ -45,7 +45,7 @@ export interface IRealmBrowserProps {
   schemas: Realm.ObjectSchema[];
   selectObject?: ISelectObjectState;
   updateObjectReference: (object: any) => void;
-  onAddModel: (name: string) => void;
+  onAddSchema: (name: string) => void;
 }
 
 export const RealmBrowser = ({
@@ -70,7 +70,7 @@ export const RealmBrowser = ({
   schemas,
   selectObject,
   updateObjectReference,
-  onAddModel,
+  onAddSchema,
 }: IRealmBrowserProps) => {
   return (
     <div className="RealmBrowser">
@@ -80,7 +80,7 @@ export const RealmBrowser = ({
         onSchemaSelected={onSchemaSelected}
         progress={progress}
         schemas={schemas}
-        onAddModel={onAddModel}
+        onAddSchema={onAddSchema}
       />
       <div className="RealmBrowser__Wrapper">
         <ContentContainer
