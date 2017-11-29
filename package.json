@@ -99,6 +99,7 @@
     "start": "electron .",
     "test:ci": "mocha-webpack --reporter mocha-junit-reporter",
     "test": "mocha-webpack",
+    "test-csv": "mocha-webpack src/services/data-importer/tests/index.test.ts ",
     "tslint-prettier": "tslint --fix 'src/**/*.ts' 'src/**/*.tsx'",
     "wait-for-bundle": "node ./webpack.wait-for-bundle.js",
     "webpack:main": "webpack --config=webpack.main.config.js",
@@ -113,6 +114,7 @@
     ]
   },
   "dependencies": {
+    "@types/papaparse": "^4.1.31",
     "classnames": "^2.2.5",
     "electron-updater": "^2.13.0",
     "faker": "^4.1.0",
@@ -123,6 +125,7 @@
     "lodash": "^4.17.4",
     "mixpanel-browser": "^2.13.0",
     "moment": "^2.19.1",
+    "papaparse": "^4.3.6",
     "react": "^15.6.2",
     "react-addons-css-transition-group": "^15.6.2",
     "react-addons-transition-group": "^15.6.2",
