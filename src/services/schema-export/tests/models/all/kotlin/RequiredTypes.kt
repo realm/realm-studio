@@ -13,13 +13,13 @@ open class RequiredTypes : RealmObject() {
     var stringRequired: String = ""
     var dateRequired: Date = Date()
     var dataRequired: ByteArray = ByteArray(0)
-    var boolRequiredArray: RealmList<Boolean> = RealmList<Boolean>()
-    var intRequiredArray: RealmList<Long> = RealmList<Long>()
-    var floatRequiredArray: RealmList<Float> = RealmList<Float>()
-    var doubleRequiredArray: RealmList<Double> = RealmList<Double>()
-    var stringRequiredArray: RealmList<String> = RealmList<String>()
-    var dateRequiredArray: RealmList<Date> = RealmList<Date>()
-    var dataRequiredArray: RealmList<ByteArray> = RealmList<ByteArray>()
-    var objectRequiredArray: RealmList<RequiredTypes> = RealmList<RequiredTypes>()
+    var boolRequiredArray: RealmList<Boolean> = RealmList()
+    var intRequiredArray: RealmList<Long> = RealmList()
+    var floatRequiredArray: RealmList<Float> = RealmList()
+    var doubleRequiredArray: RealmList<Double> = RealmList()
+    var stringRequiredArray: RealmList<String> = RealmList()
+    var dateRequiredArray: RealmList<Date> = RealmList()
+    var dataRequiredArray: RealmList<ByteArray> = RealmList()
+    var objectRequiredArray: RealmList<RequiredTypes> = RealmList()
 
 }
