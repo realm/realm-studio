@@ -94,7 +94,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
 
   public isSchemaNameAvailable = (name: string): boolean => {
     return true;
-  }
+  };
 
   public toggleAddSchema = () => {
     this.setState({

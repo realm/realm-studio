@@ -51,7 +51,9 @@ export const SchemaModal = ({
           </FormGroup>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" disabled={!nameIsValid}>Create schema</Button>{' '}
+          <Button color="primary" disabled={!nameIsValid}>
+            Create schema
+          </Button>{' '}
           <Button color="secondary" onClick={toggle}>
             Cancel
           </Button>
