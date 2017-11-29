@@ -2,6 +2,7 @@ import * as React from 'react';
 import {
   Button,
   Form,
+  FormFeedback,
   FormGroup,
   Input,
   Label,
@@ -17,12 +18,14 @@ export const SchemaModal = ({
   onNameChange,
   onSubmit,
   name,
+  nameIsValid,
 }: {
   isOpen: boolean;
   toggle: () => void;
   onNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   name: string;
+  nameIsValid: boolean;
 }) => {
   return (
     <Modal isOpen={isOpen} toggle={toggle}>
@@ -38,11 +41,17 @@ export const SchemaModal = ({
               required={true}
               value={name}
               onChange={onNameChange}
+              state={nameIsValid ? 'success' : 'danger'}
             />
+            {!nameIsValid && (
+              <FormFeedback>
+                Already exists a schema with that name.
+              </FormFeedback>
+            )}
           </FormGroup>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary">Create schema</Button>{' '}
+          <Button color="primary" disabled={!nameIsValid}>Create schema</Button>{' '}
           <Button color="secondary" onClick={toggle}>
             Cancel
           </Button>

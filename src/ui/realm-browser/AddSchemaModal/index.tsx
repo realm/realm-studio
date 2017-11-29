@@ -6,10 +6,12 @@ export interface IAddSchemaModalProps {
   isOpen: boolean;
   onAddSchema: (name: string) => void;
   toggle: () => void;
+  isSchemaNameAvailable: (name: string) => boolean;
 }
 
 export interface IAddSchemaModalState {
   name: string;
+  nameIsValid: boolean;
 }
 
 export class AddSchemaModal extends React.Component<
@@ -20,6 +22,7 @@ export class AddSchemaModal extends React.Component<
     super();
     this.state = {
       name: '',
+      nameIsValid: true,
     };
   }
 
@@ -38,8 +41,10 @@ export class AddSchemaModal extends React.Component<
   };
 
   public onNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newNameValue = e.target.value;
     this.setState({
-      name: e.target.value,
+      name: newNameValue,
+      nameIsValid: this.props.isSchemaNameAvailable(newNameValue),
     });
   };
 }

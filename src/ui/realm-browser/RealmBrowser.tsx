@@ -49,6 +49,7 @@ export interface IRealmBrowserProps {
   onAddSchema: (name: string) => void;
   isAddSchemaOpen: boolean;
   toggleAddSchema: () => void;
+  isSchemaNameAvailable: (name: string) => boolean;
 }
 
 export const RealmBrowser = ({
@@ -76,6 +77,7 @@ export const RealmBrowser = ({
   onAddSchema,
   isAddSchemaOpen,
   toggleAddSchema,
+  isSchemaNameAvailable,
 }: IRealmBrowserProps) => {
   return (
     <div className="RealmBrowser">
@@ -124,6 +126,7 @@ export const RealmBrowser = ({
         isOpen={isAddSchemaOpen}
         toggle={toggleAddSchema}
         onAddSchema={onAddSchema}
+        isSchemaNameAvailable={isSchemaNameAvailable}
       />
 
       <EncryptionDialog
