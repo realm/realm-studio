@@ -1,6 +1,6 @@
 import * as classnames from 'classnames';
 import * as React from 'react';
-import { Badge } from 'reactstrap';
+import { Badge, Button } from 'reactstrap';
 
 import { ILoadingProgress } from '../reusable/loading-overlay';
 import { IClassFocus, IFocus, IListFocus } from './focus';
@@ -61,15 +61,19 @@ export const Sidebar = ({
   onSchemaSelected,
   progress,
   schemas,
+  onAddModel,
 }: {
   focus: IFocus | null;
   getSchemaLength: (name: string) => number;
   onSchemaSelected: (name: string, objectToScroll?: any) => void;
   progress: ILoadingProgress;
   schemas: Realm.ObjectSchema[];
+  onAddModel: (name: string) => void;
 }) => (
   <div className="RealmBrowser__Sidebar">
-    <div className="RealmBrowser__Sidebar__Header">Classes</div>
+    <div className="RealmBrowser__Sidebar__Header">
+      Classes <Button onClick={() => onAddModel('prueba2')}>+</Button>
+    </div>
     {schemas && schemas.length > 0 ? (
       <ul className="RealmBrowser__Sidebar__SchemaList">
         {schemas.map(schema => {

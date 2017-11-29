@@ -1,13 +1,11 @@
-import * as assert from 'assert';
 import { ipcRenderer, remote } from 'electron';
 import * as path from 'path';
 import * as React from 'react';
 import * as Realm from 'realm';
-import * as util from 'util';
 
 import { IPropertyWithName, ISelectObjectState } from '.';
 import { IExportSchemaOptions } from '../../main/MainMenu';
-import { Language, SchemaExporter } from '../../services/schema-export';
+import { SchemaExporter } from '../../services/schema-export';
 import { IRealmBrowserOptions } from '../../windows/WindowType';
 import { showError } from '../reusable/errors';
 import {
@@ -88,6 +86,19 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         });
       } catch (err) {
         showError('Failed when saving the value', err);
+      }
+    }
+  };
+
+  public onAddModel = (name: string) => {
+    if (this.realm) {
+      try {
+        this.loadRealm(this.props.realm, [
+          ...this.state.schemas,
+          { name, properties: {} },
+        ]).then(() => this.onSchemaSelected(name));
+      } catch (err) {
+        showError(`Failed creating the model "${name}"`, err);
       }
     }
   };
