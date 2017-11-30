@@ -36,6 +36,11 @@ We strive to separate components into two categories:
 For more information on the difference between the two, please read
 [Dan Abramov's article](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0).
 
+React component files should be named in CamelCase. If the component needs more than a file, we should follow the [component folder pattern](https://medium.com/styled-components/component-folder-pattern-ee42df37ec68).
+Creating a folder named as the component and containing an `index.tsx` file with the main component and all the others files needed.
+
+Also, we should avoid using default export in JS. [More info about why](https://blog.neufund.org/why-we-have-banned-default-exports-and-you-should-do-the-same-d51fdc2cf2ad)
+
 The project contains a directory of "reusable" components in `./src/ui/reusable` for components which implements
 UI that has been used three or more places in the app.
 
