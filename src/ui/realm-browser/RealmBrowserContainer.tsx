@@ -23,6 +23,7 @@ import {
 } from './table';
 import * as primitives from './table/types/primitives';
 
+import { isUndefined } from 'util';
 import { RealmBrowser } from './RealmBrowser';
 
 export interface IRealmBrowserState extends IRealmLoadingComponentState {
@@ -93,7 +94,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   };
 
   public isSchemaNameAvailable = (name: string): boolean => {
-    return true;
+    return isUndefined(this.state.schemas.find(schema => schema.name === name));
   };
 
   public toggleAddSchema = () => {

@@ -1,3 +1,4 @@
+import * as classnames from 'classnames';
 import * as React from 'react';
 import {
   Button,
@@ -32,7 +33,7 @@ export const SchemaModal = ({
       <Form onSubmit={onSubmit}>
         <ModalHeader toggle={toggle}>Create a new schema</ModalHeader>
         <ModalBody>
-          <FormGroup>
+          <FormGroup className={nameIsValid ? '' : 'has-danger'}>
             <Label for="name">Schema name</Label>
             <Input
               name="name"
@@ -41,7 +42,6 @@ export const SchemaModal = ({
               required={true}
               value={name}
               onChange={onNameChange}
-              state={nameIsValid ? 'success' : 'danger'}
             />
             {!nameIsValid && (
               <FormFeedback>
