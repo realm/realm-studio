@@ -156,6 +156,27 @@ describe('Import CSV tests', () => {
       const REALM_FILE_DIR = `${TESTS_PATH}/temporal`;
 
       const realm = csvImporter.import(REALM_FILE_DIR, importSchema);
+      let cats = realm.objects('Cat').sorted('name');
+      assert.equal(cats.length, 2);
+      let cat = cats[0] as any;
+      assert.equal(cat.name, "Kitty");
+      assert.equal(cat.age, 3);
+      assert.equal(cat.height, 22.1);
+      assert.equal(cat.weight, 0);
+      assert.equal(cat.hasTail, false);
+      assert.equal(cat.birthday, "<null>");
+      assert.equal(cat.owner, "<null>");
+      assert.equal(cat.scaredOfDog, "<null>");
+
+      cat = cats[1] as any;
+      assert.equal(cat.name, "Ninneko");
+      assert.equal(cat.age, 4);
+      assert.equal(cat.height, 21.0);
+      assert.equal(cat.weight, 0);
+      assert.equal(cat.hasTail, true);
+      assert.equal(cat.birthday, "<null>");
+      assert.equal(cat.owner, "<null>");
+      assert.equal(cat.scaredOfDog, "<null>");
     });
 
     after(() => {
