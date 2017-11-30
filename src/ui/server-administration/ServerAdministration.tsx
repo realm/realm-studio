@@ -1,8 +1,6 @@
 import * as classnames from 'classnames';
 import * as React from 'react';
-import { Button, Navbar } from 'reactstrap';
-
-import realmLogo from '../../../static/svgs/realm-logo.svg';
+import { Button } from 'reactstrap';
 
 import { LoadingOverlay } from '../reusable/loading-overlay';
 import { LogContainer } from './logs/LogContainer';
@@ -11,6 +9,7 @@ import {
   ValidateCertificatesChangeHandler,
 } from './realms/RealmsTableContainer';
 import { ToolsContainer } from './tools/ToolsContainer';
+import { Topbar } from './Topbar';
 import { UsersTableContainer } from './users/UsersTableContainer';
 
 import './ServerAdministration.scss';
@@ -63,37 +62,9 @@ export const ServerAdministration = ({
     );
   }
 
-  const TabButton = ({ tab, label }: { tab: Tab; label: string }) => {
-    return (
-      <Button
-        color={activeTab === tab ? 'primary' : 'secondary'}
-        className="ServerAdministration__tab"
-        onClick={() => {
-          onTabChanged(tab);
-        }}
-      >
-        {label}
-      </Button>
-    );
-  };
-
   return (
     <div className="ServerAdministration">
-      <Navbar className="ServerAdministration__tabs">
-        <svg viewBox={realmLogo.viewBox} className="ServerAdministration__logo">
-          <use xlinkHref={realmLogo.url} />
-        </svg>
-        <TabButton tab={Tab.Realms} label="Realms" />
-        <TabButton tab={Tab.Users} label="Users" />
-        <TabButton tab={Tab.Logs} label="Logs" />
-        {/* <TabButton tab={Tab.Tools} label="Tools" /> */}
-        {user && (
-          <p className="ServerAdministration__status">
-            Connected to&nbsp;
-            <span className="ServerAdministration__server">{user.server}</span>
-          </p>
-        )}
-      </Navbar>
+      <Topbar activeTab={activeTab} onTabChanged={onTabChanged} user={user} />
       <div className="ServerAdministration__content">{content}</div>
       <LoadingOverlay loading={!user || isRealmOpening} fade={false} />
     </div>
