@@ -1,12 +1,13 @@
 // Please note : @LinkingObjects and default values are not represented in the schema and thus will not be part of the generated models
 package your.package.name.here
 
-import io.realm.RealmList
 import io.realm.RealmObject
 import java.util.Date
+import io.realm.RealmList
 
 open class RequiredTypes : RealmObject() {
-    var isBoolRequired: Boolean = false
+
+    var boolRequired: Boolean = false
     var intRequired: Long = 0
     var floatRequired: Float = 0.0f
     var doubleRequired: Double = 0.0

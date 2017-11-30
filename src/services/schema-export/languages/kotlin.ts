@@ -80,11 +80,9 @@ export default class KotlinSchemaExporter extends SchemaExporter {
       this.fieldsContent += `${KotlinSchemaExporter.PADDING}@Index\n`;
     }
 
-    this.fieldsContent += `${KotlinSchemaExporter.PADDING}var ${
-      prop.name
-    }: ${this.kotlinTypeForProperty(prop)} ${this.sensibleDefaultForProperty(
+    this.fieldsContent += `${KotlinSchemaExporter.PADDING}var ${prop.name}: ${this.kotlinTypeForProperty(
       prop,
-    )}\n`;
+    )} ${this.sensibleDefaultForProperty(prop)}\n`;
   }
 
   private sensibleDefaultForProperty(property: any): string {
@@ -145,7 +143,7 @@ export default class KotlinSchemaExporter extends SchemaExporter {
           properyType = 'RealmList<ByteArray>';
           break;
         case 'date':
-          this.realmImports.add('import java.util.Date;');
+          this.realmImports.add('import java.util.Date');
           properyType = 'RealmList<Date>';
           break;
         default:
@@ -170,10 +168,10 @@ export default class KotlinSchemaExporter extends SchemaExporter {
           properyType = 'String';
           break;
         case 'data':
-          properyType = 'byte[]';
+          properyType = 'ByteArray';
           break;
         case 'date':
-          this.realmImports.add('import java.util.Date;');
+          this.realmImports.add('import java.util.Date');
           properyType = 'Date';
           break;
         case 'object':

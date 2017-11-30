@@ -1,13 +1,13 @@
 // Please note : @LinkingObjects and default values are not represented in the schema and thus will not be part of the generated models
 package your.package.name.here
 
-import io.realm.RealmList
 import io.realm.RealmObject
 import java.util.Date
+import io.realm.RealmList
 
 open class OptionalTypes : RealmObject() {
 
-    var isBoolOptional: Boolean? = null
+    var boolOptional: Boolean? = null
     var intOptional: Long? = null
     var floatOptional: Float? = null
     var doubleOptional: Double? = null
