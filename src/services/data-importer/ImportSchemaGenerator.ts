@@ -45,8 +45,6 @@ export default class ImportSchemaGenerator {
       const content = papaparse.parse(rawCSV, {
         header: true,
         preview: 1,
-        // skipEmptyLines: true,
-        // dynamicTyping:true
       });
       const headers: string[] = content.meta.fields;
       const data: any[] = content.data;

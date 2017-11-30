@@ -146,6 +146,18 @@ describe('Import CSV tests', () => {
       assert.equal(scaredOfDogProperty.indexed, false);
     });
 
+    it('Populate a valid Cat Realm file', () => {
+      const files: string[] = [`${TESTS_PATH}/csv/Cat.csv`];
+
+      const importer = DataImporterHelper(ImportSchemaFormat.CSV, files);
+      const importSchema = importer.generate();
+      const csvImporter = new CSVDataImporter(files);
+
+      const REALM_FILE_DIR = `${TESTS_PATH}/temporal`;
+
+      const realm = csvImporter.import(REALM_FILE_DIR, importSchema);
+    });
+
     after(() => {
       fs.removeSync(`${TESTS_PATH}/temporal`);
     });
