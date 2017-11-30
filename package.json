@@ -35,6 +35,21 @@
         "zip"
       ]
     },
+    "dmg": {
+      "iconSize": 90,
+      "contents": [
+        {
+          "x": 95,
+          "y": 200
+        },
+        {
+          "x": 430,
+          "y": 200,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
     "linux": {
       "target": [
         "AppImage",
@@ -86,9 +101,9 @@
     "postinstall": "electron-builder install-app-deps",
     "precommit": "lint-staged",
     "prepackage": "rm -rf ./build && npm run build",
-    "prepare-next-release": "node ./scripts/prepare-next-release.js",
     "prestart": "rm -rf ./build && npm run build",
     "generate-https-certificate": "openssl req -x509 -newkey rsa:4096 -keyout data/keys/server.key -out data/keys/server.crt -days 365 -nodes",
+    "generate-all-types-realm": "node ./scripts/generate-realm.js",
     "start": "electron .",
     "test:ci": "mocha-webpack --reporter mocha-junit-reporter",
     "test": "mocha-webpack",
@@ -126,7 +141,7 @@
     "react-sortable-hoc": "^0.6.8",
     "react-virtualized": "^9.11.1",
     "reactstrap": "^4.8.0",
-    "realm": "2.0.4",
+    "realm": "2.0.11",
     "uuid": "^3.1.0"
   },
   "devDependencies": {
@@ -157,6 +172,7 @@
     "devtron": "^1.4.0",
     "electron": "^1.8.1",
     "electron-builder": "^19.37.2",
+    "electron-devtools-installer": "^2.2.1",
     "electron-publisher-s3": "^19.37.0",
     "file-loader": "^1.1.5",
     "husky": "^0.14.3",
@@ -170,7 +186,7 @@
     "prettier": "^1.7.4",
     "react-dom": "^15.6.2",
     "react-hot-loader": "^3.1.1",
-    "realm-object-server": "2.0.13",
+    "realm-object-server": "2.0.22",
     "resolve-url-loader": "^2.1.1",
     "sass-lint": "^1.12.1",
     "sass-loader": "^6.0.6",
@@ -191,6 +207,7 @@
     "webpack-dev-server": "^2.9.2",
     "webpack-node-externals": "^1.6.0",
     "webpack-visualizer-plugin": "^0.1.11",
+    "why-did-you-update": "^0.1.0",
     "xvfb-maybe": "^0.2.1"
   },
   "engines": {

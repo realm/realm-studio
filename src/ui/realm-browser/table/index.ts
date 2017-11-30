@@ -1,4 +1,4 @@
-export { SortEndHandler } from 'react-sortable-hoc';
+export { SortEndHandler, SortStartHandler } from 'react-sortable-hoc';
 
 import { IPropertyWithName } from '..';
 

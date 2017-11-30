@@ -4,6 +4,12 @@ import * as url from 'url';
 
 import { getWindowOptions, WindowType } from '../windows/WindowType';
 
+export interface IEventListenerCallbacks {
+  blur?: () => void;
+  focus?: () => void;
+  closed?: () => void;
+}
+
 const isProduction = process.env.NODE_ENV === 'production';
 
 function getRendererHtmlPath() {
@@ -48,14 +54,20 @@ export class WindowManager {
       window.setRepresentedFilename(options.path);
     }
 
+    const query: { [key: string]: string } = {
+      windowType,
+      options: JSON.stringify(options),
+    };
+
+    if (!isProduction && process.env.REACT_PERF) {
+      query.react_perf = 'enabled';
+    }
+
     window.loadURL(
       url.format({
         pathname: getRendererHtmlPath(),
         protocol: 'file:',
-        query: {
-          windowType,
-          options: JSON.stringify(options),
-        },
+        query,
         slashes: true,
       }),
     );

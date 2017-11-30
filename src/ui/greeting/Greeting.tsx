@@ -74,6 +74,15 @@ export const Greeting = ({
           </Button>
         )}
       </div>
+      <div className="Greeting__DownloadDemo">
+        <span>New to realm? </span>
+        <a
+          href="https://static.realm.io/downloads/realm-studio/demo.realm"
+          className="Link"
+        >
+          Download a demo Realm file
+        </a>
+      </div>
     </div>
     <HistoryPanelContainer />
     <CloudOverlayContainer

@@ -189,7 +189,7 @@ export const rowCellRangeRenderer = (rowRenderer: GridRowRenderer) => (
       rowIndex,
     );
 
-    const rowKey = `${rowIndex}`;
+    const rowKey = `row-${rowIndex}`;
 
     const isRowVisible =
       rowIndex >= visibleRowIndices.start && rowIndex <= visibleRowIndices.stop;

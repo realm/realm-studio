@@ -1,5 +1,10 @@
 import * as React from 'react';
-import { Grid, GridCellProps } from 'react-virtualized';
+import {
+  AutoSizerProps,
+  Grid,
+  GridCellProps,
+  ScrollSyncProps,
+} from 'react-virtualized';
 
 import {
   CellChangeHandler,
@@ -8,6 +13,7 @@ import {
   IHighlight,
   ISorting,
   SortEndHandler,
+  SortStartHandler,
 } from '.';
 import { IPropertyWithName } from '..';
 import { IFocus } from '../focus';
@@ -15,23 +21,31 @@ import { Table } from './Table';
 
 const MINIMUM_COLUMN_WIDTH = 20;
 
-export interface ITableContainerProps {
+export interface IBaseTableContainerProps {
+  dataVersion?: number;
   focus: IFocus;
+  hasEditingDisabled?: boolean;
   highlight?: IHighlight;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
   onContextMenu?: CellContextMenuHandler;
   onSortEnd?: SortEndHandler;
+  onSortStart?: SortStartHandler;
   query: string;
-  // isLoading: boolean;
+}
+
+export interface ITableContainerProps extends IBaseTableContainerProps {
+  scrollProps: ScrollSyncProps;
+  sizeProps: AutoSizerProps;
 }
 
 export interface ITableContainerState {
   columnWidths: number[];
+  isSorting: boolean;
   sorting?: ISorting;
 }
 
-export class TableContainer extends React.Component<
+export class TableContainer extends React.PureComponent<
   ITableContainerProps,
   ITableContainerState
 > {
@@ -43,6 +57,7 @@ export class TableContainer extends React.Component<
     super();
     this.state = {
       columnWidths: [],
+      isSorting: false,
     };
   }
 
@@ -54,18 +69,24 @@ export class TableContainer extends React.Component<
     return filteredSortedResults ? (
       <Table
         columnWidths={this.state.columnWidths}
+        dataVersion={this.props.dataVersion}
         filteredSortedResults={filteredSortedResults}
         focus={this.props.focus}
         getCellValue={this.getCellValue}
         gridContentRef={this.gridContentRef}
         gridHeaderRef={this.gridHeaderRef}
+        hasEditingDisabled={this.props.hasEditingDisabled}
         highlight={this.props.highlight}
+        isSorting={this.state.isSorting}
         onCellChange={this.props.onCellChange}
         onCellClick={this.props.onCellClick}
         onColumnWidthChanged={this.onColumnWidthChanged}
         onContextMenu={this.props.onContextMenu}
-        onSortEnd={this.props.onSortEnd}
         onSortClick={this.onSortClick}
+        onSortEnd={this.onSortEnd}
+        onSortStart={this.onSortStart}
+        scrollProps={this.props.scrollProps}
+        sizeProps={this.props.sizeProps}
         sorting={this.state.sorting}
       />
     ) : null;
@@ -163,6 +184,20 @@ export class TableContainer extends React.Component<
       });
     } else {
       this.setState({ sorting: undefined });
+    }
+  };
+
+  private onSortEnd: SortEndHandler = (sortEvent, e) => {
+    this.setState({ isSorting: false });
+    if (this.props.onSortEnd) {
+      this.props.onSortEnd(sortEvent, e);
+    }
+  };
+
+  private onSortStart: SortStartHandler = (sortEvent, e) => {
+    this.setState({ isSorting: true });
+    if (this.props.onSortStart) {
+      this.props.onSortStart(sortEvent, e);
     }
   };
 

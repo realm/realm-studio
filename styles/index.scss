@@ -20,4 +20,10 @@ body,
   height: 100%;
 }
 
+.Link {
+  color: $brand-primary;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 @import "./form-controls";

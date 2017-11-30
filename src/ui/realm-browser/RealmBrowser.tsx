@@ -1,13 +1,14 @@
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import { ISelectObjectState } from '.';
+import { CreateObjectHandler, ISelectObjectState } from '.';
 import { ConfirmModal } from '../reusable/confirm-modal';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
 import { ContentContainer } from './ContentContainer';
+import { CreateObjectDialog } from './create-object-dialog';
 import { EncryptionDialog } from './encryption-dialog';
-import { IFocus } from './focus';
-import { ObjectSelectorContainer } from './object-selector/ObjectSelectorContainer';
+import { Focus, IClassFocus } from './focus';
+import { ObjectSelector } from './object-selector';
 import { Sidebar } from './Sidebar';
 import {
   CellChangeHandler,
@@ -15,54 +16,69 @@ import {
   CellContextMenuHandler,
   IHighlight,
   SortEndHandler,
+  SortStartHandler,
 } from './table';
 
 import './RealmBrowser.scss';
 
-export const RealmBrowser = ({
-  closeSelectObject,
-  columnToHighlight,
-  confirmModal,
-  focus,
-  getSchemaLength,
-  highlight,
-  isEncryptionDialogVisible,
-  onCellChange,
-  onCellClick,
-  onContextMenu,
-  onHideEncryptionDialog,
-  onOpenWithEncryption,
-  onSchemaSelected,
-  onSortEnd,
-  progress,
-  rowToHighlight,
-  schemas,
-  selectObject,
-  updateObjectReference,
-}: {
-  closeSelectObject: () => void;
+export interface IRealmBrowserProps {
+  toggleSelectObject: () => void;
   columnToHighlight?: number;
   confirmModal?: {
     yes: () => void;
     no: () => void;
   };
-  focus: IFocus | null;
+  createObjectSchema?: Realm.ObjectSchema;
+  dataVersion: number;
+  focus: Focus | null;
+  getClassFocus: (className: string) => IClassFocus;
   getSchemaLength: (name: string) => number;
   highlight?: IHighlight;
   isEncryptionDialogVisible: boolean;
   onCellChange: CellChangeHandler;
   onCellClick: CellClickHandler;
   onContextMenu: CellContextMenuHandler;
+  onCreateDialogToggle: () => void;
+  onCreateObject: CreateObjectHandler;
   onHideEncryptionDialog: () => void;
   onOpenWithEncryption: (key: string) => void;
   onSchemaSelected: (name: string, objectToScroll: any) => void;
   onSortEnd: SortEndHandler;
+  onSortStart: SortStartHandler;
   progress: ILoadingProgress;
   rowToHighlight?: number;
   schemas: Realm.ObjectSchema[];
   selectObject?: ISelectObjectState;
   updateObjectReference: (object: any) => void;
-}) => {
+}
+
+export const RealmBrowser = ({
+  toggleSelectObject,
+  columnToHighlight,
+  confirmModal,
+  createObjectSchema,
+  dataVersion,
+  focus,
+  getClassFocus,
+  getSchemaLength,
+  highlight,
+  isEncryptionDialogVisible,
+  onCellChange,
+  onCellClick,
+  onContextMenu,
+  onCreateDialogToggle,
+  onCreateObject,
+  onHideEncryptionDialog,
+  onOpenWithEncryption,
+  onSchemaSelected,
+  onSortEnd,
+  onSortStart,
+  progress,
+  rowToHighlight,
+  schemas,
+  selectObject,
+  updateObjectReference,
+}: IRealmBrowserProps) => {
   return (
     <div className="RealmBrowser">
       <Sidebar
@@ -74,12 +90,14 @@ export const RealmBrowser = ({
       />
       <div className="RealmBrowser__Wrapper">
         <ContentContainer
+          dataVersion={dataVersion}
           focus={focus}
           highlight={highlight}
           onCellChange={onCellChange}
           onCellClick={onCellClick}
           onContextMenu={onContextMenu}
           onSortEnd={onSortEnd}
+          onSortStart={onSortStart}
           progress={progress}
         />
       </div>
@@ -94,12 +112,12 @@ export const RealmBrowser = ({
       )}
 
       {selectObject && (
-        <ObjectSelectorContainer
+        <ObjectSelector
+          toggle={toggleSelectObject}
           focus={selectObject.focus}
-          property={selectObject.property}
-          status={!!selectObject}
+          isOpen={!!selectObject}
+          isOptional={selectObject.property.optional}
           onObjectSelected={updateObjectReference}
-          close={closeSelectObject}
         />
       )}
 
@@ -107,6 +125,14 @@ export const RealmBrowser = ({
         onHide={onHideEncryptionDialog}
         onOpenWithEncryption={onOpenWithEncryption}
         visible={isEncryptionDialogVisible}
+      />
+
+      <CreateObjectDialog
+        getClassFocus={getClassFocus}
+        isOpen={!!createObjectSchema}
+        onCreate={onCreateObject}
+        schema={createObjectSchema}
+        toggle={onCreateDialogToggle}
       />
 
       <LoadingOverlay progress={progress} fade={true} />

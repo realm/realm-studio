@@ -8,16 +8,14 @@ export const StringCell = ({
   onBlur,
   onFocus,
   value,
-  temporalValue,
   property,
 }: {
   isEditing: boolean;
-  onChange: (newValue: string) => void;
-  onBlur: (input: HTMLInputElement) => void;
+  onChange: (value: string, input: HTMLInputElement) => void;
+  onBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
   property: Realm.ObjectSchemaProperty;
   onFocus: () => void;
   value: string;
-  temporalValue: string;
 }) => {
   let textInput: HTMLInputElement;
   return isEditing ? (
@@ -30,10 +28,10 @@ export const StringCell = ({
       getRef={input => {
         textInput = input;
       }}
-      value={temporalValue}
-      onChange={e => onChange(e.target.value)}
-      onBlur={e => onBlur(textInput)}
-      onKeyPress={e => e.key === 'Enter' && onBlur(textInput)}
+      value={value}
+      onChange={e => onChange(e.target.value, e.target)}
+      onBlur={e => onBlur(e)}
+      onKeyPress={e => e.key === 'Enter' && e.currentTarget.blur()}
       autoFocus={true}
     />
   ) : (
@@ -42,13 +40,21 @@ export const StringCell = ({
         'form-control',
         'form-control-sm',
         'RealmBrowser__Table__Input',
-        'RealmBrowser__Table__Input--unselectable',
         `RealmBrowser__Table__Input--${property.type}`,
-        { 'RealmBrowser__Table__Input--null': value === null },
       )}
       onDoubleClick={onFocus}
     >
-      {value === null ? 'null' : value.toString()}
+      <span
+        className={classnames(
+          'RealmBrowser__Table__StringCell',
+          `RealmBrowser__Table__StringCell--${property.type}`,
+          {
+            'RealmBrowser__Table__StringCell--null': value === null,
+          },
+        )}
+      >
+        {value === null ? 'null' : value.toString()}
+      </span>
     </div>
   );
 };

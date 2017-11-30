@@ -163,6 +163,25 @@ export class Application {
         WindowType.RealmBrowser,
         options,
       );
+
+      window.on('blur', () => {
+        this.mainMenu.update({
+          enableExportSchema: false,
+        });
+      });
+
+      window.on('focus', () => {
+        this.mainMenu.update({
+          enableExportSchema: true,
+        });
+      });
+
+      window.on('closed', () => {
+        this.mainMenu.update({
+          enableExportSchema: false,
+        });
+      });
+
       window.show();
       window.webContents.once('did-finish-load', () => {
         resolve();
@@ -229,7 +248,9 @@ export class Application {
   }
 
   private onReady = () => {
-    this.mainMenu.set();
+    this.mainMenu.update();
+    // this.showOpenLocalRealm();
+    // this.showConnectToServer();
     this.showGreeting();
     electron.app.focus();
     this.registerProtocols();
@@ -278,7 +299,7 @@ export class Application {
 
   private onCloudStatusChange = (status: ICloudStatus) => {
     // Refresh the menu, as the authentication state might have changed
-    this.mainMenu.refresh();
+    this.mainMenu.update();
   };
 
   private registerProtocols() {

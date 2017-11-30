@@ -21,19 +21,6 @@ If you've checked out this repository, install and start it by running
     npm install
     npm start
 
-### Parameters
-
-The application has support for some parameters that can be supplied when starting it:
-
-- The `DISPLAY` environment variable can be set to the index of the display that windows should be created on.
-  So to start the application, opening windows on your secondary monitor, run
-
-      DISPLAY=1 npm start
-
-- If the `OPEN_DEV_TOOLS` environment variable is sat every window being opened will have the developer tools opened.
-
-      OPEN_DEV_TOOLS=true npm start
-
 ## Developing
 
 Check out this git repository.
@@ -52,6 +39,30 @@ To check if the source code complies with the TypeScript and SASS rules that we'
 checker or run the lint command:
 
     npm run lint
+
+### Parameters
+
+The application has support for some parameters that can be supplied when starting it:
+
+- The `DISPLAY` environment variable can be set to the index of the display that windows should be created on.
+  So to start the application, opening windows on your secondary monitor, run
+
+      DISPLAY=1 npm run dev
+
+- If the `OPEN_DEV_TOOLS` environment variable is sat every window being opened will have the developer tools opened.
+
+      OPEN_DEV_TOOLS=true npm run dev
+
+- If the `REACT_PERF` environment variable is sat, the window URLs will get "?react_perf" appended, which will
+activate profiling of React components on the Chrome timeline:
+https://reactjs.org/blog/2016/11/16/react-v15.4.0.html#profiling-components-with-chrome-timeline
+
+      REACT_PERF=true npm run dev
+
+- If the `WHY_DID_YOU_UPDATE` environment variable is sat, the renderer process React will be instrumented with a
+tool that prints the props before and after an update of a component.
+
+      WHY_DID_YOU_UPDATE=true npm run dev
 
 ## Testing
 
@@ -82,3 +93,18 @@ This will clean the `./build` folder and run `build` internally, before using
 ## Releasing
 
 See the section on [releasing](./RELEASING.md).
+
+## Scripts
+
+- `npm run check:package-lock` runs ./scripts/check-package-lock.js to check if the package locks version and dependencies are compatible with that of the package.json.
+- `npm run generate-all-types-realm` runs ./scripts/generate-realm.js to generate a test realm with objects following the schema-exporters all-types schema.
+- `./scripts/via-nvm.sh` installs node and npm in the version from `.nvmrc` and runs commands with that enabled, ex:
+
+      ./scripts/via-nvm.sh node --version
+
+  outputs
+
+      Found '/Users/kraenhansen/Repositories/realm-studio/.nvmrc' with version <v8.6.0>
+      v8.6.0 is already installed.
+      Now using node v8.6.0 (npm v5.3.0)
+      v8.6.0

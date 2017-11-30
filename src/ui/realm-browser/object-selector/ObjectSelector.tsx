@@ -8,50 +8,51 @@ import { CellClickHandler, IHighlight } from '../table';
 
 export interface IObjectSelectorStateProps {
   focus: IClassFocus;
-  status: boolean;
+  isOpen: boolean;
 }
 
 export interface IObjectSelectorProps extends IObjectSelectorStateProps {
-  close: () => void;
+  toggle: () => void;
   highlight?: IHighlight;
+  isOptional: boolean;
   onCellClick: CellClickHandler;
   onSelectObject: () => void;
-  property: IPropertyWithName;
   selectedObject: Realm.Object | null;
 }
 
 export const ObjectSelector = ({
-  close,
+  toggle,
   focus,
   highlight,
+  isOptional,
   onCellClick,
   onSelectObject,
-  property,
   selectedObject,
-  status,
+  isOpen,
 }: IObjectSelectorProps) => (
-  <Modal size="lg" isOpen={status} toggle={close} className="ConfirmModal">
-    <ModalHeader toggle={close}>Select a new {focus.className}</ModalHeader>
+  <Modal size="lg" isOpen={isOpen} toggle={toggle} className="ConfirmModal">
+    <ModalHeader toggle={toggle}>Select a new {focus.className}</ModalHeader>
     <ModalBody className="RealmBrowser__SelectObject">
       <ContentContainer
         focus={focus}
+        hasEditingDisabled={true}
         highlight={highlight}
         onCellClick={onCellClick}
       />
     </ModalBody>
     <ModalFooter>
       {!selectedObject &&
-        property.optional && (
+        isOptional && (
           <Button color="primary" onClick={onSelectObject}>
             Set to null
           </Button>
         )}
       {selectedObject && (
         <Button color="primary" onClick={onSelectObject}>
-          Set
+          Select
         </Button>
       )}
-      <Button color="secondary" onClick={close}>
+      <Button color="secondary" onClick={toggle}>
         Close
       </Button>
     </ModalFooter>

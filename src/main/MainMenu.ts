@@ -2,23 +2,52 @@ import * as electron from 'electron';
 import * as Realm from 'realm';
 
 import * as raas from '../services/raas';
+import { Language } from '../services/schema-export';
 import { Application } from './Application';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
+export interface IMainMenuOptions {
+  enableExportSchema?: boolean;
+}
+
+const DEFAULT_OPTIONS: IMainMenuOptions = {
+  enableExportSchema: false,
+};
+
+export interface IExportSchemaOptions {
+  language: Language;
+}
+
 export class MainMenu {
-  private menu = electron.Menu.buildFromTemplate(this.menuTemplate());
-
-  public set() {
-    electron.Menu.setApplicationMenu(this.menu);
+  public update(options: IMainMenuOptions = DEFAULT_OPTIONS) {
+    const template = this.menuTemplate(options);
+    const menu = electron.Menu.buildFromTemplate(template);
+    electron.Menu.setApplicationMenu(menu);
   }
 
-  public refresh() {
-    this.menu = electron.Menu.buildFromTemplate(this.menuTemplate());
-    this.set();
-  }
+  private getMenuItem = (
+    menu: Electron.Menu,
+    name: string,
+  ): Electron.MenuItemConstructorOptions => {
+    return menu.items.find(
+      item => (item as Electron.MenuItemConstructorOptions).label === name,
+    ) as Electron.MenuItemConstructorOptions;
+  };
 
-  private menuTemplate(): Electron.MenuItemConstructorOptions[] {
+  private exportSchema = (language: Language) => {
+    const focusedWindow = electron.BrowserWindow.getFocusedWindow();
+    const options: IExportSchemaOptions = {
+      language,
+    };
+    focusedWindow.webContents.send('export-schema', options);
+  };
+
+  private menuTemplate(
+    options?: IMainMenuOptions,
+  ): Electron.MenuItemConstructorOptions[] {
+    const enableExportSchema = (options && options.enableExportSchema) || false;
+
     const template: Electron.MenuItemConstructorOptions[] = [
       {
         label: 'File',
@@ -40,6 +69,31 @@ export class MainMenu {
           },
           { type: 'separator' },
           { role: 'close' },
+          {
+            label: 'Save model definitions',
+            submenu: [
+              {
+                label: 'Swift',
+                click: () => this.exportSchema(Language.Swift),
+                enabled: enableExportSchema,
+              },
+              {
+                label: 'JavaScript',
+                click: () => this.exportSchema(Language.JS),
+                enabled: enableExportSchema,
+              },
+              {
+                label: 'Java',
+                click: () => this.exportSchema(Language.Java),
+                enabled: enableExportSchema,
+              },
+              {
+                label: 'C#',
+                click: () => this.exportSchema(Language.CS),
+                enabled: enableExportSchema,
+              },
+            ],
+          },
         ],
       },
       {

@@ -1,18 +1,20 @@
 @import "~realm-studio-styles/variables";
 
 // This constant should match the HANDLE_WIDTH in HeaderCell.tsx
-$realm-browser-header-handle-width: 7px;
+$realm-browser-header-handle-width: 5px;
 // This constant should match the rowHeights.header constant in Table.tsx
 $realm-browser-header-height: 40px;
 $realm-browser-header-icon-space: 24px;
 $realm-browser-header-handle-hover-bg: rgba(0, 0, 0, .1);
+$realm-browser-header-handle-dragging-bg: rgba($color-ultramarine, .5);
 
 $realm-browser-more-indicator-size: $spacer;
 $realm-browser-more-indicator-dark-color: rgba(0, 0, 0, .2);
 $realm-browser-more-indicator-light-color: rgba(0, 0, 0, 0);
 
 $color-row-stripe: mix($white, $color-dove, 50%);
-$highlight-row-bg: mix($color-dove, $color-elephant, 75%);
+$highlight-row-bg: mix($white, $color-indigo, 70%);
+$highlight-row-color: $black;
 
 .RealmBrowser {
   display: flex;
@@ -186,14 +188,28 @@ $highlight-row-bg: mix($color-dove, $color-elephant, 75%);
 
     &__Row {
       background: $white;
+      transition: background-color 400ms;
 
       &--striped {
         background: $color-row-stripe;
       }
 
-      &--highlighted,
       &--sorting {
+        background: mix($color-row-stripe, $white, 40%);
+        border-top: 1px solid $color-dove;
+        margin-top: -1px;
+        transition: transform 300ms;
+        user-select: none;
+      }
+
+      &--highlighted,
+      &--sorting-selected {
         background: $highlight-row-bg;
+        color: $highlight-row-color;
+      }
+
+      &--sorting-selected {
+        box-shadow: 0 0 10px $highlight-row-bg;
       }
     }
 
@@ -259,14 +275,20 @@ $highlight-row-bg: mix($color-dove, $color-elephant, 75%);
     &__HeaderHandle {
       cursor: ew-resize;
       height: 100%;
-      left: 0;
       position: absolute;
+      right: -$realm-browser-header-handle-width / 2;
       top: 0;
       width: $realm-browser-header-handle-width;
       z-index: 1;
 
-      &:hover {
-        background: $realm-browser-header-handle-hover-bg;
+      &--dragging {
+        background: $realm-browser-header-handle-dragging-bg;
+      }
+
+      &:not(&--dragging) {
+        &:hover {
+          background: $realm-browser-header-handle-hover-bg;
+        }
       }
     }
 
@@ -279,6 +301,7 @@ $highlight-row-bg: mix($color-dove, $color-elephant, 75%);
     &__Input {
       background: transparent;
       border: 0;
+      color: inherit;
       height: 100%;
       white-space: nowrap;
 
@@ -290,13 +313,19 @@ $highlight-row-bg: mix($color-dove, $color-elephant, 75%);
         color: $color-elephant;
       }
 
-      &--unselectable {
-        user-select: none;
+      &--int {
+        text-align: right;
       }
 
+      &:focus {
+        color: inherit;
+      }
+    }
+
+    &__StringCell {
       &--int {
         position: absolute;
-        right: 0;
+        right: $spacer / 2;
         text-align: right;
         width: auto;
       }
@@ -307,6 +336,14 @@ $highlight-row-bg: mix($color-dove, $color-elephant, 75%);
       border: 0;
       color: $brand-primary;
       cursor: pointer;
+    }
+
+    &__ObjectCell,
+    &__StringCell {
+      &--null {
+        color: $color-elephant;
+        font-style: italic;
+      }
     }
 
     &__ListCell {
