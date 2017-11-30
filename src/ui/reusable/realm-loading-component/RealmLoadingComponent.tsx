@@ -49,6 +49,7 @@ export abstract class RealmLoadingComponent<
 
   protected async loadRealm(
     realm: realms.ISyncedRealmToLoad | realms.ILocalRealmToLoad,
+    schema?: Realm.ObjectSchema[],
   ) {
     // Remove any existing a change listeners
     if (this.realm) {
@@ -64,14 +65,18 @@ export abstract class RealmLoadingComponent<
         // Reset the state that captures rejected certificates
         this.certificateWasRejected = false;
         // Get the realms from the ROS interface
-        this.realm = await this.openRealm(realm, {
-          errorCallback: this.onSyncError,
-          validateCertificates,
-          // Uncomment the line below to test failing certificate validation
-          /*
+        this.realm = await this.openRealm(
+          realm,
+          {
+            errorCallback: this.onSyncError,
+            validateCertificates,
+            // Uncomment the line below to test failing certificate validation
+            /*
           certificatePath: '... some path of a valid but failing certificate',
           */
-        });
+          },
+          schema,
+        );
         // Register change listeners
         this.realm.addListener('change', this.onRealmChanged);
         this.onRealmLoaded();
@@ -131,6 +136,7 @@ export abstract class RealmLoadingComponent<
   private async openRealm(
     realm: realms.ISyncedRealmToLoad | realms.ILocalRealmToLoad | undefined,
     ssl: realms.ISslConfiguration = { validateCertificates: true },
+    schema?: Realm.ObjectSchema[],
   ): Promise<Realm> {
     if (realm && realm.mode === realms.RealmLoadingMode.Local) {
       return new Realm({
@@ -149,6 +155,7 @@ export abstract class RealmLoadingComponent<
         realm.encryptionKey,
         ssl,
         this.progressChanged,
+        schema,
       );
       // Save a wrapping promise so this can be cancelled
       return new Promise<Realm>((resolve, reject) => {

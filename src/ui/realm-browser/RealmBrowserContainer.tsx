@@ -1,13 +1,11 @@
-import * as assert from 'assert';
 import { ipcRenderer, remote } from 'electron';
 import * as path from 'path';
 import * as React from 'react';
 import * as Realm from 'realm';
-import * as util from 'util';
 
 import { IPropertyWithName, ISelectObjectState } from '.';
 import { IExportSchemaOptions } from '../../main/MainMenu';
-import { Language, SchemaExporter } from '../../services/schema-export';
+import { SchemaExporter } from '../../services/schema-export';
 import { IRealmBrowserOptions } from '../../windows/WindowType';
 import { showError } from '../reusable/errors';
 import {
@@ -25,6 +23,7 @@ import {
 } from './table';
 import * as primitives from './table/types/primitives';
 
+import { isUndefined } from 'util';
 import { RealmBrowser } from './RealmBrowser';
 
 export interface IRealmBrowserState extends IRealmLoadingComponentState {
@@ -42,6 +41,7 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   schemas: Realm.ObjectSchema[];
   // TODO: Rename - Unclear if this is this an action or a piece of data
   selectObject?: ISelectObjectState;
+  isAddSchemaOpen: boolean;
 }
 
 export class RealmBrowserContainer extends RealmLoadingComponent<
@@ -59,6 +59,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       isEncryptionDialogVisible: false,
       progress: { done: false },
       schemas: [],
+      isAddSchemaOpen: false,
     };
   }
 
@@ -88,6 +89,29 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         });
       } catch (err) {
         showError('Failed when saving the value', err);
+      }
+    }
+  };
+
+  public isSchemaNameAvailable = (name: string): boolean => {
+    return isUndefined(this.state.schemas.find(schema => schema.name === name));
+  };
+
+  public toggleAddSchema = () => {
+    this.setState({
+      isAddSchemaOpen: !this.state.isAddSchemaOpen,
+    });
+  };
+
+  public onAddSchema = (name: string) => {
+    if (this.realm) {
+      try {
+        this.loadRealm(this.props.realm, [
+          ...this.state.schemas,
+          { name, properties: {} },
+        ]).then(() => this.onSchemaSelected(name));
+      } catch (err) {
+        showError(`Failed creating the model "${name}"`, err);
       }
     }
   };

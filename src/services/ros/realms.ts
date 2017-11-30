@@ -46,10 +46,13 @@ export const open = async (
   encryptionKey?: Uint8Array,
   ssl: ISslConfiguration = { validateCertificates: true },
   progressCallback?: Realm.Sync.ProgressNotificationCallback,
+  schema?: Realm.ObjectSchema[],
 ): Promise<Realm> => {
   const url = getUrl(user, realmPath);
+
   const realm = Realm.open({
     encryptionKey,
+    schema,
     sync: {
       url,
       user,
