@@ -3,14 +3,14 @@ import * as React from 'react';
 import { Badge } from 'reactstrap';
 import * as Realm from 'realm';
 
+import * as primitives from '../../primitives';
 import * as DataCell from './DataCell';
-import * as primitives from './primitives';
 
 const VALUE_LENGTH_LIMIT = 10;
 const VALUE_STRING_LENGTH_LIMIT = 50;
 
 const isListOfPrimitive = (property: Realm.ObjectSchemaProperty) => {
-  return primitives.TYPES.indexOf(property.objectType || '') >= 0;
+  return primitives.isPrimitive(property.objectType || '');
 };
 
 const displayValue = (
@@ -27,7 +27,7 @@ const displayValue = (
       .map((v: any) => {
         // Turn the value into a string representation
         const representation =
-          property.objectType === 'data' ? DataCell.displayValue(v) : String(v);
+          property.objectType === 'data' ? DataCell.display(v) : String(v);
         // If the representation is too long, limit it
         if (representation.length > VALUE_STRING_LENGTH_LIMIT) {
           const limited = representation.substring(

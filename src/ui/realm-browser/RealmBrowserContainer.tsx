@@ -14,7 +14,8 @@ import {
   IRealmLoadingComponentState,
   RealmLoadingComponent,
 } from '../reusable/realm-loading-component';
-import { IClassFocus, IFocus, IListFocus } from './focus';
+import { Focus, IClassFocus, IListFocus } from './focus';
+import * as primitives from './primitives';
 import {
   CellChangeHandler,
   CellClickHandler,
@@ -23,7 +24,6 @@ import {
   SortEndHandler,
   SortStartHandler,
 } from './table';
-import * as primitives from './table/types/primitives';
 
 import { RealmBrowser } from './RealmBrowser';
 
@@ -32,10 +32,11 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
     yes: () => void;
     no: () => void;
   };
+  createObjectSchema?: Realm.ObjectSchema;
   // A number that we can use to make components update on changes to data
   dataVersion: number;
   encryptionKey?: string;
-  focus: IFocus | null;
+  focus: Focus | null;
   isEncryptionDialogVisible: boolean;
   highlight?: IHighlight;
   // The schemas are only supposed to be used to produce a list of schemas in the sidebar
@@ -92,6 +93,27 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     }
   };
 
+  public onCreateObject = (className: string, values: {}) => {
+    this.realm.write(() => {
+      const object = this.realm.create(className, values);
+      const { focus } = this.state;
+      if (focus && focus.kind === 'class') {
+        if (focus.className === className) {
+          const rowIndex = focus.results.indexOf(object);
+          if (rowIndex >= 0) {
+            this.setState({
+              highlight: {
+                row: rowIndex,
+              },
+            });
+          }
+        } else {
+          // TODO: If objects are created on a list - insert it into the list
+        }
+      }
+    });
+  };
+
   public onSchemaSelected = (className: string, objectToScroll?: any) => {
     // TODO: Re-implement objectToScroll
     const focus: IClassFocus = {
@@ -104,6 +126,17 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       focus,
       highlight: this.generateHighlight(objectToScroll),
     });
+  };
+
+  public getClassFocus = (className: string) => {
+    const results = this.realm.objects(className);
+    const focus: IClassFocus = {
+      kind: 'class',
+      className,
+      results,
+      properties: this.derivePropertiesFromClassName(className),
+    };
+    return focus;
   };
 
   public getSchemaLength = (name: string) => {
@@ -160,14 +193,8 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     } else if (property.type === 'object' && value) {
       const className = property.objectType;
       if (className) {
-        const results = this.realm.objects(className);
-        const index = results.indexOf(value);
-        const focus: IClassFocus = {
-          kind: 'class',
-          className,
-          results,
-          properties: this.derivePropertiesFromClassName(className),
-        };
+        const focus = this.getClassFocus(className);
+        const index = focus.results.indexOf(value);
         this.setState({
           focus,
           highlight: {
@@ -207,12 +234,22 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       );
     }
 
-    if (this.state.focus && this.state.focus.kind === 'class') {
+    const { focus } = this.state;
+
+    if (focus && focus.kind === 'class') {
       menu.append(
         new remote.MenuItem({
           label: 'Delete',
           click: () => {
             this.openConfirmModal(rowObject);
+          },
+        }),
+      );
+      menu.append(
+        new remote.MenuItem({
+          label: `Create new ${focus.className}`,
+          click: () => {
+            this.onCreateDialogToggle(focus.className);
           },
         }),
       );
@@ -223,6 +260,17 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         x: e.clientX,
         y: e.clientY,
       });
+    }
+  };
+
+  public onCreateDialogToggle = (className?: string) => {
+    if (this.realm && className) {
+      const createObjectSchema = this.realm.schema.find(
+        schema => schema.name === className,
+      );
+      this.setState({ createObjectSchema });
+    } else {
+      this.setState({ createObjectSchema: undefined });
     }
   };
 
@@ -289,7 +337,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     }
   };
 
-  public closeSelectObject = () => {
+  public toggleSelectObject = () => {
     this.setState({ selectObject: undefined });
   };
 
@@ -320,18 +368,6 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     });
   };
 
-  protected generateHighlight(object?: Realm.Object): IHighlight | undefined {
-    if (object) {
-      const className = object.objectSchema().name;
-      const row = this.realm.objects(className).indexOf(object);
-      if (row) {
-        return {
-          row,
-        };
-      }
-    }
-  }
-
   protected onRealmChanged = () => {
     this.setState({ dataVersion: this.state.dataVersion + 1 });
   };
@@ -355,7 +391,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       const properties: IPropertyWithName[] = [
         { name: '#', type: 'int', readOnly: true },
       ];
-      if (primitives.TYPES.indexOf(property.objectType) >= 0) {
+      if (primitives.isPrimitive(property.objectType)) {
         return properties.concat([
           {
             name: null,
@@ -396,6 +432,18 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         throw new Error(`Object schema had a string describing its property`);
       }
     });
+  }
+
+  protected generateHighlight(object?: Realm.Object): IHighlight | undefined {
+    if (object) {
+      const className = object.objectSchema().name;
+      const row = this.realm.objects(className).indexOf(object);
+      if (row) {
+        return {
+          row,
+        };
+      }
+    }
   }
 
   protected loadingRealmFailed(err: Error) {
