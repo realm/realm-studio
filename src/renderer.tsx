@@ -88,6 +88,6 @@ process.nextTick(() => {
   const Realm = require('realm');
   // If sync is enabled on Realm - make it less verbose
   if (Realm.Sync) {
-    Realm.Sync.setLogLevel('error');
+    Realm.Sync.setLogLevel(process.env.REALM_LOG_LEVEL || 'error');
   }
 });
