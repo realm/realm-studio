@@ -5,8 +5,10 @@
   display: flex;
   flex-grow: 1;
 
-  &__selected-row {
-    background: $color-dove;
+  &__row {
+    &--selected {
+      background: $color-dove;
+    }
   }
 
   &__table {

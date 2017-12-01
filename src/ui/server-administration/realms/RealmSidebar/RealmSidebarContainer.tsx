@@ -5,9 +5,11 @@ import { RealmSidebar } from './RealmSidebar';
 import * as ros from '../../../../services/ros';
 
 export interface IRealmSidebarContainerProps {
+  getRealmPermissions: (path: string) => Realm.Results<ros.IPermission>;
   isOpen: boolean;
-  realm: ros.IRealmFile | null;
   onRealmDeletion: (path: string) => void;
+  onRealmOpened: (path: string) => void;
+  realm: ros.IRealmFile | null;
 }
 
 export class RealmSidebarContainer extends React.Component<

@@ -76,6 +76,15 @@ export class RealmsTableContainer extends RealmLoadingComponent<
     return this.realm.objectForPrimaryKey<ros.IRealmFile>('RealmFile', path);
   };
 
+  public getRealmPermissions = (
+    path: string,
+  ): Realm.Results<ros.IPermission> => {
+    const realmFile = this.getRealmFromId(path);
+    return this.realm
+      .objects<ros.IPermission>('Permission')
+      .filtered('realmFile == $0', realmFile);
+  };
+
   public onRealmDeletion = async (path: string) => {
     const confirmed = await this.confirmRealmDeletion(path);
     if (confirmed) {

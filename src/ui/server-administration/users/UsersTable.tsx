@@ -84,7 +84,7 @@ export const UsersTable = ({
               rowClassName={({ index }) => {
                 const user = getUser(index);
                 return classnames('UsersTable__row', {
-                  'UsersTable__selected-row':
+                  'UsersTable__row--selected':
                     user && user.userId === selectedUserId,
                 });
               }}

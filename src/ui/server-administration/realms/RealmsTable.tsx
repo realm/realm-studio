@@ -7,7 +7,7 @@ import {
   Table,
 } from 'react-virtualized';
 
-import { IRealmFile } from '../../../services/ros';
+import { IPermission, IRealmFile } from '../../../services/ros';
 import {
   ILoadingProgress,
   LoadingOverlay,
@@ -19,6 +19,7 @@ import './RealmsTable.scss';
 export const RealmsTable = ({
   getRealm,
   getRealmFromId,
+  getRealmPermissions,
   onRealmDeletion,
   onRealmOpened,
   onRealmSelected,
@@ -28,6 +29,7 @@ export const RealmsTable = ({
 }: {
   getRealm: (index: number) => IRealmFile | null;
   getRealmFromId: (path: string) => IRealmFile | null;
+  getRealmPermissions: (path: string) => Realm.Results<IPermission>;
   onRealmDeletion: (path: string) => void;
   onRealmOpened: (path: string) => void;
   onRealmSelected: (path: string | null) => void;
@@ -82,10 +84,12 @@ export const RealmsTable = ({
 
       <RealmSidebar
         isOpen={selectedRealmPath !== null}
+        getRealmPermissions={getRealmPermissions}
+        onRealmDeletion={onRealmDeletion}
+        onRealmOpened={onRealmOpened}
         realm={
           selectedRealmPath !== null ? getRealmFromId(selectedRealmPath) : null
         }
-        onRealmDeletion={onRealmDeletion}
       />
 
       <LoadingOverlay progress={progress} fade={true} />
