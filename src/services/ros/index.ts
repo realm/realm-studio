@@ -30,8 +30,9 @@ export interface IUserMetadataRow {
 
 export interface IRealmFile {
   path: string;
-  creatorId: string;
-  creationDate: Date;
+  syncLabel: string;
+  owner: IUser;
+  createdAt: Date;
   permissions: IPermission[];
 }
 

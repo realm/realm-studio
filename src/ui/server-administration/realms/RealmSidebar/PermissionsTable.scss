@@ -1,0 +1,11 @@
+@import "~realm-studio-styles/variables";
+
+.PermissionsTable {
+  &__PermissionsCell {
+    width: 80px;
+
+    &__Badge {
+      margin: 0 ($spacer / 8);
+    }
+  }
+}

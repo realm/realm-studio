@@ -197,13 +197,17 @@ export class UsersTableContainer extends RealmLoadingComponent<
     }
   };
 
-  protected gotUser(user: Realm.Sync.User) {
-    this.loadRealm({
-      authentication: this.props.user,
-      mode: ros.realms.RealmLoadingMode.Synced,
-      path: '__admin',
-      validateCertificates: true,
-    });
+  protected async gotUser(user: Realm.Sync.User) {
+    try {
+      await this.loadRealm({
+        authentication: this.props.user,
+        mode: ros.realms.RealmLoadingMode.Synced,
+        path: '__admin',
+        validateCertificates: true,
+      });
+    } catch (err) {
+      showError('Failed to open the __admin Realm', err);
+    }
   }
 
   protected onRealmChanged = () => {
