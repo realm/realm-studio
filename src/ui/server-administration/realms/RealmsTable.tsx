@@ -62,18 +62,18 @@ export const RealmsTable = ({
               rowCount={realmCount}
               rowGetter={({ index }) => getRealm(index)}
               onRowClick={({ event, index }) => {
+                event.stopPropagation();
                 const realm = getRealm(index);
                 onRealmSelected(
                   realm && realm.path !== selectedRealmPath ? realm.path : null,
                 );
-                event.stopPropagation();
               }}
               onRowDoubleClick={({ event, index }) => {
+                event.stopPropagation();
                 const realm = getRealm(index);
                 if (realm) {
                   onRealmOpened(realm.path);
                 }
-                event.stopPropagation();
               }}
             >
               <Column label="Path" dataKey="path" width={width} />

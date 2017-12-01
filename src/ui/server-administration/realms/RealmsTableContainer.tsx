@@ -101,6 +101,8 @@ export class RealmsTableContainer extends RealmLoadingComponent<
 
   public onRealmOpened = (path: string) => {
     this.props.onRealmOpened(path);
+    // Make sure the Realm that just got opened, is selected
+    this.onRealmSelected(path);
   };
 
   public onRealmSelected = (path: string | null) => {
