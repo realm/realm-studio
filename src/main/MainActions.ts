@@ -8,4 +8,5 @@ export enum MainActions {
   ShowRealmBrowser = 'show-realm-browser',
   ShowServerAdministration = 'show-server-administration',
   ShowCloudAdministration = 'show-cloud-administration',
+  ShowTutorial = 'show-tutorial',
 }

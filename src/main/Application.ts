@@ -10,6 +10,7 @@ import { realms } from '../services/ros';
 import {
   IRealmBrowserOptions,
   IServerAdministrationOptions,
+  ITutorialOptions,
   WindowType,
 } from '../windows/WindowType';
 import { CertificateManager } from './CertificateManager';
@@ -59,6 +60,9 @@ export class Application {
       options: IServerAdministrationOptions,
     ) => {
       return this.showServerAdministration(options);
+    },
+    [MainActions.ShowTutorial]: (options: ITutorialOptions) => {
+      return this.showTutorial(options);
     },
   };
 
@@ -212,6 +216,19 @@ export class Application {
           this.cloudManager.removeListeningWindow(window);
         });
       }
+    });
+  }
+
+  public showTutorial(options: ITutorialOptions) {
+    return new Promise(resolve => {
+      const window = this.windowManager.createWindow(
+        WindowType.Tutorial,
+        options,
+      );
+      window.show();
+      window.webContents.once('did-finish-load', () => {
+        resolve();
+      });
     });
   }
 

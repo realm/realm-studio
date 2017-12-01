@@ -3,6 +3,7 @@
 import { URL } from 'url';
 
 import * as ros from '../services/ros';
+import * as tutorials from '../services/tutorials';
 
 export enum WindowType {
   CloudAdministration = 'cloud-administration',
@@ -10,6 +11,7 @@ export enum WindowType {
   Greeting = 'greeting',
   RealmBrowser = 'realm-browser',
   ServerAdministration = 'server-administration',
+  Tutorial = 'tutorial',
 }
 
 export interface IServerAdministrationOptions {
@@ -24,6 +26,10 @@ export interface IConnectToServerOptions {
 
 export interface IRealmBrowserOptions {
   realm: ros.realms.ISyncedRealmToLoad | ros.realms.ILocalRealmToLoad;
+}
+
+export interface ITutorialOptions {
+  id: string;
 }
 
 const getRealmUrl = (realm: ros.realms.ISyncedRealmToLoad) => {
@@ -41,11 +47,11 @@ export function getWindowOptions(
   context: any,
 ): Partial<Electron.BrowserWindowConstructorOptions> {
   if (type === WindowType.RealmBrowser) {
-    const browserOptions: IRealmBrowserOptions = context;
+    const options: IRealmBrowserOptions = context;
     const title =
-      browserOptions.realm.mode === 'synced'
-        ? getRealmUrl(browserOptions.realm)
-        : browserOptions.realm.path;
+      options.realm.mode === 'synced'
+        ? getRealmUrl(options.realm)
+        : options.realm.path;
     return {
       title,
     };
@@ -57,7 +63,8 @@ export function getWindowOptions(
       resizable: false,
     };
   } else if (type === WindowType.ServerAdministration) {
-    const credentials = context.credentials;
+    const options: IServerAdministrationOptions = context;
+    const credentials = options.credentials;
     const url = credentials ? credentials.url : 'http://...';
     return {
       title: `Realm Object Server: ${url}`,
@@ -75,6 +82,15 @@ export function getWindowOptions(
     return {
       title: `Realm Cloud`,
       width: 1024,
+      height: 500,
+    };
+  } else if (type === WindowType.Tutorial) {
+    const options = context as ITutorialOptions;
+    const config = tutorials.getConfig(options.id);
+    const title = config ? config.title : 'Missing a title';
+    return {
+      title: `Tutorial: ${title}`,
+      width: 800,
       height: 500,
     };
   }

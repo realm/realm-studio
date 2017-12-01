@@ -47,6 +47,9 @@ module.exports = (env) => {
           test: /\.(eot|svg|ttf|woff|woff2)$/,
           exclude: path.resolve(__dirname, "static/svgs"),
           use: "file-loader"
+        }, {
+          test: /\.md$/,
+          use: "file-loader"
         }
       ])
     },

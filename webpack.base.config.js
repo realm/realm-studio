@@ -26,7 +26,8 @@ module.exports = (env) => {
   const resolve = {
     alias: {
       "realm-studio-styles": path.resolve(__dirname, "styles"),
-      "realm-studio-svgs": path.resolve(__dirname, "static/svgs")
+      "realm-studio-svgs": path.resolve(__dirname, "static/svgs"),
+      "realm-studio-tutorials": path.resolve(__dirname, "tutorials"),
     },
     extensions: [".ts", ".tsx", ".js", ".jsx", ".html", ".scss", ".svg"],
   };
