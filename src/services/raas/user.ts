@@ -9,9 +9,6 @@ import { store } from '../../store';
 import { GITHUB_CLIENT_ID, GITHUB_REDIRECT_URI } from '../github';
 import { IServerCredentials } from '../ros';
 
-export const PRIMARY_SUBSCRIPTION_CREDENTIALS_KEY =
-  'cloud.primarySubscriptionCredentials';
-
 const buildUserUrl = (path: string) => buildUrl('user', 'v1beta', path);
 
 export interface IRaasAuthenticationResponse {
@@ -89,24 +86,6 @@ export const getTenantCredentials = (url: string): IServerCredentials => {
       data: getToken(),
     },
   };
-};
-
-export const hasPrimarySubscriptionCredentials = () => {
-  return store.has(PRIMARY_SUBSCRIPTION_CREDENTIALS_KEY);
-};
-
-export const getPrimarySubscriptionCredentials = (): IServerCredentials => {
-  return store.get(PRIMARY_SUBSCRIPTION_CREDENTIALS_KEY);
-};
-
-export const setPrimarySubscriptionCredentials = (
-  credentials: IServerCredentials,
-) => {
-  store.set(PRIMARY_SUBSCRIPTION_CREDENTIALS_KEY, credentials);
-};
-
-export const forgetPrimarySubscriptionCredentials = () => {
-  store.delete(PRIMARY_SUBSCRIPTION_CREDENTIALS_KEY);
 };
 
 export const getAuth = async () => {
