@@ -3,19 +3,21 @@ import { Button, Navbar } from 'reactstrap';
 
 import realmLogo from '../../../../static/svgs/realm-logo.svg';
 import { Tab } from '../ServerAdministration';
-import { Topbar } from './Topbar';
+import { TopBar } from './TopBar';
 
-export interface ITopbarContainerProps {
-  activeTab: Tab;
+export interface ITopBarContainerProps {
+  activeTab: Tab | null;
+  isCloudTenant: boolean;
   onTabChanged: (tab: Tab) => void;
   user: Realm.Sync.User | null;
 }
 
-class TopbarContainer extends React.Component<ITopbarContainerProps, {}> {
+class TopBarContainer extends React.Component<ITopBarContainerProps, {}> {
   public render() {
     return (
-      <Topbar
+      <TopBar
         activeTab={this.props.activeTab}
+        isCloudTenant={this.props.isCloudTenant}
         onTabChanged={this.props.onTabChanged}
         user={this.props.user}
       />
@@ -23,4 +25,4 @@ class TopbarContainer extends React.Component<ITopbarContainerProps, {}> {
   }
 }
 
-export { TopbarContainer as Topbar };
+export { TopBarContainer as TopBar };

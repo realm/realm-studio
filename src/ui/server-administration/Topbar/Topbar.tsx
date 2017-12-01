@@ -6,16 +6,33 @@ import { Tab } from '../ServerAdministration';
 import { TabButton } from './TabButton';
 
 export interface ITopbarProps {
-  activeTab: Tab;
+  activeTab: Tab | null;
+  isCloudTenant: boolean;
   onTabChanged: (tab: Tab) => void;
   user: Realm.Sync.User | null;
 }
 
-export const Topbar = ({ activeTab, onTabChanged, user }: ITopbarProps) => (
-  <Navbar className="ServerAdministration__tabs">
-    <svg viewBox={realmLogo.viewBox} className="ServerAdministration__logo">
+export const TopBar = ({
+  activeTab,
+  isCloudTenant,
+  onTabChanged,
+  user,
+}: ITopbarProps) => (
+  <Navbar className="ServerAdministration__TobBar">
+    <svg
+      viewBox={realmLogo.viewBox}
+      className="ServerAdministration__TobBar__logo"
+    >
       <use xlinkHref={realmLogo.url} />
     </svg>
+    {isCloudTenant ? (
+      <TabButton
+        activeTab={activeTab}
+        label="Dashboard"
+        onTabChanged={onTabChanged}
+        tab={Tab.Dashboard}
+      />
+    ) : null}
     <TabButton
       activeTab={activeTab}
       label="Realms"
@@ -34,14 +51,6 @@ export const Topbar = ({ activeTab, onTabChanged, user }: ITopbarProps) => (
       onTabChanged={onTabChanged}
       tab={Tab.Logs}
     />
-    {/*
-    <TabButton
-      activeTab={activeTab}
-      label="Tools"
-      onTabChanged={onTabChanged}
-      tab={Tab.Tools}
-    />
-    */}
     {user && (
       <p className="ServerAdministration__status">
         Connected to&nbsp;

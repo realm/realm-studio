@@ -3,18 +3,20 @@ import * as React from 'react';
 import { Button } from 'reactstrap';
 
 import { LoadingOverlay } from '../reusable/loading-overlay';
+import { Dashboard } from './Dashboard';
 import { LogContainer } from './logs/LogContainer';
 import {
   RealmsTableContainer,
   ValidateCertificatesChangeHandler,
 } from './realms/RealmsTableContainer';
 import { ToolsContainer } from './tools/ToolsContainer';
-import { Topbar } from './Topbar';
+import { TopBar } from './TopBar';
 import { UsersTableContainer } from './users/UsersTableContainer';
 
 import './ServerAdministration.scss';
 
 export enum Tab {
+  Dashboard = 'dashboard',
   Realms = 'realms',
   Users = 'users',
   Logs = 'logs',
@@ -23,6 +25,7 @@ export enum Tab {
 
 export const ServerAdministration = ({
   activeTab,
+  isCloudTenant,
   isRealmOpening,
   onRealmOpened,
   onTabChanged,
@@ -30,7 +33,8 @@ export const ServerAdministration = ({
   validateCertificates,
   onValidateCertificatesChange,
 }: {
-  activeTab: Tab;
+  activeTab: Tab | null;
+  isCloudTenant: boolean;
   isRealmOpening: boolean;
   onRealmOpened: (path: string) => void;
   onTabChanged: (tab: Tab) => void;
@@ -39,7 +43,9 @@ export const ServerAdministration = ({
   onValidateCertificatesChange: ValidateCertificatesChangeHandler;
 }) => {
   let content = null;
-  if (user && activeTab === Tab.Realms) {
+  if (user && activeTab === Tab.Dashboard) {
+    content = <Dashboard isCloudTenant={isCloudTenant} />;
+  } else if (user && activeTab === Tab.Realms) {
     content = (
       <RealmsTableContainer
         user={user}
@@ -64,7 +70,12 @@ export const ServerAdministration = ({
 
   return (
     <div className="ServerAdministration">
-      <Topbar activeTab={activeTab} onTabChanged={onTabChanged} user={user} />
+      <TopBar
+        activeTab={activeTab}
+        isCloudTenant={isCloudTenant}
+        onTabChanged={onTabChanged}
+        user={user}
+      />
       <div className="ServerAdministration__content">{content}</div>
       <LoadingOverlay loading={!user || isRealmOpening} fade={false} />
     </div>

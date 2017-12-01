@@ -4,7 +4,7 @@ import { Button } from 'reactstrap';
 import { Tab } from '../ServerAdministration';
 
 export interface ITabButtonProps {
-  activeTab: Tab;
+  activeTab: Tab | null;
   label: string;
   onTabChanged: (tab: Tab) => void;
   tab: Tab;

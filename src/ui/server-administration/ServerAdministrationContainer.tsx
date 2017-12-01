@@ -25,7 +25,7 @@ export interface IServerAdministrationContainerProps
 }
 
 export interface IServerAdministrationContainerState {
-  activeTab: Tab;
+  activeTab: Tab | null;
   isRealmOpening: boolean;
   user: Realm.Sync.User | null;
 }
@@ -37,7 +37,7 @@ export class ServerAdministrationContainer extends React.Component<
   constructor() {
     super();
     this.state = {
-      activeTab: Tab.Realms,
+      activeTab: null,
       isRealmOpening: false,
       user: null,
     };
@@ -55,6 +55,16 @@ export class ServerAdministrationContainer extends React.Component<
     } catch (err) {
       showError('Failed when authenticating with the Realm Object Server', err);
     }
+
+    if (this.props.isCloudTenant) {
+      this.setState({
+        activeTab: Tab.Dashboard,
+      });
+    } else {
+      this.setState({
+        activeTab: Tab.Realms,
+      });
+    }
   }
 
   public componentWillUnmount() {
@@ -69,8 +79,9 @@ export class ServerAdministrationContainer extends React.Component<
       <ServerAdministration
         {...this.state}
         {...this}
-        validateCertificates={this.props.validateCertificates}
+        isCloudTenant={this.props.isCloudTenant || false}
         onValidateCertificatesChange={this.props.onValidateCertificatesChange}
+        validateCertificates={this.props.validateCertificates}
       />
     );
   }
