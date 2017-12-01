@@ -2,7 +2,7 @@ import * as assert from 'assert';
 import fs = require('fs-extra');
 import { ObjectSchemaProperty } from 'realm';
 import CSVDataImporter from '../csv/CSVDataImporter';
-import { DataImporterHelper, ImportSchemaFormat } from '../index';
+import { ImportSchemaFormat, ImportSchemaGeneratorHelper } from '../index';
 import Util from '../Util';
 
 const TESTS_PATH = './src/services/data-importer/tests';
@@ -41,7 +41,7 @@ describe('Import CSV tests', () => {
   it('Generate a valid Cat schema', () => {
     const files: string[] = [`${TESTS_PATH}/csv/Cat.csv`];
 
-    const importer = DataImporterHelper(ImportSchemaFormat.CSV, files);
+    const importer = ImportSchemaGeneratorHelper(ImportSchemaFormat.CSV, files);
     const importSchema = importer.generate();
 
     assert.equal(importSchema.length, 1, 'Expected to parse one schema (Cat)');
@@ -66,7 +66,10 @@ describe('Import CSV tests', () => {
     it('Create a valid Cat Realm file', () => {
       const files: string[] = [`${TESTS_PATH}/csv/Cat.csv`];
 
-      const importer = DataImporterHelper(ImportSchemaFormat.CSV, files);
+      const importer = ImportSchemaGeneratorHelper(
+        ImportSchemaFormat.CSV,
+        files,
+      );
       const importSchema = importer.generate();
       const csvImporter = new CSVDataImporter(files);
 
@@ -149,34 +152,37 @@ describe('Import CSV tests', () => {
     it('Populate a valid Cat Realm file', () => {
       const files: string[] = [`${TESTS_PATH}/csv/Cat.csv`];
 
-      const importer = DataImporterHelper(ImportSchemaFormat.CSV, files);
+      const importer = ImportSchemaGeneratorHelper(
+        ImportSchemaFormat.CSV,
+        files,
+      );
       const importSchema = importer.generate();
       const csvImporter = new CSVDataImporter(files);
 
       const REALM_FILE_DIR = `${TESTS_PATH}/temporal`;
 
       const realm = csvImporter.import(REALM_FILE_DIR, importSchema);
-      let cats = realm.objects('Cat').sorted('name');
+      const cats = realm.objects('Cat').sorted('name');
       assert.equal(cats.length, 2);
       let cat = cats[0] as any;
-      assert.equal(cat.name, "Kitty");
+      assert.equal(cat.name, 'Kitty');
       assert.equal(cat.age, 3);
       assert.equal(cat.height, 22.1);
       assert.equal(cat.weight, 0);
       assert.equal(cat.hasTail, false);
-      assert.equal(cat.birthday, "<null>");
-      assert.equal(cat.owner, "<null>");
-      assert.equal(cat.scaredOfDog, "<null>");
+      assert.equal(cat.birthday, '<null>');
+      assert.equal(cat.owner, '<null>');
+      assert.equal(cat.scaredOfDog, '<null>');
 
       cat = cats[1] as any;
-      assert.equal(cat.name, "Ninneko");
+      assert.equal(cat.name, 'Ninneko');
       assert.equal(cat.age, 4);
       assert.equal(cat.height, 21.0);
       assert.equal(cat.weight, 0);
       assert.equal(cat.hasTail, true);
-      assert.equal(cat.birthday, "<null>");
-      assert.equal(cat.owner, "<null>");
-      assert.equal(cat.scaredOfDog, "<null>");
+      assert.equal(cat.birthday, '<null>');
+      assert.equal(cat.owner, '<null>');
+      assert.equal(cat.scaredOfDog, '<null>');
     });
 
     after(() => {

@@ -1,8 +1,15 @@
 import * as electron from 'electron';
 
+import * as fsPath from 'path';
 import { ActionReceiver } from '../actions/ActionReceiver';
 import { MainTransport } from '../actions/transports/MainTransport';
+import {
+  ImportSchemaFormat,
+  ImportSchemaGeneratorHelper,
+} from '../services/data-importer';
+import CSVDataImporter from '../services/data-importer/csv/CSVDataImporter';
 import { realms } from '../services/ros';
+
 import {
   IRealmBrowserOptions,
   IServerAdministrationOptions,
@@ -116,6 +123,45 @@ export class Application {
               };
               this.showRealmBrowser(options);
             });
+          }
+        },
+      );
+      resolve();
+    });
+  }
+
+  public showImportCSVFiles() {
+    return new Promise(resolve => {
+      electron.dialog.showOpenDialog(
+        {
+          properties: ['openFile'],
+          filters: [{ name: 'CSV File(s)', extensions: ['csv', 'CSV'] }],
+        },
+        selectedPaths => {
+          if (selectedPaths) {
+            // Generate the Realm from the provided CSV file(s)
+            const importer = ImportSchemaGeneratorHelper(
+              ImportSchemaFormat.CSV,
+              selectedPaths,
+            );
+            const importSchema = importer.generate();
+            const csvImporter = new CSVDataImporter(selectedPaths);
+            const generatedRealm = csvImporter.import(
+              fsPath.dirname(selectedPaths[0]),
+              importSchema,
+            );
+            const realmPath = generatedRealm.path;
+            // close Realm in main process (to be opened in Renderer process)
+            generatedRealm.close();
+
+            // Open a RealmBrowser using the generated Realm file.
+            const options: IRealmBrowserOptions = {
+              realm: {
+                mode: realms.RealmLoadingMode.Local,
+                path: realmPath,
+              },
+            };
+            this.showRealmBrowser(options);
           }
         },
       );

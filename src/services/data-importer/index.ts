@@ -11,7 +11,7 @@ export class ImportObjectSchema implements Realm.ObjectSchema {
   public properties: Realm.PropertiesTypes = {};
 }
 
-export const DataImporterHelper = (
+export const ImportSchemaGeneratorHelper = (
   format: ImportSchemaFormat,
   files: string[],
 ): ImportSchemaGenerator => {
