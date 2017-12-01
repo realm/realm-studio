@@ -46,11 +46,9 @@ export class CloudOverlayContainer extends React.Component<
       });
 
       const locations = await raas.user.getLocations();
-      const selectedLocation = locations.find(
-        location => location.id === 'us1',
-      );
+      const selectedLocation = locations[0];
       if (!selectedLocation) {
-        throw new Error(`Unable to select the default german service shard`);
+        throw new Error(`Unable to select the default location`);
       }
 
       // Now that we're authenticated - let's create a tenant
