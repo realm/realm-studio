@@ -80,6 +80,17 @@ export const forgetToken = () => {
   store.delete(TOKEN_STORAGE_KEY);
 };
 
+export const getTenantCredentials = (url: string): IServerCredentials => {
+  return {
+    kind: 'other',
+    url,
+    options: {
+      provider: 'jwt',
+      data: getToken(),
+    },
+  };
+};
+
 export const hasPrimarySubscriptionCredentials = () => {
   return store.has(PRIMARY_SUBSCRIPTION_CREDENTIALS_KEY);
 };

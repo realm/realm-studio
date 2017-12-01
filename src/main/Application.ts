@@ -96,6 +96,11 @@ export class Application {
     return this.cloudManager.deauthenticate();
   }
 
+  public setRaasEndpoint(endpoint: raas.Endpoint) {
+    this.cloudManager.setEndpoint(endpoint);
+    this.cloudManager.deauthenticate();
+  }
+
   public async showConnectToServer(url?: string) {
     return new Promise(resolve => {
       const window = this.windowManager.createWindow(

@@ -72,7 +72,7 @@ export class GreetingContainer extends React.Component<
 
   public onConnectToPrimarySubscription = () => {
     if (this.state.cloudStatus && this.state.cloudStatus.primarySubscription) {
-      const credentials = this.state.cloudStatus.primarySubscriptionCrednetials;
+      const credentials = this.state.cloudStatus.primarySubscriptionCredentials;
       if (credentials) {
         main.showServerAdministration({
           credentials,
