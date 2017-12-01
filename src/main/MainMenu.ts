@@ -143,6 +143,27 @@ export class MainMenu {
               Application.sharedApplication.deauthenticate();
             },
           },
+          {
+            label: 'Change endpoint',
+            submenu: [
+              {
+                label: 'Production',
+                click: () => {
+                  Application.sharedApplication.setRaasEndpoint(
+                    raas.Endpoint.Production,
+                  );
+                },
+              },
+              {
+                label: 'Staging',
+                click: () => {
+                  Application.sharedApplication.setRaasEndpoint(
+                    raas.Endpoint.Staging,
+                  );
+                },
+              },
+            ],
+          },
         ],
       },
       {

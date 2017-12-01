@@ -46,11 +46,9 @@ export class CloudOverlayContainer extends React.Component<
       });
 
       const locations = await raas.user.getLocations();
-      const selectedLocation = locations.find(
-        location => location.id === 'us1',
-      );
+      const selectedLocation = locations[0];
       if (!selectedLocation) {
-        throw new Error(`Unable to select the default german service shard`);
+        throw new Error(`Unable to select the default location`);
       }
 
       // Now that we're authenticated - let's create a tenant
@@ -76,21 +74,12 @@ export class CloudOverlayContainer extends React.Component<
       const subscription = await raas.user.createSubscription({
         identifier,
         locationId: selectedLocation.id,
-        initialPassword,
+        initialPassword, // Giving a random initial password to secure the tenant
       });
 
       if (!subscription) {
         throw new Error(`Unable to create the tenant`);
       }
-
-      const credentials: ros.IUsernamePasswordCredentials = {
-        kind: 'password',
-        url: subscription.tenantUrl,
-        username: 'realm-admin',
-        password: initialPassword,
-      };
-
-      raas.user.setPrimarySubscriptionCredentials(credentials);
 
       // Poll the tenant for it's availability
       // We expect this to take 17 secound - but we're making to 27 secs to be safe
@@ -123,7 +112,7 @@ export class CloudOverlayContainer extends React.Component<
       setTimeout(async () => {
         // Connect to the tenant
         await main.showServerAdministration({
-          credentials,
+          credentials: raas.user.getTenantCredentials(subscription.tenantUrl),
           validateCertificates: true,
           isCloudTenant: true,
         });

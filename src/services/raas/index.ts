@@ -1,10 +1,16 @@
 import { store } from '../../store';
 import { GITHUB_CLIENT_ID, GITHUB_REDIRECT_URI } from '../github';
 
+export const ENDPOINT_STORAGE_KEY = 'cloud.endpoint';
 export const TOKEN_STORAGE_KEY = 'cloud.token';
 
 import * as user from './user';
 export { user };
+
+export enum Endpoint {
+  Production = 'https://cloud.realm.io',
+  Staging = 'https://raas2.realmlab.net',
+}
 
 // {"id":"ie1","controllerUrl":"https://ie1.raas.realmlab.net","region":"ireland","label":"Ireland Dev 1"}
 export interface ILocation {
@@ -14,8 +20,13 @@ export interface ILocation {
   label: string;
 }
 
+export const getEndpoint = (): Endpoint => {
+  return store.get(ENDPOINT_STORAGE_KEY, Endpoint.Production);
+};
+
 export const buildUrl = (service: string, version: string, path: string) => {
-  return `https://cloud.realm.io/api/${service}/${version}/${path}`;
+  const endpoint = getEndpoint();
+  return `${endpoint}/api/${service}/${version}/${path}`;
 };
 
 export const fetchAuthenticated = (url: string, options: RequestInit) => {
@@ -43,5 +54,13 @@ export const getErrorMessage = async (response: Response): Promise<string> => {
     } catch (err) {
       return `Error without a message from RaaS (status = ${response.status})`;
     }
+  }
+};
+
+export const setEndpoint = (endpoint: Endpoint) => {
+  if (endpoint === null) {
+    store.delete(ENDPOINT_STORAGE_KEY);
+  } else {
+    store.set(ENDPOINT_STORAGE_KEY, endpoint);
   }
 };

@@ -3,9 +3,10 @@ import * as raas from '../services/raas';
 import * as ros from '../services/ros';
 
 export interface ICloudStatus {
-  raasToken: string;
+  endpoint: raas.Endpoint;
   primarySubscription?: raas.user.ISubscription;
-  primarySubscriptionCrednetials?: ros.IServerCredentials;
+  primarySubscriptionCredentials?: ros.IServerCredentials;
+  raasToken: string;
 }
 
 type CloudStatusListener = (status: ICloudStatus) => void;
@@ -16,18 +17,6 @@ type CloudStatusListener = (status: ICloudStatus) => void;
 export class CloudManager {
   private listeningWindows: Electron.BrowserWindow[] = [];
   private listeners: CloudStatusListener[] = [];
-
-  public async authenticateWithGitHub() {
-    const code = await github.authenticate();
-    const response = await raas.user.authenticate(code);
-    raas.user.setToken(response.token);
-    this.refresh();
-  }
-
-  public async deauthenticate() {
-    raas.user.forgetToken();
-    this.refresh();
-  }
 
   public addListeningWindow(window: Electron.BrowserWindow) {
     this.listeningWindows.push(window);
@@ -47,19 +36,41 @@ export class CloudManager {
     this.listeners.splice(index, 1);
   }
 
+  public async authenticateWithGitHub() {
+    const code = await github.authenticate();
+    const response = await raas.user.authenticate(code);
+    raas.user.setToken(response.token);
+    this.refresh();
+  }
+
+  public async deauthenticate() {
+    raas.user.forgetToken();
+    this.refresh();
+  }
+
+  public setEndpoint(endpoint: raas.Endpoint) {
+    raas.setEndpoint(endpoint);
+  }
+
   public async refresh() {
     const raasToken = raas.user.getToken();
+    const endpoint = raas.getEndpoint();
     if (raasToken) {
       const subscriptions = await raas.user.getSubscriptions();
       const primarySubscription =
         subscriptions.length >= 1 ? subscriptions[0] : undefined;
+      const primarySubscriptionCredentials = primarySubscription
+        ? raas.user.getTenantCredentials(primarySubscription.tenantUrl)
+        : undefined;
       this.sendCloudStatus({
-        raasToken,
+        endpoint,
         primarySubscription,
-        primarySubscriptionCrednetials: raas.user.getPrimarySubscriptionCredentials(),
+        primarySubscriptionCredentials,
+        raasToken,
       });
     } else {
       this.sendCloudStatus({
+        endpoint,
         raasToken,
       });
     }
