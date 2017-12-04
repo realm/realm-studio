@@ -74,7 +74,7 @@ export const Sidebar = ({
     <div className="RealmBrowser__Sidebar__Header">
       <span>Classes</span>
       <Button size="sm" onClick={toggleAddSchema}>
-        +
+        <i className="fa fa-plus" />
       </Button>
     </div>
     {schemas && schemas.length > 0 ? (
