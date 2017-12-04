@@ -134,7 +134,7 @@ export class Application {
     return new Promise(resolve => {
       electron.dialog.showOpenDialog(
         {
-          properties: ['openFile'],
+          properties: ['openFile', 'multiSelections'],
           filters: [{ name: 'CSV File(s)', extensions: ['csv', 'CSV'] }],
         },
         selectedPaths => {

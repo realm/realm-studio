@@ -1,30 +1,28 @@
 export default class Util {
   public static isBoolean(value: string): boolean {
-    try {
-      return typeof JSON.parse(value.toLocaleLowerCase()) === 'boolean';
-    } catch (e) {
-      return false;
-    }
+    return (
+      value.toLocaleLowerCase() === 'true' ||
+      value.toLocaleLowerCase() === 'false'
+    );
   }
 
   public static isInt(value: string): boolean {
-    try {
-      const nbr = Number.parseFloat(value);
-      if (isNaN(nbr)) {
-        return false;
-      } else {
-        return Number.isInteger(nbr);
-      }
-    } catch (e) {
+    const nbr: any = Util.filterFloat(value);
+    if (Number.isNaN(nbr)) {
       return false;
+    } else {
+      return Number.isInteger(nbr);
     }
   }
 
   public static isDouble(value: string): boolean {
-    try {
-      return !isNaN(Number.parseFloat(value));
-    } catch (e) {
-      return false;
+    return !Number.isNaN(Util.filterFloat(value) as any);
+  }
+
+  private static filterFloat(value: string): number {
+    if (/^(\-|\+)?([0-9]+(\.[0-9]+)?|Infinity)$/.test(value)) {
+      return Number(value);
     }
+    return NaN;
   }
 }

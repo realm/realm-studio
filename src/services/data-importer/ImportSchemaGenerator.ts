@@ -39,13 +39,14 @@ export default class ImportSchemaGenerator {
       //        this would have been possible to avoid if we could use obtain a
       //        File type (https://developer.mozilla.org/en-US/docs/Web/API/File/File)
       //        to be used with papaparse (alngside preview:1)
-      const rawCSV = fs.readFileSync(file, 'utf8');
+      let rawCSV = fs.readFileSync(file, 'utf8');
 
       // Read header only
       const content = papaparse.parse(rawCSV, {
         header: true,
         preview: 1,
       });
+      rawCSV = '';
       const headers: string[] = content.meta.fields;
       const data: any[] = content.data;
       headers.forEach((header, index) => {
