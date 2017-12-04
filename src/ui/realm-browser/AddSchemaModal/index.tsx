@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { SchemaModal } from './SchemaModal';
+import { View } from './View';
 
 export interface IAddSchemaModalProps {
   isOpen: boolean;
@@ -27,7 +27,7 @@ export class AddSchemaModal extends React.Component<
   }
 
   public render() {
-    return <SchemaModal {...this.props} {...this.state} {...this} />;
+    return <View {...this.props} {...this.state} {...this} />;
   }
 
   public onSubmit = (e: React.FormEvent<HTMLFormElement>) => {

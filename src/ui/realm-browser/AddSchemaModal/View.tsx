@@ -1,4 +1,3 @@
-import * as classnames from 'classnames';
 import * as React from 'react';
 import {
   Button,
@@ -13,7 +12,7 @@ import {
   ModalHeader,
 } from 'reactstrap';
 
-export const SchemaModal = ({
+export const View = ({
   isOpen,
   toggle,
   onNameChange,
