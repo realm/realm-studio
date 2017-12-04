@@ -23,7 +23,6 @@ import {
   SortStartHandler,
 } from './table';
 
-import { isUndefined } from 'util';
 import { RealmBrowser } from './RealmBrowser';
 
 export interface IRealmBrowserState extends IRealmLoadingComponentState {
@@ -95,7 +94,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   };
 
   public isSchemaNameAvailable = (name: string): boolean => {
-    return isUndefined(this.state.schemas.find(schema => schema.name === name));
+    return !this.state.schemas.find(schema => schema.name === name);
   };
 
   public toggleAddSchema = () => {
