@@ -1,5 +1,5 @@
+import * as classnames from 'classnames';
 import * as React from 'react';
-import { ToggleClass } from '../../../reusable/ToggleClass';
 import './FloatingControls.scss';
 
 export interface IProps {
@@ -8,11 +8,11 @@ export interface IProps {
 }
 
 export const FloatingControls = ({ isOpen, children }: IProps) => (
-  <ToggleClass
-    isOpen={isOpen}
-    classUsedWhenOpened="FloatingControls"
-    classUsedWhenClosed="FloatingControls FloatingControls--hidden"
+  <div
+    className={classnames(
+      isOpen ? 'FloatingControls' : 'FloatingControls FloatingControls--hidden',
+    )}
   >
     {children}
-  </ToggleClass>
+  </div>
 );
