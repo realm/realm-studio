@@ -76,6 +76,11 @@ export class MainMenu {
                 click: () => this.exportSchema(Language.Java),
                 enabled: enableExportSchema,
               },
+              {
+                label: 'C#',
+                click: () => this.exportSchema(Language.CS),
+                enabled: enableExportSchema,
+              },
             ],
           },
           { type: 'separator' },

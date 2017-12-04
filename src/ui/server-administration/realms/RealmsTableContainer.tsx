@@ -3,12 +3,12 @@ import * as React from 'react';
 import * as Realm from 'realm';
 
 import * as ros from '../../../services/ros';
-import { showError } from '../../reusable/errors';
 import {
   IRealmLoadingComponentState,
   RealmLoadingComponent,
 } from '../../reusable/realm-loading-component';
 
+import { showError } from '../../reusable/errors';
 import { RealmsTable } from './RealmsTable';
 
 export type ValidateCertificatesChangeHandler = (
@@ -76,15 +76,33 @@ export class RealmsTableContainer extends RealmLoadingComponent<
     return this.realm.objectForPrimaryKey<ros.IRealmFile>('RealmFile', path);
   };
 
-  public onRealmDeleted = async (path: string) => {
-    await ros.realms.remove(path);
-    if (path === this.state.selectedRealmPath) {
-      this.onRealmSelected(null);
+  public getRealmPermissions = (
+    path: string,
+  ): Realm.Results<ros.IPermission> => {
+    const realmFile = this.getRealmFromId(path);
+    return this.realm
+      .objects<ros.IPermission>('Permission')
+      .filtered('realmFile == $0', realmFile);
+  };
+
+  public onRealmDeletion = async (path: string) => {
+    const confirmed = await this.confirmRealmDeletion(path);
+    if (confirmed) {
+      try {
+        await ros.realms.remove(this.props.user, path);
+        if (path === this.state.selectedRealmPath) {
+          this.onRealmSelected(null);
+        }
+      } catch (err) {
+        showError('Error deleting realm', err);
+      }
     }
   };
 
   public onRealmOpened = (path: string) => {
     this.props.onRealmOpened(path);
+    // Make sure the Realm that just got opened, is selected
+    this.onRealmSelected(path);
   };
 
   public onRealmSelected = (path: string | null) => {
@@ -93,13 +111,17 @@ export class RealmsTableContainer extends RealmLoadingComponent<
     });
   };
 
-  protected gotUser(user: Realm.Sync.User) {
-    this.loadRealm({
-      authentication: this.props.user,
-      mode: ros.realms.RealmLoadingMode.Synced,
-      path: '__admin',
-      validateCertificates: this.props.validateCertificates,
-    });
+  protected async gotUser(user: Realm.Sync.User) {
+    try {
+      await this.loadRealm({
+        authentication: this.props.user,
+        mode: ros.realms.RealmLoadingMode.Synced,
+        path: '__admin',
+        validateCertificates: this.props.validateCertificates,
+      });
+    } catch (err) {
+      showError('Failed to open the __admin Realm', err);
+    }
   }
 
   protected async loadRealm(
@@ -128,4 +150,19 @@ export class RealmsTableContainer extends RealmLoadingComponent<
       realms: this.realm.objects<ros.IRealmFile>('RealmFile'),
     });
   };
+
+  private confirmRealmDeletion(path: string): boolean {
+    const result = electron.remote.dialog.showMessageBox(
+      electron.remote.getCurrentWindow(),
+      {
+        type: 'warning',
+        message:
+          'Before deleting the Realm here, make sure that any / all clients (iOS, Android, Js, etc.) has already deleted the app or database locally. If this is not done, they will try to upload their copy of the database - which might have been replaced in the meantime.',
+        title: `Deleting ${path}`,
+        buttons: ['Cancel', 'Delete'],
+      },
+    );
+
+    return result === 1;
+  }
 }

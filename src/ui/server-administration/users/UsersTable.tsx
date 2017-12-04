@@ -84,7 +84,7 @@ export const UsersTable = ({
               rowClassName={({ index }) => {
                 const user = getUser(index);
                 return classnames('UsersTable__row', {
-                  'UsersTable__selected-row':
+                  'UsersTable__row--selected':
                     user && user.userId === selectedUserId,
                 });
               }}
@@ -147,9 +147,7 @@ export const UsersTable = ({
       </div>
 
       <UserSidebar
-        className={classnames('UsersTable__selected-user', {
-          'UsersTable__selected-user--active': selectedUserId !== null,
-        })}
+        isOpen={selectedUserId !== null}
         onUserChangePassword={onUserChangePassword}
         onUserDeletion={onUserDeletion}
         onUserMetadataAppended={onUserMetadataAppended}

@@ -1,8 +1,20 @@
 @import "~realm-studio-styles/variables";
-@import "../../variables";
+@import "../variables";
 
-.UserSidebar {
+.Sidebar {
   background: $white;
+  box-shadow: -5px 0 5px $sidebar-shadow;
+  flex: 0 0 0;
+  height: 100%;
+  overflow: hidden;
+  transition-duration: $sidebar-transition-duration;
+  transition-property: flex-basis;
+  transition-timing-function: ease-in-out;
+  z-index: 1;
+
+  &--active {
+    flex-basis: $sidebar-width;
+  }
 
   &__Card {
     // Defining its width makes sure it doesn't collapse when sliding in / out
@@ -33,37 +45,6 @@
     line-height: 1.5;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-  &__AccountsTable,
-  &__MetadataTable,
-  &__RealmsTable {
-    table-layout: fixed;
-
-    th {
-      border-top: 0;
-    }
-
-    td {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-  }
-
-  &__MetadataTableControlCell {
-    text-align: right;
-    width: 35px;
-
-    * {
-      width: 100%;
-    }
-  }
-
-  &__EmptyTableExplanation {
-    color: $color-elephant;
-    font-size: .9rem;
-    text-align: center;
   }
 
   &__Controls {

@@ -1,0 +1,85 @@
+@import "~realm-studio-styles/variables";
+
+.CreateObjectDialog {
+  &__PropertyRow {
+    &__Label {
+      width: 100%;
+    }
+
+    &__Badges {
+      float: right;
+      font-size: 1rem;
+
+      & > * {
+        margin-left: $spacer / 4;
+      }
+    }
+  }
+
+  &__ObjectControl {
+    &__FormControl {
+      align-items: center;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    &__Display {
+      font-size: .8rem;
+
+      &--null {
+        color: $color-elephant;
+        font-style: italic;
+      }
+    }
+  }
+
+  &__BooleanControl,
+  &__ListControl {
+    &__Buttons {
+      display: flex;
+      // Overriding the bootstrap default as this produces columns
+      flex-direction: row !important; // sass-lint:disable-line no-important
+      justify-content: center;
+
+      & > * {
+        margin: 0 ($spacer / 2);
+      }
+    }
+  }
+
+  &__StringControl,
+  &__DateControl,
+  &__NummericControl {
+    &__Input {
+      &::placeholder {
+        font-style: italic;
+      }
+    }
+  }
+
+  &__DateControl {
+    &__Input {
+      // Overriding the bootstrap default as this produces columns
+      flex-direction: row !important; // sass-lint:disable-line no-important
+
+      &::-webkit-clear-button { // sass-lint:disable-line no-vendor-prefixes
+        -webkit-appearance: none; // sass-lint:disable-line no-vendor-prefixes
+        display: none;
+      }
+    }
+  }
+
+  &__ListControl {
+    $list-control-gutter: $spacer / 2;
+    background: $window-background;
+
+    &__Item {
+      display: inline-block;
+      padding-bottom: $list-control-gutter;
+      width: 100%;
+      // Same as the model
+      z-index: 1050;
+    }
+  }
+}

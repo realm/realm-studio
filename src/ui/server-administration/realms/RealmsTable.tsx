@@ -7,18 +7,20 @@ import {
   Table,
 } from 'react-virtualized';
 
-import { IRealmFile } from '../../../services/ros';
+import { IPermission, IRealmFile } from '../../../services/ros';
 import {
   ILoadingProgress,
   LoadingOverlay,
 } from '../../reusable/loading-overlay';
+import { RealmSidebar } from './RealmSidebar';
 
 import './RealmsTable.scss';
 
 export const RealmsTable = ({
   getRealm,
   getRealmFromId,
-  onRealmDeleted,
+  getRealmPermissions,
+  onRealmDeletion,
   onRealmOpened,
   onRealmSelected,
   progress,
@@ -27,7 +29,8 @@ export const RealmsTable = ({
 }: {
   getRealm: (index: number) => IRealmFile | null;
   getRealmFromId: (path: string) => IRealmFile | null;
-  onRealmDeleted: (path: string) => void;
+  getRealmPermissions: (path: string) => Realm.Results<IPermission>;
+  onRealmDeletion: (path: string) => void;
   onRealmOpened: (path: string) => void;
   onRealmSelected: (path: string | null) => void;
   progress: ILoadingProgress;
@@ -36,7 +39,12 @@ export const RealmsTable = ({
 }) => {
   return (
     <div className="RealmsTable">
-      <div className="RealmsTable__table">
+      <div
+        className="RealmsTable__table"
+        onClick={event => {
+          onRealmSelected(null);
+        }}
+      >
         <AutoSizer>
           {({ width, height }: IAutoSizerDimensions) => (
             <Table
@@ -54,6 +62,14 @@ export const RealmsTable = ({
               rowCount={realmCount}
               rowGetter={({ index }) => getRealm(index)}
               onRowClick={({ event, index }) => {
+                event.stopPropagation();
+                const realm = getRealm(index);
+                onRealmSelected(
+                  realm && realm.path !== selectedRealmPath ? realm.path : null,
+                );
+              }}
+              onRowDoubleClick={({ event, index }) => {
+                event.stopPropagation();
                 const realm = getRealm(index);
                 if (realm) {
                   onRealmOpened(realm.path);
@@ -65,6 +81,16 @@ export const RealmsTable = ({
           )}
         </AutoSizer>
       </div>
+
+      <RealmSidebar
+        isOpen={selectedRealmPath !== null}
+        getRealmPermissions={getRealmPermissions}
+        onRealmDeletion={onRealmDeletion}
+        onRealmOpened={onRealmOpened}
+        realm={
+          selectedRealmPath !== null ? getRealmFromId(selectedRealmPath) : null
+        }
+      />
 
       <LoadingOverlay progress={progress} fade={true} />
     </div>

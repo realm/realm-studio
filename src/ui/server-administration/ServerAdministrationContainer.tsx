@@ -43,10 +43,15 @@ export class ServerAdministrationContainer extends React.Component<
   }
 
   public async componentDidMount() {
-    const user = await users.authenticate(this.props.credentials);
-    this.setState({
-      user,
-    });
+    try {
+      // Authenticate towards the server
+      const user = await users.authenticate(this.props.credentials);
+      this.setState({
+        user,
+      });
+    } catch (err) {
+      showError('Failed when authenticating with the Realm Object Server', err);
+    }
   }
 
   public render() {

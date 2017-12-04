@@ -33,3 +33,5 @@ export interface IListFocus extends IFocus {
   property: IPropertyWithName;
   results: Realm.List<any>;
 }
+
+export type Focus = IClassFocus | IListFocus;
