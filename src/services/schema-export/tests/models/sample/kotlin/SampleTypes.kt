@@ -3,6 +3,7 @@ package your.package.name.here
 
 import io.realm.RealmObject
 import io.realm.RealmList
+import io.realm.annotations.Required
 import java.util.Date
 import io.realm.annotations.Index
 import io.realm.annotations.PrimaryKey
@@ -12,11 +13,13 @@ open class SampleTypes : RealmObject() {
     @PrimaryKey
     var primary: Long = 0
     var ArrayFloatValue: Float? = null
+    @Required
     var listOfStrings: RealmList<String> = RealmList()
     var listOfOptionalDates: RealmList<Date>? = null
     @Index
     var indexedInt: Long = 0
     var linkToObject: SampleTypes? = null
+    @Required
     var listOfObjects: RealmList<SampleTypes> = RealmList()
 
 }

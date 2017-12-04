@@ -45,6 +45,9 @@ export default class KotlinSchemaExporter extends SchemaExporter {
         if (prop.indexed && prop.name !== schema.primaryKey) {
           this.realmImports.add('import io.realm.annotations.Index');
         }
+        if (!prop.optional && prop.type === 'list') {
+          this.realmImports.add('import io.realm.annotations.Required');
+        }
       }
     }
 
@@ -79,7 +82,9 @@ export default class KotlinSchemaExporter extends SchemaExporter {
     } else if (prop.indexed) {
       this.fieldsContent += `${KotlinSchemaExporter.PADDING}@Index\n`;
     }
-
+    if (!prop.optional && prop.type === 'list') {
+      this.fieldsContent += `${KotlinSchemaExporter.PADDING}@Required\n`;
+    }
     this.fieldsContent += `${KotlinSchemaExporter.PADDING}var ${prop.name}: ${this.kotlinTypeForProperty(
       prop,
     )} ${this.sensibleDefaultForProperty(prop)}\n`;

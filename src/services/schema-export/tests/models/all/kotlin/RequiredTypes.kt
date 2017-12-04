@@ -4,6 +4,7 @@ package your.package.name.here
 import io.realm.RealmObject
 import java.util.Date
 import io.realm.RealmList
+import io.realm.annotations.Required
 
 open class RequiredTypes : RealmObject() {
 
@@ -14,13 +15,21 @@ open class RequiredTypes : RealmObject() {
     var stringRequired: String = ""
     var dateRequired: Date = Date()
     var dataRequired: ByteArray = ByteArray(0)
+    @Required
     var boolRequiredArray: RealmList<Boolean> = RealmList()
+    @Required
     var intRequiredArray: RealmList<Long> = RealmList()
+    @Required
     var floatRequiredArray: RealmList<Float> = RealmList()
+    @Required
     var doubleRequiredArray: RealmList<Double> = RealmList()
+    @Required
     var stringRequiredArray: RealmList<String> = RealmList()
+    @Required
     var dateRequiredArray: RealmList<Date> = RealmList()
+    @Required
     var dataRequiredArray: RealmList<ByteArray> = RealmList()
+    @Required
     var objectRequiredArray: RealmList<RequiredTypes> = RealmList()
 
 }
