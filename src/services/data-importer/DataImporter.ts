@@ -27,15 +27,16 @@ export abstract class DataImporter {
     const realm = new Realm({
       path: `${output}/default.realm`,
       schema: importSchema,
+      sync: true,
     });
     return realm;
   }
 
   /**
-   * An abstract method, overidden in subclasses that performs the data import
+   * An abstract method, overidden in subclasses that performs the data import.
    * 
-   * @param path //FIXME complete
-   * @param importSchema The import schema with which this file will be created
+   * @param path Absolute path to the directory where the Realm file will be generated.
+   * @param importSchema The import schema with which this file will be created.
    */
   public abstract import(
     path: string,

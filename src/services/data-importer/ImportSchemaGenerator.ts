@@ -34,11 +34,6 @@ export default class ImportSchemaGenerator {
     this.files.map(file => {
       const schema = new ImportObjectSchema();
       schema.name = fsPath.basename(file, fsPath.extname(file));
-      // FIXME  sine we're interested in opening the file to only read the header
-      //        there is no need to read the entire content.
-      //        this would have been possible to avoid if we could use obtain a
-      //        File type (https://developer.mozilla.org/en-US/docs/Web/API/File/File)
-      //        to be used with papaparse (alngside preview:1)
       let rawCSV = fs.readFileSync(file, 'utf8');
 
       // Read header only

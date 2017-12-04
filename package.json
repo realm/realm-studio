@@ -99,7 +99,6 @@
     "start": "electron .",
     "test:ci": "mocha-webpack --reporter mocha-junit-reporter",
     "test": "mocha-webpack",
-    "test-csv": "mocha-webpack src/services/data-importer/tests/index.test.ts ",
     "tslint-prettier": "tslint --fix 'src/**/*.ts' 'src/**/*.tsx'",
     "wait-for-bundle": "node ./webpack.wait-for-bundle.js",
     "webpack:main": "webpack --config=webpack.main.config.js",

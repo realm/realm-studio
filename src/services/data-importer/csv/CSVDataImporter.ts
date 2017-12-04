@@ -29,7 +29,7 @@ export default class CSVDataImporter extends DataImporter {
             try {
               switch (schema.properties[prop]) {
                 case 'bool?':
-                  object[prop] = JSON.parse(row[prop].toLocaleLowerCase()); // TODO handle parsingn error + add tests
+                  object[prop] = JSON.parse(row[prop].toLocaleLowerCase());
                   break;
                 case 'int?':
                   const intNumber = parseInt(row[prop], 10);
