@@ -48,7 +48,7 @@ describe('Import CSV tests', () => {
     assert.equal(importSchema.length, 1, 'Expected to parse one schema (Cat)');
     const catSchema = importSchema[0];
     assert.equal(catSchema.name, 'Cat', 'Expected to parse schema named (Cat)');
-    assert.equal(catSchema.properties.name, 'string?'); // FIXME compare against camelized names
+    assert.equal(catSchema.properties.name, 'string?');
     assert.equal(catSchema.properties.age, 'int?');
     assert.equal(catSchema.properties.height, 'double?');
     assert.equal(catSchema.properties.weight, 'int?');
