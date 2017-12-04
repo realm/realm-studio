@@ -27,7 +27,6 @@ export abstract class DataImporter {
     const realm = new Realm({
       path: `${output}/default.realm`,
       schema: importSchema,
-      sync: true,
     });
     return realm;
   }
