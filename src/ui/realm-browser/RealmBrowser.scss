@@ -341,6 +341,14 @@ $highlight-row-color: $black;
       cursor: pointer;
     }
 
+    &__ObjectCell,
+    &__StringCell {
+      &--null {
+        color: $color-elephant;
+        font-style: italic;
+      }
+    }
+
     &__ListCell {
       display: flex;
       width: 100%;

@@ -8,7 +8,7 @@ import {
 } from 'react-virtualized';
 import { Button } from 'reactstrap';
 
-import { IRealmFile } from '../../../services/ros';
+import { IPermission, IRealmFile } from '../../../services/ros';
 import {
   ILoadingProgress,
   LoadingOverlay,
@@ -21,6 +21,7 @@ import './RealmsTable.scss';
 export const RealmsTable = ({
   getRealm,
   getRealmFromId,
+  getRealmPermissions,
   onRealmDeletion,
   onRealmOpened,
   onRealmSelected,
@@ -33,6 +34,7 @@ export const RealmsTable = ({
 }: {
   getRealm: (index: number) => IRealmFile | null;
   getRealmFromId: (path: string) => IRealmFile | null;
+  getRealmPermissions: (path: string) => Realm.Results<IPermission>;
   onRealmDeletion: (path: string) => void;
   onRealmOpened: (path: string) => void;
   onRealmCreated: (path: string) => void;
@@ -68,18 +70,18 @@ export const RealmsTable = ({
               rowCount={realmCount}
               rowGetter={({ index }) => getRealm(index)}
               onRowClick={({ event, index }) => {
+                event.stopPropagation();
                 const realm = getRealm(index);
                 onRealmSelected(
                   realm && realm.path !== selectedRealmPath ? realm.path : null,
                 );
-                event.stopPropagation();
               }}
               onRowDoubleClick={({ event, index }) => {
+                event.stopPropagation();
                 const realm = getRealm(index);
                 if (realm) {
                   onRealmOpened(realm.path);
                 }
-                event.stopPropagation();
               }}
             >
               <Column label="Path" dataKey="path" width={width} />
@@ -100,10 +102,12 @@ export const RealmsTable = ({
 
       <RealmSidebar
         isOpen={selectedRealmPath !== null}
+        getRealmPermissions={getRealmPermissions}
+        onRealmDeletion={onRealmDeletion}
+        onRealmOpened={onRealmOpened}
         realm={
           selectedRealmPath !== null ? getRealmFromId(selectedRealmPath) : null
         }
-        onRealmDeletion={onRealmDeletion}
       />
 
       <LoadingOverlay progress={progress} fade={true} />

@@ -3,8 +3,8 @@ import * as React from 'react';
 import { Badge, Button } from 'reactstrap';
 
 import { ILoadingProgress } from '../reusable/loading-overlay';
+import { displayObject } from './display';
 import { IClassFocus, IFocus, IListFocus } from './focus';
-import * as objectCell from './table/types/ObjectCell';
 
 import './RealmBrowser.scss';
 
@@ -45,9 +45,9 @@ const ListFocusComponent = ({
             onClick={() =>
               onSchemaSelected(focus.parent.objectSchema().name, focus.parent)}
             className="RealmBrowser__Sidebar__List__ParentObject"
-            title={objectCell.display(focus.parent, true)}
+            title={displayObject(focus.parent, true)}
           >
-            {objectCell.display(focus.parent, false)}
+            {displayObject(focus.parent, false)}
           </span>
         </div>
       </div>

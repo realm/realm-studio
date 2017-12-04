@@ -24,6 +24,7 @@ import { Topbar } from './Topbar';
 export const Content = ({
   dataVersion,
   focus,
+  hasEditingDisabled,
   highlight,
   onCellChange,
   onCellClick,
@@ -36,6 +37,7 @@ export const Content = ({
 }: {
   dataVersion?: number;
   focus: IFocus | null;
+  hasEditingDisabled?: boolean;
   highlight?: IHighlight;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
@@ -56,6 +58,7 @@ export const Content = ({
         <ResponsiveTable
           dataVersion={dataVersion}
           focus={focus}
+          hasEditingDisabled={hasEditingDisabled}
           highlight={highlight}
           onCellChange={onCellChange}
           onCellClick={onCellClick}
