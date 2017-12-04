@@ -72,8 +72,8 @@ export abstract class RealmLoadingComponent<
             validateCertificates,
             // Uncomment the line below to test failing certificate validation
             /*
-          certificatePath: '... some path of a valid but failing certificate',
-          */
+            certificatePath: '... some path of a valid but failing certificate',
+            */
           },
           schema,
         );
