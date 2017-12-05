@@ -133,10 +133,31 @@ export abstract class RealmLoadingComponent<
     ssl: realms.ISslConfiguration = { validateCertificates: true },
   ): Promise<Realm> {
     if (realm && realm.mode === realms.RealmLoadingMode.Local) {
-      return new Realm({
-        path: realm.path,
-        encryptionKey: realm.encryptionKey,
-      });
+      try {
+        let localRealm = new Realm({
+          path: realm.path,
+          encryptionKey: realm.encryptionKey,
+        });
+        return localRealm;
+      } catch (error) {
+        if (error.message) {
+          let message : string = error.message;
+          // FIXME: replace this when we have more typed error we can check against
+          if (message.includes('Incompatible histories. Expected a Realm with no or in-realm history')) {
+            // Retrying with a force sync history in order to open the sync Realm locally
+            let localRealm = new Realm({
+              path: realm.path,
+              encryptionKey: realm.encryptionKey,
+              sync:true as any,
+            });
+            return localRealm;
+          }
+        }
+        // Other errors, propagate it.
+        throw error;
+      } 
+      
+
     } else if (realm && realm.mode === realms.RealmLoadingMode.Synced) {
       const props = (realm as any) as realms.ISyncedRealmToLoad;
       const user =
