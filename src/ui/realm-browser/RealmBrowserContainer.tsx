@@ -89,7 +89,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     );
   }
 
-  public getFocusWithAddColumn = (focus: Focus) =>
+  public getFocusWithAddColumn = (focus: Focus | null) =>
     focus
       ? {
           ...focus,
