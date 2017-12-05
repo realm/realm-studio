@@ -10,7 +10,7 @@ import './RealmBrowser.scss';
 
 import * as util from 'util';
 
-const isSelected = (focus: IFocus | null, schemaName: string) => {
+export const isSelected = (focus: IFocus | null, schemaName: string) => {
   if (focus && focus.kind === 'class') {
     return (focus as IClassFocus).className === schemaName;
   } else if (focus && focus.kind === 'list') {

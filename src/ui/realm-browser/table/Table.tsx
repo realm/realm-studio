@@ -49,6 +49,7 @@ export interface ITableProps {
   scrollProps: ScrollSyncProps;
   sizeProps: AutoSizerProps;
   sorting?: ISorting;
+  onAddColumnClick: () => void;
 }
 
 export const Table = ({
@@ -72,6 +73,7 @@ export const Table = ({
   scrollProps,
   sizeProps,
   sorting,
+  onAddColumnClick,
 }: ITableProps) => {
   const {
     onScroll,
@@ -100,6 +102,7 @@ export const Table = ({
         scrollLeft={scrollLeft}
         sorting={sorting}
         width={width}
+        onAddColumnClick={onAddColumnClick}
       />
       <ContentGrid
         className="RealmBrowser__Table__ValueGrid"

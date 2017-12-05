@@ -1,12 +1,4 @@
 import * as React from 'react';
-import {
-  AutoSizer,
-  defaultCellRangeRenderer,
-  Grid,
-  GridCellRenderer,
-  ScrollSync,
-} from 'react-virtualized';
-import * as Realm from 'realm';
 
 import { ILoadingProgress } from '../reusable/loading-overlay';
 import { IFocus } from './focus';
@@ -34,6 +26,7 @@ export const Content = ({
   onSortStart,
   progress,
   query,
+  toggleAddSchemaProperty,
 }: {
   dataVersion?: number;
   focus: IFocus | null;
@@ -47,11 +40,9 @@ export const Content = ({
   onSortStart?: SortStartHandler;
   progress?: ILoadingProgress;
   query: string;
+  toggleAddSchemaProperty: () => void;
 }) => {
   if (focus) {
-    const headerHeight = 40;
-    const rowHeight = 26;
-
     return (
       <div className="RealmBrowser__Content">
         <Topbar onQueryChange={onQueryChange} query={query} />
@@ -66,6 +57,7 @@ export const Content = ({
           onSortEnd={onSortEnd}
           onSortStart={onSortStart}
           query={query}
+          onAddColumnClick={toggleAddSchemaProperty}
         />
       </div>
     );

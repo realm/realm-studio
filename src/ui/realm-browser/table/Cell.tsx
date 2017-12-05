@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as Realm from 'realm';
 
 import { IPropertyWithName } from '..';
 import { DataCell } from './types/DataCell';
@@ -20,6 +19,10 @@ const getCellContent = ({
   property: IPropertyWithName;
   value: any;
 }) => {
+  // A special cell for add new column control
+  if (property.name === '+' && property.type === 'int' && property.readOnly) {
+    return <div />;
+  }
   // A special cell for the list index
   if (property.name === '#' && property.type === 'int' && property.readOnly) {
     return <ListIndexCell value={value} />;

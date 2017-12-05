@@ -32,6 +32,7 @@ export interface IBaseTableContainerProps {
   onSortEnd?: SortEndHandler;
   onSortStart?: SortStartHandler;
   query: string;
+  onAddColumnClick: () => void;
 }
 
 export interface ITableContainerProps extends IBaseTableContainerProps {
@@ -88,6 +89,7 @@ export class TableContainer extends React.PureComponent<
         scrollProps={this.props.scrollProps}
         sizeProps={this.props.sizeProps}
         sorting={this.state.sorting}
+        onAddColumnClick={this.props.onAddColumnClick}
       />
     ) : null;
   }
@@ -235,7 +237,7 @@ export class TableContainer extends React.PureComponent<
     const columnWidths = properties.map(property => {
       switch (property.type) {
         case 'int':
-          return property.name === '#' ? 50 : 100;
+          return property.name === '#' || property.name === '+' ? 50 : 100;
         case 'bool':
           return 100;
         case 'string':

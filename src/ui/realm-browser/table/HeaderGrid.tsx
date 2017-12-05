@@ -20,6 +20,7 @@ export interface IHeaderGridProps extends Partial<GridProps> {
   properties: IPropertyWithName[];
   sorting?: ISorting;
   width: number;
+  onAddColumnClick: () => void;
 }
 
 export class HeaderGrid extends React.PureComponent<IHeaderGridProps, {}> {
@@ -36,7 +37,7 @@ export class HeaderGrid extends React.PureComponent<IHeaderGridProps, {}> {
   }
 
   public render() {
-    const { columnWidths, gridRef, height, properties } = this.props;
+    const { gridRef, height, properties } = this.props;
 
     return (
       <Grid
@@ -66,7 +67,7 @@ export class HeaderGrid extends React.PureComponent<IHeaderGridProps, {}> {
   };
 
   private generateRenderers(props: IHeaderGridProps) {
-    const { properties } = props;
+    const { properties, onAddColumnClick } = props;
 
     this.cellRenderers = properties.map((property, index) => {
       const onWidthChanged = (newWidth: number) =>
@@ -81,6 +82,7 @@ export class HeaderGrid extends React.PureComponent<IHeaderGridProps, {}> {
             onSortClick={onSortClick}
             onWidthChanged={onWidthChanged}
             sorting={this.props.sorting}
+            onAddColumnClick={onAddColumnClick}
           />
         );
       };

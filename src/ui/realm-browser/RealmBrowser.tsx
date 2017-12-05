@@ -5,6 +5,7 @@ import { CreateObjectHandler, ISelectObjectState } from '.';
 import { ConfirmModal } from '../reusable/confirm-modal';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
 import { AddSchemaModal } from './AddSchemaModal';
+import { AddSchemaPropertyModal } from './AddSchemaPropertyModal';
 import { ContentContainer } from './ContentContainer';
 import { CreateObjectDialog } from './create-object-dialog';
 import { EncryptionDialog } from './encryption-dialog';
@@ -55,6 +56,10 @@ export interface IRealmBrowserProps {
   isAddSchemaOpen: boolean;
   toggleAddSchema: () => void;
   isSchemaNameAvailable: (name: string) => boolean;
+  onAddSchemaProperty: (name: string) => void;
+  isAddSchemaPropertyOpen: boolean;
+  toggleAddSchemaProperty: () => void;
+  isPropertyNameAvailable: (name: string) => boolean;
 }
 
 export const RealmBrowser = ({
@@ -87,6 +92,10 @@ export const RealmBrowser = ({
   isAddSchemaOpen,
   toggleAddSchema,
   isSchemaNameAvailable,
+  onAddSchemaProperty,
+  isAddSchemaPropertyOpen,
+  toggleAddSchemaProperty,
+  isPropertyNameAvailable,
 }: IRealmBrowserProps) => {
   return (
     <div className="RealmBrowser">
@@ -109,6 +118,7 @@ export const RealmBrowser = ({
           onSortEnd={onSortEnd}
           onSortStart={onSortStart}
           progress={progress}
+          toggleAddSchemaProperty={toggleAddSchemaProperty}
         />
       </div>
       {confirmModal && (
@@ -136,6 +146,13 @@ export const RealmBrowser = ({
         toggle={toggleAddSchema}
         onAddSchema={onAddSchema}
         isSchemaNameAvailable={isSchemaNameAvailable}
+      />
+
+      <AddSchemaPropertyModal
+        isOpen={isAddSchemaPropertyOpen}
+        toggle={toggleAddSchemaProperty}
+        onAddSchemaProperty={onAddSchemaProperty}
+        isPropertyNameAvailable={isPropertyNameAvailable}
       />
 
       <EncryptionDialog

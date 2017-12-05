@@ -1,7 +1,5 @@
 import * as React from 'react';
-import { Grid, GridCellProps } from 'react-virtualized';
 
-import { IPropertyWithName } from '.';
 import { ILoadingProgress } from '../reusable/loading-overlay';
 import { Content } from './Content';
 import { IFocus } from './focus';
@@ -13,8 +11,6 @@ import {
   SortEndHandler,
   SortStartHandler,
 } from './table';
-import { Cell } from './table/Cell';
-import { HeaderCell } from './table/HeaderCell';
 
 export interface IContentContainerProps {
   dataVersion?: number;
@@ -27,6 +23,7 @@ export interface IContentContainerProps {
   onSortEnd?: SortEndHandler;
   onSortStart?: SortStartHandler;
   progress?: ILoadingProgress;
+  toggleAddSchemaProperty: () => void;
 }
 
 export interface IContentContainerState {

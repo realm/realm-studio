@@ -217,6 +217,7 @@ $highlight-row-color: $black;
     }
 
     &__HeaderCell,
+    &__HeaderCellControl,
     &__Cell {
       border-bottom: 1px solid $color-dove;
       border-right: 1px solid $color-dove;
@@ -233,7 +234,18 @@ $highlight-row-color: $black;
       display: flex;
       flex-direction: column;
       padding: 0 $realm-browser-header-icon-space 0 ($spacer / 4);
-      position: relative;
+    }
+
+    &__HeaderCellControl {
+      align-items: center;
+      color: $highlight-row-color;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+
+      &:hover {
+        background: $highlight-row-bg;
+      }
     }
 
     &__HeaderName {

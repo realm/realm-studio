@@ -14,6 +14,7 @@ import {
 } from '../reusable/realm-loading-component';
 import { Focus, IClassFocus, IListFocus } from './focus';
 import * as primitives from './primitives';
+import { isSelected } from './Sidebar';
 import {
   CellChangeHandler,
   CellClickHandler,
@@ -42,6 +43,7 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   // TODO: Rename - Unclear if this is this an action or a piece of data
   selectObject?: ISelectObjectState;
   isAddSchemaOpen: boolean;
+  isAddSchemaPropertyOpen: boolean;
 }
 
 export class RealmBrowserContainer extends RealmLoadingComponent<
@@ -49,6 +51,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   IRealmBrowserState
 > {
   private clickTimeout?: any;
+  private addColumn: IPropertyWithName;
 
   constructor() {
     super();
@@ -60,7 +63,10 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       progress: { done: false },
       schemas: [],
       isAddSchemaOpen: false,
+      isAddSchemaPropertyOpen: false,
     };
+
+    this.addColumn = { name: '+', type: 'int', readOnly: true };
   }
 
   public componentDidMount() {
@@ -73,8 +79,23 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   }
 
   public render() {
-    return <RealmBrowser {...this.state} {...this} />;
+    const { focus, ...restState } = this.state;
+    return (
+      <RealmBrowser
+        focus={this.getFocusWithAddColumn(focus)}
+        {...restState}
+        {...this}
+      />
+    );
   }
+
+  public getFocusWithAddColumn = (focus: Focus) =>
+    focus
+      ? {
+          ...focus,
+          properties: [...focus.properties, this.addColumn],
+        }
+      : null;
 
   public onCellChange: CellChangeHandler = params => {
     if (this.realm) {
@@ -112,6 +133,46 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         ]).then(() => this.onSchemaSelected(name));
       } catch (err) {
         showError(`Failed creating the model "${name}"`, err);
+      }
+    }
+  };
+
+  public isPropertyNameAvailable = (name: string): boolean => {
+    return true;
+  };
+
+  public toggleAddSchemaProperty = () => {
+    this.setState({
+      isAddSchemaPropertyOpen: !this.state.isAddSchemaPropertyOpen,
+    });
+  };
+
+  public onAddSchemaProperty = (name: string) => {
+    if (this.realm) {
+      let selectedSchemaName = '';
+      const schemas = this.state.schemas.map(schema => {
+        if (isSelected(this.state.focus, schema.name)) {
+          selectedSchemaName = schema.name;
+          return {
+            ...schema,
+            properties: {
+              ...schema.properties,
+              [name]: 'string',
+            },
+          };
+        } else {
+          return schema;
+        }
+      });
+      try {
+        this.loadRealm(this.props.realm, schemas).then(() =>
+          this.onSchemaSelected(selectedSchemaName),
+        );
+      } catch (err) {
+        showError(
+          `Failed adding the property name "${name}" to the selected schema`,
+          err,
+        );
       }
     }
   };
