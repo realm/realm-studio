@@ -19,7 +19,6 @@ import {
   CellClickHandler,
   CellContextMenuHandler,
   IHighlight,
-  ISorting,
 } from '.';
 import { IPropertyWithName } from '..';
 import { Cell } from './Cell';
@@ -72,7 +71,6 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
 
   public render() {
     const {
-      columnWidths,
       filteredSortedResults,
       gridRef,
       highlight,
@@ -101,6 +99,7 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
         }}
         rowCount={filteredSortedResults.length}
         scrollToAlignment={highlight && highlight.center ? 'center' : 'auto'}
+        noContentRenderer={this.getNoContentDiv}
       />
     );
   }
@@ -204,4 +203,17 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
   private getCellRenderer = (cellProps: GridCellProps) => {
     return this.cellRenderers[cellProps.columnIndex](cellProps);
   };
+
+  private getNoContentDiv = () => (
+    <div
+      style={{
+        height: this.props.rowHeight,
+        width: this.props.properties.reduce(
+          (totalWidth, value, index) =>
+            totalWidth + this.getColumnWidth({ index }),
+          0,
+        ),
+      }}
+    />
+  );
 }
