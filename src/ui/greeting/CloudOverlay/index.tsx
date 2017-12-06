@@ -2,7 +2,6 @@ import * as faker from 'faker';
 import * as moment from 'moment';
 import * as React from 'react';
 
-import { main } from '../../../actions/main';
 import * as mixpanel from '../../../services/mixpanel';
 import * as raas from '../../../services/raas';
 import * as ros from '../../../services/ros';
@@ -12,7 +11,7 @@ import { SocialNetwork } from '../GreetingContainer';
 import { CloudOverlay } from './CloudOverlay';
 
 interface ICloudOverlayContainerProps {
-  onCloudSubscriptionCreated: () => void;
+  onCloudSubscriptionCreated: (subscription: raas.user.ISubscription) => void;
   onShare: (socialNetwork: SocialNetwork) => void;
   user: raas.user.IMeResponse;
 }
@@ -129,18 +128,10 @@ export class CloudOverlayContainer extends React.Component<
       // TODO: remove this once /health does a better check
       // @see https://github.com/realm/realm-object-server-private/issues/695
       setTimeout(async () => {
-        // Connect to the tenant
-        await main.showServerAdministration({
-          credentials: raas.user.getTenantCredentials(subscription.tenantUrl),
-          validateCertificates: true,
-          isCloudTenant: true,
-        });
-
         this.setState({
           progress: { done: true },
         });
-
-        this.props.onCloudSubscriptionCreated();
+        this.props.onCloudSubscriptionCreated(subscription);
       }, 10000);
     } catch (err) {
       this.setState({

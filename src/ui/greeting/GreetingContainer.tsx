@@ -85,23 +85,33 @@ export class GreetingContainer extends React.Component<
     });
   };
 
-  public onCloudSubscriptionCreated = async () => {
-    // await main.refreshCloudStatus();
-    // this.onConnectToPrimarySubscription();
+  public onCloudSubscriptionCreated = async (
+    subscription?: raas.user.ISubscription,
+  ) => {
+    await main.refreshCloudStatus();
+    this.onConnectToPrimarySubscription(subscription);
   };
 
-  public onConnectToPrimarySubscription = () => {
-    const { cloudStatus } = this.state;
-    if (cloudStatus && cloudStatus.kind === 'has-primary-subscription') {
-      const tenantUrl = cloudStatus.primarySubscription.tenantUrl;
+  public onConnectToPrimarySubscription = (
+    subscription?: raas.user.ISubscription,
+  ): Promise<void> => {
+    if (!subscription) {
+      const { cloudStatus } = this.state;
+      if (cloudStatus && cloudStatus.kind === 'has-primary-subscription') {
+        return this.onConnectToPrimarySubscription(
+          cloudStatus.primarySubscription,
+        );
+      } else {
+        throw new Error(`Missing a primary subscription`);
+      }
+    } else {
+      const tenantUrl = subscription.tenantUrl;
       const credentials = raas.user.getTenantCredentials(tenantUrl);
-      main.showServerAdministration({
+      return main.showServerAdministration({
         credentials,
         validateCertificates: true,
         isCloudTenant: true,
       });
-    } else {
-      throw new Error(`Missing a primary subscription`);
     }
   };
 
