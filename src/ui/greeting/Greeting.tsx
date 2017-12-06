@@ -99,9 +99,9 @@ export const Greeting = ({
       </div>
     </div>
     <HistoryPanelContainer />
-    {cloudStatus &&
-    cloudStatus.kind === 'authenticated' &&
-    (cloudStatus.justAuthenticated || cloudStatus.user.canCreate) ? (
+    {isCloudOverlayActivated &&
+    cloudStatus &&
+    cloudStatus.kind === 'authenticated' ? (
       <CloudOverlay
         onCloudSubscriptionCreated={onCloudSubscriptionCreated}
         onShare={onShare}
