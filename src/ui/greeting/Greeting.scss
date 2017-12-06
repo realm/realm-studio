@@ -70,6 +70,14 @@ $history-panel-icon-size: 20px;
     flex-direction: column;
   }
 
+  &__SecondaryActions {
+    display: flex;
+
+    & > * {
+      margin: 0 ($spacer / 4);
+    }
+  }
+
   &__Action {
     margin-bottom: $spacer * .75;
   }

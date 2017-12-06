@@ -69,6 +69,24 @@ export const Greeting = ({
           onConnectToPrimarySubscription={onConnectToPrimarySubscription}
           onShare={onShare}
         />
+        <div className="Greeting__SecondaryActions">
+          <Button color="secondary" size="sm" onClick={onOpenLocalRealm}>
+            Open Realm file
+          </Button>
+          <Button
+            onClick={onConnectToServer}
+            disabled={!isSyncEnabled}
+            color="secondary"
+            size="sm"
+            title={
+              isSyncEnabled
+                ? 'Click to connect to a Realm Object Server'
+                : `This feature is currently not available on ${os.type()}`
+            }
+          >
+            Connect to Server
+          </Button>
+        </div>
       </div>
       <div className="Greeting__DownloadDemo">
         <span>New to realm? </span>
