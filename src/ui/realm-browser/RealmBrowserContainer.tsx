@@ -44,6 +44,7 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   selectObject?: ISelectObjectState;
   isAddSchemaOpen: boolean;
   isAddSchemaPropertyOpen: boolean;
+  propertyTypeOptions: string[];
 }
 
 export class RealmBrowserContainer extends RealmLoadingComponent<
@@ -64,6 +65,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       schemas: [],
       isAddSchemaOpen: false,
       isAddSchemaPropertyOpen: false,
+      propertyTypeOptions: primitives.TYPES,
     };
 
     this.addColumn = { name: '+', type: 'int', readOnly: true };
@@ -147,7 +149,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     });
   };
 
-  public onAddSchemaProperty = (name: string) => {
+  public onAddSchemaProperty = (property: Realm.PropertiesTypes) => {
     if (this.realm) {
       let selectedSchemaName = '';
       const schemas = this.state.schemas.map(schema => {
@@ -157,7 +159,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
             ...schema,
             properties: {
               ...schema.properties,
-              [name]: 'string',
+              ...property,
             },
           };
         } else {

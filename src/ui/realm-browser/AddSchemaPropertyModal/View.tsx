@@ -15,17 +15,27 @@ import {
 export const View = ({
   isOpen,
   toggle,
-  onPropertyNameChange,
+  onNameChange,
+  onTypeChange,
+  onOptionalChange,
   onSubmit,
-  propertyName,
-  propertyNameIsValid,
+  name,
+  nameIsValid,
+  type,
+  optional,
+  propertyTypeOptions,
 }: {
   isOpen: boolean;
   toggle: () => void;
-  onPropertyNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onTypeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onOptionalChange: () => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  propertyName: string;
-  propertyNameIsValid: boolean;
+  name: string;
+  nameIsValid: boolean;
+  type: string;
+  optional: boolean;
+  propertyTypeOptions: string[];
 }) => {
   return (
     <Modal isOpen={isOpen} toggle={toggle}>
@@ -34,25 +44,50 @@ export const View = ({
           Add new property to the schema
         </ModalHeader>
         <ModalBody>
-          <FormGroup className={propertyNameIsValid ? '' : 'has-danger'}>
-            <Label for="propertyName">Property name</Label>
+          <FormGroup className={nameIsValid ? '' : 'has-danger'}>
+            <Label for="name">Property name</Label>
             <Input
-              name="propertyName"
-              id="propertyName"
+              name="name"
+              id="name"
               type="text"
               required={true}
-              value={propertyName}
-              onChange={onPropertyNameChange}
+              value={name}
+              onChange={onNameChange}
             />
-            {!propertyNameIsValid && (
+            {!nameIsValid && (
               <FormFeedback>
                 Already exists a property with name in the schema.
               </FormFeedback>
             )}
           </FormGroup>
+          <FormGroup>
+            <Label for="type">Type</Label>
+            <Input
+              type="select"
+              name="type"
+              id="type"
+              value={type}
+              onChange={onTypeChange}
+            >
+              {propertyTypeOptions.map(option => (
+                <option key={option}>{option}</option>
+              ))}
+            </Input>
+          </FormGroup>
+          <FormGroup check>
+            <Label check>
+              <Input
+                type="checkbox"
+                name="optional"
+                checked={optional}
+                onChange={onOptionalChange}
+              />{' '}
+              Optional
+            </Label>
+          </FormGroup>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" disabled={!propertyNameIsValid}>
+          <Button color="primary" disabled={!nameIsValid}>
             Add property name
           </Button>{' '}
           <Button color="secondary" onClick={toggle}>

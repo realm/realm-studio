@@ -4,15 +4,25 @@ import { View } from './View';
 
 export interface IAddSchemaPropertyModalProps {
   isOpen: boolean;
-  onAddSchemaProperty: (name: string) => void;
+  onAddSchemaProperty: (property: Realm.PropertiesTypes) => void;
   toggle: () => void;
   isPropertyNameAvailable: (name: string) => boolean;
+  propertyTypeOptions: string[];
 }
 
 export interface IAddSchemaPropertyModalState {
-  propertyName: string;
-  propertyNameIsValid: boolean;
+  name: string;
+  nameIsValid: boolean;
+  type: string;
+  optional: boolean;
 }
+
+const initialState = {
+  name: '',
+  nameIsValid: true,
+  type: 'string',
+  optional: false,
+};
 
 export class AddSchemaPropertyModal extends React.Component<
   IAddSchemaPropertyModalProps,
@@ -21,8 +31,7 @@ export class AddSchemaPropertyModal extends React.Component<
   public constructor() {
     super();
     this.state = {
-      propertyName: '',
-      propertyNameIsValid: true,
+      ...initialState,
     };
   }
 
@@ -32,21 +41,35 @@ export class AddSchemaPropertyModal extends React.Component<
 
   public onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { propertyName } = this.state;
-    this.setState({
-      propertyName: '',
-    });
+    const { name, type, optional } = this.state;
+    this.setState(initialState);
     this.props.toggle();
-    this.props.onAddSchemaProperty(propertyName);
+    this.props.onAddSchemaProperty({
+      [name]: {
+        type,
+        optional,
+      },
+    });
   };
 
-  public onPropertyNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newPropertyNameValue = e.target.value;
+  public onNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
     this.setState({
-      propertyName: newPropertyNameValue,
-      propertyNameIsValid: this.props.isPropertyNameAvailable(
-        newPropertyNameValue,
-      ),
+      name: newValue,
+      nameIsValid: this.props.isPropertyNameAvailable(newValue),
+    });
+  };
+
+  public onTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    this.setState({
+      type: newValue,
+    });
+  };
+
+  public onOptionalChange = () => {
+    this.setState({
+      optional: !this.state.optional,
     });
   };
 }
