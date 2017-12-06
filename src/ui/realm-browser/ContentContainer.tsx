@@ -23,7 +23,7 @@ export interface IContentContainerProps {
   onSortEnd?: SortEndHandler;
   onSortStart?: SortStartHandler;
   progress?: ILoadingProgress;
-  toggleAddSchemaProperty: () => void;
+  onAddColumnClick?: () => void;
 }
 
 export interface IContentContainerState {

@@ -49,7 +49,7 @@ export interface ITableProps {
   scrollProps: ScrollSyncProps;
   sizeProps: AutoSizerProps;
   sorting?: ISorting;
-  onAddColumnClick: () => void;
+  onAddColumnClick?: () => void;
 }
 
 export const Table = ({

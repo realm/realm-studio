@@ -118,7 +118,7 @@ export const RealmBrowser = ({
           onSortEnd={onSortEnd}
           onSortStart={onSortStart}
           progress={progress}
-          toggleAddSchemaProperty={toggleAddSchemaProperty}
+          onAddColumnClick={toggleAddSchemaProperty}
         />
       </div>
       {confirmModal && (

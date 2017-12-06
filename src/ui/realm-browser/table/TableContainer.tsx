@@ -32,7 +32,7 @@ export interface IBaseTableContainerProps {
   onSortEnd?: SortEndHandler;
   onSortStart?: SortStartHandler;
   query: string;
-  onAddColumnClick: () => void;
+  onAddColumnClick?: () => void;
 }
 
 export interface ITableContainerProps extends IBaseTableContainerProps {

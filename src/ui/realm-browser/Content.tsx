@@ -26,7 +26,7 @@ export const Content = ({
   onSortStart,
   progress,
   query,
-  toggleAddSchemaProperty,
+  onAddColumnClick,
 }: {
   dataVersion?: number;
   focus: IFocus | null;
@@ -40,7 +40,7 @@ export const Content = ({
   onSortStart?: SortStartHandler;
   progress?: ILoadingProgress;
   query: string;
-  toggleAddSchemaProperty: () => void;
+  onAddColumnClick?: () => void;
 }) => {
   if (focus) {
     return (
@@ -57,7 +57,7 @@ export const Content = ({
           onSortEnd={onSortEnd}
           onSortStart={onSortStart}
           query={query}
-          onAddColumnClick={toggleAddSchemaProperty}
+          onAddColumnClick={onAddColumnClick}
         />
       </div>
     );

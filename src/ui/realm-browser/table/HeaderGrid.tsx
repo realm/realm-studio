@@ -20,7 +20,7 @@ export interface IHeaderGridProps extends Partial<GridProps> {
   properties: IPropertyWithName[];
   sorting?: ISorting;
   width: number;
-  onAddColumnClick: () => void;
+  onAddColumnClick?: () => void;
 }
 
 export class HeaderGrid extends React.PureComponent<IHeaderGridProps, {}> {

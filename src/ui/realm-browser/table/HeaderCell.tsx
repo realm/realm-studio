@@ -50,7 +50,7 @@ interface IHeaderCellProps {
   style: React.CSSProperties;
   onSortClick: SortClickHandler;
   sorting?: ISorting;
-  onAddColumnClick: () => void;
+  onAddColumnClick?: () => void;
 }
 
 interface IHeaderCellState {
@@ -100,7 +100,12 @@ export class HeaderCell extends React.Component<
     const { property, style, sorting, onAddColumnClick } = this.props;
 
     // A special cell for add new column
-    if (property.name === '+' && property.type === 'int' && property.readOnly) {
+    if (
+      onAddColumnClick &&
+      property.name === '+' &&
+      property.type === 'int' &&
+      property.readOnly
+    ) {
       return (
         <div
           style={style}
