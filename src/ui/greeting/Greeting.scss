@@ -75,8 +75,8 @@ $history-panel-icon-size: 20px;
   }
 
   &__DownloadDemo {
-    margin-top: $spacer / 2;
     font-size: .7rem;
+    margin-top: $spacer / 2;
   }
 
   &__HistoryPanel {
@@ -126,5 +126,54 @@ $history-panel-icon-size: 20px;
 
   &__Logo {
     width: 90px;
+  }
+
+  &__ShareAction {
+    cursor: pointer;
+
+    &:hover {
+      color: $color-indigo;
+    }
+  }
+
+  &__CloudOverlay {
+    background: $overlay-background;
+    bottom: 0;
+    color: $color-dove;
+    display: flex;
+    flex-direction: column;
+    left: 0;
+    padding: $spacer;
+    position: absolute;
+    right: 0;
+    top: 0;
+
+    &__Title {
+      margin-top: $spacer;
+      text-align: center;
+    }
+
+    &__ShareButtons {
+      display: flex;
+      justify-content: center;
+
+      & > * {
+        margin: $spacer / 4;
+      }
+    }
+
+    &__Feedback {
+      flex-grow: 1;
+      margin: ($spacer / 2) 0;
+      resize: none;
+    }
+
+    &__Footer {
+      text-align: center;
+
+      & > * {
+        margin: 0 $spacer / 4;
+      }
+    }
   }
 }
