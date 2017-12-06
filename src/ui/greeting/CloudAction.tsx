@@ -74,7 +74,7 @@ export const CloudAction = ({
     return (
       <Button
         className="Greeting__Action"
-        onClick={onConnectToPrimarySubscription}
+        onClick={() => onConnectToPrimarySubscription()}
         color="primary"
       >
         Connect to Realm Cloud
