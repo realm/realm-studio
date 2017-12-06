@@ -1,5 +1,4 @@
 import * as faker from 'faker';
-import * as jwt from 'jsonwebtoken';
 import * as moment from 'moment';
 import * as React from 'react';
 
@@ -80,16 +79,8 @@ export class CloudOverlayContainer extends React.Component<
       }
 
       // Now that we're authenticated - let's create a tenant
-      // TODO: Use "const user = await raas.user.getAuth();" instead
-      // const user = await raas.user.getAuth();
-      // console.log(user);
-
-      const token = raas.user.getToken();
-      const payload = jwt.decode(token) as any;
-      if (!payload || typeof payload.sub !== 'string') {
-        throw new Error(`Expected a sub field in the JWT token from RaaS`);
-      }
-      const identifier = (payload.sub as string).replace('/', '-');
+      const user = await raas.user.getAuth();
+      const identifier = user.id.replace(/^github\//, '');
       const initialPassword = faker.internet.password();
 
       this.setState({
