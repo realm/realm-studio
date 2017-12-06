@@ -73,13 +73,7 @@ export class CloudManager {
     raas.user.setToken(response.token);
     // Learn about the user
     const user = await raas.user.getAuth();
-    this.sendCloudStatus({
-      kind: 'authenticated',
-      endpoint,
-      justAuthenticated: true,
-      raasToken: response.token,
-      user,
-    });
+    this.refresh(true);
   }
 
   public async deauthenticate() {
@@ -91,7 +85,7 @@ export class CloudManager {
     raas.setEndpoint(endpoint);
   }
 
-  public async refresh() {
+  public async refresh(justAuthenticated = false) {
     const raasToken = raas.user.getToken();
     const endpoint = raas.getEndpoint();
     if (raasToken) {
@@ -110,7 +104,7 @@ export class CloudManager {
         this.sendCloudStatus({
           kind: 'authenticated',
           endpoint,
-          justAuthenticated: false,
+          justAuthenticated,
           raasToken,
           user,
         });
