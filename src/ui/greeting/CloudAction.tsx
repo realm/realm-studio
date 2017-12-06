@@ -85,6 +85,7 @@ export const CloudAction = ({
       <Button
         className="Greeting__Action"
         color="primary"
+        disabled={!cloudStatus || cloudStatus.kind !== 'not-authenticated'}
         onClick={onAuthenticate}
       >
         <i className="fa fa-github" /> GitHub
