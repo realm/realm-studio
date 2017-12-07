@@ -14,8 +14,6 @@ export interface IAddSchemaPropertyModalProps {
 export interface IAddSchemaPropertyModalState {
   name: string;
   type: string;
-  objectType?: string;
-  property?: string;
   isList: boolean;
   optional: boolean;
   nameIsValid: boolean;
@@ -25,8 +23,6 @@ export interface IAddSchemaPropertyModalState {
 const initialState = {
   name: '',
   type: 'string',
-  objectType: undefined,
-  property: undefined,
   optional: false,
   nameIsValid: true,
   isList: false,
