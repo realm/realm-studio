@@ -1,6 +1,6 @@
 import * as electron from 'electron';
 
-import * as fsPath from 'path';
+import * as path from 'path';
 import { ActionReceiver } from '../actions/ActionReceiver';
 import { MainTransport } from '../actions/transports/MainTransport';
 import {
@@ -140,17 +140,16 @@ export class Application {
         selectedPaths => {
           if (selectedPaths) {
             // Generate the Realm from the provided CSV file(s)
-            const importer = ImportSchemaGeneratorHelper(
+            const schemaHelper = ImportSchemaGeneratorHelper(
               ImportSchemaFormat.CSV,
               selectedPaths,
             );
-            const importSchema = importer.generate();
-            const csvImporter = new CSVDataImporter(selectedPaths);
-            const generatedRealm = csvImporter.import(
-              fsPath.dirname(selectedPaths[0]),
-              importSchema,
+            const schema = schemaHelper.generate();
+            const importer = new CSVDataImporter(selectedPaths);
+            const generatedRealm = importer.import(
+              path.dirname(selectedPaths[0]),
+              schema,
             );
-            const realmPath = generatedRealm.path;
             // close Realm in main process (to be opened in Renderer process)
             generatedRealm.close();
 
@@ -158,7 +157,7 @@ export class Application {
             const options: IRealmBrowserOptions = {
               realm: {
                 mode: realms.RealmLoadingMode.Local,
-                path: realmPath,
+                path: generatedRealm.path,
               },
             };
             this.showRealmBrowser(options);
