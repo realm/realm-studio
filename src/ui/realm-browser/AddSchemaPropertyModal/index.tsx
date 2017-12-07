@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { TYPES } from '../primitives';
 import { View } from './View';
 
 export interface IAddSchemaPropertyModalProps {
@@ -7,21 +8,28 @@ export interface IAddSchemaPropertyModalProps {
   onAddSchemaProperty: (property: Realm.PropertiesTypes) => void;
   toggle: () => void;
   isPropertyNameAvailable: (name: string) => boolean;
-  propertyTypeOptions: string[];
+  schemas: Realm.ObjectSchema[];
 }
 
 export interface IAddSchemaPropertyModalState {
   name: string;
-  nameIsValid: boolean;
   type: string;
+  objectType?: string;
+  property?: string;
+  isList: boolean;
   optional: boolean;
+  nameIsValid: boolean;
+  typeOptions: string[];
 }
 
 const initialState = {
   name: '',
-  nameIsValid: true,
   type: 'string',
+  objectType: undefined,
+  property: undefined,
   optional: false,
+  nameIsValid: true,
+  isList: false,
 };
 
 export class AddSchemaPropertyModal extends React.Component<
@@ -32,7 +40,14 @@ export class AddSchemaPropertyModal extends React.Component<
     super();
     this.state = {
       ...initialState,
+      typeOptions: TYPES,
     };
+  }
+
+  public componentWillReceiveProps(props: IAddSchemaPropertyModalProps) {
+    this.setState({
+      typeOptions: [...TYPES, ...this.getClassesTypes(props.schemas)],
+    });
   }
 
   public render() {
@@ -41,15 +56,9 @@ export class AddSchemaPropertyModal extends React.Component<
 
   public onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { name, type, optional } = this.state;
-    this.setState(initialState);
+    this.props.onAddSchemaProperty(this.getSchemaProperty());
     this.props.toggle();
-    this.props.onAddSchemaProperty({
-      [name]: {
-        type,
-        optional,
-      },
-    });
+    this.setState(initialState);
   };
 
   public onNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,4 +81,20 @@ export class AddSchemaPropertyModal extends React.Component<
       optional: !this.state.optional,
     });
   };
+
+  public onIsListChange = () => {
+    this.setState({
+      isList: !this.state.isList,
+    });
+  };
+
+  private getSchemaProperty = () => {
+    const { name, type: propertyType, optional, isList } = this.state;
+    return {
+      [name]: `${propertyType}${optional ? '?' : ''}${isList ? '[]' : ''}`,
+    };
+  };
+
+  private getClassesTypes = (schemas: Realm.ObjectSchema[]): string[] =>
+    schemas.map(schema => schema.name);
 }

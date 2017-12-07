@@ -23,19 +23,23 @@ export const View = ({
   nameIsValid,
   type,
   optional,
-  propertyTypeOptions,
+  typeOptions,
+  isList,
+  onIsListChange,
 }: {
   isOpen: boolean;
   toggle: () => void;
   onNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onTypeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onOptionalChange: () => void;
+  onIsListChange: () => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   name: string;
   nameIsValid: boolean;
   type: string;
   optional: boolean;
-  propertyTypeOptions: string[];
+  isList: boolean;
+  typeOptions: string[];
 }) => {
   return (
     <Modal isOpen={isOpen} toggle={toggle}>
@@ -56,7 +60,7 @@ export const View = ({
             />
             {!nameIsValid && (
               <FormFeedback>
-                Already exists a property with name in the schema.
+                Already exists a property with that name in the schema.
               </FormFeedback>
             )}
           </FormGroup>
@@ -69,10 +73,21 @@ export const View = ({
               value={type}
               onChange={onTypeChange}
             >
-              {propertyTypeOptions.map(option => (
+              {typeOptions.map(option => (
                 <option key={option}>{option}</option>
               ))}
             </Input>
+          </FormGroup>
+          <FormGroup check>
+            <Label check>
+              <Input
+                type="checkbox"
+                name="isList"
+                checked={isList}
+                onChange={onIsListChange}
+              />{' '}
+              It's a list
+            </Label>
           </FormGroup>
           <FormGroup check>
             <Label check>
