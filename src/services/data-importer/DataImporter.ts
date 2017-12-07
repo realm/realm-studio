@@ -22,9 +22,7 @@ export abstract class DataImporter {
    * 
    * @param output An absolute path to the folder that will hold the new Realm file.
    */
-  public createNewRealmFile(
-    output: string
-  ): Realm {
+  public createNewRealmFile(output: string): Realm {
     const realm = new Realm({
       path: `${output}/default.realm`,
       schema: this.importSchema,

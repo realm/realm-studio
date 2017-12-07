@@ -145,7 +145,7 @@ export class Application {
             const schema = schemaHelper.generate();
             const importer = new CSVDataImporter(selectedPaths, schema);
             const generatedRealm = importer.import(
-              path.dirname(selectedPaths[0])
+              path.dirname(selectedPaths[0]),
             );
             // close Realm in main process (to be opened in Renderer process)
             generatedRealm.close();
