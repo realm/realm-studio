@@ -309,12 +309,12 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
 
   public onContextMenu: CellContextMenuHandler = (
     e: React.MouseEvent<any>,
-    { rowObject, rowIndex, property },
+    { rowObject, property },
   ) => {
     e.preventDefault();
 
     const menu = new remote.Menu();
-    if (property.type === 'object') {
+    if (property && property.type === 'object') {
       menu.append(
         new remote.MenuItem({
           label: 'Update reference',
@@ -328,14 +328,16 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     const { focus } = this.state;
 
     if (focus && focus.kind === 'class') {
-      menu.append(
-        new remote.MenuItem({
-          label: 'Delete',
-          click: () => {
-            this.openConfirmModal(rowObject);
-          },
-        }),
-      );
+      if (rowObject) {
+        menu.append(
+          new remote.MenuItem({
+            label: 'Delete',
+            click: () => {
+              this.openConfirmModal(rowObject);
+            },
+          }),
+        );
+      }
       menu.append(
         new remote.MenuItem({
           label: `Create new ${focus.className}`,

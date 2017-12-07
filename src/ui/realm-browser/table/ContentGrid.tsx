@@ -206,6 +206,11 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
 
   private getNoContentDiv = () => (
     <div
+      onContextMenu={e => {
+        if (this.props.onContextMenu) {
+          this.props.onContextMenu(e, {});
+        }
+      }}
       style={{
         height: this.props.rowHeight,
         width: this.props.properties.reduce(
