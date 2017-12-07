@@ -114,11 +114,11 @@ export class Application {
         },
         selectedPaths => {
           if (selectedPaths) {
-            selectedPaths.forEach(path => {
+            selectedPaths.forEach(selectedPath => {
               const options: IRealmBrowserOptions = {
                 realm: {
                   mode: realms.RealmLoadingMode.Local,
-                  path,
+                  path: selectedPath,
                 },
               };
               this.showRealmBrowser(options);
