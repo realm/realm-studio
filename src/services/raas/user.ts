@@ -22,12 +22,10 @@ export interface ICreateSubscriptionOptions {
 }
 
 export interface IMeResponse {
-  id: string;
+  canCreate: boolean;
   email: string;
+  id: string;
   name: string;
-  provider: string;
-  password: boolean;
-  displayName: string;
 }
 
 export interface ISubscription {

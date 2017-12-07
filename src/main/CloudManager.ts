@@ -2,12 +2,38 @@ import * as github from '../services/github';
 import * as raas from '../services/raas';
 import * as ros from '../services/ros';
 
-export interface ICloudStatus {
+interface IBaseCloudStatus {
+  kind: string;
   endpoint: raas.Endpoint;
-  primarySubscription?: raas.user.ISubscription;
-  primarySubscriptionCredentials?: ros.IServerCredentials;
-  raasToken: string;
 }
+
+export interface INotAuthenticatedCloudStatus extends IBaseCloudStatus {
+  kind: 'not-authenticated';
+}
+
+export interface IAuthenticatingCloudStatus extends IBaseCloudStatus {
+  kind: 'authenticating';
+}
+
+export interface IAuthenticatedCloudStatus extends IBaseCloudStatus {
+  kind: 'authenticated';
+  justAuthenticated: boolean;
+  raasToken: string;
+  user: raas.user.IMeResponse;
+}
+
+export interface IPrimarySubscriptionCloudStatus extends IBaseCloudStatus {
+  kind: 'has-primary-subscription';
+  primarySubscription: raas.user.ISubscription;
+  raasToken: string;
+  user: raas.user.IMeResponse;
+}
+
+export type ICloudStatus =
+  | INotAuthenticatedCloudStatus
+  | IAuthenticatingCloudStatus
+  | IAuthenticatedCloudStatus
+  | IPrimarySubscriptionCloudStatus;
 
 type CloudStatusListener = (status: ICloudStatus) => void;
 
@@ -37,10 +63,17 @@ export class CloudManager {
   }
 
   public async authenticateWithGitHub() {
+    const endpoint = raas.getEndpoint();
+    this.sendCloudStatus({
+      kind: 'authenticating',
+      endpoint,
+    });
     const code = await github.authenticate();
     const response = await raas.user.authenticate(code);
     raas.user.setToken(response.token);
-    this.refresh();
+    // Learn about the user
+    const user = await raas.user.getAuth();
+    this.refresh(true);
   }
 
   public async deauthenticate() {
@@ -52,26 +85,34 @@ export class CloudManager {
     raas.setEndpoint(endpoint);
   }
 
-  public async refresh() {
+  public async refresh(justAuthenticated = false) {
     const raasToken = raas.user.getToken();
     const endpoint = raas.getEndpoint();
     if (raasToken) {
+      const user = await raas.user.getAuth();
       const subscriptions = await raas.user.getSubscriptions();
-      const primarySubscription =
-        subscriptions.length >= 1 ? subscriptions[0] : undefined;
-      const primarySubscriptionCredentials = primarySubscription
-        ? raas.user.getTenantCredentials(primarySubscription.tenantUrl)
-        : undefined;
-      this.sendCloudStatus({
-        endpoint,
-        primarySubscription,
-        primarySubscriptionCredentials,
-        raasToken,
-      });
+      if (subscriptions.length > 0) {
+        const primarySubscription = subscriptions[0];
+        this.sendCloudStatus({
+          kind: 'has-primary-subscription',
+          endpoint,
+          primarySubscription,
+          raasToken,
+          user,
+        });
+      } else {
+        this.sendCloudStatus({
+          kind: 'authenticated',
+          endpoint,
+          justAuthenticated,
+          raasToken,
+          user,
+        });
+      }
     } else {
       this.sendCloudStatus({
+        kind: 'not-authenticated',
         endpoint,
-        raasToken,
       });
     }
   }

@@ -1,16 +1,21 @@
 import * as electron from 'electron';
+import * as qs from 'querystring';
 import * as React from 'react';
 
 import { main } from '../../actions/main';
 import { ICloudStatus } from '../../main/CloudManager';
 import { IUpdateStatus } from '../../main/Updater';
+import * as raas from '../../services/raas';
 import { IServerCredentials } from '../../services/ros';
 import { store } from '../../store';
 
 import { Greeting } from './Greeting';
 
+export type SocialNetwork = 'twitter' | 'facebook' | 'reddit' | 'hacker-news';
+
 interface IGreetingContainerState {
   cloudStatus?: ICloudStatus;
+  isAuthenticating: boolean;
   isCloudOverlayActivated: boolean;
   isSyncEnabled: boolean;
   updateStatus: IUpdateStatus;
@@ -24,6 +29,7 @@ export class GreetingContainer extends React.Component<
   constructor() {
     super();
     this.state = {
+      isAuthenticating: false,
       isCloudOverlayActivated: false,
       isSyncEnabled: false,
       updateStatus: {
@@ -63,27 +69,49 @@ export class GreetingContainer extends React.Component<
 
   public onAuthenticate = async () => {
     // Authenticate with GitHub
+    this.setState({
+      isAuthenticating: true,
+    });
     await main.authenticateWithGitHub();
+    this.setState({
+      isAuthenticating: false,
+      isCloudOverlayActivated: true,
+    });
   };
 
-  public onAuthenticated = async () => {
+  public onActivateCloudOverlay = () => {
+    this.setState({
+      isCloudOverlayActivated: true,
+    });
+  };
+
+  public onCloudSubscriptionCreated = async (
+    subscription?: raas.user.ISubscription,
+  ) => {
     await main.refreshCloudStatus();
+    this.onConnectToPrimarySubscription(subscription);
   };
 
-  public onConnectToPrimarySubscription = () => {
-    if (this.state.cloudStatus && this.state.cloudStatus.primarySubscription) {
-      const credentials = this.state.cloudStatus.primarySubscriptionCredentials;
-      if (credentials) {
-        main.showServerAdministration({
-          credentials,
-          validateCertificates: true,
-          isCloudTenant: true,
-        });
+  public onConnectToPrimarySubscription = (
+    subscription?: raas.user.ISubscription,
+  ): Promise<void> => {
+    if (!subscription) {
+      const { cloudStatus } = this.state;
+      if (cloudStatus && cloudStatus.kind === 'has-primary-subscription') {
+        return this.onConnectToPrimarySubscription(
+          cloudStatus.primarySubscription,
+        );
       } else {
-        throw new Error(`Missing a primary subscription credentials`);
+        throw new Error(`Missing a primary subscription`);
       }
     } else {
-      throw new Error(`Missing a primary subscription`);
+      const tenantUrl = subscription.tenantUrl;
+      const credentials = raas.user.getTenantCredentials(tenantUrl);
+      return main.showServerAdministration({
+        credentials,
+        validateCertificates: true,
+        isCloudTenant: true,
+      });
     }
   };
 
@@ -110,16 +138,49 @@ export class GreetingContainer extends React.Component<
     e: Electron.IpcMessageEvent,
     status: ICloudStatus,
   ) => {
-    const isCloudOverlayActivated =
-      !!status.raasToken && !status.primarySubscription;
-    if (isCloudOverlayActivated) {
+    if (status.kind === 'authenticated' && status.justAuthenticated) {
       // Focus the window
       electron.remote.getCurrentWindow().focus();
+      this.setState({
+        cloudStatus: status,
+        isCloudOverlayActivated: true,
+      });
+    } else {
+      this.setState({
+        cloudStatus: status,
+      });
     }
-    this.setState({
-      cloudStatus: status,
-      // Show the cloud overlay if the user has no default credentials
-      isCloudOverlayActivated,
-    });
   };
+
+  public onShare = (socialNetwork: SocialNetwork) => {
+    const url = this.getShareUrl(socialNetwork);
+    if (url) {
+      electron.shell.openExternal(url);
+    } else {
+      alert('We have not announced this yet');
+    }
+  };
+
+  protected getShareUrl(socialNetwork: SocialNetwork) {
+    if (socialNetwork === 'twitter') {
+      // See https://dev.twitter.com/web/tweet-button for options
+      const query = qs.stringify({
+        text: 'Excited that Realm is creating a #cloud solution!',
+        via: 'realm',
+      });
+      return `https://twitter.com/intent/tweet?${query}`;
+    } else if (socialNetwork === 'facebook') {
+      const query = qs.stringify({
+        // TODO: Update this URL once we have announced it
+        u: encodeURI('https://realm.io/products/realm-cloud'),
+        display: 'page',
+      });
+      return `https://www.facebook.com/sharer/sharer.php?${query}`;
+    } else if (socialNetwork === 'reddit') {
+      // TODO: Make this a link to a post we've created
+    } else if (socialNetwork === 'hacker-news') {
+      // TODO: Make this a link to a post we've created
+      // https://news.ycombinator.com/item?id=15853477
+    }
+  }
 }

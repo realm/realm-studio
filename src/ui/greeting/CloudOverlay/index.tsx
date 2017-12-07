@@ -1,20 +1,26 @@
 import * as faker from 'faker';
-import * as jwt from 'jsonwebtoken';
 import * as moment from 'moment';
 import * as React from 'react';
 
-import { main } from '../../actions/main';
-import * as raas from '../../services/raas';
-import * as ros from '../../services/ros';
-import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
+import * as mixpanel from '../../../services/mixpanel';
+import * as raas from '../../../services/raas';
+import * as ros from '../../../services/ros';
+import { ILoadingProgress } from '../../reusable/loading-overlay';
+import { SocialNetwork } from '../GreetingContainer';
+
+import { CloudOverlay } from './CloudOverlay';
 
 interface ICloudOverlayContainerProps {
-  activated: boolean;
-  onAuthenticated: () => void;
+  onCloudSubscriptionCreated: (subscription: raas.user.ISubscription) => void;
+  onShare: (socialNetwork: SocialNetwork) => void;
+  user: raas.user.IMeResponse;
 }
 
 interface ICloudOverlayContainerState {
+  message: string;
   progress?: ILoadingProgress;
+  showWaitingList: boolean;
+  isHidden: boolean;
 }
 
 export class CloudOverlayContainer extends React.Component<
@@ -23,20 +29,40 @@ export class CloudOverlayContainer extends React.Component<
 > {
   constructor() {
     super();
-    this.state = {};
+    this.state = {
+      showWaitingList: false,
+      message: '',
+      isHidden: false,
+    };
   }
 
   public render() {
-    return <LoadingOverlay progress={this.state.progress} />;
+    return (
+      <CloudOverlay
+        isHidden={this.state.isHidden}
+        message={this.state.message}
+        onHide={this.onHide}
+        onMessageChange={this.onMessageChange}
+        onSendMessage={this.onSendMessage}
+        onShare={this.props.onShare}
+        progress={this.state.progress}
+        showWaitingList={this.state.showWaitingList}
+        user={this.props.user}
+      />
+    );
   }
 
-  public componentWillReceiveProps(nextProps: ICloudOverlayContainerProps) {
-    if (!this.props.activated && nextProps.activated) {
-      this.authenticate();
+  public componentDidMount() {
+    if (this.props.user.canCreate) {
+      this.createSubscription();
+    } else {
+      this.setState({
+        showWaitingList: true,
+      });
     }
   }
 
-  protected async authenticate() {
+  protected async createSubscription() {
     try {
       this.setState({
         progress: {
@@ -52,16 +78,8 @@ export class CloudOverlayContainer extends React.Component<
       }
 
       // Now that we're authenticated - let's create a tenant
-      // TODO: Use "const user = await raas.user.getAuth();" instead
-      // const user = await raas.user.getAuth();
-      // console.log(user);
-
-      const token = raas.user.getToken();
-      const payload = jwt.decode(token) as any;
-      if (!payload || typeof payload.sub !== 'string') {
-        throw new Error(`Expected a sub field in the JWT token from RaaS`);
-      }
-      const identifier = (payload.sub as string).replace('/', '-');
+      const user = await raas.user.getAuth();
+      const identifier = user.id.replace(/^github\//, '');
       const initialPassword = faker.internet.password();
 
       this.setState({
@@ -101,7 +119,7 @@ export class CloudOverlayContainer extends React.Component<
 
       this.setState({
         progress: {
-          activity: 'Connecting to the Realm Cloud server',
+          activity: 'Connecting to your Realm Object Server',
           done: false,
         },
       });
@@ -110,18 +128,10 @@ export class CloudOverlayContainer extends React.Component<
       // TODO: remove this once /health does a better check
       // @see https://github.com/realm/realm-object-server-private/issues/695
       setTimeout(async () => {
-        // Connect to the tenant
-        await main.showServerAdministration({
-          credentials: raas.user.getTenantCredentials(subscription.tenantUrl),
-          validateCertificates: true,
-          isCloudTenant: true,
-        });
-
         this.setState({
           progress: { done: true },
         });
-
-        this.props.onAuthenticated();
+        this.props.onCloudSubscriptionCreated(subscription);
       }, 10000);
     } catch (err) {
       this.setState({
@@ -164,4 +174,26 @@ export class CloudOverlayContainer extends React.Component<
       return Promise.resolve();
     }
   }
+
+  protected onMessageChange = (message: string) => {
+    this.setState({ message });
+  };
+
+  protected onSendMessage = () => {
+    mixpanel.track(
+      'Realm Cloud message',
+      {
+        message: this.state.message,
+      },
+      () => {
+        this.setState({ isHidden: true });
+      },
+    );
+  };
+
+  protected onHide = () => {
+    this.setState({ isHidden: true });
+  };
 }
+
+export { CloudOverlayContainer as CloudOverlay };

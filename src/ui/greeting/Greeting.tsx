@@ -8,7 +8,9 @@ import { IUpdateStatus } from '../../main/Updater';
 import { IServerCredentials } from '../../services/ros';
 
 import realmLogo from '../../../static/svgs/realm-logo.svg';
-import { CloudOverlayContainer } from './CloudOverlayContainer';
+import { CloudAction } from './CloudAction';
+import { CloudOverlay } from './CloudOverlay';
+import { SocialNetwork } from './GreetingContainer';
 import { HistoryPanelContainer } from './HistoryPanelContainer';
 import { SignupOverlayContainer } from './SignupOverlayContainer';
 import { UpdateStatusIndicator } from './UpdateStatusIndicator';
@@ -17,26 +19,32 @@ import './Greeting.scss';
 
 export const Greeting = ({
   cloudStatus,
+  isAuthenticating,
   isCloudOverlayActivated,
   isSyncEnabled,
+  onActivateCloudOverlay,
   onAuthenticate,
-  onAuthenticated,
   onCheckForUpdates,
+  onCloudSubscriptionCreated,
   onConnectToPrimarySubscription,
   onConnectToServer,
   onOpenLocalRealm,
+  onShare,
   updateStatus,
   version,
 }: {
   cloudStatus?: ICloudStatus;
+  isAuthenticating: boolean;
   isCloudOverlayActivated: boolean;
   isSyncEnabled: boolean;
+  onActivateCloudOverlay: () => void;
   onAuthenticate: () => void;
-  onAuthenticated: () => void;
   onCheckForUpdates: () => void;
+  onCloudSubscriptionCreated: () => void;
   onConnectToPrimarySubscription: () => void;
   onConnectToServer: () => void;
   onOpenLocalRealm: () => void;
+  onShare: (socialNetwork: SocialNetwork) => void;
   updateStatus: IUpdateStatus;
   version: string;
 }) => (
@@ -54,25 +62,31 @@ export const Greeting = ({
         onCheckForUpdates={onCheckForUpdates}
       />
       <div className="Greeting__Actions">
-        {cloudStatus && cloudStatus.raasToken ? (
-          <Button
-            className="Greeting__Action"
-            onClick={onConnectToPrimarySubscription}
-            color="primary"
-            disabled={!cloudStatus.primarySubscription}
-          >
-            Connect to Realm Cloud
+        <CloudAction
+          cloudStatus={cloudStatus}
+          onActivateCloudOverlay={onActivateCloudOverlay}
+          onAuthenticate={onAuthenticate}
+          onConnectToPrimarySubscription={onConnectToPrimarySubscription}
+          onShare={onShare}
+        />
+        <div className="Greeting__SecondaryActions">
+          <Button color="secondary" size="sm" onClick={onOpenLocalRealm}>
+            Open Realm file
           </Button>
-        ) : (
           <Button
-            className="Greeting__Action"
-            color="primary"
-            disabled={!cloudStatus}
-            onClick={onAuthenticate}
+            onClick={onConnectToServer}
+            disabled={!isSyncEnabled}
+            color="secondary"
+            size="sm"
+            title={
+              isSyncEnabled
+                ? 'Click to connect to a Realm Object Server'
+                : `This feature is currently not available on ${os.type()}`
+            }
           >
-            <i className="fa fa-github" /> GitHub
+            Connect to Server
           </Button>
-        )}
+        </div>
       </div>
       <div className="Greeting__DownloadDemo">
         <span>New to realm? </span>
@@ -85,10 +99,15 @@ export const Greeting = ({
       </div>
     </div>
     <HistoryPanelContainer />
-    <CloudOverlayContainer
-      activated={isCloudOverlayActivated}
-      onAuthenticated={onAuthenticated}
-    />
+    {isCloudOverlayActivated &&
+    cloudStatus &&
+    cloudStatus.kind === 'authenticated' ? (
+      <CloudOverlay
+        onCloudSubscriptionCreated={onCloudSubscriptionCreated}
+        onShare={onShare}
+        user={cloudStatus.user}
+      />
+    ) : null}
     <SignupOverlayContainer />
   </div>
 );
