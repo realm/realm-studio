@@ -7,11 +7,24 @@
 
   &__Chapter {
     flex-grow: 1;
+    overflow: auto;
     padding: $spacer;
+
+    img {
+      max-width: 100%;
+    }
+
+    pre {
+      background: $color-dove;
+      border-radius: $border-radius;
+      padding: $spacer;
+    }
   }
 
   &__ChapterSelector {
+    background: $window-background;
     display: flex;
+    flex-shrink: 0;
     justify-content: center;
     padding: $spacer / 2;
   }
