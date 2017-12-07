@@ -1,8 +1,8 @@
 export default class Util {
   public static isBoolean(value: string): boolean {
     return (
-      value.toLocaleLowerCase() === 'true' ||
-      value.toLocaleLowerCase() === 'false'
+      value.toLowerCase() === 'true' ||
+      value.toLowerCase() === 'false'
     );
   }
 
