@@ -5,6 +5,7 @@ import {
   IConnectToServerOptions,
   IRealmBrowserOptions,
   IServerAdministrationOptions,
+  ITutorialOptions,
   WindowType,
 } from './WindowType';
 
@@ -41,6 +42,9 @@ export function getWindow(type: WindowType): React.ReactElement<{}> {
     const CloudAdministrationWindow = require('./CloudAdministrationWindow')
       .CloudAdministrationWindow;
     return <CloudAdministrationWindow />;
+  } else if (type === WindowType.Tutorial) {
+    const TutorialWindow = require('./TutorialWindow').TutorialWindow;
+    return <TutorialWindow options={options as ITutorialOptions} />;
   } else {
     throw new Error(`Unexpected window type: ${type}`);
   }

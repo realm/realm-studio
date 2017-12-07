@@ -1,0 +1,70 @@
+@import "~realm-studio-styles/variables";
+
+.Dashboard {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+
+  &__Heading,
+  &__Tutorial,
+  &__Separator,
+  &__Platforms {
+    margin: $spacer;
+  }
+
+  &__Tutorial {
+    text-align: center;
+  }
+
+  &__Separator {
+    color: $color-elephant;
+
+    &::before,
+    &::after {
+      content: "—";
+      margin: 0 $spacer;
+    }
+  }
+
+  &__PlatformIcons {
+    display: flex;
+  }
+
+  &__Platform {
+    cursor: pointer;
+    font-size: 3rem;
+    margin: 0 $spacer;
+
+    &__JavascriptLogo,
+    &__XamarinLogo {
+      height: 2.5rem;
+      vertical-align: -5%;
+    }
+  }
+
+  &__PlatformTip {
+    color: $color-elephant;
+    height: 1rem;
+    text-align: center;
+  }
+
+  &__PlatformOverlay {
+    background: $overlay-background;
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+
+    &__Close {
+      color: $white;
+      cursor: pointer;
+      font-size: 2rem;
+      position: absolute;
+      right: $spacer;
+      top: $spacer;
+    }
+  }
+}
