@@ -85,10 +85,10 @@ export class MainMenu {
           },
           { type: 'separator' },
           {
-            label: 'Import From',
+            label: 'Import from',
             submenu: [
               {
-                label: 'CSV...',
+                label: 'CSV',
                 click: () => {
                   Application.sharedApplication.showImportCSVFiles();
                 },

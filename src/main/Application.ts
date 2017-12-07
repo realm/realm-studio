@@ -3,11 +3,9 @@ import * as electron from 'electron';
 import * as path from 'path';
 import { ActionReceiver } from '../actions/ActionReceiver';
 import { MainTransport } from '../actions/transports/MainTransport';
-import {
-  ImportSchemaFormat,
-  ImportSchemaGeneratorHelper,
-} from '../services/data-importer';
+import { ImportSchemaFormat } from '../services/data-importer';
 import CSVDataImporter from '../services/data-importer/csv/CSVDataImporter';
+import ImportSchemaGenerator from '../services/data-importer/ImportSchemaGenerator';
 import { realms } from '../services/ros';
 
 import {
@@ -140,15 +138,14 @@ export class Application {
         selectedPaths => {
           if (selectedPaths) {
             // Generate the Realm from the provided CSV file(s)
-            const schemaHelper = ImportSchemaGeneratorHelper(
+            const schemaHelper = new ImportSchemaGenerator(
               ImportSchemaFormat.CSV,
               selectedPaths,
             );
             const schema = schemaHelper.generate();
-            const importer = new CSVDataImporter(selectedPaths);
+            const importer = new CSVDataImporter(selectedPaths, schema);
             const generatedRealm = importer.import(
-              path.dirname(selectedPaths[0]),
-              schema,
+              path.dirname(selectedPaths[0])
             );
             // close Realm in main process (to be opened in Renderer process)
             generatedRealm.close();

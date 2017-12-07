@@ -7,10 +7,10 @@ import { DataImporter } from '../DataImporter';
 export default class CSVDataImporter extends DataImporter {
   private static readonly NUMBER_OF_INSERTS_BEFORE_COMMIT = 10000;
 
-  public import(path: string, importSchema: Realm.ObjectSchema[]): Realm {
-    const realm = this.createNewRealmFile(path, importSchema);
+  public import(path: string): Realm {
+    const realm = this.createNewRealmFile(path);
     this.files.map((file, index) => {
-      const schema = importSchema[index];
+      const schema = this.importSchema[index];
 
       const rawCSV = fs.readFileSync(file, 'utf8');
       const data = papaparse.parse(rawCSV, {
@@ -20,9 +20,7 @@ export default class CSVDataImporter extends DataImporter {
 
       realm.beginTransaction();
       let numberOfInsert = 0;
-      let lineNumber = 1; // Helpful to report to user which line did fail to parse.
-      data.forEach(row => {
-        ++lineNumber;
+      data.forEach((row, lineIndex: number) => {
         const object: any = {};
         for (const prop in schema.properties) {
           if (schema.properties.hasOwnProperty(prop) && row[prop]) {
@@ -35,7 +33,7 @@ export default class CSVDataImporter extends DataImporter {
                   const intNumber = parseInt(row[prop], 10);
                   if (isNaN(intNumber)) {
                     throw new Error(
-                      `Can not parse ${row[prop]} as int at line ${lineNumber}`,
+                      `Can not parse ${row[prop]} as int at line ${lineIndex}`,
                     );
                   }
                   object[prop] = intNumber;
@@ -44,7 +42,7 @@ export default class CSVDataImporter extends DataImporter {
                   const floatNumber = parseFloat(row[prop]);
                   if (isNaN(floatNumber)) {
                     throw new Error(
-                      `Can not parse ${row[prop]} as int at line ${lineNumber}`,
+                      `Can not parse ${row[prop]} as int at line ${lineIndex}`,
                     );
                   }
                   object[prop] = floatNumber;
@@ -59,7 +57,7 @@ export default class CSVDataImporter extends DataImporter {
               realm.close();
               fsExtra.removeSync(realm.path);
               throw new Error(
-                `Parsing error at line ${lineNumber}, expected type "${schema
+                `Parsing error at line ${lineIndex}, expected type "${schema
                   .properties[prop]}" but got "${row[
                   prop
                 ]}" for column "${prop}"\nError details: ${e}`,
@@ -69,10 +67,11 @@ export default class CSVDataImporter extends DataImporter {
         }
 
         realm.create(schema.name, object);
+        numberOfInsert++;
 
         // commit by batch to avoid creating multiple transactions.
         if (
-          numberOfInsert++ === CSVDataImporter.NUMBER_OF_INSERTS_BEFORE_COMMIT
+          numberOfInsert === CSVDataImporter.NUMBER_OF_INSERTS_BEFORE_COMMIT
         ) {
           realm.commitTransaction();
           numberOfInsert = 0;

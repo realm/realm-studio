@@ -15,7 +15,7 @@ export default class ImportSchemaGenerator {
   private format: ImportSchemaFormat;
 
   constructor(format: ImportSchemaFormat, files: string[]) {
-    this.format = this.importSchemaFormat(files[0]);
+    this.format = format;
     this.files = files;
   }
 
@@ -55,19 +55,5 @@ export default class ImportSchemaGenerator {
       schemas.push(schema);
     });
     return schemas;
-  }
-
-  private importSchemaFormat(file: string): ImportSchemaFormat {
-    switch (fsPath
-      .extname(file)
-      .toLocaleLowerCase()
-      .substr(1)) {
-      case ImportSchemaFormat.CSV:
-        return ImportSchemaFormat.CSV;
-      case ImportSchemaFormat.JSON:
-        return ImportSchemaFormat.JSON;
-      default:
-        throw new Error(`Unsupported file format: ${file}`);
-    }
   }
 }

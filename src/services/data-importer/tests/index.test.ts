@@ -2,14 +2,15 @@ import * as assert from 'assert';
 import fs = require('fs-extra');
 import { ObjectSchemaProperty } from 'realm';
 import CSVDataImporter from '../csv/CSVDataImporter';
-import { ImportSchemaFormat, ImportSchemaGeneratorHelper } from '../index';
+import ImportSchemaGenerator from '../ImportSchemaGenerator';
+import { ImportSchemaFormat } from '../index';
 import Util from '../Util';
 
 const TESTS_PATH = './src/services/data-importer/tests';
 
 describe('Import CSV tests', () => {
   describe('Util helper methods', () => {
-    it('parse boolean', () => {
+    it('parses strings to booleans', () => {
       assert.equal(Util.isBoolean('true'), true);
       assert.equal(Util.isBoolean('TRUE'), true);
       assert.equal(Util.isBoolean('TrUe'), true);
@@ -23,14 +24,14 @@ describe('Import CSV tests', () => {
       assert.equal(Util.isBoolean('true '), false);
     });
 
-    it('parse int', () => {
+    it('parses strings to ints', () => {
       assert.equal(Util.isInt('123'), true);
       assert.equal(Util.isInt('3.14'), false);
       assert.equal(Util.isInt('true'), false);
       assert.equal(Util.isInt('A094E453-46FD-4F13-AD2F-7333E2C4ABCA'), false);
     });
 
-    it('parse double', () => {
+    it('parses strings to doubles', () => {
       assert.equal(Util.isDouble('3.14'), true);
       assert.equal(Util.isDouble('3.0'), true);
       assert.equal(Util.isDouble('3'), true); // always check isInt before isDouble when parsing!
@@ -39,14 +40,14 @@ describe('Import CSV tests', () => {
     });
   });
 
-  it('Generate a valid Cat schema', () => {
+  it('Generates a valid Cat schema', () => {
     const files: string[] = [`${TESTS_PATH}/csv/Cat.csv`];
 
-    const importer = ImportSchemaGeneratorHelper(ImportSchemaFormat.CSV, files);
-    const importSchema = importer.generate();
+    const importer = new ImportSchemaGenerator(ImportSchemaFormat.CSV, files);
+    const schema = importer.generate();
 
-    assert.equal(importSchema.length, 1, 'Expected to parse one schema (Cat)');
-    const catSchema = importSchema[0];
+    assert.equal(schema.length, 1, 'Expected to parse one schema (Cat)');
+    const catSchema = schema[0];
     assert.equal(catSchema.name, 'Cat', 'Expected to parse schema named (Cat)');
     assert.equal(catSchema.properties.name, 'string?');
     assert.equal(catSchema.properties.age, 'int?');
@@ -58,7 +59,7 @@ describe('Import CSV tests', () => {
     assert.equal(catSchema.properties.scaredOfDog, 'string?');
   });
 
-  describe('Create and populate the Realm', () => {
+  describe('Creating and populating the Realm', () => {
     const REALM_FILE_DIR = `${TESTS_PATH}/temporal`;
 
     before(() => {
@@ -69,14 +70,14 @@ describe('Import CSV tests', () => {
     it('Create a valid Cat Realm file', () => {
       const files: string[] = [`${TESTS_PATH}/csv/Cat.csv`];
 
-      const importer = ImportSchemaGeneratorHelper(
+      const importer = new ImportSchemaGenerator(
         ImportSchemaFormat.CSV,
         files,
       );
-      const importSchema = importer.generate();
-      const csvImporter = new CSVDataImporter(files);
+      const schema = importer.generate();
+      const csvImporter = new CSVDataImporter(files, schema);
 
-      csvImporter.createNewRealmFile(REALM_FILE_DIR, importSchema);
+      csvImporter.createNewRealmFile(REALM_FILE_DIR);
 
       const expectedRealmFile = `${REALM_FILE_DIR}/default.realm`;
       assert.equal(
@@ -155,14 +156,14 @@ describe('Import CSV tests', () => {
     it('Populate a valid Cat Realm file', () => {
       const files: string[] = [`${TESTS_PATH}/csv/Cat.csv`];
 
-      const importer = ImportSchemaGeneratorHelper(
+      const importer = new ImportSchemaGenerator(
         ImportSchemaFormat.CSV,
         files,
       );
-      const importSchema = importer.generate();
-      const csvImporter = new CSVDataImporter(files);
+      const schema = importer.generate();
+      const csvImporter = new CSVDataImporter(files, schema);
 
-      const realm = csvImporter.import(REALM_FILE_DIR, importSchema);
+      const realm = csvImporter.import(REALM_FILE_DIR);
       const cats = realm.objects('Cat').sorted('name');
       assert.equal(cats.length, 2);
       let cat = cats[0] as any;
@@ -194,15 +195,15 @@ describe('Import CSV tests', () => {
       // the parsing will stop and the empty file will be removed.
       const files: string[] = [`${TESTS_PATH}/csv/invalid_second_line.csv`];
 
-      const importer = ImportSchemaGeneratorHelper(
+      const importer = new ImportSchemaGenerator(
         ImportSchemaFormat.CSV,
         files,
       );
-      const importSchema = importer.generate();
-      const csvImporter = new CSVDataImporter(files);
+      const schema = importer.generate();
+      const csvImporter = new CSVDataImporter(files, schema);
 
       assert.throws(
-        () => csvImporter.import(REALM_FILE_DIR, importSchema),
+        () => csvImporter.import(REALM_FILE_DIR),
         Error,
       );
     });
@@ -213,14 +214,14 @@ describe('Import CSV tests', () => {
         `${TESTS_PATH}/csv/people.csv`,
       ];
 
-      const importer = ImportSchemaGeneratorHelper(
+      const importer = new ImportSchemaGenerator(
         ImportSchemaFormat.CSV,
         files,
       );
-      const importSchema = importer.generate();
-      const csvImporter = new CSVDataImporter(files);
+      const schema = importer.generate();
+      const csvImporter = new CSVDataImporter(files, schema);
 
-      const realm = csvImporter.import(REALM_FILE_DIR, importSchema);
+      const realm = csvImporter.import(REALM_FILE_DIR);
       const people = realm.objects('people');
       const dogs = realm.objects('dogs');
       assert.equal(people.length, 2);
@@ -231,14 +232,14 @@ describe('Import CSV tests', () => {
     it('Parsing should support optional values', () => {
       const files: string[] = [`${TESTS_PATH}/csv/optional.csv`];
 
-      const importer = ImportSchemaGeneratorHelper(
+      const importer = new ImportSchemaGenerator(
         ImportSchemaFormat.CSV,
         files,
       );
-      const importSchema = importer.generate();
-      const csvImporter = new CSVDataImporter(files);
+      const schema = importer.generate();
+      const csvImporter = new CSVDataImporter(files, schema);
 
-      const realm = csvImporter.import(REALM_FILE_DIR, importSchema);
+      const realm = csvImporter.import(REALM_FILE_DIR);
       const optionals: any = realm.objects('optional').sorted('integerValue');
       assert.equal(optionals.length, 5);
 
@@ -255,14 +256,14 @@ describe('Import CSV tests', () => {
       // since we're batching inserts every 10000 elements
       const files: string[] = [`${TESTS_PATH}/csv/inspections.csv`];
 
-      const importer = ImportSchemaGeneratorHelper(
+      const importer = new ImportSchemaGenerator(
         ImportSchemaFormat.CSV,
         files,
       );
-      const importSchema = importer.generate();
-      const csvImporter = new CSVDataImporter(files);
+      const schema = importer.generate();
+      const csvImporter = new CSVDataImporter(files, schema);
 
-      const realm = csvImporter.import(REALM_FILE_DIR, importSchema);
+      const realm = csvImporter.import(REALM_FILE_DIR);
       assert.equal(realm.objects('inspections').length, 18480);
 
       realm.close();

@@ -1,4 +1,4 @@
-This is a CSV importer implementation base on https://github.com/realm/realm-cocoa-converter 
+This is a data importer (support only CSV for now) implementation base on https://github.com/realm/realm-cocoa-converter 
 
 It hase two major features:
 
