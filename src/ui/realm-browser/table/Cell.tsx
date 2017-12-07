@@ -50,15 +50,6 @@ const getCellContent = ({
         />
       );
     }
-    case 'date': {
-      return (
-        <StringCellContainer
-          property={property}
-          value={value !== null ? value.toISOString() : value}
-          onUpdateValue={onUpdateValue}
-        />
-      );
-    }
     case 'data':
       return <DataCell property={property} value={value} />;
     case 'list':
