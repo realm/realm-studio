@@ -1,9 +1,6 @@
 export default class Util {
   public static isBoolean(value: string): boolean {
-    return (
-      value.toLowerCase() === 'true' ||
-      value.toLowerCase() === 'false'
-    );
+    return value.toLowerCase() === 'true' || value.toLowerCase() === 'false';
   }
 
   public static isInt(value: string): boolean {
