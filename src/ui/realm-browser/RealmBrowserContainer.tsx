@@ -82,20 +82,20 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     const { focus, ...restState } = this.state;
     return (
       <RealmBrowser
-        focus={this.getFocusWithAddColumn(focus)}
+        focus={this.getWithAddColumnIfNecessary(focus)}
         {...restState}
         {...this}
       />
     );
   }
 
-  public getFocusWithAddColumn = (focus: Focus | null) =>
-    focus
+  public getWithAddColumnIfNecessary = (focus: Focus | null) =>
+    focus && focus.enableAddColumn
       ? {
           ...focus,
           properties: [...focus.properties, this.addColumn],
         }
-      : null;
+      : focus;
 
   public onCellChange: CellChangeHandler = params => {
     if (this.realm) {
@@ -173,7 +173,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         );
       } catch (err) {
         showError(
-          `Failed adding the property name "${name}" to the selected schema`,
+          `Failed adding the property named "${name}" to the selected schema`,
           err,
         );
       }
@@ -208,6 +208,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       className,
       results: this.realm.objects(className),
       properties: this.derivePropertiesFromClassName(className),
+      enableAddColumn: true,
     };
     this.setState({
       focus,
@@ -222,6 +223,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       className,
       results,
       properties: this.derivePropertiesFromClassName(className),
+      enableAddColumn: true,
     };
     return focus;
   };
@@ -397,6 +399,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         className,
         properties: this.derivePropertiesFromClassName(className),
         results,
+        enableAddColumn: false,
       };
       this.setState({
         selectObject: {
