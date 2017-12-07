@@ -18,9 +18,10 @@
     },
     "files": [
       "./build/**/*",
-      "./static/**/*",
       "./node_modules/**/*",
       "./package.json",
+      "./static/**/*",
+      "./tutorials/**/*",
       "!node_modules/realm/android${/*}",
       "!node_modules/realm/build${/*}",
       "!node_modules/realm/react-native${/*}",
