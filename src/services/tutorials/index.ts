@@ -24,10 +24,7 @@ export const getPath = (id: string, filePath: string) => {
   // We need to resolve relative to the app.getAppPath() and the CWD gets changed at runtime
   const app = electron.remote ? electron.remote.app : electron.app;
   const cwd = app.getAppPath();
-  const relativePath = require.resolve(
-    `realm-studio-tutorials/${id}/${filePath}`,
-  );
-  return path.resolve(cwd, relativePath);
+  return path.resolve(cwd, `tutorials/${id}/${filePath}`);
 };
 
 export const getConfig = (id: string): ITutorialConfig | null => {
