@@ -3,7 +3,7 @@ import { Button, Navbar } from 'reactstrap';
 
 import realmLogo from '../../../../static/svgs/realm-logo.svg';
 import { Tab } from '../ServerAdministration';
-import { TopBar } from './TopBar';
+import { TopBar } from './Topbar';
 
 export interface ITopBarContainerProps {
   activeTab: Tab | null;

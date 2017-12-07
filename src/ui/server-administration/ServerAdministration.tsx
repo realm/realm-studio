@@ -10,7 +10,7 @@ import {
   ValidateCertificatesChangeHandler,
 } from './realms/RealmsTableContainer';
 import { ToolsContainer } from './tools/ToolsContainer';
-import { TopBar } from './TopBar';
+import { TopBar } from './Topbar';
 import { UsersTableContainer } from './users/UsersTableContainer';
 
 import './ServerAdministration.scss';
