@@ -90,7 +90,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   }
 
   public getWithAddColumnIfNecessary = (focus: Focus | null) =>
-    focus && focus.enableAddColumn
+    focus && focus.kind === 'class' && focus.enableAddColumn
       ? {
           ...focus,
           properties: [...focus.properties, this.addColumn],
