@@ -150,26 +150,28 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     });
   };
 
-  public onAddSchemaProperty = (property: Realm.PropertiesTypes) => {
-    if (this.realm) {
-      let selectedSchemaName = '';
-      const schemas = this.state.schemas.map(schema => {
-        if (isSelected(this.state.focus, schema.name)) {
-          selectedSchemaName = schema.name;
-          return {
-            ...schema,
-            properties: {
-              ...schema.properties,
-              ...property,
-            },
-          };
-        } else {
-          return schema;
-        }
-      });
+  public onAddSchemaProperty = async (property: Realm.PropertiesTypes) => {
+    if (
+      this.realm &&
+      this.state.focus &&
+      this.state.focus.kind === 'class' &&
+      this.state.focus.enableAddColumn
+    ) {
+      const schemas = this.state.schemas.map(
+        schema =>
+          isSelected(this.state.focus, schema.name)
+            ? {
+                ...schema,
+                properties: {
+                  ...schema.properties,
+                  ...property,
+                },
+              }
+            : schema,
+      );
       try {
         this.loadRealm(this.props.realm, schemas).then(() =>
-          this.onSchemaSelected(selectedSchemaName),
+          this.onSchemaSelected((this.state.focus as IClassFocus).className),
         );
       } catch (err) {
         showError(
