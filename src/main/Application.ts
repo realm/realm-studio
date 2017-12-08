@@ -104,7 +104,7 @@ export class Application {
   }
 
   public showOpenLocalRealm() {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       electron.dialog.showOpenDialog(
         {
           properties: ['openFile'],
@@ -119,7 +119,7 @@ export class Application {
                   path: selectedPath,
                 },
               };
-              this.showRealmBrowser(options);
+              this.showRealmBrowser(options).then(resolve, reject);
             });
           }
         },
@@ -129,7 +129,7 @@ export class Application {
   }
 
   public showImportCSVFiles() {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       electron.dialog.showOpenDialog(
         {
           properties: ['openFile', 'multiSelections'],
@@ -138,11 +138,11 @@ export class Application {
         selectedPaths => {
           if (selectedPaths) {
             // Generate the Realm from the provided CSV file(s)
-            const schemaHelper = new ImportSchemaGenerator(
+            const schemaGenerator = new ImportSchemaGenerator(
               ImportSchemaFormat.CSV,
               selectedPaths,
             );
-            const schema = schemaHelper.generate();
+            const schema = schemaGenerator.generate();
             const importer = new CSVDataImporter(selectedPaths, schema);
             const generatedRealm = importer.import(
               path.dirname(selectedPaths[0]),
@@ -157,7 +157,7 @@ export class Application {
                 path: generatedRealm.path,
               },
             };
-            this.showRealmBrowser(options);
+            this.showRealmBrowser(options).then(resolve, reject);
           }
         },
       );
