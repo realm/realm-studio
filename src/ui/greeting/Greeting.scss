@@ -82,6 +82,20 @@ $history-panel-icon-size: 20px;
     margin-bottom: $spacer * .75;
   }
 
+  &__CloudStatus {
+    font-size: .8rem;
+    padding: $spacer / 2;
+
+    &__LoadingDots {
+      margin-left: $spacer / 2;
+    }
+
+    &__Close {
+      cursor: pointer;
+      margin-left: $spacer / 2;
+    }
+  }
+
   &__DownloadDemo {
     font-size: .7rem;
     margin-top: $spacer / 2;

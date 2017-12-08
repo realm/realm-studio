@@ -7,24 +7,36 @@ import { SocialNetwork } from './GreetingContainer';
 
 export interface ICloudActionButtonProps {
   cloudStatus?: ICloudStatus;
-  onAuthenticate: () => void;
   onActivateCloudOverlay: () => void;
+  onAuthenticate: () => void;
   onConnectToPrimarySubscription: () => void;
+  onDeauthenticate: () => void;
   onShare: (socialNetwork: SocialNetwork) => void;
 }
 
 export const CloudAction = ({
   cloudStatus,
-  onAuthenticate,
   onActivateCloudOverlay,
+  onAuthenticate,
   onConnectToPrimarySubscription,
+  onDeauthenticate,
   onShare,
 }: ICloudActionButtonProps) => {
   if (cloudStatus && cloudStatus.kind === 'authenticating') {
     return (
-      <Button className="Greeting__Action" color="primary" disabled={true}>
-        <LoadingDots />
-      </Button>
+      <Alert className="Greeting__CloudStatus" color="info">
+        {cloudStatus.waitingForUser
+          ? 'Waiting for you to grant access'
+          : 'Waiting for Realm Cloud to authenticate'}
+        <LoadingDots className="Greeting__CloudStatus__LoadingDots" />
+      </Alert>
+    );
+  } else if (cloudStatus && cloudStatus.kind === 'fetching') {
+    return (
+      <Alert className="Greeting__CloudStatus" color="info">
+        Fetching your profile and subscriptions
+        <LoadingDots className="Greeting__CloudStatus__LoadingDots" />
+      </Alert>
     );
   } else if (cloudStatus && cloudStatus.kind === 'authenticated') {
     return cloudStatus.user.canCreate ? (
@@ -79,6 +91,18 @@ export const CloudAction = ({
       >
         Connect to Realm Cloud
       </Button>
+    );
+  } else if (cloudStatus && cloudStatus.kind === 'error') {
+    return (
+      <Alert className="Greeting__CloudStatus" color="danger">
+        <span title={cloudStatus.message}>
+          Failed while contacting Realm Cloud
+        </span>
+        <i
+          className="Greeting__CloudStatus__Close fa fa-close"
+          onClick={onDeauthenticate}
+        />
+      </Alert>
     );
   } else {
     return (

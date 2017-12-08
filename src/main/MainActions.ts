@@ -1,5 +1,6 @@
 export enum MainActions {
   AuthenticateWithGitHub = 'authenticate-with-github',
+  Deauthenticate = 'deauthenticate',
   CheckForUpdates = 'check-for-updates',
   RefreshCloudStatus = 'refresh-cloud-status',
   ShowConnectToServer = 'show-connect-to-server',

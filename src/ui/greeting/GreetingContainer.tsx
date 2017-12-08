@@ -50,6 +50,8 @@ export class GreetingContainer extends React.Component<
         isSyncEnabled: !!Realm.Sync,
       });
     });
+    // Ask the main process to send a cloud status message
+    main.refreshCloudStatus();
   }
 
   public componentWillUnmount() {
@@ -127,6 +129,10 @@ export class GreetingContainer extends React.Component<
     main.checkForUpdates();
   };
 
+  public onDeauthenticate = () => {
+    main.deauthenticate();
+  };
+
   public updateStatusChanged = (
     e: Electron.IpcMessageEvent,
     status: IUpdateStatus,
@@ -138,9 +144,15 @@ export class GreetingContainer extends React.Component<
     e: Electron.IpcMessageEvent,
     status: ICloudStatus,
   ) => {
-    if (status.kind === 'authenticated' && status.justAuthenticated) {
-      // Focus the window
+    // Focus the window when the status requires the users attention
+    if (
+      status.kind === 'error' ||
+      (status.kind === 'authenticating' && !status.waitingForUser)
+    ) {
       electron.remote.getCurrentWindow().focus();
+    }
+    // Update the state
+    if (status.kind === 'authenticated' && status.justAuthenticated) {
       this.setState({
         cloudStatus: status,
         isCloudOverlayActivated: true,

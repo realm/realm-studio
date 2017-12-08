@@ -28,6 +28,7 @@ export const Greeting = ({
   onCloudSubscriptionCreated,
   onConnectToPrimarySubscription,
   onConnectToServer,
+  onDeauthenticate,
   onOpenLocalRealm,
   onShare,
   updateStatus,
@@ -43,6 +44,7 @@ export const Greeting = ({
   onCloudSubscriptionCreated: () => void;
   onConnectToPrimarySubscription: () => void;
   onConnectToServer: () => void;
+  onDeauthenticate: () => void;
   onOpenLocalRealm: () => void;
   onShare: (socialNetwork: SocialNetwork) => void;
   updateStatus: IUpdateStatus;
@@ -67,6 +69,7 @@ export const Greeting = ({
           onActivateCloudOverlay={onActivateCloudOverlay}
           onAuthenticate={onAuthenticate}
           onConnectToPrimarySubscription={onConnectToPrimarySubscription}
+          onDeauthenticate={onDeauthenticate}
           onShare={onShare}
         />
         <div className="Greeting__SecondaryActions">
