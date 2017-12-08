@@ -148,11 +148,10 @@ export abstract class RealmLoadingComponent<
               'Incompatible histories. Expected a Realm with no or in-realm history',
             )
           ) {
-            // Recursively open the Realm locally with a sync history mode.
-            // Note: there's a risk of infinite recursion (stack over flow) if
-            // RealmJS return the same error even when setting the sync flag to true
-            realm.sync = true;
-            return this.openRealm(realm, ssl);
+            // Try to open the Realm locally with a sync history mode.
+            if (realm.sync !== true) {
+              return this.openRealm({ ...realm, sync: true }, ssl);
+            }
           }
         }
         // Other errors, propagate it.
