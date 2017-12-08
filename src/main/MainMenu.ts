@@ -88,6 +88,11 @@ export class MainMenu {
                 enabled: enableExportSchema,
               },
               {
+                label: 'Kotlin',
+                click: () => this.exportSchema(Language.Kotlin),
+                enabled: enableExportSchema,
+              },
+              {
                 label: 'C#',
                 click: () => this.exportSchema(Language.CS),
                 enabled: enableExportSchema,
