@@ -10,14 +10,9 @@ jobWrapper {
       docker.image('node:6.11.2').inside("-e HOME=${env.WORKSPACE} -v /etc/passwd:/etc/passwd:ro") {
         // Bump the version and tag the branch
         // Using --no-git-tag-version because the default does not add the package-lock.json
-        nextVersion = sh(
-          script: "npm version --no-git-tag-version ${NEXT_VERSION}",
-          returnStdout: true
-        ).trim()
-        // Update the version in the package lock
-        def lock = readJSON(file: 'package-lock.json')
-        lock.version = nextVersion.substring(1) // Removing the v-prefix
-        writeJSON(file: 'package-lock.json', json: lock, pretty: 2)
+        sh("npm version --no-git-tag-version ${NEXT_VERSION}")
+        // Update the package-lock.json with this new version - npm version doesn't do that.
+        sh("node scripts/copy-version-to-lock.js")
       }
       // Push the change to GitHub
       input(message: "Push ${nextVersion} and start a release?", id: 'push')
