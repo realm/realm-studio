@@ -1,10 +1,20 @@
 import * as github from '../services/github';
 import * as raas from '../services/raas';
 import * as ros from '../services/ros';
+import { timeout } from '../utils';
 
 interface IBaseCloudStatus {
   kind: string;
   endpoint: raas.Endpoint;
+}
+
+export interface IErrorCloudStatus extends IBaseCloudStatus {
+  kind: 'error';
+  message: string;
+}
+
+export interface IFetchingCloudStatus extends IBaseCloudStatus {
+  kind: 'fetching';
 }
 
 export interface INotAuthenticatedCloudStatus extends IBaseCloudStatus {
@@ -13,6 +23,7 @@ export interface INotAuthenticatedCloudStatus extends IBaseCloudStatus {
 
 export interface IAuthenticatingCloudStatus extends IBaseCloudStatus {
   kind: 'authenticating';
+  waitingForUser: boolean;
 }
 
 export interface IAuthenticatedCloudStatus extends IBaseCloudStatus {
@@ -30,6 +41,8 @@ export interface IPrimarySubscriptionCloudStatus extends IBaseCloudStatus {
 }
 
 export type ICloudStatus =
+  | IErrorCloudStatus
+  | IFetchingCloudStatus
   | INotAuthenticatedCloudStatus
   | IAuthenticatingCloudStatus
   | IAuthenticatedCloudStatus
@@ -41,6 +54,7 @@ type CloudStatusListener = (status: ICloudStatus) => void;
  * This will manage and send events when
  */
 export class CloudManager {
+  private static AUTHENTICATION_TIMEOUT = 5000;
   private listeningWindows: Electron.BrowserWindow[] = [];
   private listeners: CloudStatusListener[] = [];
 
@@ -64,16 +78,36 @@ export class CloudManager {
 
   public async authenticateWithGitHub() {
     const endpoint = raas.getEndpoint();
-    this.sendCloudStatus({
-      kind: 'authenticating',
-      endpoint,
-    });
-    const code = await github.authenticate();
-    const response = await raas.user.authenticate(code);
-    raas.user.setToken(response.token);
-    // Learn about the user
-    const user = await raas.user.getAuth();
-    this.refresh(true);
+    try {
+      this.sendCloudStatus({
+        kind: 'authenticating',
+        waitingForUser: true,
+        endpoint,
+      });
+      const code = await github.authenticate();
+      this.sendCloudStatus({
+        kind: 'authenticating',
+        waitingForUser: false,
+        endpoint,
+      });
+      const response = await timeout<raas.user.IRaasAuthenticationResponse>(
+        CloudManager.AUTHENTICATION_TIMEOUT,
+        new Error(
+          `Request timed out (waited ${CloudManager.AUTHENTICATION_TIMEOUT} ms)`,
+        ),
+        raas.user.authenticate(code),
+      );
+      raas.user.setToken(response.token);
+      // Learn about the user
+      const user = await raas.user.getAuth();
+      this.refresh(true);
+    } catch (err) {
+      this.sendCloudStatus({
+        kind: 'error',
+        message: err.message,
+        endpoint,
+      });
+    }
   }
 
   public async deauthenticate() {
@@ -86,32 +120,44 @@ export class CloudManager {
   }
 
   public async refresh(justAuthenticated = false) {
-    const raasToken = raas.user.getToken();
     const endpoint = raas.getEndpoint();
-    if (raasToken) {
-      const user = await raas.user.getAuth();
-      const subscriptions = await raas.user.getSubscriptions();
-      if (subscriptions.length > 0) {
-        const primarySubscription = subscriptions[0];
+    try {
+      const raasToken = raas.user.getToken();
+      if (raasToken) {
         this.sendCloudStatus({
-          kind: 'has-primary-subscription',
+          kind: 'fetching',
           endpoint,
-          primarySubscription,
-          raasToken,
-          user,
         });
+        const user = await raas.user.getAuth();
+        const subscriptions = await raas.user.getSubscriptions();
+        if (subscriptions.length > 0) {
+          const primarySubscription = subscriptions[0];
+          this.sendCloudStatus({
+            kind: 'has-primary-subscription',
+            endpoint,
+            primarySubscription,
+            raasToken,
+            user,
+          });
+        } else {
+          this.sendCloudStatus({
+            kind: 'authenticated',
+            endpoint,
+            justAuthenticated,
+            raasToken,
+            user,
+          });
+        }
       } else {
         this.sendCloudStatus({
-          kind: 'authenticated',
+          kind: 'not-authenticated',
           endpoint,
-          justAuthenticated,
-          raasToken,
-          user,
         });
       }
-    } else {
+    } catch (err) {
       this.sendCloudStatus({
-        kind: 'not-authenticated',
+        kind: 'error',
+        message: err.message,
         endpoint,
       });
     }

@@ -35,6 +35,9 @@ export class Application {
     [MainActions.AuthenticateWithGitHub]: () => {
       return this.authenticateWithGitHub();
     },
+    [MainActions.Deauthenticate]: () => {
+      return this.deauthenticate();
+    },
     [MainActions.CheckForUpdates]: () => {
       this.checkForUpdates();
     },

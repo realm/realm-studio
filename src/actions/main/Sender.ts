@@ -16,6 +16,10 @@ export class Sender extends ActionSender {
     return this.send(MainActions.CheckForUpdates);
   }
 
+  public deauthenticate(): Promise<void> {
+    return this.send(MainActions.Deauthenticate);
+  }
+
   public refreshCloudStatus() {
     return this.send(MainActions.RefreshCloudStatus);
   }
