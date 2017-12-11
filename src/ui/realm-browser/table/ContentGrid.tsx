@@ -53,6 +53,7 @@ export interface IContentGridProps extends Partial<GridProps> {
   properties: IPropertyWithName[];
   rowHeight: number;
   width: number;
+  columnCount: number;
 }
 
 export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
@@ -76,7 +77,6 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
       highlight,
       onSortEnd,
       onSortStart,
-      properties,
     } = this.props;
 
     return (
@@ -87,7 +87,6 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
         cellRangeRenderer={this.cellRangeRenderer}
         cellRenderer={this.getCellRenderer}
         className="RealmBrowser__Table__ContentGrid"
-        columnCount={properties.length}
         columnWidth={this.getColumnWidth}
         distance={5}
         onSortEnd={onSortEnd}
@@ -103,6 +102,14 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
       />
     );
   }
+
+  private addColumnCell = () => (cellProps: GridCellProps) => (
+    <div
+      key={cellProps.key}
+      className="RealmBrowser__Table__Cell"
+      style={cellProps.style}
+    />
+  );
 
   private generateRenderers(props: IContentGridProps) {
     const { properties } = props;
@@ -135,65 +142,68 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
       );
     });
 
-    this.cellRenderers = properties.map(property => {
-      return (cellProps: GridCellProps) => {
-        const {
-          columnWidths,
-          filteredSortedResults,
-          getCellValue,
-          hasEditingDisabled,
-          onCellChange,
-          onCellClick,
-          onContextMenu,
-        } = this.props;
-        const { rowIndex, columnIndex } = cellProps;
-        const rowObject = filteredSortedResults[cellProps.rowIndex];
-        const cellValue = getCellValue(rowObject, cellProps);
+    this.cellRenderers = [
+      ...properties.map(property => {
+        return (cellProps: GridCellProps) => {
+          const {
+            columnWidths,
+            filteredSortedResults,
+            getCellValue,
+            hasEditingDisabled,
+            onCellChange,
+            onCellClick,
+            onContextMenu,
+          } = this.props;
+          const { rowIndex, columnIndex } = cellProps;
+          const rowObject = filteredSortedResults[cellProps.rowIndex];
+          const cellValue = getCellValue(rowObject, cellProps);
 
-        return (
-          <Cell
-            hasEditingDisabled={hasEditingDisabled}
-            key={cellProps.key}
-            onCellClick={e => {
-              if (onCellClick) {
-                onCellClick({
-                  cellValue,
-                  columnIndex,
-                  property,
-                  rowIndex,
-                  rowObject,
-                });
-              }
-            }}
-            onContextMenu={e => {
-              if (onContextMenu) {
-                onContextMenu(e, {
-                  cellValue,
-                  columnIndex,
-                  property,
-                  rowIndex,
-                  rowObject,
-                });
-              }
-            }}
-            onUpdateValue={value => {
-              if (onCellChange) {
-                onCellChange({
-                  cellValue: value,
-                  parent: filteredSortedResults,
-                  property,
-                  rowIndex,
-                });
-              }
-            }}
-            property={property}
-            style={cellProps.style}
-            value={cellValue}
-            width={columnWidths[cellProps.columnIndex]}
-          />
-        );
-      };
-    });
+          return (
+            <Cell
+              hasEditingDisabled={hasEditingDisabled}
+              key={cellProps.key}
+              onCellClick={e => {
+                if (onCellClick) {
+                  onCellClick({
+                    cellValue,
+                    columnIndex,
+                    property,
+                    rowIndex,
+                    rowObject,
+                  });
+                }
+              }}
+              onContextMenu={e => {
+                if (onContextMenu) {
+                  onContextMenu(e, {
+                    cellValue,
+                    columnIndex,
+                    property,
+                    rowIndex,
+                    rowObject,
+                  });
+                }
+              }}
+              onUpdateValue={value => {
+                if (onCellChange) {
+                  onCellChange({
+                    cellValue: value,
+                    parent: filteredSortedResults,
+                    property,
+                    rowIndex,
+                  });
+                }
+              }}
+              property={property}
+              style={cellProps.style}
+              value={cellValue}
+              width={columnWidths[cellProps.columnIndex]}
+            />
+          );
+        };
+      }),
+      this.addColumnCell(),
+    ];
   }
 
   private getColumnWidth = ({ index }: Index) => {
@@ -213,9 +223,8 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
       }}
       style={{
         height: this.props.rowHeight,
-        width: this.props.properties.reduce(
-          (totalWidth, value, index) =>
-            totalWidth + this.getColumnWidth({ index }),
+        width: this.props.columnWidths.reduce(
+          (totalWidth, value) => totalWidth + value,
           0,
         ),
       }}

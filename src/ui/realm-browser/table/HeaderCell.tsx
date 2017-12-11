@@ -31,7 +31,7 @@ export const getPropertyDisplayed = (property: Realm.ObjectSchemaProperty) => {
 };
 
 const isPropertySortable = (property: IPropertyWithName) => {
-  if (property.name === '#' || property.name === '+') {
+  if (property.name === '#') {
     return false;
   } else if (property.type === 'data') {
     return false;
@@ -50,7 +50,6 @@ interface IHeaderCellProps {
   style: React.CSSProperties;
   onSortClick: SortClickHandler;
   sorting?: ISorting;
-  onAddColumnClick?: () => void;
 }
 
 interface IHeaderCellState {
@@ -97,26 +96,7 @@ export class HeaderCell extends React.Component<
   }
 
   public render() {
-    const { property, style, sorting, onAddColumnClick } = this.props;
-
-    // A special cell for add new column
-    if (
-      onAddColumnClick &&
-      property.name === '+' &&
-      property.type === 'int' &&
-      property.readOnly
-    ) {
-      return (
-        <div
-          style={style}
-          className="RealmBrowser__Table__HeaderCellControl"
-          onClick={onAddColumnClick}
-          title="Click for add a new column"
-        >
-          <i className="fa fa-plus" />
-        </div>
-      );
-    }
+    const { property, style, sorting } = this.props;
 
     const isSortable = isPropertySortable(property);
     const sortClass = classNames('RealmBrowser__Table__HeaderSort', {

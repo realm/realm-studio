@@ -85,6 +85,10 @@ export const Table = ({
   const { height, width } = sizeProps;
   const scrollBottom = rowHeights.header + scrollHeight - height - scrollTop;
   const scrollRight = scrollWidth - width - scrollLeft;
+  const totalColumns = focus.addColumnEnabled
+    ? focus.properties.length + 1
+    : focus.properties.length;
+
   return (
     <div>
       <MoreIndicator position="bottom" visible={scrollBottom > 0} />
@@ -103,6 +107,7 @@ export const Table = ({
         sorting={sorting}
         width={width}
         onAddColumnClick={onAddColumnClick}
+        columnCount={totalColumns}
       />
       <ContentGrid
         className="RealmBrowser__Table__ValueGrid"
@@ -126,6 +131,7 @@ export const Table = ({
         properties={focus.properties}
         rowHeight={rowHeights.content}
         width={width}
+        columnCount={totalColumns}
       />
     </div>
   );

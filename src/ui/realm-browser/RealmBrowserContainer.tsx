@@ -51,7 +51,6 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   IRealmBrowserState
 > {
   private clickTimeout?: any;
-  private addColumn: IPropertyWithName;
 
   constructor() {
     super();
@@ -65,8 +64,6 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       isAddSchemaOpen: false,
       isAddSchemaPropertyOpen: false,
     };
-
-    this.addColumn = { name: '+', type: 'int', readOnly: true };
   }
 
   public componentDidMount() {
@@ -79,23 +76,8 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   }
 
   public render() {
-    const { focus, ...restState } = this.state;
-    return (
-      <RealmBrowser
-        focus={this.getWithAddColumnIfNecessary(focus)}
-        {...restState}
-        {...this}
-      />
-    );
+    return <RealmBrowser {...this.state} {...this} />;
   }
-
-  public getWithAddColumnIfNecessary = (focus: Focus | null) =>
-    focus && focus.kind === 'class' && focus.enableAddColumn
-      ? {
-          ...focus,
-          properties: [...focus.properties, this.addColumn],
-        }
-      : focus;
 
   public onCellChange: CellChangeHandler = params => {
     if (this.realm) {
@@ -155,7 +137,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       this.realm &&
       this.state.focus &&
       this.state.focus.kind === 'class' &&
-      this.state.focus.enableAddColumn
+      this.state.focus.addColumnEnabled
     ) {
       const schemas = this.state.schemas.map(
         schema =>
@@ -210,7 +192,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       className,
       results: this.realm.objects(className),
       properties: this.derivePropertiesFromClassName(className),
-      enableAddColumn: true,
+      addColumnEnabled: true,
     };
     this.setState({
       focus,
@@ -225,7 +207,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       className,
       results,
       properties: this.derivePropertiesFromClassName(className),
-      enableAddColumn: true,
+      addColumnEnabled: true,
     };
     return focus;
   };
@@ -403,7 +385,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         className,
         properties: this.derivePropertiesFromClassName(className),
         results,
-        enableAddColumn: false,
+        addColumnEnabled: false,
       };
       this.setState({
         selectObject: {

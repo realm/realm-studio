@@ -97,14 +97,20 @@ export class TableContainer extends React.PureComponent<
   public componentWillMount() {
     if (this.props.focus) {
       const properties = this.props.focus.properties;
-      this.setDefaultColumnWidths(properties);
+      this.setDefaultColumnWidths(
+        properties,
+        this.props.focus.addColumnEnabled,
+      );
     }
   }
 
   public componentWillReceiveProps(props: ITableContainerProps) {
     if (props.focus && this.props.focus !== props.focus) {
       const properties = props.focus.properties;
-      this.setDefaultColumnWidths(properties);
+      this.setDefaultColumnWidths(
+        properties,
+        this.props.focus.addColumnEnabled,
+      );
       this.setState({ sorting: undefined });
     }
   }
@@ -233,21 +239,27 @@ export class TableContainer extends React.PureComponent<
     }
   }
 
-  private setDefaultColumnWidths(properties: IPropertyWithName[]) {
-    const columnWidths = properties.map(property => {
-      switch (property.type) {
-        case 'int':
-          return property.name === '#' || property.name === '+' ? 50 : 100;
-        case 'bool':
-          return 100;
-        case 'string':
-          return 300;
-        case 'date':
-          return 200;
-        default:
-          return 300;
-      }
-    });
+  private setDefaultColumnWidths(
+    properties: IPropertyWithName[],
+    addColumnEnabled?: boolean,
+  ) {
+    const columnWidths = [
+      ...properties.map(property => {
+        switch (property.type) {
+          case 'int':
+            return property.name === '#' ? 50 : 100;
+          case 'bool':
+            return 100;
+          case 'string':
+            return 300;
+          case 'date':
+            return 200;
+          default:
+            return 300;
+        }
+      }),
+      addColumnEnabled ? 50 : 0,
+    ];
     this.setState({
       columnWidths,
     });
