@@ -88,6 +88,18 @@ export class MainMenu {
               },
             ],
           },
+          { type: 'separator' },
+          {
+            label: 'Import from',
+            submenu: [
+              {
+                label: 'CSV',
+                click: () => {
+                  Application.sharedApplication.showImportCSVFiles();
+                },
+              },
+            ],
+          },
         ],
       },
       {
