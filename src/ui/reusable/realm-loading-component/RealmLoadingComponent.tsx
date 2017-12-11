@@ -140,19 +140,15 @@ export abstract class RealmLoadingComponent<
           sync: realm.sync as any,
         });
       } catch (error) {
-        if (error.message) {
-          const message: string = error.message;
-          // FIXME: replace this when we have more typed error we can check against
-          if (
-            message.includes(
-              'Incompatible histories. Expected a Realm with no or in-realm history',
-            )
-          ) {
-            // Try to open the Realm locally with a sync history mode.
-            if (realm.sync !== true) {
-              return this.openRealm({ ...realm, sync: true }, ssl);
-            }
-          }
+        if (
+          error instanceof Error &&
+          error.message.includes(
+            'Incompatible histories. Expected a Realm with no or in-realm history',
+          ) &&
+          realm.sync !== true
+        ) {
+          // Try to open the Realm locally with a sync history mode.
+          return this.openRealm({ ...realm, sync: true }, ssl);
         }
         // Other errors, propagate it.
         throw error;
