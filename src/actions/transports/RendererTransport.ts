@@ -14,6 +14,7 @@ export class RendererTransport extends Transport {
   public constructor() {
     super();
     ipcRenderer.on(Transport.RESPONSE_EVENT_NAME, this.onResponseMessage);
+    ipcRenderer.on(Transport.REQUEST_EVENT_NAME, this.onRequestMessage);
   }
 
   public sendRequest(requestId: string, action: string, ...args: any[]) {
@@ -29,5 +30,12 @@ export class RendererTransport extends Transport {
     ...args: any[]
   ) => {
     this.emit(Transport.RESPONSE_EVENT_NAME, ...args);
+  };
+
+  private onRequestMessage = (
+    event: Electron.IpcMessageEvent,
+    ...args: any[]
+  ) => {
+    this.emit(Transport.REQUEST_EVENT_NAME, ...args);
   };
 }
