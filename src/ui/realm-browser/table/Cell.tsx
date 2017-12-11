@@ -19,7 +19,6 @@ const getCellContent = ({
   property: IPropertyWithName;
   value: any;
 }) => {
-
   // A special cell for the list index
   if (property.name === '#' && property.type === 'int' && property.readOnly) {
     return <ListIndexCell value={value} />;
