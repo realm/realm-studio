@@ -6,7 +6,12 @@ import * as Realm from 'realm';
 import * as util from 'util';
 
 import { IPropertyWithName, ISelectObjectState } from '.';
-import { IExportSchemaOptions } from '../../main/MainMenu';
+import {
+  IExportSchemaOptions,
+  IInsertIntoSchemaOptions,
+} from '../../main/MainMenu';
+import CSVDataImporter from '../../services/data-importer/csv/CSVDataImporter';
+import ImportSchemaGenerator from '../../services/data-importer/ImportSchemaGenerator';
 import { Language, SchemaExporter } from '../../services/schema-export';
 import { IRealmBrowserOptions } from '../../windows/WindowType';
 import { showError } from '../reusable/errors';
@@ -66,10 +71,12 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   public componentDidMount() {
     this.loadRealm(this.props.realm);
     ipcRenderer.addListener('export-schema', this.onExportSchema);
+    ipcRenderer.addListener('insert-into-schema', this.onInsertIntoSchema);
   }
 
   public componentWillUnmount() {
     ipcRenderer.removeListener('export-schema', this.onExportSchema);
+    ipcRenderer.removeListener('insert-into-schema', this.onInsertIntoSchema);
   }
 
   public render() {
@@ -479,5 +486,43 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         }
       },
     );
+  };
+
+  private onInsertIntoSchema = (
+    event: any,
+    { format, selectedPaths }: IInsertIntoSchemaOptions,
+  ): void => {
+    // console.log(`>>>>>>>>>>>> CURRENT REALM ${this.realm.path}`);
+    // console.log(`>>>>>>>>>>>> FORMAT ${format}`);
+    // console.log(`>>>>>>>>>>>> FILES ${selectedPaths}`);
+
+    // Generate the Realm from the provided CSV file(s)
+    const schemaGenerator = new ImportSchemaGenerator(format, selectedPaths);
+    const schema = schemaGenerator.generate();
+    // TODO check if the CSV schema can be used with current schema
+    //  compare this.realm.schema schemaGenerator
+    // TODO import into Realm refactor CSVDataImporter to separate
+    // creation of the Realm and import
+    const importer = new CSVDataImporter(selectedPaths, schema);
+    // const generatedRealm = importer.import(
+    //   path.dirname(selectedPaths[0]),
+    // );
+    // close Realm in main process (to be opened in Renderer process)
+    // generatedRealm.close();
+
+    // const basename = path.basename(this.props.realm.path, '.realm');
+    // remote.dialog.showSaveDialog(
+    //   {
+    //     defaultPath: `${basename}-schemas`,
+    //     message: `Select a directory to store the ${language} schema files`,
+    //   },
+    //   selectedPath => {
+    //     if (selectedPath) {
+    //       const exporter = SchemaExporter(language);
+    //       exporter.exportSchema(this.realm);
+    //       exporter.writeFilesToDisk(selectedPath);
+    //     }
+    //   },
+    // );
   };
 }
