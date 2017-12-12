@@ -42,6 +42,7 @@ export abstract class RealmLoadingComponent<
       // Deleting indicates we've closed it
       delete this.realm;
     }
+    this.closeRealm();
     this.cancelLoadingRealms();
   }
 
@@ -55,11 +56,11 @@ export abstract class RealmLoadingComponent<
     schema?: Realm.ObjectSchema[],
     schemaVersion?: number,
   ) {
-    // Remove any existing a change listeners
-    if (this.realm) {
-      this.realm.removeListener('change', this.onRealmChanged);
-    }
+    console.log('loadRealm called with', schemaVersion);
+    // Close the realm - if open
+    this.closeRealm();
 
+    // Should certificates get validated?
     const validateCertificates =
       realm.mode === 'synced' && realm.validateCertificates;
 
@@ -114,6 +115,15 @@ export abstract class RealmLoadingComponent<
           }
         }
       }
+    }
+  }
+
+  protected closeRealm() {
+    // Remove any existing a change listeners
+    if (this.realm) {
+      this.realm.removeListener('change', this.onRealmChanged);
+      this.realm.close();
+      delete this.realm;
     }
   }
 
