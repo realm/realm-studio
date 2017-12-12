@@ -21,8 +21,13 @@ export class MainTransport extends Transport {
     );
   }
 
-  public sendResponse(requestId: string, result: any) {
-    this.webContents.send(Transport.RESPONSE_EVENT_NAME, requestId, result);
+  public sendResponse(requestId: string, result: any, success: boolean) {
+    this.webContents.send(
+      Transport.RESPONSE_EVENT_NAME,
+      requestId,
+      result,
+      success,
+    );
   }
 
   private onRequestMessage = (
