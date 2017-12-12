@@ -53,6 +53,7 @@ export abstract class RealmLoadingComponent<
   protected async loadRealm(
     realm: realms.ISyncedRealmToLoad | realms.ILocalRealmToLoad,
     schema?: Realm.ObjectSchema[],
+    schemaVersion?: number,
   ) {
     // Remove any existing a change listeners
     if (this.realm) {
@@ -79,6 +80,7 @@ export abstract class RealmLoadingComponent<
             */
           },
           schema,
+          schemaVersion,
         );
         // Register change listeners
         this.realm.addListener('change', this.onRealmChanged);
@@ -140,12 +142,14 @@ export abstract class RealmLoadingComponent<
     realm: realms.ISyncedRealmToLoad | realms.ILocalRealmToLoad | undefined,
     ssl: realms.ISslConfiguration = { validateCertificates: true },
     schema?: Realm.ObjectSchema[],
+    schemaVersion?: number,
   ): Promise<Realm> {
     if (realm && realm.mode === realms.RealmLoadingMode.Local) {
       return new Realm({
         path: realm.path,
         encryptionKey: realm.encryptionKey,
         schema,
+        schemaVersion,
       });
     } else if (realm && realm.mode === realms.RealmLoadingMode.Synced) {
       const props = (realm as any) as realms.ISyncedRealmToLoad;
@@ -160,6 +164,7 @@ export abstract class RealmLoadingComponent<
         ssl,
         this.progressChanged,
         schema,
+        schemaVersion,
       );
       // Save a wrapping promise so this can be cancelled
       return new Promise<Realm>((resolve, reject) => {

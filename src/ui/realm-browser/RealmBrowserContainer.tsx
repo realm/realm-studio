@@ -5,6 +5,7 @@ import * as React from 'react';
 import * as Realm from 'realm';
 
 import { IPropertyWithName, ISelectObjectState } from '.';
+import { RealmLoadingMode } from '../../services/ros/realms';
 import { Language, SchemaExporter } from '../../services/schema-export';
 import {
   IMenuGenerator,
@@ -167,15 +168,17 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   public onAddClass = async (name: string) => {
     if (this.realm) {
       try {
+        const nextSchemaVersion = this.realm.schemaVersion + 1;
         // Close the current Realm
         this.realm.close();
         // Deleting the object to indicate we've closed it
         delete this.realm;
         // Load it again with the new schema
-        await this.loadRealm(this.props.realm, [
-          ...this.state.schemas,
-          { name, properties: {} },
-        ]);
+        await this.loadRealm(
+          this.props.realm,
+          [...this.state.schemas, { name, properties: {} }],
+          nextSchemaVersion,
+        );
         // Select the schema when it the realm has loaded
         this.onClassSelected(name);
       } catch (err) {
@@ -204,27 +207,29 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       this.state.focus.kind === 'class' &&
       this.state.focus.addColumnEnabled
     ) {
-      const schemas = this.state.schemas.map(
-        schema =>
-          isSelected(this.state.focus, schema.name)
-            ? {
-                ...schema,
-                properties: {
-                  ...schema.properties,
-                  ...property,
-                },
-              }
-            : schema,
-      );
       try {
+        const focusedClassName = this.state.focus.className;
+        const nextSchemaVersion = this.realm.schemaVersion + 1;
+        const schemas = this.state.schemas.map(
+          schema =>
+            isSelected(this.state.focus, schema.name)
+              ? {
+                  ...schema,
+                  properties: {
+                    ...schema.properties,
+                    ...property,
+                  },
+                }
+              : schema,
+        );
         // Close the current Realm
         this.realm.close();
         // Deleting the object to indicate we've closed it
         delete this.realm;
         // Load it again with the new schema
-        await this.loadRealm(this.props.realm, schemas);
+        await this.loadRealm(this.props.realm, schemas, nextSchemaVersion);
         // Ensure we've selected the class that we've just added a property to
-        this.onClassSelected(this.state.focus.className);
+        this.onClassSelected(focusedClassName);
       } catch (err) {
         showError(
           `Failed adding the property named "${name}" to the selected schema`,
