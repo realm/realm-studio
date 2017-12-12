@@ -13,6 +13,7 @@ import {
 } from 'reactstrap';
 
 import { IClassFocus } from '../focus';
+import { ITypeOption } from './';
 
 export const View = ({
   focus,
@@ -43,7 +44,7 @@ export const View = ({
   optional: boolean;
   toggle: () => void;
   type: string;
-  typeOptions: string[];
+  typeOptions: ITypeOption[];
 }) => {
   return (
     <Modal isOpen={isOpen} toggle={toggle}>
@@ -77,9 +78,18 @@ export const View = ({
               value={type}
               onChange={onTypeChange}
             >
-              {typeOptions.map(option => (
-                <option key={option}>{option}</option>
-              ))}
+              {typeOptions.map(
+                option =>
+                  option.show && (
+                    <option
+                      key={option.key}
+                      value={option.value}
+                      disabled={option.disabled}
+                    >
+                      {option.value}
+                    </option>
+                  ),
+              )}
             </Input>
           </FormGroup>
           <FormGroup check>
