@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Badge, Table } from 'reactstrap';
+import { Table } from 'reactstrap';
 import * as Realm from 'realm';
 
 import * as ros from '../../../../services/ros';
 import { displayUser } from '../../utils';
 
-import '../../sidebar/SidebarTable.scss';
+import '../../shared/Sidebar/SidebarTable.scss';
 import { PermissionsBadge } from './PermissionsBadge';
 import './PermissionsTable.scss';
 

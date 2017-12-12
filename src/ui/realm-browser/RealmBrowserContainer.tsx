@@ -1,13 +1,16 @@
 import * as assert from 'assert';
-import { ipcRenderer, remote } from 'electron';
+import { ipcRenderer, MenuItemConstructorOptions, remote } from 'electron';
 import * as path from 'path';
 import * as React from 'react';
 import * as Realm from 'realm';
-import * as util from 'util';
 
 import { IPropertyWithName, ISelectObjectState } from '.';
-import { IExportSchemaOptions } from '../../main/MainMenu';
+import { RealmLoadingMode } from '../../services/ros/realms';
 import { Language, SchemaExporter } from '../../services/schema-export';
+import {
+  IMenuGenerator,
+  IMenuGeneratorProps,
+} from '../../windows/MenuGenerator';
 import { IRealmBrowserOptions } from '../../windows/WindowType';
 import { showError } from '../reusable/errors';
 import {
@@ -16,6 +19,7 @@ import {
 } from '../reusable/realm-loading-component';
 import { Focus, IClassFocus, IListFocus } from './focus';
 import * as primitives from './primitives';
+import { isSelected } from './Sidebar';
 import {
   CellChangeHandler,
   CellClickHandler,
@@ -43,12 +47,14 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   schemas: Realm.ObjectSchema[];
   // TODO: Rename - Unclear if this is this an action or a piece of data
   selectObject?: ISelectObjectState;
+  isAddClassOpen: boolean;
+  isAddPropertyOpen: boolean;
 }
 
 export class RealmBrowserContainer extends RealmLoadingComponent<
-  IRealmBrowserOptions,
+  IRealmBrowserOptions & IMenuGeneratorProps,
   IRealmBrowserState
-> {
+> implements IMenuGenerator {
   private clickTimeout?: any;
 
   constructor() {
@@ -60,20 +66,76 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       isEncryptionDialogVisible: false,
       progress: { done: false },
       schemas: [],
+      isAddClassOpen: false,
+      isAddPropertyOpen: false,
     };
+  }
+
+  public componentWillMount() {
+    this.props.addMenuGenerator(this);
   }
 
   public componentDidMount() {
     this.loadRealm(this.props.realm);
-    ipcRenderer.addListener('export-schema', this.onExportSchema);
   }
 
   public componentWillUnmount() {
-    ipcRenderer.removeListener('export-schema', this.onExportSchema);
+    this.props.removeMenuGenerator(this);
   }
 
   public render() {
     return <RealmBrowser {...this.state} {...this} />;
+  }
+
+  public generateMenu(template: MenuItemConstructorOptions[]) {
+    const exportMenu = {
+      label: 'Save model definitions',
+      submenu: [
+        {
+          label: 'Swift',
+          click: () => this.onExportSchema(Language.Swift),
+        },
+        {
+          label: 'JavaScript',
+          click: () => this.onExportSchema(Language.JS),
+        },
+        {
+          label: 'Java',
+          click: () => this.onExportSchema(Language.Java),
+        },
+        {
+          label: 'Kotlin',
+          click: () => this.onExportSchema(Language.Kotlin),
+        },
+        {
+          label: 'C#',
+          click: () => this.onExportSchema(Language.CS),
+        },
+      ],
+    };
+
+    return template.map(menu => {
+      if (menu.id === 'file' && Array.isArray(menu.submenu)) {
+        const importIndex = menu.submenu.findIndex(
+          item => item.id === 'import',
+        );
+        if (importIndex) {
+          const submenu = [
+            ...menu.submenu.slice(0, importIndex),
+            exportMenu,
+            ...menu.submenu.slice(importIndex),
+          ];
+          return {
+            ...menu,
+            submenu,
+          };
+        } else {
+          return menu;
+        }
+      } else {
+        return menu;
+      }
+    });
   }
 
   public onCellChange: CellChangeHandler = params => {
@@ -89,6 +151,91 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         });
       } catch (err) {
         showError('Failed when saving the value', err);
+      }
+    }
+  };
+
+  public isClassNameAvailable = (name: string): boolean => {
+    return !this.state.schemas.find(schema => schema.name === name);
+  };
+
+  public toggleAddSchema = () => {
+    this.setState({
+      isAddClassOpen: !this.state.isAddClassOpen,
+    });
+  };
+
+  public onAddClass = async (name: string) => {
+    if (this.realm) {
+      try {
+        // The schema version needs to be bumped for local realms
+        const nextSchemaVersion = this.realm.schemaVersion + 1;
+        // Close the current Realm
+        this.realm.close();
+        // Deleting the object to indicate we've closed it
+        delete this.realm;
+        // Load it again with the new schema
+        await this.loadRealm(
+          this.props.realm,
+          [...this.state.schemas, { name, properties: {} }],
+          nextSchemaVersion,
+        );
+        // Select the schema when it the realm has loaded
+        this.onClassSelected(name);
+      } catch (err) {
+        showError(`Failed creating the model "${name}"`, err);
+      }
+    }
+  };
+
+  public isPropertyNameAvailable = (name: string): boolean => {
+    return (
+      this.state.focus !== null &&
+      !this.state.focus.properties.find(property => property.name === name)
+    );
+  };
+
+  public toggleAddSchemaProperty = () => {
+    this.setState({
+      isAddPropertyOpen: !this.state.isAddPropertyOpen,
+    });
+  };
+
+  public onAddProperty = async (property: Realm.PropertiesTypes) => {
+    if (
+      this.realm &&
+      this.state.focus &&
+      this.state.focus.kind === 'class' &&
+      this.state.focus.addColumnEnabled
+    ) {
+      try {
+        const focusedClassName = this.state.focus.className;
+        const nextSchemaVersion = this.realm.schemaVersion + 1;
+        const schemas = this.state.schemas.map(
+          schema =>
+            isSelected(this.state.focus, schema.name)
+              ? {
+                  ...schema,
+                  properties: {
+                    ...schema.properties,
+                    ...property,
+                  },
+                }
+              : schema,
+        );
+        // Close the current Realm
+        this.realm.close();
+        // Deleting the object to indicate we've closed it
+        delete this.realm;
+        // Load it again with the new schema
+        await this.loadRealm(this.props.realm, schemas, nextSchemaVersion);
+        // Ensure we've selected the class that we've just added a property to
+        this.onClassSelected(focusedClassName);
+      } catch (err) {
+        showError(
+          `Failed adding the property named "${name}" to the selected schema`,
+          err,
+        );
       }
     }
   };
@@ -114,18 +261,23 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     });
   };
 
-  public onSchemaSelected = (className: string, objectToScroll?: any) => {
+  public onClassSelected = (className: string, objectToScroll?: any) => {
     // TODO: Re-implement objectToScroll
-    const focus: IClassFocus = {
-      kind: 'class',
-      className,
-      results: this.realm.objects(className),
-      properties: this.derivePropertiesFromClassName(className),
-    };
-    this.setState({
-      focus,
-      highlight: this.generateHighlight(objectToScroll),
-    });
+    if (this.realm) {
+      const focus: IClassFocus = {
+        kind: 'class',
+        className,
+        results: this.realm.objects(className),
+        properties: this.derivePropertiesFromClassName(className),
+        addColumnEnabled: true,
+      };
+      this.setState({
+        focus,
+        highlight: this.generateHighlight(objectToScroll),
+      });
+    } else {
+      throw new Error(`Cannot select ${className} as the Realm is not opened`);
+    }
   };
 
   public getClassFocus = (className: string) => {
@@ -135,6 +287,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       className,
       results,
       properties: this.derivePropertiesFromClassName(className),
+      addColumnEnabled: true,
     };
     return focus;
   };
@@ -218,33 +371,45 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
 
   public onContextMenu: CellContextMenuHandler = (
     e: React.MouseEvent<any>,
-    { rowObject, rowIndex, property },
+    params,
   ) => {
     e.preventDefault();
-
-    const menu = new remote.Menu();
-    if (property.type === 'object') {
-      menu.append(
-        new remote.MenuItem({
-          label: 'Update reference',
-          click: () => {
-            this.openSelectObject(rowObject, property);
-          },
-        }),
-      );
-    }
-
     const { focus } = this.state;
 
+    const menu = new remote.Menu();
+
+    if (params) {
+      const { property, rowObject } = params;
+
+      // If we clicked a property that refers to an object
+      if (property && property.type === 'object') {
+        menu.append(
+          new remote.MenuItem({
+            label: 'Update reference',
+            click: () => {
+              this.openSelectObject(rowObject, property);
+            },
+          }),
+        );
+      }
+
+      // If we clicked on a row when focussing on a class
+      if (focus && focus.kind === 'class') {
+        if (rowObject) {
+          menu.append(
+            new remote.MenuItem({
+              label: 'Delete',
+              click: () => {
+                this.openConfirmModal(rowObject);
+              },
+            }),
+          );
+        }
+      }
+    }
+
+    // We can always create a new object if right-clicking in a class focus
     if (focus && focus.kind === 'class') {
-      menu.append(
-        new remote.MenuItem({
-          label: 'Delete',
-          click: () => {
-            this.openConfirmModal(rowObject);
-          },
-        }),
-      );
       menu.append(
         new remote.MenuItem({
           label: `Create new ${focus.className}`,
@@ -255,6 +420,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       );
     }
 
+    // If we have items to shpw - popup the menu
     if (menu.items.length > 0) {
       menu.popup(remote.getCurrentWindow(), {
         x: e.clientX,
@@ -310,6 +476,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         className,
         properties: this.derivePropertiesFromClassName(className),
         results,
+        addColumnEnabled: false,
       };
       this.setState({
         selectObject: {
@@ -379,7 +546,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       schemas: this.realm.schema,
     });
     if (firstSchemaName) {
-      this.onSchemaSelected(firstSchemaName);
+      this.onClassSelected(firstSchemaName);
     }
   };
 
@@ -461,10 +628,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     }
   }
 
-  private onExportSchema = (
-    event: any,
-    { language }: IExportSchemaOptions,
-  ): void => {
+  private onExportSchema = (language: Language): void => {
     const basename = path.basename(this.props.realm.path, '.realm');
     remote.dialog.showSaveDialog(
       {

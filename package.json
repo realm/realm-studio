@@ -1,7 +1,7 @@
 {
   "name": "realm-studio",
   "productName": "Realm Studio",
-  "version": "1.9.1",
+  "version": "1.11.0",
   "description": "A tool for everything Realm.",
   "author": {
     "name": "Realm Inc.",
@@ -113,8 +113,9 @@
     ]
   },
   "dependencies": {
+    "@types/papaparse": "^4.1.31",
     "classnames": "^2.2.5",
-    "electron-updater": "^2.13.0",
+    "electron-updater": "^2.16.3",
     "faker": "^4.1.0",
     "font-awesome": "^4.7.0",
     "fs-extra": "^4.0.2",
@@ -123,6 +124,7 @@
     "lodash": "^4.17.4",
     "mixpanel-browser": "^2.13.0",
     "moment": "^2.19.1",
+    "papaparse": "^4.3.6",
     "react": "^15.6.2",
     "react-addons-css-transition-group": "^15.6.2",
     "react-addons-transition-group": "^15.6.2",
@@ -157,10 +159,10 @@
     "concurrently": "^3.5.0",
     "css-loader": "^0.28.4",
     "devtron": "^1.4.0",
-    "electron": "^1.8.1",
-    "electron-builder": "^19.37.2",
+    "electron": "^1.8.2-beta.3",
+    "electron-builder": "^19.48.2",
     "electron-devtools-installer": "^2.2.1",
-    "electron-publisher-s3": "^19.37.0",
+    "electron-publisher-s3": "^19.47.0",
     "file-loader": "^1.1.5",
     "husky": "^0.14.3",
     "jsdom": "^11.3.0",

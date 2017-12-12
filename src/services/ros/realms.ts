@@ -47,10 +47,13 @@ export const open = async (
   encryptionKey?: Uint8Array,
   ssl: ISslConfiguration = { validateCertificates: true },
   progressCallback?: Realm.Sync.ProgressNotificationCallback,
+  schema?: Realm.ObjectSchema[],
 ): Promise<Realm> => {
   const url = getUrl(user, realmPath);
+
   const realm = Realm.open({
     encryptionKey,
+    schema,
     sync: {
       url,
       user,
@@ -65,6 +68,27 @@ export const open = async (
   }
 
   return realm;
+};
+
+export const create = (
+  user: Realm.Sync.User,
+  realmPath: string,
+): Promise<Realm> => {
+  const url = getUrl(user, realmPath);
+  const config = {
+    sync: {
+      user,
+      url,
+      error: onCreateRealmErrorCallback,
+    },
+    schema: [],
+  };
+  // Using the async Realm.open to now block the UI and wait for the Realm to upload
+  return Realm.open(config);
+};
+
+export const onCreateRealmErrorCallback = (err: any) => {
+  showError('Error while creating new synced realm', err);
 };
 
 export const remove = async (user: Realm.Sync.User, realmPath: string) => {

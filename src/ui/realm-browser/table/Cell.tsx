@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as Realm from 'realm';
 
 import { IPropertyWithName } from '..';
 import { DataCell } from './types/DataCell';

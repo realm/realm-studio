@@ -1,12 +1,5 @@
 import * as React from 'react';
-import {
-  AutoSizer,
-  AutoSizerProps,
-  Grid,
-  GridCellProps,
-  ScrollSync,
-  ScrollSyncProps,
-} from 'react-virtualized';
+import { AutoSizer, ScrollSync } from 'react-virtualized';
 
 import { IBaseTableContainerProps, TableContainer } from './TableContainer';
 

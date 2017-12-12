@@ -1,8 +1,12 @@
 import * as electron from 'electron';
 
-import { ActionReceiver } from '../actions/ActionReceiver';
+import * as path from 'path';
+import { MainReceiver } from '../actions/main';
 import { MainTransport } from '../actions/transports/MainTransport';
+import { getDataImporter, ImportFormat } from '../services/data-importer';
+import ImportSchemaGenerator from '../services/data-importer/ImportSchemaGenerator';
 import { realms } from '../services/ros';
+
 import {
   IRealmBrowserOptions,
   IServerAdministrationOptions,
@@ -10,7 +14,7 @@ import {
 } from '../windows/WindowType';
 import { CertificateManager } from './CertificateManager';
 import { MainActions } from './MainActions';
-import { MainMenu } from './MainMenu';
+import { getDefaultMenuTemplate } from './MainMenu';
 import { Updater } from './Updater';
 import { WindowManager } from './WindowManager';
 
@@ -19,7 +23,6 @@ const isProduction = process.env.NODE_ENV === 'production';
 export class Application {
   public static sharedApplication = new Application();
 
-  private mainMenu = new MainMenu();
   private updater = new Updater();
   private windowManager = new WindowManager();
   private certificateManager = new CertificateManager();
@@ -34,6 +37,9 @@ export class Application {
     [MainActions.ShowGreeting]: () => {
       return this.showGreeting();
     },
+    [MainActions.ShowImportData]: (format: ImportFormat) => {
+      return this.showImportData(format);
+    },
     [MainActions.ShowOpenLocalRealm]: () => {
       return this.showOpenLocalRealm();
     },
@@ -46,6 +52,9 @@ export class Application {
       return this.showServerAdministration(options);
     },
   };
+
+  // Instantiate a receiver that will receive actions from the main process itself.
+  private loopbackReceiver = new MainReceiver(this.actionHandlers);
 
   public run() {
     this.addAppListeners();
@@ -60,6 +69,7 @@ export class Application {
     this.updater.destroy();
     this.windowManager.closeAllWindows();
     this.certificateManager.destroy();
+    this.loopbackReceiver.destroy();
   }
 
   public userDataPath(): string {
@@ -99,7 +109,7 @@ export class Application {
   }
 
   public showOpenLocalRealm() {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       electron.dialog.showOpenDialog(
         {
           properties: ['openFile'],
@@ -107,19 +117,54 @@ export class Application {
         },
         selectedPaths => {
           if (selectedPaths) {
-            selectedPaths.forEach(path => {
+            selectedPaths.forEach(selectedPath => {
               const options: IRealmBrowserOptions = {
                 realm: {
                   mode: realms.RealmLoadingMode.Local,
-                  path,
+                  path: selectedPath,
                 },
               };
-              this.showRealmBrowser(options);
+              this.showRealmBrowser(options).then(resolve, reject);
             });
           }
         },
       );
-      resolve();
+    });
+  }
+
+  public showImportData(format: ImportFormat) {
+    return new Promise((resolve, reject) => {
+      electron.dialog.showOpenDialog(
+        {
+          properties: ['openFile', 'multiSelections'],
+          filters: [{ name: 'CSV File(s)', extensions: ['csv', 'CSV'] }],
+        },
+        selectedPaths => {
+          if (selectedPaths) {
+            // Generate the Realm from the provided CSV file(s)
+            const schemaGenerator = new ImportSchemaGenerator(
+              ImportFormat.CSV,
+              selectedPaths,
+            );
+            const schema = schemaGenerator.generate();
+            const importer = getDataImporter(format, selectedPaths, schema);
+            const generatedRealm = importer.import(
+              path.dirname(selectedPaths[0]),
+            );
+            // close Realm in main process (to be opened in Renderer process)
+            generatedRealm.close();
+
+            // Open a RealmBrowser using the generated Realm file.
+            const options: IRealmBrowserOptions = {
+              realm: {
+                mode: realms.RealmLoadingMode.Local,
+                path: generatedRealm.path,
+              },
+            };
+            this.showRealmBrowser(options).then(resolve, reject);
+          }
+        },
+      );
     });
   }
 
@@ -129,25 +174,6 @@ export class Application {
         WindowType.RealmBrowser,
         options,
       );
-
-      window.on('blur', () => {
-        this.mainMenu.update({
-          enableExportSchema: false,
-        });
-      });
-
-      window.on('focus', () => {
-        this.mainMenu.update({
-          enableExportSchema: true,
-        });
-      });
-
-      window.on('closed', () => {
-        this.mainMenu.update({
-          enableExportSchema: false,
-        });
-      });
-
       window.show();
       window.webContents.once('did-finish-load', () => {
         resolve();
@@ -194,9 +220,7 @@ export class Application {
   }
 
   private onReady = () => {
-    this.mainMenu.update();
-    // this.showOpenLocalRealm();
-    // this.showConnectToServer();
+    this.setDefaultMenu();
     this.showGreeting();
     electron.app.focus();
   };
@@ -214,6 +238,8 @@ export class Application {
   private onWindowAllClosed = () => {
     if (process.platform !== 'darwin') {
       electron.app.quit();
+    } else {
+      this.setDefaultMenu();
     }
   };
 
@@ -221,9 +247,17 @@ export class Application {
     event: Electron.Event,
     webContents: Electron.WebContents,
   ) => {
-    const receiver = new ActionReceiver(this.actionHandlers);
-    receiver.setTransport(new MainTransport(webContents));
+    const receiver = new MainReceiver(this.actionHandlers, webContents);
+    webContents.once('destroyed', () => {
+      receiver.destroy();
+    });
   };
+
+  private setDefaultMenu() {
+    const menuTemplate = getDefaultMenuTemplate();
+    const menu = electron.Menu.buildFromTemplate(menuTemplate);
+    electron.Menu.setApplicationMenu(menu);
+  }
 }
 
 if (module.hot) {

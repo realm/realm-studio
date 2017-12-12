@@ -35,10 +35,14 @@ export abstract class RealmLoadingComponent<
   protected certificateWasRejected: boolean;
 
   public componentWillUnmount() {
-    // Remove any existing a change listeners
+    // Closing and remove any existing a change listeners
     if (this.realm) {
       this.realm.removeListener('change', this.onRealmChanged);
+      this.realm.close();
+      // Deleting indicates we've closed it
+      delete this.realm;
     }
+    this.closeRealm();
     this.cancelLoadingRealms();
   }
 
@@ -49,12 +53,13 @@ export abstract class RealmLoadingComponent<
 
   protected async loadRealm(
     realm: realms.ISyncedRealmToLoad | realms.ILocalRealmToLoad,
+    schema?: Realm.ObjectSchema[],
+    schemaVersion?: number,
   ) {
-    // Remove any existing a change listeners
-    if (this.realm) {
-      this.realm.removeListener('change', this.onRealmChanged);
-    }
+    // Close the realm - if open
+    this.closeRealm();
 
+    // Should certificates get validated?
     const validateCertificates =
       realm.mode === 'synced' && realm.validateCertificates;
 
@@ -64,14 +69,19 @@ export abstract class RealmLoadingComponent<
         // Reset the state that captures rejected certificates
         this.certificateWasRejected = false;
         // Get the realms from the ROS interface
-        this.realm = await this.openRealm(realm, {
-          errorCallback: this.onSyncError,
-          validateCertificates,
-          // Uncomment the line below to test failing certificate validation
-          /*
-          certificatePath: '... some path of a valid but failing certificate',
-          */
-        });
+        this.realm = await this.openRealm(
+          realm,
+          {
+            errorCallback: this.onSyncError,
+            validateCertificates,
+            // Uncomment the line below to test failing certificate validation
+            /*
+            certificatePath: '... some path of a valid but failing certificate',
+            */
+          },
+          schema,
+          schemaVersion,
+        );
         // Register change listeners
         this.realm.addListener('change', this.onRealmChanged);
         this.onRealmLoaded();
@@ -107,6 +117,15 @@ export abstract class RealmLoadingComponent<
     }
   }
 
+  protected closeRealm() {
+    // Remove any existing a change listeners
+    if (this.realm) {
+      this.realm.removeListener('change', this.onRealmChanged);
+      this.realm.close();
+      delete this.realm;
+    }
+  }
+
   protected loadingRealmFailed(err: Error) {
     showError('Failed open the Realm', err);
     const failure = err.message || 'Failed to open the Realm';
@@ -131,6 +150,8 @@ export abstract class RealmLoadingComponent<
   private async openRealm(
     realm: realms.ISyncedRealmToLoad | realms.ILocalRealmToLoad | undefined,
     ssl: realms.ISslConfiguration = { validateCertificates: true },
+    schema?: Realm.ObjectSchema[],
+    schemaVersion?: number,
   ): Promise<Realm> {
     if (realm && realm.mode === realms.RealmLoadingMode.Local) {
       try {
@@ -138,6 +159,8 @@ export abstract class RealmLoadingComponent<
           path: realm.path,
           encryptionKey: realm.encryptionKey,
           sync: realm.sync as any,
+          schema,
+          schemaVersion,
         });
       } catch (error) {
         if (
@@ -148,7 +171,12 @@ export abstract class RealmLoadingComponent<
           realm.sync !== true
         ) {
           // Try to open the Realm locally with a sync history mode.
-          return this.openRealm({ ...realm, sync: true }, ssl);
+          return this.openRealm(
+            { ...realm, sync: true },
+            ssl,
+            schema,
+            schemaVersion,
+          );
         }
         // Other errors, propagate it.
         throw error;
@@ -165,6 +193,7 @@ export abstract class RealmLoadingComponent<
         realm.encryptionKey,
         ssl,
         this.progressChanged,
+        schema,
       );
       // Save a wrapping promise so this can be cancelled
       return new Promise<Realm>((resolve, reject) => {

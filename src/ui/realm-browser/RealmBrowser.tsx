@@ -4,6 +4,8 @@ import * as Realm from 'realm';
 import { CreateObjectHandler, ISelectObjectState } from '.';
 import { ConfirmModal } from '../reusable/confirm-modal';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
+import { AddClassModal } from './AddClassModal';
+import { AddPropertyModal } from './AddPropertyModal';
 import { ContentContainer } from './ContentContainer';
 import { CreateObjectDialog } from './create-object-dialog';
 import { EncryptionDialog } from './encryption-dialog';
@@ -42,7 +44,7 @@ export interface IRealmBrowserProps {
   onCreateObject: CreateObjectHandler;
   onHideEncryptionDialog: () => void;
   onOpenWithEncryption: (key: string) => void;
-  onSchemaSelected: (name: string, objectToScroll: any) => void;
+  onClassSelected: (name: string, objectToScroll: any) => void;
   onSortEnd: SortEndHandler;
   onSortStart: SortStartHandler;
   progress: ILoadingProgress;
@@ -50,6 +52,14 @@ export interface IRealmBrowserProps {
   schemas: Realm.ObjectSchema[];
   selectObject?: ISelectObjectState;
   updateObjectReference: (object: any) => void;
+  onAddClass: (name: string) => void;
+  isAddClassOpen: boolean;
+  toggleAddSchema: () => void;
+  isClassNameAvailable: (name: string) => boolean;
+  onAddProperty: (property: Realm.PropertiesTypes) => void;
+  isAddPropertyOpen: boolean;
+  toggleAddSchemaProperty: () => void;
+  isPropertyNameAvailable: (name: string) => boolean;
 }
 
 export const RealmBrowser = ({
@@ -70,7 +80,7 @@ export const RealmBrowser = ({
   onCreateObject,
   onHideEncryptionDialog,
   onOpenWithEncryption,
-  onSchemaSelected,
+  onClassSelected,
   onSortEnd,
   onSortStart,
   progress,
@@ -78,15 +88,24 @@ export const RealmBrowser = ({
   schemas,
   selectObject,
   updateObjectReference,
+  onAddClass,
+  isAddClassOpen,
+  toggleAddSchema,
+  isClassNameAvailable,
+  onAddProperty,
+  isAddPropertyOpen,
+  toggleAddSchemaProperty,
+  isPropertyNameAvailable,
 }: IRealmBrowserProps) => {
   return (
     <div className="RealmBrowser">
       <Sidebar
         focus={focus}
         getSchemaLength={getSchemaLength}
-        onSchemaSelected={onSchemaSelected}
+        onClassSelected={onClassSelected}
         progress={progress}
         schemas={schemas}
+        toggleAddSchema={toggleAddSchema}
       />
       <div className="RealmBrowser__Wrapper">
         <ContentContainer
@@ -99,6 +118,7 @@ export const RealmBrowser = ({
           onSortEnd={onSortEnd}
           onSortStart={onSortStart}
           progress={progress}
+          onAddColumnClick={toggleAddSchemaProperty}
         />
       </div>
       {confirmModal && (
@@ -120,6 +140,24 @@ export const RealmBrowser = ({
           onObjectSelected={updateObjectReference}
         />
       )}
+
+      <AddClassModal
+        isOpen={isAddClassOpen}
+        isClassNameAvailable={isClassNameAvailable}
+        onAddClass={onAddClass}
+        toggle={toggleAddSchema}
+      />
+
+      {focus && focus.kind === 'class' ? (
+        <AddPropertyModal
+          focus={focus}
+          isOpen={isAddPropertyOpen}
+          isPropertyNameAvailable={isPropertyNameAvailable}
+          onAddProperty={onAddProperty}
+          schemas={schemas}
+          toggle={toggleAddSchemaProperty}
+        />
+      ) : null}
 
       <EncryptionDialog
         onHide={onHideEncryptionDialog}

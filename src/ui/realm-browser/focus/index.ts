@@ -19,6 +19,7 @@ export interface IFocus {
   kind: string;
   properties: IPropertyWithName[];
   results: Realm.Collection<any>;
+  addColumnEnabled?: boolean;
 }
 
 export interface IClassFocus extends IFocus {
@@ -32,6 +33,7 @@ export interface IListFocus extends IFocus {
   parent: Realm.Object;
   property: IPropertyWithName;
   results: Realm.List<any>;
+  addColumnEnabled?: false;
 }
 
 export type Focus = IClassFocus | IListFocus;

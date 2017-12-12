@@ -9,19 +9,25 @@ export class MainTransport extends Transport {
     super();
     this.webContents = webContents;
     ipcMain.on(Transport.REQUEST_EVENT_NAME, this.onRequestMessage);
+    ipcMain.on(Transport.RESPONSE_EVENT_NAME, this.onResponseMessage);
   }
 
   public sendRequest(requestId: string, action: string, ...args: any[]) {
     this.webContents.send(
-      Transport.RESPONSE_EVENT_NAME,
+      Transport.REQUEST_EVENT_NAME,
       requestId,
       action,
       ...args,
     );
   }
 
-  public sendResponse(requestId: string, result: any) {
-    this.webContents.send(Transport.RESPONSE_EVENT_NAME, requestId, result);
+  public sendResponse(requestId: string, result: any, success: boolean) {
+    this.webContents.send(
+      Transport.RESPONSE_EVENT_NAME,
+      requestId,
+      result,
+      success,
+    );
   }
 
   private onRequestMessage = (
@@ -31,6 +37,16 @@ export class MainTransport extends Transport {
     // Make this transport emit whenever the ipcMain receives something from this webContent.
     if (event.sender === this.webContents) {
       this.emit(Transport.REQUEST_EVENT_NAME, ...args);
+    }
+  };
+
+  private onResponseMessage = (
+    event: Electron.IpcMessageEvent,
+    ...args: any[]
+  ) => {
+    // Make this transport emit whenever the ipcMain receives something from this webContent.
+    if (event.sender === this.webContents) {
+      this.emit(Transport.RESPONSE_EVENT_NAME, ...args);
     }
   };
 }
