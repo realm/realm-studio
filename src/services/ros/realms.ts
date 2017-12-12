@@ -71,7 +71,10 @@ export const open = async (
   return realm;
 };
 
-export const create = (user: Realm.Sync.User, realmPath: string): Realm => {
+export const create = (
+  user: Realm.Sync.User,
+  realmPath: string,
+): Promise<Realm> => {
   const url = getUrl(user, realmPath);
   const config = {
     sync: {
@@ -81,7 +84,8 @@ export const create = (user: Realm.Sync.User, realmPath: string): Realm => {
     },
     schema: [],
   };
-  return new Realm(config);
+  // Using the async Realm.open to now block the UI and wait for the Realm to upload
+  return Realm.open(config);
 };
 
 export const onCreateRealmErrorCallback = (err: any) => {
