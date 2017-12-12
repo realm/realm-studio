@@ -1,6 +1,7 @@
 import * as electron from 'electron';
 import { Language } from '../services/schema-export';
 import { Application } from './Application';
+import { ImportSchemaFormat } from '../services/data-importer';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -14,6 +15,11 @@ const DEFAULT_OPTIONS: IMainMenuOptions = {
 
 export interface IExportSchemaOptions {
   language: Language;
+}
+
+export interface IInsertIntoSchemaOptions {
+  format: ImportSchemaFormat;
+  selectedPaths: string[];
 }
 
 export class MainMenu {
@@ -39,6 +45,14 @@ export class MainMenu {
     };
     focusedWindow.webContents.send('export-schema', options);
   };
+
+  // private insertIntoSchema = (format: ImportSchemaFormat) => {
+  //   const focusedWindow = electron.BrowserWindow.getFocusedWindow();
+  //   const options: IInsertIntoSchemaOptions = {
+  //     format,
+  //   };
+  //   focusedWindow.webContents.send('insert-into-schema', options);
+  // };
 
   private menuTemplate(
     options?: IMainMenuOptions,
@@ -83,9 +97,19 @@ export class MainMenu {
               },
             ],
           },
+          {
+            label: 'Insert data from',
+            submenu: [
+              {
+                label: 'CSV',
+                click: () => Application.sharedApplication.showInsertCSVIntoRealm(electron.BrowserWindow.getFocusedWindow()),
+                enabled: enableExportSchema,
+              },
+            ],
+          },
           { type: 'separator' },
           {
-            label: 'Import from',
+            label: 'Create Realm from',
             submenu: [
               {
                 label: 'CSV',

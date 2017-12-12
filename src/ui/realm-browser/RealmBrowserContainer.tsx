@@ -492,37 +492,14 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     event: any,
     { format, selectedPaths }: IInsertIntoSchemaOptions,
   ): void => {
-    // console.log(`>>>>>>>>>>>> CURRENT REALM ${this.realm.path}`);
-    // console.log(`>>>>>>>>>>>> FORMAT ${format}`);
-    // console.log(`>>>>>>>>>>>> FILES ${selectedPaths}`);
-
-    // Generate the Realm from the provided CSV file(s)
     const schemaGenerator = new ImportSchemaGenerator(format, selectedPaths);
     const schema = schemaGenerator.generate();
-    // TODO check if the CSV schema can be used with current schema
-    //  compare this.realm.schema schemaGenerator
-    // TODO import into Realm refactor CSVDataImporter to separate
-    // creation of the Realm and import
     const importer = new CSVDataImporter(selectedPaths, schema);
-    // const generatedRealm = importer.import(
-    //   path.dirname(selectedPaths[0]),
-    // );
-    // close Realm in main process (to be opened in Renderer process)
-    // generatedRealm.close();
-
-    // const basename = path.basename(this.props.realm.path, '.realm');
-    // remote.dialog.showSaveDialog(
-    //   {
-    //     defaultPath: `${basename}-schemas`,
-    //     message: `Select a directory to store the ${language} schema files`,
-    //   },
-    //   selectedPath => {
-    //     if (selectedPath) {
-    //       const exporter = SchemaExporter(language);
-    //       exporter.exportSchema(this.realm);
-    //       exporter.writeFilesToDisk(selectedPath);
-    //     }
-    //   },
-    // );
+    try {
+      importer.importInto(this.realm);
+    } catch (e) {
+      const { dialog } = require('electron').remote;
+      dialog.showErrorBox('Inserting CSV data failed', e.message);
+    }
   };
 }

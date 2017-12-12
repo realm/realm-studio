@@ -15,9 +15,10 @@ import {
 } from '../windows/WindowType';
 import { CertificateManager } from './CertificateManager';
 import { MainActions } from './MainActions';
-import { MainMenu } from './MainMenu';
+import { MainMenu, IInsertIntoSchemaOptions } from './MainMenu';
 import { Updater } from './Updater';
 import { WindowManager } from './WindowManager';
+import { BrowserWindow } from 'electron';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -121,6 +122,50 @@ export class Application {
               };
               this.showRealmBrowser(options).then(resolve, reject);
             });
+          }
+        },
+      );
+      resolve();
+    });
+  }
+
+  public showInsertCSVIntoRealm(focusedWindow: BrowserWindow) {
+    return new Promise((resolve, reject) => {
+      electron.dialog.showOpenDialog(
+        {
+          properties: ['openFile', 'multiSelections'],
+          filters: [{ name: 'CSV File(s)', extensions: ['csv', 'CSV'] }],
+        },
+        selectedPaths => {
+          if (selectedPaths) {
+            // const focusedWindow = electron.BrowserWindow.getFocusedWindow();
+            const options: IInsertIntoSchemaOptions = {
+              format: ImportSchemaFormat.CSV,
+              selectedPaths,
+            };
+            focusedWindow.webContents.send('insert-into-schema', options);
+
+            // Generate the Realm from the provided CSV file(s)
+            // const schemaGenerator = new ImportSchemaGenerator(
+            //   ImportSchemaFormat.CSV,
+            //   selectedPaths,
+            // );
+            // const schema = schemaGenerator.generate();
+            // const importer = new CSVDataImporter(selectedPaths, schema);
+            // const generatedRealm = importer.import(
+            //   path.dirname(selectedPaths[0]),
+            // );
+            // // close Realm in main process (to be opened in Renderer process)
+            // generatedRealm.close();
+
+            // // Open a RealmBrowser using the generated Realm file.
+            // const options: IRealmBrowserOptions = {
+            //   realm: {
+            //     mode: realms.RealmLoadingMode.Local,
+            //     path: generatedRealm.path,
+            //   },
+            // };
+            // this.showRealmBrowser(options).then(resolve, reject);
           }
         },
       );

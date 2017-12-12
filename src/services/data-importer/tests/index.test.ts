@@ -269,6 +269,62 @@ describe('Import CSV tests', () => {
       realm.close();
     });
 
+    it('Imports into existing Realm file', () => {
+      const files: string[] = [`${TESTS_PATH}/csv/Dog.csv`];
+
+      const schemaGenerator = new ImportSchemaGenerator(
+        ImportSchemaFormat.CSV,
+        files,
+      );
+      const schema = schemaGenerator.generate();
+      const csvImporter = new CSVDataImporter(files, schema);
+
+      // Open existing Realm file containing schema for Dog, Cat, Owner and DogPromaryKey
+      let assetRealm =  new Realm(`${TESTS_PATH}/csv/asset_file.realm`);
+      assert.equal(assetRealm.schema.length, 4);
+      assert.notEqual(assetRealm.schema.find(objectSchema => {return objectSchema.name === "Dog";}), undefined);
+
+      assetRealm.beginTransaction();
+      assetRealm.delete(assetRealm.objects('Dog'));
+      assetRealm.commitTransaction();
+
+      assert.equal(assetRealm.objects('Dog').length, 0);
+
+      csvImporter.importInto(assetRealm);
+
+      // Check new rows were added 
+      let dogs: any = assetRealm.objects('Dog').sorted('name');
+      assert.equal(dogs.length, 2);
+      assert.equal(dogs[0].name, 'Caesar');
+      assert.equal(dogs[1].name, 'Rex');
+      assert.equal(dogs[0].age, 3);
+      assert.equal(dogs[1].age, 5);
+      assert.equal(dogs[0].height, 6);
+      assert.equal(dogs[1].height.toPrecision(3), 3.14);
+      assert.equal(dogs[0].weight, 16);
+      assert.equal(dogs[1].weight, 17);
+      assert.equal(dogs[0].hasTail, true);
+      assert.equal(dogs[1].hasTail, false);
+
+      assetRealm.close();
+    });
+
+    it('Imports into existing Realm file fails', () => {
+      const files: string[] = [`${TESTS_PATH}/csv/Cat.csv`];
+
+      const schemaGenerator = new ImportSchemaGenerator(
+        ImportSchemaFormat.CSV,
+        files,
+      );
+      const schema = schemaGenerator.generate();
+      const csvImporter = new CSVDataImporter(files, schema);
+
+      // the CSV Cat schema does not corespond to the existing Cat as defined in the Realm
+      let assetRealm =  new Realm(`${TESTS_PATH}/csv/asset_file.realm`);
+      assert.throws(() => csvImporter.importInto(assetRealm), Error);
+      assetRealm.close();
+    });
+
     after(() => {
       fs.removeSync(REALM_FILE_DIR);
     });
