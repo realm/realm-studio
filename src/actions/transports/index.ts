@@ -1,19 +1,4 @@
-import { DebugTransport } from './DebugTransport';
-import { RendererTransport } from './RendererTransport';
-import { Transport } from './Transport';
-
-export { DebugTransport, Transport };
+export { LoopbackTransport } from './LoopbackTransport';
 export { MainTransport } from './MainTransport';
-
-export const getTransport = () => {
-  if (process.versions.electron) {
-    if (process.type === 'renderer') {
-      return RendererTransport.getInstance();
-    } else {
-      // The main process transports are window specific
-      return null;
-    }
-  } else {
-    return DebugTransport.getInstance();
-  }
-};
+export { RendererTransport } from './RendererTransport';
+export { Transport } from './Transport';

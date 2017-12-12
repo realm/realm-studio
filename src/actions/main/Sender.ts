@@ -1,12 +1,22 @@
 import { MainActions } from '../../main/MainActions';
-import { ActionSender } from '../ActionSender';
-
+import { ImportFormat } from '../../services/data-importer';
 import {
   IRealmBrowserOptions,
   IServerAdministrationOptions,
 } from '../../windows/WindowType';
+import { ActionSender } from '../ActionSender';
+import { LoopbackTransport, RendererTransport } from '../transports';
 
 export class Sender extends ActionSender {
+  constructor() {
+    super();
+    // Use the renderer transport if the sender is accessed from the renderer and the loopback otherwise.
+    const isRenderer = process.type === 'renderer';
+    this.setTransport(
+      isRenderer ? new RendererTransport() : LoopbackTransport.getInstance(),
+    );
+  }
+
   public checkForUpdates() {
     return this.send(MainActions.CheckForUpdates);
   }
@@ -21,6 +31,10 @@ export class Sender extends ActionSender {
 
   public showOpenLocalRealm() {
     return this.send(MainActions.ShowOpenLocalRealm);
+  }
+
+  public showImportData(format: ImportFormat) {
+    return this.send(MainActions.ShowImportData, format);
   }
 
   public showRealmBrowser(options: IRealmBrowserOptions) {

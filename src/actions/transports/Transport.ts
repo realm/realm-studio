@@ -10,5 +10,9 @@ export abstract class Transport extends EventEmitter {
     ...args: any[]
   ): void;
 
-  public abstract sendResponse(requestId: string, result: any): void;
+  public abstract sendResponse(
+    requestId: string,
+    result: any,
+    success: boolean,
+  ): void;
 }
