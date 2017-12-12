@@ -27,10 +27,10 @@ export const CreateRealmDialog = ({
   return (
     <Modal isOpen={isOpen} toggle={toggle}>
       <Form onSubmit={onSubmit}>
-        <ModalHeader toggle={toggle}>Create a new realm</ModalHeader>
+        <ModalHeader toggle={toggle}>Create a new Realm</ModalHeader>
         <ModalBody>
           <FormGroup>
-            <Label for="username">Path</Label>
+            <Label for="username">Path on the server</Label>
             <Input
               name="path"
               id="path"
@@ -39,10 +39,11 @@ export const CreateRealmDialog = ({
               value={path}
               onChange={onPathChanged}
             />
+            <small>~ will be replaced by your user id</small>
           </FormGroup>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary">Create realm</Button>{' '}
+          <Button color="primary">Create Realm</Button>{' '}
           <Button color="secondary" onClick={toggle}>
             Cancel
           </Button>
