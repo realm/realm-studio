@@ -102,7 +102,15 @@ export class RealmsTableContainer extends RealmLoadingComponent<
   };
 
   public onRealmCreated = async (path: string) => {
-    ros.realms.create(this.props.user, path);
+    const realm = await ros.realms.create(this.props.user, path);
+    // Close the Realm right away - we don't need it open
+    realm.close();
+    // Cannot use the realm.path as that is the local path
+    // Instead - let's just select the latest Realm
+    if (this.state.realms) {
+      const lastRealm = this.state.realms[this.state.realms.length - 1];
+      this.onRealmSelected(lastRealm.path);
+    }
   };
 
   public toggleCreateRealm = () => {
