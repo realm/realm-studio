@@ -214,20 +214,26 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
     return this.cellRenderers[cellProps.columnIndex](cellProps);
   };
 
-  private getNoContentDiv = () => (
-    <div
-      onContextMenu={e => {
-        if (this.props.onContextMenu) {
-          this.props.onContextMenu(e);
-        }
-      }}
-      style={{
-        height: this.props.rowHeight,
-        width: this.props.columnWidths.reduce(
-          (totalWidth, value) => totalWidth + value,
-          0,
-        ),
-      }}
-    />
-  );
+  private getNoContentDiv = () => {
+    // Accumulate the width of all columns
+    const widthSum = this.props.columnWidths.reduce((sum, columnWidth) => {
+      return sum + columnWidth;
+    }, 0);
+    // Make it as wide as the content grid or sum of column widths
+    const width = Math.max(this.props.width, widthSum);
+    // Render an empty div
+    return (
+      <div
+        onContextMenu={e => {
+          if (this.props.onContextMenu) {
+            this.props.onContextMenu(e);
+          }
+        }}
+        style={{
+          height: this.props.height,
+          width,
+        }}
+      />
+    );
+  };
 }
