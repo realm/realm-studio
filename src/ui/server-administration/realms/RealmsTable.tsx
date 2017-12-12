@@ -91,7 +91,7 @@ export const RealmsTable = ({
       </div>
 
       <FloatingControls isOpen={selectedRealmPath === null}>
-        <Button onClick={toggleCreateRealm}>Create new realm</Button>
+        <Button onClick={toggleCreateRealm}>Create new Realm</Button>
       </FloatingControls>
 
       <CreateRealmDialogContainer
