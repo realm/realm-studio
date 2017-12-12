@@ -9,6 +9,10 @@
   transition-duration: $sidebar-transition-duration;
   transition-property: opacity;
 
+  & > * {
+    margin-left: $spacer / 2;
+  }
+
   &--hidden {
     opacity: 0;
   }
