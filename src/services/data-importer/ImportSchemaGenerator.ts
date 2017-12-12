@@ -1,30 +1,30 @@
 import fs = require('fs-extra');
 import papaparse = require('papaparse');
 import * as fsPath from 'path';
-import { ImportObjectSchema, ImportSchemaFormat } from '../data-importer';
+import { ImportFormat, ImportObjectSchema } from '../data-importer';
 import Util from './Util';
 
 /**
- * Will analyze the contents of files provided to it, and intelligently 
+ * Will analyze the contents of files provided to it, and intelligently
  * generate a schema definition object with which the structure of a Realm file can be created.
- * 
+ *
  * This is then used to map the raw data to the appropriate properties when performing the import to Realm.
  */
 export default class ImportSchemaGenerator {
   private files: string[];
-  private format: ImportSchemaFormat;
+  private format: ImportFormat;
 
-  constructor(format: ImportSchemaFormat, files: string[]) {
+  constructor(format: ImportFormat, files: string[]) {
     this.format = format;
     this.files = files;
   }
 
   public generate(): Realm.ObjectSchema[] {
     switch (this.format) {
-      case ImportSchemaFormat.CSV:
+      case ImportFormat.CSV:
         return this.generateForCSV();
       default:
-        throw new Error('Not suported yet');
+        throw new Error('Not supported yet');
     }
   }
 
