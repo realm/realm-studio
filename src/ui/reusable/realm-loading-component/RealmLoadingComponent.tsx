@@ -42,6 +42,7 @@ export abstract class RealmLoadingComponent<
       // Deleting indicates we've closed it
       delete this.realm;
     }
+    this.closeRealm();
     this.cancelLoadingRealms();
   }
 
@@ -55,11 +56,10 @@ export abstract class RealmLoadingComponent<
     schema?: Realm.ObjectSchema[],
     schemaVersion?: number,
   ) {
-    // Remove any existing a change listeners
-    if (this.realm) {
-      this.realm.removeListener('change', this.onRealmChanged);
-    }
+    // Close the realm - if open
+    this.closeRealm();
 
+    // Should certificates get validated?
     const validateCertificates =
       realm.mode === 'synced' && realm.validateCertificates;
 
@@ -117,6 +117,15 @@ export abstract class RealmLoadingComponent<
     }
   }
 
+  protected closeRealm() {
+    // Remove any existing a change listeners
+    if (this.realm) {
+      this.realm.removeListener('change', this.onRealmChanged);
+      this.realm.close();
+      delete this.realm;
+    }
+  }
+
   protected loadingRealmFailed(err: Error) {
     showError('Failed open the Realm', err);
     const failure = err.message || 'Failed to open the Realm';
@@ -164,7 +173,6 @@ export abstract class RealmLoadingComponent<
         ssl,
         this.progressChanged,
         schema,
-        schemaVersion,
       );
       // Save a wrapping promise so this can be cancelled
       return new Promise<Realm>((resolve, reject) => {

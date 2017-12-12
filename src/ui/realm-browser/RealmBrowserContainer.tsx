@@ -168,6 +168,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   public onAddClass = async (name: string) => {
     if (this.realm) {
       try {
+        // The schema version needs to be bumped for local realms
         const nextSchemaVersion = this.realm.schemaVersion + 1;
         // Close the current Realm
         this.realm.close();
