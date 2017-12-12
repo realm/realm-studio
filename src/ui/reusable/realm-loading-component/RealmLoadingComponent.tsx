@@ -154,12 +154,33 @@ export abstract class RealmLoadingComponent<
     schemaVersion?: number,
   ): Promise<Realm> {
     if (realm && realm.mode === realms.RealmLoadingMode.Local) {
-      return new Realm({
-        path: realm.path,
-        encryptionKey: realm.encryptionKey,
-        schema,
-        schemaVersion,
-      });
+      try {
+        return new Realm({
+          path: realm.path,
+          encryptionKey: realm.encryptionKey,
+          sync: realm.sync as any,
+          schema,
+          schemaVersion,
+        });
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          error.message.includes(
+            'Incompatible histories. Expected a Realm with no or in-realm history',
+          ) &&
+          realm.sync !== true
+        ) {
+          // Try to open the Realm locally with a sync history mode.
+          return this.openRealm(
+            { ...realm, sync: true },
+            ssl,
+            schema,
+            schemaVersion,
+          );
+        }
+        // Other errors, propagate it.
+        throw error;
+      }
     } else if (realm && realm.mode === realms.RealmLoadingMode.Synced) {
       const props = (realm as any) as realms.ISyncedRealmToLoad;
       const user =
