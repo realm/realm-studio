@@ -218,7 +218,7 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
     <div
       onContextMenu={e => {
         if (this.props.onContextMenu) {
-          this.props.onContextMenu(e, {});
+          this.props.onContextMenu(e);
         }
       }}
       style={{

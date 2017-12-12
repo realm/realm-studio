@@ -23,12 +23,12 @@ export type CellClickHandler = (
 
 export type CellContextMenuHandler = (
   e: React.MouseEvent<any>,
-  params: {
-    rowObject?: any;
-    property?: IPropertyWithName;
-    cellValue?: any;
-    rowIndex?: number;
-    columnIndex?: number;
+  params?: {
+    rowObject: any;
+    property: IPropertyWithName;
+    cellValue: any;
+    rowIndex: number;
+    columnIndex: number;
   },
 ) => void;
 

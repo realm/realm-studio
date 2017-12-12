@@ -291,35 +291,45 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
 
   public onContextMenu: CellContextMenuHandler = (
     e: React.MouseEvent<any>,
-    { rowObject, property },
+    params,
   ) => {
     e.preventDefault();
-
-    const menu = new remote.Menu();
-    if (property && property.type === 'object') {
-      menu.append(
-        new remote.MenuItem({
-          label: 'Update reference',
-          click: () => {
-            this.openSelectObject(rowObject, property);
-          },
-        }),
-      );
-    }
-
     const { focus } = this.state;
 
-    if (focus && focus.kind === 'class') {
-      if (rowObject) {
+    const menu = new remote.Menu();
+
+    if (params) {
+      const { property, rowObject } = params;
+
+      // If we clicked a property that refers to an object
+      if (property && property.type === 'object') {
         menu.append(
           new remote.MenuItem({
-            label: 'Delete',
+            label: 'Update reference',
             click: () => {
-              this.openConfirmModal(rowObject);
+              this.openSelectObject(rowObject, property);
             },
           }),
         );
       }
+
+      // If we clicked on a row when focussing on a class
+      if (focus && focus.kind === 'class') {
+        if (rowObject) {
+          menu.append(
+            new remote.MenuItem({
+              label: 'Delete',
+              click: () => {
+                this.openConfirmModal(rowObject);
+              },
+            }),
+          );
+        }
+      }
+    }
+
+    // We can always create a new object if right-clicking in a class focus
+    if (focus && focus.kind === 'class') {
       menu.append(
         new remote.MenuItem({
           label: `Create new ${focus.className}`,
@@ -330,6 +340,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       );
     }
 
+    // If we have items to shpw - popup the menu
     if (menu.items.length > 0) {
       menu.popup(remote.getCurrentWindow(), {
         x: e.clientX,
