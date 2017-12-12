@@ -280,9 +280,12 @@ describe('Import CSV tests', () => {
       const csvImporter = new CSVDataImporter(files, schema);
 
       // Open existing Realm file containing schema for Dog, Cat, Owner and DogPromaryKey
-      let assetRealm =  new Realm(`${TESTS_PATH}/csv/asset_file.realm`);
+      const assetRealm = new Realm(`${TESTS_PATH}/csv/asset_file.realm`);
       assert.equal(assetRealm.schema.length, 4);
-      assert.notEqual(assetRealm.schema.find(objectSchema => {return objectSchema.name === "Dog";}), undefined);
+      assert.notEqual(
+        assetRealm.schema.find(objectSchema => objectSchema.name === 'Dog'),
+        undefined,
+      );
 
       assetRealm.beginTransaction();
       assetRealm.delete(assetRealm.objects('Dog'));
@@ -292,8 +295,8 @@ describe('Import CSV tests', () => {
 
       csvImporter.importInto(assetRealm);
 
-      // Check new rows were added 
-      let dogs: any = assetRealm.objects('Dog').sorted('name');
+      // Check new rows were added
+      const dogs: any = assetRealm.objects('Dog').sorted('name');
       assert.equal(dogs.length, 2);
       assert.equal(dogs[0].name, 'Caesar');
       assert.equal(dogs[1].name, 'Rex');
@@ -320,7 +323,7 @@ describe('Import CSV tests', () => {
       const csvImporter = new CSVDataImporter(files, schema);
 
       // the CSV Cat schema does not corespond to the existing Cat as defined in the Realm
-      let assetRealm =  new Realm(`${TESTS_PATH}/csv/asset_file.realm`);
+      const assetRealm = new Realm(`${TESTS_PATH}/csv/asset_file.realm`);
       assert.throws(() => csvImporter.importInto(assetRealm), Error);
       assetRealm.close();
     });

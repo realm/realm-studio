@@ -6,7 +6,7 @@ import { DataImporter } from '../DataImporter';
 
 export default class CSVDataImporter extends DataImporter {
   private static readonly NUMBER_OF_INSERTS_BEFORE_COMMIT = 10000;
-  
+
   public importInto(realm: Realm) {
     this.files.map((file, index) => {
       const schema = this.importSchema[index];
@@ -71,7 +71,7 @@ export default class CSVDataImporter extends DataImporter {
           realm.cancelTransaction();
           throw e;
         }
-        
+
         numberOfInsert++;
 
         // commit by batch to avoid creating multiple transactions.
@@ -94,7 +94,7 @@ export default class CSVDataImporter extends DataImporter {
       this.importInto(realm);
     } catch (e) {
       realm.close();
-      // in case of an error remove the created Realm 
+      // in case of an error remove the created Realm
       fsExtra.removeSync(realm.path);
       throw e;
     }

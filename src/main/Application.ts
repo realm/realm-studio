@@ -15,10 +15,9 @@ import {
 } from '../windows/WindowType';
 import { CertificateManager } from './CertificateManager';
 import { MainActions } from './MainActions';
-import { MainMenu, IInsertIntoSchemaOptions } from './MainMenu';
+import { IInsertIntoSchemaOptions, MainMenu } from './MainMenu';
 import { Updater } from './Updater';
 import { WindowManager } from './WindowManager';
-import { BrowserWindow } from 'electron';
 
 const isProduction = process.env.NODE_ENV === 'production';
 

@@ -1,7 +1,7 @@
 import * as electron from 'electron';
+import { ImportSchemaFormat } from '../services/data-importer';
 import { Language } from '../services/schema-export';
 import { Application } from './Application';
-import { ImportSchemaFormat } from '../services/data-importer';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -102,7 +102,10 @@ export class MainMenu {
             submenu: [
               {
                 label: 'CSV',
-                click: () => Application.sharedApplication.showInsertCSVIntoRealm(electron.BrowserWindow.getFocusedWindow()),
+                click: () =>
+                  Application.sharedApplication.showInsertCSVIntoRealm(
+                    electron.BrowserWindow.getFocusedWindow(),
+                  ),
                 enabled: enableExportSchema,
               },
             ],
