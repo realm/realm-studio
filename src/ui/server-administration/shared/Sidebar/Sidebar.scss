@@ -12,7 +12,7 @@
   transition-timing-function: ease-in-out;
   z-index: 1;
 
-  &--active {
+  &--open {
     flex-basis: $sidebar-width;
   }
 

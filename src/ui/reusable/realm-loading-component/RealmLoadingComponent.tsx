@@ -35,9 +35,12 @@ export abstract class RealmLoadingComponent<
   protected certificateWasRejected: boolean;
 
   public componentWillUnmount() {
-    // Remove any existing a change listeners
+    // Closing and remove any existing a change listeners
     if (this.realm) {
       this.realm.removeListener('change', this.onRealmChanged);
+      this.realm.close();
+      // Deleting indicates we've closed it
+      delete this.realm;
     }
     this.cancelLoadingRealms();
   }
@@ -49,6 +52,8 @@ export abstract class RealmLoadingComponent<
 
   protected async loadRealm(
     realm: realms.ISyncedRealmToLoad | realms.ILocalRealmToLoad,
+    schema?: Realm.ObjectSchema[],
+    schemaVersion?: number,
   ) {
     // Remove any existing a change listeners
     if (this.realm) {
@@ -64,14 +69,19 @@ export abstract class RealmLoadingComponent<
         // Reset the state that captures rejected certificates
         this.certificateWasRejected = false;
         // Get the realms from the ROS interface
-        this.realm = await this.openRealm(realm, {
-          errorCallback: this.onSyncError,
-          validateCertificates,
-          // Uncomment the line below to test failing certificate validation
-          /*
-          certificatePath: '... some path of a valid but failing certificate',
-          */
-        });
+        this.realm = await this.openRealm(
+          realm,
+          {
+            errorCallback: this.onSyncError,
+            validateCertificates,
+            // Uncomment the line below to test failing certificate validation
+            /*
+            certificatePath: '... some path of a valid but failing certificate',
+            */
+          },
+          schema,
+          schemaVersion,
+        );
         // Register change listeners
         this.realm.addListener('change', this.onRealmChanged);
         this.onRealmLoaded();
@@ -131,11 +141,15 @@ export abstract class RealmLoadingComponent<
   private async openRealm(
     realm: realms.ISyncedRealmToLoad | realms.ILocalRealmToLoad | undefined,
     ssl: realms.ISslConfiguration = { validateCertificates: true },
+    schema?: Realm.ObjectSchema[],
+    schemaVersion?: number,
   ): Promise<Realm> {
     if (realm && realm.mode === realms.RealmLoadingMode.Local) {
       return new Realm({
         path: realm.path,
         encryptionKey: realm.encryptionKey,
+        schema,
+        schemaVersion,
       });
     } else if (realm && realm.mode === realms.RealmLoadingMode.Synced) {
       const props = (realm as any) as realms.ISyncedRealmToLoad;
@@ -149,6 +163,8 @@ export abstract class RealmLoadingComponent<
         realm.encryptionKey,
         ssl,
         this.progressChanged,
+        schema,
+        schemaVersion,
       );
       // Save a wrapping promise so this can be cancelled
       return new Promise<Realm>((resolve, reject) => {

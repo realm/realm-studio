@@ -39,6 +39,7 @@ export interface ITableProps {
   hasEditingDisabled?: boolean;
   highlight?: IHighlight;
   isSorting: boolean;
+  onAddColumnClick?: () => void;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
   onColumnWidthChanged: (index: number, width: number) => void;
@@ -52,8 +53,8 @@ export interface ITableProps {
 }
 
 export const Table = ({
-  dataVersion,
   columnWidths,
+  dataVersion,
   filteredSortedResults,
   focus,
   getCellValue,
@@ -62,6 +63,7 @@ export const Table = ({
   hasEditingDisabled,
   highlight,
   isSorting,
+  onAddColumnClick,
   onCellChange,
   onCellClick,
   onColumnWidthChanged,
@@ -83,6 +85,10 @@ export const Table = ({
   const { height, width } = sizeProps;
   const scrollBottom = rowHeights.header + scrollHeight - height - scrollTop;
   const scrollRight = scrollWidth - width - scrollLeft;
+  const totalColumns = focus.addColumnEnabled
+    ? focus.properties.length + 1
+    : focus.properties.length;
+
   return (
     <div>
       <MoreIndicator position="bottom" visible={scrollBottom > 0} />
@@ -90,9 +96,11 @@ export const Table = ({
       <MoreIndicator position="right" visible={scrollRight > 0} />
       <MoreIndicator position="top" visible={scrollTop > 0} />
       <HeaderGrid
+        columnCount={totalColumns}
         columnWidths={columnWidths}
         gridRef={gridHeaderRef}
         height={rowHeights.header}
+        onAddColumnClick={onAddColumnClick}
         onColumnWidthChanged={onColumnWidthChanged}
         onSortClick={onSortClick}
         overscanColumnCount={2}
@@ -103,6 +111,7 @@ export const Table = ({
       />
       <ContentGrid
         className="RealmBrowser__Table__ValueGrid"
+        columnCount={totalColumns}
         columnWidths={columnWidths}
         dataVersion={dataVersion}
         filteredSortedResults={filteredSortedResults}
