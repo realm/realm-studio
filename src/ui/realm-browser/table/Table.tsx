@@ -39,6 +39,7 @@ export interface ITableProps {
   hasEditingDisabled?: boolean;
   highlight?: IHighlight;
   isSorting: boolean;
+  onAddColumnClick?: () => void;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
   onColumnWidthChanged: (index: number, width: number) => void;
@@ -49,12 +50,11 @@ export interface ITableProps {
   scrollProps: ScrollSyncProps;
   sizeProps: AutoSizerProps;
   sorting?: ISorting;
-  onAddColumnClick?: () => void;
 }
 
 export const Table = ({
-  dataVersion,
   columnWidths,
+  dataVersion,
   filteredSortedResults,
   focus,
   getCellValue,
@@ -63,6 +63,7 @@ export const Table = ({
   hasEditingDisabled,
   highlight,
   isSorting,
+  onAddColumnClick,
   onCellChange,
   onCellClick,
   onColumnWidthChanged,
@@ -73,7 +74,6 @@ export const Table = ({
   scrollProps,
   sizeProps,
   sorting,
-  onAddColumnClick,
 }: ITableProps) => {
   const {
     onScroll,
@@ -96,9 +96,11 @@ export const Table = ({
       <MoreIndicator position="right" visible={scrollRight > 0} />
       <MoreIndicator position="top" visible={scrollTop > 0} />
       <HeaderGrid
+        columnCount={totalColumns}
         columnWidths={columnWidths}
         gridRef={gridHeaderRef}
         height={rowHeights.header}
+        onAddColumnClick={onAddColumnClick}
         onColumnWidthChanged={onColumnWidthChanged}
         onSortClick={onSortClick}
         overscanColumnCount={2}
@@ -106,11 +108,10 @@ export const Table = ({
         scrollLeft={scrollLeft}
         sorting={sorting}
         width={width}
-        onAddColumnClick={onAddColumnClick}
-        columnCount={totalColumns}
       />
       <ContentGrid
         className="RealmBrowser__Table__ValueGrid"
+        columnCount={totalColumns}
         columnWidths={columnWidths}
         dataVersion={dataVersion}
         filteredSortedResults={filteredSortedResults}
@@ -131,7 +132,6 @@ export const Table = ({
         properties={focus.properties}
         rowHeight={rowHeights.content}
         width={width}
-        columnCount={totalColumns}
       />
     </div>
   );

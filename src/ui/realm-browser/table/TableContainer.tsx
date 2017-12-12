@@ -79,6 +79,7 @@ export class TableContainer extends React.PureComponent<
         hasEditingDisabled={this.props.hasEditingDisabled}
         highlight={this.props.highlight}
         isSorting={this.state.isSorting}
+        onAddColumnClick={this.props.onAddColumnClick}
         onCellChange={this.props.onCellChange}
         onCellClick={this.props.onCellClick}
         onColumnWidthChanged={this.onColumnWidthChanged}
@@ -89,7 +90,6 @@ export class TableContainer extends React.PureComponent<
         scrollProps={this.props.scrollProps}
         sizeProps={this.props.sizeProps}
         sorting={this.state.sorting}
-        onAddColumnClick={this.props.onAddColumnClick}
       />
     ) : null;
   }
