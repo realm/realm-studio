@@ -21,8 +21,8 @@ export class RendererTransport extends Transport {
     ipcRenderer.send(Transport.REQUEST_EVENT_NAME, requestId, action, ...args);
   }
 
-  public sendResponse(requestId: string, result: any) {
-    ipcRenderer.send(Transport.RESPONSE_EVENT_NAME, requestId, result);
+  public sendResponse(requestId: string, result: any, success: boolean) {
+    ipcRenderer.send(Transport.RESPONSE_EVENT_NAME, requestId, result, success);
   }
 
   private onResponseMessage = (
