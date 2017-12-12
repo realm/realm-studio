@@ -1,14 +1,16 @@
 import * as React from 'react';
 
+import { IClassFocus } from '../focus';
 import { TYPES } from '../primitives';
 import { View } from './View';
 
 export interface IAddSchemaPropertyModalProps {
+  focus: IClassFocus;
   isOpen: boolean;
-  onAddSchemaProperty: (property: Realm.PropertiesTypes) => void;
-  toggle: () => void;
   isPropertyNameAvailable: (name: string) => boolean;
+  onAddSchemaProperty: (property: Realm.PropertiesTypes) => void;
   schemas: Realm.ObjectSchema[];
+  toggle: () => void;
 }
 
 export interface IAddSchemaPropertyModalState {

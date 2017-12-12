@@ -12,44 +12,48 @@ import {
   ModalHeader,
 } from 'reactstrap';
 
+import { IClassFocus } from '../focus';
+
 export const View = ({
+  focus,
+  isList,
   isOpen,
-  toggle,
-  onNameChange,
-  onTypeChange,
-  onOptionalChange,
-  onSubmit,
   name,
   nameIsValid,
-  type,
-  optional,
-  typeOptions,
-  isList,
   onIsListChange,
+  onNameChange,
+  onOptionalChange,
+  onSubmit,
+  onTypeChange,
+  optional,
+  toggle,
+  type,
+  typeOptions,
 }: {
+  focus: IClassFocus;
+  isList: boolean;
   isOpen: boolean;
-  toggle: () => void;
-  onNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onTypeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onOptionalChange: () => void;
-  onIsListChange: () => void;
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   name: string;
   nameIsValid: boolean;
-  type: string;
+  onIsListChange: () => void;
+  onNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onOptionalChange: () => void;
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  onTypeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   optional: boolean;
-  isList: boolean;
+  toggle: () => void;
+  type: string;
   typeOptions: string[];
 }) => {
   return (
     <Modal isOpen={isOpen} toggle={toggle}>
       <Form onSubmit={onSubmit}>
         <ModalHeader toggle={toggle}>
-          Add new property to the schema
+          Add new property to {focus.className}
         </ModalHeader>
         <ModalBody>
           <FormGroup className={nameIsValid ? '' : 'has-danger'}>
-            <Label for="name">Property name</Label>
+            <Label for="name">Name</Label>
             <Input
               name="name"
               id="name"
@@ -86,7 +90,7 @@ export const View = ({
                 checked={isList}
                 onChange={onIsListChange}
               />{' '}
-              It's a list
+              Make this a list of {type}s
             </Label>
           </FormGroup>
           <FormGroup check>
@@ -103,7 +107,7 @@ export const View = ({
         </ModalBody>
         <ModalFooter>
           <Button color="primary" disabled={!nameIsValid}>
-            Add property name
+            Add property
           </Button>{' '}
           <Button color="secondary" onClick={toggle}>
             Cancel

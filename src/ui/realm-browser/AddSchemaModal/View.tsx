@@ -30,10 +30,10 @@ export const View = ({
   return (
     <Modal isOpen={isOpen} toggle={toggle}>
       <Form onSubmit={onSubmit}>
-        <ModalHeader toggle={toggle}>Create a new schema</ModalHeader>
+        <ModalHeader toggle={toggle}>Create a new class</ModalHeader>
         <ModalBody>
           <FormGroup className={nameIsValid ? '' : 'has-danger'}>
-            <Label for="name">Schema name</Label>
+            <Label for="name">Name</Label>
             <Input
               name="name"
               id="name"
@@ -44,14 +44,14 @@ export const View = ({
             />
             {!nameIsValid && (
               <FormFeedback>
-                Already exists a schema with that name.
+                Already exists a class with that name.
               </FormFeedback>
             )}
           </FormGroup>
         </ModalBody>
         <ModalFooter>
           <Button color="primary" disabled={!nameIsValid}>
-            Create schema
+            Create class
           </Button>{' '}
           <Button color="secondary" onClick={toggle}>
             Cancel

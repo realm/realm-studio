@@ -143,18 +143,21 @@ export const RealmBrowser = ({
 
       <AddSchemaModal
         isOpen={isAddSchemaOpen}
-        toggle={toggleAddSchema}
-        onAddSchema={onAddSchema}
         isSchemaNameAvailable={isSchemaNameAvailable}
+        onAddSchema={onAddSchema}
+        toggle={toggleAddSchema}
       />
 
-      <AddSchemaPropertyModal
-        isOpen={isAddSchemaPropertyOpen}
-        toggle={toggleAddSchemaProperty}
-        onAddSchemaProperty={onAddSchemaProperty}
-        isPropertyNameAvailable={isPropertyNameAvailable}
-        schemas={schemas}
-      />
+      {focus && focus.kind === 'class' ? (
+        <AddSchemaPropertyModal
+          focus={focus}
+          isOpen={isAddSchemaPropertyOpen}
+          isPropertyNameAvailable={isPropertyNameAvailable}
+          onAddSchemaProperty={onAddSchemaProperty}
+          schemas={schemas}
+          toggle={toggleAddSchemaProperty}
+        />
+      ) : null}
 
       <EncryptionDialog
         onHide={onHideEncryptionDialog}
