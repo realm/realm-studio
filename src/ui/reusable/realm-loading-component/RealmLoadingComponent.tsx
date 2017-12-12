@@ -35,9 +35,12 @@ export abstract class RealmLoadingComponent<
   protected certificateWasRejected: boolean;
 
   public componentWillUnmount() {
-    // Remove any existing a change listeners
+    // Closing and remove any existing a change listeners
     if (this.realm) {
       this.realm.removeListener('change', this.onRealmChanged);
+      this.realm.close();
+      // Deleting indicates we've closed it
+      delete this.realm;
     }
     this.cancelLoadingRealms();
   }
