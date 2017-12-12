@@ -2,21 +2,21 @@ import * as React from 'react';
 
 import { View } from './View';
 
-export interface IAddSchemaModalProps {
+export interface IAddClassModalProps {
   isOpen: boolean;
   onAddSchema: (name: string) => void;
   toggle: () => void;
-  isSchemaNameAvailable: (name: string) => boolean;
+  isClassNameAvailable: (name: string) => boolean;
 }
 
-export interface IAddSchemaModalState {
+export interface IAddClassModalState {
   name: string;
   nameIsValid: boolean;
 }
 
-export class AddSchemaModal extends React.Component<
-  IAddSchemaModalProps,
-  IAddSchemaModalState
+export class AddClassModal extends React.Component<
+  IAddClassModalProps,
+  IAddClassModalState
 > {
   public constructor() {
     super();
@@ -44,7 +44,7 @@ export class AddSchemaModal extends React.Component<
     const newNameValue = e.target.value;
     this.setState({
       name: newNameValue,
-      nameIsValid: this.props.isSchemaNameAvailable(newNameValue),
+      nameIsValid: this.props.isClassNameAvailable(newNameValue),
     });
   };
 }

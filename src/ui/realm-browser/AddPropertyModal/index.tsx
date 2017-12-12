@@ -4,16 +4,16 @@ import { IClassFocus } from '../focus';
 import { TYPES } from '../primitives';
 import { View } from './View';
 
-export interface IAddSchemaPropertyModalProps {
+export interface IAddPropertyModalProps {
   focus: IClassFocus;
   isOpen: boolean;
   isPropertyNameAvailable: (name: string) => boolean;
-  onAddSchemaProperty: (property: Realm.PropertiesTypes) => void;
+  onAddProperty: (property: Realm.PropertiesTypes) => void;
   schemas: Realm.ObjectSchema[];
   toggle: () => void;
 }
 
-export interface IAddSchemaPropertyModalState {
+export interface IAddPropertyModalState {
   name: string;
   type: string;
   isList: boolean;
@@ -30,9 +30,9 @@ const initialState = {
   isList: false,
 };
 
-export class AddSchemaPropertyModal extends React.Component<
-  IAddSchemaPropertyModalProps,
-  IAddSchemaPropertyModalState
+export class AddPropertyModal extends React.Component<
+  IAddPropertyModalProps,
+  IAddPropertyModalState
 > {
   public constructor() {
     super();
@@ -42,7 +42,7 @@ export class AddSchemaPropertyModal extends React.Component<
     };
   }
 
-  public componentWillReceiveProps(props: IAddSchemaPropertyModalProps) {
+  public componentWillReceiveProps(props: IAddPropertyModalProps) {
     this.setState({
       typeOptions: [...TYPES, ...this.getClassesTypes(props.schemas)],
     });
@@ -54,7 +54,7 @@ export class AddSchemaPropertyModal extends React.Component<
 
   public onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    this.props.onAddSchemaProperty(this.getSchemaProperty());
+    this.props.onAddProperty(this.getSchemaProperty());
     this.props.toggle();
     this.setState(initialState);
   };

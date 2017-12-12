@@ -42,8 +42,8 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   schemas: Realm.ObjectSchema[];
   // TODO: Rename - Unclear if this is this an action or a piece of data
   selectObject?: ISelectObjectState;
-  isAddSchemaOpen: boolean;
-  isAddSchemaPropertyOpen: boolean;
+  isAddClassOpen: boolean;
+  isAddPropertyOpen: boolean;
 }
 
 export class RealmBrowserContainer extends RealmLoadingComponent<
@@ -61,8 +61,8 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       isEncryptionDialogVisible: false,
       progress: { done: false },
       schemas: [],
-      isAddSchemaOpen: false,
-      isAddSchemaPropertyOpen: false,
+      isAddClassOpen: false,
+      isAddPropertyOpen: false,
     };
   }
 
@@ -96,13 +96,13 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     }
   };
 
-  public isSchemaNameAvailable = (name: string): boolean => {
+  public isClassNameAvailable = (name: string): boolean => {
     return !this.state.schemas.find(schema => schema.name === name);
   };
 
   public toggleAddSchema = () => {
     this.setState({
-      isAddSchemaOpen: !this.state.isAddSchemaOpen,
+      isAddClassOpen: !this.state.isAddClassOpen,
     });
   };
 
@@ -128,11 +128,11 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
 
   public toggleAddSchemaProperty = () => {
     this.setState({
-      isAddSchemaPropertyOpen: !this.state.isAddSchemaPropertyOpen,
+      isAddPropertyOpen: !this.state.isAddPropertyOpen,
     });
   };
 
-  public onAddSchemaProperty = async (property: Realm.PropertiesTypes) => {
+  public onAddProperty = async (property: Realm.PropertiesTypes) => {
     if (
       this.realm &&
       this.state.focus &&

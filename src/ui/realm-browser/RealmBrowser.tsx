@@ -4,8 +4,8 @@ import * as Realm from 'realm';
 import { CreateObjectHandler, ISelectObjectState } from '.';
 import { ConfirmModal } from '../reusable/confirm-modal';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
-import { AddSchemaModal } from './AddSchemaModal';
-import { AddSchemaPropertyModal } from './AddSchemaPropertyModal';
+import { AddClassModal } from './AddClassModal';
+import { AddPropertyModal } from './AddPropertyModal';
 import { ContentContainer } from './ContentContainer';
 import { CreateObjectDialog } from './create-object-dialog';
 import { EncryptionDialog } from './encryption-dialog';
@@ -53,11 +53,11 @@ export interface IRealmBrowserProps {
   selectObject?: ISelectObjectState;
   updateObjectReference: (object: any) => void;
   onAddSchema: (name: string) => void;
-  isAddSchemaOpen: boolean;
+  isAddClassOpen: boolean;
   toggleAddSchema: () => void;
-  isSchemaNameAvailable: (name: string) => boolean;
-  onAddSchemaProperty: (property: Realm.PropertiesTypes) => void;
-  isAddSchemaPropertyOpen: boolean;
+  isClassNameAvailable: (name: string) => boolean;
+  onAddProperty: (property: Realm.PropertiesTypes) => void;
+  isAddPropertyOpen: boolean;
   toggleAddSchemaProperty: () => void;
   isPropertyNameAvailable: (name: string) => boolean;
 }
@@ -89,11 +89,11 @@ export const RealmBrowser = ({
   selectObject,
   updateObjectReference,
   onAddSchema,
-  isAddSchemaOpen,
+  isAddClassOpen,
   toggleAddSchema,
-  isSchemaNameAvailable,
-  onAddSchemaProperty,
-  isAddSchemaPropertyOpen,
+  isClassNameAvailable,
+  onAddProperty,
+  isAddPropertyOpen,
   toggleAddSchemaProperty,
   isPropertyNameAvailable,
 }: IRealmBrowserProps) => {
@@ -141,19 +141,19 @@ export const RealmBrowser = ({
         />
       )}
 
-      <AddSchemaModal
-        isOpen={isAddSchemaOpen}
-        isSchemaNameAvailable={isSchemaNameAvailable}
+      <AddClassModal
+        isOpen={isAddClassOpen}
+        isClassNameAvailable={isClassNameAvailable}
         onAddSchema={onAddSchema}
         toggle={toggleAddSchema}
       />
 
       {focus && focus.kind === 'class' ? (
-        <AddSchemaPropertyModal
+        <AddPropertyModal
           focus={focus}
-          isOpen={isAddSchemaPropertyOpen}
+          isOpen={isAddPropertyOpen}
           isPropertyNameAvailable={isPropertyNameAvailable}
-          onAddSchemaProperty={onAddSchemaProperty}
+          onAddProperty={onAddProperty}
           schemas={schemas}
           toggle={toggleAddSchemaProperty}
         />

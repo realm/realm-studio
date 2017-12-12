@@ -30,7 +30,7 @@ export const View = ({
   return (
     <Modal isOpen={isOpen} toggle={toggle}>
       <Form onSubmit={onSubmit}>
-        <ModalHeader toggle={toggle}>Create a new class</ModalHeader>
+        <ModalHeader toggle={toggle}>Add a class to the schema</ModalHeader>
         <ModalBody>
           <FormGroup className={nameIsValid ? '' : 'has-danger'}>
             <Label for="name">Name</Label>
@@ -51,7 +51,7 @@ export const View = ({
         </ModalBody>
         <ModalFooter>
           <Button color="primary" disabled={!nameIsValid}>
-            Create class
+            Add class
           </Button>{' '}
           <Button color="secondary" onClick={toggle}>
             Cancel
