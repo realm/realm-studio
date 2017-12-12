@@ -30,7 +30,7 @@ export const CreateRealmDialog = ({
         <ModalHeader toggle={toggle}>Create a new Realm</ModalHeader>
         <ModalBody>
           <FormGroup>
-            <Label for="username">Path on the server</Label>
+            <Label for="path">Path on the server</Label>
             <Input
               name="path"
               id="path"

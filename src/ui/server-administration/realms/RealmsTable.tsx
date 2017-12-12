@@ -14,36 +14,54 @@ import {
   LoadingOverlay,
 } from '../../reusable/loading-overlay';
 import { FloatingControls } from '../shared/FloatingControls';
-import { CreateRealmDialogContainer } from './CreateRealmDialogContainer';
+
+import { CreateRealmDialog } from './CreateRealmDialog';
+import { DraggingFileOverlay } from './DraggingFileOverlay';
 import { RealmSidebar } from './RealmSidebar';
+import { UploadRealmDialog } from './UploadRealmDialog';
+
 import './RealmsTable.scss';
 
 export const RealmsTable = ({
   getRealm,
   getRealmFromId,
   getRealmPermissions,
+  isCreateRealmOpen,
+  isDraggingFile,
+  isUploadRealmOpen,
+  onDragLeave,
+  onDragOver,
+  onDrop,
+  onRealmCreate,
   onRealmDeletion,
   onRealmOpened,
   onRealmSelected,
-  onRealmCreated,
+  onRealmUpload,
   progress,
   realmCount,
   selectedRealmPath,
-  isCreateRealmOpen,
   toggleCreateRealm,
+  toggleUploadRealm,
 }: {
   getRealm: (index: number) => IRealmFile | null;
   getRealmFromId: (path: string) => IRealmFile | null;
   getRealmPermissions: (path: string) => Realm.Results<IPermission>;
+  isCreateRealmOpen: boolean;
+  isDraggingFile: boolean;
+  isUploadRealmOpen: boolean;
+  onDragLeave: React.DragEventHandler<any>;
+  onDragOver: React.DragEventHandler<any>;
+  onDrop: React.DragEventHandler<any>;
+  onRealmCreate: (path: string) => void;
   onRealmDeletion: (path: string) => void;
   onRealmOpened: (path: string) => void;
-  onRealmCreated: (path: string) => void;
   onRealmSelected: (path: string | null) => void;
+  onRealmUpload: (localPath: string, serverPath: string) => void;
   progress: ILoadingProgress;
   realmCount: number;
   selectedRealmPath: string | null;
-  isCreateRealmOpen: boolean;
   toggleCreateRealm: () => void;
+  toggleUploadRealm: () => void;
 }) => {
   return (
     <div className="RealmsTable">
@@ -52,6 +70,9 @@ export const RealmsTable = ({
         onClick={event => {
           onRealmSelected(null);
         }}
+        onDragLeave={onDragLeave}
+        onDragOver={onDragOver}
+        onDrop={onDrop}
       >
         <AutoSizer>
           {({ width, height }: IAutoSizerDimensions) => (
@@ -91,13 +112,20 @@ export const RealmsTable = ({
       </div>
 
       <FloatingControls isOpen={selectedRealmPath === null}>
+        <Button onClick={toggleUploadRealm}>Upload Realm</Button>
         <Button onClick={toggleCreateRealm}>Create new Realm</Button>
       </FloatingControls>
 
-      <CreateRealmDialogContainer
+      <CreateRealmDialog
         isOpen={isCreateRealmOpen}
         toggle={toggleCreateRealm}
-        onRealmCreated={onRealmCreated}
+        onRealmCreated={onRealmCreate}
+      />
+
+      <UploadRealmDialog
+        isOpen={isUploadRealmOpen}
+        toggle={toggleUploadRealm}
+        onRealmUpload={onRealmUpload}
       />
 
       <RealmSidebar
@@ -109,6 +137,8 @@ export const RealmsTable = ({
           selectedRealmPath !== null ? getRealmFromId(selectedRealmPath) : null
         }
       />
+
+      {isDraggingFile ? <DraggingFileOverlay /> : null}
 
       <LoadingOverlay progress={progress} fade={true} />
     </div>

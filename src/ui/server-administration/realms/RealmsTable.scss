@@ -16,5 +16,27 @@ $sidebar-shadow: rgba($color-dove, .66);
     flex: 1 0;
   }
 
+  &__DraggingFileOverlay {
+    align-items: center;
+    background: $overlay-background;
+    bottom: 0;
+    color: $white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    left: 0;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    text-shadow: $overlay-text-shadow;
+    top: 0;
+    z-index: 2; // should be 1 higher than the sidebar
+
+    &__Icon {
+      height: 3rem;
+      width: 3rem;
+    }
+  }
+
   @import "../../reusable/ReactVirtualized";
 }

@@ -26,6 +26,8 @@ export interface IRealmTableContainerState extends IRealmLoadingComponentState {
   realms: Realm.Results<ros.IRealmFile> | null;
   selectedRealmPath: string | null;
   isCreateRealmOpen: boolean;
+  isUploadRealmOpen: boolean;
+  isDraggingFile: boolean;
 }
 
 export class RealmsTableContainer extends RealmLoadingComponent<
@@ -37,6 +39,8 @@ export class RealmsTableContainer extends RealmLoadingComponent<
     this.state = {
       realms: null,
       isCreateRealmOpen: false,
+      isUploadRealmOpen: false,
+      isDraggingFile: false,
       selectedRealmPath: null,
       progress: {
         done: false,
@@ -70,6 +74,24 @@ export class RealmsTableContainer extends RealmLoadingComponent<
     );
   }
 
+  public onDrop: React.DragEventHandler<any> = e => {
+    e.preventDefault();
+    this.setState({ isDraggingFile: false });
+    // TODO: Open an upload dialog
+  };
+
+  public onDragOver: React.DragEventHandler<any> = e => {
+    if (e.dataTransfer.types.indexOf('Files') >= 0) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+      this.setState({ isDraggingFile: true });
+    }
+  };
+
+  public onDragLeave: React.DragEventHandler<any> = e => {
+    this.setState({ isDraggingFile: false });
+  };
+
   public getRealm = (index: number): ros.IRealmFile | null => {
     return this.state.realms ? this.state.realms[index] : null;
   };
@@ -101,8 +123,24 @@ export class RealmsTableContainer extends RealmLoadingComponent<
     }
   };
 
-  public onRealmCreated = async (path: string) => {
+  public onRealmCreate = async (path: string) => {
     const realm = await ros.realms.create(this.props.user, path);
+    // Close the Realm right away - we don't need it open
+    realm.close();
+    // Cannot use the realm.path as that is the local path
+    // Instead - let's just select the latest Realm
+    if (this.state.realms) {
+      const lastRealm = this.state.realms[this.state.realms.length - 1];
+      this.onRealmSelected(lastRealm.path);
+    }
+  };
+
+  public onRealmUpload = async (localPath: string, remotePath: string) => {
+    const realm = await ros.realms.upload(
+      this.props.user,
+      localPath,
+      remotePath,
+    );
     // Close the Realm right away - we don't need it open
     realm.close();
     // Cannot use the realm.path as that is the local path
@@ -116,6 +154,12 @@ export class RealmsTableContainer extends RealmLoadingComponent<
   public toggleCreateRealm = () => {
     this.setState({
       isCreateRealmOpen: !this.state.isCreateRealmOpen,
+    });
+  };
+
+  public toggleUploadRealm = () => {
+    this.setState({
+      isUploadRealmOpen: !this.state.isUploadRealmOpen,
     });
   };
 

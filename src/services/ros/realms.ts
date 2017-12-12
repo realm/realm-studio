@@ -88,6 +88,46 @@ export const create = (
   return Realm.open(config);
 };
 
+export const upload = async (
+  user: Realm.Sync.User,
+  localPath: string,
+  remotePath: string,
+): Promise<Realm> => {
+  try {
+    const localRealm = new Realm({
+      path: localPath,
+      readOnly: true,
+    });
+    const serverUrl = getUrl(user, remotePath);
+    const config = {
+      sync: {
+        user,
+        url: serverUrl,
+        error: onCreateRealmErrorCallback,
+      },
+      schema: localRealm.schema,
+    };
+    // TODO: Fix this so it will perform a second pass creating links
+    // @see https://gist.github.com/astigsen/971b75d22d22eeed0961caa16aef994b
+    const serverRealm = await Realm.open(config);
+    serverRealm.write(() => {
+      // For every object type - create the object from the localRealm in the serverRealm
+      for (const objectSchema of localRealm.schema) {
+        const objects = localRealm.objects(objectSchema.name).slice();
+        for (const object of objects) {
+          serverRealm.create(objectSchema.name, object);
+        }
+      }
+    });
+    // Close the local realm
+    localRealm.close();
+    // TODO: Copy over the data ...
+    return serverRealm;
+  } catch (err) {
+    throw new Error(`Failed while uploading local Realm: ${err.message}`);
+  }
+};
+
 export const onCreateRealmErrorCallback = (err: any) => {
   showError('Error while creating new synced realm', err);
 };
