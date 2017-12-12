@@ -145,6 +145,7 @@ export abstract class RealmLoadingComponent<
       return new Realm({
         path: realm.path,
         encryptionKey: realm.encryptionKey,
+        schema,
       });
     } else if (realm && realm.mode === realms.RealmLoadingMode.Synced) {
       const props = (realm as any) as realms.ISyncedRealmToLoad;

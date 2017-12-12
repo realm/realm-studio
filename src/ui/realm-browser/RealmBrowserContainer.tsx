@@ -167,6 +167,10 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   public onAddClass = async (name: string) => {
     if (this.realm) {
       try {
+        // Close the current Realm
+        this.realm.close();
+        // Deleting the object to indicate we've closed it
+        delete this.realm;
         // Load it again with the new schema
         await this.loadRealm(this.props.realm, [
           ...this.state.schemas,
@@ -213,6 +217,10 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
             : schema,
       );
       try {
+        // Close the current Realm
+        this.realm.close();
+        // Deleting the object to indicate we've closed it
+        delete this.realm;
         // Load it again with the new schema
         await this.loadRealm(this.props.realm, schemas);
         // Ensure we've selected the class that we've just added a property to
