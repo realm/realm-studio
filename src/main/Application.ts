@@ -4,7 +4,6 @@ import * as path from 'path';
 import { MainReceiver } from '../actions/main';
 import { MainTransport } from '../actions/transports/MainTransport';
 import { getDataImporter, ImportFormat } from '../services/data-importer';
-import { CSVDataImporter } from '../services/data-importer/csv/CSVDataImporter';
 import ImportSchemaGenerator from '../services/data-importer/ImportSchemaGenerator';
 import { realms } from '../services/ros';
 
