@@ -56,7 +56,6 @@ export abstract class RealmLoadingComponent<
     schema?: Realm.ObjectSchema[],
     schemaVersion?: number,
   ) {
-    console.log('loadRealm called with', schemaVersion);
     // Close the realm - if open
     this.closeRealm();
 
@@ -174,7 +173,6 @@ export abstract class RealmLoadingComponent<
         ssl,
         this.progressChanged,
         schema,
-        schemaVersion,
       );
       // Save a wrapping promise so this can be cancelled
       return new Promise<Realm>((resolve, reject) => {
