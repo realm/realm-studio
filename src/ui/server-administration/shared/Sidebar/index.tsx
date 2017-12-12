@@ -1,4 +1,4 @@
-import * as classnames from 'classnames';
+import * as classNames from 'classnames';
 import * as React from 'react';
 import './Sidebar.scss';
 
@@ -8,7 +8,11 @@ export interface IProps {
 }
 
 export const Sidebar = ({ isOpen, children }: IProps) => (
-  <div className={classnames(isOpen ? 'Sidebar--active Sidebar' : 'Sidebar')}>
+  <div
+    className={classNames('Sidebar', {
+      'Sidebar--open': isOpen,
+    })}
+  >
     {children}
   </div>
 );
