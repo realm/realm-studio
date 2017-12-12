@@ -164,13 +164,16 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     });
   };
 
-  public onAddClass = (name: string) => {
+  public onAddClass = async (name: string) => {
     if (this.realm) {
       try {
-        this.loadRealm(this.props.realm, [
+        // Load it again with the new schema
+        await this.loadRealm(this.props.realm, [
           ...this.state.schemas,
           { name, properties: {} },
-        ]).then(() => this.onSchemaSelected(name));
+        ]);
+        // Select the schema when it the realm has loaded
+        this.onClassSelected(name);
       } catch (err) {
         showError(`Failed creating the model "${name}"`, err);
       }
@@ -210,9 +213,10 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
             : schema,
       );
       try {
-        this.loadRealm(this.props.realm, schemas).then(() =>
-          this.onSchemaSelected((this.state.focus as IClassFocus).className),
-        );
+        // Load it again with the new schema
+        await this.loadRealm(this.props.realm, schemas);
+        // Ensure we've selected the class that we've just added a property to
+        this.onClassSelected(this.state.focus.className);
       } catch (err) {
         showError(
           `Failed adding the property named "${name}" to the selected schema`,
@@ -243,19 +247,23 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     });
   };
 
-  public onSchemaSelected = (className: string, objectToScroll?: any) => {
+  public onClassSelected = (className: string, objectToScroll?: any) => {
     // TODO: Re-implement objectToScroll
-    const focus: IClassFocus = {
-      kind: 'class',
-      className,
-      results: this.realm.objects(className),
-      properties: this.derivePropertiesFromClassName(className),
-      addColumnEnabled: true,
-    };
-    this.setState({
-      focus,
-      highlight: this.generateHighlight(objectToScroll),
-    });
+    if (this.realm) {
+      const focus: IClassFocus = {
+        kind: 'class',
+        className,
+        results: this.realm.objects(className),
+        properties: this.derivePropertiesFromClassName(className),
+        addColumnEnabled: true,
+      };
+      this.setState({
+        focus,
+        highlight: this.generateHighlight(objectToScroll),
+      });
+    } else {
+      throw new Error(`Cannot select ${className} as the Realm is not opened`);
+    }
   };
 
   public getClassFocus = (className: string) => {
@@ -524,7 +532,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       schemas: this.realm.schema,
     });
     if (firstSchemaName) {
-      this.onSchemaSelected(firstSchemaName);
+      this.onClassSelected(firstSchemaName);
     }
   };
 

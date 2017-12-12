@@ -22,10 +22,10 @@ export const isSelected = (focus: IFocus | null, schemaName: string) => {
 
 const ListFocusComponent = ({
   focus,
-  onSchemaSelected,
+  onClassSelected,
 }: {
   focus: IListFocus;
-  onSchemaSelected: (name: string, objectToScroll?: any) => void;
+  onClassSelected: (name: string, objectToScroll?: any) => void;
 }) => {
   return (
     <div className={classnames('RealmBrowser__Sidebar__List')}>
@@ -43,7 +43,7 @@ const ListFocusComponent = ({
           {!focus.parent.objectSchema().primaryKey ? 'a ' : null}
           <span
             onClick={() =>
-              onSchemaSelected(focus.parent.objectSchema().name, focus.parent)}
+              onClassSelected(focus.parent.objectSchema().name, focus.parent)}
             className="RealmBrowser__Sidebar__List__ParentObject"
             title={displayObject(focus.parent, true)}
           >
@@ -58,14 +58,14 @@ const ListFocusComponent = ({
 export const Sidebar = ({
   focus,
   getSchemaLength,
-  onSchemaSelected,
+  onClassSelected,
   progress,
   schemas,
   toggleAddSchema,
 }: {
   focus: IFocus | null;
   getSchemaLength: (name: string) => number;
-  onSchemaSelected: (name: string, objectToScroll?: any) => void;
+  onClassSelected: (name: string, objectToScroll?: any) => void;
   progress: ILoadingProgress;
   schemas: Realm.ObjectSchema[];
   toggleAddSchema: () => void;
@@ -95,7 +95,7 @@ export const Sidebar = ({
             >
               <div
                 className={schemaClass}
-                onClick={() => onSchemaSelected(schema.name)}
+                onClick={() => onClassSelected(schema.name)}
               >
                 <span className="RealmBrowser__Sidebar__Schema__Name">
                   {schema.name}
@@ -105,7 +105,7 @@ export const Sidebar = ({
               {selected && focus && focus.kind === 'list' ? (
                 <ListFocusComponent
                   focus={focus as IListFocus}
-                  onSchemaSelected={onSchemaSelected}
+                  onClassSelected={onClassSelected}
                 />
               ) : null}
             </li>

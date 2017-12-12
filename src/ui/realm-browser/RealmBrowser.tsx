@@ -44,7 +44,7 @@ export interface IRealmBrowserProps {
   onCreateObject: CreateObjectHandler;
   onHideEncryptionDialog: () => void;
   onOpenWithEncryption: (key: string) => void;
-  onSchemaSelected: (name: string, objectToScroll: any) => void;
+  onClassSelected: (name: string, objectToScroll: any) => void;
   onSortEnd: SortEndHandler;
   onSortStart: SortStartHandler;
   progress: ILoadingProgress;
@@ -80,7 +80,7 @@ export const RealmBrowser = ({
   onCreateObject,
   onHideEncryptionDialog,
   onOpenWithEncryption,
-  onSchemaSelected,
+  onClassSelected,
   onSortEnd,
   onSortStart,
   progress,
@@ -102,7 +102,7 @@ export const RealmBrowser = ({
       <Sidebar
         focus={focus}
         getSchemaLength={getSchemaLength}
-        onSchemaSelected={onSchemaSelected}
+        onClassSelected={onClassSelected}
         progress={progress}
         schemas={schemas}
         toggleAddSchema={toggleAddSchema}
