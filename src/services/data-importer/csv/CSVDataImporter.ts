@@ -4,7 +4,7 @@ import papaparse = require('papaparse');
 import * as fsPath from 'path';
 import { DataImporter } from '../DataImporter';
 
-export default class CSVDataImporter extends DataImporter {
+export class CSVDataImporter extends DataImporter {
   private static readonly NUMBER_OF_INSERTS_BEFORE_COMMIT = 10000;
 
   public import(path: string): Realm {

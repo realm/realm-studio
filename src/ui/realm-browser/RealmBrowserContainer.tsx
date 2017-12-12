@@ -1,13 +1,16 @@
 import * as assert from 'assert';
-import { ipcRenderer, remote } from 'electron';
+import { ipcRenderer, MenuItemConstructorOptions, remote } from 'electron';
 import * as path from 'path';
 import * as React from 'react';
 import * as Realm from 'realm';
 import * as util from 'util';
 
 import { IPropertyWithName, ISelectObjectState } from '.';
-import { IExportSchemaOptions } from '../../main/MainMenu';
 import { Language, SchemaExporter } from '../../services/schema-export';
+import {
+  IMenuGenerator,
+  IMenuGeneratorProps,
+} from '../../windows/MenuGenerator';
 import { IRealmBrowserOptions } from '../../windows/WindowType';
 import { showError } from '../reusable/errors';
 import {
@@ -46,9 +49,9 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
 }
 
 export class RealmBrowserContainer extends RealmLoadingComponent<
-  IRealmBrowserOptions,
+  IRealmBrowserOptions & IMenuGeneratorProps,
   IRealmBrowserState
-> {
+> implements IMenuGenerator {
   private clickTimeout?: any;
 
   constructor() {
@@ -63,17 +66,71 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     };
   }
 
+  public componentWillMount() {
+    this.props.addMenuGenerator(this);
+  }
+
   public componentDidMount() {
     this.loadRealm(this.props.realm);
-    ipcRenderer.addListener('export-schema', this.onExportSchema);
   }
 
   public componentWillUnmount() {
-    ipcRenderer.removeListener('export-schema', this.onExportSchema);
+    this.props.removeMenuGenerator(this);
   }
 
   public render() {
     return <RealmBrowser {...this.state} {...this} />;
+  }
+
+  public generateMenu(template: MenuItemConstructorOptions[]) {
+    const exportMenu = {
+      label: 'Save model definitions',
+      submenu: [
+        {
+          label: 'Swift',
+          click: () => this.onExportSchema(Language.Swift),
+        },
+        {
+          label: 'JavaScript',
+          click: () => this.onExportSchema(Language.JS),
+        },
+        {
+          label: 'Java',
+          click: () => this.onExportSchema(Language.Java),
+        },
+        {
+          label: 'Kotlin',
+          click: () => this.onExportSchema(Language.Kotlin),
+        },
+        {
+          label: 'C#',
+          click: () => this.onExportSchema(Language.CS),
+        },
+      ],
+    };
+
+    return template.map(menu => {
+      if (menu.id === 'file' && Array.isArray(menu.submenu)) {
+        const importIndex = menu.submenu.findIndex(
+          item => item.id === 'import',
+        );
+        if (importIndex) {
+          const submenu = [
+            ...menu.submenu.slice(0, importIndex),
+            exportMenu,
+            ...menu.submenu.slice(importIndex),
+          ];
+          return {
+            ...menu,
+            submenu,
+          };
+        } else {
+          return menu;
+        }
+      } else {
+        return menu;
+      }
+    });
   }
 
   public onCellChange: CellChangeHandler = params => {
@@ -461,10 +518,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     }
   }
 
-  private onExportSchema = (
-    event: any,
-    { language }: IExportSchemaOptions,
-  ): void => {
+  private onExportSchema = (language: Language): void => {
     const basename = path.basename(this.props.realm.path, '.realm');
     remote.dialog.showSaveDialog(
       {
