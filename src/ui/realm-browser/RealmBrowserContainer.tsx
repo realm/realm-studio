@@ -164,7 +164,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     });
   };
 
-  public onAddSchema = (name: string) => {
+  public onAddClass = (name: string) => {
     if (this.realm) {
       try {
         this.loadRealm(this.props.realm, [

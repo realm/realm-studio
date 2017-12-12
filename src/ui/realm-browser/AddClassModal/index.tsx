@@ -4,7 +4,7 @@ import { View } from './View';
 
 export interface IAddClassModalProps {
   isOpen: boolean;
-  onAddSchema: (name: string) => void;
+  onAddClass: (name: string) => void;
   toggle: () => void;
   isClassNameAvailable: (name: string) => boolean;
 }
@@ -37,7 +37,7 @@ export class AddClassModal extends React.Component<
       name: '',
     });
     this.props.toggle();
-    this.props.onAddSchema(name);
+    this.props.onAddClass(name);
   };
 
   public onNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {

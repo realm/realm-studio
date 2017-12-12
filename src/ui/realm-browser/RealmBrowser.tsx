@@ -52,7 +52,7 @@ export interface IRealmBrowserProps {
   schemas: Realm.ObjectSchema[];
   selectObject?: ISelectObjectState;
   updateObjectReference: (object: any) => void;
-  onAddSchema: (name: string) => void;
+  onAddClass: (name: string) => void;
   isAddClassOpen: boolean;
   toggleAddSchema: () => void;
   isClassNameAvailable: (name: string) => boolean;
@@ -88,7 +88,7 @@ export const RealmBrowser = ({
   schemas,
   selectObject,
   updateObjectReference,
-  onAddSchema,
+  onAddClass,
   isAddClassOpen,
   toggleAddSchema,
   isClassNameAvailable,
@@ -144,7 +144,7 @@ export const RealmBrowser = ({
       <AddClassModal
         isOpen={isAddClassOpen}
         isClassNameAvailable={isClassNameAvailable}
-        onAddSchema={onAddSchema}
+        onAddClass={onAddClass}
         toggle={toggleAddSchema}
       />
 
