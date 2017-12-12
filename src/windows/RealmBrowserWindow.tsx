@@ -13,7 +13,13 @@ export class RealmBrowserWindow extends Window<
   {}
 > {
   public render() {
-    return <RealmBrowserContainer {...this.props.options} />;
+    return (
+      <RealmBrowserContainer
+        addMenuGenerator={this.addMenuGenerator}
+        removeMenuGenerator={this.removeMenuGenerator}
+        {...this.props.options}
+      />
+    );
   }
 
   public getTrackedProperties() {
