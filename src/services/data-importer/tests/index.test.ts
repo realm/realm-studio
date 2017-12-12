@@ -1,9 +1,9 @@
 import * as assert from 'assert';
 import fs = require('fs-extra');
 import { ObjectSchemaProperty } from 'realm';
-import CSVDataImporter from '../csv/CSVDataImporter';
+import { CSVDataImporter } from '../csv/CSVDataImporter';
 import ImportSchemaGenerator from '../ImportSchemaGenerator';
-import { ImportSchemaFormat } from '../index';
+import { ImportFormat } from '../index';
 import Util from '../Util';
 
 const TESTS_PATH = './src/services/data-importer/tests';
@@ -43,10 +43,7 @@ describe('Import CSV tests', () => {
   it('Generates a valid Cat schema', () => {
     const files: string[] = [`${TESTS_PATH}/csv/Cat.csv`];
 
-    const schemaGenerator = new ImportSchemaGenerator(
-      ImportSchemaFormat.CSV,
-      files,
-    );
+    const schemaGenerator = new ImportSchemaGenerator(ImportFormat.CSV, files);
     const schema = schemaGenerator.generate();
 
     assert.equal(schema.length, 1, 'Expected to parse one schema (Cat)');
@@ -74,7 +71,7 @@ describe('Import CSV tests', () => {
       const files: string[] = [`${TESTS_PATH}/csv/Cat.csv`];
 
       const schemaGenerator = new ImportSchemaGenerator(
-        ImportSchemaFormat.CSV,
+        ImportFormat.CSV,
         files,
       );
       const schema = schemaGenerator.generate();
@@ -160,7 +157,7 @@ describe('Import CSV tests', () => {
       const files: string[] = [`${TESTS_PATH}/csv/Cat.csv`];
 
       const schemaGenerator = new ImportSchemaGenerator(
-        ImportSchemaFormat.CSV,
+        ImportFormat.CSV,
         files,
       );
       const schema = schemaGenerator.generate();
@@ -199,7 +196,7 @@ describe('Import CSV tests', () => {
       const files: string[] = [`${TESTS_PATH}/csv/invalid_second_line.csv`];
 
       const schemaGenerator = new ImportSchemaGenerator(
-        ImportSchemaFormat.CSV,
+        ImportFormat.CSV,
         files,
       );
       const schema = schemaGenerator.generate();
@@ -215,7 +212,7 @@ describe('Import CSV tests', () => {
       ];
 
       const schemaGenerator = new ImportSchemaGenerator(
-        ImportSchemaFormat.CSV,
+        ImportFormat.CSV,
         files,
       );
       const schema = schemaGenerator.generate();
@@ -233,7 +230,7 @@ describe('Import CSV tests', () => {
       const files: string[] = [`${TESTS_PATH}/csv/optional.csv`];
 
       const schemaGenerator = new ImportSchemaGenerator(
-        ImportSchemaFormat.CSV,
+        ImportFormat.CSV,
         files,
       );
       const schema = schemaGenerator.generate();
@@ -257,7 +254,7 @@ describe('Import CSV tests', () => {
       const files: string[] = [`${TESTS_PATH}/csv/inspections.csv`];
 
       const schemaGenerator = new ImportSchemaGenerator(
-        ImportSchemaFormat.CSV,
+        ImportFormat.CSV,
         files,
       );
       const schema = schemaGenerator.generate();
@@ -273,7 +270,7 @@ describe('Import CSV tests', () => {
       const files: string[] = [`${TESTS_PATH}/csv/Dog.csv`];
 
       const schemaGenerator = new ImportSchemaGenerator(
-        ImportSchemaFormat.CSV,
+        ImportFormat.CSV,
         files,
       );
       const schema = schemaGenerator.generate();
@@ -316,7 +313,7 @@ describe('Import CSV tests', () => {
       const files: string[] = [`${TESTS_PATH}/csv/Cat.csv`];
 
       const schemaGenerator = new ImportSchemaGenerator(
-        ImportSchemaFormat.CSV,
+        ImportFormat.CSV,
         files,
       );
       const schema = schemaGenerator.generate();

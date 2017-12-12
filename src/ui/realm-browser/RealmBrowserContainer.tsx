@@ -1,18 +1,16 @@
 import * as assert from 'assert';
-import { ipcRenderer, remote } from 'electron';
+import { ipcRenderer, MenuItemConstructorOptions, remote } from 'electron';
 import * as path from 'path';
 import * as React from 'react';
 import * as Realm from 'realm';
 import * as util from 'util';
 
 import { IPropertyWithName, ISelectObjectState } from '.';
-import {
-  IExportSchemaOptions,
-  IInsertIntoSchemaOptions,
-} from '../../main/MainMenu';
-import CSVDataImporter from '../../services/data-importer/csv/CSVDataImporter';
-import ImportSchemaGenerator from '../../services/data-importer/ImportSchemaGenerator';
 import { Language, SchemaExporter } from '../../services/schema-export';
+import {
+  IMenuGenerator,
+  IMenuGeneratorProps,
+} from '../../windows/MenuGenerator';
 import { IRealmBrowserOptions } from '../../windows/WindowType';
 import { showError } from '../reusable/errors';
 import {
@@ -30,6 +28,9 @@ import {
   SortStartHandler,
 } from './table';
 
+import { ImportFormat } from '../../services/data-importer';
+import { CSVDataImporter } from '../../services/data-importer/csv/CSVDataImporter';
+import ImportSchemaGenerator from '../../services/data-importer/ImportSchemaGenerator';
 import { RealmBrowser } from './RealmBrowser';
 
 export interface IRealmBrowserState extends IRealmLoadingComponentState {
@@ -51,9 +52,9 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
 }
 
 export class RealmBrowserContainer extends RealmLoadingComponent<
-  IRealmBrowserOptions,
+  IRealmBrowserOptions & IMenuGeneratorProps,
   IRealmBrowserState
-> {
+> implements IMenuGenerator {
   private clickTimeout?: any;
 
   constructor() {
@@ -68,19 +69,85 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     };
   }
 
+  public componentWillMount() {
+    this.props.addMenuGenerator(this);
+  }
+
   public componentDidMount() {
     this.loadRealm(this.props.realm);
-    ipcRenderer.addListener('export-schema', this.onExportSchema);
-    ipcRenderer.addListener('insert-into-schema', this.onInsertIntoSchema);
   }
 
   public componentWillUnmount() {
-    ipcRenderer.removeListener('export-schema', this.onExportSchema);
-    ipcRenderer.removeListener('insert-into-schema', this.onInsertIntoSchema);
+    this.props.removeMenuGenerator(this);
   }
 
   public render() {
     return <RealmBrowser {...this.state} {...this} />;
+  }
+
+  public generateMenu(template: MenuItemConstructorOptions[]) {
+    const importMenu = {
+      label: 'Import data from',
+      submenu: [
+        {
+          label: 'CSV',
+          click: () => this.onImportIntoExistingRealm(),
+        },
+      ],
+    };
+
+    const separator: MenuItemConstructorOptions = {
+      type: 'separator',
+    };
+
+    const exportMenu = {
+      label: 'Save model definitions',
+      submenu: [
+        {
+          label: 'Swift',
+          click: () => this.onExportSchema(Language.Swift),
+        },
+        {
+          label: 'JavaScript',
+          click: () => this.onExportSchema(Language.JS),
+        },
+        {
+          label: 'Java',
+          click: () => this.onExportSchema(Language.Java),
+        },
+        {
+          label: 'Kotlin',
+          click: () => this.onExportSchema(Language.Kotlin),
+        },
+        {
+          label: 'C#',
+          click: () => this.onExportSchema(Language.CS),
+        },
+      ],
+    };
+
+    return template.map(menu => {
+      if (menu.id === 'file' && Array.isArray(menu.submenu)) {
+        const closeIndex = menu.submenu.findIndex(item => item.id === 'close');
+        if (closeIndex) {
+          const submenu = [
+            ...menu.submenu.slice(0, closeIndex),
+            exportMenu,
+            importMenu,
+            separator,
+            ...menu.submenu.slice(closeIndex),
+          ];
+          return {
+            ...menu,
+            submenu,
+          };
+        } else {
+          return menu;
+        }
+      } else {
+        return menu;
+      }
+    });
   }
 
   public onCellChange: CellChangeHandler = params => {
@@ -468,10 +535,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     }
   }
 
-  private onExportSchema = (
-    event: any,
-    { language }: IExportSchemaOptions,
-  ): void => {
+  private onExportSchema = (language: Language): void => {
     const basename = path.basename(this.props.realm.path, '.realm');
     remote.dialog.showSaveDialog(
       {
@@ -488,18 +552,28 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     );
   };
 
-  private onInsertIntoSchema = (
-    event: any,
-    { format, selectedPaths }: IInsertIntoSchemaOptions,
-  ): void => {
-    const schemaGenerator = new ImportSchemaGenerator(format, selectedPaths);
-    const schema = schemaGenerator.generate();
-    const importer = new CSVDataImporter(selectedPaths, schema);
-    try {
-      importer.importInto(this.realm);
-    } catch (e) {
-      const { dialog } = require('electron').remote;
-      dialog.showErrorBox('Inserting CSV data failed', e.message);
-    }
+  private onImportIntoExistingRealm = () => {
+    remote.dialog.showOpenDialog(
+      {
+        properties: ['openFile', 'multiSelections'],
+        filters: [{ name: 'CSV File(s)', extensions: ['csv', 'CSV'] }],
+      },
+      selectedPaths => {
+        if (selectedPaths) {
+          const schemaGenerator = new ImportSchemaGenerator(
+            ImportFormat.CSV,
+            selectedPaths,
+          );
+          const schema = schemaGenerator.generate();
+          const importer = new CSVDataImporter(selectedPaths, schema);
+          try {
+            importer.importInto(this.realm);
+          } catch (e) {
+            const { dialog } = require('electron').remote;
+            dialog.showErrorBox('Inserting CSV data failed', e.message);
+          }
+        }
+      },
+    );
   };
 }
