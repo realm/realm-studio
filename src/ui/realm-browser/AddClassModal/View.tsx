@@ -82,18 +82,6 @@ export const View = ({
                 <Input
                   type="radio"
                   name="primaryKey"
-                  value={PRIMARY_KEY_OPTIONS.auto.key}
-                  checked={primaryKey === PRIMARY_KEY_OPTIONS.auto.key}
-                  onChange={onPKChange}
-                />
-                <span>{PRIMARY_KEY_OPTIONS.auto.label}</span>
-              </Label>
-            </FormGroup>
-            <FormGroup check>
-              <Label check>
-                <Input
-                  type="radio"
-                  name="primaryKey"
                   value={PRIMARY_KEY_OPTIONS.custom.key}
                   checked={primaryKey === PRIMARY_KEY_OPTIONS.custom.key}
                   onChange={onPKChange}
@@ -109,9 +97,9 @@ export const View = ({
                 <FormGroup>
                   <Label for="primaryKeyName">Name</Label>
                   <Input
+                    placeholder="uuid"
                     name="primaryKeyName"
                     type="text"
-                    required={true}
                     value={primaryKeyName}
                     onChange={onPKNameChange}
                   />

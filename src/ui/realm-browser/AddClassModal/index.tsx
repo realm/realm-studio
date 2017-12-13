@@ -7,10 +7,6 @@ export const PRIMARY_KEY_OPTIONS = {
     key: 'none',
     label: 'None',
   },
-  auto: {
-    key: 'auto',
-    label: 'Default',
-  },
   custom: {
     key: 'custom',
     label: 'Customized',
@@ -37,17 +33,7 @@ const initialState = {
   nameIsValid: true,
   primaryKey: PRIMARY_KEY_OPTIONS.none.key,
   primaryKeyName: '',
-  primaryKeyType: 'int',
-};
-
-const customPK = {
-  primaryKeyName: '',
-  primaryKeyType: 'int',
-};
-
-const autoPK = {
-  primaryKeyName: 'UUID',
-  primaryKeyType: 'int',
+  primaryKeyType: 'string',
 };
 
 export class AddClassModal extends React.Component<
@@ -81,13 +67,8 @@ export class AddClassModal extends React.Component<
   };
 
   public onPKChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const isAuto = e.target.value === PRIMARY_KEY_OPTIONS.auto.key;
-    const isCustom = e.target.value === PRIMARY_KEY_OPTIONS.custom.key;
-
     this.setState({
       primaryKey: e.target.value,
-      ...isAuto ? autoPK : {},
-      ...isCustom ? customPK : {},
     });
   };
 
@@ -103,8 +84,14 @@ export class AddClassModal extends React.Component<
     });
   };
 
+  private preparePrimaryKeyName = (primaryKeyName: string) =>
+    primaryKeyName === '' ? 'uuid' : primaryKeyName;
+
   private getSchema = (): Realm.ObjectSchema => {
-    const { name, primaryKey, primaryKeyType, primaryKeyName } = this.state;
+    const { name, primaryKey, primaryKeyType } = this.state;
+    const primaryKeyName = this.preparePrimaryKeyName(
+      this.state.primaryKeyName,
+    );
     const hasPrimaryKey = primaryKey !== PRIMARY_KEY_OPTIONS.none.key;
 
     return {
