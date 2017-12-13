@@ -4,7 +4,7 @@ import { View } from './View';
 
 export interface IAddClassModalProps {
   isOpen: boolean;
-  onAddClass: (name: string) => void;
+  onAddClass: (schema: Realm.ObjectSchema) => void;
   toggle: () => void;
   isClassNameAvailable: (name: string) => boolean;
 }
@@ -12,7 +12,18 @@ export interface IAddClassModalProps {
 export interface IAddClassModalState {
   name: string;
   nameIsValid: boolean;
+  primaryKey: boolean;
+  primaryKeyName: string;
+  primaryKeyType: string;
 }
+
+const initialState = {
+  name: '',
+  nameIsValid: true,
+  primaryKey: false,
+  primaryKeyName: '',
+  primaryKeyType: 'string',
+};
 
 export class AddClassModal extends React.Component<
   IAddClassModalProps,
@@ -21,8 +32,7 @@ export class AddClassModal extends React.Component<
   public constructor() {
     super();
     this.state = {
-      name: '',
-      nameIsValid: true,
+      ...initialState,
     };
   }
 
@@ -32,12 +42,9 @@ export class AddClassModal extends React.Component<
 
   public onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { name } = this.state;
-    this.setState({
-      name: '',
-    });
+    this.props.onAddClass(this.getSchema());
     this.props.toggle();
-    this.props.onAddClass(name);
+    this.setState(initialState);
   };
 
   public onNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,5 +53,41 @@ export class AddClassModal extends React.Component<
       name: newNameValue,
       nameIsValid: this.props.isClassNameAvailable(newNameValue),
     });
+  };
+
+  public onPKChange = () => {
+    this.setState({
+      primaryKey: !this.state.primaryKey,
+    });
+  };
+
+  public onPKNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({
+      primaryKeyName: e.target.value,
+    });
+  };
+
+  public onPKTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({
+      primaryKeyType: e.target.value,
+    });
+  };
+
+  private preparePrimaryKeyName = (primaryKeyName: string) =>
+    primaryKeyName === '' ? 'uuid' : primaryKeyName;
+
+  private getSchema = (): Realm.ObjectSchema => {
+    const { name, primaryKey, primaryKeyType } = this.state;
+    const primaryKeyName = this.preparePrimaryKeyName(
+      this.state.primaryKeyName,
+    );
+
+    return {
+      name,
+      ...primaryKey ? { primaryKey: primaryKeyName } : {},
+      properties: {
+        ...primaryKey ? { [primaryKeyName]: primaryKeyType } : {},
+      },
+    };
   };
 }

@@ -182,7 +182,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     });
   };
 
-  public onAddClass = async (name: string) => {
+  public onAddClass = async (schema: Realm.ObjectSchema) => {
     if (this.realm) {
       try {
         // The schema version needs to be bumped for local realms
@@ -194,13 +194,13 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         // Load it again with the new schema
         await this.loadRealm(
           this.props.realm,
-          [...this.state.schemas, { name, properties: {} }],
+          [...this.state.schemas, schema],
           nextSchemaVersion,
         );
         // Select the schema when it the realm has loaded
-        this.onClassSelected(name);
+        this.onClassSelected(schema.name);
       } catch (err) {
-        showError(`Failed creating the model "${name}"`, err);
+        showError(`Failed creating the model "${schema.name}"`, err);
       }
     }
   };
