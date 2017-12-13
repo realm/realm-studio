@@ -112,8 +112,8 @@ export const View = ({
                 onChange={onOptionalChange}
               />{' '}
               {isList
-                ? 'Optional (Make the values within the list optional)'
-                : 'Optional'}
+                ? 'Optional: Allow null values in the list'
+                : 'Optional: Allow a null value'}
             </Label>
           </FormGroup>
         </ModalBody>
