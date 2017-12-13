@@ -22,6 +22,17 @@ jobWrapper {
   stage('Publish & notify') {
     node('docker') {
       git = checkoutAtVersion()
+
+      // Unstash the artifacts from the builds
+      unstash name: 'macos-artifacts'
+      unstash name: 'other-artifacts'
+
+      // Unstash the node modules - as these are needed for the scripts checking the result
+      unstash name: 'docker-node-modules'
+
+      // Check the auto-updating for mismatching versions and referenced files
+      sh 'npm run check:auto-update-files'
+
       // Ask the user to confirm that we're publishing
       def packageJson = readJSON file: 'package.json'
       def inputUrl = "${env.BUILD_URL}/input"
@@ -32,12 +43,9 @@ jobWrapper {
         'color': 'warning',
         'unfurl_links': false
       ]])
+
       // Wait for input
       input(message: "Ready to publish v${packageJson.version}?", id: 'publish')
-
-      // Unstash the artifacts from the builds
-      unstash name: 'macos-artifacts'
-      unstash name: 'other-artifacts'
 
       // Upload the build artifacts to S3
       def s3Config = packageJson.build.publish[0]
@@ -107,6 +115,7 @@ def packageOthers() {
 
         archiveArtifacts 'dist/*'
         stash includes: 'dist/*', name: 'other-artifacts'
+        stash includes: 'node_modules/*', name: 'docker-node-modules'
       }
     }
   }
