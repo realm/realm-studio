@@ -95,6 +95,7 @@
     "generate-all-types-realm": "node ./scripts/generate-realm.js",
     "start": "electron .",
     "test:ci": "mocha-webpack --reporter mocha-junit-reporter",
+    "test:packaged": "mocha-webpack --opts mocha-webpack-packaged.opts",
     "test": "mocha-webpack",
     "tslint-prettier": "tslint --fix 'src/**/*.ts' 'src/**/*.tsx'",
     "wait-for-bundle": "node ./webpack.wait-for-bundle.js",
