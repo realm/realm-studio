@@ -19,7 +19,12 @@ export interface IAddPropertyModalState {
   isList: boolean;
   optional: boolean;
   nameIsValid: boolean;
-  typeOptions: string[];
+  typeOptions: ITypeOption[];
+}
+export interface ITypeOption {
+  value: string;
+  disabled: boolean;
+  show: boolean;
 }
 
 const initialState = {
@@ -34,18 +39,16 @@ export class AddPropertyModal extends React.Component<
   IAddPropertyModalProps,
   IAddPropertyModalState
 > {
-  public constructor() {
-    super();
+  public constructor(props: IAddPropertyModalProps) {
+    super(props);
     this.state = {
       ...initialState,
-      typeOptions: TYPES,
+      typeOptions: [],
     };
   }
 
   public componentWillReceiveProps(props: IAddPropertyModalProps) {
-    this.setState({
-      typeOptions: [...TYPES, ...this.getClassesTypes(props.schemas)],
-    });
+    this.generateTypeOptions();
   }
 
   public render() {
@@ -83,6 +86,38 @@ export class AddPropertyModal extends React.Component<
   public onIsListChange = () => {
     this.setState({
       isList: !this.state.isList,
+    });
+  };
+
+  private generateTypeOptions = () => {
+    const primitiveTypesHeader = {
+      value: 'Primitive Types',
+      disabled: true,
+      show: true,
+    };
+    const primitiveTypesOptions = TYPES.map(type => ({
+      value: type,
+      disabled: false,
+      show: true,
+    }));
+    const classes = this.getClassesTypes(this.props.schemas);
+    const classTypeHeader = {
+      value: 'Link Types',
+      disabled: true,
+      show: classes.length > 0,
+    };
+    const classTypesOptions = classes.map(type => ({
+      value: type,
+      disabled: false,
+      show: true,
+    }));
+    this.setState({
+      typeOptions: [
+        primitiveTypesHeader,
+        ...primitiveTypesOptions,
+        classTypeHeader,
+        ...classTypesOptions,
+      ],
     });
   };
 
