@@ -22,6 +22,7 @@ export interface ISyncedRealmToLoad extends IRealmToLoad {
 
 export interface ILocalRealmToLoad extends IRealmToLoad {
   mode: RealmLoadingMode.Local;
+  sync?: boolean;
 }
 
 export interface ISslConfiguration {
@@ -47,14 +48,12 @@ export const open = async (
   ssl: ISslConfiguration = { validateCertificates: true },
   progressCallback?: Realm.Sync.ProgressNotificationCallback,
   schema?: Realm.ObjectSchema[],
-  schemaVersion?: number,
 ): Promise<Realm> => {
   const url = getUrl(user, realmPath);
 
   const realm = Realm.open({
     encryptionKey,
     schema,
-    schemaVersion,
     sync: {
       url,
       user,

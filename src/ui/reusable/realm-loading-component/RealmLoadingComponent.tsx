@@ -42,6 +42,7 @@ export abstract class RealmLoadingComponent<
       // Deleting indicates we've closed it
       delete this.realm;
     }
+    this.closeRealm();
     this.cancelLoadingRealms();
   }
 
@@ -55,11 +56,10 @@ export abstract class RealmLoadingComponent<
     schema?: Realm.ObjectSchema[],
     schemaVersion?: number,
   ) {
-    // Remove any existing a change listeners
-    if (this.realm) {
-      this.realm.removeListener('change', this.onRealmChanged);
-    }
+    // Close the realm - if open
+    this.closeRealm();
 
+    // Should certificates get validated?
     const validateCertificates =
       realm.mode === 'synced' && realm.validateCertificates;
 
@@ -117,6 +117,15 @@ export abstract class RealmLoadingComponent<
     }
   }
 
+  protected closeRealm() {
+    // Remove any existing a change listeners
+    if (this.realm) {
+      this.realm.removeListener('change', this.onRealmChanged);
+      this.realm.close();
+      delete this.realm;
+    }
+  }
+
   protected loadingRealmFailed(err: Error) {
     showError('Failed open the Realm', err);
     const failure = err.message || 'Failed to open the Realm';
@@ -145,12 +154,33 @@ export abstract class RealmLoadingComponent<
     schemaVersion?: number,
   ): Promise<Realm> {
     if (realm && realm.mode === realms.RealmLoadingMode.Local) {
-      return new Realm({
-        path: realm.path,
-        encryptionKey: realm.encryptionKey,
-        schema,
-        schemaVersion,
-      });
+      try {
+        return new Realm({
+          path: realm.path,
+          encryptionKey: realm.encryptionKey,
+          sync: realm.sync as any,
+          schema,
+          schemaVersion,
+        });
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          error.message.includes(
+            'Incompatible histories. Expected a Realm with no or in-realm history',
+          ) &&
+          realm.sync !== true
+        ) {
+          // Try to open the Realm locally with a sync history mode.
+          return this.openRealm(
+            { ...realm, sync: true },
+            ssl,
+            schema,
+            schemaVersion,
+          );
+        }
+        // Other errors, propagate it.
+        throw error;
+      }
     } else if (realm && realm.mode === realms.RealmLoadingMode.Synced) {
       const props = (realm as any) as realms.ISyncedRealmToLoad;
       const user =
@@ -164,7 +194,6 @@ export abstract class RealmLoadingComponent<
         ssl,
         this.progressChanged,
         schema,
-        schemaVersion,
       );
       // Save a wrapping promise so this can be cancelled
       return new Promise<Realm>((resolve, reject) => {
