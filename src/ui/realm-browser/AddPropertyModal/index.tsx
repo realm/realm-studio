@@ -22,7 +22,6 @@ export interface IAddPropertyModalState {
   typeOptions: ITypeOption[];
 }
 export interface ITypeOption {
-  key: number;
   value: string;
   disabled: boolean;
   show: boolean;
@@ -91,37 +90,33 @@ export class AddPropertyModal extends React.Component<
   };
 
   private generateTypeOptions = () => {
-    const primitiveHeader = {
-      key: 0,
+    const primitiveTypesHeader = {
       value: 'Primitive types',
       disabled: true,
       show: true,
     };
-    const primitiveTypesOptions = TYPES.map((type, index) => ({
-      key: index + 1,
+    const primitiveTypesOptions = TYPES.map(type => ({
       value: type,
       disabled: false,
       show: true,
     }));
     const classes = this.getClassesTypes(this.props.schemas);
-    const classesHeader = {
-      key: primitiveTypesOptions.length + 1,
+    const classTypeHeader = {
       value: 'Class types',
       disabled: true,
       show: classes.length > 0,
     };
-    const classesTypesOptions = classes.map((type, index) => ({
-      key: primitiveTypesOptions.length + index + 2,
+    const classTypesOptions = classes.map(type => ({
       value: type,
       disabled: false,
       show: true,
     }));
     this.setState({
       typeOptions: [
-        primitiveHeader,
+        primitiveTypesHeader,
         ...primitiveTypesOptions,
-        classesHeader,
-        ...classesTypesOptions,
+        classTypeHeader,
+        ...classTypesOptions,
       ],
     });
   };

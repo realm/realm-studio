@@ -79,10 +79,10 @@ export const View = ({
               onChange={onTypeChange}
             >
               {typeOptions.map(
-                option =>
+                (option, index) =>
                   option.show && (
                     <option
-                      key={option.key}
+                      key={index}
                       value={option.value}
                       disabled={option.disabled}
                     >
