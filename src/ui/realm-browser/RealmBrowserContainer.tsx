@@ -29,6 +29,9 @@ import {
   SortStartHandler,
 } from './table';
 
+import { ImportFormat } from '../../services/data-importer';
+import { CSVDataImporter } from '../../services/data-importer/csv/CSVDataImporter';
+import ImportSchemaGenerator from '../../services/data-importer/ImportSchemaGenerator';
 import { RealmBrowser } from './RealmBrowser';
 
 export interface IRealmBrowserState extends IRealmLoadingComponentState {
@@ -88,6 +91,20 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   }
 
   public generateMenu(template: MenuItemConstructorOptions[]) {
+    const importMenu = {
+      label: 'Import data from',
+      submenu: [
+        {
+          label: 'CSV',
+          click: () => this.onImportIntoExistingRealm(),
+        },
+      ],
+    };
+
+    const separator: MenuItemConstructorOptions = {
+      type: 'separator',
+    };
+
     const exportMenu = {
       label: 'Save model definitions',
       submenu: [
@@ -116,14 +133,14 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
 
     return template.map(menu => {
       if (menu.id === 'file' && Array.isArray(menu.submenu)) {
-        const importIndex = menu.submenu.findIndex(
-          item => item.id === 'import',
-        );
-        if (importIndex) {
+        const closeIndex = menu.submenu.findIndex(item => item.id === 'close');
+        if (closeIndex) {
           const submenu = [
-            ...menu.submenu.slice(0, importIndex),
+            ...menu.submenu.slice(0, closeIndex),
             exportMenu,
-            ...menu.submenu.slice(importIndex),
+            importMenu,
+            separator,
+            ...menu.submenu.slice(closeIndex),
           ];
           return {
             ...menu,
@@ -640,6 +657,31 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
           const exporter = SchemaExporter(language);
           exporter.exportSchema(this.realm);
           exporter.writeFilesToDisk(selectedPath);
+        }
+      },
+    );
+  };
+
+  private onImportIntoExistingRealm = () => {
+    remote.dialog.showOpenDialog(
+      {
+        properties: ['openFile', 'multiSelections'],
+        filters: [{ name: 'CSV File(s)', extensions: ['csv', 'CSV'] }],
+      },
+      selectedPaths => {
+        if (selectedPaths) {
+          const schemaGenerator = new ImportSchemaGenerator(
+            ImportFormat.CSV,
+            selectedPaths,
+          );
+          const schema = schemaGenerator.generate();
+          const importer = new CSVDataImporter(selectedPaths, schema);
+          try {
+            importer.importInto(this.realm);
+          } catch (e) {
+            const { dialog } = require('electron').remote;
+            dialog.showErrorBox('Inserting CSV data failed', e.message);
+          }
         }
       },
     );

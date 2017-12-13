@@ -21,7 +21,7 @@ export const getDefaultMenuTemplate = (): electron.MenuItemConstructorOptions[] 
         },
         { type: 'separator' },
         {
-          label: 'Import from',
+          label: 'Create Realm from',
           id: 'import',
           submenu: [
             {
@@ -33,7 +33,7 @@ export const getDefaultMenuTemplate = (): electron.MenuItemConstructorOptions[] 
           ],
         },
         { type: 'separator' },
-        { role: 'close' },
+        { role: 'close', id: 'close' },
       ],
     },
     {

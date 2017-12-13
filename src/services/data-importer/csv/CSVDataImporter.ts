@@ -7,8 +7,7 @@ import { DataImporter } from '../DataImporter';
 export class CSVDataImporter extends DataImporter {
   private static readonly NUMBER_OF_INSERTS_BEFORE_COMMIT = 10000;
 
-  public import(path: string): Realm {
-    const realm = this.createNewRealmFile(path);
+  public importInto(realm: Realm) {
     this.files.map((file, index) => {
       const schema = this.importSchema[index];
 
@@ -54,8 +53,6 @@ export class CSVDataImporter extends DataImporter {
             } catch (e) {
               // abort transaction and delete the Realm
               realm.cancelTransaction();
-              realm.close();
-              fsExtra.removeSync(realm.path);
               throw new Error(
                 `Parsing error at line ${lineIndex}, expected type "${schema
                   .properties[prop]}" but got "${row[
@@ -66,7 +63,15 @@ export class CSVDataImporter extends DataImporter {
           }
         }
 
-        realm.create(schema.name, object);
+        try {
+          realm.create(schema.name, object);
+        } catch (e) {
+          // This might throw, if the CSV violate the current Realm constraints (ex: nullability or primary key)
+          // or generally if the CSV schema is not compatible with the current Realm.
+          realm.cancelTransaction();
+          throw e;
+        }
+
         numberOfInsert++;
 
         // commit by batch to avoid creating multiple transactions.
@@ -81,7 +86,18 @@ export class CSVDataImporter extends DataImporter {
 
       realm.commitTransaction();
     });
+  }
 
+  public import(path: string): Realm {
+    const realm = this.createNewRealmFile(path);
+    try {
+      this.importInto(realm);
+    } catch (e) {
+      realm.close();
+      // in case of an error remove the created Realm
+      fsExtra.removeSync(realm.path);
+      throw e;
+    }
     return realm;
   }
 }
