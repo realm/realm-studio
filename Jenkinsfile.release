@@ -115,7 +115,7 @@ def packageOthers() {
 
         archiveArtifacts 'dist/*'
         stash includes: 'dist/*', name: 'other-artifacts'
-        stash includes: 'node_modules/*', name: 'docker-node-modules'
+        stash includes: 'node_modules/**', name: 'docker-node-modules'
       }
     }
   }
