@@ -31,7 +31,7 @@ export const PermissionsTable = ({
       ) : (
         permissions.map((permission, index) => (
           <tr key={index}>
-            <td>{displayUser(permission.user)}</td>
+            <td>{displayUser(permission.user, 'public')}</td>
             <td>
               <PermissionsBadge
                 isVisible={permission.mayRead}
