@@ -52,7 +52,7 @@ export interface IRealmBrowserProps {
   schemas: Realm.ObjectSchema[];
   selectObject?: ISelectObjectState;
   updateObjectReference: (object: any) => void;
-  onAddClass: (name: string) => void;
+  onAddClass: (schema: Realm.ObjectSchema) => void;
   isAddClassOpen: boolean;
   toggleAddSchema: () => void;
   isClassNameAvailable: (name: string) => boolean;

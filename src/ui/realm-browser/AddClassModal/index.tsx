@@ -2,9 +2,24 @@ import * as React from 'react';
 
 import { View } from './View';
 
+export const PRIMARY_KEY_OPTIONS = {
+  none: {
+    key: 'none',
+    label: 'None',
+  },
+  auto: {
+    key: 'auto',
+    label: 'Default',
+  },
+  custom: {
+    key: 'custom',
+    label: 'Customized',
+  },
+};
+
 export interface IAddClassModalProps {
   isOpen: boolean;
-  onAddClass: (name: string) => void;
+  onAddClass: (schema: Realm.ObjectSchema) => void;
   toggle: () => void;
   isClassNameAvailable: (name: string) => boolean;
 }
@@ -12,7 +27,28 @@ export interface IAddClassModalProps {
 export interface IAddClassModalState {
   name: string;
   nameIsValid: boolean;
+  primaryKey: string;
+  primaryKeyName: string;
+  primaryKeyType: string;
 }
+
+const initialState = {
+  name: '',
+  nameIsValid: true,
+  primaryKey: PRIMARY_KEY_OPTIONS.none.key,
+  primaryKeyName: '',
+  primaryKeyType: 'int',
+};
+
+const customPK = {
+  primaryKeyName: '',
+  primaryKeyType: 'int',
+};
+
+const autoPK = {
+  primaryKeyName: 'UUID',
+  primaryKeyType: 'int',
+};
 
 export class AddClassModal extends React.Component<
   IAddClassModalProps,
@@ -21,8 +57,7 @@ export class AddClassModal extends React.Component<
   public constructor() {
     super();
     this.state = {
-      name: '',
-      nameIsValid: true,
+      ...initialState,
     };
   }
 
@@ -32,12 +67,9 @@ export class AddClassModal extends React.Component<
 
   public onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { name } = this.state;
-    this.setState({
-      name: '',
-    });
+    this.props.onAddClass(this.getSchema());
     this.props.toggle();
-    this.props.onAddClass(name);
+    this.setState(initialState);
   };
 
   public onNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,5 +78,41 @@ export class AddClassModal extends React.Component<
       name: newNameValue,
       nameIsValid: this.props.isClassNameAvailable(newNameValue),
     });
+  };
+
+  public onPKChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const isAuto = e.target.value === PRIMARY_KEY_OPTIONS.auto.key;
+    const isCustom = e.target.value === PRIMARY_KEY_OPTIONS.custom.key;
+
+    this.setState({
+      primaryKey: e.target.value,
+      ...isAuto ? autoPK : {},
+      ...isCustom ? customPK : {},
+    });
+  };
+
+  public onPKNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({
+      primaryKeyName: e.target.value,
+    });
+  };
+
+  public onPKTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({
+      primaryKeyType: e.target.value,
+    });
+  };
+
+  private getSchema = (): Realm.ObjectSchema => {
+    const { name, primaryKey, primaryKeyType, primaryKeyName } = this.state;
+    const hasPrimaryKey = primaryKey !== PRIMARY_KEY_OPTIONS.none.key;
+
+    return {
+      name,
+      ...hasPrimaryKey ? { primaryKey: primaryKeyName } : {},
+      properties: {
+        ...hasPrimaryKey ? { [primaryKeyName]: primaryKeyType } : {},
+      },
+    };
   };
 }
