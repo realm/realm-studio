@@ -27,12 +27,6 @@ jobWrapper {
       unstash name: 'macos-artifacts'
       unstash name: 'other-artifacts'
 
-      // Unstash the node modules - as these are needed for the scripts checking the result
-      unstash name: 'docker-node-modules'
-
-      // Check the auto-updating for mismatching versions and referenced files
-      sh 'npm run check:auto-update-files'
-
       // Ask the user to confirm that we're publishing
       def packageJson = readJSON file: 'package.json'
       def inputUrl = "${env.BUILD_URL}/input"
@@ -112,10 +106,12 @@ def packageOthers() {
           // Build the package: Never publishing and failing if missing code signing
           sh 'node_modules/.bin/electron-builder -c.forceCodeSigning --linux --windows --publish never'
         }
+        
+        // Check the auto-updating for versions and referenced files
+        sh 'npm run check:auto-update-files'
 
         archiveArtifacts 'dist/*'
         stash includes: 'dist/*', name: 'other-artifacts'
-        stash includes: 'node_modules/**', name: 'docker-node-modules'
       }
     }
   }
@@ -137,6 +133,9 @@ def packageOnMacos() {
 
         // Build the package: Never publishing and failing if missing code signing
         sh 'node_modules/.bin/electron-builder -c.forceCodeSigning --publish never'
+        
+        // Check the auto-updating for versions and referenced files
+        sh './scripts/via-nvm.sh npm run check:auto-update-files'
 
         // TODO: Run a post-package test, to see if the packaged app boots
 
