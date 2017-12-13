@@ -91,7 +91,7 @@ export class AddPropertyModal extends React.Component<
 
   private generateTypeOptions = () => {
     const primitiveTypesHeader = {
-      value: 'Primitive types',
+      value: 'Primitive Types',
       disabled: true,
       show: true,
     };
@@ -102,7 +102,7 @@ export class AddPropertyModal extends React.Component<
     }));
     const classes = this.getClassesTypes(this.props.schemas);
     const classTypeHeader = {
-      value: 'Class types',
+      value: 'Link Types',
       disabled: true,
       show: classes.length > 0,
     };
