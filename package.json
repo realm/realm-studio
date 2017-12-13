@@ -73,10 +73,6 @@
         "bucket": "static.realm.io",
         "region": "us-east-1",
         "path": "downloads/realm-studio"
-      },
-      {
-        "provider": "github",
-        "private": true
       }
     ]
   },
