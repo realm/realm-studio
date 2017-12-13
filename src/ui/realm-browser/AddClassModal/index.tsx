@@ -2,17 +2,6 @@ import * as React from 'react';
 
 import { View } from './View';
 
-export const PRIMARY_KEY_OPTIONS = {
-  none: {
-    key: 'none',
-    label: 'None',
-  },
-  custom: {
-    key: 'custom',
-    label: 'Customized',
-  },
-};
-
 export interface IAddClassModalProps {
   isOpen: boolean;
   onAddClass: (schema: Realm.ObjectSchema) => void;
@@ -23,7 +12,7 @@ export interface IAddClassModalProps {
 export interface IAddClassModalState {
   name: string;
   nameIsValid: boolean;
-  primaryKey: string;
+  primaryKey: boolean;
   primaryKeyName: string;
   primaryKeyType: string;
 }
@@ -31,7 +20,7 @@ export interface IAddClassModalState {
 const initialState = {
   name: '',
   nameIsValid: true,
-  primaryKey: PRIMARY_KEY_OPTIONS.none.key,
+  primaryKey: false,
   primaryKeyName: '',
   primaryKeyType: 'string',
 };
@@ -66,9 +55,9 @@ export class AddClassModal extends React.Component<
     });
   };
 
-  public onPKChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  public onPKChange = () => {
     this.setState({
-      primaryKey: e.target.value,
+      primaryKey: !this.state.primaryKey,
     });
   };
 
@@ -92,13 +81,12 @@ export class AddClassModal extends React.Component<
     const primaryKeyName = this.preparePrimaryKeyName(
       this.state.primaryKeyName,
     );
-    const hasPrimaryKey = primaryKey !== PRIMARY_KEY_OPTIONS.none.key;
 
     return {
       name,
-      ...hasPrimaryKey ? { primaryKey: primaryKeyName } : {},
+      ...primaryKey ? { primaryKey: primaryKeyName } : {},
       properties: {
-        ...hasPrimaryKey ? { [primaryKeyName]: primaryKeyType } : {},
+        ...primaryKey ? { [primaryKeyName]: primaryKeyType } : {},
       },
     };
   };
