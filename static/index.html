@@ -32,7 +32,8 @@
     if (rendererBundlePath) {
       require(rendererBundlePath);
     } else {
-      document.write('Failed to resolve renderer bundle');
+      const paths = '"' + candidatePaths.join('", "') + '"';
+      document.write('Failed to resolve renderer bundle, tried:', paths);
     }
     </script>
   </body>
