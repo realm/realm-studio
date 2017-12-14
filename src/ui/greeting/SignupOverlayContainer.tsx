@@ -19,10 +19,16 @@ export class SignupOverlayContainer extends React.Component<
     const hasSignedUp =
       mixpanel.get_property('has_signed_up') ||
       localStorage.getItem(HAS_SIGNED_UP_STORAGE_KEY) === 'true';
+    // Determine if the process was started with --skip-signup
+    const processArguments = electron.remote.process.argv;
+    const skipSignup =
+      Array.isArray(processArguments) &&
+      processArguments.indexOf('--skip-signup') >= 0;
+    // Set the initial state
     this.state = {
       email: '',
       newsletter: false,
-      isVisible: !hasSignedUp,
+      isVisible: !hasSignedUp && !skipSignup,
     };
   }
 
