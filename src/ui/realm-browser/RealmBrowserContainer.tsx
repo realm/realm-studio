@@ -11,7 +11,7 @@ import {
   IMenuGenerator,
   IMenuGeneratorProps,
 } from '../../windows/MenuGenerator';
-import { IRealmBrowserOptions } from '../../windows/WindowType';
+import { IRealmBrowserWindowProps } from '../../windows/WindowType';
 import { showError } from '../reusable/errors';
 import {
   IRealmLoadingComponentState,
@@ -55,7 +55,7 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
 }
 
 export class RealmBrowserContainer extends RealmLoadingComponent<
-  IRealmBrowserOptions & IMenuGeneratorProps,
+  IRealmBrowserWindowProps & IMenuGeneratorProps,
   IRealmBrowserState
 > implements IMenuGenerator {
   private clickTimeout?: any;

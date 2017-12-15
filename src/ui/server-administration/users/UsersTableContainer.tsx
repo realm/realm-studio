@@ -14,6 +14,7 @@ import { UsersTable } from './UsersTable';
 
 export interface IUsersTableContainerProps {
   user: Realm.Sync.User;
+  validateCertificates: boolean;
 }
 
 export interface IUsersTableContainerState extends IRealmLoadingComponentState {
@@ -203,7 +204,7 @@ export class UsersTableContainer extends RealmLoadingComponent<
         authentication: this.props.user,
         mode: ros.realms.RealmLoadingMode.Synced,
         path: '__admin',
-        validateCertificates: true,
+        validateCertificates: this.props.validateCertificates,
       });
     } catch (err) {
       showError('Failed to open the __admin Realm', err);
