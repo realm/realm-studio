@@ -31,13 +31,12 @@ const rowHeights = {
 export interface ITableProps {
   columnWidths: number[];
   dataVersion?: number;
-  editMode?: EditMode;
+  editMode: EditMode;
   filteredSortedResults: Realm.Collection<any>;
   focus: IFocus;
   getCellValue: (object: any, props: GridCellProps) => string;
   gridContentRef: (grid: Grid) => void;
   gridHeaderRef: (grid: Grid) => void;
-  hasEditingDisabled?: boolean;
   highlight?: IHighlight;
   isSorting: boolean;
   onAddColumnClick?: () => void;
@@ -55,14 +54,13 @@ export interface ITableProps {
 
 export const Table = ({
   columnWidths,
-  editMode,
   dataVersion,
+  editMode,
   filteredSortedResults,
   focus,
   getCellValue,
   gridContentRef,
   gridHeaderRef,
-  hasEditingDisabled,
   highlight,
   isSorting,
   onAddColumnClick,
@@ -120,7 +118,6 @@ export const Table = ({
         filteredSortedResults={filteredSortedResults}
         getCellValue={getCellValue}
         gridRef={gridContentRef}
-        hasEditingDisabled={hasEditingDisabled}
         height={height - rowHeights.header}
         highlight={highlight}
         isSortable={focus.kind === 'list' && !sorting}

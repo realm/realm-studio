@@ -35,13 +35,13 @@ const SortableGrid = SortableContainer<GridProps>(Grid as any, {
 });
 
 export interface IContentGridProps extends Partial<GridProps> {
+  columnCount: number;
   columnWidths: number[];
   dataVersion?: number;
-  editMode?: EditMode;
+  editMode: EditMode;
   filteredSortedResults: Realm.Collection<any>;
   getCellValue: (object: any, props: GridCellProps) => string;
   gridRef: (ref: React.ReactNode) => void;
-  hasEditingDisabled?: boolean;
   height: number;
   highlight?: IHighlight;
   isSortable?: boolean;
@@ -54,7 +54,6 @@ export interface IContentGridProps extends Partial<GridProps> {
   properties: IPropertyWithName[];
   rowHeight: number;
   width: number;
-  columnCount: number;
 }
 
 export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
@@ -148,9 +147,9 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
         return (cellProps: GridCellProps) => {
           const {
             columnWidths,
+            editMode,
             filteredSortedResults,
             getCellValue,
-            hasEditingDisabled,
             onCellChange,
             onCellClick,
             onContextMenu,
@@ -161,7 +160,6 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
 
           return (
             <Cell
-              hasEditingDisabled={hasEditingDisabled}
               editMode={editMode}
               key={cellProps.key}
               onCellClick={e => {

@@ -7,8 +7,7 @@ import { parse } from '../../parsers';
 import { StringCell } from './StringCell';
 
 export interface IStringCellContainerProps {
-  editMode?: EditMode;
-  hasEditingDisabled?: boolean;
+  editMode: EditMode;
   onUpdateValue: (value: any) => void;
   property: IPropertyWithName;
   value: string;
@@ -68,7 +67,10 @@ export class StringCellContainer extends React.Component<
 
   public onFocus = (): void => {
     // We can only edit cells that are not readOnly
-    if (!this.props.property.readOnly && !this.props.hasEditingDisabled) {
+    if (
+      !this.props.property.readOnly &&
+      this.props.editMode !== EditMode.Disabled
+    ) {
       this.setState({ isEditing: true });
     }
   };

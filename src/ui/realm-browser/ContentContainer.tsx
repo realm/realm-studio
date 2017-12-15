@@ -19,9 +19,9 @@ export interface IContentContainerProps {
   dataVersion?: number;
   editMode?: EditMode;
   focus: IFocus | null;
-  hasEditingDisabled?: boolean;
   highlight?: IHighlight;
   inTransaction?: boolean;
+  onAddColumnClick?: () => void;
   onCancelTransaction?: () => void;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
@@ -30,7 +30,6 @@ export interface IContentContainerProps {
   onSortEnd?: SortEndHandler;
   onSortStart?: SortStartHandler;
   progress?: ILoadingProgress;
-  onAddColumnClick?: () => void;
 }
 
 export interface IContentContainerState {
@@ -49,7 +48,14 @@ export class ContentContainer extends React.Component<
   }
 
   public render() {
-    return <Content {...this.state} {...this.props} {...this} />;
+    return (
+      <Content
+        editMode={this.props.editMode || EditMode.InputBlur}
+        {...this.state}
+        {...this.props}
+        {...this}
+      />
+    );
   }
 
   public onQueryChange = (query: string) => {

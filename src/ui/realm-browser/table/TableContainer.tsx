@@ -23,17 +23,16 @@ const MINIMUM_COLUMN_WIDTH = 20;
 
 export interface IBaseTableContainerProps {
   dataVersion?: number;
-  editMode?: EditMode;
+  editMode: EditMode;
   focus: IFocus;
-  hasEditingDisabled?: boolean;
   highlight?: IHighlight;
+  onAddColumnClick?: () => void;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
   onContextMenu?: CellContextMenuHandler;
   onSortEnd?: SortEndHandler;
   onSortStart?: SortStartHandler;
   query: string;
-  onAddColumnClick?: () => void;
 }
 
 export interface ITableContainerProps extends IBaseTableContainerProps {
@@ -78,7 +77,6 @@ export class TableContainer extends React.PureComponent<
         getCellValue={this.getCellValue}
         gridContentRef={this.gridContentRef}
         gridHeaderRef={this.gridHeaderRef}
-        hasEditingDisabled={this.props.hasEditingDisabled}
         highlight={this.props.highlight}
         isSorting={this.state.isSorting}
         onAddColumnClick={this.props.onAddColumnClick}

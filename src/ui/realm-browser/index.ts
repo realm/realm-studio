@@ -14,8 +14,9 @@ export interface ISelectObjectState {
 }
 
 export enum EditMode {
-  KeyPress = 'key-press',
+  Disabled = 'disabled',
   InputBlur = 'input-blur',
+  KeyPress = 'key-press',
 }
 
 export type CreateObjectHandler = (className: string, values: {}) => void;

@@ -20,9 +20,9 @@ export const Content = ({
   dataVersion,
   editMode,
   focus,
-  hasEditingDisabled,
   highlight,
   inTransaction,
+  onAddColumnClick,
   onCancelTransaction,
   onCellChange,
   onCellClick,
@@ -34,15 +34,14 @@ export const Content = ({
   onSortStart,
   progress,
   query,
-  onAddColumnClick,
 }: {
   changeCount?: number;
   dataVersion?: number;
-  editMode?: EditMode;
+  editMode: EditMode;
   focus: IFocus | null;
-  hasEditingDisabled?: boolean;
   highlight?: IHighlight;
   inTransaction?: boolean;
+  onAddColumnClick?: () => void;
   onCancelTransaction?: () => void;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
@@ -54,7 +53,6 @@ export const Content = ({
   onSortStart?: SortStartHandler;
   progress?: ILoadingProgress;
   query: string;
-  onAddColumnClick?: () => void;
 }) => {
   if (focus) {
     return (
@@ -68,7 +66,6 @@ export const Content = ({
           dataVersion={dataVersion}
           editMode={editMode}
           focus={focus}
-          hasEditingDisabled={hasEditingDisabled}
           highlight={highlight}
           onCellChange={onCellChange}
           onCellClick={onCellClick}

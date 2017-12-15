@@ -24,7 +24,6 @@ import {
 import './RealmBrowser.scss';
 
 export interface IRealmBrowserProps {
-  toggleSelectObject: () => void;
   columnToHighlight?: number;
   confirmModal?: {
     yes: () => void;
@@ -39,31 +38,32 @@ export interface IRealmBrowserProps {
   getSchemaLength: (name: string) => number;
   highlight?: IHighlight;
   inTransaction: boolean;
+  isAddClassOpen: boolean;
+  isAddPropertyOpen: boolean;
+  isClassNameAvailable: (name: string) => boolean;
   isEncryptionDialogVisible: boolean;
+  isPropertyNameAvailable: (name: string) => boolean;
+  onAddClass: (schema: Realm.ObjectSchema) => void;
+  onAddProperty: (property: Realm.PropertiesTypes) => void;
   onCancelTransaction: () => void;
   onCellChange: CellChangeHandler;
   onCellClick: CellClickHandler;
+  onClassSelected: (name: string, objectToScroll: any) => void;
   onCommitTransaction: () => void;
   onContextMenu: CellContextMenuHandler;
   onCreateDialogToggle: () => void;
   onCreateObject: CreateObjectHandler;
   onHideEncryptionDialog: () => void;
   onOpenWithEncryption: (key: string) => void;
-  onClassSelected: (name: string, objectToScroll: any) => void;
   onSortEnd: SortEndHandler;
   onSortStart: SortStartHandler;
   progress: ILoadingProgress;
   schemas: Realm.ObjectSchema[];
   selectObject?: ISelectObjectState;
-  updateObjectReference: (object: any) => void;
-  onAddClass: (schema: Realm.ObjectSchema) => void;
-  isAddClassOpen: boolean;
   toggleAddSchema: () => void;
-  isClassNameAvailable: (name: string) => boolean;
-  onAddProperty: (property: Realm.PropertiesTypes) => void;
-  isAddPropertyOpen: boolean;
   toggleAddSchemaProperty: () => void;
-  isPropertyNameAvailable: (name: string) => boolean;
+  toggleSelectObject: () => void;
+  updateObjectReference: (object: any) => void;
 }
 
 export const RealmBrowser = ({

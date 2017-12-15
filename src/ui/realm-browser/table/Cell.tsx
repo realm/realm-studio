@@ -10,14 +10,12 @@ import { StringCellContainer } from './types/StringCellContainer';
 
 const getCellContent = ({
   editMode,
-  hasEditingDisabled,
   isScrolling,
   onUpdateValue,
   property,
   value,
 }: {
-  editMode?: EditMode;
-  hasEditingDisabled?: boolean;
+  editMode: EditMode;
   isScrolling?: boolean;
   onUpdateValue: (value: string) => void;
   property: IPropertyWithName;
@@ -37,7 +35,6 @@ const getCellContent = ({
       return (
         <StringCellContainer
           editMode={editMode}
-          hasEditingDisabled={hasEditingDisabled}
           onUpdateValue={onUpdateValue}
           property={property}
           value={value}
@@ -48,7 +45,6 @@ const getCellContent = ({
       return (
         <StringCellContainer
           editMode={editMode}
-          hasEditingDisabled={hasEditingDisabled}
           onUpdateValue={onUpdateValue}
           property={property}
           value={value !== null ? value.toISOString() : value}
@@ -70,7 +66,6 @@ const getCellContent = ({
 
 export const Cell = ({
   editMode,
-  hasEditingDisabled,
   isScrolling,
   onCellClick,
   onContextMenu,
@@ -80,8 +75,7 @@ export const Cell = ({
   value,
   width,
 }: {
-  editMode?: EditMode;
-  hasEditingDisabled?: boolean;
+  editMode: EditMode;
   isScrolling?: boolean;
   onCellClick: (e: React.MouseEvent<any>) => void;
   onContextMenu: (e: React.MouseEvent<any>) => void;
@@ -93,7 +87,6 @@ export const Cell = ({
 }) => {
   const content = getCellContent({
     editMode,
-    hasEditingDisabled,
     isScrolling,
     onUpdateValue,
     property,
