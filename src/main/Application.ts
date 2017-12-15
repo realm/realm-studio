@@ -8,8 +8,8 @@ import ImportSchemaGenerator from '../services/data-importer/ImportSchemaGenerat
 import { realms } from '../services/ros';
 
 import {
-  IRealmBrowserOptions,
-  IServerAdministrationOptions,
+  IRealmBrowserWindowProps,
+  IServerAdministrationWindowProps,
   WindowType,
 } from '../windows/WindowType';
 import { CertificateManager } from './CertificateManager';
@@ -43,13 +43,13 @@ export class Application {
     [MainActions.ShowOpenLocalRealm]: () => {
       return this.showOpenLocalRealm();
     },
-    [MainActions.ShowRealmBrowser]: (options: IRealmBrowserOptions) => {
-      return this.showRealmBrowser(options);
+    [MainActions.ShowRealmBrowser]: (props: IRealmBrowserWindowProps) => {
+      return this.showRealmBrowser(props);
     },
     [MainActions.ShowServerAdministration]: (
-      options: IServerAdministrationOptions,
+      props: IServerAdministrationWindowProps,
     ) => {
-      return this.showServerAdministration(options);
+      return this.showServerAdministration(props);
     },
   };
 
@@ -80,9 +80,9 @@ export class Application {
 
   public async showConnectToServer() {
     return new Promise(resolve => {
-      const window = this.windowManager.createWindow(
-        WindowType.ConnectToServer,
-      );
+      const window = this.windowManager.createWindow({
+        type: 'connect-to-server',
+      });
       window.show();
       window.webContents.once('did-finish-load', () => {
         resolve();
@@ -92,7 +92,9 @@ export class Application {
 
   public showGreeting() {
     return new Promise(resolve => {
-      const window = this.windowManager.createWindow(WindowType.Greeting);
+      const window = this.windowManager.createWindow({
+        type: 'greeting',
+      });
       // Show the window, the first time its ready-to-show
       window.once('ready-to-show', () => {
         window.show();
@@ -118,7 +120,8 @@ export class Application {
         selectedPaths => {
           if (selectedPaths) {
             selectedPaths.forEach(selectedPath => {
-              const options: IRealmBrowserOptions = {
+              const options: IRealmBrowserWindowProps = {
+                type: 'realm-browser',
                 realm: {
                   mode: realms.RealmLoadingMode.Local,
                   path: selectedPath,
@@ -155,25 +158,23 @@ export class Application {
             generatedRealm.close();
 
             // Open a RealmBrowser using the generated Realm file.
-            const options: IRealmBrowserOptions = {
+            const props: IRealmBrowserWindowProps = {
+              type: 'realm-browser',
               realm: {
                 mode: realms.RealmLoadingMode.Local,
                 path: generatedRealm.path,
               },
             };
-            this.showRealmBrowser(options).then(resolve, reject);
+            this.showRealmBrowser(props).then(resolve, reject);
           }
         },
       );
     });
   }
 
-  public showRealmBrowser(options: IRealmBrowserOptions) {
+  public showRealmBrowser(props: IRealmBrowserWindowProps) {
     return new Promise(resolve => {
-      const window = this.windowManager.createWindow(
-        WindowType.RealmBrowser,
-        options,
-      );
+      const window = this.windowManager.createWindow(props);
       window.show();
       window.webContents.once('did-finish-load', () => {
         resolve();
@@ -181,14 +182,11 @@ export class Application {
     });
   }
 
-  public showServerAdministration(options: IServerAdministrationOptions) {
+  public showServerAdministration(props: IServerAdministrationWindowProps) {
     return new Promise(resolve => {
       // TODO: Change this once the realm-js Realm.Sync.User serializes correctly
       // @see https://github.com/realm/realm-js/issues/1276
-      const window = this.windowManager.createWindow(
-        WindowType.ServerAdministration,
-        options,
-      );
+      const window = this.windowManager.createWindow(props);
       window.show();
       window.webContents.once('did-finish-load', () => {
         resolve();

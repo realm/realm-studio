@@ -1,8 +1,8 @@
 import { MainActions } from '../../main/MainActions';
 import { ImportFormat } from '../../services/data-importer';
 import {
-  IRealmBrowserOptions,
-  IServerAdministrationOptions,
+  IRealmBrowserWindowProps,
+  IServerAdministrationWindowProps,
 } from '../../windows/WindowType';
 import { ActionSender } from '../ActionSender';
 import { LoopbackTransport, RendererTransport } from '../transports';
@@ -37,11 +37,11 @@ export class Sender extends ActionSender {
     return this.send(MainActions.ShowImportData, format);
   }
 
-  public showRealmBrowser(options: IRealmBrowserOptions) {
-    return this.send(MainActions.ShowRealmBrowser, options);
+  public showRealmBrowser(props: IRealmBrowserWindowProps) {
+    return this.send(MainActions.ShowRealmBrowser, props);
   }
 
-  public showServerAdministration(options: IServerAdministrationOptions) {
-    return this.send(MainActions.ShowServerAdministration, options);
+  public showServerAdministration(props: IServerAdministrationWindowProps) {
+    return this.send(MainActions.ShowServerAdministration, props);
   }
 }
