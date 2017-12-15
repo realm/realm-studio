@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Table } from 'reactstrap';
 
 import * as ros from '../../../../services/ros';
-import '../../sidebar/SidebarTable.scss';
+import '../../shared/Sidebar/SidebarTable.scss';
 
 export const RealmsTable = ({ realms }: { realms: ros.IRealmFile[] }) => (
   <Table size="sm" className="SidebarTable">

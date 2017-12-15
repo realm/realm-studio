@@ -3,18 +3,19 @@ import * as React from 'react';
 import * as Realm from 'realm';
 
 import { EditMode, IPropertyWithName } from '../..';
-import { parse } from './parser';
+import { parse } from '../../parsers';
 import { StringCell } from './StringCell';
 
 export interface IStringCellContainerProps {
   editMode?: EditMode;
+  hasEditingDisabled?: boolean;
   onUpdateValue: (value: any) => void;
   property: IPropertyWithName;
   value: string;
 }
 
 interface IStringCellContainerState {
-  temporalValue: string;
+  temporalValue: any;
   isEditing: boolean;
 }
 
@@ -67,7 +68,7 @@ export class StringCellContainer extends React.Component<
 
   public onFocus = (): void => {
     // We can only edit cells that are not readOnly
-    if (!this.props.property.readOnly) {
+    if (!this.props.property.readOnly && !this.props.hasEditingDisabled) {
       this.setState({ isEditing: true });
     }
   };
@@ -91,7 +92,7 @@ export class StringCellContainer extends React.Component<
       const value = parse(this.state.temporalValue, this.props.property);
       if (value !== this.props.value) {
         this.props.onUpdateValue(value);
-        this.setState({ temporalValue: value.toString(), isEditing: false });
+        this.setState({ temporalValue: value, isEditing: false });
       }
     } catch (err) {
       const leave = this.showInvalidValueError(err.message);

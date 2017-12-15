@@ -96,21 +96,14 @@ export class HeaderCell extends React.Component<
   }
 
   public render() {
-    const {
-      onWidthChanged,
-      property,
-      style,
-      onSortClick,
-      sorting,
-    } = this.props;
-
-    const { isDragging } = this.state;
+    const { property, style, sorting } = this.props;
 
     const isSortable = isPropertySortable(property);
     const sortClass = classNames('RealmBrowser__Table__HeaderSort', {
       'RealmBrowser__Table__HeaderSort--active':
         sorting && sorting.property.name === property.name,
     });
+
     return (
       <div
         style={style}

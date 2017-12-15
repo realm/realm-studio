@@ -25,6 +25,7 @@ export interface IRealmTableContainerProps {
 export interface IRealmTableContainerState extends IRealmLoadingComponentState {
   realms: Realm.Results<ros.IRealmFile> | null;
   selectedRealmPath: string | null;
+  isCreateRealmOpen: boolean;
 }
 
 export class RealmsTableContainer extends RealmLoadingComponent<
@@ -35,6 +36,7 @@ export class RealmsTableContainer extends RealmLoadingComponent<
     super();
     this.state = {
       realms: null,
+      isCreateRealmOpen: false,
       selectedRealmPath: null,
       progress: {
         done: false,
@@ -76,6 +78,15 @@ export class RealmsTableContainer extends RealmLoadingComponent<
     return this.realm.objectForPrimaryKey<ros.IRealmFile>('RealmFile', path);
   };
 
+  public getRealmPermissions = (
+    path: string,
+  ): Realm.Results<ros.IPermission> => {
+    const realmFile = this.getRealmFromId(path);
+    return this.realm
+      .objects<ros.IPermission>('Permission')
+      .filtered('realmFile == $0', realmFile);
+  };
+
   public onRealmDeletion = async (path: string) => {
     const confirmed = await this.confirmRealmDeletion(path);
     if (confirmed) {
@@ -90,8 +101,28 @@ export class RealmsTableContainer extends RealmLoadingComponent<
     }
   };
 
+  public onRealmCreated = async (path: string) => {
+    const realm = await ros.realms.create(this.props.user, path);
+    // Close the Realm right away - we don't need it open
+    realm.close();
+    // Cannot use the realm.path as that is the local path
+    // Instead - let's just select the latest Realm
+    if (this.state.realms) {
+      const lastRealm = this.state.realms[this.state.realms.length - 1];
+      this.onRealmSelected(lastRealm.path);
+    }
+  };
+
+  public toggleCreateRealm = () => {
+    this.setState({
+      isCreateRealmOpen: !this.state.isCreateRealmOpen,
+    });
+  };
+
   public onRealmOpened = (path: string) => {
     this.props.onRealmOpened(path);
+    // Make sure the Realm that just got opened, is selected
+    this.onRealmSelected(path);
   };
 
   public onRealmSelected = (path: string | null) => {
@@ -100,13 +131,17 @@ export class RealmsTableContainer extends RealmLoadingComponent<
     });
   };
 
-  protected gotUser(user: Realm.Sync.User) {
-    this.loadRealm({
-      authentication: this.props.user,
-      mode: ros.realms.RealmLoadingMode.Synced,
-      path: '__admin',
-      validateCertificates: this.props.validateCertificates,
-    });
+  protected async gotUser(user: Realm.Sync.User) {
+    try {
+      await this.loadRealm({
+        authentication: this.props.user,
+        mode: ros.realms.RealmLoadingMode.Synced,
+        path: '__admin',
+        validateCertificates: this.props.validateCertificates,
+      });
+    } catch (err) {
+      showError('Failed to open the __admin Realm', err);
+    }
   }
 
   protected async loadRealm(

@@ -18,4 +18,5 @@ export enum EditMode {
   InputBlur = 'input-blur',
 }
 
+export type CreateObjectHandler = (className: string, values: {}) => void;
 export type EditModeChangeHandler = (editMode: EditMode) => void;

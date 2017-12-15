@@ -3,14 +3,14 @@ import * as React from 'react';
 import { Badge } from 'reactstrap';
 import * as Realm from 'realm';
 
+import * as primitives from '../../primitives';
 import * as DataCell from './DataCell';
-import * as primitives from './primitives';
 
 const VALUE_LENGTH_LIMIT = 10;
 const VALUE_STRING_LENGTH_LIMIT = 50;
 
 const isListOfPrimitive = (property: Realm.ObjectSchemaProperty) => {
-  return primitives.TYPES.indexOf(property.objectType || '') >= 0;
+  return primitives.isPrimitive(property.objectType || '');
 };
 
 const displayValue = (

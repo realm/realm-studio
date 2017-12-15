@@ -1,12 +1,22 @@
 import { MainActions } from '../../main/MainActions';
-import { ActionSender } from '../ActionSender';
-
+import { ImportFormat } from '../../services/data-importer';
 import {
-  IRealmBrowserOptions,
-  IServerAdministrationOptions,
+  IRealmBrowserWindowProps,
+  IServerAdministrationWindowProps,
 } from '../../windows/WindowType';
+import { ActionSender } from '../ActionSender';
+import { LoopbackTransport, RendererTransport } from '../transports';
 
 export class Sender extends ActionSender {
+  constructor() {
+    super();
+    // Use the renderer transport if the sender is accessed from the renderer and the loopback otherwise.
+    const isRenderer = process.type === 'renderer';
+    this.setTransport(
+      isRenderer ? new RendererTransport() : LoopbackTransport.getInstance(),
+    );
+  }
+
   public checkForUpdates() {
     return this.send(MainActions.CheckForUpdates);
   }
@@ -23,11 +33,15 @@ export class Sender extends ActionSender {
     return this.send(MainActions.ShowOpenLocalRealm);
   }
 
-  public showRealmBrowser(options: IRealmBrowserOptions) {
-    return this.send(MainActions.ShowRealmBrowser, options);
+  public showImportData(format: ImportFormat) {
+    return this.send(MainActions.ShowImportData, format);
   }
 
-  public showServerAdministration(options: IServerAdministrationOptions) {
-    return this.send(MainActions.ShowServerAdministration, options);
+  public showRealmBrowser(props: IRealmBrowserWindowProps) {
+    return this.send(MainActions.ShowRealmBrowser, props);
+  }
+
+  public showServerAdministration(props: IServerAdministrationWindowProps) {
+    return this.send(MainActions.ShowServerAdministration, props);
   }
 }

@@ -10,8 +10,8 @@ import {
   users,
 } from '../../services/ros';
 import {
-  IRealmBrowserOptions,
-  IServerAdministrationOptions,
+  IRealmBrowserWindowProps,
+  IServerAdministrationWindowProps,
 } from '../../windows/WindowType';
 import { showError } from '../reusable/errors';
 
@@ -19,7 +19,7 @@ import { ValidateCertificatesChangeHandler } from './realms/RealmsTableContainer
 import { ServerAdministration, Tab } from './ServerAdministration';
 
 export interface IServerAdministrationContainerProps
-  extends IServerAdministrationOptions {
+  extends IServerAdministrationWindowProps {
   onValidateCertificatesChange: ValidateCertificatesChangeHandler;
 }
 
@@ -43,10 +43,15 @@ export class ServerAdministrationContainer extends React.Component<
   }
 
   public async componentDidMount() {
-    const user = await users.authenticate(this.props.credentials);
-    this.setState({
-      user,
-    });
+    try {
+      // Authenticate towards the server
+      const user = await users.authenticate(this.props.credentials);
+      this.setState({
+        user,
+      });
+    } catch (err) {
+      showError('Failed when authenticating with the Realm Object Server', err);
+    }
   }
 
   public render() {
@@ -72,6 +77,7 @@ export class ServerAdministrationContainer extends React.Component<
         validateCertificates: this.props.validateCertificates,
       };
       await main.showRealmBrowser({
+        type: 'realm-browser',
         realm,
       });
       this.setState({ isRealmOpening: false });

@@ -1,29 +1,17 @@
 @import "~realm-studio-styles/variables";
-@import "../variables";
 
 .UsersTable {
   display: flex;
   flex-grow: 1;
 
-  &__selected-row {
-    background: $color-dove;
+  &__row {
+    &--selected {
+      background: $color-dove;
+    }
   }
 
   &__table {
     flex: 1 0;
-  }
-
-  &__overlayed-controls {
-    bottom: $spacer;
-    opacity: 1;
-    position: absolute;
-    right: $spacer;
-    transition-duration: $sidebar-transition-duration;
-    transition-property: opacity;
-
-    &--hidden {
-      opacity: 0;
-    }
   }
 
   @import "../../reusable/ReactVirtualized";

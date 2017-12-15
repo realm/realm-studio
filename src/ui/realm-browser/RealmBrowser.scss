@@ -36,11 +36,14 @@ $highlight-row-color: $black;
     width: 200px;
 
     &__Header {
+      align-items: baseline;
       border-bottom: 1px solid $color-dove;
       color: $color-elephant;
+      display: flex;
       font-size: .9rem;
       font-weight: bold;
       height: 2rem;
+      justify-content: space-between;
       line-height: 2em;
       margin-bottom: $spacer / 2;
       text-transform: uppercase;
@@ -220,6 +223,7 @@ $highlight-row-color: $black;
     }
 
     &__HeaderCell,
+    &__HeaderCellControl,
     &__Cell {
       border-bottom: 1px solid $color-dove;
       border-right: 1px solid $color-dove;
@@ -236,7 +240,18 @@ $highlight-row-color: $black;
       display: flex;
       flex-direction: column;
       padding: 0 $realm-browser-header-icon-space 0 ($spacer / 4);
-      position: relative;
+    }
+
+    &__HeaderCellControl {
+      align-items: center;
+      color: $highlight-row-color;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+
+      &:hover {
+        background: $highlight-row-bg;
+      }
     }
 
     &__HeaderName {
@@ -344,6 +359,14 @@ $highlight-row-color: $black;
       border: 0;
       color: $brand-primary;
       cursor: pointer;
+    }
+
+    &__ObjectCell,
+    &__StringCell {
+      &--null {
+        color: $color-elephant;
+        font-style: italic;
+      }
     }
 
     &__ListCell {

@@ -1,6 +1,5 @@
 import * as electron from 'electron';
 import * as React from 'react';
-import { Grid, GridCellProps } from 'react-virtualized';
 
 import { EditMode, IPropertyWithName } from '.';
 import { ILoadingProgress } from '../reusable/loading-overlay';
@@ -14,14 +13,13 @@ import {
   SortEndHandler,
   SortStartHandler,
 } from './table';
-import { Cell } from './table/Cell';
-import { HeaderCell } from './table/HeaderCell';
 
 export interface IContentContainerProps {
   changeCount?: number;
   dataVersion?: number;
   editMode?: EditMode;
   focus: IFocus | null;
+  hasEditingDisabled?: boolean;
   highlight?: IHighlight;
   inTransaction?: boolean;
   onCancelTransaction?: () => void;
@@ -32,6 +30,7 @@ export interface IContentContainerProps {
   onSortEnd?: SortEndHandler;
   onSortStart?: SortStartHandler;
   progress?: ILoadingProgress;
+  onAddColumnClick?: () => void;
 }
 
 export interface IContentContainerState {

@@ -1,12 +1,4 @@
 import * as React from 'react';
-import {
-  AutoSizer,
-  defaultCellRangeRenderer,
-  Grid,
-  GridCellRenderer,
-  ScrollSync,
-} from 'react-virtualized';
-import * as Realm from 'realm';
 
 import { EditMode } from '.';
 import { ILoadingProgress } from '../reusable/loading-overlay';
@@ -28,6 +20,7 @@ export const Content = ({
   dataVersion,
   editMode,
   focus,
+  hasEditingDisabled,
   highlight,
   inTransaction,
   onCancelTransaction,
@@ -41,11 +34,13 @@ export const Content = ({
   onSortStart,
   progress,
   query,
+  onAddColumnClick,
 }: {
   changeCount?: number;
   dataVersion?: number;
   editMode?: EditMode;
   focus: IFocus | null;
+  hasEditingDisabled?: boolean;
   highlight?: IHighlight;
   inTransaction?: boolean;
   onCancelTransaction?: () => void;
@@ -59,11 +54,9 @@ export const Content = ({
   onSortStart?: SortStartHandler;
   progress?: ILoadingProgress;
   query: string;
+  onAddColumnClick?: () => void;
 }) => {
   if (focus) {
-    const headerHeight = 40;
-    const rowHeight = 26;
-
     return (
       <div className="RealmBrowser__Content">
         <Topbar
@@ -75,6 +68,7 @@ export const Content = ({
           dataVersion={dataVersion}
           editMode={editMode}
           focus={focus}
+          hasEditingDisabled={hasEditingDisabled}
           highlight={highlight}
           onCellChange={onCellChange}
           onCellClick={onCellClick}
@@ -82,6 +76,7 @@ export const Content = ({
           onSortEnd={onSortEnd}
           onSortStart={onSortStart}
           query={query}
+          onAddColumnClick={onAddColumnClick}
         />
         <Bottombar
           changeCount={changeCount}

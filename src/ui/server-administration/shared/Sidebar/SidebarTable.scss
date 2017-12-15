@@ -3,6 +3,10 @@
 .SidebarTable {
   table-layout: fixed;
 
+  &--non-fixed {
+    table-layout: auto;
+  }
+
   th {
     border-top: 0;
   }
