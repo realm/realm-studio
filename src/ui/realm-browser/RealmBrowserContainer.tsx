@@ -456,23 +456,26 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     rowIndex,
     columnIndex,
   }) => {
-    if (this.clickTimeout) {
-      clearTimeout(this.clickTimeout);
-      this.onCellDoubleClick(rowObject, property, cellValue);
-      this.clickTimeout = null;
-    } else {
-      this.clickTimeout = setTimeout(() => {
-        this.onCellSingleClick(rowObject, property, cellValue);
+    // Ensuring that the last cell validation didn't fail
+    if (!this.latestCellValidation || this.latestCellValidation.valid) {
+      if (this.clickTimeout) {
+        clearTimeout(this.clickTimeout);
+        this.onCellDoubleClick(rowObject, property, cellValue);
         this.clickTimeout = null;
-      }, 200);
+      } else {
+        this.clickTimeout = setTimeout(() => {
+          this.onCellSingleClick(rowObject, property, cellValue);
+          this.clickTimeout = null;
+        }, 200);
+      }
+
+      this.setState({
+        highlight: {
+          column: columnIndex,
+          row: rowIndex,
+        },
+      });
     }
-    // TODO: Re-enable this, once cells are not re-rendering and forgetting their focus state
-    this.setState({
-      highlight: {
-        column: columnIndex,
-        row: rowIndex,
-      },
-    });
   };
 
   public onCellSingleClick = (
