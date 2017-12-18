@@ -3,38 +3,38 @@ import * as React from 'react';
 import { Input } from 'reactstrap';
 
 export const StringCell = ({
+  getRef,
   isEditing,
-  onChange,
   isHighlighted,
   onBlur,
-  onFocus,
-  value,
+  onChange,
+  onClick,
   property,
+  value,
 }: {
+  getRef: (instance: HTMLInputElement) => any;
   isEditing: boolean;
-  onChange: (value: string, input: HTMLInputElement) => void;
   isHighlighted: boolean;
   onBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onChange: (value: string) => void;
+  onClick: (e: React.MouseEvent<any>) => void;
   property: Realm.ObjectSchemaProperty;
-  onFocus: () => void;
   value: string;
 }) => {
-  let textInput: HTMLInputElement;
   return isEditing ? (
     <Input
+      contentEditable={isEditing}
       className={classnames(
         'RealmBrowser__Table__Input',
         `RealmBrowser__Table__Input--${property.type}`,
       )}
-      size="sm"
-      getRef={input => {
-        textInput = input;
-      }}
-      value={value}
-      onChange={e => onChange(e.target.value, e.target)}
-      onBlur={e => onBlur(e)}
+      getRef={getRef}
+      onBlur={onBlur}
+      onClick={onClick}
+      onChange={e => onChange(e.target.value)}
       onKeyPress={e => e.key === 'Enter' && e.currentTarget.blur()}
-      autoFocus={true}
+      size="sm"
+      value={value}
     />
   ) : (
     <div
@@ -44,7 +44,7 @@ export const StringCell = ({
         'RealmBrowser__Table__Input',
         `RealmBrowser__Table__Input--${property.type}`,
       )}
-      onDoubleClick={onFocus}
+      onDoubleClick={onClick}
     >
       <span
         className={classnames(

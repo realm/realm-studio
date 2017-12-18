@@ -12,6 +12,8 @@ import {
   CellChangeHandler,
   CellClickHandler,
   CellContextMenuHandler,
+  CellHighlightedHandler,
+  CellValidatedHandler,
   IHighlight,
   ISorting,
   SortEndHandler,
@@ -43,6 +45,7 @@ export interface ITableProps {
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
   onCellHighlighted?: CellHighlightedHandler;
+  onCellValidated?: CellValidatedHandler;
   onColumnWidthChanged: (index: number, width: number) => void;
   onContextMenu?: CellContextMenuHandler;
   onSortClick: (property: IPropertyWithName) => void;
@@ -68,6 +71,7 @@ export const Table = ({
   onCellChange,
   onCellClick,
   onCellHighlighted,
+  onCellValidated,
   onColumnWidthChanged,
   onContextMenu,
   onSortClick,
@@ -127,6 +131,7 @@ export const Table = ({
         onCellChange={onCellChange}
         onCellClick={onCellClick}
         onCellHighlighted={onCellHighlighted}
+        onCellValidated={onCellValidated}
         onContextMenu={onContextMenu}
         onScroll={onScroll}
         onSortEnd={onSortEnd}

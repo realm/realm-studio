@@ -68,6 +68,11 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   IRealmBrowserState
 > implements IMenuGenerator {
   private clickTimeout?: any;
+  private latestCellValidation: {
+    columnIndex: number;
+    rowIndex: number;
+    valid: boolean;
+  };
 
   constructor() {
     super();
@@ -499,6 +504,18 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         y: e.clientY,
       });
     }
+  };
+
+  public onCellValidated = (
+    rowIndex: number,
+    columnIndex: number,
+    valid: boolean,
+  ) => {
+    this.latestCellValidation = {
+      columnIndex,
+      rowIndex,
+      valid,
+    };
   };
 
   public onCreateDialogToggle = (className?: string) => {

@@ -18,6 +18,8 @@ import {
   CellChangeHandler,
   CellClickHandler,
   CellContextMenuHandler,
+  CellHighlightedHandler,
+  CellValidatedHandler,
   IHighlight,
 } from '.';
 import { EditMode, IPropertyWithName } from '..';
@@ -48,6 +50,8 @@ export interface IContentGridProps extends Partial<GridProps> {
   isSorting?: boolean;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
+  onCellHighlighted?: CellHighlightedHandler;
+  onCellValidated?: CellValidatedHandler;
   onContextMenu?: CellContextMenuHandler;
   onSortEnd?: SortEndHandler;
   onSortStart?: SortStartHandler;
@@ -150,8 +154,11 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
             editMode,
             filteredSortedResults,
             getCellValue,
+            highlight,
             onCellChange,
             onCellClick,
+            onCellHighlighted,
+            onCellValidated,
             onContextMenu,
           } = this.props;
           const { rowIndex, columnIndex } = cellProps;
@@ -175,6 +182,11 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
                     rowIndex,
                     rowObject,
                   });
+                }
+              }}
+              onValidated={valid => {
+                if (onCellValidated) {
+                  onCellValidated(rowIndex, columnIndex, valid);
                 }
               }}
               onContextMenu={e => {

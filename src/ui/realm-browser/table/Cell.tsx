@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { CellValidatedHandler } from '.';
 import { EditMode, IPropertyWithName } from '..';
 import { DataCell } from './types/DataCell';
 import { DefaultCell } from './types/DefaultCell';
@@ -14,6 +15,7 @@ const getCellContent = ({
   isScrolling,
   onHighlighted,
   onUpdateValue,
+  onValidated,
   property,
   value,
 }: {
@@ -22,6 +24,7 @@ const getCellContent = ({
   isScrolling?: boolean;
   onHighlighted: () => void;
   onUpdateValue: (value: string) => void;
+  onValidated: (valid: boolean) => void;
   property: IPropertyWithName;
   value: any;
 }) => {
@@ -42,6 +45,7 @@ const getCellContent = ({
           isHighlighted={isHighlighted}
           onHighlighted={onHighlighted}
           onUpdateValue={onUpdateValue}
+          onValidated={onValidated}
           property={property}
           value={value}
         />
@@ -54,6 +58,7 @@ const getCellContent = ({
           isHighlighted={isHighlighted}
           onHighlighted={onHighlighted}
           onUpdateValue={onUpdateValue}
+          onValidated={onValidated}
           property={property}
           value={value !== null ? value.toISOString() : value}
         />
@@ -80,6 +85,7 @@ export const Cell = ({
   onContextMenu,
   onHighlighted,
   onUpdateValue,
+  onValidated,
   property,
   style,
   value,
@@ -92,6 +98,7 @@ export const Cell = ({
   onContextMenu: (e: React.MouseEvent<any>) => void;
   onHighlighted: () => void;
   onUpdateValue: (value: string) => void;
+  onValidated: (valid: boolean) => void;
   property: IPropertyWithName;
   style: React.CSSProperties;
   value: any;
@@ -101,6 +108,7 @@ export const Cell = ({
     editMode,
     isHighlighted,
     isScrolling,
+    onValidated,
     onHighlighted,
     onUpdateValue,
     property,

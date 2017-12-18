@@ -33,6 +33,13 @@ export type CellContextMenuHandler = (
 ) => void;
 
 export type CellHighlightedHandler = (highlight: IHighlight) => void;
+
+export type CellValidatedHandler = (
+  rowIndex: number,
+  columnIndex: number,
+  valid: boolean,
+) => void;
+
 export interface IHighlight {
   row?: number;
   column?: number;

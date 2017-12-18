@@ -11,6 +11,7 @@ import {
   CellClickHandler,
   CellContextMenuHandler,
   CellHighlightedHandler,
+  CellValidatedHandler,
   IHighlight,
   ISorting,
   SortEndHandler,
@@ -31,6 +32,7 @@ export interface IBaseTableContainerProps {
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
   onCellHighlighted?: CellHighlightedHandler;
+  onCellValidated?: CellValidatedHandler;
   onContextMenu?: CellContextMenuHandler;
   onSortEnd?: SortEndHandler;
   onSortStart?: SortStartHandler;
@@ -85,6 +87,7 @@ export class TableContainer extends React.PureComponent<
         onCellChange={this.props.onCellChange}
         onCellClick={this.props.onCellClick}
         onCellHighlighted={this.props.onCellHighlighted}
+        onCellValidated={this.props.onCellValidated}
         onColumnWidthChanged={this.onColumnWidthChanged}
         onContextMenu={this.props.onContextMenu}
         onSortClick={this.onSortClick}
