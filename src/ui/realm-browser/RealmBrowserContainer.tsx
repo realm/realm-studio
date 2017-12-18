@@ -408,19 +408,22 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   };
 
   public onClassSelected = (className: string, objectToScroll?: any) => {
-    // TODO: Re-implement objectToScroll
     if (this.realm) {
-      const focus: IClassFocus = {
-        kind: 'class',
-        className,
-        results: this.realm.objects(className),
-        properties: this.derivePropertiesFromClassName(className),
-        addColumnEnabled: true,
-      };
-      this.setState({
-        focus,
-        highlight: this.generateHighlight(objectToScroll),
-      });
+      if (!this.latestCellValidation || this.latestCellValidation.valid) {
+        const focus: IClassFocus = {
+          kind: 'class',
+          className,
+          results: this.realm.objects(className),
+          properties: this.derivePropertiesFromClassName(className),
+          addColumnEnabled: true,
+        };
+        this.setState({
+          focus,
+          highlight: this.generateHighlight(objectToScroll),
+        });
+      } else {
+        // Don't do anything before we have a valid cell validation.
+      }
     } else {
       throw new Error(`Cannot select ${className} as the Realm is not opened`);
     }
