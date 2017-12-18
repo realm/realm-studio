@@ -42,6 +42,7 @@ export interface ITableProps {
   onAddColumnClick?: () => void;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
+  onCellHighlighted?: CellHighlightedHandler;
   onColumnWidthChanged: (index: number, width: number) => void;
   onContextMenu?: CellContextMenuHandler;
   onSortClick: (property: IPropertyWithName) => void;
@@ -66,6 +67,7 @@ export const Table = ({
   onAddColumnClick,
   onCellChange,
   onCellClick,
+  onCellHighlighted,
   onColumnWidthChanged,
   onContextMenu,
   onSortClick,
@@ -124,6 +126,7 @@ export const Table = ({
         isSorting={isSorting}
         onCellChange={onCellChange}
         onCellClick={onCellClick}
+        onCellHighlighted={onCellHighlighted}
         onContextMenu={onContextMenu}
         onScroll={onScroll}
         onSortEnd={onSortEnd}

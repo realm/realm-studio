@@ -8,6 +8,8 @@ import { StringCell } from './StringCell';
 
 export interface IStringCellContainerProps {
   editMode: EditMode;
+  isHighlighted?: boolean;
+  onHighlighted: () => void;
   onUpdateValue: (value: any) => void;
   property: IPropertyWithName;
   value: string;
@@ -32,6 +34,7 @@ export class StringCellContainer extends React.Component<
 
   public componentWillReceiveProps(props: IStringCellContainerProps) {
     const { value } = props;
+    const { value, isHighlighted } = nextProps;
     const { isEditing } = this.state;
 
     if (!isEditing) {
@@ -60,6 +63,7 @@ export class StringCellContainer extends React.Component<
   ) {
     return (
       this.props.value !== nextProps.value ||
+      this.props.isHighlighted !== nextProps.isHighlighted ||
       this.state.isEditing !== nextState.isEditing ||
       this.state.temporalValue !== nextState.temporalValue
     );

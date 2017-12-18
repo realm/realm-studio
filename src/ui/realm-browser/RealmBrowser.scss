@@ -13,7 +13,8 @@ $realm-browser-more-indicator-dark-color: rgba(0, 0, 0, .2);
 $realm-browser-more-indicator-light-color: rgba(0, 0, 0, 0);
 
 $color-row-stripe: mix($white, $color-dove, 50%);
-$highlight-row-bg: mix($white, $color-indigo, 70%);
+$highlight-row-bg: mix($white, $color-indigo, 75%);
+$highlight-cell-bg: mix($white, $color-indigo, 60%);
 $highlight-row-color: $black;
 
 .RealmBrowser {
@@ -197,6 +198,7 @@ $highlight-row-color: $black;
 
     &__Row {
       background: $white;
+      position: relative;
       transition: background-color 400ms;
 
       &--striped {
@@ -233,6 +235,12 @@ $highlight-row-color: $black;
       // after the classNames that we provide.
       .form-control { // sass-lint:disable-line class-name-format
         background: transparent;
+      }
+    }
+
+    &__Cell {
+      &--highlighted {
+        background: $highlight-cell-bg;
       }
     }
 

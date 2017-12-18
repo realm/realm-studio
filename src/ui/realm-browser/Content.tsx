@@ -8,6 +8,8 @@ import {
   CellChangeHandler,
   CellClickHandler,
   CellContextMenuHandler,
+  CellHighlightedHandler,
+  CellValidatedHandler,
   IHighlight,
   SortEndHandler,
   SortStartHandler,
@@ -26,6 +28,8 @@ export const Content = ({
   onCancelTransaction,
   onCellChange,
   onCellClick,
+  onCellHighlighted,
+  onCellValidated,
   onCommitTransaction,
   onContextMenu,
   onQueryChange,
@@ -45,6 +49,8 @@ export const Content = ({
   onCancelTransaction?: () => void;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
+  onCellHighlighted?: CellHighlightedHandler;
+  onCellValidated?: CellValidatedHandler;
   onCommitTransaction?: () => void;
   onContextMenu?: CellContextMenuHandler;
   onQueryChange: (query: string) => void;
@@ -67,13 +73,15 @@ export const Content = ({
           editMode={editMode}
           focus={focus}
           highlight={highlight}
+          onAddColumnClick={onAddColumnClick}
           onCellChange={onCellChange}
           onCellClick={onCellClick}
+          onCellHighlighted={onCellHighlighted}
+          onCellValidated={onCellValidated}
           onContextMenu={onContextMenu}
           onSortEnd={onSortEnd}
           onSortStart={onSortStart}
           query={query}
-          onAddColumnClick={onAddColumnClick}
         />
         <Bottombar
           changeCount={changeCount}

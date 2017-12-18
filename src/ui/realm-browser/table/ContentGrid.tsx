@@ -157,10 +157,14 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
           const { rowIndex, columnIndex } = cellProps;
           const rowObject = filteredSortedResults[cellProps.rowIndex];
           const cellValue = getCellValue(rowObject, cellProps);
+          const isHighlighted = highlight
+            ? highlight.row === rowIndex && highlight.column === columnIndex
+            : false;
 
           return (
             <Cell
               editMode={editMode}
+              isHighlighted={isHighlighted}
               key={cellProps.key}
               onCellClick={e => {
                 if (onCellClick) {
@@ -181,6 +185,14 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
                     property,
                     rowIndex,
                     rowObject,
+                  });
+                }
+              }}
+              onHighlighted={() => {
+                if (onCellHighlighted) {
+                  onCellHighlighted({
+                    row: rowIndex,
+                    column: columnIndex,
                   });
                 }
               }}

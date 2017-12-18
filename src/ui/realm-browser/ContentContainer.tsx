@@ -9,6 +9,8 @@ import {
   CellChangeHandler,
   CellClickHandler,
   CellContextMenuHandler,
+  CellHighlightedHandler,
+  CellValidatedHandler,
   IHighlight,
   SortEndHandler,
   SortStartHandler,
@@ -25,6 +27,8 @@ export interface IContentContainerProps {
   onCancelTransaction?: () => void;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
+  onCellHighlighted?: CellHighlightedHandler;
+  onCellValidated?: CellValidatedHandler;
   onCommitTransaction?: () => void;
   onContextMenu?: CellContextMenuHandler;
   onSortEnd?: SortEndHandler;

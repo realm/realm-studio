@@ -5,6 +5,7 @@ import { Input } from 'reactstrap';
 export const StringCell = ({
   isEditing,
   onChange,
+  isHighlighted,
   onBlur,
   onFocus,
   value,
@@ -12,6 +13,7 @@ export const StringCell = ({
 }: {
   isEditing: boolean;
   onChange: (value: string, input: HTMLInputElement) => void;
+  isHighlighted: boolean;
   onBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
   property: Realm.ObjectSchemaProperty;
   onFocus: () => void;

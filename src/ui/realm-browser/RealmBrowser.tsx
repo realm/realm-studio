@@ -16,6 +16,8 @@ import {
   CellChangeHandler,
   CellClickHandler,
   CellContextMenuHandler,
+  CellHighlightedHandler,
+  CellValidatedHandler,
   IHighlight,
   SortEndHandler,
   SortStartHandler,
@@ -48,6 +50,8 @@ export interface IRealmBrowserProps {
   onCancelTransaction: () => void;
   onCellChange: CellChangeHandler;
   onCellClick: CellClickHandler;
+  onCellHighlighted: CellHighlightedHandler;
+  onCellValidated: CellValidatedHandler;
   onClassSelected: (name: string, objectToScroll: any) => void;
   onCommitTransaction: () => void;
   onContextMenu: CellContextMenuHandler;
@@ -88,6 +92,8 @@ export const RealmBrowser = ({
   onCancelTransaction,
   onCellChange,
   onCellClick,
+  onCellHighlighted,
+  onCellValidated,
   onClassSelected,
   onCommitTransaction,
   onContextMenu,
@@ -127,15 +133,17 @@ export const RealmBrowser = ({
           focus={focus}
           highlight={highlight}
           inTransaction={inTransaction}
+          onAddColumnClick={toggleAddSchemaProperty}
           onCancelTransaction={onCancelTransaction}
           onCellChange={onCellChange}
           onCellClick={onCellClick}
+          onCellHighlighted={onCellHighlighted}
+          onCellValidated={onCellValidated}
           onCommitTransaction={onCommitTransaction}
           onContextMenu={onContextMenu}
           onSortEnd={onSortEnd}
           onSortStart={onSortStart}
           progress={progress}
-          onAddColumnClick={toggleAddSchemaProperty}
         />
       </div>
       {confirmModal && (

@@ -435,6 +435,12 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     }
   };
 
+  public onCellHighlighted = (highlight: IHighlight) => {
+    if (!this.latestCellValidation || this.latestCellValidation.valid) {
+      this.setState({ highlight });
+    }
+  };
+
   public onContextMenu: CellContextMenuHandler = (
     e: React.MouseEvent<any>,
     params,

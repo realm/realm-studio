@@ -10,13 +10,17 @@ import { StringCellContainer } from './types/StringCellContainer';
 
 const getCellContent = ({
   editMode,
+  isHighlighted,
   isScrolling,
+  onHighlighted,
   onUpdateValue,
   property,
   value,
 }: {
   editMode: EditMode;
+  isHighlighted?: boolean;
   isScrolling?: boolean;
+  onHighlighted: () => void;
   onUpdateValue: (value: string) => void;
   property: IPropertyWithName;
   value: any;
@@ -35,6 +39,8 @@ const getCellContent = ({
       return (
         <StringCellContainer
           editMode={editMode}
+          isHighlighted={isHighlighted}
+          onHighlighted={onHighlighted}
           onUpdateValue={onUpdateValue}
           property={property}
           value={value}
@@ -45,6 +51,8 @@ const getCellContent = ({
       return (
         <StringCellContainer
           editMode={editMode}
+          isHighlighted={isHighlighted}
+          onHighlighted={onHighlighted}
           onUpdateValue={onUpdateValue}
           property={property}
           value={value !== null ? value.toISOString() : value}
@@ -66,9 +74,11 @@ const getCellContent = ({
 
 export const Cell = ({
   editMode,
+  isHighlighted,
   isScrolling,
   onCellClick,
   onContextMenu,
+  onHighlighted,
   onUpdateValue,
   property,
   style,
@@ -76,9 +86,11 @@ export const Cell = ({
   width,
 }: {
   editMode: EditMode;
+  isHighlighted?: boolean;
   isScrolling?: boolean;
   onCellClick: (e: React.MouseEvent<any>) => void;
   onContextMenu: (e: React.MouseEvent<any>) => void;
+  onHighlighted: () => void;
   onUpdateValue: (value: string) => void;
   property: IPropertyWithName;
   style: React.CSSProperties;
@@ -87,14 +99,18 @@ export const Cell = ({
 }) => {
   const content = getCellContent({
     editMode,
+    isHighlighted,
     isScrolling,
+    onHighlighted,
     onUpdateValue,
     property,
     value,
   });
   return (
     <div
-      className="RealmBrowser__Table__Cell"
+      className={classNames('RealmBrowser__Table__Cell', {
+        'RealmBrowser__Table__Cell--highlighted': isHighlighted,
+      })}
       onClick={onCellClick}
       onContextMenu={onContextMenu}
       style={style}
