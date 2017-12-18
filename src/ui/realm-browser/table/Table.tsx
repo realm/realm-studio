@@ -90,7 +90,21 @@ export const Table = ({
     : focus.properties.length;
 
   return (
-    <div>
+    <div
+      onContextMenu={e => {
+        const element = e.target as Element;
+        if (
+          onContextMenu &&
+          (element.classList.contains('RealmBrowser__Table__HeaderGrid') ||
+            element.classList.contains('RealmBrowser__Table__ContentGrid') ||
+            element.classList.contains(
+              'RealmBrowser__Table__ContentGrid--empty',
+            ))
+        ) {
+          onContextMenu(e);
+        }
+      }}
+    >
       <MoreIndicator position="bottom" visible={scrollBottom > 0} />
       <MoreIndicator position="left" visible={scrollLeft > 0} />
       <MoreIndicator position="right" visible={scrollRight > 0} />

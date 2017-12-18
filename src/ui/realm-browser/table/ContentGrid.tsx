@@ -224,11 +224,7 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
     // Render an empty div
     return (
       <div
-        onContextMenu={e => {
-          if (this.props.onContextMenu) {
-            this.props.onContextMenu(e);
-          }
-        }}
+        className="RealmBrowser__Table__ContentGrid--empty"
         style={{
           height: this.props.height,
           width,
