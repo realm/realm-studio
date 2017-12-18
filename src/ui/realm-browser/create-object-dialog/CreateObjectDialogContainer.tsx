@@ -1,11 +1,11 @@
-import * as electron from 'electron';
 import * as React from 'react';
 import * as Realm from 'realm';
+import { v4 as uuid } from 'uuid';
 
 import { CreateObjectHandler } from '..';
+import { IPropertyWithName } from '../';
 import { showError } from '../../reusable/errors';
 import { IClassFocus } from '../focus';
-import { parse } from '../parsers';
 import { CreateObjectDialog } from './CreateObjectDialog';
 
 import './CreateObjectDialog.scss';
@@ -67,10 +67,11 @@ export class CreateObjectDialogContainer extends React.PureComponent<
   protected generateInitialValues(props: ICreateObjectDialogContainerProps) {
     if (props.schema) {
       const properties = props.schema.properties;
+      const primaryKey = props.schema.primaryKey;
       const values: IRealmObject = {};
       Object.keys(properties).forEach(propertyName => {
-        const property = properties[propertyName] as Realm.ObjectSchemaProperty;
-        values[propertyName] = this.generateInitialValue(property);
+        const property = properties[propertyName] as IPropertyWithName;
+        values[propertyName] = this.generateInitialValue(property, primaryKey);
       });
       this.setState({
         values,
@@ -78,9 +79,18 @@ export class CreateObjectDialogContainer extends React.PureComponent<
     }
   }
 
-  protected generateInitialValue = (property: Realm.ObjectSchemaProperty) => {
+  protected generateInitialValue = (
+    property: IPropertyWithName,
+    primaryKey?: string,
+  ) => {
     // TODO: Initialize the values based on their property
-    if (property.type === 'list') {
+    if (
+      property.name === 'uuid' &&
+      property.name === primaryKey &&
+      property.type === 'string'
+    ) {
+      return uuid();
+    } else if (property.type === 'list') {
       // If a list is optional, it refers to the type of the elements
       return [];
     } else if (property.optional) {
