@@ -1,3 +1,4 @@
+import * as classNames from 'classnames';
 import * as React from 'react';
 
 import { CellValidatedHandler } from '.';
@@ -60,7 +61,8 @@ const getCellContent = ({
           onUpdateValue={onUpdateValue}
           onValidated={onValidated}
           property={property}
-          value={value !== null ? value.toISOString() : value}
+          value={value}
+          valueToString={v => (v ? v.toISOString() : v)}
         />
       );
     }
