@@ -38,6 +38,7 @@ export const getDefaultMenuTemplate = (): electron.MenuItemConstructorOptions[] 
     },
     {
       label: 'Edit',
+      id: 'edit',
       submenu: [
         { role: 'undo' },
         { role: 'redo' },
@@ -46,7 +47,7 @@ export const getDefaultMenuTemplate = (): electron.MenuItemConstructorOptions[] 
         { role: 'copy' },
         { role: 'paste' },
         { role: 'delete' },
-        { role: 'selectall' },
+        { role: 'selectall', id: 'select-all' },
       ],
     },
     {

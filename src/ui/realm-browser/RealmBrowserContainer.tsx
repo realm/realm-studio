@@ -119,7 +119,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   }
 
   public generateMenu(template: MenuItemConstructorOptions[]) {
-    const importMenu = {
+    const importMenu: MenuItemConstructorOptions = {
       label: 'Import data from',
       submenu: [
         {
@@ -133,7 +133,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       type: 'separator',
     };
 
-    const exportMenu = {
+    const exportMenu: MenuItemConstructorOptions = {
       label: 'Save model definitions',
       submenu: [
         {
@@ -159,6 +159,56 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       ],
     };
 
+    const transactionMenuItems: MenuItemConstructorOptions[] =
+      this.realm && this.realm.isInTransaction
+        ? [
+            {
+              label: 'Commit transaction',
+              accelerator: 'CommandOrControl+T',
+              click: () => {
+                this.onCommitTransaction();
+              },
+            },
+            {
+              label: 'Cancel transaction',
+              accelerator: 'CommandOrControl+Shift+T',
+              click: () => {
+                this.onCancelTransaction();
+              },
+            },
+          ]
+        : [
+            {
+              label: 'Begin transaction',
+              accelerator: 'CommandOrControl+T',
+              click: () => {
+                this.onBeginTransaction();
+              },
+            },
+          ];
+
+    const editModeMenu: MenuItemConstructorOptions = {
+      label: 'Edit mode',
+      submenu: [
+        {
+          label: 'Update when leaving a field',
+          type: 'radio',
+          checked: this.state.editMode === EditMode.InputBlur,
+          click: () => {
+            this.onEditModeChange(EditMode.InputBlur);
+          },
+        },
+        {
+          label: 'Update on key press',
+          type: 'radio',
+          checked: this.state.editMode === EditMode.KeyPress,
+          click: () => {
+            this.onEditModeChange(EditMode.KeyPress);
+          },
+        },
+      ],
+    };
+
     return template.map(menu => {
       if (menu.id === 'file' && Array.isArray(menu.submenu)) {
         const closeIndex = menu.submenu.findIndex(item => item.id === 'close');
@@ -169,6 +219,25 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
             importMenu,
             separator,
             ...menu.submenu.slice(closeIndex),
+          ];
+          return {
+            ...menu,
+            submenu,
+          };
+        } else {
+          return menu;
+        }
+      } else if (menu.id === 'edit' && Array.isArray(menu.submenu)) {
+        const selectAllIndex = menu.submenu.findIndex(
+          item => item.id === 'select-all',
+        );
+        if (selectAllIndex) {
+          const submenu = [
+            ...menu.submenu.slice(0, selectAllIndex + 1),
+            separator,
+            ...transactionMenuItems,
+            editModeMenu,
+            ...menu.submenu.slice(selectAllIndex + 1),
           ];
           return {
             ...menu,
@@ -201,6 +270,9 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   public onBeginTransaction = () => {
     if (this.realm && !this.realm.isInTransaction) {
       this.realm.beginTransaction();
+      // Ask the menu to update
+      this.props.updateMenu();
+      // Hang on to the dataVersion
       this.setState({
         dataVersionAtBeginning: this.state.dataVersion,
       });
@@ -212,6 +284,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   public onCommitTransaction = () => {
     if (this.realm && this.realm.isInTransaction) {
       this.realm.commitTransaction();
+      this.props.updateMenu();
       this.resetDataVersion();
     } else {
       throw new Error('Cannot commit when not in a transaction');
@@ -221,6 +294,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   public onCancelTransaction = () => {
     if (this.realm && this.realm.isInTransaction) {
       this.realm.cancelTransaction();
+      this.props.updateMenu();
       this.resetDataVersion();
     } else {
       throw new Error('Cannot cancel when not in a transaction');
@@ -683,29 +757,17 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     }
   };
 
-  protected onKeyDown = (e: KeyboardEvent) => {
-    const savePress = (e.ctrlKey || e.metaKey) && e.key === 's';
-    const transactionPress = (e.ctrlKey || e.metaKey) && e.key === 't';
-    if (this.realm && this.realm.isInTransaction && savePress) {
-      this.onCommitTransaction();
-    } else if (this.realm && !this.realm.isInTransaction && transactionPress) {
-      this.onBeginTransaction();
-    }
-  };
-
   protected addListeners() {
     ipcRenderer.addListener('export-schema', this.onExportSchema);
     window.addEventListener<'beforeunload'>(
       'beforeunload',
       this.onBeforeUnload,
     );
-    window.addEventListener<'keydown'>('keydown', this.onKeyDown);
   }
 
   protected removeListeners() {
     ipcRenderer.removeListener('export-schema', this.onExportSchema);
     window.removeEventListener('beforeunload', this.onBeforeUnload);
-    window.removeEventListener('keydown', this.onKeyDown);
   }
 
   protected derivePropertiesFromProperty(
