@@ -100,6 +100,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   }
 
   public componentWillUnmount() {
+    super.componentWillUnmount();
     this.removeListeners();
     this.props.removeMenuGenerator(this);
     if (this.realm && this.realm.isInTransaction) {
