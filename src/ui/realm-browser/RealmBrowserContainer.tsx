@@ -3,9 +3,13 @@ import { ipcRenderer, MenuItemConstructorOptions, remote } from 'electron';
 import * as path from 'path';
 import * as React from 'react';
 import * as Realm from 'realm';
-import { isArray } from 'util';
 
-import { IPropertyWithName, ISelectObjectState } from '.';
+import {
+  EditMode,
+  EditModeChangeHandler,
+  IPropertyWithName,
+  ISelectObjectState,
+} from '.';
 import { RealmLoadingMode } from '../../services/ros/realms';
 import { Language, SchemaExporter } from '../../services/schema-export';
 import {
@@ -35,6 +39,8 @@ import { CSVDataImporter } from '../../services/data-importer/csv/CSVDataImporte
 import ImportSchemaGenerator from '../../services/data-importer/ImportSchemaGenerator';
 import { RealmBrowser } from './RealmBrowser';
 
+const EDIT_MODE_STORAGE_KEY = 'realm-browser-edit-mode';
+
 export interface IRealmBrowserState extends IRealmLoadingComponentState {
   confirmModal?: {
     yes: () => void;
@@ -43,6 +49,8 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   createObjectSchema?: Realm.ObjectSchema;
   // A number that we can use to make components update on changes to data
   dataVersion: number;
+  dataVersionAtBeginning?: number;
+  editMode: EditMode;
   encryptionKey?: string;
   focus: Focus | null;
   isEncryptionDialogVisible: boolean;
@@ -60,11 +68,18 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   IRealmBrowserState
 > implements IMenuGenerator {
   private clickTimeout?: any;
+  private latestCellValidation: {
+    columnIndex: number;
+    rowIndex: number;
+    valid: boolean;
+  };
 
   constructor() {
     super();
+    const editMode = localStorage.getItem(EDIT_MODE_STORAGE_KEY) as EditMode;
     this.state = {
       confirmModal: undefined,
+      editMode: editMode || EditMode.InputBlur,
       dataVersion: 0,
       focus: null,
       isEncryptionDialogVisible: false,
@@ -81,18 +96,30 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
 
   public componentDidMount() {
     this.loadRealm(this.props.realm);
+    this.addListeners();
   }
 
   public componentWillUnmount() {
+    super.componentWillUnmount();
+    this.removeListeners();
     this.props.removeMenuGenerator(this);
+    if (this.realm && this.realm.isInTransaction) {
+      this.realm.cancelTransaction();
+    }
   }
 
   public render() {
-    return <RealmBrowser {...this.state} {...this} />;
+    return (
+      <RealmBrowser
+        inTransaction={this.realm && this.realm.isInTransaction}
+        {...this.state}
+        {...this}
+      />
+    );
   }
 
   public generateMenu(template: MenuItemConstructorOptions[]) {
-    const importMenu = {
+    const importMenu: MenuItemConstructorOptions = {
       label: 'Import data from',
       submenu: [
         {
@@ -106,7 +133,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       type: 'separator',
     };
 
-    const exportMenu = {
+    const exportMenu: MenuItemConstructorOptions = {
       label: 'Save model definitions',
       submenu: [
         {
@@ -132,6 +159,56 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       ],
     };
 
+    const transactionMenuItems: MenuItemConstructorOptions[] =
+      this.realm && this.realm.isInTransaction
+        ? [
+            {
+              label: 'Commit transaction',
+              accelerator: 'CommandOrControl+T',
+              click: () => {
+                this.onCommitTransaction();
+              },
+            },
+            {
+              label: 'Cancel transaction',
+              accelerator: 'CommandOrControl+Shift+T',
+              click: () => {
+                this.onCancelTransaction();
+              },
+            },
+          ]
+        : [
+            {
+              label: 'Begin transaction',
+              accelerator: 'CommandOrControl+T',
+              click: () => {
+                this.onBeginTransaction();
+              },
+            },
+          ];
+
+    const editModeMenu: MenuItemConstructorOptions = {
+      label: 'Edit mode',
+      submenu: [
+        {
+          label: 'Update when leaving a field',
+          type: 'radio',
+          checked: this.state.editMode === EditMode.InputBlur,
+          click: () => {
+            this.onEditModeChange(EditMode.InputBlur);
+          },
+        },
+        {
+          label: 'Update on key press',
+          type: 'radio',
+          checked: this.state.editMode === EditMode.KeyPress,
+          click: () => {
+            this.onEditModeChange(EditMode.KeyPress);
+          },
+        },
+      ],
+    };
+
     return template.map(menu => {
       if (menu.id === 'file' && Array.isArray(menu.submenu)) {
         const closeIndex = menu.submenu.findIndex(item => item.id === 'close');
@@ -150,6 +227,25 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         } else {
           return menu;
         }
+      } else if (menu.id === 'edit' && Array.isArray(menu.submenu)) {
+        const selectAllIndex = menu.submenu.findIndex(
+          item => item.id === 'select-all',
+        );
+        if (selectAllIndex) {
+          const submenu = [
+            ...menu.submenu.slice(0, selectAllIndex + 1),
+            separator,
+            ...transactionMenuItems,
+            editModeMenu,
+            ...menu.submenu.slice(selectAllIndex + 1),
+          ];
+          return {
+            ...menu,
+            submenu,
+          };
+        } else {
+          return menu;
+        }
       } else {
         return menu;
       }
@@ -157,19 +253,51 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   }
 
   public onCellChange: CellChangeHandler = params => {
-    if (this.realm) {
-      try {
-        this.realm.write(() => {
-          const { parent, property, rowIndex, cellValue } = params;
-          if (property.name !== null) {
-            parent[rowIndex][property.name] = cellValue;
-          } else {
-            parent[rowIndex] = cellValue;
-          }
-        });
-      } catch (err) {
-        showError('Failed when saving the value', err);
-      }
+    try {
+      this.write(() => {
+        const { parent, property, rowIndex, cellValue } = params;
+        if (property.name !== null) {
+          parent[rowIndex][property.name] = cellValue;
+        } else {
+          parent[rowIndex] = cellValue;
+        }
+      });
+    } catch (err) {
+      showError('Failed when saving the value', err);
+    }
+  };
+
+  public onBeginTransaction = () => {
+    if (this.realm && !this.realm.isInTransaction) {
+      this.realm.beginTransaction();
+      // Ask the menu to update
+      this.props.updateMenu();
+      // Hang on to the dataVersion
+      this.setState({
+        dataVersionAtBeginning: this.state.dataVersion,
+      });
+    } else {
+      throw new Error(`Realm is not ready or already in transaction`);
+    }
+  };
+
+  public onCommitTransaction = () => {
+    if (this.realm && this.realm.isInTransaction) {
+      this.realm.commitTransaction();
+      this.props.updateMenu();
+      this.resetDataVersion();
+    } else {
+      throw new Error('Cannot commit when not in a transaction');
+    }
+  };
+
+  public onCancelTransaction = () => {
+    if (this.realm && this.realm.isInTransaction) {
+      this.realm.cancelTransaction();
+      this.props.updateMenu();
+      this.resetDataVersion();
+    } else {
+      throw new Error('Cannot cancel when not in a transaction');
     }
   };
 
@@ -281,19 +409,22 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   };
 
   public onClassSelected = (className: string, objectToScroll?: any) => {
-    // TODO: Re-implement objectToScroll
     if (this.realm) {
-      const focus: IClassFocus = {
-        kind: 'class',
-        className,
-        results: this.realm.objects(className),
-        properties: this.derivePropertiesFromClassName(className),
-        addColumnEnabled: true,
-      };
-      this.setState({
-        focus,
-        highlight: this.generateHighlight(objectToScroll),
-      });
+      if (!this.latestCellValidation || this.latestCellValidation.valid) {
+        const focus: IClassFocus = {
+          kind: 'class',
+          className,
+          results: this.realm.objects(className),
+          properties: this.derivePropertiesFromClassName(className),
+          addColumnEnabled: true,
+        };
+        this.setState({
+          focus,
+          highlight: this.generateHighlight(objectToScroll),
+        });
+      } else {
+        // Don't do anything before we have a valid cell validation.
+      }
     } else {
       throw new Error(`Cannot select ${className} as the Realm is not opened`);
     }
@@ -326,23 +457,26 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     rowIndex,
     columnIndex,
   }) => {
-    if (this.clickTimeout) {
-      clearTimeout(this.clickTimeout);
-      this.onCellDoubleClick(rowObject, property, cellValue);
-      this.clickTimeout = null;
-    } else {
-      this.clickTimeout = setTimeout(() => {
-        this.onCellSingleClick(rowObject, property, cellValue);
+    // Ensuring that the last cell validation didn't fail
+    if (!this.latestCellValidation || this.latestCellValidation.valid) {
+      if (this.clickTimeout) {
+        clearTimeout(this.clickTimeout);
+        this.onCellDoubleClick(rowObject, property, cellValue);
         this.clickTimeout = null;
-      }, 200);
+      } else {
+        this.clickTimeout = setTimeout(() => {
+          this.onCellSingleClick(rowObject, property, cellValue);
+          this.clickTimeout = null;
+        }, 200);
+      }
+
+      this.setState({
+        highlight: {
+          column: columnIndex,
+          row: rowIndex,
+        },
+      });
     }
-    // TODO: Re-enable this, once cells are not re-rendering and forgetting their focus state
-    this.setState({
-      highlight: {
-        column: columnIndex,
-        row: rowIndex,
-      },
-    });
   };
 
   public onCellSingleClick = (
@@ -385,6 +519,12 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   ) => {
     if (property.type === 'object') {
       this.openSelectObject(object, property);
+    }
+  };
+
+  public onCellHighlighted = (highlight: IHighlight) => {
+    if (!this.latestCellValidation || this.latestCellValidation.valid) {
+      this.setState({ highlight });
     }
   };
 
@@ -462,6 +602,18 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     }
   };
 
+  public onCellValidated = (
+    rowIndex: number,
+    columnIndex: number,
+    valid: boolean,
+  ) => {
+    this.latestCellValidation = {
+      columnIndex,
+      rowIndex,
+      valid,
+    };
+  };
+
   public onCreateDialogToggle = (className?: string) => {
     if (this.realm && className) {
       const createObjectSchema = this.realm.schema.find(
@@ -471,6 +623,11 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     } else {
       this.setState({ createObjectSchema: undefined });
     }
+  };
+
+  public onEditModeChange: EditModeChangeHandler = editMode => {
+    localStorage.setItem(EDIT_MODE_STORAGE_KEY, editMode);
+    this.setState({ editMode });
   };
 
   public onSortStart: SortStartHandler = ({ index }) => {
@@ -483,7 +640,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   public onSortEnd: SortEndHandler = ({ oldIndex, newIndex }) => {
     if (this.state.focus && this.state.focus.kind === 'list') {
       const results = (this.state.focus.results as any) as Realm.List<any>;
-      this.realm.write(() => {
+      this.write(() => {
         const movedElements = results.splice(oldIndex, 1);
         results.splice(newIndex, 0, movedElements[0]);
       });
@@ -526,7 +683,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     if (selectObject) {
       const object: any = selectObject.object;
       const propertyName = selectObject.property.name;
-      this.realm.write(() => {
+      this.write(() => {
         // Distinguish when we are selecting an object or adding an existing object into a list
         if (object.length) {
           object.push(reference);
@@ -561,7 +718,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
 
     if (focus) {
       try {
-        this.realm.write(() => {
+        this.write(() => {
           if (focus.kind === 'class') {
             this.realm.delete(object);
           } else if (focus.kind === 'list') {
@@ -602,6 +759,55 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       this.onClassSelected(firstSchemaName);
     }
   };
+
+  protected onBeforeUnload = (e: BeforeUnloadEvent) => {
+    if (this.realm && this.realm.isInTransaction) {
+      e.returnValue = false;
+
+      const { dataVersionAtBeginning, dataVersion } = this.state;
+      const unsavedChanges =
+        typeof dataVersionAtBeginning === 'number'
+          ? dataVersion - dataVersionAtBeginning
+          : 0;
+      // Show a dialog
+      const currentWindow = remote.getCurrentWindow();
+      const plural = unsavedChanges > 1 ? 's' : '';
+      remote.dialog.showMessageBox(
+        currentWindow,
+        {
+          type: 'warning',
+          message: `You have ${unsavedChanges} unsaved change${plural}`,
+          buttons: ['Save and close', 'Discard and close', 'Cancel'],
+        },
+        result => {
+          if (result === 0 || result === 1) {
+            if (result === 0) {
+              this.onCommitTransaction();
+            } else if (result === 1) {
+              this.onCancelTransaction();
+            }
+            // Allow the for the state to update
+            process.nextTick(() => {
+              window.close();
+            });
+          }
+        },
+      );
+    }
+  };
+
+  protected addListeners() {
+    ipcRenderer.addListener('export-schema', this.onExportSchema);
+    window.addEventListener<'beforeunload'>(
+      'beforeunload',
+      this.onBeforeUnload,
+    );
+  }
+
+  protected removeListeners() {
+    ipcRenderer.removeListener('export-schema', this.onExportSchema);
+    window.removeEventListener('beforeunload', this.onBeforeUnload);
+  }
 
   protected derivePropertiesFromProperty(
     property: IPropertyWithName,
@@ -678,6 +884,25 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       });
     } else {
       super.loadingRealmFailed(err);
+    }
+  }
+
+  protected write(callback: () => void) {
+    if (this.realm && this.realm.isInTransaction) {
+      callback();
+      // We have to signal changes manually
+      this.onRealmChanged();
+    } else {
+      this.realm.write(callback);
+    }
+  }
+
+  protected resetDataVersion() {
+    if (typeof this.state.dataVersionAtBeginning === 'number') {
+      this.setState({
+        dataVersion: this.state.dataVersionAtBeginning,
+        dataVersionAtBeginning: undefined,
+      });
     }
   }
 
