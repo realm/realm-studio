@@ -3,6 +3,7 @@ import { ipcRenderer, MenuItemConstructorOptions, remote } from 'electron';
 import * as path from 'path';
 import * as React from 'react';
 import * as Realm from 'realm';
+import { isArray } from 'util';
 
 import { IPropertyWithName, ISelectObjectState } from '.';
 import { RealmLoadingMode } from '../../services/ros/realms';
@@ -412,20 +413,31 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       }
 
       // If we clicked on a row can be always deleted
-      if (focus) {
-        if (rowObject && rowIndex >= 0) {
-          menu.append(
-            new remote.MenuItem({
-              label: 'Delete',
-              click: () => {
-                this.openConfirmModal(() =>
-                  this.deleteObject(rowObject, rowIndex),
-                );
-              },
-            }),
-          );
-        }
+      if (focus && rowObject && rowIndex >= 0) {
+        menu.append(
+          new remote.MenuItem({
+            label: 'Delete',
+            click: () => {
+              this.openConfirmModal(() =>
+                this.deleteObject(rowObject, rowIndex),
+              );
+            },
+          }),
+        );
       }
+    }
+
+    // If we right-clicking on the content we can add an existing object when we are focusing a list
+    if (focus && focus.kind === 'list') {
+      const className = this.getClassName(focus);
+      menu.append(
+        new remote.MenuItem({
+          label: `Add existing ${className}`,
+          click: () => {
+            this.openSelectObject(this.getFocusedList(focus), focus.property);
+          },
+        }),
+      );
     }
 
     // If we right-clicking on the content we can always create a new object
@@ -487,8 +499,6 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     object: Realm.Object,
     property: IPropertyWithName,
   ) => {
-    const { schemas } = this.state;
-
     if (property.objectType) {
       const className = property.objectType;
       const results = this.realm.objects(className) || null;
@@ -517,7 +527,10 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       const object: any = selectObject.object;
       const propertyName = selectObject.property.name;
       this.realm.write(() => {
-        if (propertyName) {
+        // Distinguish when we are selecting an object or adding an existing object into a list
+        if (object.length) {
+          object.push(reference);
+        } else if (propertyName) {
           object[propertyName] = reference;
         }
       });
