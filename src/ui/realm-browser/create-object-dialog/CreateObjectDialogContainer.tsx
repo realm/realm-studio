@@ -3,7 +3,6 @@ import * as Realm from 'realm';
 import { v4 as uuid } from 'uuid';
 
 import { CreateObjectHandler } from '..';
-import { IPropertyWithName } from '../';
 import { showError } from '../../reusable/errors';
 import { IClassFocus } from '../focus';
 import { CreateObjectDialog } from './CreateObjectDialog';
@@ -70,8 +69,12 @@ export class CreateObjectDialogContainer extends React.PureComponent<
       const primaryKey = props.schema.primaryKey;
       const values: IRealmObject = {};
       Object.keys(properties).forEach(propertyName => {
-        const property = properties[propertyName] as IPropertyWithName;
-        values[propertyName] = this.generateInitialValue(property, primaryKey);
+        const property = properties[propertyName] as Realm.ObjectSchemaProperty;
+        values[propertyName] = this.generateInitialValue(
+          property,
+          propertyName,
+          primaryKey,
+        );
       });
       this.setState({
         values,
@@ -80,13 +83,14 @@ export class CreateObjectDialogContainer extends React.PureComponent<
   }
 
   protected generateInitialValue = (
-    property: IPropertyWithName,
+    property: Realm.ObjectSchemaProperty,
+    propertyName?: string,
     primaryKey?: string,
   ) => {
     // TODO: Initialize the values based on their property
     if (
-      property.name === 'uuid' &&
-      property.name === primaryKey &&
+      propertyName === 'uuid' &&
+      propertyName === primaryKey &&
       property.type === 'string'
     ) {
       return uuid();
