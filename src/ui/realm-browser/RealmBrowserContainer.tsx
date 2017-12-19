@@ -396,7 +396,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     const menu = new remote.Menu();
 
     if (params) {
-      const { property, rowObject } = params;
+      const { property, rowObject, rowIndex } = params;
 
       // If we clicked a property that refers to an object
       if (property && property.type === 'object') {
@@ -410,14 +410,16 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         );
       }
 
-      // If we clicked on a row when focussing on a class
-      if (focus && focus.kind === 'class') {
-        if (rowObject) {
+      // If we clicked on a row
+      if (focus) {
+        if (rowObject && rowIndex >= 0) {
           menu.append(
             new remote.MenuItem({
               label: 'Delete',
               click: () => {
-                this.openConfirmModal(rowObject);
+                this.openConfirmModal(() =>
+                  this.deleteObject(rowObject, rowIndex),
+                );
               },
             }),
           );
@@ -437,7 +439,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       );
     }
 
-    // If we have items to shpw - popup the menu
+    // If we have items to show - popup the menu
     if (menu.items.length > 0) {
       menu.popup(remote.getCurrentWindow(), {
         x: e.clientX,
@@ -525,18 +527,40 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     this.setState({ selectObject: undefined });
   };
 
-  public openConfirmModal = (object: any) => {
+  public openConfirmModal = (onYesCallback: () => void) => {
     this.setState({
       confirmModal: {
-        yes: () => this.deleteObject(object),
-        no: () => this.setState({ confirmModal: undefined }),
+        yes: () => {
+          onYesCallback();
+          this.closeConfirmModal();
+        },
+        no: this.closeConfirmModal,
       },
     });
   };
 
-  public deleteObject = (object: Realm.Object) => {
-    this.realm.write(() => this.realm.delete(object));
-    this.setState({ highlight: undefined, confirmModal: undefined });
+  public closeConfirmModal = () => this.setState({ confirmModal: undefined });
+
+  public deleteObject = (object: Realm.Object, index: number) => {
+    const { focus } = this.state;
+
+    if (focus) {
+      try {
+        this.realm.write(() => {
+          if (focus.kind === 'class') {
+            this.realm.delete(object);
+          } else if (focus.kind === 'list') {
+            if (focus.property.name !== null) {
+              // If we don't parse to any TS can't know if the Realm.Object has our property
+              (focus.parent as any)[focus.property.name].splice(index, 1);
+            }
+          }
+        });
+        this.setState({ highlight: undefined });
+      } catch (err) {
+        showError('Error deleting the object', err);
+      }
+    }
   };
 
   public onHideEncryptionDialog = () => {
