@@ -387,23 +387,36 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   };
 
   public onCreateObject = (className: string, values: {}) => {
-    this.realm.write(() => {
-      const object = this.realm.create(className, values);
-      const { focus } = this.state;
-      if (focus) {
-        if (focus.kind === 'list') {
-          this.getFocusedList(focus).push(object);
+    const { focus } = this.state;
+    let rowIndex = -1;
+
+    this.write(() => {
+      // Adding a primitive value into a list
+      if (primitives.isPrimitive(className)) {
+        if (focus && focus.kind === 'list') {
+          const valueTuPush = (values as any)[className];
+          this.getFocusedList(focus).push(valueTuPush);
+          rowIndex = focus.results.indexOf(valueTuPush);
         }
-        if (this.getClassName(focus) === className) {
-          const rowIndex = focus.results.indexOf(object);
-          if (rowIndex >= 0) {
-            this.setState({
-              highlight: {
-                row: rowIndex,
-              },
-            });
+      } else {
+        // Adding a new object into a class
+        const object = this.realm.create(className, values);
+        if (focus) {
+          // New object has been created from a list, so we add it too into the list
+          if (focus.kind === 'list') {
+            this.getFocusedList(focus).push(object);
+          }
+          if (this.getClassName(focus) === className) {
+            rowIndex = focus.results.indexOf(object);
           }
         }
+      }
+      if (rowIndex >= 0) {
+        this.setState({
+          highlight: {
+            row: rowIndex,
+          },
+        });
       }
     });
   };
@@ -567,8 +580,13 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       }
     }
 
-    // If we right-clicking on the content we can add an existing object when we are focusing a list
-    if (focus && focus.kind === 'list') {
+    // If we right-clicking on the content we can add an existing object when we are focusing an object list
+    if (
+      focus &&
+      focus.kind === 'list' &&
+      focus.property.objectType &&
+      !primitives.isPrimitive(focus.property.objectType)
+    ) {
       const className = this.getClassName(focus);
       menu.append(
         new remote.MenuItem({
@@ -616,9 +634,17 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
 
   public onCreateDialogToggle = (className?: string) => {
     if (this.realm && className) {
-      const createObjectSchema = this.realm.schema.find(
-        schema => schema.name === className,
-      );
+      const createObjectSchema =
+        className && primitives.isPrimitive(className)
+          ? {
+              name: className,
+              properties: {
+                [className]: {
+                  type: className,
+                },
+              },
+            }
+          : this.realm.schema.find(schema => schema.name === className);
       this.setState({ createObjectSchema });
     } else {
       this.setState({ createObjectSchema: undefined });
@@ -685,7 +711,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       const propertyName = selectObject.property.name;
       this.write(() => {
         // Distinguish when we are selecting an object or adding an existing object into a list
-        if (object.length) {
+        if (object.length >= 0) {
           object.push(reference);
         } else if (propertyName) {
           object[propertyName] = reference;
@@ -954,7 +980,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
 
   private getFocusedList = (focus: IListFocus): any => {
     if (focus.property.name !== null) {
-      // If we don't parse to any TS can't know if the Realm.Object has our property
+      // TS can't know if the Realm.Object has our property so we need parse it to 'any'
       return (focus.parent as any)[focus.property.name];
     }
   };
