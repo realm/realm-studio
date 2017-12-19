@@ -261,8 +261,11 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     this.realm.write(() => {
       const object = this.realm.create(className, values);
       const { focus } = this.state;
-      if (focus && focus.kind === 'class') {
-        if (focus.className === className) {
+      if (focus) {
+        if (focus.kind === 'list') {
+          this.getFocusedList(focus).push(object);
+        }
+        if (this.getClassName(focus) === className) {
           const rowIndex = focus.results.indexOf(object);
           if (rowIndex >= 0) {
             this.setState({
@@ -271,8 +274,6 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
               },
             });
           }
-        } else {
-          // TODO: If objects are created on a list - insert it into the list
         }
       }
     });
@@ -410,7 +411,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         );
       }
 
-      // If we clicked on a row
+      // If we clicked on a row can be always deleted
       if (focus) {
         if (rowObject && rowIndex >= 0) {
           menu.append(
@@ -427,13 +428,14 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       }
     }
 
-    // We can always create a new object if right-clicking in a class focus
-    if (focus && focus.kind === 'class') {
+    // If we right-clicking on the content we can always create a new object
+    if (focus) {
+      const className = this.getClassName(focus);
       menu.append(
         new remote.MenuItem({
-          label: `Create new ${focus.className}`,
+          label: `Create new ${className}`,
           click: () => {
-            this.onCreateDialogToggle(focus.className);
+            this.onCreateDialogToggle(className);
           },
         }),
       );
@@ -550,10 +552,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
           if (focus.kind === 'class') {
             this.realm.delete(object);
           } else if (focus.kind === 'list') {
-            if (focus.property.name !== null) {
-              // If we don't parse to any TS can't know if the Realm.Object has our property
-              (focus.parent as any)[focus.property.name].splice(index, 1);
-            }
+            this.getFocusedList(focus).splice(index, 1);
           }
         });
         this.setState({ highlight: undefined });
@@ -709,5 +708,16 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         }
       },
     );
+  };
+
+  private getClassName = (focus: Focus): string | undefined =>
+    (focus as IClassFocus).className ||
+    (focus as IListFocus).property.objectType;
+
+  private getFocusedList = (focus: IListFocus): any => {
+    if (focus.property.name !== null) {
+      // If we don't parse to any TS can't know if the Realm.Object has our property
+      return (focus.parent as any)[focus.property.name];
+    }
   };
 }
