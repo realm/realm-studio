@@ -1,22 +1,26 @@
 import * as electron from 'electron';
 import { URL } from 'url';
 
-import { ActionReceiver } from '../actions/ActionReceiver';
+import * as path from 'path';
+import { MainReceiver } from '../actions/main';
 import { MainTransport } from '../actions/transports/MainTransport';
 import { PROTOCOL } from '../constants';
+import { getDataImporter, ImportFormat } from '../services/data-importer';
+import ImportSchemaGenerator from '../services/data-importer/ImportSchemaGenerator';
 import * as github from '../services/github';
 import * as raas from '../services/raas';
 import { realms } from '../services/ros';
+
 import {
-  IRealmBrowserOptions,
-  IServerAdministrationOptions,
-  ITutorialOptions,
+  IRealmBrowserWindowProps,
+  IServerAdministrationWindowProps,
+  ITutorialWindowProps,
   WindowType,
 } from '../windows/WindowType';
 import { CertificateManager } from './CertificateManager';
 import { CloudManager, ICloudStatus } from './CloudManager';
 import { MainActions } from './MainActions';
-import { MainMenu } from './MainMenu';
+import { getDefaultMenuTemplate } from './MainMenu';
 import { Updater } from './Updater';
 import { WindowManager } from './WindowManager';
 
@@ -25,7 +29,6 @@ const isProduction = process.env.NODE_ENV === 'production';
 export class Application {
   public static sharedApplication = new Application();
 
-  private mainMenu = new MainMenu();
   private updater = new Updater();
   private windowManager = new WindowManager();
   private certificateManager = new CertificateManager();
@@ -53,21 +56,27 @@ export class Application {
     [MainActions.ShowGreeting]: () => {
       return this.showGreeting();
     },
+    [MainActions.ShowImportData]: (format: ImportFormat) => {
+      return this.showImportData(format);
+    },
     [MainActions.ShowOpenLocalRealm]: () => {
       return this.showOpenLocalRealm();
     },
-    [MainActions.ShowRealmBrowser]: (options: IRealmBrowserOptions) => {
-      return this.showRealmBrowser(options);
+    [MainActions.ShowRealmBrowser]: (props: IRealmBrowserWindowProps) => {
+      return this.showRealmBrowser(props);
     },
     [MainActions.ShowServerAdministration]: (
-      options: IServerAdministrationOptions,
+      props: IServerAdministrationWindowProps,
     ) => {
-      return this.showServerAdministration(options);
+      return this.showServerAdministration(props);
     },
-    [MainActions.ShowTutorial]: (options: ITutorialOptions) => {
-      return this.showTutorial(options);
+    [MainActions.ShowTutorial]: (props: ITutorialWindowProps) => {
+      return this.showTutorial(props);
     },
   };
+
+  // Instantiate a receiver that will receive actions from the main process itself.
+  private loopbackReceiver = new MainReceiver(this.actionHandlers);
 
   public run() {
     // this.makeSingleton(); // TODO: Re-enable and test on windows
@@ -87,6 +96,7 @@ export class Application {
     this.cloudManager.removeListener(this.onCloudStatusChange);
     this.windowManager.closeAllWindows();
     this.certificateManager.destroy();
+    this.loopbackReceiver.destroy();
   }
 
   public userDataPath(): string {
@@ -110,12 +120,10 @@ export class Application {
 
   public async showConnectToServer(url?: string) {
     return new Promise(resolve => {
-      const window = this.windowManager.createWindow(
-        WindowType.ConnectToServer,
-        {
-          url,
-        },
-      );
+      const window = this.windowManager.createWindow({
+        type: 'connect-to-server',
+        url,
+      });
       window.show();
       window.webContents.once('did-finish-load', () => {
         resolve();
@@ -125,7 +133,9 @@ export class Application {
 
   public showGreeting() {
     return new Promise(resolve => {
-      const window = this.windowManager.createWindow(WindowType.Greeting);
+      const window = this.windowManager.createWindow({
+        type: 'greeting',
+      });
       // Show the window, the first time its ready-to-show
       window.once('ready-to-show', () => {
         window.show();
@@ -145,7 +155,7 @@ export class Application {
   }
 
   public showOpenLocalRealm() {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       electron.dialog.showOpenDialog(
         {
           properties: ['openFile'],
@@ -153,47 +163,62 @@ export class Application {
         },
         selectedPaths => {
           if (selectedPaths) {
-            selectedPaths.forEach(path => {
-              const options: IRealmBrowserOptions = {
+            selectedPaths.forEach(selectedPath => {
+              const options: IRealmBrowserWindowProps = {
+                type: 'realm-browser',
                 realm: {
                   mode: realms.RealmLoadingMode.Local,
-                  path,
+                  path: selectedPath,
                 },
               };
-              this.showRealmBrowser(options);
+              this.showRealmBrowser(options).then(resolve, reject);
             });
           }
         },
       );
-      resolve();
     });
   }
 
-  public showRealmBrowser(options: IRealmBrowserOptions) {
-    return new Promise(resolve => {
-      const window = this.windowManager.createWindow(
-        WindowType.RealmBrowser,
-        options,
+  public showImportData(format: ImportFormat) {
+    return new Promise((resolve, reject) => {
+      electron.dialog.showOpenDialog(
+        {
+          properties: ['openFile', 'multiSelections'],
+          filters: [{ name: 'CSV File(s)', extensions: ['csv', 'CSV'] }],
+        },
+        selectedPaths => {
+          if (selectedPaths) {
+            // Generate the Realm from the provided CSV file(s)
+            const schemaGenerator = new ImportSchemaGenerator(
+              ImportFormat.CSV,
+              selectedPaths,
+            );
+            const schema = schemaGenerator.generate();
+            const importer = getDataImporter(format, selectedPaths, schema);
+            const generatedRealm = importer.import(
+              path.dirname(selectedPaths[0]),
+            );
+            // close Realm in main process (to be opened in Renderer process)
+            generatedRealm.close();
+
+            // Open a RealmBrowser using the generated Realm file.
+            const props: IRealmBrowserWindowProps = {
+              type: 'realm-browser',
+              realm: {
+                mode: realms.RealmLoadingMode.Local,
+                path: generatedRealm.path,
+              },
+            };
+            this.showRealmBrowser(props).then(resolve, reject);
+          }
+        },
       );
+    });
+  }
 
-      window.on('blur', () => {
-        this.mainMenu.update({
-          enableExportSchema: false,
-        });
-      });
-
-      window.on('focus', () => {
-        this.mainMenu.update({
-          enableExportSchema: true,
-        });
-      });
-
-      window.on('closed', () => {
-        this.mainMenu.update({
-          enableExportSchema: false,
-        });
-      });
-
+  public showRealmBrowser(props: IRealmBrowserWindowProps) {
+    return new Promise(resolve => {
+      const window = this.windowManager.createWindow(props);
       window.show();
       window.webContents.once('did-finish-load', () => {
         resolve();
@@ -201,19 +226,16 @@ export class Application {
     });
   }
 
-  public showServerAdministration(options: IServerAdministrationOptions) {
+  public showServerAdministration(props: IServerAdministrationWindowProps) {
     return new Promise(resolve => {
       // TODO: Change this once the realm-js Realm.Sync.User serializes correctly
       // @see https://github.com/realm/realm-js/issues/1276
-      const window = this.windowManager.createWindow(
-        WindowType.ServerAdministration,
-        options,
-      );
+      const window = this.windowManager.createWindow(props);
       window.show();
       window.webContents.once('did-finish-load', () => {
         resolve();
       });
-      if (options.isCloudTenant) {
+      if (props.isCloudTenant) {
         this.cloudManager.addListeningWindow(window);
         window.once('close', () => {
           this.cloudManager.removeListeningWindow(window);
@@ -222,12 +244,9 @@ export class Application {
     });
   }
 
-  public showTutorial(options: ITutorialOptions) {
+  public showTutorial(props: ITutorialWindowProps) {
     return new Promise(resolve => {
-      const window = this.windowManager.createWindow(
-        WindowType.Tutorial,
-        options,
-      );
+      const window = this.windowManager.createWindow(props);
       window.show();
       window.webContents.once('did-finish-load', () => {
         resolve();
@@ -237,9 +256,9 @@ export class Application {
 
   public showCloudAdministration() {
     return new Promise(resolve => {
-      const window = this.windowManager.createWindow(
-        WindowType.CloudAdministration,
-      );
+      const window = this.windowManager.createWindow({
+        type: 'cloud-administration',
+      });
       window.show();
       window.webContents.once('did-finish-load', () => {
         resolve();
@@ -273,9 +292,7 @@ export class Application {
   }
 
   private onReady = () => {
-    this.mainMenu.update();
-    // this.showOpenLocalRealm();
-    // this.showConnectToServer();
+    this.setDefaultMenu();
     this.showGreeting();
     electron.app.focus();
     this.registerProtocols();
@@ -311,6 +328,8 @@ export class Application {
   private onWindowAllClosed = () => {
     if (process.platform !== 'darwin') {
       electron.app.quit();
+    } else {
+      this.setDefaultMenu();
     }
   };
 
@@ -318,13 +337,16 @@ export class Application {
     event: Electron.Event,
     webContents: Electron.WebContents,
   ) => {
-    const receiver = new ActionReceiver(this.actionHandlers);
-    receiver.setTransport(new MainTransport(webContents));
+    const receiver = new MainReceiver(this.actionHandlers, webContents);
+    webContents.once('destroyed', () => {
+      receiver.destroy();
+    });
   };
 
   private onCloudStatusChange = (status: ICloudStatus) => {
     // Refresh the menu, as the authentication state might have changed
-    this.mainMenu.update();
+    // this.mainMenu.update();
+    // TODO: Update the menu when the cloud status changes.
   };
 
   private registerProtocols() {
@@ -359,6 +381,12 @@ export class Application {
   private onInstanceStarted = (argv: string[], workingDirectory: string) => {
     // TODO: Restore and focus the GreetingWindow
   };
+
+  private setDefaultMenu() {
+    const menuTemplate = getDefaultMenuTemplate();
+    const menu = electron.Menu.buildFromTemplate(menuTemplate);
+    electron.Menu.setApplicationMenu(menu);
+  }
 }
 
 if (module.hot) {

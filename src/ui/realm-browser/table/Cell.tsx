@@ -1,7 +1,8 @@
+import * as classNames from 'classnames';
 import * as React from 'react';
-import * as Realm from 'realm';
 
-import { IPropertyWithName } from '..';
+import { CellValidatedHandler } from '.';
+import { EditMode, IPropertyWithName } from '..';
 import { DataCell } from './types/DataCell';
 import { DefaultCell } from './types/DefaultCell';
 import { ListCell } from './types/ListCell';
@@ -10,13 +11,21 @@ import { ObjectCell } from './types/ObjectCell';
 import { StringCellContainer } from './types/StringCellContainer';
 
 const getCellContent = ({
-  hasEditingDisabled,
+  editMode,
+  isHighlighted,
+  isScrolling,
+  onHighlighted,
   onUpdateValue,
+  onValidated,
   property,
   value,
 }: {
-  hasEditingDisabled?: boolean;
+  editMode: EditMode;
+  isHighlighted?: boolean;
+  isScrolling?: boolean;
+  onHighlighted: () => void;
   onUpdateValue: (value: string) => void;
+  onValidated: (valid: boolean) => void;
   property: IPropertyWithName;
   value: any;
 }) => {
@@ -33,8 +42,11 @@ const getCellContent = ({
     case 'string': {
       return (
         <StringCellContainer
-          hasEditingDisabled={hasEditingDisabled}
+          editMode={editMode}
+          isHighlighted={isHighlighted}
+          onHighlighted={onHighlighted}
           onUpdateValue={onUpdateValue}
+          onValidated={onValidated}
           property={property}
           value={value}
         />
@@ -43,15 +55,21 @@ const getCellContent = ({
     case 'date': {
       return (
         <StringCellContainer
-          hasEditingDisabled={hasEditingDisabled}
+          editMode={editMode}
+          isHighlighted={isHighlighted}
+          onHighlighted={onHighlighted}
           onUpdateValue={onUpdateValue}
+          onValidated={onValidated}
           property={property}
-          value={value !== null ? value.toISOString() : value}
+          value={value}
+          valueToString={v => (v ? v.toISOString() : v)}
         />
       );
     }
     case 'data':
-      return <DataCell property={property} value={value} />;
+      return (
+        <DataCell isScrolling={isScrolling} property={property} value={value} />
+      );
     case 'list':
       return <ListCell property={property} value={value} />;
     case 'object':
@@ -62,33 +80,47 @@ const getCellContent = ({
 };
 
 export const Cell = ({
-  hasEditingDisabled,
+  editMode,
+  isHighlighted,
+  isScrolling,
   onCellClick,
   onContextMenu,
+  onHighlighted,
   onUpdateValue,
+  onValidated,
   property,
   style,
   value,
   width,
 }: {
-  hasEditingDisabled?: boolean;
+  editMode: EditMode;
+  isHighlighted?: boolean;
+  isScrolling?: boolean;
   onCellClick: (e: React.MouseEvent<any>) => void;
   onContextMenu: (e: React.MouseEvent<any>) => void;
+  onHighlighted: () => void;
   onUpdateValue: (value: string) => void;
+  onValidated: (valid: boolean) => void;
   property: IPropertyWithName;
   style: React.CSSProperties;
   value: any;
   width: number;
 }) => {
   const content = getCellContent({
-    hasEditingDisabled,
+    editMode,
+    isHighlighted,
+    isScrolling,
+    onValidated,
+    onHighlighted,
     onUpdateValue,
     property,
     value,
   });
   return (
     <div
-      className="RealmBrowser__Table__Cell"
+      className={classNames('RealmBrowser__Table__Cell', {
+        'RealmBrowser__Table__Cell--highlighted': isHighlighted,
+      })}
       onClick={onCellClick}
       onContextMenu={onContextMenu}
       style={style}

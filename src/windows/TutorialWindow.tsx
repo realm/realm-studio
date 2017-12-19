@@ -2,23 +2,19 @@ import * as React from 'react';
 
 import { Tutorial } from '../ui/Tutorial';
 import { Window } from './Window';
-import { ITutorialOptions } from './WindowType';
+import { ITutorialWindowProps } from './WindowType';
 
 // TODO: Consider if we can have the window not show before a connection has been established.
 
-export class TutorialWindow extends Window<
-  {
-    options: ITutorialOptions;
-  },
-  {}
-> {
+export class TutorialWindow extends Window<ITutorialWindowProps, {}> {
   public render() {
-    return <Tutorial {...this.props.options} />;
+    return <Tutorial {...this.props} />;
   }
 
-  public getTrackedProperties() {
+  protected getTrackedProperties() {
     return {
-      id: this.props.options.id,
+      ...super.getTrackedProperties(),
+      id: this.props.id,
     };
   }
 }

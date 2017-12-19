@@ -31,36 +31,28 @@ window.addEventListener('beforeunload', e => {
 
 import '../styles/index.scss';
 
-import { CurrentWindow } from './windows';
+import { getWindow } from './windows/Window';
 
 const appElement = document.getElementById('app');
 
 if (isProduction) {
-  ReactDOM.render(<CurrentWindow />, appElement);
+  const window = getWindow();
+  ReactDOM.render(window, appElement);
 } else {
   // The react-hot-loader is a dev-dependency, why we cannot use a regular import in the top of this file
   // tslint:disable-next-line:no-var-requires
   const { AppContainer } = require('react-hot-loader');
 
-  ReactDOM.render(
-    <AppContainer>
-      <CurrentWindow />
-    </AppContainer>,
-    appElement,
-  );
+  const currentWindow = getWindow();
+  ReactDOM.render(<AppContainer>{currentWindow}</AppContainer>, appElement);
 
   // Hot Module Replacement API
   if (module.hot) {
-    module.hot.accept('./windows', () => {
-      const NextWindow = require<{
-        CurrentWindow: typeof CurrentWindow;
-      }>('./windows').CurrentWindow;
-      ReactDOM.render(
-        <AppContainer>
-          <NextWindow />
-        </AppContainer>,
-        appElement,
-      );
+    module.hot.accept('./windows/Window', () => {
+      const nextGetWindow = require('./windows/Window').getWindow;
+      const nextWindow = nextGetWindow();
+      // Render the updated window
+      ReactDOM.render(<AppContainer>{nextWindow}</AppContainer>, appElement);
     });
   }
 

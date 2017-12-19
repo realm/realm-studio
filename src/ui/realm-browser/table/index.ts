@@ -23,13 +23,21 @@ export type CellClickHandler = (
 
 export type CellContextMenuHandler = (
   e: React.MouseEvent<any>,
-  params: {
+  params?: {
     rowObject: any;
     property: IPropertyWithName;
     cellValue: any;
     rowIndex: number;
     columnIndex: number;
   },
+) => void;
+
+export type CellHighlightedHandler = (highlight: IHighlight) => void;
+
+export type CellValidatedHandler = (
+  rowIndex: number,
+  columnIndex: number,
+  valid: boolean,
 ) => void;
 
 export interface IHighlight {

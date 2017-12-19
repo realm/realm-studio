@@ -1,213 +1,162 @@
 import * as electron from 'electron';
-import * as Realm from 'realm';
 
+import { main } from '../actions/main';
+import { ImportFormat } from '../services/data-importer';
 import * as raas from '../services/raas';
-import { Language } from '../services/schema-export';
-import { Application } from './Application';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-export interface IMainMenuOptions {
-  enableExportSchema?: boolean;
-}
+export const getDefaultMenuTemplate = (): electron.MenuItemConstructorOptions[] => {
+  const electronOrRemote = electron.remote || electron;
+  const template: electron.MenuItemConstructorOptions[] = [
+    {
+      label: 'File',
+      id: 'file',
+      submenu: [
+        {
+          label: 'Open...',
+          accelerator: 'CmdOrCtrl+O',
+          click: () => {
+            main.showOpenLocalRealm();
+          },
+        },
+        { type: 'separator' },
+        {
+          label: 'Create Realm from',
+          id: 'import',
+          submenu: [
+            {
+              label: 'CSV',
+              click: () => {
+                main.showImportData(ImportFormat.CSV);
+              },
+            },
+          ],
+        },
+        { type: 'separator' },
+        { role: 'close', id: 'close' },
+      ],
+    },
+    {
+      label: 'Edit',
+      id: 'edit',
+      submenu: [
+        { role: 'undo' },
+        { role: 'redo' },
+        { type: 'separator' },
+        { role: 'cut' },
+        { role: 'copy' },
+        { role: 'paste' },
+        { role: 'delete' },
+        { role: 'selectall', id: 'select-all' },
+      ],
+    },
+    {
+      label: 'View',
+      submenu: [
+        { role: 'reload', visible: !isProduction },
+        { role: 'toggledevtools', visible: !isProduction },
+        { type: 'separator', visible: !isProduction },
+        { role: 'resetzoom' },
+        { role: 'zoomin' },
+        { role: 'zoomout' },
+        { type: 'separator' },
+        { role: 'togglefullscreen' },
+      ],
+    },
+    {
+      // TODO: Consider moving this to the GreetingWindow
+      label: 'Realm Cloud',
+      submenu: [
+        {
+          label: 'Login with GitHub',
+          visible: !raas.user.hasToken(),
+          click: () => {
+            main.authenticateWithGitHub();
+          },
+        },
+        {
+          label: 'Logout',
+          visible: raas.user.hasToken(),
+          click: () => {
+            main.deauthenticate();
+          },
+        },
+        {
+          label: 'Change endpoint',
+          submenu: [
+            {
+              label: 'Production',
+              click: () => {
+                throw new Error('Not yet implemented');
+                // TODO: Create a main action to change Raas endpoint
+                // - or use raas.setEndpoint directly
+                /*
+                Application.sharedApplication.setRaasEndpoint(
+                  raas.Endpoint.Production,
+                );
+                main.setRaasEndpoint(raas.Endpoint.Production);
+                */
+              },
+            },
+            {
+              label: 'Staging',
+              click: () => {
+                throw new Error('Not yet implemented');
+                // TODO: Create a main action to change Raas endpoint.
+                // - or use raas.setEndpoint directly
+                /*
+                Application.sharedApplication.setRaasEndpoint(
+                  raas.Endpoint.Staging,
+                );
+                main.setRaasEndpoint(raas.Endpoint.Staging);
+                */
+              },
+            },
+          ],
+        },
+      ],
+    },
+    {
+      role: 'window',
+      submenu: [{ role: 'minimize' }, { role: 'zoom' }],
+    },
+    {
+      role: 'help',
+      submenu: [
+        {
+          label: 'Learn More...',
+          click: () => {
+            electronOrRemote.shell.openExternal('https://realm.io/docs');
+          },
+        },
+      ],
+    },
+  ];
 
-const DEFAULT_OPTIONS: IMainMenuOptions = {
-  enableExportSchema: false,
+  if (process.platform === 'darwin') {
+    template.unshift({
+      label: electronOrRemote.app.getName(),
+      submenu: [
+        { role: 'about' },
+        { type: 'separator' },
+        {
+          label: 'Check for Updates...',
+          click: () => {
+            main.checkForUpdates();
+          },
+        },
+        { type: 'separator' },
+        { role: 'services', submenu: [] },
+        { type: 'separator' },
+        { role: 'hide' },
+        { role: 'hideothers' },
+        { role: 'unhide' },
+        { type: 'separator' },
+        { role: 'quit' },
+      ],
+    });
+  }
+
+  return template;
 };
-
-export interface IExportSchemaOptions {
-  language: Language;
-}
-
-export class MainMenu {
-  public update(options: IMainMenuOptions = DEFAULT_OPTIONS) {
-    const template = this.menuTemplate(options);
-    const menu = electron.Menu.buildFromTemplate(template);
-    electron.Menu.setApplicationMenu(menu);
-  }
-
-  private getMenuItem = (
-    menu: Electron.Menu,
-    name: string,
-  ): Electron.MenuItemConstructorOptions => {
-    return menu.items.find(
-      item => (item as Electron.MenuItemConstructorOptions).label === name,
-    ) as Electron.MenuItemConstructorOptions;
-  };
-
-  private exportSchema = (language: Language) => {
-    const focusedWindow = electron.BrowserWindow.getFocusedWindow();
-    const options: IExportSchemaOptions = {
-      language,
-    };
-    focusedWindow.webContents.send('export-schema', options);
-  };
-
-  private menuTemplate(
-    options?: IMainMenuOptions,
-  ): Electron.MenuItemConstructorOptions[] {
-    const enableExportSchema = (options && options.enableExportSchema) || false;
-
-    const template: Electron.MenuItemConstructorOptions[] = [
-      {
-        label: 'File',
-        submenu: [
-          {
-            label: 'Open local Realm file',
-            accelerator: 'CmdOrCtrl+O',
-            click: () => {
-              Application.sharedApplication.showOpenLocalRealm();
-            },
-          },
-          { type: 'separator' },
-          {
-            label: 'Connect to a Realm Object Server',
-            visible: !!Realm.Sync,
-            click: () => {
-              Application.sharedApplication.showConnectToServer();
-            },
-          },
-          { type: 'separator' },
-          { role: 'close' },
-          {
-            label: 'Save model definitions',
-            submenu: [
-              {
-                label: 'Swift',
-                click: () => this.exportSchema(Language.Swift),
-                enabled: enableExportSchema,
-              },
-              {
-                label: 'JavaScript',
-                click: () => this.exportSchema(Language.JS),
-                enabled: enableExportSchema,
-              },
-              {
-                label: 'Java',
-                click: () => this.exportSchema(Language.Java),
-                enabled: enableExportSchema,
-              },
-              {
-                label: 'Kotlin',
-                click: () => this.exportSchema(Language.Kotlin),
-                enabled: enableExportSchema,
-              },
-              {
-                label: 'C#',
-                click: () => this.exportSchema(Language.CS),
-                enabled: enableExportSchema,
-              },
-            ],
-          },
-        ],
-      },
-      {
-        label: 'Edit',
-        submenu: [
-          { role: 'undo' },
-          { role: 'redo' },
-          { type: 'separator' },
-          { role: 'cut' },
-          { role: 'copy' },
-          { role: 'paste' },
-          { role: 'delete' },
-          { role: 'selectall' },
-        ],
-      },
-      {
-        label: 'View',
-        submenu: [
-          { role: 'reload', visible: !isProduction },
-          { role: 'toggledevtools', visible: !isProduction },
-          { type: 'separator', visible: !isProduction },
-          { role: 'resetzoom' },
-          { role: 'zoomin' },
-          { role: 'zoomout' },
-          { type: 'separator' },
-          { role: 'togglefullscreen' },
-        ],
-      },
-      {
-        role: 'window',
-        submenu: [{ role: 'minimize' }, { role: 'zoom' }],
-      },
-      {
-        label: 'Realm Cloud',
-        submenu: [
-          {
-            label: 'Login with GitHub',
-            visible: !raas.user.hasToken(),
-            click: () => {
-              Application.sharedApplication.authenticateWithGitHub();
-            },
-          },
-          {
-            label: 'Logout',
-            visible: raas.user.hasToken(),
-            click: () => {
-              Application.sharedApplication.deauthenticate();
-            },
-          },
-          {
-            label: 'Change endpoint',
-            submenu: [
-              {
-                label: 'Production',
-                click: () => {
-                  Application.sharedApplication.setRaasEndpoint(
-                    raas.Endpoint.Production,
-                  );
-                },
-              },
-              {
-                label: 'Staging',
-                click: () => {
-                  Application.sharedApplication.setRaasEndpoint(
-                    raas.Endpoint.Staging,
-                  );
-                },
-              },
-            ],
-          },
-        ],
-      },
-      {
-        role: 'help',
-        submenu: [
-          {
-            label: 'Learn More...',
-            click: () => {
-              electron.shell.openExternal('https://realm.io/docs');
-            },
-          },
-        ],
-      },
-    ];
-
-    if (process.platform === 'darwin') {
-      template.unshift({
-        label: electron.app.getName(),
-        submenu: [
-          { role: 'about' },
-          { type: 'separator' },
-          {
-            label: 'Check for Updates...',
-            click: () => {
-              Application.sharedApplication.checkForUpdates();
-            },
-          },
-          { type: 'separator' },
-          { role: 'services', submenu: [] },
-          { type: 'separator' },
-          { role: 'hide' },
-          { role: 'hideothers' },
-          { role: 'unhide' },
-          { type: 'separator' },
-          { role: 'quit' },
-        ],
-      });
-    }
-
-    return template;
-  }
-}

@@ -93,6 +93,7 @@ export class ConnectToServerContainer extends React.Component<
       }
       this.setLatestUrl(credentials.url);
       await main.showServerAdministration({
+        type: 'server-administration',
         credentials,
         validateCertificates: true,
       });

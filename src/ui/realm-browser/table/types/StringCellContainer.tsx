@@ -2,15 +2,20 @@ import { remote } from 'electron';
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import { IPropertyWithName } from '../..';
+import { CellValidatedHandler } from '..';
+import { EditMode, IPropertyWithName } from '../..';
 import { parse } from '../../parsers';
 import { StringCell } from './StringCell';
 
 export interface IStringCellContainerProps {
-  hasEditingDisabled?: boolean;
+  editMode: EditMode;
+  isHighlighted?: boolean;
+  onHighlighted: () => void;
   onUpdateValue: (value: any) => void;
+  onValidated: (valid: boolean) => void;
   property: IPropertyWithName;
-  value: string;
+  value: any;
+  valueToString?: (value: any) => string;
 }
 
 interface IStringCellContainerState {
@@ -22,6 +27,8 @@ export class StringCellContainer extends React.Component<
   IStringCellContainerProps,
   IStringCellContainerState
 > {
+  private inputElement: HTMLInputElement;
+
   constructor(props: IStringCellContainerProps) {
     super();
     this.state = {
@@ -30,28 +37,21 @@ export class StringCellContainer extends React.Component<
     };
   }
 
-  public componentWillReceiveProps(props: IStringCellContainerProps) {
-    const { value } = props;
+  public componentWillReceiveProps(nextProps: IStringCellContainerProps) {
+    const { value, isHighlighted } = nextProps;
     const { isEditing } = this.state;
 
-    if (!isEditing) {
+    if (this.props.isHighlighted && !isHighlighted) {
+      // The field is no longer highlighted
       this.setState({
-        temporalValue: value,
+        isEditing: false,
+      });
+    } else if (!this.props.isHighlighted && isHighlighted) {
+      // The field just got highlighted - lets start editing
+      this.setState({
+        temporalValue: this.getValueString(value),
       });
     }
-  }
-
-  public render() {
-    const { value, property } = this.props;
-
-    return (
-      <StringCell
-        isEditing={this.state.isEditing}
-        property={property}
-        value={this.state.isEditing ? this.state.temporalValue : value}
-        {...this}
-      />
-    );
   }
 
   public shouldComponentUpdate(
@@ -59,43 +59,114 @@ export class StringCellContainer extends React.Component<
     nextState: IStringCellContainerState,
   ) {
     return (
+      this.props.editMode !== nextProps.editMode ||
       this.props.value !== nextProps.value ||
+      this.props.isHighlighted !== nextProps.isHighlighted ||
       this.state.isEditing !== nextState.isEditing ||
       this.state.temporalValue !== nextState.temporalValue
     );
   }
 
-  public onFocus = (): void => {
-    // We can only edit cells that are not readOnly
-    if (!this.props.property.readOnly && !this.props.hasEditingDisabled) {
-      this.setState({ isEditing: true });
+  public componentDidUpdate(
+    prevProps: IStringCellContainerProps,
+    prevState: IStringCellContainerState,
+  ) {
+    // Change the focus of the element, according to the value of isEditing
+    if (this.inputElement) {
+      if (this.state.isEditing) {
+        this.inputElement.focus();
+      } else if (this.inputElement === document.activeElement) {
+        this.inputElement.blur();
+      }
     }
-  };
+  }
 
-  public onChange = (value: string, input: HTMLInputElement): void => {
-    this.setState({ temporalValue: value });
-  };
+  public render() {
+    const { isHighlighted, value, property } = this.props;
+    const valueString = this.state.isEditing
+      ? this.state.temporalValue
+      : this.getValueString(value);
+    return (
+      <StringCell
+        getRef={this.getInputRef}
+        isEditing={this.state.isEditing}
+        isHighlighted={isHighlighted || false}
+        property={property}
+        value={valueString}
+        {...this}
+      />
+    );
+  }
 
   public onBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
-    try {
-      const value = parse(this.state.temporalValue, this.props.property);
-      if (value !== this.props.value) {
-        this.props.onUpdateValue(value);
-        this.setState({ temporalValue: value, isEditing: false });
-      }
-    } catch (err) {
-      const leave = this.showInvalidValueError(err.message);
-      if (leave) {
-        this.setState({ temporalValue: this.props.value, isEditing: false });
-      } else {
-        const inputField = e.currentTarget;
-        e.preventDefault();
-        e.stopPropagation();
-        setTimeout(() => {
-          inputField.focus();
-        }, 100);
+    if (this.state.isEditing) {
+      try {
+        const value = parse(this.state.temporalValue, this.props.property);
+        if (value !== this.props.value) {
+          this.props.onValidated(true);
+          this.props.onUpdateValue(value);
+          this.setState({ temporalValue: value, isEditing: false });
+        }
+      } catch (err) {
+        const leave = this.showInvalidValueError(err.message);
+        if (leave) {
+          this.setState({ temporalValue: this.props.value, isEditing: false });
+          this.props.onValidated(true);
+        } else {
+          this.props.onValidated(false);
+          // Prevent getting blurred:
+          // This doesn't work as the another input might be getting focussed.
+          e.preventDefault();
+          // Re-focus
+          const inputElement = this.inputElement;
+          if (inputElement) {
+            setTimeout(() => {
+              inputElement.focus();
+            }, 100);
+          }
+        }
       }
     }
+  };
+
+  public onChange = (value: string): void => {
+    this.setState({ temporalValue: value });
+    if (this.props.editMode === EditMode.KeyPress) {
+      try {
+        const parsedValue = parse(value, this.props.property);
+        this.props.onValidated(true);
+        this.props.onUpdateValue(parsedValue);
+      } catch (err) {
+        // Probably a parsing error
+        // tslint:disable-next-line:no-console
+        console.warn(`Error parsing the input: ${err.message}`);
+        this.props.onValidated(false);
+      }
+    }
+  };
+
+  public onFocus = (): void => {
+    if (!this.props.isHighlighted) {
+      this.props.onHighlighted();
+    }
+  };
+
+  public onClick = (e: React.MouseEvent<any>): void => {
+    // We can only edit cells that are not readOnly and highlighted
+    if (
+      this.props.isHighlighted &&
+      !this.props.property.readOnly &&
+      this.props.editMode !== EditMode.Disabled
+    ) {
+      // Go into edit mode if not already
+      if (!this.state.isEditing) {
+        this.setState({ isEditing: true });
+      }
+    }
+  };
+
+  private getInputRef = (inputElement: HTMLInputElement) => {
+    this.inputElement = inputElement;
   };
 
   private showInvalidValueError(message: string): boolean {
@@ -109,5 +180,13 @@ export class StringCellContainer extends React.Component<
       cancelId: 1,
     });
     return answer === 0;
+  }
+
+  private getValueString(value: string) {
+    if (this.props.valueToString) {
+      return this.props.valueToString(value);
+    } else {
+      return value;
+    }
   }
 }

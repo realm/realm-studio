@@ -55,7 +55,12 @@ export const ServerAdministration = ({
       />
     );
   } else if (user && activeTab === Tab.Users) {
-    content = <UsersTableContainer user={user} />;
+    content = (
+      <UsersTableContainer
+        user={user}
+        validateCertificates={validateCertificates}
+      />
+    );
   } else if (user && activeTab === Tab.Logs) {
     content = <LogContainer user={user} />;
   } else if (user && activeTab === Tab.Tools) {

@@ -14,10 +14,10 @@ import {
   ILoadingProgress,
   LoadingOverlay,
 } from '../../reusable/loading-overlay';
+import { FloatingControls } from '../shared/FloatingControls';
 import { ChangePasswordDialogContainer } from './ChangePasswordDialogContainer';
 import { CreateUserDialogContainer } from './CreateUserDialogContainer';
 import { UserSidebar } from './UserSidebar';
-
 import './UsersTable.scss';
 
 export const UsersTable = ({
@@ -138,13 +138,9 @@ export const UsersTable = ({
         </AutoSizer>
       </div>
 
-      <div
-        className={classnames('UsersTable__overlayed-controls', {
-          'UsersTable__overlayed-controls--hidden': selectedUserId !== null,
-        })}
-      >
+      <FloatingControls isOpen={selectedUserId === null}>
         <Button onClick={toggleCreateUser}>Create new user</Button>
-      </div>
+      </FloatingControls>
 
       <UserSidebar
         isOpen={selectedUserId !== null}

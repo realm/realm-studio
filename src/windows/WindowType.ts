@@ -1,36 +1,60 @@
 // These enums and interfaces are not in index.tsx to enable the main process to import this without importing
 // React components.
+import * as assert from 'assert';
 import { URL } from 'url';
 
 import * as ros from '../services/ros';
 import * as tutorials from '../services/tutorials';
 
-export enum WindowType {
-  CloudAdministration = 'cloud-administration',
-  ConnectToServer = 'connect-to-server',
-  Greeting = 'greeting',
-  RealmBrowser = 'realm-browser',
-  ServerAdministration = 'server-administration',
-  Tutorial = 'tutorial',
+export type WindowType =
+  | 'cloud-administration'
+  | 'connect-to-server'
+  | 'greeting'
+  | 'realm-browser'
+  | 'server-administration'
+  | 'tutorial';
+
+export interface IWindowProps {
+  type: WindowType;
 }
 
-export interface IServerAdministrationOptions {
-  credentials: ros.IServerCredentials;
-  validateCertificates: boolean;
-  isCloudTenant?: boolean;
+export interface ICloudAdministrationWindowProps extends IWindowProps {
+  type: 'cloud-administration';
 }
 
-export interface IConnectToServerOptions {
+export interface IConnectToServerWindowProps extends IWindowProps {
+  type: 'connect-to-server';
   url?: string;
 }
 
-export interface IRealmBrowserOptions {
+export interface IGreetingWindowProps extends IWindowProps {
+  type: 'greeting';
+}
+
+export interface IRealmBrowserWindowProps extends IWindowProps {
+  type: 'realm-browser';
   realm: ros.realms.ISyncedRealmToLoad | ros.realms.ILocalRealmToLoad;
 }
 
-export interface ITutorialOptions {
+export interface IServerAdministrationWindowProps extends IWindowProps {
+  type: 'server-administration';
+  credentials: ros.IServerCredentials;
+  isCloudTenant?: boolean;
+  validateCertificates: boolean;
+}
+
+export interface ITutorialWindowProps extends IWindowProps {
+  type: 'tutorial';
   id: string;
 }
+
+export type WindowProps =
+  | ICloudAdministrationWindowProps
+  | IConnectToServerWindowProps
+  | IGreetingWindowProps
+  | IRealmBrowserWindowProps
+  | IServerAdministrationWindowProps
+  | ITutorialWindowProps;
 
 const getRealmUrl = (realm: ros.realms.ISyncedRealmToLoad) => {
   const url = new URL(
@@ -42,51 +66,51 @@ const getRealmUrl = (realm: ros.realms.ISyncedRealmToLoad) => {
   return url.toString();
 };
 
+/*
+ * Generate options that should get passed to the BrowserWindow constructor,
+ * when opening a particular window type.
+ */
 export function getWindowOptions(
-  type: WindowType,
-  context: any,
+  props: WindowProps,
 ): Partial<Electron.BrowserWindowConstructorOptions> {
-  if (type === WindowType.RealmBrowser) {
-    const options: IRealmBrowserOptions = context;
+  if (props.type === 'realm-browser') {
     const title =
-      options.realm.mode === 'synced'
-        ? getRealmUrl(options.realm)
-        : options.realm.path;
+      props.realm.mode === 'synced'
+        ? getRealmUrl(props.realm)
+        : props.realm.path;
     return {
       title,
     };
-  } else if (type === WindowType.ConnectToServer) {
+  } else if (props.type === 'connect-to-server') {
     return {
       title: 'Connect to Realm Object Server',
       width: 500,
       height: 300,
       resizable: false,
     };
-  } else if (type === WindowType.ServerAdministration) {
-    const options: IServerAdministrationOptions = context;
-    const credentials = options.credentials;
+  } else if (props.type === 'server-administration') {
+    const credentials = props.credentials;
     const url = credentials ? credentials.url : 'http://...';
     return {
       title: `Realm Object Server: ${url}`,
       width: 1024,
       height: 600,
     };
-  } else if (type === WindowType.Greeting) {
+  } else if (props.type === 'greeting') {
     return {
       title: `Realm Studio`,
       width: 600,
       height: 400,
       resizable: false,
     };
-  } else if (type === WindowType.CloudAdministration) {
+  } else if (props.type === 'cloud-administration') {
     return {
       title: `Realm Cloud`,
       width: 1024,
       height: 500,
     };
-  } else if (type === WindowType.Tutorial) {
-    const options = context as ITutorialOptions;
-    const config = tutorials.getConfig(options.id);
+  } else if (props.type === 'tutorial') {
+    const config = tutorials.getConfig(props.id);
     const title = config ? config.title : 'Missing a title';
     return {
       title: `Tutorial: ${title}`,

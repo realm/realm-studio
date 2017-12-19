@@ -22,6 +22,11 @@ jobWrapper {
   stage('Publish & notify') {
     node('docker') {
       git = checkoutAtVersion()
+
+      // Unstash the artifacts from the builds
+      unstash name: 'macos-artifacts'
+      unstash name: 'other-artifacts'
+
       // Ask the user to confirm that we're publishing
       def packageJson = readJSON file: 'package.json'
       def inputUrl = "${env.BUILD_URL}/input"
@@ -32,12 +37,9 @@ jobWrapper {
         'color': 'warning',
         'unfurl_links': false
       ]])
+
       // Wait for input
       input(message: "Ready to publish v${packageJson.version}?", id: 'publish')
-
-      // Unstash the artifacts from the builds
-      unstash name: 'macos-artifacts'
-      unstash name: 'other-artifacts'
 
       // Upload the build artifacts to S3
       def s3Config = packageJson.build.publish[0]
@@ -104,6 +106,9 @@ def packageOthers() {
           // Build the package: Never publishing and failing if missing code signing
           sh 'node_modules/.bin/electron-builder -c.forceCodeSigning --linux --windows --publish never'
         }
+        
+        // Check the auto-updating for versions and referenced files
+        sh 'npm run check:auto-update-files'
 
         archiveArtifacts 'dist/*'
         stash includes: 'dist/*', name: 'other-artifacts'
@@ -128,6 +133,9 @@ def packageOnMacos() {
 
         // Build the package: Never publishing and failing if missing code signing
         sh 'node_modules/.bin/electron-builder -c.forceCodeSigning --publish never'
+        
+        // Check the auto-updating for versions and referenced files
+        sh './scripts/via-nvm.sh npm run check:auto-update-files'
 
         // TODO: Run a post-package test, to see if the packaged app boots
 
