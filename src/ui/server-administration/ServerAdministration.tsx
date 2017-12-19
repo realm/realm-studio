@@ -4,12 +4,14 @@ import { Button, Navbar } from 'reactstrap';
 
 import realmLogo from '../../../static/svgs/realm-logo.svg';
 
-import { LoadingOverlay } from '../reusable/loading-overlay';
+import * as ros from '../../services/ros';
+import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
 import { LogContainer } from './logs/LogContainer';
 import {
   RealmsTableContainer,
   ValidateCertificatesChangeHandler,
 } from './realms/RealmsTableContainer';
+import { Status } from './Status';
 import { ToolsContainer } from './tools/ToolsContainer';
 import { UsersTableContainer } from './users/UsersTableContainer';
 
@@ -24,34 +26,44 @@ export enum Tab {
 
 export const ServerAdministration = ({
   activeTab,
+  adminRealm,
+  adminRealmProgress,
   isRealmOpening,
   onRealmOpened,
+  onReconnect,
   onTabChanged,
+  onValidateCertificatesChange,
+  syncError,
   user,
   validateCertificates,
-  onValidateCertificatesChange,
 }: {
   activeTab: Tab;
+  adminRealm: Realm;
+  adminRealmProgress: ILoadingProgress;
   isRealmOpening: boolean;
   onRealmOpened: (path: string) => void;
+  onReconnect: () => void;
   onTabChanged: (tab: Tab) => void;
+  onValidateCertificatesChange: ValidateCertificatesChangeHandler;
+  syncError?: Realm.Sync.SyncError;
   user: Realm.Sync.User | null;
   validateCertificates: boolean;
-  onValidateCertificatesChange: ValidateCertificatesChangeHandler;
 }) => {
   let content = null;
-  if (user && activeTab === Tab.Realms) {
+  if (user && adminRealm && activeTab === Tab.Realms) {
     content = (
       <RealmsTableContainer
-        user={user}
+        adminRealm={adminRealm}
         onRealmOpened={onRealmOpened}
-        validateCertificates={validateCertificates}
         onValidateCertificatesChange={onValidateCertificatesChange}
+        user={user}
+        validateCertificates={validateCertificates}
       />
     );
-  } else if (user && activeTab === Tab.Users) {
+  } else if (user && adminRealm && activeTab === Tab.Users) {
     content = (
       <UsersTableContainer
+        adminRealm={adminRealm}
         user={user}
         validateCertificates={validateCertificates}
       />
@@ -101,6 +113,7 @@ export const ServerAdministration = ({
       </Navbar>
       <div className="ServerAdministration__content">{content}</div>
       <LoadingOverlay loading={!user || isRealmOpening} fade={false} />
+      <LoadingOverlay progress={adminRealmProgress} fade={true} />
     </div>
   );
 };
