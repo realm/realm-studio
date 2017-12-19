@@ -10,12 +10,14 @@ import {
   CellChangeHandler,
   CellClickHandler,
   CellContextMenuHandler,
+  CellHighlightedHandler,
+  CellValidatedHandler,
   IHighlight,
   ISorting,
   SortEndHandler,
   SortStartHandler,
 } from '.';
-import { IPropertyWithName } from '..';
+import { EditMode, IPropertyWithName } from '..';
 import { IFocus } from '../focus';
 import { Table } from './Table';
 
@@ -23,11 +25,14 @@ const MINIMUM_COLUMN_WIDTH = 20;
 
 export interface IBaseTableContainerProps {
   dataVersion?: number;
+  editMode: EditMode;
   focus: IFocus;
-  hasEditingDisabled?: boolean;
   highlight?: IHighlight;
+  onAddColumnClick?: () => void;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
+  onCellHighlighted?: CellHighlightedHandler;
+  onCellValidated?: CellValidatedHandler;
   onContextMenu?: CellContextMenuHandler;
   onSortEnd?: SortEndHandler;
   onSortStart?: SortStartHandler;
@@ -70,16 +75,19 @@ export class TableContainer extends React.PureComponent<
       <Table
         columnWidths={this.state.columnWidths}
         dataVersion={this.props.dataVersion}
+        editMode={this.props.editMode}
         filteredSortedResults={filteredSortedResults}
         focus={this.props.focus}
         getCellValue={this.getCellValue}
         gridContentRef={this.gridContentRef}
         gridHeaderRef={this.gridHeaderRef}
-        hasEditingDisabled={this.props.hasEditingDisabled}
         highlight={this.props.highlight}
         isSorting={this.state.isSorting}
+        onAddColumnClick={this.props.onAddColumnClick}
         onCellChange={this.props.onCellChange}
         onCellClick={this.props.onCellClick}
+        onCellHighlighted={this.props.onCellHighlighted}
+        onCellValidated={this.props.onCellValidated}
         onColumnWidthChanged={this.onColumnWidthChanged}
         onContextMenu={this.props.onContextMenu}
         onSortClick={this.onSortClick}
@@ -95,14 +103,20 @@ export class TableContainer extends React.PureComponent<
   public componentWillMount() {
     if (this.props.focus) {
       const properties = this.props.focus.properties;
-      this.setDefaultColumnWidths(properties);
+      this.setDefaultColumnWidths(
+        properties,
+        this.props.focus.addColumnEnabled,
+      );
     }
   }
 
   public componentWillReceiveProps(props: ITableContainerProps) {
     if (props.focus && this.props.focus !== props.focus) {
       const properties = props.focus.properties;
-      this.setDefaultColumnWidths(properties);
+      this.setDefaultColumnWidths(
+        properties,
+        this.props.focus.addColumnEnabled,
+      );
       this.setState({ sorting: undefined });
     }
   }
@@ -231,21 +245,27 @@ export class TableContainer extends React.PureComponent<
     }
   }
 
-  private setDefaultColumnWidths(properties: IPropertyWithName[]) {
-    const columnWidths = properties.map(property => {
-      switch (property.type) {
-        case 'int':
-          return property.name === '#' ? 50 : 100;
-        case 'bool':
-          return 100;
-        case 'string':
-          return 300;
-        case 'date':
-          return 200;
-        default:
-          return 300;
-      }
-    });
+  private setDefaultColumnWidths(
+    properties: IPropertyWithName[],
+    addColumnEnabled?: boolean,
+  ) {
+    const columnWidths = [
+      ...properties.map(property => {
+        switch (property.type) {
+          case 'int':
+            return property.name === '#' ? 50 : 100;
+          case 'bool':
+            return 100;
+          case 'string':
+            return 300;
+          case 'date':
+            return 200;
+          default:
+            return 300;
+        }
+      }),
+      addColumnEnabled ? 50 : 0,
+    ];
     this.setState({
       columnWidths,
     });

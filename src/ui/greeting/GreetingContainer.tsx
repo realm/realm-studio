@@ -110,6 +110,7 @@ export class GreetingContainer extends React.Component<
       const tenantUrl = subscription.tenantUrl;
       const credentials = raas.user.getTenantCredentials(tenantUrl);
       return main.showServerAdministration({
+        type: 'server-administration',
         credentials,
         validateCertificates: true,
         isCloudTenant: true,

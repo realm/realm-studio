@@ -1,31 +1,28 @@
 import { v4 as uuid } from 'uuid';
 
 import { IActionHandlers } from '.';
-import { getTransport, Transport } from './transports';
+import { Transport } from './transports';
 
 interface IRequestHandle {
   promise: Promise<any>;
   resolve: (args: any[]) => void;
+  reject: (error: Error) => void;
+  error: Error;
 }
 
 export abstract class ActionSender {
-  private transport: Transport;
+  protected transport: Transport;
   private requests: {
     [id: string]: IRequestHandle;
   } = {};
 
-  constructor() {
-    const transport = getTransport();
-    if (transport) {
-      this.setTransport(transport);
-    }
-  }
-
   public destroy() {
-    this.transport.removeListener(
-      Transport.RESPONSE_EVENT_NAME,
-      this.onResponse,
-    );
+    if (this.transport) {
+      this.transport.removeListener(
+        Transport.RESPONSE_EVENT_NAME,
+        this.onResponse,
+      );
+    }
   }
 
   public setTransport(transport: Transport) {
@@ -46,10 +43,14 @@ export abstract class ActionSender {
 
   protected awaitResponse(requestId: string): Promise<any> {
     // Creating a placeholder, with values that should get overwritten before this method returns
-    const requestHandle: Partial<IRequestHandle> = {};
+    const requestHandle: Partial<IRequestHandle> = {
+      // Creating the error here to provide a better stacktrace
+      error: new Error(),
+    };
     // Create the promise and override the handles .resolve
     requestHandle.promise = new Promise((resolve, reject) => {
       requestHandle.resolve = resolve;
+      requestHandle.reject = reject;
     });
     // Hold on to and return the request handle
     if (requestHandle.promise && requestHandle.resolve) {
@@ -60,10 +61,17 @@ export abstract class ActionSender {
     }
   }
 
-  private onResponse = (requestId: string, result: any) => {
+  private onResponse = (requestId: string, result: any, success: boolean) => {
     if (requestId in this.requests) {
       const request = this.requests[requestId];
-      request.resolve(result);
+      if (success) {
+        // Resolve with the result from the receiver
+        request.resolve(result);
+      } else {
+        // Override the error message and reject the promise
+        request.error.message = result as string;
+        request.reject(request.error);
+      }
       delete this.requests[requestId];
     }
   };

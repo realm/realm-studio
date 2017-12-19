@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Badge, Table } from 'reactstrap';
+import { Table } from 'reactstrap';
 import * as Realm from 'realm';
 
 import * as ros from '../../../../services/ros';
 import { displayUser } from '../../utils';
 
-import '../../sidebar/SidebarTable.scss';
+import '../../shared/Sidebar/SidebarTable.scss';
 import { PermissionsBadge } from './PermissionsBadge';
 import './PermissionsTable.scss';
 
@@ -31,7 +31,7 @@ export const PermissionsTable = ({
       ) : (
         permissions.map((permission, index) => (
           <tr key={index}>
-            <td>{displayUser(permission.user)}</td>
+            <td>{displayUser(permission.user, 'public')}</td>
             <td>
               <PermissionsBadge
                 isVisible={permission.mayRead}

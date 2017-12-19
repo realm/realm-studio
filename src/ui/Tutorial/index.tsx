@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import * as tutorials from '../../services/tutorials';
 
-import { ITutorialOptions } from '../../windows/WindowType';
+import { ITutorialWindowProps } from '../../windows/WindowType';
 import { Tutorial } from './Tutorial';
 
 interface ITutorialContainerState {
@@ -11,7 +11,7 @@ interface ITutorialContainerState {
 }
 
 class TutorialContainer extends React.Component<
-  ITutorialOptions,
+  ITutorialWindowProps,
   ITutorialContainerState
 > {
   constructor() {

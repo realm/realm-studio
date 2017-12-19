@@ -25,6 +25,7 @@ export interface IRealmTableContainerProps {
 export interface IRealmTableContainerState extends IRealmLoadingComponentState {
   realms: Realm.Results<ros.IRealmFile> | null;
   selectedRealmPath: string | null;
+  isCreateRealmOpen: boolean;
 }
 
 export class RealmsTableContainer extends RealmLoadingComponent<
@@ -35,6 +36,7 @@ export class RealmsTableContainer extends RealmLoadingComponent<
     super();
     this.state = {
       realms: null,
+      isCreateRealmOpen: false,
       selectedRealmPath: null,
       progress: {
         done: false,
@@ -97,6 +99,24 @@ export class RealmsTableContainer extends RealmLoadingComponent<
         showError('Error deleting realm', err);
       }
     }
+  };
+
+  public onRealmCreated = async (path: string) => {
+    const realm = await ros.realms.create(this.props.user, path);
+    // Close the Realm right away - we don't need it open
+    realm.close();
+    // Cannot use the realm.path as that is the local path
+    // Instead - let's just select the latest Realm
+    if (this.state.realms) {
+      const lastRealm = this.state.realms[this.state.realms.length - 1];
+      this.onRealmSelected(lastRealm.path);
+    }
+  };
+
+  public toggleCreateRealm = () => {
+    this.setState({
+      isCreateRealmOpen: !this.state.isCreateRealmOpen,
+    });
   };
 
   public onRealmOpened = (path: string) => {

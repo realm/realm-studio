@@ -5,6 +5,7 @@ export enum MainActions {
   RefreshCloudStatus = 'refresh-cloud-status',
   ShowConnectToServer = 'show-connect-to-server',
   ShowGreeting = 'show-server-administration',
+  ShowImportData = 'show-import-data',
   ShowOpenLocalRealm = 'show-open-local-realm',
   ShowRealmBrowser = 'show-realm-browser',
   ShowServerAdministration = 'show-server-administration',

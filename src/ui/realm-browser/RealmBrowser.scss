@@ -13,7 +13,8 @@ $realm-browser-more-indicator-dark-color: rgba(0, 0, 0, .2);
 $realm-browser-more-indicator-light-color: rgba(0, 0, 0, 0);
 
 $color-row-stripe: mix($white, $color-dove, 50%);
-$highlight-row-bg: mix($white, $color-indigo, 70%);
+$highlight-row-bg: mix($white, $color-indigo, 75%);
+$highlight-cell-bg: mix($white, $color-indigo, 60%);
 $highlight-row-color: $black;
 
 .RealmBrowser {
@@ -36,17 +37,21 @@ $highlight-row-color: $black;
     width: 200px;
 
     &__Header {
+      align-items: baseline;
       border-bottom: 1px solid $color-dove;
       color: $color-elephant;
+      display: flex;
       font-size: .9rem;
       font-weight: bold;
       height: 2rem;
+      justify-content: space-between;
       line-height: 2em;
       margin-bottom: $spacer / 2;
       text-transform: uppercase;
     }
 
     &__SchemaList {
+      flex-grow: 1;
       margin: 0 (-$spacer / 2);
       overflow-x: hidden;
       overflow-y: auto;
@@ -164,17 +169,22 @@ $highlight-row-color: $black;
         content: "No schema selected";
       }
     }
+  }
 
-    &__Actions {
-      background: $white;
+  &__Topbar {
+    align-items: center;
+    background: $window-background;
+    display: flex;
+    padding: $spacer / 2;
 
-      &__Filter {
-        &,
-        input,
-        .input-group-addon {
-          border-radius: 0;
-        }
-      }
+    &__Changes {
+      align-items: center;
+      display: flex;
+      margin-right: $spacer / 2;
+    }
+
+    &__Filter {
+      flex-grow: 1;
     }
   }
 
@@ -188,6 +198,7 @@ $highlight-row-color: $black;
 
     &__Row {
       background: $white;
+      position: relative;
       transition: background-color 400ms;
 
       &--striped {
@@ -214,6 +225,7 @@ $highlight-row-color: $black;
     }
 
     &__HeaderCell,
+    &__HeaderCellControl,
     &__Cell {
       border-bottom: 1px solid $color-dove;
       border-right: 1px solid $color-dove;
@@ -226,11 +238,28 @@ $highlight-row-color: $black;
       }
     }
 
+    &__Cell {
+      &--highlighted {
+        background: $highlight-cell-bg;
+      }
+    }
+
     &__HeaderCell {
       display: flex;
       flex-direction: column;
       padding: 0 $realm-browser-header-icon-space 0 ($spacer / 4);
-      position: relative;
+    }
+
+    &__HeaderCellControl {
+      align-items: center;
+      color: $highlight-row-color;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+
+      &:hover {
+        background: $highlight-row-bg;
+      }
     }
 
     &__HeaderName {
@@ -324,10 +353,12 @@ $highlight-row-color: $black;
 
     &__StringCell {
       &--int {
+        overflow: hidden;
         position: absolute;
         right: $spacer / 2;
         text-align: right;
-        width: auto;
+        text-overflow: ellipsis;
+        width: 100%;
       }
     }
 
@@ -434,5 +465,39 @@ $highlight-row-color: $black;
     }
 
     @import "../reusable/ReactVirtualized";
+  }
+
+  &__Bottombar {
+    align-items: center;
+    background: $color-ultramarine;
+    color: $color-dove;
+    display: flex;
+    height: 0;
+    justify-content: space-between;
+    transition: height 100ms;
+
+    &--visible {
+      height: 2.8rem;
+    }
+
+    &__UnsavedChanges,
+    &__Controls {
+      padding: $spacer / 2;
+    }
+
+    &__UnsavedChanges {
+      font-size: .8rem;
+      padding: 0 $spacer;
+      text-align: center;
+    }
+
+    &__Controls {
+      display: flex;
+      justify-content: center;
+
+      * {
+        margin-left: $spacer / 2;
+      }
+    }
   }
 }
