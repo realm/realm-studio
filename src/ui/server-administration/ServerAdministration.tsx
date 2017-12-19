@@ -92,12 +92,12 @@ export const ServerAdministration = ({
         <TabButton tab={Tab.Users} label="Users" />
         <TabButton tab={Tab.Logs} label="Logs" />
         {/* <TabButton tab={Tab.Tools} label="Tools" /> */}
-        {user && (
-          <p className="ServerAdministration__status">
-            Connected to&nbsp;
-            <span className="ServerAdministration__server">{user.server}</span>
-          </p>
-        )}
+        <Status
+          onReconnect={onReconnect}
+          progress={adminRealmProgress}
+          syncError={syncError}
+          user={user}
+        />
       </Navbar>
       <div className="ServerAdministration__content">{content}</div>
       <LoadingOverlay loading={!user || isRealmOpening} fade={false} />

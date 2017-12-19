@@ -34,15 +34,16 @@
     color: $color-elephant;
   }
 
-  &__status {
+  &__Status {
     flex-grow: 1;
     font-size: .9rem;
     margin: 0;
     text-align: right;
-  }
 
-  &__server {
-    user-select: text;
+    &__error,
+    &__server {
+      user-select: text;
+    }
   }
 
   &__content {
