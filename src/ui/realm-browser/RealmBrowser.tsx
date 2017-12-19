@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import { CreateObjectHandler, ISelectObjectState } from '.';
+import { CreateObjectHandler, EditMode, ISelectObjectState } from '.';
 import { ConfirmModal } from '../reusable/confirm-modal';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
 import { AddClassModal } from './AddClassModal';
@@ -16,6 +16,8 @@ import {
   CellChangeHandler,
   CellClickHandler,
   CellContextMenuHandler,
+  CellHighlightedHandler,
+  CellValidatedHandler,
   IHighlight,
   SortEndHandler,
   SortStartHandler,
@@ -24,7 +26,6 @@ import {
 import './RealmBrowser.scss';
 
 export interface IRealmBrowserProps {
-  toggleSelectObject: () => void;
   columnToHighlight?: number;
   confirmModal?: {
     yes: () => void;
@@ -32,71 +33,88 @@ export interface IRealmBrowserProps {
   };
   createObjectSchema?: Realm.ObjectSchema;
   dataVersion: number;
+  dataVersionAtBeginning?: number;
+  editMode: EditMode;
   focus: Focus | null;
   getClassFocus: (className: string) => IClassFocus;
   getSchemaLength: (name: string) => number;
   highlight?: IHighlight;
+  inTransaction: boolean;
+  isAddClassOpen: boolean;
+  isAddPropertyOpen: boolean;
+  isClassNameAvailable: (name: string) => boolean;
   isEncryptionDialogVisible: boolean;
+  isPropertyNameAvailable: (name: string) => boolean;
+  onAddClass: (schema: Realm.ObjectSchema) => void;
+  onAddProperty: (property: Realm.PropertiesTypes) => void;
+  onCancelTransaction: () => void;
   onCellChange: CellChangeHandler;
   onCellClick: CellClickHandler;
+  onCellHighlighted: CellHighlightedHandler;
+  onCellValidated: CellValidatedHandler;
+  onClassSelected: (name: string, objectToScroll: any) => void;
+  onCommitTransaction: () => void;
   onContextMenu: CellContextMenuHandler;
   onCreateDialogToggle: () => void;
   onCreateObject: CreateObjectHandler;
   onHideEncryptionDialog: () => void;
   onOpenWithEncryption: (key: string) => void;
-  onClassSelected: (name: string, objectToScroll: any) => void;
   onSortEnd: SortEndHandler;
   onSortStart: SortStartHandler;
   progress: ILoadingProgress;
-  rowToHighlight?: number;
   schemas: Realm.ObjectSchema[];
   selectObject?: ISelectObjectState;
-  updateObjectReference: (object: any) => void;
-  onAddClass: (schema: Realm.ObjectSchema) => void;
-  isAddClassOpen: boolean;
   toggleAddSchema: () => void;
-  isClassNameAvailable: (name: string) => boolean;
-  onAddProperty: (property: Realm.PropertiesTypes) => void;
-  isAddPropertyOpen: boolean;
   toggleAddSchemaProperty: () => void;
-  isPropertyNameAvailable: (name: string) => boolean;
+  toggleSelectObject: () => void;
+  updateObjectReference: (object: any) => void;
 }
 
 export const RealmBrowser = ({
-  toggleSelectObject,
   columnToHighlight,
   confirmModal,
   createObjectSchema,
   dataVersion,
+  dataVersionAtBeginning,
+  editMode,
   focus,
   getClassFocus,
   getSchemaLength,
   highlight,
+  inTransaction,
+  isAddClassOpen,
+  isAddPropertyOpen,
+  isClassNameAvailable,
   isEncryptionDialogVisible,
+  isPropertyNameAvailable,
+  onAddClass,
+  onAddProperty,
+  onCancelTransaction,
   onCellChange,
   onCellClick,
+  onCellHighlighted,
+  onCellValidated,
+  onClassSelected,
+  onCommitTransaction,
   onContextMenu,
   onCreateDialogToggle,
   onCreateObject,
   onHideEncryptionDialog,
   onOpenWithEncryption,
-  onClassSelected,
   onSortEnd,
   onSortStart,
   progress,
-  rowToHighlight,
   schemas,
   selectObject,
-  updateObjectReference,
-  onAddClass,
-  isAddClassOpen,
   toggleAddSchema,
-  isClassNameAvailable,
-  onAddProperty,
-  isAddPropertyOpen,
   toggleAddSchemaProperty,
-  isPropertyNameAvailable,
+  toggleSelectObject,
+  updateObjectReference,
 }: IRealmBrowserProps) => {
+  const changeCount =
+    typeof dataVersionAtBeginning === 'number'
+      ? dataVersion - dataVersionAtBeginning
+      : 0;
   return (
     <div className="RealmBrowser">
       <Sidebar
@@ -109,16 +127,23 @@ export const RealmBrowser = ({
       />
       <div className="RealmBrowser__Wrapper">
         <ContentContainer
+          changeCount={changeCount}
           dataVersion={dataVersion}
+          editMode={editMode}
           focus={focus}
           highlight={highlight}
+          inTransaction={inTransaction}
+          onAddColumnClick={toggleAddSchemaProperty}
+          onCancelTransaction={onCancelTransaction}
           onCellChange={onCellChange}
           onCellClick={onCellClick}
+          onCellHighlighted={onCellHighlighted}
+          onCellValidated={onCellValidated}
+          onCommitTransaction={onCommitTransaction}
           onContextMenu={onContextMenu}
           onSortEnd={onSortEnd}
           onSortStart={onSortStart}
           progress={progress}
-          onAddColumnClick={toggleAddSchemaProperty}
         />
       </div>
       {confirmModal && (

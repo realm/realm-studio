@@ -33,12 +33,12 @@ export abstract class Window<P extends WindowProps, S> extends React.Component<
     const trackedProperties = this.getTrackedProperties();
     mixpanel.track('Window opened', trackedProperties);
     // Generate the menu now and whenever the window gets focus
-    this.generateMenu();
-    window.addEventListener('focus', this.generateMenu);
+    this.updateMenu();
+    window.addEventListener('focus', this.updateMenu);
   }
 
   public componentWillUnmount() {
-    window.removeEventListener('focus', this.generateMenu);
+    window.removeEventListener('focus', this.updateMenu);
   }
 
   public addMenuGenerator = (generator: IMenuGenerator) => {
@@ -56,7 +56,7 @@ export abstract class Window<P extends WindowProps, S> extends React.Component<
     }
   };
 
-  public generateMenu = () => {
+  public updateMenu = () => {
     // Let's only generate menus of windows that are focused
     if (remote.getCurrentWindow().isFocused()) {
       // Generate and set the application

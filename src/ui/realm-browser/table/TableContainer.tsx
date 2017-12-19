@@ -10,12 +10,14 @@ import {
   CellChangeHandler,
   CellClickHandler,
   CellContextMenuHandler,
+  CellHighlightedHandler,
+  CellValidatedHandler,
   IHighlight,
   ISorting,
   SortEndHandler,
   SortStartHandler,
 } from '.';
-import { IPropertyWithName } from '..';
+import { EditMode, IPropertyWithName } from '..';
 import { IFocus } from '../focus';
 import { Table } from './Table';
 
@@ -23,16 +25,18 @@ const MINIMUM_COLUMN_WIDTH = 20;
 
 export interface IBaseTableContainerProps {
   dataVersion?: number;
+  editMode: EditMode;
   focus: IFocus;
-  hasEditingDisabled?: boolean;
   highlight?: IHighlight;
+  onAddColumnClick?: () => void;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
+  onCellHighlighted?: CellHighlightedHandler;
+  onCellValidated?: CellValidatedHandler;
   onContextMenu?: CellContextMenuHandler;
   onSortEnd?: SortEndHandler;
   onSortStart?: SortStartHandler;
   query: string;
-  onAddColumnClick?: () => void;
 }
 
 export interface ITableContainerProps extends IBaseTableContainerProps {
@@ -71,17 +75,19 @@ export class TableContainer extends React.PureComponent<
       <Table
         columnWidths={this.state.columnWidths}
         dataVersion={this.props.dataVersion}
+        editMode={this.props.editMode}
         filteredSortedResults={filteredSortedResults}
         focus={this.props.focus}
         getCellValue={this.getCellValue}
         gridContentRef={this.gridContentRef}
         gridHeaderRef={this.gridHeaderRef}
-        hasEditingDisabled={this.props.hasEditingDisabled}
         highlight={this.props.highlight}
         isSorting={this.state.isSorting}
         onAddColumnClick={this.props.onAddColumnClick}
         onCellChange={this.props.onCellChange}
         onCellClick={this.props.onCellClick}
+        onCellHighlighted={this.props.onCellHighlighted}
+        onCellValidated={this.props.onCellValidated}
         onColumnWidthChanged={this.onColumnWidthChanged}
         onContextMenu={this.props.onContextMenu}
         onSortClick={this.onSortClick}

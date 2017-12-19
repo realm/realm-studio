@@ -1,24 +1,29 @@
 import * as React from 'react';
-import { Input, InputGroup, InputGroupAddon } from 'reactstrap';
+import { Button, Input, InputGroup, InputGroupButton } from 'reactstrap';
 
 export interface ITopbarProps {
   onQueryChange: (query: string) => void;
+  onQueryHelp: () => void;
   query: string;
 }
 
-export const Topbar = ({ onQueryChange, query }: ITopbarProps) => (
-  <div className="RealmBrowser__Content__Actions">
-    <InputGroup className="RealmBrowser__Content__Actions__Filter">
-      <InputGroupAddon>
-        <i className="fa fa-search" aria-hidden="true" />
-      </InputGroupAddon>
-      <Input
-        onChange={e => {
-          onQueryChange(e.target.value);
-        }}
-        placeholder="Query ..."
-        value={query}
-      />
-    </InputGroup>
+export const Topbar = ({ onQueryChange, onQueryHelp, query }: ITopbarProps) => (
+  <div className="RealmBrowser__Topbar">
+    <section className="RealmBrowser__Topbar__Filter">
+      <InputGroup size="sm">
+        <Input
+          onChange={e => {
+            onQueryChange(e.target.value);
+          }}
+          placeholder="Enter a query to filter the list"
+          value={query}
+        />
+        <InputGroupButton>
+          <Button onClick={onQueryHelp}>
+            <i className="fa fa-question" aria-hidden="true" />
+          </Button>
+        </InputGroupButton>
+      </InputGroup>
+    </section>
   </div>
 );
