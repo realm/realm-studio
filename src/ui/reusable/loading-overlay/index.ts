@@ -1,8 +1,10 @@
 export { LoadingOverlay } from './LoadingOverlay';
 
+export type LoadingStatus = 'idle' | 'done' | 'failed' | 'in-progress';
+
 export interface ILoadingProgress {
-  done: boolean;
-  failure?: string;
+  status: LoadingStatus;
+  message?: string;
   transferable?: number;
   transferred?: number;
 }

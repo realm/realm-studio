@@ -65,7 +65,7 @@ export abstract class RealmLoadingComponent<
 
     if (realm) {
       try {
-        this.setState({ progress: { done: false } });
+        this.setState({ progress: { status: 'in-progress' } });
         // Reset the state that captures rejected certificates
         this.certificateWasRejected = false;
         // Get the realms from the ROS interface
@@ -86,7 +86,7 @@ export abstract class RealmLoadingComponent<
         this.realm.addListener('change', this.onRealmChanged);
         this.onRealmLoaded();
         // Update the state, to indicate we're done loading
-        this.setState({ progress: { done: true } });
+        this.setState({ progress: { status: 'done' } });
       } catch (err) {
         // Ignore an error that originates from the load being cancelled
         if (!err.wasCancelled) {
@@ -127,9 +127,8 @@ export abstract class RealmLoadingComponent<
   }
 
   protected loadingRealmFailed(err: Error) {
-    showError('Failed open the Realm', err);
-    const failure = err.message || 'Failed to open the Realm';
-    this.setState({ progress: { failure, done: true } });
+    const message = err.message || 'Failed to open the Realm';
+    this.setState({ progress: { message, status: 'failed' } });
   }
 
   protected isSslCertificateRelated(err: Error) {
@@ -243,7 +242,7 @@ export abstract class RealmLoadingComponent<
   private progressChanged = (transferred: number, transferable: number) => {
     this.setState({
       progress: {
-        done: transferred >= transferable,
+        status: transferred >= transferable ? 'done' : 'in-progress',
         transferred,
         transferable,
       },

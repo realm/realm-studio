@@ -22,14 +22,13 @@ export const LoadingOverlay = ({
   fade?: boolean;
 }) => {
   // If a progress has been supplied, it overrides loading
-  const isVisible = progress ? !progress.done || progress.failure : loading;
+  const isVisible = progress ? progress.status !== 'done' : loading;
   return isVisible ? (
     <div
       className={classNames('LoadingOverlay', {
         'LoadingOverlay--no-fade': !fade,
       })}
     >
-      {(progress ? !progress.done : loading) ? <LoadingDots /> : null}
       {progress &&
         progress.transferable &&
         progress.transferred && (
@@ -39,14 +38,21 @@ export const LoadingOverlay = ({
             max={progress.transferable}
           />
         )}
-      {progress && progress.failure ? (
+      {progress && progress.status === 'failed' ? (
         <section className="LoadingOverlay__Failure">
           <i
-            className="LoadingOverlay__FailureIcon fa fa-exclamation-triangle"
+            className="LoadingOverlay__FailureIcon fa fa-exclamation-circle"
             aria-hidden="true"
           />
-          {progress.failure}
         </section>
+      ) : null}
+      {progress && progress.message ? (
+        <section className="LoadingOverlay__Message">
+          {progress.message}
+        </section>
+      ) : null}
+      {(progress && progress.status === 'in-progress') || loading ? (
+        <LoadingDots />
       ) : null}
     </div>
   ) : null;

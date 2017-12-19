@@ -40,15 +40,16 @@
     width: 60vw;
   }
 
+  &__Message,
   &__Failure {
     align-items: center;
     display: flex;
     flex-direction: column;
+    padding: $spacer / 2;
     width: 70%;
   }
 
   &__FailureIcon {
     font-size: 4rem;
-    margin-bottom: $spacer;
   }
 }
