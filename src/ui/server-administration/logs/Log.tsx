@@ -7,6 +7,11 @@ import {
   ScrollSync,
 } from 'react-virtualized';
 
+import {
+  ILoadingProgress,
+  LoadingOverlay,
+} from '../../reusable/loading-overlay';
+
 import { Entry, ILogEntry } from './Entry';
 import { LevelSelector, LogLevel } from './LevelSelector';
 
@@ -18,12 +23,14 @@ export const Log = ({
   level,
   onLevelChanged,
   toggleLevelSelector,
+  progress,
 }: {
   entries: ILogEntry[];
   isLevelSelectorOpen: boolean;
   level: LogLevel;
   onLevelChanged: (level: LogLevel) => void;
   toggleLevelSelector: () => void;
+  progress: ILoadingProgress;
 }) => {
   return (
     <div className="Log">
@@ -57,7 +64,11 @@ export const Log = ({
         </ScrollSync>
       </div>
       <div className="Log__Controls">
-        <div className="Log__Status">Showing {entries.length} log entries</div>
+        <div className="Log__Status">
+          {progress.status === 'done' ? (
+            <span>Showing {entries.length} entries from the server</span>
+          ) : null}
+        </div>
         <div className="Log__LevelSelector">
           Show levels &ge;&nbsp;
           <LevelSelector
@@ -68,6 +79,7 @@ export const Log = ({
           />
         </div>
       </div>
+      <LoadingOverlay progress={progress} />
     </div>
   );
 };
