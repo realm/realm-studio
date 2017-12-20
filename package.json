@@ -81,6 +81,7 @@
     "check:package-lock": "node ./scripts/check-package-lock.js",
     "check:auto-update-files": "node ./scripts/check-auto-update-files.js",
     "dev:ros-https": "ros start --https --https-key ./data/keys/server.key --https-cert ./data/keys/server.crt",
+    "dev:ros-unreliable": "node ./scripts/unreliable-ros.js",
     "dev:ros": "ros start",
     "dev": "rm -rf ./build && concurrently --names \"WEBPACK:M,WEBPACK:R,ELECTRON\" \"npm run webpack:main\" \"npm run webpack:renderer\" \"npm run wait-for-bundle && electron .\"",
     "lint:sass": "sass-lint -c .sass-lint.yml 'src/**/*.scss' -v",
