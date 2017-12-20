@@ -53,7 +53,6 @@ export const TopBar = ({
     />
     {user && (
       <p className="ServerAdministration__status">
-        Connected to&nbsp;
         <span className="ServerAdministration__server">{user.server}</span>
       </p>
     )}
