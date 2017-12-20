@@ -112,8 +112,11 @@ export const ServerAdministration = ({
         />
       </Navbar>
       <div className="ServerAdministration__content">{content}</div>
-      <LoadingOverlay loading={!user || isRealmOpening} fade={false} />
-      <LoadingOverlay progress={adminRealmProgress} fade={true} />
+      <LoadingOverlay
+        loading={!user || isRealmOpening}
+        progress={adminRealmProgress}
+        fade={true}
+      />
     </div>
   );
 };
