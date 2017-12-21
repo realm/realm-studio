@@ -23,8 +23,6 @@ import { ContentGrid } from './ContentGrid';
 import { HeaderGrid } from './HeaderGrid';
 import { MoreIndicator } from './MoreIndicator';
 
-export const allowDispatchContentMenuClass = 'allow-dispatch-content-menu';
-
 const rowHeights = {
   header: 40,
   content: 26,
@@ -98,11 +96,7 @@ export const Table = ({
   return (
     <div
       onContextMenu={e => {
-        const element = e.target as Element;
-        if (
-          onContextMenu &&
-          element.classList.contains(allowDispatchContentMenuClass)
-        ) {
+        if (onContextMenu) {
           onContextMenu(e);
         }
       }}

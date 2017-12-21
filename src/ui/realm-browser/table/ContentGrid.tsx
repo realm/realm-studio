@@ -30,7 +30,6 @@ import {
   IGridRowProps,
   rowCellRangeRenderer,
 } from './rowCellRangeRenderer';
-import { allowDispatchContentMenuClass } from './Table';
 
 // Must pass Grid as any - due to a bug in the types
 const SortableGrid = SortableContainer<GridProps>(Grid as any, {
@@ -91,7 +90,7 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
         helperClass="RealmBrowser__Table__Row--sorting-selected"
         cellRangeRenderer={this.cellRangeRenderer}
         cellRenderer={this.getCellRenderer}
-        className={`RealmBrowser__Table__ContentGrid ${allowDispatchContentMenuClass}`}
+        className="RealmBrowser__Table__ContentGrid"
         columnWidth={this.getColumnWidth}
         distance={5}
         onSortEnd={onSortEnd}
@@ -191,6 +190,7 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
                 }
               }}
               onContextMenu={e => {
+                e.stopPropagation();
                 if (onContextMenu) {
                   onContextMenu(e, {
                     cellValue,
@@ -249,7 +249,6 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
     // Render an empty div
     return (
       <div
-        className={`RealmBrowser__Table__ContentGrid--empty ${allowDispatchContentMenuClass}`}
         style={{
           height: this.props.height,
           width,
