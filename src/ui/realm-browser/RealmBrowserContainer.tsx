@@ -679,7 +679,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   };
 
   public openSelectObject = (
-    object: Realm.Object | Realm.List<any>,
+    contentToUpdate: Realm.Object | Realm.List<any>,
     property: IPropertyWithName,
   ) => {
     if (property.objectType) {
@@ -696,7 +696,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         selectObject: {
           focus,
           property,
-          object,
+          contentToUpdate,
         },
       });
     } else {
@@ -707,14 +707,14 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   public updateObjectReference = (reference: any) => {
     const { selectObject } = this.state;
     if (selectObject) {
-      const object: any = selectObject.object;
+      const contentToUpdate: any = selectObject.contentToUpdate;
       const propertyName = selectObject.property.name;
       this.write(() => {
-        // Distinguish when we are selecting an object or adding an existing object into a list
-        if (object.length >= 0) {
-          object.push(reference);
+        // Distinguish when we are updating an object or adding an existing object into a list
+        if (contentToUpdate.length >= 0) {
+          contentToUpdate.push(reference);
         } else if (propertyName) {
-          object[propertyName] = reference;
+          contentToUpdate[propertyName] = reference;
         }
       });
       this.setState({ selectObject: undefined });
