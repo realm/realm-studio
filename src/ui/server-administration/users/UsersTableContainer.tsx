@@ -13,59 +13,42 @@ import {
 import { UsersTable } from './UsersTable';
 
 export interface IUsersTableContainerProps {
+  adminRealm: Realm;
   user: Realm.Sync.User;
   validateCertificates: boolean;
 }
 
-export interface IUsersTableContainerState extends IRealmLoadingComponentState {
+export interface IUsersTableContainerState {
   isChangePasswordOpen: boolean;
   isCreateUserOpen: boolean;
   selectedUserId: string | null;
-  users: Realm.Results<ros.IUser> | null;
-  progress: ILoadingProgress;
 }
 
-export class UsersTableContainer extends RealmLoadingComponent<
+export class UsersTableContainer extends React.Component<
   IUsersTableContainerProps,
   IUsersTableContainerState
 > {
+  protected users: Realm.Results<ros.IUser>;
+
   constructor() {
     super();
     this.state = {
       isChangePasswordOpen: false,
       isCreateUserOpen: false,
       selectedUserId: null,
-      users: null,
-      progress: {
-        done: false,
-      },
     };
   }
 
-  public componentDidMount() {
-    if (this.props.user) {
-      this.gotUser(this.props.user);
-    }
+  public componentWillMount() {
+    this.setUsers();
   }
 
-  public componentDidUpdate(
-    prevProps: IUsersTableContainerProps,
-    prevState: IUsersTableContainerState,
-  ) {
-    // Fetch the realms realm from ROS
-    if (prevProps.user !== this.props.user) {
-      this.gotUser(this.props.user);
-    }
+  public componentDidUpdate() {
+    this.setUsers();
   }
 
   public render() {
-    return (
-      <UsersTable
-        userCount={this.state.users ? this.state.users.length : 0}
-        {...this.state}
-        {...this}
-      />
-    );
+    return <UsersTable users={this.users} {...this.state} {...this} />;
   }
 
   public onUserSelected = (userId: string | null) => {
@@ -74,18 +57,16 @@ export class UsersTableContainer extends RealmLoadingComponent<
     });
   };
 
-  public getUser = (index: number): ros.IUser | null => {
-    return this.state.users ? this.state.users[index] : null;
-  };
-
   public getUserFromId = (userId: string): ros.IUser | null => {
-    return this.realm.objectForPrimaryKey<ros.IUser>('User', userId);
+    const { adminRealm } = this.props;
+    return adminRealm.objectForPrimaryKey<ros.IUser>('User', userId);
   };
 
   public getUsersRealms = (userId: string): ros.IRealmFile[] => {
-    const user = this.realm.objectForPrimaryKey<ros.IRealmFile>('User', userId);
+    const { adminRealm } = this.props;
+    const user = adminRealm.objectForPrimaryKey<ros.IRealmFile>('User', userId);
     if (user) {
-      const realms = this.realm
+      const realms = adminRealm
         .objects<ros.IRealmFile>('RealmFile')
         .filtered('owner = $0', user);
       return realms.slice();
@@ -134,10 +115,11 @@ export class UsersTableContainer extends RealmLoadingComponent<
   };
 
   public onUserMetadataAppended = (userId: string) => {
+    const { adminRealm } = this.props;
     const user = this.getUserFromId(userId);
     if (user) {
-      this.realm.write(() => {
-        const metadataRow = this.realm.create<
+      adminRealm.write(() => {
+        const metadataRow = adminRealm.create<
           ros.IUserMetadataRow
         >('UserMetadataRow', {
           key: '',
@@ -156,7 +138,7 @@ export class UsersTableContainer extends RealmLoadingComponent<
   ) => {
     const user = this.getUserFromId(userId);
     if (user && index >= 0 && index < user.metadata.length) {
-      this.realm.write(() => {
+      this.props.adminRealm.write(() => {
         user.metadata[index].key = key;
         user.metadata[index].value = value;
       });
@@ -170,8 +152,8 @@ export class UsersTableContainer extends RealmLoadingComponent<
   public onUserMetadataDeleted = (userId: string, index: number) => {
     const user = this.getUserFromId(userId);
     if (user && index >= 0 && index < user.metadata.length) {
-      this.realm.write(() => {
-        this.realm.delete(user.metadata[index]);
+      this.props.adminRealm.write(() => {
+        this.props.adminRealm.delete(user.metadata[index]);
       });
     } else {
       throw new Error(
@@ -188,9 +170,10 @@ export class UsersTableContainer extends RealmLoadingComponent<
   };
 
   public onUserRoleChanged = (userId: string, role: ros.UserRole) => {
-    const user = this.realm.objectForPrimaryKey<ros.IUser>('User', userId);
+    const { adminRealm } = this.props;
+    const user = adminRealm.objectForPrimaryKey<ros.IUser>('User', userId);
     if (user) {
-      this.realm.write(() => {
+      adminRealm.write(() => {
         user.isAdmin = role === ros.UserRole.Administrator;
       });
     } else {
@@ -198,29 +181,15 @@ export class UsersTableContainer extends RealmLoadingComponent<
     }
   };
 
-  protected async gotUser(user: Realm.Sync.User) {
-    try {
-      await this.loadRealm({
-        authentication: this.props.user,
-        mode: ros.realms.RealmLoadingMode.Synced,
-        path: '__admin',
-        validateCertificates: this.props.validateCertificates,
-      });
-    } catch (err) {
-      showError('Failed to open the __admin Realm', err);
-    }
-  }
-
   protected onRealmChanged = () => {
     this.forceUpdate();
   };
 
-  protected onRealmLoaded = () => {
-    // Get the users and save them in the state
-    this.setState({
-      users: this.realm.objects<ros.IUser>('User').sorted('userId'),
-    });
-  };
+  protected setUsers() {
+    this.users = this.props.adminRealm
+      .objects<ros.IUser>('User')
+      .sorted('userId');
+  }
 
   private confirmUserDeletion(userId: string): boolean {
     const isCurrentUser = userId === this.props.user.identity;

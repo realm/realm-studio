@@ -37,8 +37,8 @@ export interface ITableProps {
   filteredSortedResults: Realm.Collection<any>;
   focus: IFocus;
   getCellValue: (object: any, props: GridCellProps) => string;
-  gridContentRef: (grid: Grid) => void;
-  gridHeaderRef: (grid: Grid) => void;
+  gridContentRef: (grid: Grid | null) => void;
+  gridHeaderRef: (grid: Grid | null) => void;
   highlight?: IHighlight;
   isSorting: boolean;
   onAddColumnClick?: () => void;

@@ -13,7 +13,7 @@ import { HeaderCell } from './HeaderCell';
 
 export interface IHeaderGridProps extends Partial<GridProps> {
   columnWidths: number[];
-  gridRef: (ref: React.ReactNode) => void;
+  gridRef: (grid: Grid | null) => void;
   height: number;
   onColumnWidthChanged: (index: number, width: number) => void;
   onSortClick: (property: IPropertyWithName) => void;

@@ -83,7 +83,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       dataVersion: 0,
       focus: null,
       isEncryptionDialogVisible: false,
-      progress: { done: false },
+      progress: { status: 'idle' },
       schemas: [],
       isAddClassOpen: false,
       isAddPropertyOpen: false,
@@ -846,7 +846,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       this.setState({
         isEncryptionDialogVisible: true,
         progress: {
-          done: true,
+          status: 'done',
         },
       });
     } else {

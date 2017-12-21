@@ -43,7 +43,7 @@ export interface IContentGridProps extends Partial<GridProps> {
   editMode: EditMode;
   filteredSortedResults: Realm.Collection<any>;
   getCellValue: (object: any, props: GridCellProps) => string;
-  gridRef: (ref: React.ReactNode) => void;
+  gridRef: (grid: Grid | null) => void;
   height: number;
   highlight?: IHighlight;
   isSortable?: boolean;
