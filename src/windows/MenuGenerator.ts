@@ -14,6 +14,7 @@ export interface IMenuGenerator {
 export interface IMenuGeneratorProps {
   addMenuGenerator(generator: IMenuGenerator): void;
   removeMenuGenerator(generator: IMenuGenerator): void;
+  updateMenu(): void;
 }
 
 const isProduction = process.env.NODE_ENV === 'production';

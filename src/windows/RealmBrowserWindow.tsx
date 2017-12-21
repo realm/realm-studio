@@ -10,9 +10,10 @@ export class RealmBrowserWindow extends Window<IRealmBrowserWindowProps, {}> {
   public render() {
     return (
       <RealmBrowserContainer
+        {...this.props}
         addMenuGenerator={this.addMenuGenerator}
         removeMenuGenerator={this.removeMenuGenerator}
-        {...this.props}
+        updateMenu={this.updateMenu}
       />
     );
   }

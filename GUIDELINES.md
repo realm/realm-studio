@@ -10,6 +10,9 @@ It should be flexible, updated and a topic for discussions.
 This project uses [semantic versioning](http://semver.org/)
 and [GitHub-flow](http://scottchacon.com/2011/08/31/github-flow.html).
 
+Please choose "Squash and merge" when merging a PR.
+It makes it easier to revert a PR and gives a clean commit history on the master branch.
+
 # Linters
 
 This document describes guidelines, some of which can be checked by static code analysis tools called linters.

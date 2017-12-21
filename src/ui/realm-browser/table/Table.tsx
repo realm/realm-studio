@@ -12,12 +12,14 @@ import {
   CellChangeHandler,
   CellClickHandler,
   CellContextMenuHandler,
+  CellHighlightedHandler,
+  CellValidatedHandler,
   IHighlight,
   ISorting,
   SortEndHandler,
   SortStartHandler,
 } from '.';
-import { IPropertyWithName } from '..';
+import { EditMode, IPropertyWithName } from '..';
 import { IFocus } from '../focus';
 import { ContentGrid } from './ContentGrid';
 import { HeaderGrid } from './HeaderGrid';
@@ -31,17 +33,19 @@ const rowHeights = {
 export interface ITableProps {
   columnWidths: number[];
   dataVersion?: number;
+  editMode: EditMode;
   filteredSortedResults: Realm.Collection<any>;
   focus: IFocus;
   getCellValue: (object: any, props: GridCellProps) => string;
   gridContentRef: (grid: Grid) => void;
   gridHeaderRef: (grid: Grid) => void;
-  hasEditingDisabled?: boolean;
   highlight?: IHighlight;
   isSorting: boolean;
   onAddColumnClick?: () => void;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
+  onCellHighlighted?: CellHighlightedHandler;
+  onCellValidated?: CellValidatedHandler;
   onColumnWidthChanged: (index: number, width: number) => void;
   onContextMenu?: CellContextMenuHandler;
   onSortClick: (property: IPropertyWithName) => void;
@@ -55,17 +59,19 @@ export interface ITableProps {
 export const Table = ({
   columnWidths,
   dataVersion,
+  editMode,
   filteredSortedResults,
   focus,
   getCellValue,
   gridContentRef,
   gridHeaderRef,
-  hasEditingDisabled,
   highlight,
   isSorting,
   onAddColumnClick,
   onCellChange,
   onCellClick,
+  onCellHighlighted,
+  onCellValidated,
   onColumnWidthChanged,
   onContextMenu,
   onSortClick,
@@ -128,16 +134,18 @@ export const Table = ({
         columnCount={totalColumns}
         columnWidths={columnWidths}
         dataVersion={dataVersion}
+        editMode={editMode}
         filteredSortedResults={filteredSortedResults}
         getCellValue={getCellValue}
         gridRef={gridContentRef}
-        hasEditingDisabled={hasEditingDisabled}
         height={height - rowHeights.header}
         highlight={highlight}
         isSortable={focus.kind === 'list' && !sorting}
         isSorting={isSorting}
         onCellChange={onCellChange}
         onCellClick={onCellClick}
+        onCellHighlighted={onCellHighlighted}
+        onCellValidated={onCellValidated}
         onContextMenu={onContextMenu}
         onScroll={onScroll}
         onSortEnd={onSortEnd}

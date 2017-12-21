@@ -18,9 +18,11 @@ import {
   CellChangeHandler,
   CellClickHandler,
   CellContextMenuHandler,
+  CellHighlightedHandler,
+  CellValidatedHandler,
   IHighlight,
 } from '.';
-import { IPropertyWithName } from '..';
+import { EditMode, IPropertyWithName } from '..';
 import { Cell } from './Cell';
 import { Row } from './Row';
 import {
@@ -35,25 +37,27 @@ const SortableGrid = SortableContainer<GridProps>(Grid as any, {
 });
 
 export interface IContentGridProps extends Partial<GridProps> {
+  columnCount: number;
   columnWidths: number[];
   dataVersion?: number;
+  editMode: EditMode;
   filteredSortedResults: Realm.Collection<any>;
   getCellValue: (object: any, props: GridCellProps) => string;
   gridRef: (ref: React.ReactNode) => void;
-  hasEditingDisabled?: boolean;
   height: number;
   highlight?: IHighlight;
   isSortable?: boolean;
-  isSorting: boolean;
+  isSorting?: boolean;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
+  onCellHighlighted?: CellHighlightedHandler;
+  onCellValidated?: CellValidatedHandler;
   onContextMenu?: CellContextMenuHandler;
   onSortEnd?: SortEndHandler;
   onSortStart?: SortStartHandler;
   properties: IPropertyWithName[];
   rowHeight: number;
   width: number;
-  columnCount: number;
 }
 
 export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
@@ -147,20 +151,27 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
         return (cellProps: GridCellProps) => {
           const {
             columnWidths,
+            editMode,
             filteredSortedResults,
             getCellValue,
-            hasEditingDisabled,
+            highlight,
             onCellChange,
             onCellClick,
+            onCellHighlighted,
+            onCellValidated,
             onContextMenu,
           } = this.props;
           const { rowIndex, columnIndex } = cellProps;
           const rowObject = filteredSortedResults[cellProps.rowIndex];
           const cellValue = getCellValue(rowObject, cellProps);
+          const isHighlighted = highlight
+            ? highlight.row === rowIndex && highlight.column === columnIndex
+            : false;
 
           return (
             <Cell
-              hasEditingDisabled={hasEditingDisabled}
+              editMode={editMode}
+              isHighlighted={isHighlighted}
               key={cellProps.key}
               onCellClick={e => {
                 if (onCellClick) {
@@ -173,6 +184,11 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
                   });
                 }
               }}
+              onValidated={valid => {
+                if (onCellValidated) {
+                  onCellValidated(rowIndex, columnIndex, valid);
+                }
+              }}
               onContextMenu={e => {
                 if (onContextMenu) {
                   onContextMenu(e, {
@@ -181,6 +197,14 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
                     property,
                     rowIndex,
                     rowObject,
+                  });
+                }
+              }}
+              onHighlighted={() => {
+                if (onCellHighlighted) {
+                  onCellHighlighted({
+                    row: rowIndex,
+                    column: columnIndex,
                   });
                 }
               }}
