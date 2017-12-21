@@ -24,5 +24,10 @@
     "build",
     "dist",
     "realm-object-server-dev-server.js"
-  ]
+  ],
+  "awesomeTypescriptLoaderOptions": {
+    "reportFiles": [
+      "src/**/*.{ts,tsx}"
+    ]
+  }
 }

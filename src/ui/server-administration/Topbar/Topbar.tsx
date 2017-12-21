@@ -3,6 +3,7 @@ import { Button, Navbar } from 'reactstrap';
 
 import realmLogo from '../../../../static/svgs/realm-logo.svg';
 import { Tab } from '../ServerAdministration';
+import { Status } from './Status';
 import { TabButton } from './TabButton';
 
 export interface ITopbarProps {
@@ -51,11 +52,11 @@ export const TopBar = ({
       onTabChanged={onTabChanged}
       tab={Tab.Logs}
     />
-    {user && (
-      <p className="ServerAdministration__status">
-        Connected to&nbsp;
-        <span className="ServerAdministration__server">{user.server}</span>
-      </p>
-    )}
+    <Status
+      onReconnect={onReconnect}
+      progress={adminRealmProgress}
+      syncError={syncError}
+      user={user}
+    />
   </Navbar>
 );

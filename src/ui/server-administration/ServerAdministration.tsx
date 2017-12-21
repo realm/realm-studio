@@ -2,7 +2,8 @@ import * as classnames from 'classnames';
 import * as React from 'react';
 import { Button } from 'reactstrap';
 
-import { LoadingOverlay } from '../reusable/loading-overlay';
+import * as ros from '../../services/ros';
+import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
 import { Dashboard } from './Dashboard';
 import { LogContainer } from './logs/LogContainer';
 import {
@@ -23,55 +24,68 @@ export enum Tab {
   Tools = 'tools',
 }
 
-export const ServerAdministration = ({
-  activeTab,
-  isCloudTenant,
-  isRealmOpening,
-  onRealmOpened,
-  onTabChanged,
-  user,
-  validateCertificates,
-  onValidateCertificatesChange,
-}: {
+interface IServerAdministrationProps {
   activeTab: Tab | null;
+  adminRealm: Realm;
+  adminRealmProgress: ILoadingProgress;
   isCloudTenant: boolean;
   isRealmOpening: boolean;
   onRealmOpened: (path: string) => void;
+  onReconnect: () => void;
   onTabChanged: (tab: Tab) => void;
+  onValidateCertificatesChange: ValidateCertificatesChangeHandler;
+  syncError?: Realm.Sync.SyncError;
   user: Realm.Sync.User | null;
   validateCertificates: boolean;
-  onValidateCertificatesChange: ValidateCertificatesChangeHandler;
-}) => {
-  let content = null;
+}
+
+const getContent = ({
+  activeTab,
+  adminRealm,
+  isCloudTenant,
+  onRealmOpened,
+  onValidateCertificatesChange,
+  user,
+  validateCertificates,
+}: IServerAdministrationProps) => {
   if (user && activeTab === Tab.Dashboard) {
-    content = <Dashboard isCloudTenant={isCloudTenant} />;
-  } else if (user && activeTab === Tab.Realms) {
-    content = (
+    return <Dashboard isCloudTenant={isCloudTenant} />;
+  } else if (user && adminRealm && activeTab === Tab.Realms) {
+    return (
       <RealmsTableContainer
-        user={user}
+        adminRealm={adminRealm}
         onRealmOpened={onRealmOpened}
-        validateCertificates={validateCertificates}
         onValidateCertificatesChange={onValidateCertificatesChange}
+        user={user}
+        validateCertificates={validateCertificates}
       />
     );
-  } else if (user && activeTab === Tab.Users) {
-    content = (
+  } else if (user && adminRealm && activeTab === Tab.Users) {
+    return (
       <UsersTableContainer
+        adminRealm={adminRealm}
         user={user}
         validateCertificates={validateCertificates}
       />
     );
   } else if (user && activeTab === Tab.Logs) {
-    content = <LogContainer user={user} />;
+    return <LogContainer user={user} />;
   } else if (user && activeTab === Tab.Tools) {
-    content = <ToolsContainer user={user} />;
+    return <ToolsContainer user={user} />;
   } else {
-    content = (
-      <p className="ServerAdministration__no-content">
-        This tab has no content yet
-      </p>
-    );
+    return null;
   }
+};
+
+export const ServerAdministration = (props: IServerAdministrationProps) => {
+  const {
+    activeTab,
+    isCloudTenant,
+    onTabChanged,
+    user,
+    isRealmOpening,
+    adminRealmProgress,
+  } = props;
 
   return (
     <div className="ServerAdministration">
@@ -81,8 +95,12 @@ export const ServerAdministration = ({
         onTabChanged={onTabChanged}
         user={user}
       />
-      <div className="ServerAdministration__content">{content}</div>
-      <LoadingOverlay loading={!user || isRealmOpening} fade={false} />
+      <div className="ServerAdministration__content">{getContent(props)}</div>
+      <LoadingOverlay
+        loading={!user || isRealmOpening}
+        progress={adminRealmProgress}
+        fade={true}
+      />
     </div>
   );
 };

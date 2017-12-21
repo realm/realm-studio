@@ -34,15 +34,16 @@
     color: $color-elephant;
   }
 
-  &__status {
+  &__Status {
     flex-grow: 1;
     font-size: .9rem;
     margin: 0;
     text-align: right;
-  }
 
-  &__server {
-    user-select: text;
+    &__error,
+    &__server {
+      user-select: text;
+    }
   }
 
   &__content {
@@ -50,19 +51,5 @@
     display: flex;
     flex-grow: 1;
     position: relative;
-  }
-
-  &__no-content {
-    align-items: center;
-    bottom: 0;
-    color: $color-elephant;
-    cursor: default;
-    display: flex;
-    justify-content: center;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-    user-select: none;
   }
 }
