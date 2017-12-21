@@ -84,7 +84,7 @@
     "dev:ros-unreliable": "node ./scripts/unreliable-ros.js",
     "dev:ros": "ros start",
     "dev": "rm -rf ./build && concurrently --names \"WEBPACK:M,WEBPACK:R,ELECTRON\" \"npm run webpack:main\" \"npm run webpack:renderer\" \"npm run wait-for-bundle && electron .\"",
-    "lint:sass": "sass-lint -c .sass-lint.yml 'src/**/*.scss' -v",
+    "lint:sass": "sass-lint --max-warnings=0 -c .sass-lint.yml 'src/**/*.scss' -v",
     "lint:ts": "tslint --project tsconfig.json 'src/**/*.ts' 'src/**/*.tsx'",
     "lint": "npm run lint:ts && npm run lint:sass && echo 'Everything looks good!'",
     "package": "electron-builder --publish=never",
