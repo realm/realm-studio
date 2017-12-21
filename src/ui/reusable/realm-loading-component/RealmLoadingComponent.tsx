@@ -91,7 +91,11 @@ export abstract class RealmLoadingComponent<
         // Ignore an error that originates from the load being cancelled
         if (!err.wasCancelled) {
           // Could this error originate from an untrusted SSL certificate?
-          if (validateCertificates && this.certificateWasRejected) {
+          if (
+            validateCertificates &&
+            this.certificateWasRejected &&
+            realm.mode === realms.RealmLoadingMode.Synced
+          ) {
             // Ask the user if they want to trust the certificate
             const result = electron.remote.dialog.showMessageBox(
               electron.remote.getCurrentWindow(),
@@ -112,7 +116,7 @@ export abstract class RealmLoadingComponent<
           } else {
             this.loadingRealmFailed(err);
           }
-        }
+        } // ignore errors from cancelled loading
       }
     }
   }

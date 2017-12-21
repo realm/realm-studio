@@ -17,6 +17,12 @@ import { LevelSelector, LogLevel } from './LevelSelector';
 
 import './Log.scss';
 
+interface IListScrollParams {
+  clientHeight: number;
+  scrollHeight: number;
+  scrollTop: number;
+}
+
 export const Log = ({
   entries,
   isLevelSelectorOpen,
@@ -35,7 +41,7 @@ export const Log = ({
   return (
     <div className="Log">
       <div className="Log__Table">
-        <ScrollSync>
+        <ScrollSync disableWidth={true}>
           {({ clientHeight, onScroll, scrollTop, scrollHeight }) => {
             // Measure the distance from the bottom scroll - initially 0.
             const scrollBottom = scrollHeight - (scrollTop + clientHeight);
@@ -48,7 +54,14 @@ export const Log = ({
                   <List
                     width={width}
                     height={height}
-                    onScroll={onScroll}
+                    onScroll={(params: IListScrollParams) => {
+                      onScroll({
+                        ...params,
+                        clientWidth: 0,
+                        scrollLeft: 0,
+                        scrollWidth: width,
+                      });
+                    }}
                     rowCount={entries.length}
                     rowHeight={20}
                     rowRenderer={({ key, style, index, isScrolling }) => {
