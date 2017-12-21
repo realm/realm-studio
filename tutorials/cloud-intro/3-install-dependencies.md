@@ -9,3 +9,5 @@ npm install realm -S
 // Install Faker library used by script and save to package.json
 npm install faker -S
 ```
+
+Note: Please notice that npm is case-sensitive.
