@@ -10,6 +10,7 @@ import {
 import { ISorting } from '.';
 import { IPropertyWithName } from '..';
 import { HeaderCell } from './HeaderCell';
+import { allowDispatchContentMenuClass } from './Table';
 
 export interface IHeaderGridProps extends Partial<GridProps> {
   columnWidths: number[];
@@ -43,7 +44,7 @@ export class HeaderGrid extends React.PureComponent<IHeaderGridProps, {}> {
       <Grid
         /* TODO: Omit the props that are irrellevant for the grid */
         {...this.props}
-        className="RealmBrowser__Table__HeaderGrid"
+        className={`RealmBrowser__Table__HeaderGrid ${allowDispatchContentMenuClass}`}
         rowCount={1}
         columnWidth={this.getColumnWidth}
         cellRenderer={this.getCellRenderer}

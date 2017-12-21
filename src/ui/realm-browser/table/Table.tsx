@@ -1,10 +1,8 @@
 import * as React from 'react';
 import {
-  AutoSizer,
   AutoSizerProps,
   Grid,
   GridCellProps,
-  ScrollSync,
   ScrollSyncProps,
 } from 'react-virtualized';
 
@@ -24,6 +22,8 @@ import { IFocus } from '../focus';
 import { ContentGrid } from './ContentGrid';
 import { HeaderGrid } from './HeaderGrid';
 import { MoreIndicator } from './MoreIndicator';
+
+export const allowDispatchContentMenuClass = 'allow-dispatch-content-menu';
 
 const rowHeights = {
   header: 40,
@@ -101,11 +101,7 @@ export const Table = ({
         const element = e.target as Element;
         if (
           onContextMenu &&
-          (element.classList.contains('RealmBrowser__Table__HeaderGrid') ||
-            element.classList.contains('RealmBrowser__Table__ContentGrid') ||
-            element.classList.contains(
-              'RealmBrowser__Table__ContentGrid--empty',
-            ))
+          element.classList.contains(allowDispatchContentMenuClass)
         ) {
           onContextMenu(e);
         }
