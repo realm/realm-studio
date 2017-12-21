@@ -394,9 +394,9 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       // Adding a primitive value into a list
       if (primitives.isPrimitive(className)) {
         if (focus && focus.kind === 'list') {
-          const valueTuPush = (values as any)[className];
-          this.getFocusedList(focus).push(valueTuPush);
-          rowIndex = focus.results.indexOf(valueTuPush);
+          const valueToPush = (values as any)[className];
+          focus.results.push(valueToPush);
+          rowIndex = focus.results.indexOf(valueToPush);
         }
       } else {
         // Adding a new object into a class
@@ -404,7 +404,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         if (focus) {
           // New object has been created from a list, so we add it too into the list
           if (focus.kind === 'list') {
-            this.getFocusedList(focus).push(object);
+            focus.results.push(object);
           }
           if (this.getClassName(focus) === className) {
             rowIndex = focus.results.indexOf(object);
@@ -565,7 +565,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         );
       }
 
-      // If we clicked on a row can be always deleted
+      // If we right-clicking on a row we can delete it
       if (focus && rowObject && rowIndex >= 0) {
         menu.append(
           new remote.MenuItem({
@@ -592,7 +592,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         new remote.MenuItem({
           label: `Add existing ${className}`,
           click: () => {
-            this.openSelectObject(this.getFocusedList(focus), focus.property);
+            this.openSelectObject(focus.results, focus.property);
           },
         }),
       );
@@ -679,7 +679,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   };
 
   public openSelectObject = (
-    object: Realm.Object,
+    object: Realm.Object | Realm.List<any>,
     property: IPropertyWithName,
   ) => {
     if (property.objectType) {
@@ -748,7 +748,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
           if (focus.kind === 'class') {
             this.realm.delete(object);
           } else if (focus.kind === 'list') {
-            this.getFocusedList(focus).splice(index, 1);
+            focus.results.splice(index, 1);
           }
         });
         this.setState({ highlight: undefined });
@@ -977,11 +977,4 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   private getClassName = (focus: Focus): string | undefined =>
     (focus as IClassFocus).className ||
     (focus as IListFocus).property.objectType;
-
-  private getFocusedList = (focus: IListFocus): any => {
-    if (focus.property.name !== null) {
-      // TS can't know if the Realm.Object has our property so we need parse it to 'any'
-      return (focus.parent as any)[focus.property.name];
-    }
-  };
 }
