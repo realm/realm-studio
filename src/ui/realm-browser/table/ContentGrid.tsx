@@ -190,6 +190,7 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
                 }
               }}
               onContextMenu={e => {
+                e.stopPropagation();
                 if (onContextMenu) {
                   onContextMenu(e, {
                     cellValue,
@@ -248,11 +249,6 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
     // Render an empty div
     return (
       <div
-        onContextMenu={e => {
-          if (this.props.onContextMenu) {
-            this.props.onContextMenu(e);
-          }
-        }}
         style={{
           height: this.props.height,
           width,

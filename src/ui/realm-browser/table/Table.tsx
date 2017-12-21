@@ -1,10 +1,8 @@
 import * as React from 'react';
 import {
-  AutoSizer,
   AutoSizerProps,
   Grid,
   GridCellProps,
-  ScrollSync,
   ScrollSyncProps,
 } from 'react-virtualized';
 
@@ -96,7 +94,13 @@ export const Table = ({
     : focus.properties.length;
 
   return (
-    <div>
+    <div
+      onContextMenu={e => {
+        if (onContextMenu) {
+          onContextMenu(e);
+        }
+      }}
+    >
       <MoreIndicator position="bottom" visible={scrollBottom > 0} />
       <MoreIndicator position="left" visible={scrollLeft > 0} />
       <MoreIndicator position="right" visible={scrollRight > 0} />
