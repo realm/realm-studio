@@ -387,22 +387,36 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   };
 
   public onCreateObject = (className: string, values: {}) => {
-    this.realm.write(() => {
-      const object = this.realm.create(className, values);
-      const { focus } = this.state;
-      if (focus && focus.kind === 'class') {
-        if (focus.className === className) {
-          const rowIndex = focus.results.indexOf(object);
-          if (rowIndex >= 0) {
-            this.setState({
-              highlight: {
-                row: rowIndex,
-              },
-            });
-          }
-        } else {
-          // TODO: If objects are created on a list - insert it into the list
+    const { focus } = this.state;
+    let rowIndex = -1;
+
+    this.write(() => {
+      // Adding a primitive value into a list
+      if (primitives.isPrimitive(className)) {
+        if (focus && focus.kind === 'list') {
+          const valueToPush = (values as any)[className];
+          focus.results.push(valueToPush);
+          rowIndex = focus.results.indexOf(valueToPush);
         }
+      } else {
+        // Adding a new object into a class
+        const object = this.realm.create(className, values);
+        if (focus) {
+          // New object has been created from a list, so we add it too into the list
+          if (focus.kind === 'list') {
+            focus.results.push(object);
+          }
+          if (this.getClassName(focus) === className) {
+            rowIndex = focus.results.indexOf(object);
+          }
+        }
+      }
+      if (rowIndex >= 0) {
+        this.setState({
+          highlight: {
+            row: rowIndex,
+          },
+        });
       }
     });
   };
@@ -537,7 +551,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     const menu = new remote.Menu();
 
     if (params) {
-      const { property, rowObject } = params;
+      const { property, rowObject, rowIndex } = params;
 
       // If we clicked a property that refers to an object
       if (property && property.type === 'object') {
@@ -551,34 +565,53 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         );
       }
 
-      // If we clicked on a row when focussing on a class
-      if (focus && focus.kind === 'class') {
-        if (rowObject) {
-          menu.append(
-            new remote.MenuItem({
-              label: 'Delete',
-              click: () => {
-                this.openConfirmModal(rowObject);
-              },
-            }),
-          );
-        }
+      // If we right-clicking on a row we can delete it
+      if (focus && rowObject && rowIndex >= 0) {
+        menu.append(
+          new remote.MenuItem({
+            label: 'Delete',
+            click: () => {
+              this.openConfirmModal(() =>
+                this.deleteObject(rowObject, rowIndex),
+              );
+            },
+          }),
+        );
       }
     }
 
-    // We can always create a new object if right-clicking in a class focus
-    if (focus && focus.kind === 'class') {
+    // If we right-clicking on the content we can add an existing object when we are focusing an object list
+    if (
+      focus &&
+      focus.kind === 'list' &&
+      focus.property.objectType &&
+      !primitives.isPrimitive(focus.property.objectType)
+    ) {
+      const className = this.getClassName(focus);
       menu.append(
         new remote.MenuItem({
-          label: `Create new ${focus.className}`,
+          label: `Add existing ${className}`,
           click: () => {
-            this.onCreateDialogToggle(focus.className);
+            this.openSelectObject(focus.results, focus.property);
           },
         }),
       );
     }
 
-    // If we have items to shpw - popup the menu
+    // If we right-clicking on the content we can always create a new object
+    if (focus) {
+      const className = this.getClassName(focus);
+      menu.append(
+        new remote.MenuItem({
+          label: `Create new ${className}`,
+          click: () => {
+            this.onCreateDialogToggle(className);
+          },
+        }),
+      );
+    }
+
+    // If we have items to show - popup the menu
     if (menu.items.length > 0) {
       menu.popup(remote.getCurrentWindow(), {
         x: e.clientX,
@@ -601,9 +634,17 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
 
   public onCreateDialogToggle = (className?: string) => {
     if (this.realm && className) {
-      const createObjectSchema = this.realm.schema.find(
-        schema => schema.name === className,
-      );
+      const createObjectSchema =
+        className && primitives.isPrimitive(className)
+          ? {
+              name: className,
+              properties: {
+                [className]: {
+                  type: className,
+                },
+              },
+            }
+          : this.realm.schema.find(schema => schema.name === className);
       this.setState({ createObjectSchema });
     } else {
       this.setState({ createObjectSchema: undefined });
@@ -638,11 +679,9 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   };
 
   public openSelectObject = (
-    object: Realm.Object,
+    contentToUpdate: Realm.Object | Realm.List<any>,
     property: IPropertyWithName,
   ) => {
-    const { schemas } = this.state;
-
     if (property.objectType) {
       const className = property.objectType;
       const results = this.realm.objects(className) || null;
@@ -657,7 +696,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         selectObject: {
           focus,
           property,
-          object,
+          contentToUpdate,
         },
       });
     } else {
@@ -668,11 +707,14 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   public updateObjectReference = (reference: any) => {
     const { selectObject } = this.state;
     if (selectObject) {
-      const object: any = selectObject.object;
+      const contentToUpdate: any = selectObject.contentToUpdate;
       const propertyName = selectObject.property.name;
       this.write(() => {
-        if (propertyName) {
-          object[propertyName] = reference;
+        // Distinguish when we are updating an object or adding an existing object into a list
+        if (contentToUpdate.length >= 0) {
+          contentToUpdate.push(reference);
+        } else if (propertyName) {
+          contentToUpdate[propertyName] = reference;
         }
       });
       this.setState({ selectObject: undefined });
@@ -683,20 +725,37 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     this.setState({ selectObject: undefined });
   };
 
-  public openConfirmModal = (object: any) => {
+  public openConfirmModal = (onYesCallback: () => void) => {
     this.setState({
       confirmModal: {
-        yes: () => this.deleteObject(object),
-        no: () => this.setState({ confirmModal: undefined }),
+        yes: () => {
+          onYesCallback();
+          this.closeConfirmModal();
+        },
+        no: this.closeConfirmModal,
       },
     });
   };
 
-  public deleteObject = (object: Realm.Object) => {
-    this.write(() => {
-      this.realm.delete(object);
-    });
-    this.setState({ highlight: undefined, confirmModal: undefined });
+  public closeConfirmModal = () => this.setState({ confirmModal: undefined });
+
+  public deleteObject = (object: Realm.Object, index: number) => {
+    const { focus } = this.state;
+
+    if (focus) {
+      try {
+        this.write(() => {
+          if (focus.kind === 'class') {
+            this.realm.delete(object);
+          } else if (focus.kind === 'list') {
+            focus.results.splice(index, 1);
+          }
+        });
+        this.setState({ highlight: undefined });
+      } catch (err) {
+        showError('Error deleting the object', err);
+      }
+    }
   };
 
   public onHideEncryptionDialog = () => {
@@ -914,4 +973,8 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       },
     );
   };
+
+  private getClassName = (focus: Focus): string | undefined =>
+    (focus as IClassFocus).className ||
+    (focus as IListFocus).property.objectType;
 }
