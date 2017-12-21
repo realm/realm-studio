@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as Realm from 'realm';
 
+import { ILoadingProgress } from '../../reusable/loading-overlay';
+
 import { ILogEntry } from './Entry';
 import { LogLevel } from './LevelSelector';
 import { Log } from './Log';
@@ -13,6 +15,7 @@ export interface ILogContainerState {
   entries: ILogEntry[];
   isLevelSelectorOpen: boolean;
   level: LogLevel;
+  progress: ILoadingProgress;
 }
 
 export class LogContainer extends React.Component<
@@ -27,6 +30,7 @@ export class LogContainer extends React.Component<
       entries: [],
       isLevelSelectorOpen: false,
       level: LogLevel.info,
+      progress: { status: 'idle' },
     };
   }
 
@@ -70,6 +74,13 @@ export class LogContainer extends React.Component<
   };
 
   private connect() {
+    this.setState({
+      progress: {
+        status: 'in-progress',
+        message: 'Connecting ...',
+      },
+    });
+
     if (this.socket) {
       this.disconnect();
       this.setState({
@@ -81,6 +92,13 @@ export class LogContainer extends React.Component<
     const userRefreshToken = this.props.user.token;
     this.socket = new WebSocket(url);
     this.socket.addEventListener('open', e => {
+      this.setState({
+        progress: {
+          status: 'in-progress',
+          message: 'Authenticating ...',
+        },
+      });
+
       if (this.socket) {
         this.socket.send(
           JSON.stringify({
@@ -114,5 +132,9 @@ export class LogContainer extends React.Component<
     this.setState({
       entries: this.state.entries.concat(newEntries),
     });
+    // If the progress is not done - update it on the first message
+    if (this.state.progress.status !== 'done') {
+      this.setState({ progress: { status: 'done' } });
+    }
   };
 }
