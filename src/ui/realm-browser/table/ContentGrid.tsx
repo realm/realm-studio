@@ -43,7 +43,7 @@ export interface IContentGridProps extends Partial<GridProps> {
   editMode: EditMode;
   filteredSortedResults: Realm.Collection<any>;
   getCellValue: (object: any, props: GridCellProps) => string;
-  gridRef: (ref: React.ReactNode) => void;
+  gridRef: (grid: Grid | null) => void;
   height: number;
   highlight?: IHighlight;
   isSortable?: boolean;
@@ -190,6 +190,7 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
                 }
               }}
               onContextMenu={e => {
+                e.stopPropagation();
                 if (onContextMenu) {
                   onContextMenu(e, {
                     cellValue,
@@ -248,11 +249,6 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
     // Render an empty div
     return (
       <div
-        onContextMenu={e => {
-          if (this.props.onContextMenu) {
-            this.props.onContextMenu(e);
-          }
-        }}
         style={{
           height: this.props.height,
           width,

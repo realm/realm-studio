@@ -1,10 +1,8 @@
 import * as React from 'react';
 import {
-  AutoSizer,
   AutoSizerProps,
   Grid,
   GridCellProps,
-  ScrollSync,
   ScrollSyncProps,
 } from 'react-virtualized';
 
@@ -37,8 +35,8 @@ export interface ITableProps {
   filteredSortedResults: Realm.Collection<any>;
   focus: IFocus;
   getCellValue: (object: any, props: GridCellProps) => string;
-  gridContentRef: (grid: Grid) => void;
-  gridHeaderRef: (grid: Grid) => void;
+  gridContentRef: (grid: Grid | null) => void;
+  gridHeaderRef: (grid: Grid | null) => void;
   highlight?: IHighlight;
   isSorting: boolean;
   onAddColumnClick?: () => void;
@@ -96,7 +94,13 @@ export const Table = ({
     : focus.properties.length;
 
   return (
-    <div>
+    <div
+      onContextMenu={e => {
+        if (onContextMenu) {
+          onContextMenu(e);
+        }
+      }}
+    >
       <MoreIndicator position="bottom" visible={scrollBottom > 0} />
       <MoreIndicator position="left" visible={scrollLeft > 0} />
       <MoreIndicator position="right" visible={scrollRight > 0} />

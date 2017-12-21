@@ -9,40 +9,32 @@ import {
 import { Button } from 'reactstrap';
 
 import { IPermission, IRealmFile } from '../../../services/ros';
-import {
-  ILoadingProgress,
-  LoadingOverlay,
-} from '../../reusable/loading-overlay';
 import { FloatingControls } from '../shared/FloatingControls';
 import { CreateRealmDialogContainer } from './CreateRealmDialogContainer';
 import { RealmSidebar } from './RealmSidebar';
 import './RealmsTable.scss';
 
 export const RealmsTable = ({
-  getRealm,
   getRealmFromId,
   getRealmPermissions,
+  isCreateRealmOpen,
+  onRealmCreated,
   onRealmDeletion,
   onRealmOpened,
   onRealmSelected,
-  onRealmCreated,
-  progress,
-  realmCount,
+  realms,
   selectedRealmPath,
-  isCreateRealmOpen,
   toggleCreateRealm,
 }: {
-  getRealm: (index: number) => IRealmFile | null;
   getRealmFromId: (path: string) => IRealmFile | null;
   getRealmPermissions: (path: string) => Realm.Results<IPermission>;
+  isCreateRealmOpen: boolean;
+  onRealmCreated: (path: string) => void;
   onRealmDeletion: (path: string) => void;
   onRealmOpened: (path: string) => void;
-  onRealmCreated: (path: string) => void;
   onRealmSelected: (path: string | null) => void;
-  progress: ILoadingProgress;
-  realmCount: number;
+  realms: Realm.Results<IRealmFile>;
   selectedRealmPath: string | null;
-  isCreateRealmOpen: boolean;
   toggleCreateRealm: () => void;
 }) => {
   return (
@@ -61,24 +53,24 @@ export const RealmsTable = ({
               rowHeight={30}
               headerHeight={30}
               rowClassName={({ index }) => {
-                const realm = getRealm(index);
+                const realm = realms[index];
                 return classnames('RealmsTable__row', {
                   'RealmsTable__row--selected':
                     realm && realm.path === selectedRealmPath,
                 });
               }}
-              rowCount={realmCount}
-              rowGetter={({ index }) => getRealm(index)}
+              rowCount={realms.length}
+              rowGetter={({ index }) => realms[index]}
               onRowClick={({ event, index }) => {
                 event.stopPropagation();
-                const realm = getRealm(index);
+                const realm = realms[index];
                 onRealmSelected(
                   realm && realm.path !== selectedRealmPath ? realm.path : null,
                 );
               }}
               onRowDoubleClick={({ event, index }) => {
                 event.stopPropagation();
-                const realm = getRealm(index);
+                const realm = realms[index];
                 if (realm) {
                   onRealmOpened(realm.path);
                 }
@@ -109,8 +101,6 @@ export const RealmsTable = ({
           selectedRealmPath !== null ? getRealmFromId(selectedRealmPath) : null
         }
       />
-
-      <LoadingOverlay progress={progress} fade={true} />
     </div>
   );
 };

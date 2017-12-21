@@ -66,8 +66,8 @@ export class CloudOverlayContainer extends React.Component<
     try {
       this.setState({
         progress: {
-          activity: 'Fetching available locations',
-          done: false,
+          message: 'Fetching available locations',
+          status: 'in-progress',
         },
       });
 
@@ -84,8 +84,8 @@ export class CloudOverlayContainer extends React.Component<
 
       this.setState({
         progress: {
-          activity: `Preparing a slice of Realm Cloud\n${identifier} sounds like a great name!`,
-          done: false,
+          message: `Preparing a slice of Realm Cloud\n${identifier} sounds like a great name!`,
+          status: 'in-progress',
         },
       });
 
@@ -108,8 +108,8 @@ export class CloudOverlayContainer extends React.Component<
       await this.performCountdown(ETA, async secondsRemaining => {
         this.setState({
           progress: {
-            activity: `Preparing a slice of Realm Cloud\n${identifier} is ready in ~${secondsRemaining} seconds`,
-            done: false,
+            message: `Preparing a slice of Realm Cloud\n${identifier} is ready in ~${secondsRemaining} seconds`,
+            status: 'in-progress',
             transferable: ETA,
             transferred: ETA - secondsRemaining,
           },
@@ -119,8 +119,8 @@ export class CloudOverlayContainer extends React.Component<
 
       this.setState({
         progress: {
-          activity: 'Connecting to your Realm Object Server',
-          done: false,
+          message: 'Connecting to your Realm Object Server',
+          status: 'in-progress',
         },
       });
 
@@ -129,15 +129,15 @@ export class CloudOverlayContainer extends React.Component<
       // @see https://github.com/realm/realm-object-server-private/issues/695
       setTimeout(async () => {
         this.setState({
-          progress: { done: true },
+          progress: { status: 'done' },
         });
         this.props.onCloudSubscriptionCreated(subscription);
       }, 10000);
     } catch (err) {
       this.setState({
         progress: {
-          done: true,
-          failure: err.message,
+          status: 'failed',
+          message: err.message,
         },
       });
     }

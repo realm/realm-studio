@@ -112,7 +112,7 @@ export const Sidebar = ({
           );
         })}
       </ul>
-    ) : progress.done ? (
+    ) : progress.status === 'done' ? (
       <div className="RealmBrowser__Sidebar__SchemaList--empty" />
     ) : null}
   </div>

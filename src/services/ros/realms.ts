@@ -93,9 +93,7 @@ export const onCreateRealmErrorCallback = (err: any) => {
 
 export const remove = async (user: Realm.Sync.User, realmPath: string) => {
   const server = user.server;
-  const encodedUrl = encodeURIComponent(
-    realmPath.startsWith('/') ? realmPath.substring(1) : realmPath,
-  );
+  const encodedUrl = encodeURIComponent(realmPath);
   const url = new URL(`/realms/files/${encodedUrl}`, server);
   const request = new Request(url.toString(), {
     method: 'DELETE',
