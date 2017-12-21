@@ -52,18 +52,4 @@
     flex-grow: 1;
     position: relative;
   }
-
-  &__no-content {
-    align-items: center;
-    bottom: 0;
-    color: $color-elephant;
-    cursor: default;
-    display: flex;
-    justify-content: center;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-    user-select: none;
-  }
 }

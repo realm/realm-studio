@@ -73,11 +73,7 @@ export const ServerAdministration = ({
   } else if (user && activeTab === Tab.Tools) {
     content = <ToolsContainer user={user} />;
   } else {
-    content = (
-      <p className="ServerAdministration__no-content">
-        This tab has no content yet
-      </p>
-    );
+    content = null;
   }
 
   const TabButton = ({ tab, label }: { tab: Tab; label: string }) => {
