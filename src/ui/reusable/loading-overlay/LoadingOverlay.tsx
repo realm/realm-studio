@@ -23,6 +23,7 @@ export const LoadingOverlay = ({
 }) => {
   // If a progress has been supplied, it overrides loading
   const isVisible = progress ? progress.status !== 'done' : loading;
+  const showDots = progress ? progress.status === 'in-progress' : loading;
   return isVisible ? (
     <div
       className={classNames('LoadingOverlay', {
@@ -51,8 +52,7 @@ export const LoadingOverlay = ({
           {progress.message}
         </section>
       ) : null}
-      {(progress && progress.status === 'in-progress') || loading ? (
-        <LoadingDots />
+      {showDots ? <LoadingDots /> : null}
       ) : null}
     </div>
   ) : null;
