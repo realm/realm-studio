@@ -80,19 +80,24 @@ const getContent = ({
 export const ServerAdministration = (props: IServerAdministrationProps) => {
   const {
     activeTab,
-    isCloudTenant,
-    onTabChanged,
-    user,
-    isRealmOpening,
     adminRealmProgress,
+    isCloudTenant,
+    isRealmOpening,
+    onReconnect,
+    onTabChanged,
+    syncError,
+    user,
   } = props;
 
   return (
     <div className="ServerAdministration">
       <TopBar
         activeTab={activeTab}
+        adminRealmProgress={adminRealmProgress}
         isCloudTenant={isCloudTenant}
+        onReconnect={onReconnect}
         onTabChanged={onTabChanged}
+        syncError={syncError}
         user={user}
       />
       <div className="ServerAdministration__content">{getContent(props)}</div>

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button } from 'reactstrap';
 import * as Realm from 'realm';
 
-import { ILoadingProgress } from '../reusable/loading-overlay';
+import { ILoadingProgress } from '../../reusable/loading-overlay';
 
 export interface IStatusProps {
   onReconnect: () => void;

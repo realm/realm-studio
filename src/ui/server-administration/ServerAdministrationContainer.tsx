@@ -32,7 +32,7 @@ export interface IServerAdministrationContainerProps
 
 export interface IServerAdministrationContainerState
   extends IRealmLoadingComponentState {
-  activeTab: Tab;
+  activeTab: Tab | null;
   isRealmOpening: boolean;
   syncError?: Realm.Sync.SyncError;
   user: Realm.Sync.User | null;
