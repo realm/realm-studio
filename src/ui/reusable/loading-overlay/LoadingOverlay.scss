@@ -51,6 +51,10 @@
     width: 70%;
   }
 
+  &__RetryButton {
+    margin-top: $spacer;
+  }
+
   &__FailureIcon {
     font-size: 4rem;
   }

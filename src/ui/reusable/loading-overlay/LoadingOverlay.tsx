@@ -1,6 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import { Progress } from 'reactstrap';
+import { Button, Progress } from 'reactstrap';
 
 import { LoadingDots } from '../loading-dots/LoadingDots';
 import { ILoadingProgress } from './index';
@@ -53,6 +53,14 @@ export const LoadingOverlay = ({
         </section>
       ) : null}
       {showDots ? <LoadingDots /> : null}
+      {progress && progress.retry ? (
+        <Button
+          className="LoadingOverlay__RetryButton"
+          color="primary"
+          onClick={progress.retry.onRetry}
+        >
+          {progress.retry.label}
+        </Button>
       ) : null}
     </div>
   ) : null;

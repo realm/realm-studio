@@ -129,7 +129,25 @@ export class ServerAdministrationContainer extends RealmLoadingComponent<
         user,
       });
     } catch (err) {
-      showError('Failed when authenticating with the Realm Object Server', err);
+      const message = this.getAuthenticationErrorMessage(err);
+      this.setState({
+        progress: {
+          status: 'failed',
+          message,
+          retry: {
+            label: 'Retry',
+            onRetry: this.onReconnect,
+          },
+        },
+      });
+    }
+  }
+
+  protected getAuthenticationErrorMessage(err: Error) {
+    if (err.message === 'Failed to fetch') {
+      return 'Failed to fetch:\nIs the server started?';
+    } else {
+      return err.message || 'Failed to authenticate';
     }
   }
 
