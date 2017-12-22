@@ -15,7 +15,7 @@ export const Status = ({ onReconnect, progress, user }: IStatusProps) => {
     if (progress.status === 'failed') {
       return (
         <p className="ServerAdministration__Status">
-          <i className="fa fa-exclamation-circle" /> Failed synchronizing: "
+          <i className="fa fa-exclamation-circle" /> Disconnected: "
           <span className="ServerAdministration__Status__error">
             {progress.message}
           </span>"&nbsp;
