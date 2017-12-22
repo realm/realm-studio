@@ -19,11 +19,11 @@ export const Status = ({ onReconnect, progress, user }: IStatusProps) => {
           <span className="ServerAdministration__Status__error">
             {progress.message}
           </span>"&nbsp;
-          {progress.retry ? (
+          {/* progress.retry ? (
             <Button size="sm" onClick={progress.retry.onRetry}>
               Reconnect now
             </Button>
-          ) : null}
+          ) : null */}
         </p>
       );
     } else if (progress.status === 'in-progress') {
