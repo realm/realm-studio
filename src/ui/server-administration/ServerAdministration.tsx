@@ -39,7 +39,7 @@ interface IServerAdministrationProps {
   validateCertificates: boolean;
 }
 
-const getContent = ({
+const renderContent = ({
   activeTab,
   adminRealm,
   isCloudTenant,
@@ -99,7 +99,9 @@ export const ServerAdministration = (props: IServerAdministrationProps) => {
         onTabChanged={onTabChanged}
         user={user}
       />
-      <div className="ServerAdministration__content">{getContent(props)}</div>
+      <div className="ServerAdministration__content">
+        {adminRealmProgress.status === 'done' ? renderContent(props) : null}
+      </div>
       <LoadingOverlay
         loading={!user || isRealmOpening}
         progress={adminRealmProgress}
