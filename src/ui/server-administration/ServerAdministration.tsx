@@ -33,7 +33,6 @@ export const ServerAdministration = ({
   onReconnect,
   onTabChanged,
   onValidateCertificatesChange,
-  syncError,
   user,
   validateCertificates,
 }: {
@@ -45,7 +44,6 @@ export const ServerAdministration = ({
   onReconnect: () => void;
   onTabChanged: (tab: Tab) => void;
   onValidateCertificatesChange: ValidateCertificatesChangeHandler;
-  syncError?: Realm.Sync.SyncError;
   user: Realm.Sync.User | null;
   validateCertificates: boolean;
 }) => {
@@ -103,7 +101,6 @@ export const ServerAdministration = ({
         <Status
           onReconnect={onReconnect}
           progress={adminRealmProgress}
-          syncError={syncError}
           user={user}
         />
       </Navbar>
