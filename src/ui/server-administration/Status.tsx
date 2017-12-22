@@ -7,27 +7,23 @@ import { ILoadingProgress } from '../reusable/loading-overlay';
 export interface IStatusProps {
   onReconnect: () => void;
   progress: ILoadingProgress;
-  syncError?: Realm.Sync.SyncError;
   user: Realm.Sync.User | null;
 }
 
-export const Status = ({
-  onReconnect,
-  progress,
-  syncError,
-  user,
-}: IStatusProps) => {
+export const Status = ({ onReconnect, progress, user }: IStatusProps) => {
   if (user) {
-    if (syncError) {
+    if (progress.status === 'failed') {
       return (
         <p className="ServerAdministration__Status">
           <i className="fa fa-exclamation-circle" /> Failed synchronizing: "
           <span className="ServerAdministration__Status__error">
-            {syncError.message}
+            {progress.message}
           </span>"&nbsp;
-          <Button size="sm" onClick={onReconnect}>
-            Reconnect now
-          </Button>
+          {progress.retry ? (
+            <Button size="sm" onClick={progress.retry.onRetry}>
+              Reconnect now
+            </Button>
+          ) : null}
         </p>
       );
     } else if (progress.status === 'in-progress') {

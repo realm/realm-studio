@@ -33,7 +33,6 @@ export interface IServerAdministrationContainerState
   extends IRealmLoadingComponentState {
   activeTab: Tab;
   isRealmOpening: boolean;
-  syncError?: Realm.Sync.SyncError;
   user: Realm.Sync.User | null;
 }
 
@@ -166,7 +165,12 @@ export class ServerAdministrationContainer extends RealmLoadingComponent<
         validateCertificates: this.props.validateCertificates,
       });
     } catch (err) {
-      showError('Failed to open the __admin Realm', err);
+      this.setState({
+        progress: {
+          status: 'failed',
+          message: `Failed to open the __admin Realm: ${err.message}`,
+        },
+      });
     }
   }
 
@@ -202,7 +206,14 @@ export class ServerAdministrationContainer extends RealmLoadingComponent<
       this.certificateWasRejected = true;
     } else {
       this.setState({
-        syncError: error,
+        progress: {
+          status: 'failed',
+          message: error.message,
+          retry: {
+            label: 'Reconnect',
+            onRetry: this.onReconnect,
+          },
+        },
       });
     }
   };
