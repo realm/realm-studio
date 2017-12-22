@@ -14,14 +14,13 @@ import {
   ILoadingProgress,
   LoadingOverlay,
 } from '../../reusable/loading-overlay';
+import { FloatingControls } from '../shared/FloatingControls';
 import { ChangePasswordDialogContainer } from './ChangePasswordDialogContainer';
 import { CreateUserDialogContainer } from './CreateUserDialogContainer';
 import { UserSidebar } from './UserSidebar';
-
 import './UsersTable.scss';
 
 export const UsersTable = ({
-  getUser,
   getUserFromId,
   getUsersRealms,
   isChangePasswordOpen,
@@ -35,13 +34,11 @@ export const UsersTable = ({
   onUserPasswordChanged,
   onUserRoleChanged,
   onUserSelected,
-  progress,
   selectedUserId,
   toggleChangePassword,
   toggleCreateUser,
-  userCount,
+  users,
 }: {
-  getUser: (index: number) => ros.IUser | null;
   getUserFromId: (userId: string) => ros.IUser | null;
   getUsersRealms: (userId: string) => ros.IRealmFile[];
   isChangePasswordOpen: boolean;
@@ -60,11 +57,10 @@ export const UsersTable = ({
   onUserPasswordChanged: (userId: string, password: string) => void;
   onUserRoleChanged: (userId: string, role: ros.UserRole) => void;
   onUserSelected: (userId: string | null) => void;
-  progress: ILoadingProgress;
   selectedUserId: string | null;
   toggleChangePassword: () => void;
   toggleCreateUser: () => void;
-  userCount: number;
+  users: Realm.Results<ros.IUser>;
 }) => {
   return (
     <div className="UsersTable">
@@ -82,16 +78,16 @@ export const UsersTable = ({
               rowHeight={30}
               headerHeight={30}
               rowClassName={({ index }) => {
-                const user = getUser(index);
+                const user = users[index];
                 return classnames('UsersTable__row', {
                   'UsersTable__row--selected':
                     user && user.userId === selectedUserId,
                 });
               }}
-              rowCount={userCount}
-              rowGetter={({ index }) => getUser(index)}
+              rowCount={users.length}
+              rowGetter={({ index }) => users[index]}
               onRowClick={({ event, index }) => {
-                const user = getUser(index);
+                const user = users[index];
                 onUserSelected(
                   user && user.userId !== selectedUserId ? user.userId : null,
                 );
@@ -138,13 +134,9 @@ export const UsersTable = ({
         </AutoSizer>
       </div>
 
-      <div
-        className={classnames('UsersTable__overlayed-controls', {
-          'UsersTable__overlayed-controls--hidden': selectedUserId !== null,
-        })}
-      >
+      <FloatingControls isOpen={selectedUserId === null}>
         <Button onClick={toggleCreateUser}>Create new user</Button>
-      </div>
+      </FloatingControls>
 
       <UserSidebar
         isOpen={selectedUserId !== null}
@@ -170,8 +162,6 @@ export const UsersTable = ({
         toggle={toggleCreateUser}
         onUserCreated={onUserCreated}
       />
-
-      <LoadingOverlay progress={progress} fade={true} />
     </div>
   );
 };

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Table } from 'reactstrap';
 
 import * as ros from '../../../../services/ros';
-import '../../sidebar/SidebarTable.scss';
+import '../../shared/Sidebar/SidebarTable.scss';
 
 export const AccountsTable = ({ accounts }: { accounts: ros.IAccount[] }) => (
   <Table size="sm" className="SidebarTable">

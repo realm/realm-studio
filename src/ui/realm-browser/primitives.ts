@@ -1,6 +1,6 @@
 import * as Realm from 'realm';
 
-export const TYPES = [
+export const TYPES: string[] = [
   'bool',
   'int',
   'float',

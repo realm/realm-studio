@@ -1,6 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import { Progress } from 'reactstrap';
+import { Button, Progress } from 'reactstrap';
 
 import { LoadingDots } from '../loading-dots/LoadingDots';
 import { ILoadingProgress } from './index';
@@ -22,19 +22,14 @@ export const LoadingOverlay = ({
   fade?: boolean;
 }) => {
   // If a progress has been supplied, it overrides loading
-  const isVisible = progress ? !progress.done || progress.failure : loading;
+  const isVisible = progress ? progress.status !== 'done' : loading;
+  const showDots = progress ? progress.status === 'in-progress' : loading;
   return isVisible ? (
     <div
       className={classNames('LoadingOverlay', {
         'LoadingOverlay--no-fade': !fade,
       })}
     >
-      {progress && progress.activity ? (
-        <section className="LoadingOverlay__Activity">
-          {progress.activity}
-        </section>
-      ) : null}
-      {(progress ? !progress.done : loading) ? <LoadingDots /> : null}
       {progress &&
         typeof progress.transferable === 'number' &&
         typeof progress.transferred === 'number' && (
@@ -44,14 +39,28 @@ export const LoadingOverlay = ({
             max={progress.transferable}
           />
         )}
-      {progress && progress.failure ? (
+      {progress && progress.status === 'failed' ? (
         <section className="LoadingOverlay__Failure">
           <i
-            className="LoadingOverlay__FailureIcon fa fa-exclamation-triangle"
+            className="LoadingOverlay__FailureIcon fa fa-exclamation-circle"
             aria-hidden="true"
           />
-          {progress.failure}
         </section>
+      ) : null}
+      {progress && progress.message ? (
+        <section className="LoadingOverlay__Message">
+          {progress.message}
+        </section>
+      ) : null}
+      {showDots ? <LoadingDots /> : null}
+      {progress && progress.retry ? (
+        <Button
+          className="LoadingOverlay__RetryButton"
+          color="primary"
+          onClick={progress.retry.onRetry}
+        >
+          {progress.retry.label}
+        </Button>
       ) : null}
     </div>
   ) : null;

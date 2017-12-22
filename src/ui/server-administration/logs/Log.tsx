@@ -7,10 +7,21 @@ import {
   ScrollSync,
 } from 'react-virtualized';
 
+import {
+  ILoadingProgress,
+  LoadingOverlay,
+} from '../../reusable/loading-overlay';
+
 import { Entry, ILogEntry } from './Entry';
 import { LevelSelector, LogLevel } from './LevelSelector';
 
 import './Log.scss';
+
+interface IListScrollParams {
+  clientHeight: number;
+  scrollHeight: number;
+  scrollTop: number;
+}
 
 export const Log = ({
   entries,
@@ -18,17 +29,19 @@ export const Log = ({
   level,
   onLevelChanged,
   toggleLevelSelector,
+  progress,
 }: {
   entries: ILogEntry[];
   isLevelSelectorOpen: boolean;
   level: LogLevel;
   onLevelChanged: (level: LogLevel) => void;
   toggleLevelSelector: () => void;
+  progress: ILoadingProgress;
 }) => {
   return (
     <div className="Log">
       <div className="Log__Table">
-        <ScrollSync>
+        <ScrollSync disableWidth={true}>
           {({ clientHeight, onScroll, scrollTop, scrollHeight }) => {
             // Measure the distance from the bottom scroll - initially 0.
             const scrollBottom = scrollHeight - (scrollTop + clientHeight);
@@ -41,7 +54,14 @@ export const Log = ({
                   <List
                     width={width}
                     height={height}
-                    onScroll={onScroll}
+                    onScroll={(params: IListScrollParams) => {
+                      onScroll({
+                        ...params,
+                        clientWidth: 0,
+                        scrollLeft: 0,
+                        scrollWidth: width,
+                      });
+                    }}
                     rowCount={entries.length}
                     rowHeight={20}
                     rowRenderer={({ key, style, index, isScrolling }) => {
@@ -57,7 +77,11 @@ export const Log = ({
         </ScrollSync>
       </div>
       <div className="Log__Controls">
-        <div className="Log__Status">Showing {entries.length} log entries</div>
+        <div className="Log__Status">
+          {progress.status === 'done' ? (
+            <span>Showing {entries.length} entries from the server</span>
+          ) : null}
+        </div>
         <div className="Log__LevelSelector">
           Show levels &ge;&nbsp;
           <LevelSelector
@@ -68,6 +92,7 @@ export const Log = ({
           />
         </div>
       </div>
+      <LoadingOverlay progress={progress} />
     </div>
   );
 };

@@ -10,7 +10,14 @@ export interface IPropertyWithName extends Realm.ObjectSchemaProperty {
 export interface ISelectObjectState {
   focus: IClassFocus;
   property: IPropertyWithName;
-  object: Realm.Object;
+  contentToUpdate: Realm.Object | Realm.List<any>;
+}
+
+export enum EditMode {
+  Disabled = 'disabled',
+  InputBlur = 'input-blur',
+  KeyPress = 'key-press',
 }
 
 export type CreateObjectHandler = (className: string, values: {}) => void;
+export type EditModeChangeHandler = (editMode: EditMode) => void;

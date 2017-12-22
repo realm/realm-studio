@@ -14,14 +14,15 @@ export class RendererTransport extends Transport {
   public constructor() {
     super();
     ipcRenderer.on(Transport.RESPONSE_EVENT_NAME, this.onResponseMessage);
+    ipcRenderer.on(Transport.REQUEST_EVENT_NAME, this.onRequestMessage);
   }
 
   public sendRequest(requestId: string, action: string, ...args: any[]) {
     ipcRenderer.send(Transport.REQUEST_EVENT_NAME, requestId, action, ...args);
   }
 
-  public sendResponse(requestId: string, result: any) {
-    ipcRenderer.send(Transport.RESPONSE_EVENT_NAME, requestId, result);
+  public sendResponse(requestId: string, result: any, success: boolean) {
+    ipcRenderer.send(Transport.RESPONSE_EVENT_NAME, requestId, result, success);
   }
 
   private onResponseMessage = (
@@ -29,5 +30,12 @@ export class RendererTransport extends Transport {
     ...args: any[]
   ) => {
     this.emit(Transport.RESPONSE_EVENT_NAME, ...args);
+  };
+
+  private onRequestMessage = (
+    event: Electron.IpcMessageEvent,
+    ...args: any[]
+  ) => {
+    this.emit(Transport.REQUEST_EVENT_NAME, ...args);
   };
 }

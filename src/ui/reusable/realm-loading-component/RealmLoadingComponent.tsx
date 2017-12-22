@@ -35,10 +35,14 @@ export abstract class RealmLoadingComponent<
   protected certificateWasRejected: boolean;
 
   public componentWillUnmount() {
-    // Remove any existing a change listeners
+    // Closing and remove any existing a change listeners
     if (this.realm) {
       this.realm.removeListener('change', this.onRealmChanged);
+      this.realm.close();
+      // Deleting indicates we've closed it
+      delete this.realm;
     }
+    this.closeRealm();
     this.cancelLoadingRealms();
   }
 
@@ -49,39 +53,49 @@ export abstract class RealmLoadingComponent<
 
   protected async loadRealm(
     realm: realms.ISyncedRealmToLoad | realms.ILocalRealmToLoad,
+    schema?: Realm.ObjectSchema[],
+    schemaVersion?: number,
   ) {
-    // Remove any existing a change listeners
-    if (this.realm) {
-      this.realm.removeListener('change', this.onRealmChanged);
-    }
+    // Close the realm - if open
+    this.closeRealm();
 
+    // Should certificates get validated?
     const validateCertificates =
       realm.mode === 'synced' && realm.validateCertificates;
 
     if (realm) {
       try {
-        this.setState({ progress: { done: false } });
+        this.setState({ progress: { status: 'in-progress' } });
         // Reset the state that captures rejected certificates
         this.certificateWasRejected = false;
         // Get the realms from the ROS interface
-        this.realm = await this.openRealm(realm, {
-          errorCallback: this.onSyncError,
-          validateCertificates,
-          // Uncomment the line below to test failing certificate validation
-          /*
-          certificatePath: '... some path of a valid but failing certificate',
-          */
-        });
+        this.realm = await this.openRealm(
+          realm,
+          {
+            errorCallback: this.onSyncError,
+            validateCertificates,
+            // Uncomment the line below to test failing certificate validation
+            /*
+            certificatePath: '... some path of a valid but failing certificate',
+            */
+          },
+          schema,
+          schemaVersion,
+        );
         // Register change listeners
         this.realm.addListener('change', this.onRealmChanged);
         this.onRealmLoaded();
         // Update the state, to indicate we're done loading
-        this.setState({ progress: { done: true } });
+        this.setState({ progress: { status: 'done' } });
       } catch (err) {
         // Ignore an error that originates from the load being cancelled
         if (!err.wasCancelled) {
           // Could this error originate from an untrusted SSL certificate?
-          if (validateCertificates && this.certificateWasRejected) {
+          if (
+            validateCertificates &&
+            this.certificateWasRejected &&
+            realm.mode === realms.RealmLoadingMode.Synced
+          ) {
             // Ask the user if they want to trust the certificate
             const result = electron.remote.dialog.showMessageBox(
               electron.remote.getCurrentWindow(),
@@ -102,15 +116,23 @@ export abstract class RealmLoadingComponent<
           } else {
             this.loadingRealmFailed(err);
           }
-        }
+        } // ignore errors from cancelled loading
       }
     }
   }
 
+  protected closeRealm() {
+    // Remove any existing a change listeners
+    if (this.realm) {
+      this.realm.removeListener('change', this.onRealmChanged);
+      this.realm.close();
+      delete this.realm;
+    }
+  }
+
   protected loadingRealmFailed(err: Error) {
-    showError('Failed open the Realm', err);
-    const failure = err.message || 'Failed to open the Realm';
-    this.setState({ progress: { failure, done: true } });
+    const message = err.message || 'Failed to open the Realm';
+    this.setState({ progress: { message, status: 'failed' } });
   }
 
   protected isSslCertificateRelated(err: Error) {
@@ -131,12 +153,37 @@ export abstract class RealmLoadingComponent<
   private async openRealm(
     realm: realms.ISyncedRealmToLoad | realms.ILocalRealmToLoad | undefined,
     ssl: realms.ISslConfiguration = { validateCertificates: true },
+    schema?: Realm.ObjectSchema[],
+    schemaVersion?: number,
   ): Promise<Realm> {
     if (realm && realm.mode === realms.RealmLoadingMode.Local) {
-      return new Realm({
-        path: realm.path,
-        encryptionKey: realm.encryptionKey,
-      });
+      try {
+        return new Realm({
+          path: realm.path,
+          encryptionKey: realm.encryptionKey,
+          sync: realm.sync as any,
+          schema,
+          schemaVersion,
+        });
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          error.message.includes(
+            'Incompatible histories. Expected a Realm with no or in-realm history',
+          ) &&
+          realm.sync !== true
+        ) {
+          // Try to open the Realm locally with a sync history mode.
+          return this.openRealm(
+            { ...realm, sync: true },
+            ssl,
+            schema,
+            schemaVersion,
+          );
+        }
+        // Other errors, propagate it.
+        throw error;
+      }
     } else if (realm && realm.mode === realms.RealmLoadingMode.Synced) {
       const props = (realm as any) as realms.ISyncedRealmToLoad;
       const user =
@@ -149,6 +196,7 @@ export abstract class RealmLoadingComponent<
         realm.encryptionKey,
         ssl,
         this.progressChanged,
+        schema,
       );
       // Save a wrapping promise so this can be cancelled
       return new Promise<Realm>((resolve, reject) => {
@@ -198,7 +246,7 @@ export abstract class RealmLoadingComponent<
   private progressChanged = (transferred: number, transferable: number) => {
     this.setState({
       progress: {
-        done: transferred >= transferable,
+        status: transferred >= transferable ? 'done' : 'in-progress',
         transferred,
         transferable,
       },

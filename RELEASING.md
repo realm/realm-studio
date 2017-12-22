@@ -39,8 +39,13 @@ what it's basically doing:
 
 ## Release a prepared release
 
-To publish the release, go to https://ci.realm.io/job/realm-studio/job/release/build and select the version tag that
-you want to build and release for.
+The prepare job starts a new release job as its final step, so usually you don't need to start the release job manually.
+
+If you've just finished preparing a release, go to
+https://ci.realm.io/blue/organizations/jenkins/realm-studio%2Frelease/activity
+
+To start a previously prepared release manually, go to https://ci.realm.io/job/realm-studio/job/release/build and select
+the version tag that you want to build and release for.
 
 To see what the release job does, see https://github.com/realm/realm-studio/blob/master/Jenkinsfile.release - this is
 what it's basically doing:

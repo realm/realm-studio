@@ -2,7 +2,7 @@ import { BrowserWindow, screen, shell } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 
-import { getWindowOptions, WindowType } from '../windows/WindowType';
+import { getWindowOptions, WindowProps } from '../windows/WindowType';
 
 export interface IEventListenerCallbacks {
   blur?: () => void;
@@ -23,14 +23,14 @@ function getRendererHtmlPath() {
 export class WindowManager {
   public windows: Electron.BrowserWindow[] = [];
 
-  public createWindow(windowType: WindowType, options: any = {}) {
+  public createWindow(props: WindowProps) {
     const window = new BrowserWindow({
       title: 'Realm Studio',
       width: 800,
       height: 600,
       vibrancy: 'light',
       show: false,
-      ...getWindowOptions(windowType, options),
+      ...getWindowOptions(props),
     });
 
     // Open up the dev tools, if not in production mode
@@ -50,19 +50,24 @@ export class WindowManager {
     const display = this.getDesiredDisplay();
     this.positionWindowOnDisplay(window, display);
 
-    if (typeof options.path === 'string' && process.platform === 'darwin') {
-      window.setRepresentedFilename(options.path);
+    if (
+      process.platform === 'darwin' &&
+      props.type === 'realm-browser' &&
+      props.realm.mode === 'local'
+    ) {
+      window.setRepresentedFilename(props.realm.path);
     }
 
     const query: { [key: string]: string } = {
-      windowType,
-      options: JSON.stringify(options),
+      props: JSON.stringify(props),
     };
 
+    // @see https://reactjs.org/blog/2016/11/16/react-v15.4.0.html#profiling-components-with-chrome-timeline
     if (!isProduction && process.env.REACT_PERF) {
       query.react_perf = 'enabled';
     }
 
+    // Load the renderer html into the window
     window.loadURL(
       url.format({
         pathname: getRendererHtmlPath(),

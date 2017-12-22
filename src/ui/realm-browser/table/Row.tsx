@@ -4,8 +4,8 @@ import * as React from 'react';
 import { IGridRowProps } from './rowCellRangeRenderer';
 
 export interface IRowProps extends IGridRowProps {
-  isHighlighted: boolean;
-  isSorting: boolean;
+  isHighlighted?: boolean;
+  isSorting?: boolean;
 }
 
 export const Row = ({

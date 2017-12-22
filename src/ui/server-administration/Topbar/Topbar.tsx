@@ -2,20 +2,28 @@ import * as React from 'react';
 import { Button, Navbar } from 'reactstrap';
 
 import realmLogo from '../../../../static/svgs/realm-logo.svg';
+import { ILoadingProgress } from '../../reusable/loading-overlay';
 import { Tab } from '../ServerAdministration';
+import { Status } from './Status';
 import { TabButton } from './TabButton';
 
 export interface ITopbarProps {
   activeTab: Tab | null;
+  adminRealmProgress: ILoadingProgress;
   isCloudTenant: boolean;
+  onReconnect: () => void;
   onTabChanged: (tab: Tab) => void;
+  syncError?: Realm.Sync.SyncError;
   user: Realm.Sync.User | null;
 }
 
 export const TopBar = ({
   activeTab,
+  adminRealmProgress,
   isCloudTenant,
+  onReconnect,
   onTabChanged,
+  syncError,
   user,
 }: ITopbarProps) => (
   <Navbar className="ServerAdministration__TobBar">
@@ -51,11 +59,10 @@ export const TopBar = ({
       onTabChanged={onTabChanged}
       tab={Tab.Logs}
     />
-    {user && (
-      <p className="ServerAdministration__status">
-        Connected to&nbsp;
-        <span className="ServerAdministration__server">{user.server}</span>
-      </p>
-    )}
+    <Status
+      onReconnect={onReconnect}
+      progress={adminRealmProgress}
+      user={user}
+    />
   </Navbar>
 );

@@ -132,6 +132,36 @@ describe('Export schema tests', () => {
     );
   });
 
+  it('Kotlin export with sample types', () => {
+    assertGeneratedSchemaIsValid(
+      Language.Kotlin,
+      `${TESTS_PATH}/models/sample/kotlin/SampleTypes.kt`,
+      `${TESTS_PATH}/temporal/${Language.Kotlin}/SampleTypes.kt`,
+      sampleRealm as Realm,
+    );
+  });
+
+  it('Kotlin exporter model with all types', () => {
+    assertGeneratedSchemaAreValid(
+      Language.Kotlin,
+      Array<string>(
+        `${TESTS_PATH}/models/all/kotlin/IndexedTypes.kt`,
+        `${TESTS_PATH}/models/all/kotlin/LinkTypes.kt`,
+        `${TESTS_PATH}/models/all/kotlin/OptionalTypes.kt`,
+        `${TESTS_PATH}/models/all/kotlin/RequiredTypes.kt`,
+        `${TESTS_PATH}/models/all/kotlin/ReverseType.kt`,
+      ),
+      Array<string>(
+        `${TESTS_PATH}/temporal/${Language.Kotlin}/IndexedTypes.kt`,
+        `${TESTS_PATH}/temporal/${Language.Kotlin}/LinkTypes.kt`,
+        `${TESTS_PATH}/temporal/${Language.Kotlin}/OptionalTypes.kt`,
+        `${TESTS_PATH}/temporal/${Language.Kotlin}/RequiredTypes.kt`,
+        `${TESTS_PATH}/temporal/${Language.Kotlin}/ReverseType.kt`,
+      ),
+      allRealm as Realm,
+    );
+  });
+
   it('C# exporter model with sample types', () => {
     assertGeneratedSchemaIsValid(
       Language.CS,

@@ -100,6 +100,7 @@ See the section on [releasing](./RELEASING.md).
 ## Scripts
 
 - `npm run check:package-lock` runs ./scripts/check-package-lock.js to check if the package locks version and dependencies are compatible with that of the package.json.
+- `npm run check:auto-update-files` runs ./scripts/check-auto-update-files.js to check if the auto updating `latest-*` files are referring to the current version from the package.json and ensuring that it's not referencing any files that won't be available once released.
 - `npm run generate-all-types-realm` runs ./scripts/generate-realm.js to generate a test realm with objects following the schema-exporters all-types schema.
 - `./scripts/via-nvm.sh` installs node and npm in the version from `.nvmrc` and runs commands with that enabled, ex:
 

@@ -1,20 +1,21 @@
 import { IActionHandlers } from '.';
-import { getTransport, Transport } from './transports';
+import { Transport } from './transports';
 
-export class ActionReceiver {
+export abstract class ActionReceiver {
   private transport: Transport;
   private handlers: IActionHandlers;
 
   constructor(handlers: IActionHandlers) {
     this.handlers = handlers;
-    const transport = getTransport();
-    if (transport) {
-      this.setTransport(transport);
-    }
   }
 
   public destroy() {
-    this.transport.removeListener(Transport.REQUEST_EVENT_NAME, this.onRequest);
+    if (this.transport) {
+      this.transport.removeListener(
+        Transport.REQUEST_EVENT_NAME,
+        this.onRequest,
+      );
+    }
   }
 
   public setTransport(transport: Transport) {
@@ -34,11 +35,13 @@ export class ActionReceiver {
     if (action in this.handlers) {
       try {
         const result = await this.handlers[action](...args);
-        this.transport.sendResponse(requestId, result);
+        this.transport.sendResponse(requestId, result, true);
       } catch (err) {
         // tslint:disable-next-line:no-console
-        console.error(err);
-        throw new Error(`Failed to perform "${action}": ${err.message}`);
+        console.error(
+          `Action "${action}" (${requestId}) failed: ${err.message}`,
+        );
+        this.transport.sendResponse(requestId, err.message, false);
       }
     } else {
       throw new Error(`ActionReceiver cannot handle "${action}" actions`);
