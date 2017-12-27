@@ -55,7 +55,7 @@ export const Content = ({
   onCellValidated?: CellValidatedHandler;
   onCommitTransaction?: () => void;
   onContextMenu?: CellContextMenuHandler;
-  onNewObjectClick: () => void;
+  onNewObjectClick?: () => void;
   onQueryChange: (query: string) => void;
   onQueryHelp: () => void;
   onSortEnd?: SortEndHandler;

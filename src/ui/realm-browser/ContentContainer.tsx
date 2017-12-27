@@ -31,7 +31,7 @@ export interface IContentContainerProps {
   onCellValidated?: CellValidatedHandler;
   onCommitTransaction?: () => void;
   onContextMenu?: CellContextMenuHandler;
-  onNewObjectClick: () => void;
+  onNewObjectClick?: () => void;
   onSortEnd?: SortEndHandler;
   onSortStart?: SortStartHandler;
   progress?: ILoadingProgress;
