@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { Button } from 'reactstrap';
 import { EditMode } from '.';
 import { ILoadingProgress } from '../reusable/loading-overlay';
 import { QuerySearch } from '../reusable/QuerySearch';
@@ -32,6 +33,7 @@ export const Content = ({
   onCellValidated,
   onCommitTransaction,
   onContextMenu,
+  onNewObjectClick,
   onQueryChange,
   onQueryHelp,
   onSortEnd,
@@ -53,6 +55,7 @@ export const Content = ({
   onCellValidated?: CellValidatedHandler;
   onCommitTransaction?: () => void;
   onContextMenu?: CellContextMenuHandler;
+  onNewObjectClick: () => void;
   onQueryChange: (query: string) => void;
   onQueryHelp: () => void;
   onSortEnd?: SortEndHandler;
@@ -71,6 +74,14 @@ export const Content = ({
             query={query}
             placeholder="Enter a query to filter the list"
           />
+          <Button
+            size="sm"
+            color="primary"
+            className="RealmBrowser__Topbar__Button"
+            onClick={onNewObjectClick}
+          >
+            New object
+          </Button>
         </div>
         <ResponsiveTable
           dataVersion={dataVersion}

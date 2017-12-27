@@ -1,4 +1,3 @@
-import * as assert from 'assert';
 import { ipcRenderer, MenuItemConstructorOptions, remote } from 'electron';
 import * as path from 'path';
 import * as React from 'react';
@@ -10,7 +9,6 @@ import {
   IPropertyWithName,
   ISelectObjectState,
 } from '.';
-import { RealmLoadingMode } from '../../services/ros/realms';
 import { Language, SchemaExporter } from '../../services/schema-export';
 import {
   IMenuGenerator,
@@ -617,6 +615,15 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         x: e.clientX,
         y: e.clientY,
       });
+    }
+  };
+
+  public onNewObjectClick = () => {
+    const { focus } = this.state;
+
+    if (focus) {
+      const className = this.getClassName(focus);
+      this.onCreateDialogToggle(className);
     }
   };
 
