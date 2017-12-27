@@ -9,6 +9,7 @@ import {
 import { Button } from 'reactstrap';
 
 import { IPermission, IRealmFile } from '../../../services/ros';
+import { QuerySearch } from '../../reusable/QuerySearch';
 import { FloatingControls } from '../shared/FloatingControls';
 import { CreateRealmDialogContainer } from './CreateRealmDialogContainer';
 import { RealmSidebar } from './RealmSidebar';
@@ -25,6 +26,8 @@ export const RealmsTable = ({
   realms,
   selectedRealmPath,
   toggleCreateRealm,
+  query,
+  onQueryChange,
 }: {
   getRealmFromId: (path: string) => IRealmFile | null;
   getRealmPermissions: (path: string) => Realm.Results<IPermission>;
@@ -36,50 +39,77 @@ export const RealmsTable = ({
   realms: Realm.Results<IRealmFile>;
   selectedRealmPath: string | null;
   toggleCreateRealm: () => void;
+  query: string;
+  onQueryChange: (query: string) => void;
 }) => {
   return (
     <div className="RealmsTable">
-      <div
-        className="RealmsTable__table"
-        onClick={event => {
-          onRealmSelected(null);
-        }}
-      >
-        <AutoSizer>
-          {({ width, height }: IAutoSizerDimensions) => (
-            <Table
-              width={width}
-              height={height}
-              rowHeight={30}
-              headerHeight={30}
-              rowClassName={({ index }) => {
-                const realm = realms[index];
-                return classnames('RealmsTable__row', {
-                  'RealmsTable__row--selected':
-                    realm && realm.path === selectedRealmPath,
-                });
-              }}
-              rowCount={realms.length}
-              rowGetter={({ index }) => realms[index]}
-              onRowClick={({ event, index }) => {
-                event.stopPropagation();
-                const realm = realms[index];
-                onRealmSelected(
-                  realm && realm.path !== selectedRealmPath ? realm.path : null,
-                );
-              }}
-              onRowDoubleClick={({ event, index }) => {
-                event.stopPropagation();
-                const realm = realms[index];
-                if (realm) {
-                  onRealmOpened(realm.path);
-                }
-              }}
-            >
-              <Column label="Path" dataKey="path" width={width} />
-            </Table>
-          )}
-        </AutoSizer>
+      <div className="RealmsTable__content">
+        <div className="RealmsTable__Topbar">
+          <QuerySearch
+            query={query}
+            onQueryChange={onQueryChange}
+            placeholder="Search realms"
+          />
+        </div>
+        <div
+          className="RealmsTable__table"
+          onClick={event => {
+            onRealmSelected(null);
+          }}
+        >
+          <AutoSizer>
+            {({ width, height }: IAutoSizerDimensions) => (
+              <Table
+                width={width}
+                height={height}
+                rowHeight={30}
+                headerHeight={30}
+                rowClassName={({ index }) => {
+                  const realm = realms[index];
+                  return classnames('RealmsTable__row', {
+                    'RealmsTable__row--selected':
+                      realm && realm.path === selectedRealmPath,
+                  });
+                }}
+                rowCount={realms.length}
+                rowGetter={({ index }) => realms[index]}
+                onRowClick={({ event, index }) => {
+                  event.stopPropagation();
+                  const realm = realms[index];
+                  onRealmSelected(
+                    realm && realm.path !== selectedRealmPath
+                      ? realm.path
+                      : null,
+                  );
+                }}
+                onRowDoubleClick={({ event, index }) => {
+                  event.stopPropagation();
+                  const realm = realms[index];
+                  if (realm) {
+                    onRealmOpened(realm.path);
+                  }
+                }}
+              >
+                <Column label="Path" dataKey="path" width={width} />
+                <Column
+                  label="Owner"
+                  dataKey="owner"
+                  width={width}
+                  cellDataGetter={({ rowData }) =>
+                    rowData.owner && [
+                      ...new Set([
+                        rowData.owner.userId,
+                        ...rowData.owner.accounts.map(
+                          (account: any) => account.providerId,
+                        ),
+                      ]),
+                    ]}
+                />
+              </Table>
+            )}
+          </AutoSizer>
+        </div>
       </div>
 
       <FloatingControls isOpen={selectedRealmPath === null}>

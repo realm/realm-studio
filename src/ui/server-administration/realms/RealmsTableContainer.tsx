@@ -3,10 +3,6 @@ import * as React from 'react';
 import * as Realm from 'realm';
 
 import * as ros from '../../../services/ros';
-import {
-  IRealmLoadingComponentState,
-  RealmLoadingComponent,
-} from '../../reusable/realm-loading-component';
 
 import { showError } from '../../reusable/errors';
 import { RealmsTable } from './RealmsTable';
@@ -27,6 +23,7 @@ export interface IRealmTableContainerProps {
 export interface IRealmTableContainerState {
   selectedRealmPath: string | null;
   isCreateRealmOpen: boolean;
+  query: string;
 }
 
 export class RealmsTableContainer extends React.PureComponent<
@@ -40,6 +37,7 @@ export class RealmsTableContainer extends React.PureComponent<
     this.state = {
       isCreateRealmOpen: false,
       selectedRealmPath: null,
+      query: '',
     };
   }
 
@@ -108,6 +106,21 @@ export class RealmsTableContainer extends React.PureComponent<
     this.setState({
       selectedRealmPath: path,
     });
+  };
+
+  public onQueryChange = (query: string) => {
+    this.setState({ query });
+
+    try {
+      this.realms = this.props.adminRealm
+        .objects<ros.IRealmFile>('RealmFile')
+        .filtered(
+          `path CONTAINS[c] "${query}" OR owner.userId CONTAINS[c] "${query}" OR owner.accounts.providerId CONTAINS[c] "${query}"`,
+        );
+    } catch (err) {
+      // tslint:disable-next-line:no-console
+      console.warn(`Could not filter on "${query}"`, err);
+    }
   };
 
   private confirmRealmDeletion(path: string): boolean {

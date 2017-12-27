@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import { EditMode } from '.';
 import { ILoadingProgress } from '../reusable/loading-overlay';
+import { QuerySearch } from '../reusable/QuerySearch';
 import { Bottombar } from './Bottombar';
 import { IFocus } from './focus';
 import {
@@ -15,7 +16,6 @@ import {
   SortStartHandler,
 } from './table';
 import { ResponsiveTable } from './table/ResponsiveTable';
-import { Topbar } from './Topbar';
 
 export const Content = ({
   changeCount,
@@ -63,11 +63,15 @@ export const Content = ({
   if (focus) {
     return (
       <div className="RealmBrowser__Content">
-        <Topbar
-          onQueryChange={onQueryChange}
-          onQueryHelp={onQueryHelp}
-          query={query}
-        />
+        <div className="RealmBrowser__Topbar">
+          <QuerySearch
+            className="RealmBrowser__Topbar__Filter"
+            onQueryChange={onQueryChange}
+            onQueryHelp={onQueryHelp}
+            query={query}
+            placeholder="Enter a query to filter the list"
+          />
+        </div>
         <ResponsiveTable
           dataVersion={dataVersion}
           editMode={editMode}

@@ -6,6 +6,17 @@ $sidebar-shadow: rgba($color-dove, .66);
   display: flex;
   flex-grow: 1;
 
+  &__content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  &__Topbar {
+    padding: $spacer / 2;
+    background-color: $color-dove;
+  }
+
   &__row {
     &--selected {
       background: $color-dove;
