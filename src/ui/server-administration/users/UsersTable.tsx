@@ -10,15 +10,12 @@ import { Button } from 'reactstrap';
 
 import * as ros from '../../../services/ros';
 
-import {
-  ILoadingProgress,
-  LoadingOverlay,
-} from '../../reusable/loading-overlay';
+import { QuerySearch } from '../../reusable/QuerySearch';
 import { FloatingControls } from '../shared/FloatingControls';
+import '../shared/Table/Table.scss';
 import { ChangePasswordDialogContainer } from './ChangePasswordDialogContainer';
 import { CreateUserDialogContainer } from './CreateUserDialogContainer';
 import { UserSidebar } from './UserSidebar';
-import './UsersTable.scss';
 
 export const UsersTable = ({
   getUserFromId,
@@ -38,6 +35,8 @@ export const UsersTable = ({
   toggleChangePassword,
   toggleCreateUser,
   users,
+  query,
+  onQueryChange,
 }: {
   getUserFromId: (userId: string) => ros.IUser | null;
   getUsersRealms: (userId: string) => ros.IRealmFile[];
@@ -61,77 +60,91 @@ export const UsersTable = ({
   toggleChangePassword: () => void;
   toggleCreateUser: () => void;
   users: Realm.Results<ros.IUser>;
+  query: string;
+  onQueryChange: (query: string) => void;
 }) => {
   return (
-    <div className="UsersTable">
-      <div
-        className="UsersTable__table"
-        onClick={event => {
-          onUserSelected(null);
-        }}
-      >
-        <AutoSizer>
-          {({ width, height }: IAutoSizerDimensions) => (
-            <Table
-              width={width}
-              height={height}
-              rowHeight={30}
-              headerHeight={30}
-              rowClassName={({ index }) => {
-                const user = users[index];
-                return classnames('UsersTable__row', {
-                  'UsersTable__row--selected':
-                    user && user.userId === selectedUserId,
-                });
-              }}
-              rowCount={users.length}
-              rowGetter={({ index }) => users[index]}
-              onRowClick={({ event, index }) => {
-                const user = users[index];
-                onUserSelected(
-                  user && user.userId !== selectedUserId ? user.userId : null,
-                );
-                event.stopPropagation();
-              }}
-            >
-              <Column
-                label="Provider Id(s)"
-                dataKey="accounts"
-                width={200}
-                cellRenderer={({ cellData }) => {
-                  const accounts = cellData as ros.IAccount[];
-                  return (
-                    <span>
-                      {accounts.map(account => (
-                        <span title={`Provider: ${account.provider}`}>
-                          {account.providerId}
-                        </span>
-                      ))}
-                    </span>
+    <div className="Table">
+      <div className="Table__content">
+        <div className="Table__topbar">
+          <QuerySearch
+            query={query}
+            onQueryChange={onQueryChange}
+            placeholder="Search users"
+          />
+        </div>
+        <div
+          className="Table__table"
+          onClick={event => {
+            onUserSelected(null);
+          }}
+        >
+          <AutoSizer>
+            {({ width, height }: IAutoSizerDimensions) => (
+              <Table
+                width={width}
+                height={height}
+                rowHeight={30}
+                headerHeight={30}
+                rowClassName={({ index }) => {
+                  const user = users[index];
+                  return classnames('Table__row', {
+                    'Table__row--selected':
+                      user && user.userId === selectedUserId,
+                  });
+                }}
+                rowCount={users.length}
+                rowGetter={({ index }) => users[index]}
+                onRowClick={({ event, index }) => {
+                  const user = users[index];
+                  onUserSelected(
+                    user && user.userId !== selectedUserId ? user.userId : null,
                   );
+                  event.stopPropagation();
                 }}
-              />
-              <Column label="User Id" dataKey="userId" width={200} />
-              <Column
-                label="Role"
-                dataKey="isAdmin"
-                width={100}
-                cellRenderer={({ cellData }) => {
-                  return cellData ? 'Administrator' : 'Regular user';
-                }}
-              />
-              <Column
-                label="# Realms"
-                dataKey="userId"
-                width={100}
-                cellRenderer={({ cellData }) => {
-                  const userId = cellData as string;
-                  return getUsersRealms(userId).length;
-                }}
-              />
-            </Table>
-          )}
-        </AutoSizer>
+              >
+                <Column
+                  label="Provider Id(s)"
+                  dataKey="accounts"
+                  width={200}
+                  cellRenderer={({ cellData }) => {
+                    const accounts = cellData as ros.IAccount[];
+                    return (
+                      <span>
+                        {accounts.map((account, index) => (
+                          <span
+                            key={index}
+                            title={`Provider: ${account.provider}`}
+                          >
+                            {account.providerId}
+                          </span>
+                        ))}
+                      </span>
+                    );
+                  }}
+                />
+                <Column label="User Id" dataKey="userId" width={200} />
+                <Column
+                  label="Role"
+                  dataKey="isAdmin"
+                  width={100}
+                  cellRenderer={({ cellData }) => {
+                    return cellData ? 'Administrator' : 'Regular user';
+                  }}
+                />
+                <Column
+                  label="# Realms"
+                  dataKey="userId"
+                  width={100}
+                  cellRenderer={({ cellData }) => {
+                    const userId = cellData as string;
+                    return getUsersRealms(userId).length;
+                  }}
+                />
+              </Table>
+            )}
+          </AutoSizer>
+        </div>
       </div>
 
       <FloatingControls isOpen={selectedUserId === null}>

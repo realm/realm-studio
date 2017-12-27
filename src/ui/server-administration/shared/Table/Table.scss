@@ -1,8 +1,6 @@
 @import "~realm-studio-styles/variables";
 
-$sidebar-shadow: rgba($color-dove, .66);
-
-.RealmsTable {
+.Table {
   display: flex;
   flex-grow: 1;
 
@@ -12,7 +10,7 @@ $sidebar-shadow: rgba($color-dove, .66);
     flex-grow: 1;
   }
 
-  &__Topbar {
+  &__topbar {
     padding: $spacer / 2;
     background-color: $color-dove;
   }
@@ -27,5 +25,5 @@ $sidebar-shadow: rgba($color-dove, .66);
     flex: 1 0;
   }
 
-  @import "../../reusable/ReactVirtualized";
+  @import "../../../reusable/ReactVirtualized";
 }

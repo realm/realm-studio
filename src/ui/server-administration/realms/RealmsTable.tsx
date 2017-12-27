@@ -11,9 +11,9 @@ import { Button } from 'reactstrap';
 import { IPermission, IRealmFile } from '../../../services/ros';
 import { QuerySearch } from '../../reusable/QuerySearch';
 import { FloatingControls } from '../shared/FloatingControls';
+import '../shared/Table/Table.scss';
 import { CreateRealmDialogContainer } from './CreateRealmDialogContainer';
 import { RealmSidebar } from './RealmSidebar';
-import './RealmsTable.scss';
 
 export const RealmsTable = ({
   getRealmFromId,
@@ -43,9 +43,9 @@ export const RealmsTable = ({
   onQueryChange: (query: string) => void;
 }) => {
   return (
-    <div className="RealmsTable">
-      <div className="RealmsTable__content">
-        <div className="RealmsTable__Topbar">
+    <div className="Table">
+      <div className="Table__content">
+        <div className="Table__topbar">
           <QuerySearch
             query={query}
             onQueryChange={onQueryChange}
@@ -53,7 +53,7 @@ export const RealmsTable = ({
           />
         </div>
         <div
-          className="RealmsTable__table"
+          className="Table__table"
           onClick={event => {
             onRealmSelected(null);
           }}
@@ -67,8 +67,8 @@ export const RealmsTable = ({
                 headerHeight={30}
                 rowClassName={({ index }) => {
                   const realm = realms[index];
-                  return classnames('RealmsTable__row', {
-                    'RealmsTable__row--selected':
+                  return classnames('Table__row', {
+                    'Table__row--selected':
                       realm && realm.path === selectedRealmPath,
                   });
                 }}

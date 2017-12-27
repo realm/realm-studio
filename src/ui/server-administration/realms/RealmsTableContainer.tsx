@@ -42,7 +42,7 @@ export class RealmsTableContainer extends React.PureComponent<
   }
 
   public componentWillMount() {
-    this.realms = this.props.adminRealm.objects<ros.IRealmFile>('RealmFile');
+    this.setRealms();
   }
 
   public render() {
@@ -110,18 +110,25 @@ export class RealmsTableContainer extends React.PureComponent<
 
   public onQueryChange = (query: string) => {
     this.setState({ query });
-
-    try {
-      this.realms = this.props.adminRealm
-        .objects<ros.IRealmFile>('RealmFile')
-        .filtered(
-          `path CONTAINS[c] "${query}" OR owner.userId CONTAINS[c] "${query}" OR owner.accounts.providerId CONTAINS[c] "${query}"`,
-        );
-    } catch (err) {
-      // tslint:disable-next-line:no-console
-      console.warn(`Could not filter on "${query}"`, err);
-    }
+    this.setRealms(query);
   };
+
+  protected setRealms(query?: string) {
+    if (!query || query === '') {
+      this.realms = this.props.adminRealm.objects<ros.IRealmFile>('RealmFile');
+    } else {
+      try {
+        this.realms = this.props.adminRealm
+          .objects<ros.IRealmFile>('RealmFile')
+          .filtered(
+            `path CONTAINS[c] "${query}" OR owner.userId CONTAINS[c] "${query}" OR owner.accounts.providerId CONTAINS[c] "${query}"`,
+          );
+      } catch (err) {
+        // tslint:disable-next-line:no-console
+        console.warn(`Could not filter on "${query}"`, err);
+      }
+    }
+  }
 
   private confirmRealmDeletion(path: string): boolean {
     const result = electron.remote.dialog.showMessageBox(

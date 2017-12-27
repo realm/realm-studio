@@ -4,11 +4,6 @@ import * as Realm from 'realm';
 
 import * as ros from '../../../services/ros';
 import { showError } from '../../reusable/errors';
-import { ILoadingProgress } from '../../reusable/loading-overlay';
-import {
-  IRealmLoadingComponentState,
-  RealmLoadingComponent,
-} from '../../reusable/realm-loading-component';
 
 import { UsersTable } from './UsersTable';
 
@@ -23,6 +18,7 @@ export interface IUsersTableContainerState {
   isChangePasswordOpen: boolean;
   isCreateUserOpen: boolean;
   selectedUserId: string | null;
+  query: string;
 }
 
 export class UsersTableContainer extends React.Component<
@@ -37,6 +33,7 @@ export class UsersTableContainer extends React.Component<
       isChangePasswordOpen: false,
       isCreateUserOpen: false,
       selectedUserId: null,
+      query: '',
     };
   }
 
@@ -49,6 +46,7 @@ export class UsersTableContainer extends React.Component<
   }
 
   public render() {
+    this.setUsers(this.state.query);
     return <UsersTable users={this.users} {...this.state} {...this} />;
   }
 
@@ -182,14 +180,32 @@ export class UsersTableContainer extends React.Component<
     }
   };
 
+  public onQueryChange = (query: string) => {
+    this.setState({ query });
+  };
+
   protected onRealmChanged = () => {
     this.forceUpdate();
   };
 
-  protected setUsers() {
-    this.users = this.props.adminRealm
-      .objects<ros.IUser>('User')
-      .sorted('userId');
+  protected setUsers(query?: string) {
+    if (!query || query === '') {
+      this.users = this.props.adminRealm
+        .objects<ros.IUser>('User')
+        .sorted('userId');
+    } else {
+      try {
+        this.users = this.props.adminRealm
+          .objects<ros.IUser>('User')
+          .filtered(
+            `userId CONTAINS[c] "${query}" OR accounts.providerId CONTAINS[c] "${query}" OR metadata.key CONTAINS[c] "${query}" OR metadata.value CONTAINS[c] "${query}"`,
+          )
+          .sorted('userId');
+      } catch (err) {
+        // tslint:disable-next-line:no-console
+        console.warn(`Could not filter on "${query}"`, err);
+      }
+    }
   }
 
   private confirmUserDeletion(userId: string): boolean {
