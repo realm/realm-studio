@@ -41,12 +41,7 @@ export class UsersTableContainer extends React.Component<
     this.setUsers();
   }
 
-  public componentDidUpdate() {
-    this.setUsers();
-  }
-
   public render() {
-    this.setUsers(this.state.searchString);
     return <UsersTable users={this.users} {...this.state} {...this} />;
   }
 
@@ -182,6 +177,7 @@ export class UsersTableContainer extends React.Component<
 
   public onSearchStringChange = (searchString: string) => {
     this.setState({ searchString });
+    this.setUsers(searchString);
   };
 
   protected onRealmChanged = () => {
