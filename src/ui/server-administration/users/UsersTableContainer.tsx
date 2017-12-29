@@ -4,7 +4,7 @@ import * as Realm from 'realm';
 
 import * as ros from '../../../services/ros';
 import { showError } from '../../reusable/errors';
-
+import { querySomeFieldContainsText } from '../utils';
 import { UsersTable } from './UsersTable';
 
 export interface IUsersTableContainerProps {
@@ -198,7 +198,15 @@ export class UsersTableContainer extends React.Component<
         this.users = this.props.adminRealm
           .objects<ros.IUser>('User')
           .filtered(
-            `userId CONTAINS[c] "${query}" OR accounts.providerId CONTAINS[c] "${query}" OR metadata.key CONTAINS[c] "${query}" OR metadata.value CONTAINS[c] "${query}"`,
+            querySomeFieldContainsText(
+              [
+                'userId',
+                'accounts.providerId',
+                'metadata.key',
+                'metadata.value',
+              ],
+              query,
+            ),
           )
           .sorted('userId');
       } catch (err) {

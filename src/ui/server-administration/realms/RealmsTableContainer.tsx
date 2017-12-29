@@ -5,6 +5,7 @@ import * as Realm from 'realm';
 import * as ros from '../../../services/ros';
 
 import { showError } from '../../reusable/errors';
+import { querySomeFieldContainsText } from '../utils';
 import { RealmsTable } from './RealmsTable';
 
 export type ValidateCertificatesChangeHandler = (
@@ -121,7 +122,10 @@ export class RealmsTableContainer extends React.PureComponent<
         this.realms = this.props.adminRealm
           .objects<ros.IRealmFile>('RealmFile')
           .filtered(
-            `path CONTAINS[c] "${query}" OR owner.userId CONTAINS[c] "${query}" OR owner.accounts.providerId CONTAINS[c] "${query}"`,
+            querySomeFieldContainsText(
+              ['path', 'owner.accounts.providerId'],
+              query,
+            ),
           );
       } catch (err) {
         // tslint:disable-next-line:no-console
