@@ -18,7 +18,7 @@ export interface IUsersTableContainerState {
   isChangePasswordOpen: boolean;
   isCreateUserOpen: boolean;
   selectedUserId: string | null;
-  query: string;
+  searchString: string;
 }
 
 export class UsersTableContainer extends React.Component<
@@ -33,7 +33,7 @@ export class UsersTableContainer extends React.Component<
       isChangePasswordOpen: false,
       isCreateUserOpen: false,
       selectedUserId: null,
-      query: '',
+      searchString: '',
     };
   }
 
@@ -46,7 +46,7 @@ export class UsersTableContainer extends React.Component<
   }
 
   public render() {
-    this.setUsers(this.state.query);
+    this.setUsers(this.state.searchString);
     return <UsersTable users={this.users} {...this.state} {...this} />;
   }
 
@@ -180,38 +180,32 @@ export class UsersTableContainer extends React.Component<
     }
   };
 
-  public onQueryChange = (query: string) => {
-    this.setState({ query });
+  public onSearchStringChange = (searchString: string) => {
+    this.setState({ searchString });
   };
 
   protected onRealmChanged = () => {
     this.forceUpdate();
   };
 
-  protected setUsers(query?: string) {
-    if (!query || query === '') {
+  protected setUsers(searchString?: string) {
+    if (!searchString || searchString === '') {
       this.users = this.props.adminRealm
         .objects<ros.IUser>('User')
         .sorted('userId');
     } else {
+      const filterQuery = querySomeFieldContainsText(
+        ['userId', 'accounts.providerId', 'metadata.key', 'metadata.value'],
+        searchString,
+      );
       try {
         this.users = this.props.adminRealm
           .objects<ros.IUser>('User')
-          .filtered(
-            querySomeFieldContainsText(
-              [
-                'userId',
-                'accounts.providerId',
-                'metadata.key',
-                'metadata.value',
-              ],
-              query,
-            ),
-          )
+          .filtered(filterQuery)
           .sorted('userId');
       } catch (err) {
         // tslint:disable-next-line:no-console
-        console.warn(`Could not filter on "${query}"`, err);
+        console.warn(`Could not filter on "${filterQuery}"`, err);
       }
     }
   }

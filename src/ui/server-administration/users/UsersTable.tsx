@@ -35,8 +35,8 @@ export const UsersTable = ({
   toggleChangePassword,
   toggleCreateUser,
   users,
-  query,
-  onQueryChange,
+  searchString,
+  onSearchStringChange,
 }: {
   getUserFromId: (userId: string) => ros.IUser | null;
   getUsersRealms: (userId: string) => ros.IRealmFile[];
@@ -60,16 +60,16 @@ export const UsersTable = ({
   toggleChangePassword: () => void;
   toggleCreateUser: () => void;
   users: Realm.Results<ros.IUser>;
-  query: string;
-  onQueryChange: (query: string) => void;
+  searchString: string;
+  onSearchStringChange: (query: string) => void;
 }) => {
   return (
     <div className="Table">
       <div className="Table__content">
         <div className="Table__topbar">
           <QuerySearch
-            query={query}
-            onQueryChange={onQueryChange}
+            query={searchString}
+            onQueryChange={onSearchStringChange}
             placeholder="Search users"
           />
         </div>

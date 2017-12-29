@@ -24,7 +24,7 @@ export interface IRealmTableContainerProps {
 export interface IRealmTableContainerState {
   selectedRealmPath: string | null;
   isCreateRealmOpen: boolean;
-  query: string;
+  searchString: string;
 }
 
 export class RealmsTableContainer extends React.PureComponent<
@@ -38,7 +38,7 @@ export class RealmsTableContainer extends React.PureComponent<
     this.state = {
       isCreateRealmOpen: false,
       selectedRealmPath: null,
-      query: '',
+      searchString: '',
     };
   }
 
@@ -109,27 +109,26 @@ export class RealmsTableContainer extends React.PureComponent<
     });
   };
 
-  public onQueryChange = (query: string) => {
-    this.setState({ query });
-    this.setRealms(query);
+  public onSearchStringChange = (searchString: string) => {
+    this.setState({ searchString });
+    this.setRealms(searchString);
   };
 
-  protected setRealms(query?: string) {
-    if (!query || query === '') {
+  protected setRealms(searchString?: string) {
+    if (!searchString || searchString === '') {
       this.realms = this.props.adminRealm.objects<ros.IRealmFile>('RealmFile');
     } else {
+      const filterQuery = querySomeFieldContainsText(
+        ['path', 'owner.accounts.providerId'],
+        searchString,
+      );
       try {
         this.realms = this.props.adminRealm
           .objects<ros.IRealmFile>('RealmFile')
-          .filtered(
-            querySomeFieldContainsText(
-              ['path', 'owner.accounts.providerId'],
-              query,
-            ),
-          );
+          .filtered(filterQuery);
       } catch (err) {
         // tslint:disable-next-line:no-console
-        console.warn(`Could not filter on "${query}"`, err);
+        console.warn(`Could not filter on "${filterQuery}"`, err);
       }
     }
   }

@@ -27,8 +27,8 @@ export const RealmsTable = ({
   realms,
   selectedRealmPath,
   toggleCreateRealm,
-  query,
-  onQueryChange,
+  searchString,
+  onSearchStringChange,
 }: {
   getRealmFromId: (path: string) => IRealmFile | null;
   getRealmPermissions: (path: string) => Realm.Results<IPermission>;
@@ -40,16 +40,16 @@ export const RealmsTable = ({
   realms: Realm.Results<IRealmFile>;
   selectedRealmPath: string | null;
   toggleCreateRealm: () => void;
-  query: string;
-  onQueryChange: (query: string) => void;
+  searchString: string;
+  onSearchStringChange: (query: string) => void;
 }) => {
   return (
     <div className="Table">
       <div className="Table__content">
         <div className="Table__topbar">
           <QuerySearch
-            query={query}
-            onQueryChange={onQueryChange}
+            query={searchString}
+            onQueryChange={onSearchStringChange}
             placeholder="Search realms"
           />
         </div>
