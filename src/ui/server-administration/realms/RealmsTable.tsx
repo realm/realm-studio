@@ -12,6 +12,7 @@ import { IPermission, IRealmFile } from '../../../services/ros';
 import { QuerySearch } from '../../reusable/QuerySearch';
 import { FloatingControls } from '../shared/FloatingControls';
 import '../shared/Table/Table.scss';
+import { displayUser } from '../utils';
 import { CreateRealmDialogContainer } from './CreateRealmDialogContainer';
 import { RealmSidebar } from './RealmSidebar';
 
@@ -96,15 +97,7 @@ export const RealmsTable = ({
                   label="Owner"
                   dataKey="owner"
                   width={width}
-                  cellDataGetter={({ rowData }) =>
-                    rowData.owner && [
-                      ...new Set([
-                        rowData.owner.userId,
-                        ...rowData.owner.accounts.map(
-                          (account: any) => account.providerId,
-                        ),
-                      ]),
-                    ]}
+                  cellRenderer={({ cellData }) => displayUser(cellData)}
                 />
               </Table>
             )}

@@ -11,7 +11,6 @@
       "es5",
       "es6"
     ],
-    "downlevelIteration": true,
     "noImplicitAny": true,
     "removeComments": true,
     "sourceMap": true,
