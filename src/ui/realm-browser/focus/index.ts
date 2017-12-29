@@ -37,3 +37,6 @@ export interface IListFocus extends IFocus {
 }
 
 export type Focus = IClassFocus | IListFocus;
+
+export const getClassName = (focus: Focus | IFocus): string | undefined =>
+  (focus as IClassFocus).className || (focus as IListFocus).property.objectType;

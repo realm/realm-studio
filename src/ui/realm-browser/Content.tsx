@@ -5,7 +5,7 @@ import { EditMode } from '.';
 import { ILoadingProgress } from '../reusable/loading-overlay';
 import { QuerySearch } from '../reusable/QuerySearch';
 import { Bottombar } from './Bottombar';
-import { IFocus } from './focus';
+import { getClassName, IFocus } from './focus';
 import {
   CellChangeHandler,
   CellClickHandler,
@@ -79,8 +79,9 @@ export const Content = ({
             color="primary"
             className="RealmBrowser__Topbar__Button"
             onClick={onNewObjectClick}
+            title={`Create new ${getClassName(focus)}`}
           >
-            New object
+            Create new {getClassName(focus)}
           </Button>
         </div>
         <ResponsiveTable
