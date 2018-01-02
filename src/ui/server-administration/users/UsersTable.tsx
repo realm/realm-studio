@@ -1,11 +1,5 @@
-import * as classnames from 'classnames';
 import * as React from 'react';
-import {
-  AutoSizer,
-  Column,
-  Dimensions as IAutoSizerDimensions,
-  Table,
-} from 'react-virtualized';
+import { Column } from 'react-virtualized';
 import { Button } from 'reactstrap';
 
 import * as ros from '../../../services/ros';
@@ -71,73 +65,46 @@ export const UsersTable = ({
         searchString={searchString}
         onSearchStringChange={onSearchStringChange}
         searchPlaceholder="Search users"
-        onTableClick={() => onUserSelected(null)}
+        onElementSelected={onUserSelected}
+        elements={users}
+        elementIdProperty="userId"
+        selectedIdPropertyValue={selectedUserId}
       >
-        <AutoSizer>
-          {({ width, height }: IAutoSizerDimensions) => (
-            <Table
-              width={width}
-              height={height}
-              rowHeight={30}
-              headerHeight={30}
-              rowClassName={({ index }) => {
-                const user = users[index];
-                return classnames('Table__row', {
-                  'Table__row--selected':
-                    user && user.userId === selectedUserId,
-                });
-              }}
-              rowCount={users.length}
-              rowGetter={({ index }) => users[index]}
-              onRowClick={({ event, index }) => {
-                const user = users[index];
-                onUserSelected(
-                  user && user.userId !== selectedUserId ? user.userId : null,
-                );
-                event.stopPropagation();
-              }}
-            >
-              <Column
-                label="Provider Id(s)"
-                dataKey="accounts"
-                width={200}
-                cellRenderer={({ cellData }) => {
-                  const accounts = cellData as ros.IAccount[];
-                  return (
-                    <span>
-                      {accounts.map((account, index) => (
-                        <span
-                          key={index}
-                          title={`Provider: ${account.provider}`}
-                        >
-                          {account.providerId}
-                        </span>
-                      ))}
-                    </span>
-                  );
-                }}
-              />
-              <Column label="User Id" dataKey="userId" width={200} />
-              <Column
-                label="Role"
-                dataKey="isAdmin"
-                width={100}
-                cellRenderer={({ cellData }) => {
-                  return cellData ? 'Administrator' : 'Regular user';
-                }}
-              />
-              <Column
-                label="# Realms"
-                dataKey="userId"
-                width={100}
-                cellRenderer={({ cellData }) => {
-                  const userId = cellData as string;
-                  return getUsersRealms(userId).length;
-                }}
-              />
-            </Table>
-          )}
-        </AutoSizer>
+        <Column
+          label="Provider Id(s)"
+          dataKey="accounts"
+          width={200}
+          cellRenderer={({ cellData }) => {
+            const accounts = cellData as ros.IAccount[];
+            return (
+              <span>
+                {accounts.map((account, index) => (
+                  <span key={index} title={`Provider: ${account.provider}`}>
+                    {account.providerId}
+                  </span>
+                ))}
+              </span>
+            );
+          }}
+        />
+        <Column label="User Id" dataKey="userId" width={200} />
+        <Column
+          label="Role"
+          dataKey="isAdmin"
+          width={100}
+          cellRenderer={({ cellData }) => {
+            return cellData ? 'Administrator' : 'Regular user';
+          }}
+        />
+        <Column
+          label="# Realms"
+          dataKey="userId"
+          width={100}
+          cellRenderer={({ cellData }) => {
+            const userId = cellData as string;
+            return getUsersRealms(userId).length;
+          }}
+        />
       </FilterableTable>
 
       <FloatingControls isOpen={selectedUserId === null}>
