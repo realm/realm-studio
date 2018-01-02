@@ -74,7 +74,12 @@
         "region": "us-east-1",
         "path": "downloads/realm-studio"
       }
-    ]
+    ],
+    "fileAssociations": {
+      "ext": "realm",
+      "name": "REALM",
+      "isPackage": true
+    }
   },
   "scripts": {
     "build": "webpack --env.NODE_ENV=production",
