@@ -56,6 +56,9 @@ export class Application {
   // Instantiate a receiver that will receive actions from the main process itself.
   private loopbackReceiver = new MainReceiver(this.actionHandlers);
 
+  // All files opened while app is loading will be stored on this array and opened when app is ready
+  private realmsToBeLoadedWhenAppIsReady: string[] = [];
+
   public run() {
     this.addAppListeners();
     // If its already ready - the handler won't be called
@@ -120,14 +123,7 @@ export class Application {
         selectedPaths => {
           if (selectedPaths) {
             selectedPaths.forEach(selectedPath => {
-              const options: IRealmBrowserWindowProps = {
-                type: 'realm-browser',
-                realm: {
-                  mode: realms.RealmLoadingMode.Local,
-                  path: selectedPath,
-                },
-              };
-              this.showRealmBrowser(options).then(resolve, reject);
+              this.openLocalRealmAtPath(selectedPath).then(resolve, reject);
             });
           }
         },
@@ -158,14 +154,10 @@ export class Application {
             generatedRealm.close();
 
             // Open a RealmBrowser using the generated Realm file.
-            const props: IRealmBrowserWindowProps = {
-              type: 'realm-browser',
-              realm: {
-                mode: realms.RealmLoadingMode.Local,
-                path: generatedRealm.path,
-              },
-            };
-            this.showRealmBrowser(props).then(resolve, reject);
+            this.openLocalRealmAtPath(generatedRealm.path).then(
+              resolve,
+              reject,
+            );
           }
         },
       );
@@ -221,6 +213,13 @@ export class Application {
     this.setDefaultMenu();
     this.showGreeting();
     electron.app.focus();
+
+    if (this.realmsToBeLoadedWhenAppIsReady.length > 0) {
+      this.realmsToBeLoadedWhenAppIsReady.map(realmPath =>
+        this.openLocalRealmAtPath(realmPath),
+      );
+      this.realmsToBeLoadedWhenAppIsReady = [];
+    }
   };
 
   private onActivate = () => {
@@ -231,15 +230,10 @@ export class Application {
 
   private onOpenFile = (event: Electron.Event, filePath: string) => {
     event.preventDefault();
-    if (filePath) {
-      const props: IRealmBrowserWindowProps = {
-        type: 'realm-browser',
-        realm: {
-          mode: realms.RealmLoadingMode.Local,
-          path: filePath,
-        },
-      };
-      this.showRealmBrowser(props);
+    if (!electron.app.isReady()) {
+      this.realmsToBeLoadedWhenAppIsReady.push(filePath);
+    } else if (filePath) {
+      this.openLocalRealmAtPath(filePath);
     } else {
       this.showOpenLocalRealm();
     }
@@ -268,6 +262,17 @@ export class Application {
     const menu = electron.Menu.buildFromTemplate(menuTemplate);
     electron.Menu.setApplicationMenu(menu);
   }
+
+  private openLocalRealmAtPath = (filePath: string) => {
+    const props: IRealmBrowserWindowProps = {
+      type: 'realm-browser',
+      realm: {
+        mode: realms.RealmLoadingMode.Local,
+        path: filePath,
+      },
+    };
+    return this.showRealmBrowser(props);
+  };
 }
 
 if (module.hot) {
