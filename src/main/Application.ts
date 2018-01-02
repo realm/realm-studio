@@ -229,8 +229,20 @@ export class Application {
     }
   };
 
-  private onOpenFile = () => {
-    this.showOpenLocalRealm();
+  private onOpenFile = (event: Electron.Event, filePath: string) => {
+    event.preventDefault();
+    if (filePath) {
+      const props: IRealmBrowserWindowProps = {
+        type: 'realm-browser',
+        realm: {
+          mode: realms.RealmLoadingMode.Local,
+          path: filePath,
+        },
+      };
+      this.showRealmBrowser(props);
+    } else {
+      this.showOpenLocalRealm();
+    }
   };
 
   private onWindowAllClosed = () => {
