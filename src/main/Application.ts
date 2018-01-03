@@ -232,10 +232,8 @@ export class Application {
     event.preventDefault();
     if (!electron.app.isReady()) {
       this.realmsToBeLoadedWhenAppIsReady.push(filePath);
-    } else if (filePath) {
-      this.openLocalRealmAtPath(filePath);
     } else {
-      this.showOpenLocalRealm();
+      this.openLocalRealmAtPath(filePath);
     }
   };
 
