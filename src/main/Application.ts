@@ -2,23 +2,20 @@ import * as electron from 'electron';
 
 import * as path from 'path';
 import { MainReceiver } from '../actions/main';
-import { MainTransport } from '../actions/transports/MainTransport';
 import { getDataImporter, ImportFormat } from '../services/data-importer';
 import ImportSchemaGenerator from '../services/data-importer/ImportSchemaGenerator';
 import { realms } from '../services/ros';
+import { crashReporterStart } from './CrashReporter';
 
 import {
   IRealmBrowserWindowProps,
   IServerAdministrationWindowProps,
-  WindowType,
 } from '../windows/WindowType';
 import { CertificateManager } from './CertificateManager';
 import { MainActions } from './MainActions';
 import { getDefaultMenuTemplate } from './MainMenu';
 import { Updater } from './Updater';
 import { WindowManager } from './WindowManager';
-
-const isProduction = process.env.NODE_ENV === 'production';
 
 export class Application {
   public static sharedApplication = new Application();
@@ -199,6 +196,7 @@ export class Application {
   }
 
   private addAppListeners() {
+    electron.app.addListener('will-finish-launching', crashReporterStart);
     electron.app.addListener('ready', this.onReady);
     electron.app.addListener('activate', this.onActivate);
     electron.app.addListener('open-file', this.onOpenFile);
@@ -207,6 +205,7 @@ export class Application {
   }
 
   private removeAppListeners() {
+    electron.app.removeListener('will-finish-launching', crashReporterStart);
     electron.app.removeListener('ready', this.onReady);
     electron.app.removeListener('activate', this.onActivate);
     electron.app.removeListener('open-file', this.onOpenFile);
