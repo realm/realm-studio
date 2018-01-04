@@ -4,17 +4,17 @@ import { Badge, Button } from 'reactstrap';
 
 import { ILoadingProgress } from '../reusable/loading-overlay';
 import { displayObject } from './display';
-import { IClassFocus, IFocus, IListFocus } from './focus';
+import { Focus, IClassFocus, IListFocus } from './focus';
 
 import './RealmBrowser.scss';
 
 import * as util from 'util';
 
-export const isSelected = (focus: IFocus | null, schemaName: string) => {
+export const isSelected = (focus: Focus | null, schemaName: string) => {
   if (focus && focus.kind === 'class') {
-    return (focus as IClassFocus).className === schemaName;
+    return focus.className === schemaName;
   } else if (focus && focus.kind === 'list') {
-    return (focus as IListFocus).parent.objectSchema().name === schemaName;
+    return focus.parent.objectSchema().name === schemaName;
   } else {
     return false;
   }
@@ -63,7 +63,7 @@ export const Sidebar = ({
   schemas,
   toggleAddSchema,
 }: {
-  focus: IFocus | null;
+  focus: Focus | null;
   getSchemaLength: (name: string) => number;
   onClassSelected: (name: string, objectToScroll?: any) => void;
   progress: ILoadingProgress;

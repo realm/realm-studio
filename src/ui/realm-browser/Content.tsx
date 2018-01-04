@@ -5,7 +5,7 @@ import { EditMode } from '.';
 import { ILoadingProgress } from '../reusable/loading-overlay';
 import { QuerySearch } from '../reusable/QuerySearch';
 import { Bottombar } from './Bottombar';
-import { getClassName, IFocus } from './focus';
+import { Focus, getClassName } from './focus';
 import {
   CellChangeHandler,
   CellClickHandler,
@@ -44,7 +44,7 @@ export const Content = ({
   changeCount?: number;
   dataVersion?: number;
   editMode: EditMode;
-  focus: IFocus | null;
+  focus: Focus | null;
   highlight?: IHighlight;
   inTransaction?: boolean;
   onAddColumnClick?: () => void;

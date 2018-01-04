@@ -18,7 +18,7 @@ import {
   SortStartHandler,
 } from '.';
 import { EditMode, IPropertyWithName } from '..';
-import { IFocus } from '../focus';
+import { Focus } from '../focus';
 import { Table } from './Table';
 
 const MINIMUM_COLUMN_WIDTH = 20;
@@ -26,7 +26,7 @@ const MINIMUM_COLUMN_WIDTH = 20;
 export interface IBaseTableContainerProps {
   dataVersion?: number;
   editMode: EditMode;
-  focus: IFocus;
+  focus: Focus;
   highlight?: IHighlight;
   onAddColumnClick?: () => void;
   onCellChange?: CellChangeHandler;

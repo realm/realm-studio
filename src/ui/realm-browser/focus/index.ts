@@ -15,7 +15,7 @@ export interface IRenderers {
   valueRenderers: GridCellRenderer[];
 }
 
-export interface IFocus {
+interface IFocus {
   kind: string;
   properties: IPropertyWithName[];
   results: Realm.Collection<any>;
@@ -38,5 +38,5 @@ export interface IListFocus extends IFocus {
 
 export type Focus = IClassFocus | IListFocus;
 
-export const getClassName = (focus: Focus | IFocus): string | undefined =>
-  (focus as IClassFocus).className || (focus as IListFocus).property.objectType;
+export const getClassName = (focus: Focus): string | undefined =>
+  focus.kind === 'class' ? focus.className : focus.property.objectType;
