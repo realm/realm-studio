@@ -39,11 +39,11 @@ function generateRandomTickerSymbol(len) {
 }
 
 function getStarted() {
-    Realm.Sync.User.login(`http://${SERVER}`, USERNAME, PASSWORD)
+    Realm.Sync.User.login(`https://${SERVER}`, USERNAME, PASSWORD)
     .then(user => {
         Realm.open({
             sync: {
-                url: `realm://${SERVER}/tickers`,
+                url: `realms://${SERVER}/tickers`,
                 user: user
             },
             schema: [TickerSchema],
