@@ -43,7 +43,7 @@ function getStarted() {
     .then(user => {
         Realm.open({
             sync: {
-                url: `realms://${SERVER}/tickers`,
+                url: `realms://${SERVER}/~/tickers`,
                 user: user
             },
             schema: [TickerSchema],
