@@ -2,23 +2,20 @@ import * as electron from 'electron';
 
 import * as path from 'path';
 import { MainReceiver } from '../actions/main';
-import { MainTransport } from '../actions/transports/MainTransport';
 import { getDataImporter, ImportFormat } from '../services/data-importer';
 import ImportSchemaGenerator from '../services/data-importer/ImportSchemaGenerator';
 import { realms } from '../services/ros';
 
+import { showErrorMainThread } from '../ui/reusable/errors';
 import {
   IRealmBrowserWindowProps,
   IServerAdministrationWindowProps,
-  WindowType,
 } from '../windows/WindowType';
 import { CertificateManager } from './CertificateManager';
 import { MainActions } from './MainActions';
 import { getDefaultMenuTemplate } from './MainMenu';
 import { Updater } from './Updater';
 import { WindowManager } from './WindowManager';
-
-const isProduction = process.env.NODE_ENV === 'production';
 
 export class Application {
   public static sharedApplication = new Application();
@@ -215,7 +212,9 @@ export class Application {
     electron.app.focus();
 
     this.realmsToBeLoadedWhenAppIsReady.forEach(realmPath =>
-      this.openLocalRealmAtPath(realmPath),
+      this.openLocalRealmAtPath(realmPath).catch(err =>
+        showErrorMainThread(`Failed opening the file "${realmPath}"`, err),
+      ),
     );
     this.realmsToBeLoadedWhenAppIsReady = [];
   };
@@ -231,7 +230,9 @@ export class Application {
     if (!electron.app.isReady()) {
       this.realmsToBeLoadedWhenAppIsReady.push(filePath);
     } else {
-      this.openLocalRealmAtPath(filePath);
+      this.openLocalRealmAtPath(filePath).catch(err =>
+        showErrorMainThread(`Failed opening the file "${filePath}"`, err),
+      );
     }
   };
 
