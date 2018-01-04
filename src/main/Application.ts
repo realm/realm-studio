@@ -214,12 +214,10 @@ export class Application {
     this.showGreeting();
     electron.app.focus();
 
-    if (this.realmsToBeLoadedWhenAppIsReady.length > 0) {
-      this.realmsToBeLoadedWhenAppIsReady.map(realmPath =>
-        this.openLocalRealmAtPath(realmPath),
-      );
-      this.realmsToBeLoadedWhenAppIsReady = [];
-    }
+    this.realmsToBeLoadedWhenAppIsReady.forEach(realmPath =>
+      this.openLocalRealmAtPath(realmPath),
+    );
+    this.realmsToBeLoadedWhenAppIsReady = [];
   };
 
   private onActivate = () => {
