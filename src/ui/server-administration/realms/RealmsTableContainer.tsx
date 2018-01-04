@@ -46,6 +46,15 @@ export class RealmsTableContainer extends React.PureComponent<
     this.setRealms();
   }
 
+  public componentWillUpdate(
+    nextProps: IRealmTableContainerProps,
+    nextState: IRealmTableContainerState,
+  ) {
+    if (this.state.searchString !== nextState.searchString) {
+      this.setRealms(nextState.searchString);
+    }
+  }
+
   public render() {
     return <RealmsTable realms={this.realms} {...this.state} {...this} />;
   }
@@ -111,7 +120,6 @@ export class RealmsTableContainer extends React.PureComponent<
 
   public onSearchStringChange = (searchString: string) => {
     this.setState({ searchString });
-    this.setRealms(searchString);
   };
 
   protected setRealms(searchString?: string) {
