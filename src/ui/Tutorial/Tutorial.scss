@@ -22,11 +22,28 @@
   }
 
   &__ChapterSelector {
+    align-items: center;
     background: $window-background;
     display: flex;
     flex-shrink: 0;
-    justify-content: center;
+    justify-content: space-between;
     padding: $spacer / 2;
+  }
+
+  &__Previous,
+  &__Next {
+    flex-basis: 50%;
+    padding: 0 $spacer;
+  }
+
+  &__Next {
+    text-align: right;
+  }
+
+  &__ChapterButtons {
+    display: flex;
+    flex-grow: 1;
+    justify-content: center;
   }
 
   &__ChapterButton {

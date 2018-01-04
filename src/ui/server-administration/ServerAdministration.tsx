@@ -49,7 +49,7 @@ const renderContent = ({
   validateCertificates,
 }: IServerAdministrationProps) => {
   if (user && activeTab === Tab.Dashboard) {
-    return <Dashboard isCloudTenant={isCloudTenant} />;
+    return <Dashboard isCloudTenant={isCloudTenant} serverUrl={user.server} />;
   } else if (user && adminRealm && activeTab === Tab.Realms) {
     return (
       <RealmsTableContainer

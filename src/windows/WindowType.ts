@@ -46,6 +46,9 @@ export interface IServerAdministrationWindowProps extends IWindowProps {
 export interface ITutorialWindowProps extends IWindowProps {
   type: 'tutorial';
   id: string;
+  context: {
+    serverUrl: string;
+  };
 }
 
 export type WindowProps =

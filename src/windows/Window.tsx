@@ -83,6 +83,8 @@ function getWindowClass(props: WindowProps): React.ComponentClass {
     return require('./RealmBrowserWindow').RealmBrowserWindow;
   } else if (props.type === 'server-administration') {
     return require('./ServerAdministrationWindow').ServerAdministrationWindow;
+  } else if (props.type === 'tutorial') {
+    return require('./TutorialWindow').TutorialWindow;
   } else {
     throw new Error(`Unexpected window type: ${(props as any).type}`);
   }

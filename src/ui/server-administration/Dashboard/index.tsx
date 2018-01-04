@@ -9,6 +9,7 @@ export type Platform = 'android' | 'apple' | 'javascript' | 'xamarin';
 
 interface IDashboardContainerProps {
   isCloudTenant: boolean;
+  serverUrl: string;
 }
 
 interface IDashboardContainerState {
@@ -31,7 +32,13 @@ class DashboardContainer extends React.Component<
   }
 
   public onShowCloudTutorial = () => {
-    main.showTutorial({ type: 'tutorial', id: 'cloud-intro' });
+    main.showTutorial({
+      type: 'tutorial',
+      id: 'cloud-intro',
+      context: {
+        serverUrl: this.props.serverUrl,
+      },
+    });
   };
 
   public onMouseEnterPlatform = (platform: Platform) => {
