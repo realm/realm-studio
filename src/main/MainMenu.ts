@@ -6,7 +6,9 @@ import * as raas from '../services/raas';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-export const getDefaultMenuTemplate = (): electron.MenuItemConstructorOptions[] => {
+export const getDefaultMenuTemplate = (
+  updateMenu: () => void,
+): electron.MenuItemConstructorOptions[] => {
   const electronOrRemote = electron.remote || electron;
   const template: electron.MenuItemConstructorOptions[] = [
     {
@@ -89,26 +91,22 @@ export const getDefaultMenuTemplate = (): electron.MenuItemConstructorOptions[] 
           label: 'Change endpoint',
           submenu: [
             {
+              type: 'radio',
               label: 'Production',
-              click: () => {
-                /*
-                Application.sharedApplication.setRaasEndpoint(
-                  raas.Endpoint.Production,
-                );
-                */
-                throw new Error('Not implemented');
+              click: async () => {
+                await main.setRaasEndpoint(raas.Endpoint.Production);
+                updateMenu();
               },
+              checked: raas.getEndpoint() === raas.Endpoint.Production,
             },
             {
+              type: 'radio',
               label: 'Staging',
-              click: () => {
-                /*
-                Application.sharedApplication.setRaasEndpoint(
-                  raas.Endpoint.Staging,
-                );
-                */
-                throw new Error('Not implemented');
+              click: async () => {
+                await main.setRaasEndpoint(raas.Endpoint.Staging);
+                updateMenu();
               },
+              checked: raas.getEndpoint() === raas.Endpoint.Staging,
             },
           ],
         },

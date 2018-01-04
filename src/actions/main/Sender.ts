@@ -1,5 +1,6 @@
 import { MainActions } from '../../main/MainActions';
 import { ImportFormat } from '../../services/data-importer';
+import * as raas from '../../services/raas';
 import {
   IRealmBrowserWindowProps,
   IServerAdministrationWindowProps,
@@ -32,6 +33,10 @@ export class Sender extends ActionSender {
 
   public refreshCloudStatus() {
     return this.send(MainActions.RefreshCloudStatus);
+  }
+
+  public setRaasEndpoint(endpoint: raas.Endpoint) {
+    return this.send(MainActions.SetRaasEndpoint, endpoint);
   }
 
   public showCloudAdministration() {

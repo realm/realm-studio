@@ -3,6 +3,7 @@ export enum MainActions {
   Deauthenticate = 'deauthenticate',
   CheckForUpdates = 'check-for-updates',
   RefreshCloudStatus = 'refresh-cloud-status',
+  SetRaasEndpoint = 'set-raas-endpoint',
   ShowConnectToServer = 'show-connect-to-server',
   ShowGreeting = 'show-server-administration',
   ShowImportData = 'show-import-data',

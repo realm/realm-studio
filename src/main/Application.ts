@@ -47,6 +47,9 @@ export class Application {
     [MainActions.RefreshCloudStatus]: () => {
       this.cloudManager.refresh();
     },
+    [MainActions.SetRaasEndpoint]: (endpoint: raas.Endpoint) => {
+      return this.setRaasEndpoint(endpoint);
+    },
     [MainActions.ShowCloudAdministration]: () => {
       return this.showCloudAdministration();
     },
@@ -382,11 +385,11 @@ export class Application {
     // TODO: Restore and focus the GreetingWindow
   };
 
-  private setDefaultMenu() {
-    const menuTemplate = getDefaultMenuTemplate();
+  private setDefaultMenu = () => {
+    const menuTemplate = getDefaultMenuTemplate(this.setDefaultMenu);
     const menu = electron.Menu.buildFromTemplate(menuTemplate);
     electron.Menu.setApplicationMenu(menu);
-  }
+  };
 }
 
 if (module.hot) {
