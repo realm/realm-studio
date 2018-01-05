@@ -7,8 +7,10 @@ export const displayUser = (
 ) =>
   user ? (
     <span title={`ID: ${user.userId}`}>
-      {user.accounts.map(account => (
-        <span title={account.provider}>{account.providerId}</span>
+      {user.accounts.map((account, index) => (
+        <span key={index} title={account.provider}>
+          {account.providerId}
+        </span>
       ))}
     </span>
   ) : (
@@ -16,3 +18,9 @@ export const displayUser = (
       <em>{fallback}</em>
     </span>
   );
+
+export const querySomeFieldContainsText = (
+  fields: string[],
+  textToContain: string,
+) =>
+  fields.map(field => `${field} CONTAINS[c] "${textToContain}"`).join(' OR ');

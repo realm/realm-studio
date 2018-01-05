@@ -3,12 +3,9 @@ import * as React from 'react';
 import * as Realm from 'realm';
 
 import * as ros from '../../../services/ros';
-import {
-  IRealmLoadingComponentState,
-  RealmLoadingComponent,
-} from '../../reusable/realm-loading-component';
 
 import { showError } from '../../reusable/errors';
+import { querySomeFieldContainsText } from '../utils';
 import { RealmsTable } from './RealmsTable';
 
 export type ValidateCertificatesChangeHandler = (
@@ -27,6 +24,7 @@ export interface IRealmTableContainerProps {
 export interface IRealmTableContainerState {
   selectedRealmPath: string | null;
   isCreateRealmOpen: boolean;
+  searchString: string;
 }
 
 export class RealmsTableContainer extends React.PureComponent<
@@ -40,11 +38,21 @@ export class RealmsTableContainer extends React.PureComponent<
     this.state = {
       isCreateRealmOpen: false,
       selectedRealmPath: null,
+      searchString: '',
     };
   }
 
   public componentWillMount() {
-    this.realms = this.props.adminRealm.objects<ros.IRealmFile>('RealmFile');
+    this.setRealms();
+  }
+
+  public componentWillUpdate(
+    nextProps: IRealmTableContainerProps,
+    nextState: IRealmTableContainerState,
+  ) {
+    if (this.state.searchString !== nextState.searchString) {
+      this.setRealms(nextState.searchString);
+    }
   }
 
   public render() {
@@ -109,6 +117,29 @@ export class RealmsTableContainer extends React.PureComponent<
       selectedRealmPath: path,
     });
   };
+
+  public onSearchStringChange = (searchString: string) => {
+    this.setState({ searchString });
+  };
+
+  protected setRealms(searchString?: string) {
+    if (!searchString || searchString === '') {
+      this.realms = this.props.adminRealm.objects<ros.IRealmFile>('RealmFile');
+    } else {
+      const filterQuery = querySomeFieldContainsText(
+        ['path', 'owner.accounts.providerId'],
+        searchString,
+      );
+      try {
+        this.realms = this.props.adminRealm
+          .objects<ros.IRealmFile>('RealmFile')
+          .filtered(filterQuery);
+      } catch (err) {
+        // tslint:disable-next-line:no-console
+        console.warn(`Could not filter on "${filterQuery}"`, err);
+      }
+    }
+  }
 
   private confirmRealmDeletion(path: string): boolean {
     const result = electron.remote.dialog.showMessageBox(
