@@ -14,6 +14,7 @@ import { UsersTable } from './UsersTable';
 
 export interface IUsersTableContainerProps {
   adminRealm: Realm;
+  adminRealmChanges: number;
   user: Realm.Sync.User;
   validateCertificates: boolean;
 }

@@ -27,6 +27,7 @@ export enum Tab {
 export const ServerAdministration = ({
   activeTab,
   adminRealm,
+  adminRealmChanges,
   adminRealmProgress,
   isRealmOpening,
   onRealmOpened,
@@ -38,6 +39,7 @@ export const ServerAdministration = ({
 }: {
   activeTab: Tab;
   adminRealm: Realm;
+  adminRealmChanges: number;
   adminRealmProgress: ILoadingProgress;
   isRealmOpening: boolean;
   onRealmOpened: (path: string) => void;
@@ -52,6 +54,7 @@ export const ServerAdministration = ({
     content = (
       <RealmsTableContainer
         adminRealm={adminRealm}
+        adminRealmChanges={adminRealmChanges}
         onRealmOpened={onRealmOpened}
         onValidateCertificatesChange={onValidateCertificatesChange}
         user={user}
@@ -62,6 +65,7 @@ export const ServerAdministration = ({
     content = (
       <UsersTableContainer
         adminRealm={adminRealm}
+        adminRealmChanges={adminRealmChanges}
         user={user}
         validateCertificates={validateCertificates}
       />
