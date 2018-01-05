@@ -19,6 +19,7 @@ export type CellClickHandler = (
     rowIndex: number;
     columnIndex: number;
   },
+  e?: React.MouseEvent<any>,
 ) => void;
 
 export type CellContextMenuHandler = (
@@ -44,6 +45,7 @@ export interface IHighlight {
   row?: number;
   column?: number;
   center?: boolean;
+  rowsSelected?: number[];
 }
 
 export interface ISorting {

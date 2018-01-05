@@ -1,7 +1,12 @@
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import { CreateObjectHandler, EditMode, ISelectObjectState } from '.';
+import {
+  CreateObjectHandler,
+  EditMode,
+  IConfirmModal,
+  ISelectObjectState,
+} from '.';
 import { ConfirmModal } from '../reusable/confirm-modal';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
 import { AddClassModal } from './AddClassModal';
@@ -27,10 +32,7 @@ import './RealmBrowser.scss';
 
 export interface IRealmBrowserProps {
   columnToHighlight?: number;
-  confirmModal?: {
-    yes: () => void;
-    no: () => void;
-  };
+  confirmModal?: IConfirmModal;
   createObjectSchema?: Realm.ObjectSchema;
   dataVersion: number;
   dataVersionAtBeginning?: number;
@@ -151,8 +153,8 @@ export const RealmBrowser = ({
       </div>
       {confirmModal && (
         <ConfirmModal
-          title="Deleting object ..."
-          description="Are you sure you want to delete this object?"
+          title={confirmModal.title}
+          description={confirmModal.description}
           status={true}
           yes={confirmModal.yes}
           no={confirmModal.no}

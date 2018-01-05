@@ -243,6 +243,7 @@ $highlight-row-color: $black;
     }
 
     &__Cell {
+      user-select: none;
       &--highlighted {
         background: $highlight-cell-bg;
       }

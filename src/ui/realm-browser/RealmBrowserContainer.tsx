@@ -6,6 +6,7 @@ import * as Realm from 'realm';
 import {
   EditMode,
   EditModeChangeHandler,
+  IConfirmModal,
   IPropertyWithName,
   ISelectObjectState,
 } from '.';
@@ -35,15 +36,13 @@ import {
 import { ImportFormat } from '../../services/data-importer';
 import { CSVDataImporter } from '../../services/data-importer/csv/CSVDataImporter';
 import ImportSchemaGenerator from '../../services/data-importer/ImportSchemaGenerator';
+import { getRange } from '../reusable/utils';
 import { RealmBrowser } from './RealmBrowser';
 
 const EDIT_MODE_STORAGE_KEY = 'realm-browser-edit-mode';
 
 export interface IRealmBrowserState extends IRealmLoadingComponentState {
-  confirmModal?: {
-    yes: () => void;
-    no: () => void;
-  };
+  confirmModal?: IConfirmModal;
   createObjectSchema?: Realm.ObjectSchema;
   // A number that we can use to make components update on changes to data
   dataVersion: number;
@@ -472,15 +471,46 @@ export class RealmBrowserContainer
     }
   };
 
-  public onCellClick: CellClickHandler = ({
-    rowObject,
-    property,
-    cellValue,
-    rowIndex,
-    columnIndex,
-  }) => {
-    // Ensuring that the last cell validation didn't fail
+  public onCellClick: CellClickHandler = (
+    { rowObject, property, cellValue, rowIndex, columnIndex },
+    e,
+  ) => {
+    const shiftClick = e && e.shiftKey;
+    const metaClick = e && e.metaKey; // Command key in MacOs
+    const currentRowsSelected =
+      this.state.highlight && this.state.highlight.rowsSelected
+        ? this.state.highlight.rowsSelected
+        : [];
+    let rowsSelected = [rowIndex];
+
+    if (metaClick) {
+      const currentRowsSelectedWithoutRowIndex = currentRowsSelected.filter(
+        row => row !== rowIndex,
+      );
+      const rowIndexIsAlreadySelected =
+        currentRowsSelected.length > currentRowsSelectedWithoutRowIndex.length;
+
+      // Unselect the row when It was already selected otherwise select it
+      rowsSelected = rowIndexIsAlreadySelected
+        ? currentRowsSelectedWithoutRowIndex
+        : [...currentRowsSelected, rowIndex];
+      rowIndex = rowIndexIsAlreadySelected ? -1 : rowIndex; // TODO improve the way we unselect the rows
+    } else if (shiftClick) {
+      const currentRowSelected =
+        this.state.highlight && this.state.highlight.row;
+
+      if (currentRowSelected !== undefined) {
+        rowsSelected = [
+          ...new Set([
+            ...currentRowsSelected,
+            ...getRange(currentRowSelected, rowIndex),
+          ]),
+        ];
+      }
+    }
+
     if (!this.latestCellValidation || this.latestCellValidation.valid) {
+      // Ensuring that the last cell validation didn't fail
       if (this.clickTimeout) {
         clearTimeout(this.clickTimeout);
         this.onCellDoubleClick(rowObject, property, cellValue);
@@ -494,6 +524,7 @@ export class RealmBrowserContainer
 
       this.setState({
         highlight: {
+          rowsSelected,
           column: columnIndex,
           row: rowIndex,
         },
@@ -576,13 +607,40 @@ export class RealmBrowserContainer
 
       // If we right-clicking on a row we can delete it
       if (focus && rowObject && rowIndex >= 0) {
+        const title = 'Deleting object...';
+        const description = 'Are you sure you want to delete this object?';
         menu.append(
           new remote.MenuItem({
             label: 'Delete',
             click: () => {
-              this.openConfirmModal(() =>
+              this.openConfirmModal(title, description, () =>
                 this.deleteObject(rowObject, rowIndex),
               );
+            },
+          }),
+        );
+      }
+    }
+
+    if (focus) {
+      const rowsSelected =
+        this.state.highlight && this.state.highlight.rowsSelected;
+
+      if (rowsSelected && rowsSelected.length > 1) {
+        const title = 'Deleting objects...';
+        const description = 'Are you sure you want to delete this objects?';
+        menu.append(
+          new remote.MenuItem({
+            label: 'Delete all',
+            click: () => {
+              this.openConfirmModal(title, description, () => {
+                rowsSelected.forEach(otherRowIndex => {
+                  this.deleteObject(
+                    focus.results[otherRowIndex],
+                    otherRowIndex,
+                  );
+                });
+              });
             },
           }),
         );
@@ -743,9 +801,15 @@ export class RealmBrowserContainer
     this.setState({ selectObject: undefined });
   };
 
-  public openConfirmModal = (onYesCallback: () => void) => {
+  public openConfirmModal = (
+    title: string,
+    description: string,
+    onYesCallback: () => void,
+  ) => {
     this.setState({
       confirmModal: {
+        title,
+        description,
         yes: () => {
           onYesCallback();
           this.closeConfirmModal();

@@ -121,7 +121,13 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
     const rowRenderer: GridRowRenderer = (rowProps: IGridRowProps) => {
       const { highlight, isSorting } = this.props;
       const isHighlighted =
-        (highlight && highlight.row === rowProps.rowIndex) || false;
+        (highlight && highlight.row === rowProps.rowIndex) ||
+        (highlight &&
+          highlight.rowsSelected &&
+          highlight.rowsSelected.find(
+            otherRowSelected => otherRowSelected === rowProps.rowIndex,
+          ) !== undefined) ||
+        false;
       return (
         <Row
           isHighlighted={isHighlighted}
@@ -175,13 +181,16 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
               key={cellProps.key}
               onCellClick={e => {
                 if (onCellClick) {
-                  onCellClick({
-                    cellValue,
-                    columnIndex,
-                    property,
-                    rowIndex,
-                    rowObject,
-                  });
+                  onCellClick(
+                    {
+                      cellValue,
+                      columnIndex,
+                      property,
+                      rowIndex,
+                      rowObject,
+                    },
+                    e,
+                  );
                 }
               }}
               onValidated={valid => {
