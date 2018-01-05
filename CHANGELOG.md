@@ -1,8 +1,5 @@
-X.Y.Z Release notes
-=============================================================
+At the moment, the project does not have a CHANGELOG.md.
 
-### Enhancements
-* None
+Instead the notes for each release can be found on GitHub: https://github.com/realm/realm-studio/releases
 
-### Bug fixes
-* None
+There's an issue about adding a changelog to the project: https://github.com/realm/realm-studio/issues/584
