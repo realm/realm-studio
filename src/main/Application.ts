@@ -6,7 +6,7 @@ import { getDataImporter, ImportFormat } from '../services/data-importer';
 import ImportSchemaGenerator from '../services/data-importer/ImportSchemaGenerator';
 import { realms } from '../services/ros';
 
-import { showErrorMainThread } from '../ui/reusable/errors';
+import { showError } from '../ui/reusable/errors';
 import {
   IRealmBrowserWindowProps,
   IServerAdministrationWindowProps,
@@ -54,7 +54,7 @@ export class Application {
   private loopbackReceiver = new MainReceiver(this.actionHandlers);
 
   // All files opened while app is loading will be stored on this array and opened when app is ready
-  private realmsToBeLoadedWhenAppIsReady: string[] = [];
+  private realmsToBeLoaded: string[] = [];
 
   public run() {
     this.addAppListeners();
@@ -211,12 +211,12 @@ export class Application {
     this.showGreeting();
     electron.app.focus();
 
-    this.realmsToBeLoadedWhenAppIsReady.forEach(realmPath =>
-      this.openLocalRealmAtPath(realmPath).catch(err =>
-        showErrorMainThread(`Failed opening the file "${realmPath}"`, err),
+    this.realmsToBeLoaded.forEach(filePath =>
+      this.openLocalRealmAtPath(filePath).catch(err =>
+        showError(`Failed opening the file "${filePath}"`, err),
       ),
     );
-    this.realmsToBeLoadedWhenAppIsReady = [];
+    this.realmsToBeLoaded = [];
   };
 
   private onActivate = () => {
@@ -228,10 +228,10 @@ export class Application {
   private onOpenFile = (event: Electron.Event, filePath: string) => {
     event.preventDefault();
     if (!electron.app.isReady()) {
-      this.realmsToBeLoadedWhenAppIsReady.push(filePath);
+      this.realmsToBeLoaded.push(filePath);
     } else {
       this.openLocalRealmAtPath(filePath).catch(err =>
-        showErrorMainThread(`Failed opening the file "${filePath}"`, err),
+        showError(`Failed opening the file "${filePath}"`, err),
       );
     }
   };
