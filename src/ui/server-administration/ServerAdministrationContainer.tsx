@@ -32,6 +32,7 @@ export interface IServerAdministrationContainerProps
 export interface IServerAdministrationContainerState
   extends IRealmLoadingComponentState {
   activeTab: Tab;
+  // This will increment when the realm changes to trigger updates to the UI.
   adminRealmChanges: number;
   isRealmOpening: boolean;
   user: Realm.Sync.User | null;
