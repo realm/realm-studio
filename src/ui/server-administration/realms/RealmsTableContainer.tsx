@@ -17,6 +17,7 @@ export type ValidateCertificatesChangeHandler = (
 
 export interface IRealmTableContainerProps {
   adminRealm: Realm;
+  adminRealmChanges: number;
   onRealmOpened: (path: string) => void;
   onValidateCertificatesChange: ValidateCertificatesChangeHandler;
   user: Realm.Sync.User;
