@@ -2,20 +2,23 @@ import * as electron from 'electron';
 
 import * as path from 'path';
 import { MainReceiver } from '../actions/main';
+import { MainTransport } from '../actions/transports/MainTransport';
 import { getDataImporter, ImportFormat } from '../services/data-importer';
 import ImportSchemaGenerator from '../services/data-importer/ImportSchemaGenerator';
 import { realms } from '../services/ros';
-import { showError } from '../ui/reusable/errors';
+
 import {
   IRealmBrowserWindowProps,
   IServerAdministrationWindowProps,
+  WindowType,
 } from '../windows/WindowType';
-
 import { CertificateManager } from './CertificateManager';
 import { MainActions } from './MainActions';
 import { getDefaultMenuTemplate } from './MainMenu';
 import { Updater } from './Updater';
 import { WindowManager } from './WindowManager';
+
+const isProduction = process.env.NODE_ENV === 'production';
 
 export class Application {
   public static sharedApplication = new Application();
@@ -52,9 +55,6 @@ export class Application {
 
   // Instantiate a receiver that will receive actions from the main process itself.
   private loopbackReceiver = new MainReceiver(this.actionHandlers);
-
-  // All files opened while app is loading will be stored on this array and opened when app is ready
-  private realmsToBeLoaded: string[] = [];
 
   public run() {
     this.addAppListeners();
@@ -120,7 +120,14 @@ export class Application {
         selectedPaths => {
           if (selectedPaths) {
             selectedPaths.forEach(selectedPath => {
-              this.openLocalRealmAtPath(selectedPath).then(resolve, reject);
+              const options: IRealmBrowserWindowProps = {
+                type: 'realm-browser',
+                realm: {
+                  mode: realms.RealmLoadingMode.Local,
+                  path: selectedPath,
+                },
+              };
+              this.showRealmBrowser(options).then(resolve, reject);
             });
           }
         },
@@ -151,10 +158,14 @@ export class Application {
             generatedRealm.close();
 
             // Open a RealmBrowser using the generated Realm file.
-            this.openLocalRealmAtPath(generatedRealm.path).then(
-              resolve,
-              reject,
-            );
+            const props: IRealmBrowserWindowProps = {
+              type: 'realm-browser',
+              realm: {
+                mode: realms.RealmLoadingMode.Local,
+                path: generatedRealm.path,
+              },
+            };
+            this.showRealmBrowser(props).then(resolve, reject);
           }
         },
       );
@@ -210,13 +221,6 @@ export class Application {
     this.setDefaultMenu();
     this.showGreeting();
     electron.app.focus();
-
-    this.realmsToBeLoaded.forEach(filePath =>
-      this.openLocalRealmAtPath(filePath).catch(err =>
-        showError(`Failed opening the file "${filePath}"`, err),
-      ),
-    );
-    this.realmsToBeLoaded = [];
   };
 
   private onActivate = () => {
@@ -225,15 +229,8 @@ export class Application {
     }
   };
 
-  private onOpenFile = (event: Electron.Event, filePath: string) => {
-    event.preventDefault();
-    if (!electron.app.isReady()) {
-      this.realmsToBeLoaded.push(filePath);
-    } else {
-      this.openLocalRealmAtPath(filePath).catch(err =>
-        showError(`Failed opening the file "${filePath}"`, err),
-      );
-    }
+  private onOpenFile = () => {
+    this.showOpenLocalRealm();
   };
 
   private onWindowAllClosed = () => {
@@ -259,17 +256,6 @@ export class Application {
     const menu = electron.Menu.buildFromTemplate(menuTemplate);
     electron.Menu.setApplicationMenu(menu);
   }
-
-  private openLocalRealmAtPath = (filePath: string) => {
-    const props: IRealmBrowserWindowProps = {
-      type: 'realm-browser',
-      realm: {
-        mode: realms.RealmLoadingMode.Local,
-        path: filePath,
-      },
-    };
-    return this.showRealmBrowser(props);
-  };
 }
 
 if (module.hot) {

@@ -1,4 +1,4 @@
-import * as electron from 'electron';
+import { remote } from 'electron';
 
 export const showError = (
   failedIntent: string,
@@ -11,17 +11,10 @@ export const showError = (
   if (message in messageOverrides) {
     message = messageOverrides[message];
   }
-  const messageOptions = {
+  // remote.dialog.showErrorBox(failedIntent, message);
+  remote.dialog.showMessageBox(remote.getCurrentWindow(), {
     type: 'error',
     message,
     title: failedIntent,
-  };
-  if (process.type === 'renderer') {
-    electron.remote.dialog.showMessageBox(
-      electron.remote.getCurrentWindow(),
-      messageOptions,
-    );
-  } else {
-    electron.dialog.showMessageBox(messageOptions);
-  }
+  });
 };
