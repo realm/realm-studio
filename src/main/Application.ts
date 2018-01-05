@@ -5,12 +5,12 @@ import { MainReceiver } from '../actions/main';
 import { getDataImporter, ImportFormat } from '../services/data-importer';
 import ImportSchemaGenerator from '../services/data-importer/ImportSchemaGenerator';
 import { realms } from '../services/ros';
-
 import { showError } from '../ui/reusable/errors';
 import {
   IRealmBrowserWindowProps,
   IServerAdministrationWindowProps,
 } from '../windows/WindowType';
+
 import { CertificateManager } from './CertificateManager';
 import { MainActions } from './MainActions';
 import { getDefaultMenuTemplate } from './MainMenu';
