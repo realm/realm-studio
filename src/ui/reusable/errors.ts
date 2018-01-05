@@ -1,32 +1,6 @@
-import { dialog, remote } from 'electron';
+import * as electron from 'electron';
 
 export const showError = (
-  failedIntent: string,
-  error?: any,
-  messageOverrides: { [msg: string]: string } = {},
-) => {
-  const message = getMessage(error, failedIntent, messageOverrides);
-  remote.dialog.showMessageBox(remote.getCurrentWindow(), {
-    type: 'error',
-    message,
-    title: failedIntent,
-  });
-};
-
-export const showErrorMainThread = (
-  failedIntent: string,
-  error?: any,
-  messageOverrides: { [msg: string]: string } = {},
-) => {
-  const message = getMessage(error, failedIntent, messageOverrides);
-  dialog.showMessageBox({
-    type: 'error',
-    message,
-    title: failedIntent,
-  });
-};
-
-const getMessage = (
   failedIntent: string,
   error?: any,
   messageOverrides: { [msg: string]: string } = {},
@@ -37,5 +11,17 @@ const getMessage = (
   if (message in messageOverrides) {
     message = messageOverrides[message];
   }
-  return message;
+  const messageOptions = {
+    type: 'error',
+    message,
+    title: failedIntent,
+  };
+  if (process.type === 'renderer') {
+    electron.remote.dialog.showMessageBox(
+      electron.remote.getCurrentWindow(),
+      messageOptions,
+    );
+  } else {
+    electron.dialog.showMessageBox(messageOptions);
+  }
 };
