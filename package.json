@@ -65,7 +65,8 @@
       "icon": "resources/icon.ico"
     },
     "nsis": {
-      "installerIcon": "resources/icon.ico"
+      "installerIcon": "resources/icon.ico",
+      "perMachine": true
     },
     "publish": [
       {
@@ -74,7 +75,12 @@
         "region": "us-east-1",
         "path": "downloads/realm-studio"
       }
-    ]
+    ],
+    "fileAssociations": {
+      "ext": "realm",
+      "name": "Realm",
+      "isPackage": true
+    }
   },
   "scripts": {
     "build": "webpack --env.NODE_ENV=production",
