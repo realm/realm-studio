@@ -42,9 +42,32 @@
   }
 
   &__Title {
-    line-height: 1.5;
+    align-items: center;
+    display: flex;
+    height: 1.5rem;
+  }
+
+  &__TitleText {
+    flex-grow: 1;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__TitleToggle {
+    color: $color-elephant;
+    flex-shrink: 1;
+    padding-left: $spacer / 2;
+
+    &:hover {
+      color: $color-charcoal;
+    }
+  }
+
+  &__SubTitle {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   &__Controls {

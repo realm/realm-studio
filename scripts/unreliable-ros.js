@@ -1,16 +1,17 @@
 const ros = require('realm-object-server');
 const path = require('path');
 
-let server = new ros.BasicServer();
+let server = new ros.TestServer();
 const config = {
   dataPath: path.join(__dirname, '../data'),
-  logLevel: 'detail',
+  logLevel: 'info',
+  port: 9080,
 };
 
 // Start the server
 server.start(config).then(() => {
   console.log('\nServer started ...\n');
-  // On an interval - stop and restart the server
+  // On an interval - stop and restart the server every 10 seconds
   setInterval(async () => {
     try {
       console.log('\nStopping the server ...\n');
@@ -24,5 +25,5 @@ server.start(config).then(() => {
     } catch (err) {
       console.error(`Failed to restart!`, err);
     }
-  }, 5000);
+  }, 10000);
 }, console.error);

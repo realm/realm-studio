@@ -1,4 +1,3 @@
-import * as assert from 'assert';
 import { ipcRenderer, MenuItemConstructorOptions, remote } from 'electron';
 import * as path from 'path';
 import * as React from 'react';
@@ -10,7 +9,6 @@ import {
   IPropertyWithName,
   ISelectObjectState,
 } from '.';
-import { RealmLoadingMode } from '../../services/ros/realms';
 import { Language, SchemaExporter } from '../../services/schema-export';
 import {
   IMenuGenerator,
@@ -22,7 +20,7 @@ import {
   IRealmLoadingComponentState,
   RealmLoadingComponent,
 } from '../reusable/realm-loading-component';
-import { Focus, IClassFocus, IListFocus } from './focus';
+import { Focus, getClassName, IClassFocus, IListFocus } from './focus';
 import * as primitives from './primitives';
 import { isSelected } from './Sidebar';
 import {
@@ -406,7 +404,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
           if (focus.kind === 'list') {
             focus.results.push(object);
           }
-          if (this.getClassName(focus) === className) {
+          if (getClassName(focus) === className) {
             rowIndex = focus.results.indexOf(object);
           }
         }
@@ -587,7 +585,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       focus.property.objectType &&
       !primitives.isPrimitive(focus.property.objectType)
     ) {
-      const className = this.getClassName(focus);
+      const className = getClassName(focus);
       menu.append(
         new remote.MenuItem({
           label: `Add existing ${className}`,
@@ -600,7 +598,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
 
     // If we right-clicking on the content we can always create a new object
     if (focus) {
-      const className = this.getClassName(focus);
+      const className = getClassName(focus);
       menu.append(
         new remote.MenuItem({
           label: `Create new ${className}`,
@@ -617,6 +615,15 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         x: e.clientX,
         y: e.clientY,
       });
+    }
+  };
+
+  public onNewObjectClick = () => {
+    const { focus } = this.state;
+
+    if (focus) {
+      const className = getClassName(focus);
+      this.onCreateDialogToggle(className);
     }
   };
 
@@ -973,8 +980,4 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
       },
     );
   };
-
-  private getClassName = (focus: Focus): string | undefined =>
-    (focus as IClassFocus).className ||
-    (focus as IListFocus).property.objectType;
 }

@@ -9,6 +9,7 @@ export interface IRealmSidebarContainerProps {
   isOpen: boolean;
   onRealmDeletion: (path: string) => void;
   onRealmOpened: (path: string) => void;
+  onToggle: () => void;
   realm: ros.IRealmFile | null;
 }
 
