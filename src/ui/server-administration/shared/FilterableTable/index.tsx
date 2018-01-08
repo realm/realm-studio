@@ -15,24 +15,26 @@ export const FilterableTableWrapper = ({
 }) => <div className="Table">{children}</div>;
 
 export interface IProps {
-  searchString: string;
-  onSearchStringChange: (searchString: string) => void;
-  onElementSelected: (elementIdSelected: string | null) => void;
-  searchPlaceholder: string;
   children: JSX.Element[];
-  elements: Realm.Results<any>;
   elementIdProperty: string;
+  elements: Realm.Results<any>;
+  onElementDoubleClick?: (elementIdSelected: string) => void;
+  onElementSelected: (elementIdSelected: string | null) => void;
+  onSearchStringChange: (searchString: string) => void;
+  searchPlaceholder: string;
+  searchString: string;
   selectedIdPropertyValue: string | null;
 }
 
 export const FilterableTable = ({
-  searchString,
-  onSearchStringChange,
-  onElementSelected,
-  searchPlaceholder,
   children,
-  elements,
   elementIdProperty,
+  elements,
+  onElementDoubleClick,
+  onElementSelected,
+  onSearchStringChange,
+  searchPlaceholder,
+  searchString,
   selectedIdPropertyValue,
 }: IProps) => (
   <div className="Table__content">
@@ -70,6 +72,12 @@ export const FilterableTable = ({
                   : null,
               );
               event.stopPropagation();
+            }}
+            onRowDoubleClick={({ event, index }) => {
+              const element = elements[index];
+              if (onElementDoubleClick) {
+                onElementDoubleClick(element[elementIdProperty]);
+              }
             }}
           >
             {children}

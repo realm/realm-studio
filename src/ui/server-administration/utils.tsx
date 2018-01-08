@@ -19,6 +19,19 @@ export const displayUser = (
     </span>
   );
 
+const userIdPattern = /[0-9a-fA-F]{32}/;
+
+export const shortenRealmPath = (path: string) => {
+  const userIdMatch = userIdPattern.exec(path);
+  if (userIdMatch) {
+    const userId = userIdMatch[0];
+    const shortUserId = '~';
+    return path.replace(userId, shortUserId);
+  } else {
+    return path;
+  }
+};
+
 export const querySomeFieldContainsText = (
   fields: string[],
   textToContain: string,

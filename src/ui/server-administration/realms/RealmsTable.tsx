@@ -42,12 +42,13 @@ export const RealmsTable = ({
   return (
     <FilterableTableWrapper>
       <FilterableTable
-        searchString={searchString}
-        onSearchStringChange={onSearchStringChange}
-        onElementSelected={onRealmSelected}
-        searchPlaceholder="Search Realms"
-        elements={realms}
         elementIdProperty="path"
+        elements={realms}
+        onElementDoubleClick={onRealmOpened}
+        onElementSelected={onRealmSelected}
+        onSearchStringChange={onSearchStringChange}
+        searchPlaceholder="Search Realms"
+        searchString={searchString}
         selectedIdPropertyValue={selectedRealmPath}
       >
         <Column label="Path" dataKey="path" width={500} />
@@ -70,10 +71,11 @@ export const RealmsTable = ({
       />
 
       <RealmSidebar
-        isOpen={selectedRealmPath !== null}
         getRealmPermissions={getRealmPermissions}
+        isOpen={selectedRealmPath !== null}
         onRealmDeletion={onRealmDeletion}
         onRealmOpened={onRealmOpened}
+        onToggle={() => onRealmSelected(null)}
         realm={
           selectedRealmPath !== null ? getRealmFromId(selectedRealmPath) : null
         }
