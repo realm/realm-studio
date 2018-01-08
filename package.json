@@ -65,7 +65,8 @@
       "icon": "resources/icon.ico"
     },
     "nsis": {
-      "installerIcon": "resources/icon.ico"
+      "installerIcon": "resources/icon.ico",
+      "perMachine": true
     },
     "publish": [
       {
