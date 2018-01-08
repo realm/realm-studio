@@ -66,6 +66,7 @@ export const UsersTable = ({
         onSearchStringChange={onSearchStringChange}
         searchPlaceholder="Search users"
         onElementSelected={onUserSelected}
+        onElementDoubleClick={onUserSelected}
         elements={users}
         elementIdProperty="userId"
         selectedIdPropertyValue={selectedUserId}
@@ -113,6 +114,7 @@ export const UsersTable = ({
 
       <UserSidebar
         isOpen={selectedUserId !== null}
+        onToggle={() => onUserSelected(null)}
         onUserChangePassword={onUserChangePassword}
         onUserDeletion={onUserDeletion}
         onUserMetadataAppended={onUserMetadataAppended}
