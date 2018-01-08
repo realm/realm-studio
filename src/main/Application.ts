@@ -57,6 +57,15 @@ export class Application {
   private realmsToBeLoaded: string[] = [];
 
   public run() {
+    // In Mac we detect the files opened with `open-file` event otherwise we need get it from `process.argv`
+    if (process.platform !== 'darwin') {
+      const filesOpened = process.argv.slice(1);
+
+      if (filesOpened[0] !== '') {
+        this.realmsToBeLoaded = filesOpened;
+      }
+    }
+
     this.addAppListeners();
     // If its already ready - the handler won't be called
     if (electron.app.isReady()) {
