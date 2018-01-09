@@ -4,16 +4,12 @@ import * as Realm from 'realm';
 
 import * as ros from '../../../services/ros';
 import { showError } from '../../reusable/errors';
-import { ILoadingProgress } from '../../reusable/loading-overlay';
-import {
-  IRealmLoadingComponentState,
-  RealmLoadingComponent,
-} from '../../reusable/realm-loading-component';
-
+import { querySomeFieldContainsText } from '../utils';
 import { UsersTable } from './UsersTable';
 
 export interface IUsersTableContainerProps {
   adminRealm: Realm;
+  adminRealmChanges: number;
   user: Realm.Sync.User;
   validateCertificates: boolean;
 }
@@ -22,6 +18,7 @@ export interface IUsersTableContainerState {
   isChangePasswordOpen: boolean;
   isCreateUserOpen: boolean;
   selectedUserId: string | null;
+  searchString: string;
 }
 
 export class UsersTableContainer extends React.Component<
@@ -36,6 +33,7 @@ export class UsersTableContainer extends React.Component<
       isChangePasswordOpen: false,
       isCreateUserOpen: false,
       selectedUserId: null,
+      searchString: '',
     };
   }
 
@@ -43,8 +41,13 @@ export class UsersTableContainer extends React.Component<
     this.setUsers();
   }
 
-  public componentDidUpdate() {
-    this.setUsers();
+  public componentWillUpdate(
+    nextProps: IUsersTableContainerProps,
+    nextState: IUsersTableContainerState,
+  ) {
+    if (this.state.searchString !== nextState.searchString) {
+      this.setUsers(nextState.searchString);
+    }
   }
 
   public render() {
@@ -181,14 +184,34 @@ export class UsersTableContainer extends React.Component<
     }
   };
 
+  public onSearchStringChange = (searchString: string) => {
+    this.setState({ searchString });
+  };
+
   protected onRealmChanged = () => {
     this.forceUpdate();
   };
 
-  protected setUsers() {
-    this.users = this.props.adminRealm
-      .objects<ros.IUser>('User')
-      .sorted('userId');
+  protected setUsers(searchString?: string) {
+    if (!searchString || searchString === '') {
+      this.users = this.props.adminRealm
+        .objects<ros.IUser>('User')
+        .sorted('userId');
+    } else {
+      const filterQuery = querySomeFieldContainsText(
+        ['userId', 'accounts.providerId', 'metadata.key', 'metadata.value'],
+        searchString,
+      );
+      try {
+        this.users = this.props.adminRealm
+          .objects<ros.IUser>('User')
+          .filtered(filterQuery)
+          .sorted('userId');
+      } catch (err) {
+        // tslint:disable-next-line:no-console
+        console.warn(`Could not filter on "${filterQuery}"`, err);
+      }
+    }
   }
 
   private confirmUserDeletion(userId: string): boolean {

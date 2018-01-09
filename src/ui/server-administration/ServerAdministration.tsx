@@ -27,6 +27,7 @@ export enum Tab {
 interface IServerAdministrationProps {
   activeTab: Tab | null;
   adminRealm: Realm;
+  adminRealmChanges: number;
   adminRealmProgress: ILoadingProgress;
   isCloudTenant: boolean;
   isRealmOpening: boolean;
@@ -42,6 +43,7 @@ interface IServerAdministrationProps {
 const renderContent = ({
   activeTab,
   adminRealm,
+  adminRealmChanges,
   isCloudTenant,
   onRealmOpened,
   onValidateCertificatesChange,
@@ -54,6 +56,7 @@ const renderContent = ({
     return (
       <RealmsTableContainer
         adminRealm={adminRealm}
+        adminRealmChanges={adminRealmChanges}
         onRealmOpened={onRealmOpened}
         onValidateCertificatesChange={onValidateCertificatesChange}
         user={user}
@@ -64,6 +67,7 @@ const renderContent = ({
     return (
       <UsersTableContainer
         adminRealm={adminRealm}
+        adminRealmChanges={adminRealmChanges}
         user={user}
         validateCertificates={validateCertificates}
       />

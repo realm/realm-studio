@@ -4,7 +4,7 @@ import * as React from 'react';
 import { EditMode, IPropertyWithName } from '.';
 import { ILoadingProgress } from '../reusable/loading-overlay';
 import { Content } from './Content';
-import { IFocus } from './focus';
+import { Focus } from './focus';
 import {
   CellChangeHandler,
   CellClickHandler,
@@ -20,7 +20,7 @@ export interface IContentContainerProps {
   changeCount?: number;
   dataVersion?: number;
   editMode?: EditMode;
-  focus: IFocus | null;
+  focus: Focus | null;
   highlight?: IHighlight;
   inTransaction?: boolean;
   onAddColumnClick?: () => void;
@@ -31,6 +31,7 @@ export interface IContentContainerProps {
   onCellValidated?: CellValidatedHandler;
   onCommitTransaction?: () => void;
   onContextMenu?: CellContextMenuHandler;
+  onNewObjectClick?: () => void;
   onSortEnd?: SortEndHandler;
   onSortStart?: SortStartHandler;
   progress?: ILoadingProgress;

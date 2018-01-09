@@ -186,6 +186,10 @@ $highlight-row-color: $black;
     &__Filter {
       flex-grow: 1;
     }
+
+    &__Button {
+      margin-left: $spacer;
+    }
   }
 
   &__Table {

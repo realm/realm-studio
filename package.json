@@ -1,7 +1,7 @@
 {
   "name": "realm-studio",
   "productName": "Realm Studio",
-  "version": "1.14.0-cloud.13",
+  "version": "1.16.0-cloud.13",
   "description": "A tool for everything Realm.",
   "author": {
     "name": "Realm Inc.",
@@ -66,7 +66,8 @@
       "icon": "resources/icon.ico"
     },
     "nsis": {
-      "installerIcon": "resources/icon.ico"
+      "installerIcon": "resources/icon.ico",
+      "perMachine": true
     },
     "protocols": [
       {
@@ -83,7 +84,12 @@
         "region": "us-east-1",
         "path": "downloads/realm-studio"
       }
-    ]
+    ],
+    "fileAssociations": {
+      "ext": "realm",
+      "name": "Realm",
+      "isPackage": true
+    }
   },
   "scripts": {
     "build": "webpack --env.NODE_ENV=production",

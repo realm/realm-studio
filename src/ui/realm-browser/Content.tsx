@@ -1,9 +1,11 @@
 import * as React from 'react';
 
+import { Button } from 'reactstrap';
 import { EditMode } from '.';
 import { ILoadingProgress } from '../reusable/loading-overlay';
+import { QuerySearch } from '../reusable/QuerySearch';
 import { Bottombar } from './Bottombar';
-import { IFocus } from './focus';
+import { Focus, getClassName } from './focus';
 import {
   CellChangeHandler,
   CellClickHandler,
@@ -15,7 +17,6 @@ import {
   SortStartHandler,
 } from './table';
 import { ResponsiveTable } from './table/ResponsiveTable';
-import { Topbar } from './Topbar';
 
 export const Content = ({
   changeCount,
@@ -32,6 +33,7 @@ export const Content = ({
   onCellValidated,
   onCommitTransaction,
   onContextMenu,
+  onNewObjectClick,
   onQueryChange,
   onQueryHelp,
   onSortEnd,
@@ -42,7 +44,7 @@ export const Content = ({
   changeCount?: number;
   dataVersion?: number;
   editMode: EditMode;
-  focus: IFocus | null;
+  focus: Focus | null;
   highlight?: IHighlight;
   inTransaction?: boolean;
   onAddColumnClick?: () => void;
@@ -53,6 +55,7 @@ export const Content = ({
   onCellValidated?: CellValidatedHandler;
   onCommitTransaction?: () => void;
   onContextMenu?: CellContextMenuHandler;
+  onNewObjectClick?: () => void;
   onQueryChange: (query: string) => void;
   onQueryHelp: () => void;
   onSortEnd?: SortEndHandler;
@@ -63,11 +66,24 @@ export const Content = ({
   if (focus) {
     return (
       <div className="RealmBrowser__Content">
-        <Topbar
-          onQueryChange={onQueryChange}
-          onQueryHelp={onQueryHelp}
-          query={query}
-        />
+        <div className="RealmBrowser__Topbar">
+          <QuerySearch
+            className="RealmBrowser__Topbar__Filter"
+            onQueryChange={onQueryChange}
+            onQueryHelp={onQueryHelp}
+            query={query}
+            placeholder="Enter a query to filter the list"
+          />
+          <Button
+            size="sm"
+            color="primary"
+            className="RealmBrowser__Topbar__Button"
+            onClick={onNewObjectClick}
+            title={`Create new ${getClassName(focus)}`}
+          >
+            Create new {getClassName(focus)}
+          </Button>
+        </div>
         <ResponsiveTable
           dataVersion={dataVersion}
           editMode={editMode}

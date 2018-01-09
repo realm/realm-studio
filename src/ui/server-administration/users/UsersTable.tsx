@@ -1,24 +1,17 @@
-import * as classnames from 'classnames';
 import * as React from 'react';
-import {
-  AutoSizer,
-  Column,
-  Dimensions as IAutoSizerDimensions,
-  Table,
-} from 'react-virtualized';
+import { Column } from 'react-virtualized';
 import { Button } from 'reactstrap';
 
 import * as ros from '../../../services/ros';
 
 import {
-  ILoadingProgress,
-  LoadingOverlay,
-} from '../../reusable/loading-overlay';
+  FilterableTable,
+  FilterableTableWrapper,
+} from '../shared/FilterableTable';
 import { FloatingControls } from '../shared/FloatingControls';
 import { ChangePasswordDialogContainer } from './ChangePasswordDialogContainer';
 import { CreateUserDialogContainer } from './CreateUserDialogContainer';
 import { UserSidebar } from './UserSidebar';
-import './UsersTable.scss';
 
 export const UsersTable = ({
   getUserFromId,
@@ -38,6 +31,8 @@ export const UsersTable = ({
   toggleChangePassword,
   toggleCreateUser,
   users,
+  searchString,
+  onSearchStringChange,
 }: {
   getUserFromId: (userId: string) => ros.IUser | null;
   getUsersRealms: (userId: string) => ros.IRealmFile[];
@@ -61,78 +56,57 @@ export const UsersTable = ({
   toggleChangePassword: () => void;
   toggleCreateUser: () => void;
   users: Realm.Results<ros.IUser>;
+  searchString: string;
+  onSearchStringChange: (query: string) => void;
 }) => {
   return (
-    <div className="UsersTable">
-      <div
-        className="UsersTable__table"
-        onClick={event => {
-          onUserSelected(null);
-        }}
+    <FilterableTableWrapper>
+      <FilterableTable
+        searchString={searchString}
+        onSearchStringChange={onSearchStringChange}
+        searchPlaceholder="Search users"
+        onElementSelected={onUserSelected}
+        onElementDoubleClick={onUserSelected}
+        elements={users}
+        elementIdProperty="userId"
+        selectedIdPropertyValue={selectedUserId}
       >
-        <AutoSizer>
-          {({ width, height }: IAutoSizerDimensions) => (
-            <Table
-              width={width}
-              height={height}
-              rowHeight={30}
-              headerHeight={30}
-              rowClassName={({ index }) => {
-                const user = users[index];
-                return classnames('UsersTable__row', {
-                  'UsersTable__row--selected':
-                    user && user.userId === selectedUserId,
-                });
-              }}
-              rowCount={users.length}
-              rowGetter={({ index }) => users[index]}
-              onRowClick={({ event, index }) => {
-                const user = users[index];
-                onUserSelected(
-                  user && user.userId !== selectedUserId ? user.userId : null,
-                );
-                event.stopPropagation();
-              }}
-            >
-              <Column
-                label="Provider Id(s)"
-                dataKey="accounts"
-                width={200}
-                cellRenderer={({ cellData }) => {
-                  const accounts = cellData as ros.IAccount[];
-                  return (
-                    <span>
-                      {accounts.map(account => (
-                        <span title={`Provider: ${account.provider}`}>
-                          {account.providerId}
-                        </span>
-                      ))}
-                    </span>
-                  );
-                }}
-              />
-              <Column label="User Id" dataKey="userId" width={200} />
-              <Column
-                label="Role"
-                dataKey="isAdmin"
-                width={100}
-                cellRenderer={({ cellData }) => {
-                  return cellData ? 'Administrator' : 'Regular user';
-                }}
-              />
-              <Column
-                label="# Realms"
-                dataKey="userId"
-                width={100}
-                cellRenderer={({ cellData }) => {
-                  const userId = cellData as string;
-                  return getUsersRealms(userId).length;
-                }}
-              />
-            </Table>
-          )}
-        </AutoSizer>
-      </div>
+        <Column
+          label="Provider Id(s)"
+          dataKey="accounts"
+          width={200}
+          cellRenderer={({ cellData }) => {
+            const accounts = cellData as ros.IAccount[];
+            return (
+              <span>
+                {accounts.map((account, index) => (
+                  <span key={index} title={`Provider: ${account.provider}`}>
+                    {account.providerId}
+                  </span>
+                ))}
+              </span>
+            );
+          }}
+        />
+        <Column label="User Id" dataKey="userId" width={200} />
+        <Column
+          label="Role"
+          dataKey="isAdmin"
+          width={100}
+          cellRenderer={({ cellData }) => {
+            return cellData ? 'Administrator' : 'Regular user';
+          }}
+        />
+        <Column
+          label="# Realms"
+          dataKey="userId"
+          width={100}
+          cellRenderer={({ cellData }) => {
+            const userId = cellData as string;
+            return getUsersRealms(userId).length;
+          }}
+        />
+      </FilterableTable>
 
       <FloatingControls isOpen={selectedUserId === null}>
         <Button onClick={toggleCreateUser}>Create new user</Button>
@@ -140,6 +114,7 @@ export const UsersTable = ({
 
       <UserSidebar
         isOpen={selectedUserId !== null}
+        onToggle={() => onUserSelected(null)}
         onUserChangePassword={onUserChangePassword}
         onUserDeletion={onUserDeletion}
         onUserMetadataAppended={onUserMetadataAppended}
@@ -162,6 +137,6 @@ export const UsersTable = ({
         toggle={toggleCreateUser}
         onUserCreated={onUserCreated}
       />
-    </div>
+    </FilterableTableWrapper>
   );
 };
