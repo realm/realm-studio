@@ -111,6 +111,7 @@ export class Application {
       // Check for updates, every time the contents has loaded
       window.webContents.on('did-finish-load', () => {
         this.updater.checkForUpdates(true);
+        resolve();
       });
       this.updater.addListeningWindow(window);
       window.once('close', () => {
@@ -175,7 +176,7 @@ export class Application {
       const window = this.windowManager.createWindow(props);
       window.show();
       window.webContents.once('did-finish-load', () => {
-        resolve();
+        resolve(window);
       });
     });
   }
@@ -217,20 +218,33 @@ export class Application {
 
   private onReady = () => {
     this.setDefaultMenu();
-    this.showGreeting();
-    electron.app.focus();
-
-    this.realmsToBeLoaded.forEach(filePath =>
-      this.openLocalRealmAtPath(filePath).catch(err =>
-        showError(`Failed opening the file "${filePath}"`, err),
-      ),
-    );
-    this.realmsToBeLoaded = [];
+    this.showGreeting()
+      .then(() => {
+        if (this.realmsToBeLoaded.length === 0) {
+          electron.app.focus();
+        } else {
+          this.realmsToBeLoaded.forEach(filePath =>
+            this.openLocalRealmAtPath(filePath)
+              .then(window => {
+                if (window !== undefined) {
+                  (window as Electron.BrowserWindow).focus();
+                }
+              })
+              .catch(err =>
+                showError(`Failed opening the file "${filePath}"`, err),
+              ),
+          );
+          this.realmsToBeLoaded = [];
+        }
+      })
+      .catch(err => showError(`Failed opening "Greeting" window`, err));
   };
 
   private onActivate = () => {
     if (this.windowManager.windows.length === 0) {
-      this.showGreeting();
+      this.showGreeting().catch(err =>
+        showError(`Failed opening "Greeting" window`, err),
+      );
     }
   };
 
