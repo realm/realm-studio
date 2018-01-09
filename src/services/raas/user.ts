@@ -31,9 +31,11 @@ export interface IMeResponse {
 export interface ISubscription {
   id: string;
   tenantStatus: string;
-  tenantUrl: string;
+  tenantUrl?: string;
   plan: string;
   createdAt: string;
+  projectName?: string | null;
+  projectDescription?: string | null;
 }
 
 export const authenticate = async (

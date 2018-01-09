@@ -8,6 +8,7 @@ import { IUpdateStatus } from '../../main/Updater';
 import * as raas from '../../services/raas';
 import { IServerCredentials } from '../../services/ros';
 import { store } from '../../store';
+import { showError } from '../reusable/errors';
 
 import { Greeting } from './Greeting';
 
@@ -94,27 +95,35 @@ export class GreetingContainer extends React.Component<
     this.onConnectToPrimarySubscription(subscription);
   };
 
-  public onConnectToPrimarySubscription = (
+  public onConnectToPrimarySubscription = async (
     subscription?: raas.user.ISubscription,
   ): Promise<void> => {
-    if (!subscription) {
-      const { cloudStatus } = this.state;
-      if (cloudStatus && cloudStatus.kind === 'has-primary-subscription') {
-        return this.onConnectToPrimarySubscription(
-          cloudStatus.primarySubscription,
-        );
+    try {
+      if (!subscription) {
+        const { cloudStatus } = this.state;
+        if (cloudStatus && cloudStatus.kind === 'has-primary-subscription') {
+          return this.onConnectToPrimarySubscription(
+            cloudStatus.primarySubscription,
+          );
+        } else {
+          throw new Error(`Missing a primary subscription`);
+        }
       } else {
-        throw new Error(`Missing a primary subscription`);
+        const tenantUrl = subscription.tenantUrl;
+        if (tenantUrl) {
+          const credentials = raas.user.getTenantCredentials(tenantUrl);
+          return main.showServerAdministration({
+            type: 'server-administration',
+            credentials,
+            validateCertificates: true,
+            isCloudTenant: true,
+          });
+        } else {
+          throw new Error(`Couldn't determine the URL of the server`);
+        }
       }
-    } else {
-      const tenantUrl = subscription.tenantUrl;
-      const credentials = raas.user.getTenantCredentials(tenantUrl);
-      return main.showServerAdministration({
-        type: 'server-administration',
-        credentials,
-        validateCertificates: true,
-        isCloudTenant: true,
-      });
+    } catch (err) {
+      showError('Failed to connect to the server', err);
     }
   };
 
