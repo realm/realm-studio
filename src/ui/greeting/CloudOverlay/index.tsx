@@ -78,8 +78,12 @@ export class CloudOverlayContainer extends React.Component<
       }
 
       // Now that we're authenticated - let's create a tenant
-      const user = await raas.user.getAuth();
-      const identifier = user.id.replace(/^github\//, '');
+      const { githubUserId } = await raas.user.getAccount();
+      if (!githubUserId) {
+        throw new Error(`Currently only signups via GitHub is supported`);
+      }
+
+      const identifier = githubUserId;
       const initialPassword = faker.internet.password();
 
       this.setState({
@@ -99,6 +103,12 @@ export class CloudOverlayContainer extends React.Component<
         throw new Error(`Unable to create the tenant`);
       }
 
+      const tenantUrl = subscription.tenantUrl;
+
+      if (!tenantUrl) {
+        throw new Error(`Unable to determine the URL of the tenant`);
+      }
+
       // Poll the tenant for it's availability
       // We expect this to take 17 secound - but we're making to 27 secs to be safe
       // TODO: Make it 17 when the ROS health API has improved
@@ -114,7 +124,7 @@ export class CloudOverlayContainer extends React.Component<
             transferred: ETA - secondsRemaining,
           },
         });
-        return ros.isAvailable(subscription.tenantUrl);
+        return ros.isAvailable(tenantUrl);
       });
 
       this.setState({

@@ -25,6 +25,7 @@ export interface IUserSidebarProps extends IUserSidebarContainerProps {
   onMetadataChanged: (index: number, key: string, value: string) => void;
   onMetadataDeleted: (index: number) => void;
   onRoleChanged: (role: ros.UserRole) => void;
+  onToggle: () => void;
   roleDropdownOpen: boolean;
   toggleRoleDropdown: () => void;
 }
@@ -37,6 +38,7 @@ export const UserSidebar = ({
   onMetadataChanged,
   onMetadataDeleted,
   onRoleChanged,
+  onToggle,
   realms,
   roleDropdownOpen,
   toggleRoleDropdown,
@@ -48,7 +50,13 @@ export const UserSidebar = ({
         <Card className="Sidebar__Card">
           <CardBlock className="Sidebar__Top">
             <CardTitle className="Sidebar__Title">
-              <span title={user.userId}>{user.userId}</span>
+              <span className="Sidebar__TitleText" title={user.userId}>
+                {user.userId}
+              </span>
+              <i
+                onClick={onToggle}
+                className="Sidebar__TitleToggle fa fa-close"
+              />
             </CardTitle>
             <ButtonDropdown
               isOpen={roleDropdownOpen}

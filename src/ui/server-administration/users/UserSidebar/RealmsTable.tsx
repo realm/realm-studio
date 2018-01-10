@@ -3,6 +3,7 @@ import { Table } from 'reactstrap';
 
 import * as ros from '../../../../services/ros';
 import '../../shared/Sidebar/SidebarTable.scss';
+import { shortenRealmPath } from '../../utils';
 
 export const RealmsTable = ({ realms }: { realms: ros.IRealmFile[] }) => (
   <Table size="sm" className="SidebarTable">
@@ -23,7 +24,7 @@ export const RealmsTable = ({ realms }: { realms: ros.IRealmFile[] }) => (
         realms.map(realm => {
           return (
             <tr key={realm.path}>
-              <td title={realm.path}>{realm.path}</td>
+              <td title={realm.path}>{shortenRealmPath(realm.path)}</td>
             </tr>
           );
         })

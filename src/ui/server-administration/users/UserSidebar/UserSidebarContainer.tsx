@@ -8,7 +8,7 @@ import { UserSidebar } from './UserSidebar';
 
 export interface IUserSidebarContainerProps {
   isOpen: boolean;
-  realms: ros.IRealmFile[];
+  onToggle: () => void;
   onUserChangePassword: (userId: string) => void;
   onUserDeletion: (userId: string) => void;
   onUserMetadataAppended: (userId: string) => void;
@@ -20,6 +20,7 @@ export interface IUserSidebarContainerProps {
   ) => void;
   onUserMetadataDeleted: (userId: string, index: number) => void;
   onUserRoleChanged: (userId: string, role: ros.UserRole) => void;
+  realms: ros.IRealmFile[];
   user: ros.IUser | null;
 }
 

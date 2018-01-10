@@ -4,7 +4,7 @@ import { Button, Card, CardBlock, CardTitle } from 'reactstrap';
 import * as ros from '../../../../services/ros';
 
 import { Sidebar } from '../../shared/Sidebar';
-import { displayUser } from '../../utils';
+import { displayUser, shortenRealmPath } from '../../utils';
 import { PermissionsTable } from './PermissionsTable';
 
 export const RealmSidebar = ({
@@ -12,12 +12,14 @@ export const RealmSidebar = ({
   isOpen,
   onRealmDeletion,
   onRealmOpened,
+  onToggle,
   realm,
 }: {
   getRealmPermissions: (path: string) => Realm.Results<ros.IPermission>;
   isOpen: boolean;
   onRealmDeletion: (path: string) => void;
   onRealmOpened: (path: string) => void;
+  onToggle: () => void;
   realm: ros.IRealmFile | null;
 }) => {
   const permissions = realm ? getRealmPermissions(realm.path) : null;
@@ -27,9 +29,17 @@ export const RealmSidebar = ({
         <Card className="Sidebar__Card">
           <CardBlock className="Sidebar__Top">
             <CardTitle className="Sidebar__Title">
-              <span title={realm.path}>{realm.path}</span>
+              <span className="Sidebar__TitleText" title={realm.path}>
+                {shortenRealmPath(realm.path)}
+              </span>
+              <i
+                className="Sidebar__TitleToggle fa fa-close"
+                onClick={onToggle}
+              />
             </CardTitle>
-            <p>Owned by {displayUser(realm.owner)}</p>
+            <p className="Sidebar__SubTitle">
+              Owned by {displayUser(realm.owner)}
+            </p>
           </CardBlock>
           <CardBlock className="Sidebar__Tables">
             {permissions ? (
