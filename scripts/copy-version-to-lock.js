@@ -12,4 +12,4 @@ const packageLockJson = require(packageLockPath);
 packageLockJson.version = packageJson.version;
 
 // Write back the package-lock.json
-fs.writeFileSync(packageLockPath, JSON.stringify(packageLockJson, null, 2));
+fs.writeFileSync(packageLockPath, JSON.stringify(packageLockJson, null, 2) + "\n");

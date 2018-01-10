@@ -1,0 +1,29 @@
+@import "~realm-studio-styles/variables";
+
+.Table {
+  display: flex;
+  flex-grow: 1;
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  &__topbar {
+    padding: $spacer / 2;
+    background-color: $color-dove;
+  }
+
+  &__row {
+    &--selected {
+      background: $color-dove;
+    }
+  }
+
+  &__table {
+    flex: 1 0;
+  }
+
+  @import "../../../reusable/ReactVirtualized";
+}

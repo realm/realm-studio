@@ -32,6 +32,8 @@ export interface IServerAdministrationContainerProps
 export interface IServerAdministrationContainerState
   extends IRealmLoadingComponentState {
   activeTab: Tab;
+  // This will increment when the realm changes to trigger updates to the UI.
+  adminRealmChanges: number;
   isRealmOpening: boolean;
   user: Realm.Sync.User | null;
 }
@@ -44,6 +46,7 @@ export class ServerAdministrationContainer extends RealmLoadingComponent<
     super();
     this.state = {
       activeTab: Tab.Realms,
+      adminRealmChanges: 0,
       isRealmOpening: false,
       progress: { status: 'idle' },
       user: null,
@@ -69,6 +72,7 @@ export class ServerAdministrationContainer extends RealmLoadingComponent<
         {...this.state}
         {...this}
         adminRealm={this.realm}
+        adminRealmChanges={this.state.adminRealmChanges}
         adminRealmProgress={this.state.progress}
         validateCertificates={this.props.validateCertificates}
         onValidateCertificatesChange={this.props.onValidateCertificatesChange}
@@ -191,7 +195,7 @@ export class ServerAdministrationContainer extends RealmLoadingComponent<
   }
 
   protected onRealmChanged = () => {
-    this.forceUpdate();
+    this.setState({ adminRealmChanges: this.state.adminRealmChanges + 1 });
   };
 
   protected onRealmLoaded = () => {

@@ -18,7 +18,7 @@ import {
   SortStartHandler,
 } from '.';
 import { EditMode, IPropertyWithName } from '..';
-import { IFocus } from '../focus';
+import { Focus } from '../focus';
 import { ContentGrid } from './ContentGrid';
 import { HeaderGrid } from './HeaderGrid';
 import { MoreIndicator } from './MoreIndicator';
@@ -33,7 +33,7 @@ export interface ITableProps {
   dataVersion?: number;
   editMode: EditMode;
   filteredSortedResults: Realm.Collection<any>;
-  focus: IFocus;
+  focus: Focus;
   getCellValue: (object: any, props: GridCellProps) => string;
   gridContentRef: (grid: Grid | null) => void;
   gridHeaderRef: (grid: Grid | null) => void;

@@ -1,18 +1,16 @@
-import * as classnames from 'classnames';
 import * as React from 'react';
-import {
-  AutoSizer,
-  Column,
-  Dimensions as IAutoSizerDimensions,
-  Table,
-} from 'react-virtualized';
+import { Column } from 'react-virtualized';
 import { Button } from 'reactstrap';
 
 import { IPermission, IRealmFile } from '../../../services/ros';
+import {
+  FilterableTable,
+  FilterableTableWrapper,
+} from '../shared/FilterableTable';
 import { FloatingControls } from '../shared/FloatingControls';
+import { displayUser } from '../utils';
 import { CreateRealmDialogContainer } from './CreateRealmDialogContainer';
 import { RealmSidebar } from './RealmSidebar';
-import './RealmsTable.scss';
 
 export const RealmsTable = ({
   getRealmFromId,
@@ -25,6 +23,8 @@ export const RealmsTable = ({
   realms,
   selectedRealmPath,
   toggleCreateRealm,
+  searchString,
+  onSearchStringChange,
 }: {
   getRealmFromId: (path: string) => IRealmFile | null;
   getRealmPermissions: (path: string) => Realm.Results<IPermission>;
@@ -36,51 +36,29 @@ export const RealmsTable = ({
   realms: Realm.Results<IRealmFile>;
   selectedRealmPath: string | null;
   toggleCreateRealm: () => void;
+  searchString: string;
+  onSearchStringChange: (query: string) => void;
 }) => {
   return (
-    <div className="RealmsTable">
-      <div
-        className="RealmsTable__table"
-        onClick={event => {
-          onRealmSelected(null);
-        }}
+    <FilterableTableWrapper>
+      <FilterableTable
+        elementIdProperty="path"
+        elements={realms}
+        onElementDoubleClick={onRealmOpened}
+        onElementSelected={onRealmSelected}
+        onSearchStringChange={onSearchStringChange}
+        searchPlaceholder="Search Realms"
+        searchString={searchString}
+        selectedIdPropertyValue={selectedRealmPath}
       >
-        <AutoSizer>
-          {({ width, height }: IAutoSizerDimensions) => (
-            <Table
-              width={width}
-              height={height}
-              rowHeight={30}
-              headerHeight={30}
-              rowClassName={({ index }) => {
-                const realm = realms[index];
-                return classnames('RealmsTable__row', {
-                  'RealmsTable__row--selected':
-                    realm && realm.path === selectedRealmPath,
-                });
-              }}
-              rowCount={realms.length}
-              rowGetter={({ index }) => realms[index]}
-              onRowClick={({ event, index }) => {
-                event.stopPropagation();
-                const realm = realms[index];
-                onRealmSelected(
-                  realm && realm.path !== selectedRealmPath ? realm.path : null,
-                );
-              }}
-              onRowDoubleClick={({ event, index }) => {
-                event.stopPropagation();
-                const realm = realms[index];
-                if (realm) {
-                  onRealmOpened(realm.path);
-                }
-              }}
-            >
-              <Column label="Path" dataKey="path" width={width} />
-            </Table>
-          )}
-        </AutoSizer>
-      </div>
+        <Column label="Path" dataKey="path" width={500} />
+        <Column
+          label="Owner"
+          dataKey="owner"
+          width={500}
+          cellRenderer={({ cellData }) => displayUser(cellData)}
+        />
+      </FilterableTable>
 
       <FloatingControls isOpen={selectedRealmPath === null}>
         <Button onClick={toggleCreateRealm}>Create new Realm</Button>
@@ -93,14 +71,15 @@ export const RealmsTable = ({
       />
 
       <RealmSidebar
-        isOpen={selectedRealmPath !== null}
         getRealmPermissions={getRealmPermissions}
+        isOpen={selectedRealmPath !== null}
         onRealmDeletion={onRealmDeletion}
         onRealmOpened={onRealmOpened}
+        onToggle={() => onRealmSelected(null)}
         realm={
           selectedRealmPath !== null ? getRealmFromId(selectedRealmPath) : null
         }
       />
-    </div>
+    </FilterableTableWrapper>
   );
 };
