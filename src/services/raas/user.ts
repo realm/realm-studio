@@ -28,6 +28,16 @@ export interface IMeResponse {
   name: string;
 }
 
+export interface IAccountResponse {
+  company: string;
+  country: string;
+  email: string;
+  nameFirst: string;
+  nameLast: string;
+  phoneNumber: string;
+  githubUserId?: string;
+}
+
 export interface ISubscription {
   id: string;
   tenantStatus: string;
@@ -86,6 +96,19 @@ export const getTenantCredentials = (url: string): IServerCredentials => {
       data: getToken(),
     },
   };
+};
+
+export const getAccount = async () => {
+  const url = buildUserUrl('account');
+  const response = await fetchAuthenticated(url, {
+    method: 'GET',
+  });
+  if (response.ok) {
+    return (await response.json()) as IAccountResponse;
+  } else {
+    const message = await getErrorMessage(response);
+    throw new Error(message);
+  }
 };
 
 export const getAuth = async () => {
