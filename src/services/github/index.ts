@@ -21,7 +21,9 @@ export interface IOAuthCallbackOptions {
   state: string;
 }
 
-export const authenticate = (scope: string = 'user') => {
+export const authenticate = (
+  scope: string = 'read:org read:user user:email',
+) => {
   // Throw an error if accessed from the renderer
   if (process.type !== 'browser') {
     throw new Error('This API is supposed to be called from the main process.');
