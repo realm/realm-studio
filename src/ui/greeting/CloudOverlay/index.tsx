@@ -78,8 +78,12 @@ export class CloudOverlayContainer extends React.Component<
       }
 
       // Now that we're authenticated - let's create a tenant
-      const user = await raas.user.getAuth();
-      const identifier = user.id.replace(/^github\//, '');
+      const { githubUserId } = await raas.user.getAccount();
+      if (!githubUserId) {
+        throw new Error(`Currently only signups via GitHub is supported`);
+      }
+
+      const identifier = githubUserId;
       const initialPassword = faker.internet.password();
 
       this.setState({
