@@ -126,16 +126,16 @@ export class TableContainer extends React.PureComponent<
     prevState: ITableContainerState,
   ) {
     if (this.gridContent && this.props.highlight) {
-      const rowChanged =
+      const rowsChanged =
         !prevProps.highlight ||
-        prevProps.highlight.row !== this.props.highlight.row;
+        prevProps.highlight.rows !== this.props.highlight.rows;
       const columnChanged =
         !prevProps.highlight ||
         prevProps.highlight.column !== this.props.highlight.column;
-      if (rowChanged || columnChanged) {
+      if (rowsChanged || columnChanged) {
         this.gridContent.scrollToCell({
           columnIndex: this.props.highlight.column || 0,
-          rowIndex: this.props.highlight.row || 0,
+          rowIndex: this.props.highlight.rows[0] || 0,
         });
       }
     } else if (this.gridContent && this.props.focus !== prevProps.focus) {
