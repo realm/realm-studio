@@ -59,6 +59,12 @@ export interface IContentGridProps extends Partial<GridProps> {
   rowHeight: number;
   width: number;
 }
+const isRowHighlighted = (
+  highlight: IHighlight | undefined,
+  rowIndex: number,
+): boolean =>
+  (highlight && highlight.rows.find(row => row === rowIndex) !== undefined) ||
+  false;
 
 export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
   private cellRangeRenderer?: GridCellRangeRenderer;
@@ -120,17 +126,10 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
 
     const rowRenderer: GridRowRenderer = (rowProps: IGridRowProps) => {
       const { highlight, isSorting } = this.props;
-      const isHighlighted =
-        (highlight && highlight.row === rowProps.rowIndex) ||
-        (highlight &&
-          highlight.rowsSelected &&
-          highlight.rowsSelected.find(
-            otherRowSelected => otherRowSelected === rowProps.rowIndex,
-          ) !== undefined) ||
-        false;
+
       return (
         <Row
-          isHighlighted={isHighlighted}
+          isHighlighted={isRowHighlighted(highlight, rowProps.rowIndex)}
           key={rowProps.key}
           isSorting={isSorting}
           {...rowProps}
@@ -170,14 +169,15 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
           const { rowIndex, columnIndex } = cellProps;
           const rowObject = filteredSortedResults[cellProps.rowIndex];
           const cellValue = getCellValue(rowObject, cellProps);
-          const isHighlighted = highlight
-            ? highlight.row === rowIndex && highlight.column === columnIndex
+          const isCellHighlighted = highlight
+            ? isRowHighlighted(highlight, rowIndex) &&
+              highlight.column === columnIndex
             : false;
 
           return (
             <Cell
               editMode={editMode}
-              isHighlighted={isHighlighted}
+              isHighlighted={isCellHighlighted}
               key={cellProps.key}
               onCellClick={e => {
                 if (onCellClick) {
@@ -213,8 +213,9 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
               onHighlighted={() => {
                 if (onCellHighlighted) {
                   onCellHighlighted({
-                    row: rowIndex,
+                    rows: [rowIndex],
                     column: columnIndex,
+                    rowReferenceShiftClick: rowIndex,
                   });
                 }
               }}

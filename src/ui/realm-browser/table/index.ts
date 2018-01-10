@@ -42,11 +42,15 @@ export type CellValidatedHandler = (
 ) => void;
 
 export interface IHighlight {
-  row?: number;
+  rows: number[];
   column?: number;
   center?: boolean;
-  rowsSelected?: number[];
+  rowReferenceShiftClick?: number | undefined;
 }
+
+export const defaultHighlightValue = {
+  rows: [],
+};
 
 export interface ISorting {
   property: IPropertyWithName;

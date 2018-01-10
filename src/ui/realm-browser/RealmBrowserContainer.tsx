@@ -28,6 +28,7 @@ import {
   CellChangeHandler,
   CellClickHandler,
   CellContextMenuHandler,
+  defaultHighlightValue,
   IHighlight,
   SortEndHandler,
   SortStartHandler,
@@ -86,6 +87,7 @@ export class RealmBrowserContainer
       schemas: [],
       isAddClassOpen: false,
       isAddPropertyOpen: false,
+      highlight: defaultHighlightValue,
     };
   }
 
@@ -415,7 +417,8 @@ export class RealmBrowserContainer
         if (rowIndex >= 0) {
           this.setState({
             highlight: {
-              row: rowIndex,
+              ...this.state.highlight,
+              rows: [rowIndex],
             },
           });
         }
@@ -477,33 +480,40 @@ export class RealmBrowserContainer
   ) => {
     const shiftClick = e && e.shiftKey;
     const metaClick = e && e.metaKey; // Command key in MacOs
-    const currentRowsSelected =
-      this.state.highlight && this.state.highlight.rowsSelected
-        ? this.state.highlight.rowsSelected
-        : [];
-    let rowsSelected = [rowIndex];
+
+    const currentRowReferenceShiftClick =
+      this.state.highlight && this.state.highlight.rowReferenceShiftClick;
+    const clickWhenNoRowHighlighted =
+      currentRowReferenceShiftClick === undefined;
+    const normalClick = !shiftClick && !metaClick;
+    const nextRowReferenceShiftClick =
+      clickWhenNoRowHighlighted || normalClick || metaClick
+        ? rowIndex
+        : currentRowReferenceShiftClick;
+
+    const currentRowsHighlighted =
+      (this.state.highlight && this.state.highlight.rows) || [];
+    let nextRowsHighlighted = [rowIndex];
 
     if (metaClick) {
-      const currentRowsSelectedWithoutRowIndex = currentRowsSelected.filter(
+      // Unselect the row when It was already selected otherwise select it
+      const currentRowsHighlightedWithoutRowIndex = currentRowsHighlighted.filter(
         row => row !== rowIndex,
       );
-      const rowIndexIsAlreadySelected =
-        currentRowsSelected.length > currentRowsSelectedWithoutRowIndex.length;
+      const rowIndexIsAlreadyHighlighted =
+        currentRowsHighlighted.length >
+        currentRowsHighlightedWithoutRowIndex.length;
 
-      // Unselect the row when It was already selected otherwise select it
-      rowsSelected = rowIndexIsAlreadySelected
-        ? currentRowsSelectedWithoutRowIndex
-        : [...currentRowsSelected, rowIndex];
-      rowIndex = rowIndexIsAlreadySelected ? -1 : rowIndex; // TODO improve the way we unselect the rows
+      nextRowsHighlighted = rowIndexIsAlreadyHighlighted
+        ? currentRowsHighlightedWithoutRowIndex
+        : [...currentRowsHighlighted, rowIndex];
     } else if (shiftClick) {
-      const currentRowSelected =
-        this.state.highlight && this.state.highlight.row;
-
-      if (currentRowSelected !== undefined) {
-        rowsSelected = [
+      // Select all the rows from the row previously referenced to the last row clicked
+      if (nextRowReferenceShiftClick !== undefined) {
+        nextRowsHighlighted = [
           ...new Set([
-            ...currentRowsSelected,
-            ...getRange(currentRowSelected, rowIndex),
+            ...currentRowsHighlighted,
+            ...getRange(nextRowReferenceShiftClick, rowIndex),
           ]),
         ];
       }
@@ -524,9 +534,9 @@ export class RealmBrowserContainer
 
       this.setState({
         highlight: {
-          rowsSelected,
+          rows: nextRowsHighlighted,
           column: columnIndex,
-          row: rowIndex,
+          rowReferenceShiftClick: nextRowReferenceShiftClick,
         },
       });
     }
@@ -557,8 +567,9 @@ export class RealmBrowserContainer
         this.setState({
           focus,
           highlight: {
-            row: index,
+            rows: [index],
             center: true,
+            rowReferenceShiftClick: index,
           },
         });
       }
@@ -623,10 +634,9 @@ export class RealmBrowserContainer
     }
 
     if (focus) {
-      const rowsSelected =
-        this.state.highlight && this.state.highlight.rowsSelected;
+      const rowsHighlighted = this.state.highlight && this.state.highlight.rows;
 
-      if (rowsSelected && rowsSelected.length > 1) {
+      if (rowsHighlighted && rowsHighlighted.length > 1) {
         const title = 'Deleting objects...';
         const description = 'Are you sure you want to delete this objects?';
         menu.append(
@@ -634,10 +644,10 @@ export class RealmBrowserContainer
             label: 'Delete all',
             click: () => {
               this.openConfirmModal(title, description, () => {
-                rowsSelected.forEach(otherRowIndex => {
+                rowsHighlighted.forEach(rowHighlightedIndex => {
                   this.deleteObject(
-                    focus.results[otherRowIndex],
-                    otherRowIndex,
+                    focus.results[rowHighlightedIndex],
+                    rowHighlightedIndex,
                   );
                 });
               });
@@ -749,7 +759,8 @@ export class RealmBrowserContainer
     }
     this.setState({
       highlight: {
-        row: newIndex,
+        ...this.state.highlight,
+        rows: [newIndex],
       },
     });
   };
@@ -983,11 +994,9 @@ export class RealmBrowserContainer
     if (object) {
       const className = object.objectSchema().name;
       const row = this.realm.objects(className).indexOf(object);
-      if (row) {
-        return {
-          row,
-        };
-      }
+      return {
+        rows: row ? [row] : [],
+      };
     }
   }
 
