@@ -121,7 +121,7 @@ export class Application {
     return new Promise((resolve, reject) => {
       electron.dialog.showOpenDialog(
         {
-          properties: ['openFile'],
+          properties: ['openFile', 'multiSelections'],
           filters: [{ name: 'Realm Files', extensions: ['realm'] }],
         },
         selectedPaths => {
