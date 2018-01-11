@@ -59,11 +59,9 @@ export class Application {
   public run() {
     // In Mac we detect the files opened with `open-file` event otherwise we need get it from `process.argv`
     if (process.platform !== 'darwin') {
-      const filesOpened = process.argv.slice(1);
-
-      if (filesOpened[0] !== '') {
-        this.realmsToBeLoaded = filesOpened;
-      }
+      this.realmsToBeLoaded = process.argv.filter(arg => {
+        return arg.indexOf('.realm') >= 0;
+      });
     }
 
     this.addAppListeners();
