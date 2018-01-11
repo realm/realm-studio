@@ -105,6 +105,7 @@ export class Application {
       // Show the window, the first time its ready-to-show
       window.once('ready-to-show', () => {
         window.show();
+        resolve();
       });
       // Check for updates, every time the contents has loaded
       window.webContents.on('did-finish-load', () => {
