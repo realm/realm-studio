@@ -126,9 +126,14 @@ export class Application {
         },
         selectedPaths => {
           if (selectedPaths) {
-            selectedPaths.forEach(selectedPath => {
-              this.openLocalRealmAtPath(selectedPath).then(resolve, reject);
+            const realmsLoaded = selectedPaths.map(selectedPath => {
+              return this.openLocalRealmAtPath(selectedPath);
             });
+            // Call Resolve or reject when all realms are opened or a single fails
+            Promise.all(realmsLoaded).then(resolve, reject);
+          } else {
+            // Nothing loaded
+            resolve();
           }
         },
       );
@@ -213,16 +218,19 @@ export class Application {
     );
   }
 
-  private onReady = () => {
+  private onReady = async () => {
     this.setDefaultMenu();
     this.showGreeting();
     electron.app.focus();
-
-    this.realmsToBeLoaded.forEach(filePath =>
-      this.openLocalRealmAtPath(filePath).catch(err =>
-        showError(`Failed opening the file "${filePath}"`, err),
-      ),
+    // Open all the realms to be loaded
+    const realmsLoaded = this.realmsToBeLoaded.map(realmPath => {
+      return this.openLocalRealmAtPath(realmPath);
+    });
+    // Wait for all realms to open or show an error on failure
+    await Promise.all(realmsLoaded).catch(err =>
+      showError(`Failed opening Realm`, err),
     );
+    // Reset the array to prevent any double loading
     this.realmsToBeLoaded = [];
   };
 
