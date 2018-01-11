@@ -220,8 +220,8 @@ export class Application {
 
   private onReady = async () => {
     this.setDefaultMenu();
-    this.showGreeting();
-    electron.app.focus();
+    // Wait for the greeting window to show
+    await this.showGreeting();
     // Open all the realms to be loaded
     const realmsLoaded = this.realmsToBeLoaded.map(realmPath => {
       return this.openLocalRealmAtPath(realmPath);
