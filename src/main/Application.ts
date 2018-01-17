@@ -338,8 +338,8 @@ export class Application {
         }
       }
     } else if (url.protocol === `${CLOUD_PROTOCOL}:`) {
-      // Check the hostname to ensure it ends on "realm.io"
-      const trustedHosts = ['.realm.io'];
+      // Check the hostname to ensure it ends on a trusted domain
+      const trustedHosts = ['.realm.io', '.realmlab.net'];
       const trusted = trustedHosts.reduce((result, host) => {
         return result || url.host.endsWith(host);
       }, false);
