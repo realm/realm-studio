@@ -3,7 +3,7 @@ import { URL } from 'url';
 
 import * as path from 'path';
 import { MainReceiver } from '../actions/main';
-import { PROTOCOL } from '../constants';
+import { CLOUD_PROTOCOL, STUDIO_PROTOCOL } from '../constants';
 import { getDataImporter, ImportFormat } from '../services/data-importer';
 import ImportSchemaGenerator from '../services/data-importer/ImportSchemaGenerator';
 import * as github from '../services/github';
@@ -325,7 +325,7 @@ export class Application {
 
   private onOpenUrl = (event: Event, urlString: string) => {
     const url = new URL(urlString);
-    if (url.protocol === `${PROTOCOL}:`) {
+    if (url.protocol === `${STUDIO_PROTOCOL}:`) {
       // The protocol stores the action as the URL hostname
       const action = url.hostname;
       if (action === github.OPEN_URL_ACTION) {
@@ -337,6 +337,35 @@ export class Application {
           github.handleOauthCallback({ code, state });
         }
       }
+    } else if (url.protocol === `${CLOUD_PROTOCOL}:`) {
+      // Check the hostname to ensure it ends on "realm.io"
+      const trustedHosts = ['.realm.io'];
+      const trusted = trustedHosts.reduce((result, host) => {
+        return result || url.host.endsWith(host);
+      }, false);
+
+      const serverUrl = new URL(`https://${url.host}`);
+
+      if (!trusted) {
+        const answer = electron.dialog.showMessageBox({
+          type: 'warning',
+          message: `You're about to connect to ${serverUrl.toString()}.\n\nThis will reveal your cloud token to the server. Do you wish to proceed?`,
+          buttons: ['Yes, connect!', 'No, abort!'],
+          defaultId: 0,
+          cancelId: 1,
+        });
+        if (answer === 1) {
+          // Abort!
+          return;
+        }
+      }
+
+      this.showServerAdministration({
+        credentials: raas.user.getTenantCredentials(serverUrl.toString()),
+        isCloudTenant: true,
+        type: 'server-administration',
+        validateCertificates: true,
+      });
     }
   };
 
@@ -365,22 +394,32 @@ export class Application {
   };
 
   private registerProtocols() {
+    this.registerProtocol(CLOUD_PROTOCOL);
+    this.registerProtocol(STUDIO_PROTOCOL);
+  }
+
+  private unregisterProtocols() {
+    this.unregisterProtocol(CLOUD_PROTOCOL);
+    this.unregisterProtocol(STUDIO_PROTOCOL);
+  }
+
+  private registerProtocol(protocol: string) {
     // Register this app as the default client for 'x-realm-studio://'
-    const success = electron.app.setAsDefaultProtocolClient(PROTOCOL);
+    const success = electron.app.setAsDefaultProtocolClient(protocol);
     if (!success) {
       electron.dialog.showErrorBox(
         'Failed when registering protocols',
-        'Studio could not register the x-realm-studio:// protocol. For this reason, you might not be able to log into Studio.',
+        `Studio could not register the ${protocol}:// protocol.`,
       );
     }
   }
 
-  private unregisterProtocols() {
-    const success = electron.app.removeAsDefaultProtocolClient(PROTOCOL);
+  private unregisterProtocol(protocol: string) {
+    const success = electron.app.removeAsDefaultProtocolClient(protocol);
     if (!success) {
       electron.dialog.showErrorBox(
         'Failed when unregistering protocols',
-        'Studio could not unregister the x-realm-studio:// protocol.',
+        `Studio could not unregister the ${protocol}:// protocol.`,
       );
     }
   }

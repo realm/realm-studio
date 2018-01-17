@@ -2,7 +2,7 @@ import * as electron from 'electron';
 import { URL } from 'url';
 import { v4 as uuid } from 'uuid';
 
-import { PROTOCOL } from '../../constants';
+import { STUDIO_PROTOCOL } from '../../constants';
 
 interface IAuthenticationHandler {
   resolve: (code: string) => void;
@@ -14,7 +14,7 @@ const authenticationPromises: { [state: string]: IAuthenticationHandler } = {};
 export const OPEN_URL_ACTION = 'github-oauth';
 export const GITHUB_CLIENT_ID = '9e947af0f244f295235c';
 export const GITHUB_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize';
-export const GITHUB_REDIRECT_URI = `${PROTOCOL}://${OPEN_URL_ACTION}`;
+export const GITHUB_REDIRECT_URI = `${STUDIO_PROTOCOL}://${OPEN_URL_ACTION}`;
 
 export interface IOAuthCallbackOptions {
   code: string;
