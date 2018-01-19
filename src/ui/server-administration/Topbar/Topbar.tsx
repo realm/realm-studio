@@ -31,7 +31,7 @@ export const TopBar = ({
       viewBox={realmLogo.viewBox}
       className="ServerAdministration__TobBar__logo"
     >
-      <use xlinkHref={realmLogo.url} />
+      <use xlinkHref={`#${realmLogo.id}`} />
     </svg>
     {isCloudTenant ? (
       <TabButton

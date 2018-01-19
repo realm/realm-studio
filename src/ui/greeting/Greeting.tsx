@@ -54,7 +54,7 @@ export const Greeting = ({
     <div className="Greeting__ActionsPanel">
       <div className="Greeting__Brand">
         <svg className="Greeting__Logo" viewBox={realmLogo.viewBox}>
-          <use xlinkHref={realmLogo.url} />
+          <use xlinkHref={`#${realmLogo.id}`} />
         </svg>
         <h3 className="Greeting__Title">Realm Studio</h3>
         <div>Version {version}</div>

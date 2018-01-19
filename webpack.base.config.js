@@ -2,7 +2,6 @@ const path = require("path");
 const nodeExternals = require("webpack-node-externals");
 const webpack = require('webpack');
 const { CheckerPlugin } = require("awesome-typescript-loader");
-const SpriteLoaderPlugin = require("svg-sprite-loader/plugin");
 
 module.exports = (env) => {
   const isProduction = env && env.NODE_ENV === "production";
@@ -48,7 +47,6 @@ module.exports = (env) => {
       new webpack.DefinePlugin({
         "process.env.NODE_ENV": JSON.stringify(env ? env.NODE_ENV : 'development'),
       }),
-      new SpriteLoaderPlugin(),
     ].concat(isProduction ? [
       // Plugins for production
       // @see https://reactjs.org/docs/optimizing-performance.html#webpack

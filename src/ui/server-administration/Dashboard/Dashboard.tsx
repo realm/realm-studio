@@ -85,7 +85,7 @@ export const Dashboard = ({
             className="Dashboard__Platform__JavascriptLogo"
             viewBox={nodeJsLogo.viewBox}
           >
-            <use xlinkHref={nodeJsLogo.url} />
+            <use xlinkHref={`#${nodeJsLogo.id}`} />
           </svg>
         </div>
         <div
@@ -98,7 +98,7 @@ export const Dashboard = ({
             className="Dashboard__Platform__XamarinLogo"
             viewBox={xamarinLogo.viewBox}
           >
-            <use xlinkHref={xamarinLogo.url} />
+            <use xlinkHref={`#${xamarinLogo.id}`} />
           </svg>
         </div>
       </section>
