@@ -9,7 +9,6 @@ import { IServerCredentials } from '../../services/ros';
 
 import realmLogo from '../../../static/svgs/realm-logo.svg';
 import { CloudAction } from './CloudAction';
-import { CloudOverlay } from './CloudOverlay';
 import { SocialNetwork } from './GreetingContainer';
 import { HistoryPanelContainer } from './HistoryPanelContainer';
 import { SignupOverlayContainer } from './SignupOverlayContainer';
@@ -19,10 +18,7 @@ import './Greeting.scss';
 
 export const Greeting = ({
   cloudStatus,
-  isAuthenticating,
-  isCloudOverlayActivated,
   isSyncEnabled,
-  onActivateCloudOverlay,
   onAuthenticate,
   onCheckForUpdates,
   onCloudSubscriptionCreated,
@@ -30,15 +26,13 @@ export const Greeting = ({
   onConnectToServer,
   onDeauthenticate,
   onOpenLocalRealm,
+  onServerCreate,
   onShare,
   updateStatus,
   version,
 }: {
   cloudStatus?: ICloudStatus;
-  isAuthenticating: boolean;
-  isCloudOverlayActivated: boolean;
   isSyncEnabled: boolean;
-  onActivateCloudOverlay: () => void;
   onAuthenticate: () => void;
   onCheckForUpdates: () => void;
   onCloudSubscriptionCreated: () => void;
@@ -46,6 +40,7 @@ export const Greeting = ({
   onConnectToServer: () => void;
   onDeauthenticate: () => void;
   onOpenLocalRealm: () => void;
+  onServerCreate: () => void;
   onShare: (socialNetwork: SocialNetwork) => void;
   updateStatus: IUpdateStatus;
   version: string;
@@ -54,7 +49,7 @@ export const Greeting = ({
     <div className="Greeting__ActionsPanel">
       <div className="Greeting__Brand">
         <svg className="Greeting__Logo" viewBox={realmLogo.viewBox}>
-          <use xlinkHref={realmLogo.url} />
+          <use xlinkHref={`#${realmLogo.id}`} />
         </svg>
         <h3 className="Greeting__Title">Realm Studio</h3>
         <div>Version {version}</div>
@@ -64,14 +59,16 @@ export const Greeting = ({
         onCheckForUpdates={onCheckForUpdates}
       />
       <div className="Greeting__Actions">
-        <CloudAction
-          cloudStatus={cloudStatus}
-          onActivateCloudOverlay={onActivateCloudOverlay}
-          onAuthenticate={onAuthenticate}
-          onConnectToPrimarySubscription={onConnectToPrimarySubscription}
-          onDeauthenticate={onDeauthenticate}
-          onShare={onShare}
-        />
+        <div className="Greeting__Action">
+          <CloudAction
+            cloudStatus={cloudStatus}
+            onAuthenticate={onAuthenticate}
+            onConnectToPrimarySubscription={onConnectToPrimarySubscription}
+            onDeauthenticate={onDeauthenticate}
+            onServerCreate={onServerCreate}
+            onShare={onShare}
+          />
+        </div>
         <div className="Greeting__SecondaryActions">
           <Button color="secondary" size="sm" onClick={onOpenLocalRealm}>
             Open Realm file
@@ -102,15 +99,6 @@ export const Greeting = ({
       </div>
     </div>
     <HistoryPanelContainer />
-    {isCloudOverlayActivated &&
-    cloudStatus &&
-    cloudStatus.kind === 'authenticated' ? (
-      <CloudOverlay
-        onCloudSubscriptionCreated={onCloudSubscriptionCreated}
-        onShare={onShare}
-        user={cloudStatus.user}
-      />
-    ) : null}
     <SignupOverlayContainer />
   </div>
 );

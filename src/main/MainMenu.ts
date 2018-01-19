@@ -74,10 +74,10 @@ export const getDefaultMenuTemplate = (
       label: 'Realm Cloud',
       submenu: [
         {
-          label: 'Login with GitHub',
+          label: 'Login',
           visible: !raas.user.hasToken(),
           click: () => {
-            main.authenticateWithGitHub();
+            main.showCloudAuthentication();
           },
         },
         {

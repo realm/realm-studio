@@ -32,6 +32,9 @@ export class Application {
   private cloudManager = new CloudManager();
 
   private actionHandlers = {
+    [MainActions.AuthenticateWithEmail]: (email: string, password: string) => {
+      return this.authenticateWithEmail(email, password);
+    },
     [MainActions.AuthenticateWithGitHub]: () => {
       return this.authenticateWithGitHub();
     },
@@ -47,8 +50,8 @@ export class Application {
     [MainActions.SetRaasEndpoint]: (endpoint: raas.Endpoint) => {
       return this.setRaasEndpoint(endpoint);
     },
-    [MainActions.ShowCloudAdministration]: () => {
-      return this.showCloudAdministration();
+    [MainActions.ShowCloudAuthentication]: () => {
+      return this.showCloudAuthentication();
     },
     [MainActions.ShowConnectToServer]: (url?: string) => {
       return this.showConnectToServer(url);
@@ -115,6 +118,10 @@ export class Application {
   }
 
   // Implementation of action handlers below
+
+  public async authenticateWithEmail(email: string, password: string) {
+    return this.cloudManager.authenticateWithEmail(email, password);
+  }
 
   public async authenticateWithGitHub() {
     return this.cloudManager.authenticateWithGitHub();
@@ -254,10 +261,10 @@ export class Application {
     });
   }
 
-  public showCloudAdministration() {
+  public showCloudAuthentication() {
     return new Promise(resolve => {
       const window = this.windowManager.createWindow({
-        type: 'cloud-administration',
+        type: 'cloud-authentication',
       });
       window.show();
       window.webContents.once('did-finish-load', () => {

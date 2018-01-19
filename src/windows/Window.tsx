@@ -75,7 +75,9 @@ export abstract class Window<P extends WindowProps, S> extends React.Component<
 function getWindowClass(props: WindowProps): React.ComponentClass {
   // We're using calls to require here, to prevent loading anything that does not
   // relate to the specific window being loaded.
-  if (props.type === 'connect-to-server') {
+  if (props.type === 'cloud-authentication') {
+    return require('./CloudAuthenticationWindow').CloudAuthenticationWindow;
+  } else if (props.type === 'connect-to-server') {
     return require('./ConnectToServerDialog').ConnectToServerDialog;
   } else if (props.type === 'greeting') {
     return require('./GreetingWindow').GreetingWindow;

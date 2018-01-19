@@ -19,6 +19,10 @@ export class Sender extends ActionSender {
     );
   }
 
+  public authenticateWithEmail(email: string, password: string): Promise<void> {
+    return this.send(MainActions.AuthenticateWithEmail, email, password);
+  }
+
   public authenticateWithGitHub(): Promise<void> {
     return this.send(MainActions.AuthenticateWithGitHub);
   }
@@ -39,8 +43,8 @@ export class Sender extends ActionSender {
     return this.send(MainActions.SetRaasEndpoint, endpoint);
   }
 
-  public showCloudAdministration() {
-    return this.send(MainActions.ShowCloudAdministration);
+  public showCloudAuthentication() {
+    return this.send(MainActions.ShowCloudAuthentication);
   }
 
   public showConnectToServer(url?: string) {

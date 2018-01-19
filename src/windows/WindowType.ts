@@ -7,7 +7,7 @@ import * as ros from '../services/ros';
 import * as tutorials from '../services/tutorials';
 
 export type WindowType =
-  | 'cloud-administration'
+  | 'cloud-authentication'
   | 'connect-to-server'
   | 'greeting'
   | 'realm-browser'
@@ -18,8 +18,8 @@ export interface IWindowProps {
   type: WindowType;
 }
 
-export interface ICloudAdministrationWindowProps extends IWindowProps {
-  type: 'cloud-administration';
+export interface ICloudAuthenticationWindowProps extends IWindowProps {
+  type: 'cloud-authentication';
 }
 
 export interface IConnectToServerWindowProps extends IWindowProps {
@@ -52,7 +52,7 @@ export interface ITutorialWindowProps extends IWindowProps {
 }
 
 export type WindowProps =
-  | ICloudAdministrationWindowProps
+  | ICloudAuthenticationWindowProps
   | IConnectToServerWindowProps
   | IGreetingWindowProps
   | IRealmBrowserWindowProps
@@ -106,11 +106,11 @@ export function getWindowOptions(
       height: 400,
       resizable: false,
     };
-  } else if (props.type === 'cloud-administration') {
+  } else if (props.type === 'cloud-authentication') {
     return {
       title: `Realm Cloud`,
-      width: 1024,
-      height: 500,
+      width: 400,
+      height: 420,
     };
   } else if (props.type === 'tutorial') {
     const config = tutorials.getConfig(props.id);
