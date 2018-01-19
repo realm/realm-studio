@@ -16,8 +16,6 @@ export type SocialNetwork = 'twitter' | 'facebook' | 'reddit' | 'hacker-news';
 
 interface IGreetingContainerState {
   cloudStatus?: ICloudStatus;
-  isAuthenticating: boolean;
-  isCloudOverlayActivated: boolean;
   isSyncEnabled: boolean;
   updateStatus: IUpdateStatus;
   version: string;
@@ -30,8 +28,6 @@ export class GreetingContainer extends React.Component<
   constructor() {
     super();
     this.state = {
-      isAuthenticating: false,
-      isCloudOverlayActivated: false,
       isSyncEnabled: false,
       updateStatus: {
         state: 'up-to-date',
@@ -71,21 +67,7 @@ export class GreetingContainer extends React.Component<
   }
 
   public onAuthenticate = async () => {
-    // Authenticate with GitHub
-    this.setState({
-      isAuthenticating: true,
-    });
-    await main.authenticateWithGitHub();
-    this.setState({
-      isAuthenticating: false,
-      isCloudOverlayActivated: true,
-    });
-  };
-
-  public onActivateCloudOverlay = () => {
-    this.setState({
-      isCloudOverlayActivated: true,
-    });
+    await main.showCloudAuthentication();
   };
 
   public onCloudSubscriptionCreated = async (
@@ -161,17 +143,13 @@ export class GreetingContainer extends React.Component<
     ) {
       electron.remote.getCurrentWindow().focus();
     }
-    // Update the state
-    if (status.kind === 'authenticated' && status.justAuthenticated) {
-      this.setState({
-        cloudStatus: status,
-        isCloudOverlayActivated: true,
-      });
-    } else {
-      this.setState({
-        cloudStatus: status,
-      });
-    }
+    // Update the cloud status
+    this.setState({ cloudStatus: status });
+  };
+
+  public onServerCreate = () => {
+    const endpoint = raas.getEndpoint();
+    electron.remote.shell.openExternal(`${endpoint}/apps/create`);
   };
 
   public onShare = (socialNetwork: SocialNetwork) => {
