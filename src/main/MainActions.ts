@@ -1,7 +1,8 @@
 export enum MainActions {
+  AuthenticateWithEmail = 'authenticate-with-email',
   AuthenticateWithGitHub = 'authenticate-with-github',
-  Deauthenticate = 'deauthenticate',
   CheckForUpdates = 'check-for-updates',
+  Deauthenticate = 'deauthenticate',
   RefreshCloudStatus = 'refresh-cloud-status',
   SetRaasEndpoint = 'set-raas-endpoint',
   ShowConnectToServer = 'show-connect-to-server',

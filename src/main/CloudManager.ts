@@ -95,11 +95,35 @@ export class CloudManager {
         new Error(
           `Request timed out (waited ${CloudManager.AUTHENTICATION_TIMEOUT} ms)`,
         ),
-        raas.user.authenticate(code),
+        raas.user.authenticateWithGitHub(code),
       );
       raas.user.setToken(response.token);
-      // Learn about the user
-      const user = await raas.user.getAuth();
+      this.refresh(true);
+    } catch (err) {
+      this.sendCloudStatus({
+        kind: 'error',
+        message: err.message,
+        endpoint,
+      });
+    }
+  }
+
+  public async authenticateWithEmail(email: string, password: string) {
+    const endpoint = raas.getEndpoint();
+    try {
+      this.sendCloudStatus({
+        kind: 'authenticating',
+        waitingForUser: false,
+        endpoint,
+      });
+      const response = await timeout<raas.user.IRaasAuthenticationResponse>(
+        CloudManager.AUTHENTICATION_TIMEOUT,
+        new Error(
+          `Request timed out (waited ${CloudManager.AUTHENTICATION_TIMEOUT} ms)`,
+        ),
+        raas.user.authenticateWithEmail(email, password),
+      );
+      raas.user.setToken(response.token);
       this.refresh(true);
     } catch (err) {
       this.sendCloudStatus({

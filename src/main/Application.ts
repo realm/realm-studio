@@ -32,6 +32,9 @@ export class Application {
   private cloudManager = new CloudManager();
 
   private actionHandlers = {
+    [MainActions.AuthenticateWithEmail]: (email: string, password: string) => {
+      return this.authenticateWithEmail(email, password);
+    },
     [MainActions.AuthenticateWithGitHub]: () => {
       return this.authenticateWithGitHub();
     },
@@ -115,6 +118,10 @@ export class Application {
   }
 
   // Implementation of action handlers below
+
+  public async authenticateWithEmail(email: string, password: string) {
+    return this.cloudManager.authenticateWithEmail(email, password);
+  }
 
   public async authenticateWithGitHub() {
     return this.cloudManager.authenticateWithGitHub();

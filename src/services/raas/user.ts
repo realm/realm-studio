@@ -48,7 +48,7 @@ export interface ISubscription {
   projectDescription?: string | null;
 }
 
-export const authenticate = async (
+export const authenticateWithGitHub = async (
   githubCode: string,
 ): Promise<IRaasAuthenticationResponse> => {
   const url = buildUserUrl('auth/github');
@@ -61,6 +61,29 @@ export const authenticate = async (
       code: githubCode,
       clientId: GITHUB_CLIENT_ID,
       redirectUri: GITHUB_REDIRECT_URI,
+    }),
+  });
+  if (response.ok) {
+    return response.json();
+  } else {
+    const message = await getErrorMessage(response);
+    throw new Error(message);
+  }
+};
+
+export const authenticateWithEmail = async (
+  email: string,
+  password: string,
+): Promise<IRaasAuthenticationResponse> => {
+  const url = buildUserUrl('auth/email');
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: new Headers({
+      'Content-Type': 'application/json',
+    }),
+    body: JSON.stringify({
+      email,
+      password,
     }),
   });
   if (response.ok) {
