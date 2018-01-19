@@ -1,0 +1,26 @@
+@import "~realm-studio-styles/variables";
+
+.CloudAuthentication {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+
+  &__Icon {
+    height: 2.5rem;
+    width: 2.5rem;
+  }
+
+  &__Title {
+    margin-top: $spacer / 2;
+  }
+
+  &__Form {
+    min-width: 80vw;
+  }
+
+  &__Button {
+    width: 100%;
+  }
+}
