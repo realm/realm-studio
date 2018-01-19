@@ -71,7 +71,7 @@ export const CloudAuthentication = ({
           onAuthenticateWithGitHub();
         }}
       >
-        Log in using GitHub
+        <i className="fa fa-github" /> Log in using GitHub
       </Button>
     </Form>
     <LoadingOverlay loading={isLoading} />
