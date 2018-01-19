@@ -1,54 +1,54 @@
+import * as classNames from 'classnames';
 import * as React from 'react';
 import { Alert, Button } from 'reactstrap';
 
-import { ICloudStatus } from '../../main/CloudManager';
-import { LoadingDots } from '../reusable/loading-dots';
-import { SocialNetwork } from './GreetingContainer';
+import cloudLogo from '../../../../static/svgs/cloud-logo-simple.svg';
+import { ICloudStatus } from '../../../main/CloudManager';
+import { LoadingDots } from '../../reusable/loading-dots';
+import { SocialNetwork } from '../GreetingContainer';
+
+import './CloudAction.scss';
 
 export interface ICloudActionButtonProps {
   cloudStatus?: ICloudStatus;
-  onActivateCloudOverlay: () => void;
   onAuthenticate: () => void;
   onConnectToPrimarySubscription: () => void;
   onDeauthenticate: () => void;
+  onServerCreate: () => void;
   onShare: (socialNetwork: SocialNetwork) => void;
 }
 
 export const CloudAction = ({
   cloudStatus,
-  onActivateCloudOverlay,
   onAuthenticate,
   onConnectToPrimarySubscription,
   onDeauthenticate,
+  onServerCreate,
   onShare,
 }: ICloudActionButtonProps) => {
   if (cloudStatus && cloudStatus.kind === 'authenticating') {
     return (
-      <Alert className="Greeting__CloudStatus" color="info">
+      <Alert className="CloudAction__Alert" color="info">
         {cloudStatus.waitingForUser
           ? 'Waiting for you to grant access'
           : 'Waiting for Realm Cloud to authenticate'}
-        <LoadingDots className="Greeting__CloudStatus__LoadingDots" />
+        <LoadingDots className="CloudAction__LoadingDots" />
       </Alert>
     );
   } else if (cloudStatus && cloudStatus.kind === 'fetching') {
     return (
-      <Alert className="Greeting__CloudStatus" color="info">
+      <Alert className="CloudAction__Alert" color="info">
         Fetching your profile and subscriptions
-        <LoadingDots className="Greeting__CloudStatus__LoadingDots" />
+        <LoadingDots className="CloudAction__LoadingDots" />
       </Alert>
     );
   } else if (cloudStatus && cloudStatus.kind === 'authenticated') {
     return cloudStatus.user.canCreate ? (
-      <Button
-        className="Greeting__Action"
-        onClick={onActivateCloudOverlay}
-        color="primary"
-      >
+      <Button onClick={onServerCreate} color="primary">
         Create Realm Cloud server
       </Button>
     ) : (
-      <Alert color="info">
+      <Alert className="CloudAction__Alert" color="info">
         <small>
           You're on the waitlist to use Realm Cloud!{' '}
           <span
@@ -84,22 +84,18 @@ export const CloudAction = ({
     );
   } else if (cloudStatus && cloudStatus.kind === 'has-primary-subscription') {
     return (
-      <Button
-        className="Greeting__Action"
-        onClick={() => onConnectToPrimarySubscription()}
-        color="primary"
-      >
+      <Button onClick={() => onConnectToPrimarySubscription()} color="primary">
         Connect to Realm Cloud
       </Button>
     );
   } else if (cloudStatus && cloudStatus.kind === 'error') {
     return (
-      <Alert className="Greeting__CloudStatus" color="danger">
+      <Alert className="CloudAction__Alert" color="danger">
         <span title={cloudStatus.message}>
           Failed while contacting Realm Cloud
         </span>
         <i
-          className="Greeting__CloudStatus__Close fa fa-close"
+          className="CloudAction__Close fa fa-close"
           onClick={onDeauthenticate}
         />
       </Alert>
@@ -107,12 +103,14 @@ export const CloudAction = ({
   } else {
     return (
       <Button
-        className="Greeting__Action"
         color="primary"
         disabled={!cloudStatus || cloudStatus.kind !== 'not-authenticated'}
         onClick={onAuthenticate}
       >
-        <i className="fa fa-github" /> GitHub
+        <svg className="CloudAction__Icon" viewBox={cloudLogo.viewBox}>
+          <use xlinkHref={`#${cloudLogo.id}`} />
+        </svg>{' '}
+        Log into Realm Cloud
       </Button>
     );
   }
