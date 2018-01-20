@@ -13,6 +13,8 @@ module.exports = (env) => {
       whitelist: [
         /webpack(\/.*)?/,
         'electron-devtools-installer',
+        /svg-baker-runtime(\/.*)?/,
+        /svg-sprite-loader(\/.*)?/,
       ]
     }),
   ];
