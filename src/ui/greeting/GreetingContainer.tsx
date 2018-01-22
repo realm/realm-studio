@@ -137,10 +137,7 @@ export class GreetingContainer extends React.Component<
     status: ICloudStatus,
   ) => {
     // Focus the window when the status requires the users attention
-    if (
-      status.kind === 'error' ||
-      (status.kind === 'authenticating' && !status.waitingForUser)
-    ) {
+    if (status.kind === 'authenticated') {
       electron.remote.getCurrentWindow().focus();
     }
     // Update the cloud status
