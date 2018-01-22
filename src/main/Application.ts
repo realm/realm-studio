@@ -83,8 +83,12 @@ export class Application {
 
   // All files opened while app is loading will be stored on this array and opened when app is ready
   private realmsToBeLoaded: string[] = [];
+  // All urls opened while app is loading will be stored in this array and upened when app is ready
+  private delayedUrlOpens: Array<{ event: Event; urlString: string }> = [];
 
   public run() {
+    // Register as a listener for specific URLs
+    this.registerProtocols();
     // In Mac we detect the files opened with `open-file` event otherwise we need get it from `process.argv`
     if (process.platform !== 'darwin') {
       this.realmsToBeLoaded = process.argv.filter(arg => {
@@ -316,6 +320,17 @@ export class Application {
     );
     // Reset the array to prevent any double loading
     this.realmsToBeLoaded = [];
+
+    // Open any URLs that the app was not ready to open during startup
+    const urlsOpened = this.delayedUrlOpens.map(({ event, urlString }) => {
+      // Call the event handler again, now that the app is ready
+      return this.onOpenUrl(event, urlString);
+    });
+    // Wait for all realms to open or show an error on failure
+    await Promise.all(urlsOpened).catch(err =>
+      showError(`Failed opening URL`, err),
+    );
+    this.delayedUrlOpens = [];
   };
 
   private onActivate = () => {
@@ -336,48 +351,52 @@ export class Application {
   };
 
   private onOpenUrl = (event: Event, urlString: string) => {
-    const url = new URL(urlString);
-    if (url.protocol === `${STUDIO_PROTOCOL}:`) {
-      // The protocol stores the action as the URL hostname
-      const action = url.hostname;
-      if (action === github.OPEN_URL_ACTION) {
-        const code = url.searchParams.get('code');
-        const state = url.searchParams.get('state');
-        if (!code || !state) {
-          throw new Error('Missing the code or state');
-        } else {
-          github.handleOauthCallback({ code, state });
+    if (electron.app.isReady()) {
+      const url = new URL(urlString);
+      if (url.protocol === `${STUDIO_PROTOCOL}:`) {
+        // The protocol stores the action as the URL hostname
+        const action = url.hostname;
+        if (action === github.OPEN_URL_ACTION) {
+          const code = url.searchParams.get('code');
+          const state = url.searchParams.get('state');
+          if (!code || !state) {
+            throw new Error('Missing the code or state');
+          } else {
+            github.handleOauthCallback({ code, state });
+          }
         }
-      }
-    } else if (url.protocol === `${CLOUD_PROTOCOL}:`) {
-      // Check the hostname to ensure it ends on a trusted domain
-      const trustedHosts = ['.realm.io', '.realmlab.net'];
-      const trusted = trustedHosts.reduce((result, host) => {
-        return result || url.host.endsWith(host);
-      }, false);
+      } else if (url.protocol === `${CLOUD_PROTOCOL}:`) {
+        // Check the hostname to ensure it ends on a trusted domain
+        const trustedHosts = ['.realm.io', '.realmlab.net'];
+        const trusted = trustedHosts.reduce((result, host) => {
+          return result || url.host.endsWith(host);
+        }, false);
 
-      const serverUrl = new URL(`https://${url.host}`);
+        const serverUrl = new URL(`https://${url.host}`);
 
-      if (!trusted) {
-        const answer = electron.dialog.showMessageBox({
-          type: 'warning',
-          message: `You're about to connect to ${serverUrl.toString()}.\n\nThis will reveal your cloud token to the server. Do you wish to proceed?`,
-          buttons: ['Yes, connect!', 'No, abort!'],
-          defaultId: 0,
-          cancelId: 1,
+        if (!trusted) {
+          const answer = electron.dialog.showMessageBox({
+            type: 'warning',
+            message: `You're about to connect to ${serverUrl.toString()}.\n\nThis will reveal your cloud token to the server. Do you wish to proceed?`,
+            buttons: ['Yes, connect!', 'No, abort!'],
+            defaultId: 0,
+            cancelId: 1,
+          });
+          if (answer === 1) {
+            // Abort!
+            return;
+          }
+        }
+
+        this.showServerAdministration({
+          credentials: raas.user.getTenantCredentials(serverUrl.toString()),
+          isCloudTenant: true,
+          type: 'server-administration',
+          validateCertificates: true,
         });
-        if (answer === 1) {
-          // Abort!
-          return;
-        }
       }
-
-      this.showServerAdministration({
-        credentials: raas.user.getTenantCredentials(serverUrl.toString()),
-        isCloudTenant: true,
-        type: 'server-administration',
-        validateCertificates: true,
-      });
+    } else {
+      this.delayedUrlOpens.push({ event, urlString });
     }
   };
 
