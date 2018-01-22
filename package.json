@@ -73,6 +73,7 @@
       {
         "name": "Realm Studio",
         "schemes": [
+          "x-realm-cloud",
           "x-realm-studio"
         ]
       }
