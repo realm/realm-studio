@@ -43,7 +43,7 @@ class CloudAuthenticationContainer extends React.Component<
 
   protected onAuthenticateWithEmail = async () => {
     try {
-      this.setState({ isLoading: true });
+      this.setState({ isLoading: true, error: undefined });
       await main.authenticateWithEmail(this.state.email, this.state.password);
       this.setState({ isLoading: false });
       // Close this window ..
@@ -54,11 +54,15 @@ class CloudAuthenticationContainer extends React.Component<
   };
 
   protected onAuthenticateWithGitHub = async () => {
-    this.setState({ isLoading: true });
-    await main.authenticateWithGitHub();
-    this.setState({ isLoading: false });
-    // Close this window ..
-    window.close();
+    try {
+      this.setState({ isLoading: true, error: undefined });
+      await main.authenticateWithGitHub();
+      this.setState({ isLoading: false });
+      // Close this window ..
+      window.close();
+    } catch (err) {
+      this.setState({ error: err, isLoading: false });
+    }
   };
 
   protected onEmailChange = (email: string) => {
