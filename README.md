@@ -49,9 +49,10 @@ The application has support for some parameters that can be supplied when starti
 
       DISPLAY=1 npm run dev
 
-- If the `OPEN_DEV_TOOLS` environment variable is sat every window being opened will have the developer tools opened.
+- If the `REALM_STUDIO_DEV_TOOLS` environment variable is sat every window being opened will have the developer
+tools opened.
 
-      OPEN_DEV_TOOLS=true npm run dev
+      REALM_STUDIO_DEV_TOOLS=true npm run dev
 
 - If the `REACT_PERF` environment variable is sat, the window URLs will get "?react_perf" appended, which will
 activate profiling of React components on the Chrome timeline:
