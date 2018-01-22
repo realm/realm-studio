@@ -78,37 +78,26 @@ export class CloudManager {
 
   public async authenticateWithGitHub() {
     const endpoint = raas.getEndpoint();
-    try {
-      this.sendCloudStatus({
-        kind: 'authenticating',
-        waitingForUser: true,
-        endpoint,
-      });
-      const code = await github.authenticate();
-      this.sendCloudStatus({
-        kind: 'authenticating',
-        waitingForUser: false,
-        endpoint,
-      });
-      const response = await timeout<raas.user.IRaasAuthenticationResponse>(
-        CloudManager.AUTHENTICATION_TIMEOUT,
-        new Error(
-          `Request timed out (waited ${CloudManager.AUTHENTICATION_TIMEOUT} ms)`,
-        ),
-        raas.user.authenticateWithGitHub(code),
-      );
-      raas.user.setToken(response.token);
-      this.refresh(true);
-    } catch (err) {
-      this.sendCloudStatus({
-        kind: 'error',
-        message: err.message,
-        endpoint,
-      });
-    }
+    this.sendCloudStatus({
+      kind: 'authenticating',
+      waitingForUser: true,
+      endpoint,
+    });
+    const code = await github.authenticate();
+    return this.authenticate(() => {
+      return raas.user.authenticateWithGitHub(code);
+    });
   }
 
   public async authenticateWithEmail(email: string, password: string) {
+    return this.authenticate(() => {
+      return raas.user.authenticateWithEmail(email, password);
+    });
+  }
+
+  public async authenticate(
+    performAuthentication: () => Promise<raas.user.IRaasAuthenticationResponse>,
+  ) {
     const endpoint = raas.getEndpoint();
     try {
       this.sendCloudStatus({
@@ -121,7 +110,7 @@ export class CloudManager {
         new Error(
           `Request timed out (waited ${CloudManager.AUTHENTICATION_TIMEOUT} ms)`,
         ),
-        raas.user.authenticateWithEmail(email, password),
+        performAuthentication(),
       );
       raas.user.setToken(response.token);
       this.refresh(true);
@@ -131,6 +120,8 @@ export class CloudManager {
         message: err.message,
         endpoint,
       });
+      // Allow callers to catch this error too, by rethrowing
+      throw err;
     }
   }
 
