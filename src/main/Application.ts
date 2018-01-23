@@ -269,15 +269,38 @@ export class Application {
     });
   }
 
-  public showCloudAuthentication() {
-    return new Promise(resolve => {
+  public showCloudAuthentication(
+    resolveUser: boolean = false,
+  ): Promise<raas.user.IMeResponse> {
+    return new Promise((resolve, reject) => {
       const window = this.windowManager.createWindow({
         type: 'cloud-authentication',
       });
+      // If resolve user is true - we wait for the authentication before resolving
+      if (resolveUser) {
+        const listener = (status: ICloudStatus) => {
+          if (
+            status.kind === 'authenticated' ||
+            status.kind === 'has-primary-subscription'
+          ) {
+            this.cloudManager.removeListener(listener);
+            resolve(status.user);
+          } else if (status.kind === 'error') {
+            this.cloudManager.removeListener(listener);
+            reject(new Error(status.message));
+          }
+        };
+        this.cloudManager.addListener(listener);
+        // Reject the promise if the window is closed before cloud status turns authenticated
+        window.once('close', () => {
+          reject(new Error('Window was closed'));
+        });
+      } else {
+        window.webContents.once('did-finish-load', () => {
+          resolve();
+        });
+      }
       window.show();
-      window.webContents.once('did-finish-load', () => {
-        resolve();
-      });
     });
   }
 
