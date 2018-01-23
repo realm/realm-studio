@@ -279,10 +279,7 @@ export class Application {
       // If resolve user is true - we wait for the authentication before resolving
       if (resolveUser) {
         const listener = (status: ICloudStatus) => {
-          if (
-            status.kind === 'authenticated' ||
-            status.kind === 'has-primary-subscription'
-          ) {
+          if (status.kind === 'authenticated') {
             this.cloudManager.removeListener(listener);
             resolve(status.user);
           } else if (status.kind === 'error') {

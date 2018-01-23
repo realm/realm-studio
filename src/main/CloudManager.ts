@@ -29,13 +29,7 @@ export interface IAuthenticatingCloudStatus extends IBaseCloudStatus {
 export interface IAuthenticatedCloudStatus extends IBaseCloudStatus {
   kind: 'authenticated';
   justAuthenticated: boolean;
-  raasToken: string;
-  user: raas.user.IMeResponse;
-}
-
-export interface IPrimarySubscriptionCloudStatus extends IBaseCloudStatus {
-  kind: 'has-primary-subscription';
-  primarySubscription: raas.user.ISubscription;
+  primarySubscription?: raas.user.ISubscription;
   raasToken: string;
   user: raas.user.IMeResponse;
 }
@@ -45,8 +39,7 @@ export type ICloudStatus =
   | IFetchingCloudStatus
   | INotAuthenticatedCloudStatus
   | IAuthenticatingCloudStatus
-  | IAuthenticatedCloudStatus
-  | IPrimarySubscriptionCloudStatus;
+  | IAuthenticatedCloudStatus;
 
 type CloudStatusListener = (status: ICloudStatus) => void;
 
@@ -146,24 +139,17 @@ export class CloudManager {
         });
         const user = await raas.user.getAuth();
         const subscriptions = await raas.user.getSubscriptions();
+        const status: IAuthenticatedCloudStatus = {
+          kind: 'authenticated',
+          endpoint,
+          justAuthenticated,
+          raasToken,
+          user,
+        };
         if (subscriptions.length > 0) {
-          const primarySubscription = subscriptions[0];
-          this.sendCloudStatus({
-            kind: 'has-primary-subscription',
-            endpoint,
-            primarySubscription,
-            raasToken,
-            user,
-          });
-        } else {
-          this.sendCloudStatus({
-            kind: 'authenticated',
-            endpoint,
-            justAuthenticated,
-            raasToken,
-            user,
-          });
+          status.primarySubscription = subscriptions[0];
         }
+        this.sendCloudStatus(status);
       } else {
         this.sendCloudStatus({
           kind: 'not-authenticated',

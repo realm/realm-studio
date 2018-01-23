@@ -83,7 +83,11 @@ export class GreetingContainer extends React.Component<
     try {
       if (!subscription) {
         const { cloudStatus } = this.state;
-        if (cloudStatus && cloudStatus.kind === 'has-primary-subscription') {
+        if (
+          cloudStatus &&
+          cloudStatus.kind === 'authenticated' &&
+          cloudStatus.primarySubscription
+        ) {
           return this.onConnectToPrimarySubscription(
             cloudStatus.primarySubscription,
           );
