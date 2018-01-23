@@ -50,7 +50,9 @@ const getOrCreateIdentity = () => {
       electron.remote.app.getPath('userData'),
       'settings.json',
     );
-    const legacySettings = fs.readJsonSync(settingsPath);
+    const legacySettings = fs.existsSync(settingsPath)
+      ? fs.readJsonSync(settingsPath)
+      : null;
     if (legacySettings && legacySettings.identity) {
       store.set('identity', legacySettings.identity);
       return legacySettings.identity;
