@@ -6,11 +6,14 @@ import * as raas from '../../services/raas';
 
 import { CloudAuthentication } from './CloudAuthentication';
 
+const INTRODUCED_STORAGE_KEY = 'cloud-introduced';
+
+export type Mode = 'introduction' | 'log-in' | 'sign-up' | 'waitlist';
+
 interface ICloudAuthenticationContainerState {
-  email: string;
   error?: Error;
   isLoading: boolean;
-  password: string;
+  mode: Mode;
 }
 
 class CloudAuthenticationContainer extends React.Component<
@@ -19,32 +22,35 @@ class CloudAuthenticationContainer extends React.Component<
 > {
   constructor() {
     super();
+    const wasCloudIntroduced =
+      localStorage.getItem(INTRODUCED_STORAGE_KEY) !== null;
     this.state = {
-      email: '',
       isLoading: false,
-      password: '',
+      mode: wasCloudIntroduced ? 'log-in' : 'introduction',
     };
   }
 
   public render() {
     return (
       <CloudAuthentication
-        email={this.state.email}
         error={this.state.error}
         isLoading={this.state.isLoading}
+        mode={this.state.mode}
         onAuthenticateWithEmail={this.onAuthenticateWithEmail}
         onAuthenticateWithGitHub={this.onAuthenticateWithGitHub}
-        onEmailChange={this.onEmailChange}
-        onPasswordChange={this.onPasswordChange}
-        password={this.state.password}
+        onModeChange={this.onModeChange}
+        onSignUp={this.onSignUp}
       />
     );
   }
 
-  protected onAuthenticateWithEmail = async () => {
+  protected onAuthenticateWithEmail = async (
+    email: string,
+    password: string,
+  ) => {
     try {
       this.setState({ isLoading: true, error: undefined });
-      await main.authenticateWithEmail(this.state.email, this.state.password);
+      await main.authenticateWithEmail(email, password);
       this.setState({ isLoading: false });
       // Close this window ..
       window.close();
@@ -56,22 +62,44 @@ class CloudAuthenticationContainer extends React.Component<
   protected onAuthenticateWithGitHub = async () => {
     try {
       this.setState({ isLoading: true, error: undefined });
-      await main.authenticateWithGitHub();
-      this.setState({ isLoading: false });
-      // Close this window ..
-      window.close();
+      const response = await main.authenticateWithGitHub();
+      this.setCloudIntroduced(true);
+      if (!response.canCreate) {
+        this.setState({ isLoading: false, mode: 'waitlist' });
+        // Focus the window to show the waitlist message
+        window.focus();
+      } else {
+        this.setState({ isLoading: false });
+        // Close this window ..
+        window.close();
+      }
     } catch (err) {
       this.setState({ error: err, isLoading: false });
     }
   };
 
-  protected onEmailChange = (email: string) => {
-    this.setState({ email });
+  protected onModeChange = (mode: Mode) => {
+    this.setState({ mode });
   };
 
-  protected onPasswordChange = (password: string) => {
-    this.setState({ password });
+  protected onSignUp = async (email: string) => {
+    try {
+      this.setState({ isLoading: true, error: undefined });
+      await raas.user.postEmailSignup(email);
+      this.setState({ isLoading: false, mode: 'waitlist' });
+      this.setCloudIntroduced(true);
+    } catch (err) {
+      this.setState({ error: err, isLoading: false });
+    }
   };
+
+  protected setCloudIntroduced(introduced: boolean) {
+    if (introduced) {
+      localStorage.setItem(INTRODUCED_STORAGE_KEY, 'true');
+    } else {
+      localStorage.removeItem(INTRODUCED_STORAGE_KEY);
+    }
+  }
 }
 
 export { CloudAuthenticationContainer as CloudAuthentication };

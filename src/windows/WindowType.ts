@@ -110,7 +110,7 @@ export function getWindowOptions(
     return {
       title: `Realm Cloud`,
       width: 400,
-      height: 420,
+      height: 450,
     };
   } else if (props.type === 'tutorial') {
     const config = tutorials.getConfig(props.id);

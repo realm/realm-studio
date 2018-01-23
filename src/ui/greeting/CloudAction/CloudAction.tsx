@@ -14,6 +14,7 @@ export interface ICloudActionButtonProps {
   onAuthenticate: () => void;
   onConnectToPrimarySubscription: () => void;
   onDeauthenticate: () => void;
+  onRefresh: () => void;
   onServerCreate: () => void;
   onShare: (socialNetwork: SocialNetwork) => void;
 }
@@ -23,6 +24,7 @@ export const CloudAction = ({
   onAuthenticate,
   onConnectToPrimarySubscription,
   onDeauthenticate,
+  onRefresh,
   onServerCreate,
   onShare,
 }: ICloudActionButtonProps) => {
@@ -38,7 +40,7 @@ export const CloudAction = ({
   } else if (cloudStatus && cloudStatus.kind === 'fetching') {
     return (
       <Alert className="CloudAction__Alert" color="info">
-        Fetching your profile and subscriptions
+        Fetching your profile and instances
         <LoadingDots className="CloudAction__LoadingDots" />
       </Alert>
     );
@@ -49,37 +51,44 @@ export const CloudAction = ({
       </Button>
     ) : (
       <Alert className="CloudAction__Alert" color="info">
-        <small>
-          You're on the waitlist to use Realm Cloud!{' '}
-          <span
-            className="Greeting__ShareAction"
-            onClick={() => onShare('twitter')}
-            title="Now that's something worth tweeting about!"
-          >
-            <i className="fa fa-twitter" />
-          </span>{' '}
-          <span
-            className="Greeting__ShareAction"
-            onClick={() => onShare('facebook')}
-            title="Now that's something worth sharing!"
-          >
-            <i className="fa fa-facebook" />
-          </span>{' '}
-          <span
-            className="Greeting__ShareAction"
-            onClick={() => onShare('reddit')}
-            title="Now that's something worth upvoting!"
-          >
-            <i className="fa fa-reddit" />
-          </span>{' '}
-          <span
-            className="Greeting__ShareAction"
-            onClick={() => onShare('hacker-news')}
-            title="Now that's something worth upvoting!"
-          >
-            <i className="fa fa-hacker-news" />
-          </span>
-        </small>
+        You're on the waitlist to use Realm Cloud!{' '}
+        <span
+          className="CloudAction__ActionIcon"
+          onClick={() => onShare('twitter')}
+          title="Now that's something worth tweeting about!"
+        >
+          <i className="fa fa-twitter" />
+        </span>{' '}
+        <span
+          className="CloudAction__ActionIcon"
+          onClick={() => onShare('facebook')}
+          title="Now that's something worth sharing!"
+        >
+          <i className="fa fa-facebook" />
+        </span>{' '}
+        <span
+          className="CloudAction__ActionIcon"
+          onClick={() => onRefresh()}
+          title="Refresh this status"
+        >
+          <i className="fa fa-refresh" />
+        </span>
+        {/*
+        <span
+          className="Greeting__ShareAction"
+          onClick={() => onShare('reddit')}
+          title="Now that's something worth upvoting!"
+        >
+          <i className="fa fa-reddit" />
+        </span>{' '}
+        <span
+          className="Greeting__ShareAction"
+          onClick={() => onShare('hacker-news')}
+          title="Now that's something worth upvoting!"
+        >
+          <i className="fa fa-hacker-news" />
+        </span>
+        */}
       </Alert>
     );
   } else if (cloudStatus && cloudStatus.kind === 'has-primary-subscription') {

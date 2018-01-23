@@ -1,79 +1,69 @@
+import * as classNames from 'classnames';
 import * as React from 'react';
 import { Alert, Button, Form, FormGroup, Input } from 'reactstrap';
 
+import { Mode } from '.';
 import cloudLogo from '../../../static/svgs/cloud-logo.svg';
 import { LoadingOverlay } from '../reusable/loading-overlay';
+import { IntroductionOverlay } from './IntroductionOverlay';
+import { LogInForm } from './LogInForm';
+import { SignUpForm } from './SignUpForm';
+import { WaitlistOverlay } from './WaitlistOverlay';
 
 import './CloudAuthentication.scss';
 
 interface ICloudAuthenticationProps {
-  email: string;
   error?: Error;
   isLoading: boolean;
-  onAuthenticateWithEmail: () => void;
+  mode: Mode;
+  onAuthenticateWithEmail: (email: string, password: string) => void;
   onAuthenticateWithGitHub: () => void;
-  onEmailChange: (email: string) => void;
-  onPasswordChange: (password: string) => void;
-  password: string;
+  onModeChange: (mode: Mode) => void;
+  onSignUp: (email: string) => void;
 }
 
 export const CloudAuthentication = ({
-  email,
   error,
   isLoading,
+  mode,
   onAuthenticateWithEmail,
   onAuthenticateWithGitHub,
-  onEmailChange,
-  onPasswordChange,
-  password,
+  onModeChange,
+  onSignUp,
 }: ICloudAuthenticationProps) => (
-  <div className="CloudAuthentication">
-    <svg className="CloudAuthentication__Icon" viewBox={cloudLogo.viewBox}>
-      <use xlinkHref={`#${cloudLogo.id}`} />
-    </svg>
-    <h3 className="CloudAuthentication__Title">Realm Cloud</h3>
-    <Form
-      className="CloudAuthentication__Form"
-      onSubmit={e => {
-        e.preventDefault();
-        onAuthenticateWithEmail();
-      }}
-    >
+  <div
+    className={classNames(
+      'CloudAuthentication',
+      `CloudAuthentication--${mode}`,
+    )}
+  >
+    <div className="CloudAuthentication__Brand">
+      <svg className="CloudAuthentication__Icon" viewBox={cloudLogo.viewBox}>
+        <use xlinkHref={`#${cloudLogo.id}`} />
+      </svg>
+      <h3 className="CloudAuthentication__Title">Realm Cloud</h3>
+    </div>
+    <div className="CloudAuthentication__Form">
       {error && <Alert color="danger">{error.message}</Alert>}
-      <FormGroup>
-        <Input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={e => onEmailChange(e.target.value)}
-          required
+      {mode === 'log-in' && (
+        <LogInForm
+          onAuthenticateWithEmail={onAuthenticateWithEmail}
+          onAuthenticateWithGitHub={onAuthenticateWithGitHub}
+          onModeChange={onModeChange}
         />
-      </FormGroup>
-      <FormGroup>
-        <Input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={e => onPasswordChange(e.target.value)}
-          required
+      )}
+      {mode === 'sign-up' && (
+        <SignUpForm
+          onAuthenticateWithGitHub={onAuthenticateWithGitHub}
+          onModeChange={onModeChange}
+          onSignUp={onSignUp}
         />
-      </FormGroup>
-      <FormGroup>
-        <Button className="CloudAuthentication__Button" color="primary">
-          Log in
-        </Button>
-      </FormGroup>
-      <Button
-        className="CloudAuthentication__Button"
-        color="secondary"
-        onClick={e => {
-          e.preventDefault();
-          onAuthenticateWithGitHub();
-        }}
-      >
-        <i className="fa fa-github" /> Log in using GitHub
-      </Button>
-    </Form>
+      )}
+      {mode === 'introduction' && (
+        <IntroductionOverlay onModeChange={onModeChange} />
+      )}
+      {mode === 'waitlist' && <WaitlistOverlay onModeChange={onModeChange} />}
+    </div>
     <LoadingOverlay loading={isLoading} />
   </div>
 );

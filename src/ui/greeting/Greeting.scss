@@ -136,14 +136,6 @@ $history-panel-icon-size: 20px;
     width: 90px;
   }
 
-  &__ShareAction {
-    cursor: pointer;
-
-    &:hover {
-      color: $color-indigo;
-    }
-  }
-
   &__CloudOverlay {
     background: $overlay-background;
     bottom: 0;
