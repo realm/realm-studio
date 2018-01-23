@@ -471,17 +471,6 @@ export class Application {
     electron.Menu.setApplicationMenu(menu);
   };
 
-  private openLocalRealmAtPath = (filePath: string) => {
-    const props: IRealmBrowserWindowProps = {
-      type: 'realm-browser',
-      realm: {
-        mode: realms.RealmLoadingMode.Local,
-        path: filePath,
-      },
-    };
-    return this.showRealmBrowser(props);
-  };
-
   private async openCloudUrl(url: URL): Promise<void> {
     // Test that any user id matches the currently authenticated user
     const currentUser = raas.user.hasToken() ? await raas.user.getAuth() : null;
@@ -550,6 +539,17 @@ export class Application {
       validateCertificates: true,
     });
   }
+
+  private openLocalRealmAtPath = (filePath: string) => {
+    const props: IRealmBrowserWindowProps = {
+      type: 'realm-browser',
+      realm: {
+        mode: realms.RealmLoadingMode.Local,
+        path: filePath,
+      },
+    };
+    return this.showRealmBrowser(props);
+  };
 }
 
 if (module.hot) {
