@@ -373,7 +373,10 @@ export class Application {
     }
   };
 
-  private onOpenUrl = (event: Event, urlString: string) => {
+  private onOpenUrl = async (
+    event: Event,
+    urlString: string,
+  ): Promise<void> => {
     if (electron.app.isReady()) {
       const url = new URL(urlString);
       if (url.protocol === `${STUDIO_PROTOCOL}:`) {
@@ -389,6 +392,36 @@ export class Application {
           }
         }
       } else if (url.protocol === `${CLOUD_PROTOCOL}:`) {
+        // Test that any user id matches the currently authenticated user
+        const currentUser = raas.user.hasToken()
+          ? await raas.user.getAuth()
+          : null;
+        if (url.username) {
+          if (!currentUser) {
+            await this.cloudManager.deauthenticate();
+            const newUser = await this.showCloudAuthentication(true);
+            // Retry
+            return this.onOpenUrl(event, urlString);
+          } else if (url.username !== currentUser.id) {
+            const answer = electron.dialog.showMessageBox({
+              type: 'warning',
+              message: `You're trying to connect to a cloud instance that is not owned by you.\n\nDo you want to login as another user?`,
+              buttons: ['Yes, login with another user!', 'No, abort!'],
+              defaultId: 0,
+              cancelId: 1,
+            });
+            if (answer === 1) {
+              // Abort!
+              return;
+            } else {
+              await this.cloudManager.deauthenticate();
+              const newUser = await this.showCloudAuthentication(true);
+              // Retry
+              return this.onOpenUrl(event, urlString);
+            }
+          }
+        }
+
         // Check the hostname to ensure it ends on a trusted domain
         const trustedHosts = ['.realm.io', '.realmlab.net'];
         const trusted = trustedHosts.reduce((result, host) => {
@@ -411,7 +444,7 @@ export class Application {
           }
         }
 
-        this.showServerAdministration({
+        await this.showServerAdministration({
           credentials: raas.user.getTenantCredentials(serverUrl.toString()),
           isCloudTenant: true,
           type: 'server-administration',
