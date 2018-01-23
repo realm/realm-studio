@@ -1,8 +1,10 @@
 import { MainActions } from '../../main/MainActions';
 import { ImportFormat } from '../../services/data-importer';
+import * as raas from '../../services/raas';
 import {
   IRealmBrowserWindowProps,
   IServerAdministrationWindowProps,
+  ITutorialWindowProps,
 } from '../../windows/WindowType';
 import { ActionSender } from '../ActionSender';
 import { LoopbackTransport, RendererTransport } from '../transports';
@@ -17,12 +19,39 @@ export class Sender extends ActionSender {
     );
   }
 
+  public authenticateWithEmail(
+    email: string,
+    password: string,
+  ): Promise<raas.user.IAuthResponse> {
+    return this.send(MainActions.AuthenticateWithEmail, email, password);
+  }
+
+  public authenticateWithGitHub(): Promise<raas.user.IAuthResponse> {
+    return this.send(MainActions.AuthenticateWithGitHub);
+  }
+
   public checkForUpdates() {
     return this.send(MainActions.CheckForUpdates);
   }
 
-  public showConnectToServer() {
-    return this.send(MainActions.ShowConnectToServer);
+  public deauthenticate(): Promise<void> {
+    return this.send(MainActions.Deauthenticate);
+  }
+
+  public refreshCloudStatus() {
+    return this.send(MainActions.RefreshCloudStatus);
+  }
+
+  public setRaasEndpoint(endpoint: raas.Endpoint) {
+    return this.send(MainActions.SetRaasEndpoint, endpoint);
+  }
+
+  public showCloudAuthentication() {
+    return this.send(MainActions.ShowCloudAuthentication);
+  }
+
+  public showConnectToServer(url?: string) {
+    return this.send(MainActions.ShowConnectToServer, url);
   }
 
   public showGreeting() {
@@ -43,5 +72,9 @@ export class Sender extends ActionSender {
 
   public showServerAdministration(props: IServerAdministrationWindowProps) {
     return this.send(MainActions.ShowServerAdministration, props);
+  }
+
+  public showTutorial(options: ITutorialWindowProps) {
+    return this.send(MainActions.ShowTutorial, options);
   }
 }

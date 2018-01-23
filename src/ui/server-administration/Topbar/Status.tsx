@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button } from 'reactstrap';
 import * as Realm from 'realm';
 
-import { ILoadingProgress } from '../reusable/loading-overlay';
+import { ILoadingProgress } from '../../reusable/loading-overlay';
 
 export interface IStatusProps {
   onReconnect: () => void;
@@ -15,15 +15,15 @@ export const Status = ({ onReconnect, progress, user }: IStatusProps) => {
     if (progress.status === 'failed') {
       return (
         <p className="ServerAdministration__Status">
-          <i className="fa fa-exclamation-circle" /> Failed synchronizing: "
+          <i className="fa fa-exclamation-circle" /> Disconnected: "
           <span className="ServerAdministration__Status__error">
             {progress.message}
           </span>"&nbsp;
-          {progress.retry ? (
+          {/* progress.retry ? (
             <Button size="sm" onClick={progress.retry.onRetry}>
               Reconnect now
             </Button>
-          ) : null}
+          ) : null */}
         </p>
       );
     } else if (progress.status === 'in-progress') {

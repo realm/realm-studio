@@ -31,8 +31,8 @@ export const LoadingOverlay = ({
       })}
     >
       {progress &&
-        progress.transferable &&
-        progress.transferred && (
+        typeof progress.transferable === 'number' &&
+        typeof progress.transferred === 'number' && (
           <Progress
             className="LoadingOverlay__Progress"
             value={progress.transferred}

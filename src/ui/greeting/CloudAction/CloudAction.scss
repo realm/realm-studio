@@ -1,0 +1,33 @@
+@import "~realm-studio-styles/variables";
+
+.CloudAction {
+  &__Alert {
+    font-size: .8rem;
+    margin: 0;
+    padding: $spacer / 2;
+  }
+
+  &__LoadingDots {
+    margin-left: $spacer / 2;
+  }
+
+  &__Close {
+    cursor: pointer;
+    margin-left: $spacer / 2;
+  }
+
+  &__Icon {
+    height: 1em;
+    margin-left: - $spacer / 4;
+    vertical-align: -10%;
+    width: 1em;
+  }
+
+  &__ActionIcon {
+    cursor: pointer;
+
+    &:hover {
+      color: $black;
+    }
+  }
+}
