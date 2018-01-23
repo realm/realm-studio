@@ -19,7 +19,10 @@ export class Sender extends ActionSender {
     );
   }
 
-  public authenticateWithEmail(email: string, password: string): Promise<void> {
+  public authenticateWithEmail(
+    email: string,
+    password: string,
+  ): Promise<raas.user.IAuthResponse> {
     return this.send(MainActions.AuthenticateWithEmail, email, password);
   }
 

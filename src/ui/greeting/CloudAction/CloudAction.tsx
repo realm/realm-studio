@@ -45,35 +45,47 @@ export const CloudAction = ({
       </Alert>
     );
   } else if (cloudStatus && cloudStatus.kind === 'authenticated') {
-    return cloudStatus.user.canCreate ? (
-      <Button onClick={onServerCreate} color="primary">
-        Create Realm Cloud server
-      </Button>
-    ) : (
-      <Alert className="CloudAction__Alert" color="info">
-        You're on the waitlist to use Realm Cloud!{' '}
-        <span
-          className="CloudAction__ActionIcon"
-          onClick={() => onShare('twitter')}
-          title="Now that's something worth tweeting about!"
+    if (cloudStatus.primarySubscription) {
+      return (
+        <Button
+          onClick={() => onConnectToPrimarySubscription()}
+          color="primary"
         >
-          <i className="fa fa-twitter" />
-        </span>{' '}
-        <span
-          className="CloudAction__ActionIcon"
-          onClick={() => onShare('facebook')}
-          title="Now that's something worth sharing!"
-        >
-          <i className="fa fa-facebook" />
-        </span>{' '}
-        <span
-          className="CloudAction__ActionIcon"
-          onClick={() => onRefresh()}
-          title="Refresh this status"
-        >
-          <i className="fa fa-refresh" />
-        </span>
-        {/*
+          Connect to Realm Cloud
+        </Button>
+      );
+    } else if (cloudStatus.user.canCreate) {
+      return (
+        <Button onClick={onServerCreate} color="primary">
+          Create Realm Cloud server
+        </Button>
+      );
+    } else {
+      return (
+        <Alert className="CloudAction__Alert" color="info">
+          You're on the waitlist to use Realm Cloud!{' '}
+          <span
+            className="CloudAction__ActionIcon"
+            onClick={() => onShare('twitter')}
+            title="Now that's something worth tweeting about!"
+          >
+            <i className="fa fa-twitter" />
+          </span>{' '}
+          <span
+            className="CloudAction__ActionIcon"
+            onClick={() => onShare('facebook')}
+            title="Now that's something worth sharing!"
+          >
+            <i className="fa fa-facebook" />
+          </span>{' '}
+          <span
+            className="CloudAction__ActionIcon"
+            onClick={() => onRefresh()}
+            title="Refresh this status"
+          >
+            <i className="fa fa-refresh" />
+          </span>
+          {/*
         <span
           className="Greeting__ShareAction"
           onClick={() => onShare('reddit')}
@@ -89,14 +101,9 @@ export const CloudAction = ({
           <i className="fa fa-hacker-news" />
         </span>
         */}
-      </Alert>
-    );
-  } else if (cloudStatus && cloudStatus.kind === 'has-primary-subscription') {
-    return (
-      <Button onClick={() => onConnectToPrimarySubscription()} color="primary">
-        Connect to Realm Cloud
-      </Button>
-    );
+        </Alert>
+      );
+    }
   } else if (cloudStatus && cloudStatus.kind === 'error') {
     return (
       <Alert className="CloudAction__Alert" color="danger">

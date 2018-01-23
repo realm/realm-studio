@@ -52,6 +52,7 @@ class CloudAuthenticationContainer extends React.Component<
       this.setState({ isLoading: true, error: undefined });
       await main.authenticateWithEmail(email, password);
       this.setState({ isLoading: false });
+      this.setCloudIntroduced(true);
       // Close this window ..
       window.close();
     } catch (err) {

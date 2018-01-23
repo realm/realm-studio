@@ -269,15 +269,38 @@ export class Application {
     });
   }
 
-  public showCloudAuthentication() {
-    return new Promise(resolve => {
+  public showCloudAuthentication(
+    resolveUser: boolean = false,
+  ): Promise<raas.user.IMeResponse> {
+    return new Promise((resolve, reject) => {
       const window = this.windowManager.createWindow({
         type: 'cloud-authentication',
       });
+      // If resolve user is true - we wait for the authentication before resolving
+      if (resolveUser) {
+        const listener = (status: ICloudStatus) => {
+          if (status.kind === 'authenticated') {
+            this.cloudManager.removeListener(listener);
+            resolve(status.user);
+          } else if (status.kind === 'error') {
+            this.cloudManager.removeListener(listener);
+            reject(new Error(status.message));
+          }
+        };
+        this.cloudManager.addListener(listener);
+        // Reject the promise if the window is closed before cloud status turns authenticated
+        window.once('close', () => {
+          // We need a timeout here, because the close event fires before the cloud status updates
+          setTimeout(() => {
+            reject(new Error('Window was closed'));
+          }, 500);
+        });
+      } else {
+        window.webContents.once('did-finish-load', () => {
+          resolve();
+        });
+      }
       window.show();
-      window.webContents.once('did-finish-load', () => {
-        resolve();
-      });
     });
   }
 
@@ -366,33 +389,8 @@ export class Application {
           }
         }
       } else if (url.protocol === `${CLOUD_PROTOCOL}:`) {
-        // Check the hostname to ensure it ends on a trusted domain
-        const trustedHosts = ['.realm.io', '.realmlab.net'];
-        const trusted = trustedHosts.reduce((result, host) => {
-          return result || url.host.endsWith(host);
-        }, false);
-
-        const serverUrl = new URL(`https://${url.host}`);
-
-        if (!trusted) {
-          const answer = electron.dialog.showMessageBox({
-            type: 'warning',
-            message: `You're about to connect to ${serverUrl.toString()}.\n\nThis will reveal your cloud token to the server. Do you wish to proceed?`,
-            buttons: ['Yes, connect!', 'No, abort!'],
-            defaultId: 0,
-            cancelId: 1,
-          });
-          if (answer === 1) {
-            // Abort!
-            return;
-          }
-        }
-
-        this.showServerAdministration({
-          credentials: raas.user.getTenantCredentials(serverUrl.toString()),
-          isCloudTenant: true,
-          type: 'server-administration',
-          validateCertificates: true,
+        this.openCloudUrl(url).catch((err: Error) => {
+          showError('Could not open Realm Cloud URL', err);
         });
       }
     } else {
@@ -483,6 +481,75 @@ export class Application {
     };
     return this.showRealmBrowser(props);
   };
+
+  private async openCloudUrl(url: URL): Promise<void> {
+    // Test that any user id matches the currently authenticated user
+    const currentUser = raas.user.hasToken() ? await raas.user.getAuth() : null;
+    if (url.username) {
+      try {
+        if (!currentUser) {
+          await this.cloudManager.deauthenticate();
+          const newUser = await this.showCloudAuthentication(true);
+          // Retry
+          return this.openCloudUrl(url);
+        } else if (url.username !== currentUser.id) {
+          const answer = electron.dialog.showMessageBox({
+            type: 'warning',
+            message: `You're trying to connect to a cloud instance that is not owned by you.\n\nDo you want to login as another user?`,
+            buttons: ['Yes, login with another user!', 'No, abort!'],
+            defaultId: 0,
+            cancelId: 1,
+          });
+          if (answer === 1) {
+            // Abort!
+            return;
+          } else {
+            await this.cloudManager.deauthenticate();
+            const newUser = await this.showCloudAuthentication(true);
+            // Retry
+            return this.openCloudUrl(url);
+          }
+        }
+      } catch (err) {
+        // We consider closing the window aborting the opening
+        if (err.message === 'Window was closed') {
+          // Abort!
+          return;
+        } else {
+          throw err;
+        }
+      }
+    }
+
+    // Check the hostname to ensure it ends on a trusted domain
+    const trustedHosts = ['.realm.io', '.realmlab.net'];
+    const trusted = trustedHosts.reduce((result, host) => {
+      return result || url.host.endsWith(host);
+    }, false);
+
+    const serverUrl = new URL(`https://${url.host}`);
+
+    if (!trusted) {
+      const answer = electron.dialog.showMessageBox({
+        type: 'warning',
+        message: `You're about to connect to ${serverUrl.toString()}.\n\nThis will reveal your cloud token to the server. Do you wish to proceed?`,
+        buttons: ['Yes, connect!', 'No, abort!'],
+        defaultId: 0,
+        cancelId: 1,
+      });
+      if (answer === 1) {
+        // Abort!
+        return;
+      }
+    }
+
+    await this.showServerAdministration({
+      credentials: raas.user.getTenantCredentials(serverUrl.toString()),
+      isCloudTenant: true,
+      type: 'server-administration',
+      validateCertificates: true,
+    });
+  }
 }
 
 if (module.hot) {
