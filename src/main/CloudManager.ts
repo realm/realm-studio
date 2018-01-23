@@ -96,7 +96,7 @@ export class CloudManager {
   }
 
   public async authenticate(
-    performAuthentication: () => Promise<raas.user.IRaasAuthenticationResponse>,
+    performAuthentication: () => Promise<raas.user.IAuthResponse>,
   ) {
     const endpoint = raas.getEndpoint();
     try {
@@ -105,7 +105,7 @@ export class CloudManager {
         waitingForUser: false,
         endpoint,
       });
-      const response = await timeout<raas.user.IRaasAuthenticationResponse>(
+      const response = await timeout<raas.user.IAuthResponse>(
         CloudManager.AUTHENTICATION_TIMEOUT,
         new Error(
           `Request timed out (waited ${CloudManager.AUTHENTICATION_TIMEOUT} ms)`,
@@ -114,6 +114,7 @@ export class CloudManager {
       );
       raas.user.setToken(response.token);
       this.refresh(true);
+      return response;
     } catch (err) {
       this.sendCloudStatus({
         kind: 'error',

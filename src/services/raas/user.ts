@@ -11,7 +11,10 @@ import { IServerCredentials } from '../ros';
 
 const buildUserUrl = (path: string) => buildUrl('user', 'v1beta', path);
 
-export interface IRaasAuthenticationResponse {
+export interface IAuthResponse {
+  canCreate?: boolean;
+  email?: string;
+  id: string;
   token: string;
 }
 
@@ -38,6 +41,11 @@ export interface IAccountResponse {
   githubUserId?: string;
 }
 
+export interface IEmailSignupResponse {
+  id: string;
+  email: string;
+}
+
 export interface ISubscription {
   id: string;
   tenantStatus: string;
@@ -50,7 +58,7 @@ export interface ISubscription {
 
 export const authenticateWithGitHub = async (
   githubCode: string,
-): Promise<IRaasAuthenticationResponse> => {
+): Promise<IAuthResponse> => {
   const url = buildUserUrl('auth/github');
   const response = await fetch(url, {
     method: 'POST',
@@ -74,7 +82,7 @@ export const authenticateWithGitHub = async (
 export const authenticateWithEmail = async (
   email: string,
   password: string,
-): Promise<IRaasAuthenticationResponse> => {
+): Promise<IAuthResponse> => {
   const url = buildUserUrl('auth/email');
   const response = await fetch(url, {
     method: 'POST',
@@ -119,6 +127,25 @@ export const getTenantCredentials = (url: string): IServerCredentials => {
       data: getToken(),
     },
   };
+};
+
+export const postEmailSignup = async (email: string) => {
+  const url = buildUserUrl('auth/email-signup');
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: new Headers({
+      'Content-Type': 'application/json',
+    }),
+    body: JSON.stringify({
+      email,
+    }),
+  });
+  if (response.ok) {
+    return (await response.json()) as IEmailSignupResponse;
+  } else {
+    const message = await getErrorMessage(response);
+    throw new Error(message);
+  }
 };
 
 export const getAccount = async () => {

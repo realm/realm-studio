@@ -23,7 +23,7 @@ export class Sender extends ActionSender {
     return this.send(MainActions.AuthenticateWithEmail, email, password);
   }
 
-  public authenticateWithGitHub(): Promise<void> {
+  public authenticateWithGitHub(): Promise<raas.user.IAuthResponse> {
     return this.send(MainActions.AuthenticateWithGitHub);
   }
 
