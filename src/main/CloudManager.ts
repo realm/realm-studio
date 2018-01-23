@@ -108,7 +108,9 @@ export class CloudManager {
       const response = await timeout<raas.user.IAuthResponse>(
         CloudManager.AUTHENTICATION_TIMEOUT,
         new Error(
-          `Request timed out (waited ${CloudManager.AUTHENTICATION_TIMEOUT} ms)`,
+          `Request timed out (waited ${
+            CloudManager.AUTHENTICATION_TIMEOUT
+          } ms)`,
         ),
         performAuthentication(),
       );
