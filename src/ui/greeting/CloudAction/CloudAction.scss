@@ -3,6 +3,7 @@
 .CloudAction {
   &__Alert {
     font-size: .8rem;
+    margin: 0;
     padding: $spacer / 2;
   }
 
@@ -20,5 +21,13 @@
     margin-left: - $spacer / 4;
     vertical-align: -10%;
     width: 1em;
+  }
+
+  &__ActionIcon {
+    cursor: pointer;
+
+    &:hover {
+      color: $black;
+    }
   }
 }

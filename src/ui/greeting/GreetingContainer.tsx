@@ -144,6 +144,10 @@ export class GreetingContainer extends React.Component<
     this.setState({ cloudStatus: status });
   };
 
+  public onRefreshCloudStatus = () => {
+    main.refreshCloudStatus();
+  };
+
   public onServerCreate = () => {
     const endpoint = raas.getEndpoint();
     electron.remote.shell.openExternal(`${endpoint}/apps/create`);

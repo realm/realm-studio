@@ -14,6 +14,7 @@ export interface ICloudActionButtonProps {
   onAuthenticate: () => void;
   onConnectToPrimarySubscription: () => void;
   onDeauthenticate: () => void;
+  onRefresh: () => void;
   onServerCreate: () => void;
   onShare: (socialNetwork: SocialNetwork) => void;
 }
@@ -23,6 +24,7 @@ export const CloudAction = ({
   onAuthenticate,
   onConnectToPrimarySubscription,
   onDeauthenticate,
+  onRefresh,
   onServerCreate,
   onShare,
 }: ICloudActionButtonProps) => {
@@ -52,19 +54,27 @@ export const CloudAction = ({
         <small>
           You're on the waitlist to use Realm Cloud!{' '}
           <span
-            className="Greeting__ShareAction"
+            className="CloudAction__ActionIcon"
             onClick={() => onShare('twitter')}
             title="Now that's something worth tweeting about!"
           >
             <i className="fa fa-twitter" />
           </span>{' '}
           <span
-            className="Greeting__ShareAction"
+            className="CloudAction__ActionIcon"
             onClick={() => onShare('facebook')}
             title="Now that's something worth sharing!"
           >
             <i className="fa fa-facebook" />
           </span>{' '}
+          <span
+            className="CloudAction__ActionIcon"
+            onClick={() => onRefresh()}
+            title="Refresh this status"
+          >
+            <i className="fa fa-refresh" />
+          </span>{' '}
+          {/*
           <span
             className="Greeting__ShareAction"
             onClick={() => onShare('reddit')}
@@ -79,6 +89,7 @@ export const CloudAction = ({
           >
             <i className="fa fa-hacker-news" />
           </span>
+          */}
         </small>
       </Alert>
     );
