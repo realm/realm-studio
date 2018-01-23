@@ -290,7 +290,10 @@ export class Application {
         this.cloudManager.addListener(listener);
         // Reject the promise if the window is closed before cloud status turns authenticated
         window.once('close', () => {
-          reject(new Error('Window was closed'));
+          // We need a timeout here, because the close event fires before the cloud status updates
+          setTimeout(() => {
+            reject(new Error('Window was closed'));
+          }, 500);
         });
       } else {
         window.webContents.once('did-finish-load', () => {
