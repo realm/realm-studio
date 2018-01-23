@@ -40,7 +40,7 @@ export const CloudAction = ({
   } else if (cloudStatus && cloudStatus.kind === 'fetching') {
     return (
       <Alert className="CloudAction__Alert" color="info">
-        Fetching your profile and subscriptions
+        Fetching your profile and instances
         <LoadingDots className="CloudAction__LoadingDots" />
       </Alert>
     );
