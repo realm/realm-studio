@@ -3,7 +3,6 @@ import * as React from 'react';
 import * as Realm from 'realm';
 
 import { main } from '../../actions/main';
-import { ICloudStatus } from '../../main/CloudManager';
 import {
   IAdminTokenCredentials,
   IRealmFile,
@@ -28,12 +27,11 @@ import { ServerAdministration, Tab } from './ServerAdministration';
 export interface IServerAdministrationContainerProps
   extends IServerAdministrationWindowProps {
   onValidateCertificatesChange: ValidateCertificatesChangeHandler;
-  isCloudTenant?: boolean;
 }
 
 export interface IServerAdministrationContainerState
   extends IRealmLoadingComponentState {
-  activeTab: Tab | null;
+  activeTab: Tab;
   // This will increment when the realm changes to trigger updates to the UI.
   adminRealmChanges: number;
   isRealmOpening: boolean;
@@ -47,36 +45,12 @@ export class ServerAdministrationContainer extends RealmLoadingComponent<
   constructor() {
     super();
     this.state = {
-      activeTab: null,
+      activeTab: Tab.Realms,
       adminRealmChanges: 0,
       isRealmOpening: false,
       progress: { status: 'idle' },
       user: null,
     };
-  }
-
-  public async componentDidMount() {
-    // Start listening on changes to the cloud-status
-    electron.ipcRenderer.on('cloud-status', this.cloudStatusChanged);
-    try {
-      // Authenticate towards the server
-      const user = await users.authenticate(this.props.credentials);
-      this.setState({
-        user,
-      });
-    } catch (err) {
-      showError('Failed when authenticating with the Realm Object Server', err);
-    }
-
-    if (this.props.isCloudTenant) {
-      this.setState({
-        activeTab: Tab.Dashboard,
-      });
-    } else {
-      this.setState({
-        activeTab: Tab.Realms,
-      });
-    }
   }
 
   public async componentWillMount() {
@@ -92,13 +66,6 @@ export class ServerAdministrationContainer extends RealmLoadingComponent<
     }
   }
 
-  public componentWillUnmount() {
-    electron.ipcRenderer.removeListener(
-      'cloud-status',
-      this.cloudStatusChanged,
-    );
-  }
-
   public render() {
     return (
       <ServerAdministration
@@ -107,9 +74,8 @@ export class ServerAdministrationContainer extends RealmLoadingComponent<
         adminRealm={this.realm}
         adminRealmChanges={this.state.adminRealmChanges}
         adminRealmProgress={this.state.progress}
-        isCloudTenant={this.props.isCloudTenant || false}
-        onValidateCertificatesChange={this.props.onValidateCertificatesChange}
         validateCertificates={this.props.validateCertificates}
+        onValidateCertificatesChange={this.props.onValidateCertificatesChange}
       />
     );
   }
@@ -253,16 +219,6 @@ export class ServerAdministrationContainer extends RealmLoadingComponent<
           },
         },
       });
-    }
-  };
-
-  protected cloudStatusChanged = (
-    e: Electron.IpcMessageEvent,
-    status: ICloudStatus,
-  ) => {
-    // If the user is deauthenticated - close the window if it's administering a cloud tenant
-    if (this.props.isCloudTenant && status.kind === 'not-authenticated') {
-      electron.remote.getCurrentWindow().close();
     }
   };
 }

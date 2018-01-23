@@ -2,9 +2,6 @@ import { app, dialog } from 'electron';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 
-// Loading the fetch API polyfill - so we can use this from the node main process too.
-import 'isomorphic-fetch';
-
 import { Application } from './main/Application';
 
 // TODO: Submit these to a service like opbeat instead.
@@ -24,9 +21,6 @@ if (!isProduction) {
 }
 
 Application.sharedApplication.run();
-app.on('will-quit', e => {
-  Application.sharedApplication.destroy();
-});
 
 // Look for changes to application
 if (module.hot) {

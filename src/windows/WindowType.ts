@@ -4,27 +4,19 @@ import * as assert from 'assert';
 import { URL } from 'url';
 
 import * as ros from '../services/ros';
-import * as tutorials from '../services/tutorials';
 
 export type WindowType =
-  | 'cloud-authentication'
   | 'connect-to-server'
   | 'greeting'
   | 'realm-browser'
-  | 'server-administration'
-  | 'tutorial';
+  | 'server-administration';
 
 export interface IWindowProps {
   type: WindowType;
 }
 
-export interface ICloudAuthenticationWindowProps extends IWindowProps {
-  type: 'cloud-authentication';
-}
-
 export interface IConnectToServerWindowProps extends IWindowProps {
   type: 'connect-to-server';
-  url?: string;
 }
 
 export interface IGreetingWindowProps extends IWindowProps {
@@ -39,25 +31,14 @@ export interface IRealmBrowserWindowProps extends IWindowProps {
 export interface IServerAdministrationWindowProps extends IWindowProps {
   type: 'server-administration';
   credentials: ros.IServerCredentials;
-  isCloudTenant?: boolean;
   validateCertificates: boolean;
 }
 
-export interface ITutorialWindowProps extends IWindowProps {
-  type: 'tutorial';
-  id: string;
-  context: {
-    serverUrl: string;
-  };
-}
-
 export type WindowProps =
-  | ICloudAuthenticationWindowProps
   | IConnectToServerWindowProps
   | IGreetingWindowProps
   | IRealmBrowserWindowProps
-  | IServerAdministrationWindowProps
-  | ITutorialWindowProps;
+  | IServerAdministrationWindowProps;
 
 const getRealmUrl = (realm: ros.realms.ISyncedRealmToLoad) => {
   const url = new URL(
@@ -105,20 +86,6 @@ export function getWindowOptions(
       width: 600,
       height: 400,
       resizable: false,
-    };
-  } else if (props.type === 'cloud-authentication') {
-    return {
-      title: `Realm Cloud`,
-      width: 400,
-      height: 450,
-    };
-  } else if (props.type === 'tutorial') {
-    const config = tutorials.getConfig(props.id);
-    const title = config ? config.title : 'Missing a title';
-    return {
-      title: `Tutorial: ${title}`,
-      width: 800,
-      height: 500,
     };
   }
   return {};

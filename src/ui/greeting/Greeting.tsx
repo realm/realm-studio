@@ -1,15 +1,11 @@
 import * as os from 'os';
 import * as React from 'react';
-import { Button, ButtonGroup } from 'reactstrap';
+import { Button } from 'reactstrap';
 import * as util from 'util';
 
-import { ICloudStatus } from '../../main/CloudManager';
 import { IUpdateStatus } from '../../main/Updater';
-import { IServerCredentials } from '../../services/ros';
 
 import realmLogo from '../../../static/svgs/realm-logo.svg';
-import { CloudAction } from './CloudAction';
-import { SocialNetwork } from './GreetingContainer';
 import { HistoryPanelContainer } from './HistoryPanelContainer';
 import { SignupOverlayContainer } from './SignupOverlayContainer';
 import { UpdateStatusIndicator } from './UpdateStatusIndicator';
@@ -17,41 +13,25 @@ import { UpdateStatusIndicator } from './UpdateStatusIndicator';
 import './Greeting.scss';
 
 export const Greeting = ({
-  cloudStatus,
   isSyncEnabled,
-  onAuthenticate,
   onCheckForUpdates,
-  onCloudSubscriptionCreated,
-  onConnectToPrimarySubscription,
   onConnectToServer,
-  onDeauthenticate,
   onOpenLocalRealm,
-  onRefreshCloudStatus,
-  onServerCreate,
-  onShare,
   updateStatus,
   version,
 }: {
-  cloudStatus?: ICloudStatus;
   isSyncEnabled: boolean;
-  onAuthenticate: () => void;
   onCheckForUpdates: () => void;
-  onCloudSubscriptionCreated: () => void;
-  onConnectToPrimarySubscription: () => void;
   onConnectToServer: () => void;
-  onDeauthenticate: () => void;
   onOpenLocalRealm: () => void;
-  onRefreshCloudStatus: () => void;
-  onServerCreate: () => void;
-  onShare: (socialNetwork: SocialNetwork) => void;
   updateStatus: IUpdateStatus;
   version: string;
 }) => (
   <div className="Greeting">
     <div className="Greeting__ActionsPanel">
       <div className="Greeting__Brand">
-        <svg className="Greeting__Logo" viewBox={realmLogo.viewBox}>
-          <use xlinkHref={`#${realmLogo.id}`} />
+        <svg viewBox={realmLogo.viewBox} className="Greeting__Logo">
+          <use xlinkHref={realmLogo.url} />
         </svg>
         <h3 className="Greeting__Title">Realm Studio</h3>
         <div>Version {version}</div>
@@ -61,35 +41,21 @@ export const Greeting = ({
         onCheckForUpdates={onCheckForUpdates}
       />
       <div className="Greeting__Actions">
-        <div className="Greeting__Action">
-          <CloudAction
-            cloudStatus={cloudStatus}
-            onAuthenticate={onAuthenticate}
-            onConnectToPrimarySubscription={onConnectToPrimarySubscription}
-            onDeauthenticate={onDeauthenticate}
-            onRefresh={onRefreshCloudStatus}
-            onServerCreate={onServerCreate}
-            onShare={onShare}
-          />
-        </div>
-        <div className="Greeting__SecondaryActions">
-          <Button color="secondary" size="sm" onClick={onOpenLocalRealm}>
-            Open Realm file
-          </Button>
-          <Button
-            onClick={onConnectToServer}
-            disabled={!isSyncEnabled}
-            color="secondary"
-            size="sm"
-            title={
-              isSyncEnabled
-                ? 'Click to connect to a Realm Object Server'
-                : `This feature is currently not available on ${os.type()}`
-            }
-          >
-            Connect to Server
-          </Button>
-        </div>
+        <Button className="Greeting__Action" onClick={onOpenLocalRealm}>
+          Open a local Realm
+        </Button>
+        <Button
+          className="Greeting__Action"
+          onClick={onConnectToServer}
+          disabled={!isSyncEnabled}
+          title={
+            isSyncEnabled
+              ? 'Click to connect to Realm Object Server'
+              : `This feature is currently not available on ${os.type()}`
+          }
+        >
+          Connect to Realm Object Server
+        </Button>
       </div>
       <div className="Greeting__DownloadDemo">
         <span>New to realm? </span>

@@ -189,6 +189,7 @@ export const rowCellRangeRenderer = (rowRenderer: GridRowRenderer) => (
       rowIndex,
     );
 
+    // Including the columnStartIndex and columnStopIndex in the row cache key.
     const rowKey = `row-${rowIndex}`;
 
     const isRowVisible =

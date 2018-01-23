@@ -4,6 +4,7 @@ $color-sexy-salmon: #f77c88;
 $color-flamingo: #f25192;
 $color-mulberry: #d34ca3;
 $color-grape-jelly: #9a50a5;
+$color-space-jelly: #9a50a5;
 $color-indigo: #59569e;
 $color-ultramarine: #39477f;
 $color-charcoal: #1c233f;
@@ -19,11 +20,8 @@ $brand-info: $color-ultramarine;
 $btn-secondary-bg: $color-dove;
 $btn-secondary-border: $color-dove;
 
-$state-info-text: $color-ultramarine;
-$state-info-bg: lighten($color-ultramarine, 50%);
-
 $window-background: mix(#fff, $color-dove, 50%);
-$overlay-background: rgba($color-charcoal, .6);
+$overlay-background: rgba($color-charcoal, .25);
 
 /*
 // TODO: Use this once reactstrap is up-to-date https://github.com/reactstrap/reactstrap/issues/487

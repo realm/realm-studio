@@ -28,9 +28,6 @@ module.exports = (env) => {
         }, {
           test: /\.(scss|svg)$/,
           use: "null-loader"
-        }, {
-          test: /\.md$/,
-          use: "file-loader"
         }
       ])
     },

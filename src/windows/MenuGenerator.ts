@@ -19,11 +19,8 @@ export interface IMenuGeneratorProps {
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-export const generateMenu = (
-  generators: IMenuGenerator[],
-  updateMenu: () => void,
-) => {
-  const defaultTemplate = getDefaultMenuTemplate(updateMenu);
+export const generateMenu = (generators: IMenuGenerator[]) => {
+  const defaultTemplate = getDefaultMenuTemplate();
   const template = generators.reduce((partialTemplate, generator) => {
     return generator.generateMenu(partialTemplate);
   }, defaultTemplate);
