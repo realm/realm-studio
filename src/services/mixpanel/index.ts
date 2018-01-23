@@ -39,8 +39,8 @@ const browserParams = {
 // Sends the browser version on every request
 mixpanel.register(browserParams);
 
-const getOrCreateIdentity = () => {
-  // Get the identity from the settings file - in case the localStorage was cleared
+const getIdentity = () => {
+  // Get the identity from the store
   const identityFromStore = store.get('identity');
   if (identityFromStore) {
     return identityFromStore;
@@ -50,16 +50,29 @@ const getOrCreateIdentity = () => {
       electron.remote.app.getPath('userData'),
       'settings.json',
     );
-    const legacySettings = fs.readJsonSync(settingsPath);
-    if (legacySettings && legacySettings.identity) {
-      store.set('identity', legacySettings.identity);
-      return legacySettings.identity;
-    } else {
-      // Generate a new idendity
-      const newIdentity = uuid();
-      store.set('identity', newIdentity);
-      return newIdentity;
+    if (fs.existsSync(settingsPath)) {
+      const legacySettings = fs.readJsonSync(settingsPath);
+      // Delete the legacy settings.json
+      fs.removeSync(settingsPath);
+      if (legacySettings && legacySettings.identity) {
+        store.set('identity', legacySettings.identity);
+        return legacySettings.identity;
+      } else {
+        return null;
+      }
     }
+  }
+};
+
+const getOrCreateIdentity = () => {
+  const existingIdentity = getIdentity();
+  if (existingIdentity) {
+    return existingIdentity;
+  } else {
+    // Generate a new idendity and store it
+    const newIdentity = uuid();
+    store.set('identity', newIdentity);
+    return newIdentity;
   }
 };
 
