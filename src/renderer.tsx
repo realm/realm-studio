@@ -20,6 +20,10 @@ process.env.REALM_DISABLE_ANALYTICS = 'true';
 const userDataPath = electron.remote.app.getPath('userData');
 const pid = process.pid.toString();
 const processDir = path.resolve(userDataPath, `renderer-${pid}`);
+// Remove the directory if it already exists
+if (fs.existsSync(processDir)) {
+  fs.removeSync(processDir);
+}
 // Create the directory
 fs.mkdirSync(processDir);
 // Change to it
