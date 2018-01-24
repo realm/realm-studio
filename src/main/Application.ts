@@ -85,29 +85,38 @@ export class Application {
   private loopbackReceiver = new MainReceiver(this.actionHandlers);
 
   // All files opened while app is loading will be stored on this array and opened when app is ready
-  private realmsToBeLoaded: string[] = [];
+  private delayedRealmOpens: string[] = [];
   // All urls opened while app is loading will be stored in this array and upened when app is ready
   private delayedUrlOpens: string[] = [];
 
   public run() {
-    // Register as a listener for specific URLs
-    this.registerProtocols();
-    // In Mac we detect the files opened with `open-file` event otherwise we need get it from `process.argv`
-    if (process.platform !== 'darwin') {
-      this.processArguments(process.argv);
-    }
+    // Check to see if this is the first instance or not
+    const hasAnotherInstance = electron.app.makeSingleInstance(
+      this.onInstanceStarted,
+    );
 
-    this.addAppListeners();
-    this.cloudManager.addListener(this.onCloudStatusChange);
-    // If its already ready - the handler won't be called
-    if (electron.app.isReady()) {
-      this.onReady();
+    if (hasAnotherInstance) {
+      // Quit the app if started multiple times
+      electron.app.quit();
+    } else {
+      // Register as a listener for specific URLs
+      this.registerProtocols();
+      // In Mac we detect the files opened with `open-file` event otherwise we need get it from `process.argv`
+      if (process.platform !== 'darwin') {
+        this.processArguments(process.argv);
+      }
+      // Register all app listeners
+      this.addAppListeners();
+      this.cloudManager.addListener(this.onCloudStatusChange);
+      // If its already ready - the handler won't be called
+      if (electron.app.isReady()) {
+        this.onReady();
+      }
     }
   }
 
   public destroy() {
     this.removeAppListeners();
-    this.unregisterProtocols();
     this.updater.destroy();
     this.certificateManager.destroy();
     this.cloudManager.removeListener(this.onCloudStatusChange);
@@ -354,7 +363,7 @@ export class Application {
   private onOpenFile = (event: Electron.Event, filePath: string) => {
     event.preventDefault();
     if (!electron.app.isReady()) {
-      this.realmsToBeLoaded.push(filePath);
+      this.delayedRealmOpens.push(filePath);
     } else {
       this.openLocalRealmAtPath(filePath).catch(err =>
         showError(`Failed opening the file "${filePath}"`, err),
@@ -416,40 +425,24 @@ export class Application {
     this.registerProtocol(STUDIO_PROTOCOL);
   }
 
-  private unregisterProtocols() {
-    this.unregisterProtocol(CLOUD_PROTOCOL);
-    this.unregisterProtocol(STUDIO_PROTOCOL);
-  }
-
+  /**
+   * If not already - register this as the default protocol client for a protocol
+   */
   private registerProtocol(protocol: string) {
-    // Register this app as the default client for 'x-realm-studio://'
-    const success = electron.app.setAsDefaultProtocolClient(protocol);
-    if (!success) {
-      electron.dialog.showErrorBox(
-        'Failed when registering protocols',
-        `Studio could not register the ${protocol}:// protocol.`,
-      );
+    if (!electron.app.isDefaultProtocolClient(protocol)) {
+      const success = electron.app.setAsDefaultProtocolClient(protocol);
+      if (!success) {
+        electron.dialog.showErrorBox(
+          'Failed when registering protocols',
+          `Studio could not register the ${protocol}:// protocol.`,
+        );
+      }
     }
   }
 
-  private unregisterProtocol(protocol: string) {
-    const success = electron.app.removeAsDefaultProtocolClient(protocol);
-    if (!success) {
-      electron.dialog.showErrorBox(
-        'Failed when unregistering protocols',
-        `Studio could not unregister the ${protocol}:// protocol.`,
-      );
-    }
-  }
-
-  private makeSingleton() {
-    const isSecond = electron.app.makeSingleInstance(this.onInstanceStarted);
-    if (isSecond) {
-      // Quit the app if started multiple times
-      electron.app.quit();
-    }
-  }
-
+  /**
+   * This is called when another instance of the app is started on Windows or Linux
+   */
   private onInstanceStarted = async (
     argv: string[],
     workingDirectory: string,
@@ -546,10 +539,10 @@ export class Application {
   };
 
   private processArguments(argv: string[]) {
-    this.realmsToBeLoaded = process.argv.filter(arg => {
+    this.delayedRealmOpens = argv.filter(arg => {
       return arg.endsWith('.realm');
     });
-    this.delayedUrlOpens = process.argv.filter(arg => {
+    this.delayedUrlOpens = argv.filter(arg => {
       return (
         arg.startsWith(`${CLOUD_PROTOCOL}://`) ||
         arg.startsWith(`${STUDIO_PROTOCOL}://`)
@@ -559,11 +552,11 @@ export class Application {
 
   private async performDelayedTasks() {
     // Open all the realms to be loaded
-    const realmsLoaded = this.realmsToBeLoaded.map(realmPath => {
+    const realmsLoaded = this.delayedRealmOpens.map(realmPath => {
       return this.openLocalRealmAtPath(realmPath);
     });
     // Reset the array to prevent double loading
-    this.realmsToBeLoaded = [];
+    this.delayedRealmOpens = [];
     // Wait for all realms to open or show an error on failure
     await Promise.all(realmsLoaded).catch(err =>
       showError(`Failed opening Realm`, err),
@@ -571,7 +564,6 @@ export class Application {
 
     // Open any URLs that the app was not ready to open during startup
     const urlsOpened = this.delayedUrlOpens.map(url => {
-      // Call the event handler again, now that the app is ready
       return this.onOpenUrl(undefined, url);
     });
     // Reset the array to prevent double opening
