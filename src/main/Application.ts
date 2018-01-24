@@ -31,6 +31,9 @@ export class Application {
   private certificateManager = new CertificateManager();
   private cloudManager = new CloudManager();
 
+  // Saving a reference for a single greeting window
+  private greetingWindow: electron.BrowserWindow;
+
   private actionHandlers = {
     [MainActions.AuthenticateWithEmail]: (email: string, password: string) => {
       return this.authenticateWithEmail(email, password);
@@ -84,16 +87,14 @@ export class Application {
   // All files opened while app is loading will be stored on this array and opened when app is ready
   private realmsToBeLoaded: string[] = [];
   // All urls opened while app is loading will be stored in this array and upened when app is ready
-  private delayedUrlOpens: Array<{ event: Event; urlString: string }> = [];
+  private delayedUrlOpens: string[] = [];
 
   public run() {
     // Register as a listener for specific URLs
     this.registerProtocols();
     // In Mac we detect the files opened with `open-file` event otherwise we need get it from `process.argv`
     if (process.platform !== 'darwin') {
-      this.realmsToBeLoaded = process.argv.filter(arg => {
-        return arg.indexOf('.realm') >= 0;
-      });
+      this.processArguments(process.argv);
     }
 
     this.addAppListeners();
@@ -152,27 +153,35 @@ export class Application {
   }
 
   public showGreeting() {
-    return new Promise(resolve => {
-      const window = this.windowManager.createWindow({
-        type: 'greeting',
+    if (this.greetingWindow) {
+      this.greetingWindow.focus();
+      return Promise.resolve();
+    } else {
+      return new Promise(resolve => {
+        const window = this.windowManager.createWindow({
+          type: 'greeting',
+        });
+        // Save this for later
+        this.greetingWindow = window;
+        // Show the window, the first time its ready-to-show
+        window.once('ready-to-show', () => {
+          window.show();
+          resolve();
+        });
+        // Check for updates, every time the contents has loaded
+        window.webContents.on('did-finish-load', () => {
+          this.updater.checkForUpdates(true);
+          this.cloudManager.refresh();
+        });
+        this.updater.addListeningWindow(window);
+        this.cloudManager.addListeningWindow(window);
+        window.once('close', () => {
+          this.updater.removeListeningWindow(window);
+          this.cloudManager.removeListeningWindow(window);
+          delete this.greetingWindow;
+        });
       });
-      // Show the window, the first time its ready-to-show
-      window.once('ready-to-show', () => {
-        window.show();
-        resolve();
-      });
-      // Check for updates, every time the contents has loaded
-      window.webContents.on('did-finish-load', () => {
-        this.updater.checkForUpdates(true);
-        this.cloudManager.refresh();
-      });
-      this.updater.addListeningWindow(window);
-      this.cloudManager.addListeningWindow(window);
-      window.once('close', () => {
-        this.updater.removeListeningWindow(window);
-        this.cloudManager.removeListeningWindow(window);
-      });
-    });
+    }
   }
 
   public showOpenLocalRealm() {
@@ -333,27 +342,7 @@ export class Application {
     this.setDefaultMenu();
     // Wait for the greeting window to show
     await this.showGreeting();
-    // Open all the realms to be loaded
-    const realmsLoaded = this.realmsToBeLoaded.map(realmPath => {
-      return this.openLocalRealmAtPath(realmPath);
-    });
-    // Wait for all realms to open or show an error on failure
-    await Promise.all(realmsLoaded).catch(err =>
-      showError(`Failed opening Realm`, err),
-    );
-    // Reset the array to prevent any double loading
-    this.realmsToBeLoaded = [];
-
-    // Open any URLs that the app was not ready to open during startup
-    const urlsOpened = this.delayedUrlOpens.map(({ event, urlString }) => {
-      // Call the event handler again, now that the app is ready
-      return this.onOpenUrl(event, urlString);
-    });
-    // Wait for all realms to open or show an error on failure
-    await Promise.all(urlsOpened).catch(err =>
-      showError(`Failed opening URL`, err),
-    );
-    this.delayedUrlOpens = [];
+    this.performDelayedTasks();
   };
 
   private onActivate = () => {
@@ -373,7 +362,7 @@ export class Application {
     }
   };
 
-  private onOpenUrl = (event: Event, urlString: string) => {
+  private onOpenUrl = (event: Event | undefined, urlString: string) => {
     if (electron.app.isReady()) {
       const url = new URL(urlString);
       if (url.protocol === `${STUDIO_PROTOCOL}:`) {
@@ -394,7 +383,7 @@ export class Application {
         });
       }
     } else {
-      this.delayedUrlOpens.push({ event, urlString });
+      this.delayedUrlOpens.push(urlString);
     }
   };
 
@@ -461,8 +450,13 @@ export class Application {
     }
   }
 
-  private onInstanceStarted = (argv: string[], workingDirectory: string) => {
-    // TODO: Restore and focus the GreetingWindow
+  private onInstanceStarted = async (
+    argv: string[],
+    workingDirectory: string,
+  ) => {
+    this.processArguments(argv);
+    await this.showGreeting();
+    this.performDelayedTasks();
   };
 
   private setDefaultMenu = () => {
@@ -550,6 +544,43 @@ export class Application {
     };
     return this.showRealmBrowser(props);
   };
+
+  private processArguments(argv: string[]) {
+    this.realmsToBeLoaded = process.argv.filter(arg => {
+      return arg.endsWith('.realm');
+    });
+    this.delayedUrlOpens = process.argv.filter(arg => {
+      return (
+        arg.startsWith(`${CLOUD_PROTOCOL}://`) ||
+        arg.startsWith(`${STUDIO_PROTOCOL}://`)
+      );
+    });
+  }
+
+  private async performDelayedTasks() {
+    // Open all the realms to be loaded
+    const realmsLoaded = this.realmsToBeLoaded.map(realmPath => {
+      return this.openLocalRealmAtPath(realmPath);
+    });
+    // Reset the array to prevent double loading
+    this.realmsToBeLoaded = [];
+    // Wait for all realms to open or show an error on failure
+    await Promise.all(realmsLoaded).catch(err =>
+      showError(`Failed opening Realm`, err),
+    );
+
+    // Open any URLs that the app was not ready to open during startup
+    const urlsOpened = this.delayedUrlOpens.map(url => {
+      // Call the event handler again, now that the app is ready
+      return this.onOpenUrl(undefined, url);
+    });
+    // Reset the array to prevent double opening
+    this.delayedUrlOpens = [];
+    // Wait for all realms to open or show an error on failure
+    await Promise.all(urlsOpened).catch(err =>
+      showError(`Failed opening URL`, err),
+    );
+  }
 }
 
 if (module.hot) {
