@@ -58,6 +58,8 @@ export enum UserRole {
 }
 
 export const isAvailable = async (url: string) => {
-  const response = await fetch(`${url}/health`);
+  const parsedUrl = new URL(url);
+  parsedUrl.pathname = 'health';
+  const response = await fetch(parsedUrl.toString());
   return response.status === 200;
 };

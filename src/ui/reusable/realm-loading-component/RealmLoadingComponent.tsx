@@ -246,6 +246,7 @@ export abstract class RealmLoadingComponent<
   private progressChanged = (transferred: number, transferable: number) => {
     this.setState({
       progress: {
+        message: 'Downloading Realm',
         status: transferred >= transferable ? 'done' : 'in-progress',
         transferred,
         transferable,

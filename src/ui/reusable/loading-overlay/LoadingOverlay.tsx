@@ -23,22 +23,21 @@ export const LoadingOverlay = ({
 }) => {
   // If a progress has been supplied, it overrides loading
   const isVisible = progress ? progress.status !== 'done' : loading;
-  const showDots = progress ? progress.status === 'in-progress' : loading;
+  // Show the progress bar if we know how far we've made it
+  const showProgress =
+    progress &&
+    typeof progress.transferable === 'number' &&
+    typeof progress.transferred === 'number';
+  // Show the dots if making progress but being uncertain on how far
+  const showDots = progress
+    ? progress.status === 'in-progress' && !showProgress
+    : loading;
   return isVisible ? (
     <div
       className={classNames('LoadingOverlay', {
         'LoadingOverlay--no-fade': !fade,
       })}
     >
-      {progress &&
-        typeof progress.transferable === 'number' &&
-        typeof progress.transferred === 'number' && (
-          <Progress
-            className="LoadingOverlay__Progress"
-            value={progress.transferred}
-            max={progress.transferable}
-          />
-        )}
       {progress && progress.status === 'failed' ? (
         <section className="LoadingOverlay__Failure">
           <i
@@ -52,6 +51,14 @@ export const LoadingOverlay = ({
           {progress.message}
         </section>
       ) : null}
+      {progress &&
+        showProgress && (
+          <Progress
+            className="LoadingOverlay__Progress"
+            value={progress.transferred}
+            max={progress.transferable}
+          />
+        )}
       {showDots ? <LoadingDots /> : null}
       {progress && progress.retry ? (
         <Button
