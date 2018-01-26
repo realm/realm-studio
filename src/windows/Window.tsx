@@ -6,7 +6,7 @@ if (process.type === 'browser') {
 import { remote } from 'electron';
 import * as querystring from 'querystring';
 import * as React from 'react';
-import * as mixpanel from '../mixpanel';
+import * as mixpanel from '../services/mixpanel';
 
 import { ServerAdministrationContainer } from '../ui/server-administration/ServerAdministrationContainer';
 import {
@@ -60,7 +60,7 @@ export abstract class Window<P extends WindowProps, S> extends React.Component<
     // Let's only generate menus of windows that are focused
     if (remote.getCurrentWindow().isFocused()) {
       // Generate and set the application
-      const menu = generateMenu(this.menuGenerators);
+      const menu = generateMenu(this.menuGenerators, this.updateMenu);
       remote.Menu.setApplicationMenu(menu);
     }
   };
@@ -75,14 +75,18 @@ export abstract class Window<P extends WindowProps, S> extends React.Component<
 function getWindowClass(props: WindowProps): React.ComponentClass {
   // We're using calls to require here, to prevent loading anything that does not
   // relate to the specific window being loaded.
-  if (props.type === 'realm-browser') {
-    return require('./RealmBrowserWindow').RealmBrowserWindow;
+  if (props.type === 'cloud-authentication') {
+    return require('./CloudAuthenticationWindow').CloudAuthenticationWindow;
   } else if (props.type === 'connect-to-server') {
     return require('./ConnectToServerDialog').ConnectToServerDialog;
-  } else if (props.type === 'server-administration') {
-    return require('./ServerAdministrationWindow').ServerAdministrationWindow;
   } else if (props.type === 'greeting') {
     return require('./GreetingWindow').GreetingWindow;
+  } else if (props.type === 'realm-browser') {
+    return require('./RealmBrowserWindow').RealmBrowserWindow;
+  } else if (props.type === 'server-administration') {
+    return require('./ServerAdministrationWindow').ServerAdministrationWindow;
+  } else if (props.type === 'tutorial') {
+    return require('./TutorialWindow').TutorialWindow;
   } else {
     throw new Error(`Unexpected window type: ${(props as any).type}`);
   }

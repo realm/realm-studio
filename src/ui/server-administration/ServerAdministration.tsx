@@ -1,57 +1,59 @@
 import * as classnames from 'classnames';
 import * as React from 'react';
-import { Button, Navbar } from 'reactstrap';
-
-import realmLogo from '../../../static/svgs/realm-logo.svg';
+import { Button } from 'reactstrap';
 
 import * as ros from '../../services/ros';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
+import { Dashboard } from './Dashboard';
 import { LogContainer } from './logs/LogContainer';
 import {
   RealmsTableContainer,
   ValidateCertificatesChangeHandler,
 } from './realms/RealmsTableContainer';
-import { Status } from './Status';
 import { ToolsContainer } from './tools/ToolsContainer';
+import { TopBar } from './Topbar';
 import { UsersTableContainer } from './users/UsersTableContainer';
 
 import './ServerAdministration.scss';
 
 export enum Tab {
+  Dashboard = 'dashboard',
   Realms = 'realms',
   Users = 'users',
   Logs = 'logs',
   Tools = 'tools',
 }
 
-export const ServerAdministration = ({
-  activeTab,
-  adminRealm,
-  adminRealmChanges,
-  adminRealmProgress,
-  isRealmOpening,
-  onRealmOpened,
-  onReconnect,
-  onTabChanged,
-  onValidateCertificatesChange,
-  user,
-  validateCertificates,
-}: {
-  activeTab: Tab;
+interface IServerAdministrationProps {
+  activeTab: Tab | null;
   adminRealm: Realm;
   adminRealmChanges: number;
   adminRealmProgress: ILoadingProgress;
+  isCloudTenant: boolean;
   isRealmOpening: boolean;
   onRealmOpened: (path: string) => void;
   onReconnect: () => void;
   onTabChanged: (tab: Tab) => void;
   onValidateCertificatesChange: ValidateCertificatesChangeHandler;
+  syncError?: Realm.Sync.SyncError;
   user: Realm.Sync.User | null;
   validateCertificates: boolean;
-}) => {
-  let content = null;
-  if (user && adminRealm && activeTab === Tab.Realms) {
-    content = (
+}
+
+const renderContent = ({
+  activeTab,
+  adminRealm,
+  adminRealmChanges,
+  isCloudTenant,
+  onRealmOpened,
+  onValidateCertificatesChange,
+  user,
+  validateCertificates,
+}: IServerAdministrationProps) => {
+  if (user && activeTab === Tab.Dashboard) {
+    return <Dashboard isCloudTenant={isCloudTenant} serverUrl={user.server} />;
+  } else if (user && adminRealm && activeTab === Tab.Realms) {
+    return (
       <RealmsTableContainer
         adminRealm={adminRealm}
         adminRealmChanges={adminRealmChanges}
@@ -62,7 +64,7 @@ export const ServerAdministration = ({
       />
     );
   } else if (user && adminRealm && activeTab === Tab.Users) {
-    content = (
+    return (
       <UsersTableContainer
         adminRealm={adminRealm}
         adminRealmChanges={adminRealmChanges}
@@ -71,44 +73,39 @@ export const ServerAdministration = ({
       />
     );
   } else if (user && activeTab === Tab.Logs) {
-    content = <LogContainer user={user} />;
+    return <LogContainer user={user} />;
   } else if (user && activeTab === Tab.Tools) {
-    content = <ToolsContainer user={user} />;
+    return <ToolsContainer user={user} />;
   } else {
-    content = null;
+    return null;
   }
+};
 
-  const TabButton = ({ tab, label }: { tab: Tab; label: string }) => {
-    return (
-      <Button
-        color={activeTab === tab ? 'primary' : 'secondary'}
-        className="ServerAdministration__tab"
-        onClick={() => {
-          onTabChanged(tab);
-        }}
-      >
-        {label}
-      </Button>
-    );
-  };
+export const ServerAdministration = (props: IServerAdministrationProps) => {
+  const {
+    activeTab,
+    adminRealmProgress,
+    isCloudTenant,
+    isRealmOpening,
+    onReconnect,
+    onTabChanged,
+    syncError,
+    user,
+  } = props;
 
   return (
     <div className="ServerAdministration">
-      <Navbar className="ServerAdministration__tabs">
-        <svg viewBox={realmLogo.viewBox} className="ServerAdministration__logo">
-          <use xlinkHref={realmLogo.url} />
-        </svg>
-        <TabButton tab={Tab.Realms} label="Realms" />
-        <TabButton tab={Tab.Users} label="Users" />
-        <TabButton tab={Tab.Logs} label="Logs" />
-        {/* <TabButton tab={Tab.Tools} label="Tools" /> */}
-        <Status
-          onReconnect={onReconnect}
-          progress={adminRealmProgress}
-          user={user}
-        />
-      </Navbar>
-      <div className="ServerAdministration__content">{content}</div>
+      <TopBar
+        activeTab={activeTab}
+        adminRealmProgress={adminRealmProgress}
+        isCloudTenant={isCloudTenant}
+        onReconnect={onReconnect}
+        onTabChanged={onTabChanged}
+        user={user}
+      />
+      <div className="ServerAdministration__content">
+        {adminRealmProgress.status === 'done' ? renderContent(props) : null}
+      </div>
       <LoadingOverlay
         loading={!user || isRealmOpening}
         progress={adminRealmProgress}

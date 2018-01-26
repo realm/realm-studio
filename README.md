@@ -65,6 +65,9 @@ tool that prints the props before and after an update of a component.
 
       WHY_DID_YOU_UPDATE=true npm run dev
 
+- If the `REALM_LOG_LEVEL` environment variable is sat, this will get passed to `Realm.Sync.setLogLevel(` when
+  the renderer processes start. It defaults to 'error'.
+
 ## Testing
 
 To run all tests, run

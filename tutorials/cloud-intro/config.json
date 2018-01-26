@@ -1,0 +1,20 @@
+{
+  "title": "The Realm Cloud",
+  "chapters": [
+    {
+      "markdownPath": "1-introduction.md"
+    }, {
+      "markdownPath": "2-create-project.md"
+    }, {
+      "markdownPath": "3-install-dependencies.md"
+    }, {
+      "markdownPath": "4-create-a-user.md"
+    }, {
+      "markdownPath": "5-create-index-js.md"
+    }, {
+      "markdownPath": "6-run-the-script.md"
+    }, {
+      "markdownPath": "7-look-at-the-realm.md"
+    }
+  ]
+}

@@ -39,13 +39,12 @@ module.exports = (env) => {
           test: /\.svg$/,
           loader: "svg-sprite-loader",
           include: path.resolve(__dirname, "static/svgs"),
-          options: {
-            extract: true,
-            spriteFilename: "sprite.svg"
-          }
         }, {
           test: /\.(eot|svg|ttf|woff|woff2)$/,
           exclude: path.resolve(__dirname, "static/svgs"),
+          use: "file-loader"
+        }, {
+          test: /\.md$/,
           use: "file-loader"
         }
       ])

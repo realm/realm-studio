@@ -9,6 +9,6 @@ export class ConnectToServerDialog extends Window<
   {}
 > {
   public render() {
-    return <ConnectToServerContainer />;
+    return <ConnectToServerContainer url={this.props.url} />;
   }
 }
