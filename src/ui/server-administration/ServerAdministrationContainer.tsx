@@ -7,11 +7,13 @@ import { ICloudStatus } from '../../main/CloudManager';
 import {
   IAdminTokenCredentials,
   IRealmFile,
+  isAvailable,
   IUser,
   IUsernamePasswordCredentials,
   realms,
   users,
 } from '../../services/ros';
+import { countdown, wait } from '../../utils';
 import {
   IRealmBrowserWindowProps,
   IServerAdministrationWindowProps,
@@ -44,6 +46,8 @@ export class ServerAdministrationContainer extends RealmLoadingComponent<
   IServerAdministrationContainerProps,
   IServerAdministrationContainerState
 > {
+  protected availabilityPromise: Promise<void>;
+
   constructor() {
     super();
     this.state = {
@@ -59,6 +63,7 @@ export class ServerAdministrationContainer extends RealmLoadingComponent<
     // Start listening on changes to the cloud-status
     electron.ipcRenderer.on('cloud-status', this.cloudStatusChanged);
     try {
+      await this.ensureServerIsAvailable(this.props.credentials.url);
       // Authenticate towards the server
       const user = await users.authenticate(this.props.credentials);
       this.setState({
@@ -180,6 +185,46 @@ export class ServerAdministrationContainer extends RealmLoadingComponent<
     }
   }
 
+  protected async ensureServerIsAvailable(url: string) {
+    // Return a previous promise if that's available
+    if (!this.availabilityPromise) {
+      this.availabilityPromise = new Promise(async resolve => {
+        while (true) {
+          try {
+            this.setState({
+              progress: {
+                status: 'in-progress',
+                message: `Checking availability`,
+              },
+            });
+            const available = await isAvailable(url);
+            if (available) {
+              // Let's resolve the promise, delete it and break the endless loop
+              resolve();
+              delete this.availabilityPromise;
+              return;
+            } else {
+              throw new Error('Not available ...');
+            }
+          } catch (err) {
+            await wait(500); // Wait to show we're checking ...
+            // Errors probably means it's unavailable - let's retry
+            await countdown(1000, 3, n => {
+              const plural = n >= 1 ? 's' : '';
+              this.setState({
+                progress: {
+                  status: 'in-progress',
+                  message: `The server is not available, retrying in ${n} second${plural}`,
+                },
+              });
+            });
+          }
+        }
+      });
+    }
+    return this.availabilityPromise;
+  }
+
   protected getAuthenticationErrorMessage(err: Error) {
     if (err.message === 'Failed to fetch') {
       return 'Failed to fetch:\nIs the server started?';
@@ -236,23 +281,15 @@ export class ServerAdministrationContainer extends RealmLoadingComponent<
     // The child components will be updated from the change of progress state
   };
 
-  protected onSyncError = (
+  protected onSyncError = async (
     session: Realm.Sync.Session,
     error: Realm.Sync.SyncError,
   ) => {
     if (error.message === 'SSL server certificate rejected') {
       this.certificateWasRejected = true;
     } else {
-      this.setState({
-        progress: {
-          status: 'failed',
-          message: error.message,
-          retry: {
-            label: 'Reconnect',
-            onRetry: this.onReconnect,
-          },
-        },
-      });
+      await this.ensureServerIsAvailable(session.user.server);
+      this.onReconnect();
     }
   };
 
