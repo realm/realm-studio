@@ -6,9 +6,13 @@ const Empty = () => (
   <div className="Greeting__HistoryPanel__Empty">
     <p>Welcome to Realm Studio!</p>
     <p>
-      <a href="https://realm.io/docs/realm-object-server/" target="_blank">
-        Download and start the Realm Object Server
-      </a>, if you have not already done that.
+      We have announced Realm Cloud: Realm Platform as a Service:{' '}
+      <a
+        href="https://realm.io/blog/realm-cloud-beta-waitlist/"
+        target="_blank"
+      >
+        Click to read more
+      </a>.
     </p>
   </div>
 );
