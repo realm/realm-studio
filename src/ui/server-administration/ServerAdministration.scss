@@ -5,25 +5,25 @@
   flex-direction: column;
   height: 100%;
 
-  &__tabs {
+  &__TobBar {
     background: $window-background;
     cursor: default;
     flex-shrink: 0;
     justify-content: flex-start;
     user-select: none;
     z-index: 2;
+
+    &__logo {
+      height: 30px;
+      margin-right: $spacer;
+    }
   }
 
   // TODO: Remove this block once we're using bootstrap-v4.0.0-beta
-  &__tabs { // sass-lint:disable-line no-mergeable-selectors
+  &__TobBar { // sass-lint:disable-line no-mergeable-selectors
     align-items: center;
     display: flex;
     flex-direction: row;
-  }
-
-  &__logo {
-    height: 30px;
-    margin-right: $spacer;
   }
 
   &__tab {

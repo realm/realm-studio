@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import * as mixpanel from './mixpanel';
+import * as mixpanel from './services/mixpanel';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -20,6 +20,10 @@ process.env.REALM_DISABLE_ANALYTICS = 'true';
 const userDataPath = electron.remote.app.getPath('userData');
 const pid = process.pid.toString();
 const processDir = path.resolve(userDataPath, `renderer-${pid}`);
+// Remove the directory if it already exists
+if (fs.existsSync(processDir)) {
+  fs.removeSync(processDir);
+}
 // Create the directory
 fs.mkdirSync(processDir);
 // Change to it
@@ -80,6 +84,6 @@ process.nextTick(() => {
   const Realm = require('realm');
   // If sync is enabled on Realm - make it less verbose
   if (Realm.Sync) {
-    Realm.Sync.setLogLevel('error');
+    Realm.Sync.setLogLevel(process.env.REALM_LOG_LEVEL || 'error');
   }
 });
