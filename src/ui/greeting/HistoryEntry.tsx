@@ -26,7 +26,7 @@ export const HistoryEntry = ({ entry }: { entry: IHistoryEntry }) => {
           viewBox={serverIcon.viewBox}
           className="Greeting__HistoryPanel__Icon"
         >
-          <use xlinkHref={`#${serverIcon.id}}`} />
+          <use xlinkHref={serverIcon.url} />
         </svg>
         <div className="Greeting__HistoryPanel__Description">
           {serverEntry.url}
@@ -41,7 +41,7 @@ export const HistoryEntry = ({ entry }: { entry: IHistoryEntry }) => {
           viewBox={syncedRealmFileIcon.viewBox}
           className="Greeting__HistoryPanel__Icon"
         >
-          <use xlinkHref={`#${syncedRealmFileIcon.id}`} />
+          <use xlinkHref={syncedRealmFileIcon.url} />
         </svg>
         <div className="Greeting__HistoryPanel__Description">
           {serverEntry.url}

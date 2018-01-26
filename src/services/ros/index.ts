@@ -56,8 +56,3 @@ export enum UserRole {
   Administrator = 'administrator',
   Regular = 'regular',
 }
-
-export const isAvailable = async (url: string) => {
-  const response = await fetch(`${url}/health`);
-  return response.status === 200;
-};

@@ -2,13 +2,10 @@ import * as electron from 'electron';
 
 import { main } from '../actions/main';
 import { ImportFormat } from '../services/data-importer';
-import * as raas from '../services/raas';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-export const getDefaultMenuTemplate = (
-  updateMenu: () => void,
-): electron.MenuItemConstructorOptions[] => {
+export const getDefaultMenuTemplate = (): electron.MenuItemConstructorOptions[] => {
   const electronOrRemote = electron.remote || electron;
   const template: electron.MenuItemConstructorOptions[] = [
     {
@@ -69,48 +66,6 @@ export const getDefaultMenuTemplate = (
     {
       role: 'window',
       submenu: [{ role: 'minimize' }, { role: 'zoom' }],
-    },
-    {
-      label: 'Realm Cloud',
-      submenu: [
-        {
-          label: 'Login',
-          visible: !raas.user.hasToken(),
-          click: () => {
-            main.showCloudAuthentication();
-          },
-        },
-        {
-          label: 'Logout',
-          visible: raas.user.hasToken(),
-          click: () => {
-            main.deauthenticate();
-          },
-        },
-        {
-          label: 'Change endpoint',
-          submenu: [
-            {
-              type: 'radio',
-              label: 'Production',
-              click: async () => {
-                await main.setRaasEndpoint(raas.Endpoint.Production);
-                updateMenu();
-              },
-              checked: raas.getEndpoint() === raas.Endpoint.Production,
-            },
-            {
-              type: 'radio',
-              label: 'Staging',
-              click: async () => {
-                await main.setRaasEndpoint(raas.Endpoint.Staging);
-                updateMenu();
-              },
-              checked: raas.getEndpoint() === raas.Endpoint.Staging,
-            },
-          ],
-        },
-      ],
     },
     {
       role: 'help',

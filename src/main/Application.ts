@@ -1,23 +1,17 @@
 import * as electron from 'electron';
-import { URL } from 'url';
 
 import * as path from 'path';
 import { MainReceiver } from '../actions/main';
-import { CLOUD_PROTOCOL, STUDIO_PROTOCOL } from '../constants';
 import { getDataImporter, ImportFormat } from '../services/data-importer';
 import ImportSchemaGenerator from '../services/data-importer/ImportSchemaGenerator';
-import * as github from '../services/github';
-import * as raas from '../services/raas';
 import { realms } from '../services/ros';
 import { showError } from '../ui/reusable/errors';
 import {
   IRealmBrowserWindowProps,
   IServerAdministrationWindowProps,
-  ITutorialWindowProps,
 } from '../windows/WindowType';
 
 import { CertificateManager } from './CertificateManager';
-import { CloudManager, ICloudStatus } from './CloudManager';
 import { MainActions } from './MainActions';
 import { getDefaultMenuTemplate } from './MainMenu';
 import { Updater } from './Updater';
@@ -29,35 +23,16 @@ export class Application {
   private updater = new Updater();
   private windowManager = new WindowManager();
   private certificateManager = new CertificateManager();
-  private cloudManager = new CloudManager();
 
   // Saving a reference for a single greeting window
   private greetingWindow: electron.BrowserWindow;
 
   private actionHandlers = {
-    [MainActions.AuthenticateWithEmail]: (email: string, password: string) => {
-      return this.authenticateWithEmail(email, password);
-    },
-    [MainActions.AuthenticateWithGitHub]: () => {
-      return this.authenticateWithGitHub();
-    },
-    [MainActions.Deauthenticate]: () => {
-      return this.deauthenticate();
-    },
     [MainActions.CheckForUpdates]: () => {
       this.checkForUpdates();
     },
-    [MainActions.RefreshCloudStatus]: () => {
-      this.cloudManager.refresh();
-    },
-    [MainActions.SetRaasEndpoint]: (endpoint: raas.Endpoint) => {
-      return this.setRaasEndpoint(endpoint);
-    },
-    [MainActions.ShowCloudAuthentication]: () => {
-      return this.showCloudAuthentication();
-    },
-    [MainActions.ShowConnectToServer]: (url?: string) => {
-      return this.showConnectToServer(url);
+    [MainActions.ShowConnectToServer]: () => {
+      return this.showConnectToServer();
     },
     [MainActions.ShowGreeting]: () => {
       return this.showGreeting();
@@ -75,9 +50,6 @@ export class Application {
       props: IServerAdministrationWindowProps,
     ) => {
       return this.showServerAdministration(props);
-    },
-    [MainActions.ShowTutorial]: (options: ITutorialWindowProps) => {
-      return this.showTutorial(options);
     },
   };
 
@@ -118,8 +90,6 @@ export class Application {
   public destroy() {
     this.removeAppListeners();
     this.updater.destroy();
-    this.certificateManager.destroy();
-    this.cloudManager.removeListener(this.onCloudStatusChange);
     this.windowManager.closeAllWindows();
     this.certificateManager.destroy();
     this.loopbackReceiver.destroy();
@@ -131,28 +101,10 @@ export class Application {
 
   // Implementation of action handlers below
 
-  public async authenticateWithEmail(email: string, password: string) {
-    return this.cloudManager.authenticateWithEmail(email, password);
-  }
-
-  public async authenticateWithGitHub() {
-    return this.cloudManager.authenticateWithGitHub();
-  }
-
-  public deauthenticate() {
-    return this.cloudManager.deauthenticate();
-  }
-
-  public setRaasEndpoint(endpoint: raas.Endpoint) {
-    this.cloudManager.setEndpoint(endpoint);
-    this.cloudManager.deauthenticate();
-  }
-
-  public async showConnectToServer(url?: string) {
+  public async showConnectToServer() {
     return new Promise(resolve => {
       const window = this.windowManager.createWindow({
         type: 'connect-to-server',
-        url,
       });
       window.show();
       window.webContents.once('did-finish-load', () => {
@@ -268,57 +220,6 @@ export class Application {
       window.webContents.once('did-finish-load', () => {
         resolve();
       });
-      if (props.isCloudTenant) {
-        this.cloudManager.addListeningWindow(window);
-        window.once('close', () => {
-          this.cloudManager.removeListeningWindow(window);
-        });
-      }
-    });
-  }
-
-  public showTutorial(props: ITutorialWindowProps) {
-    return new Promise(resolve => {
-      const window = this.windowManager.createWindow(props);
-      window.show();
-      window.webContents.once('did-finish-load', () => {
-        resolve();
-      });
-    });
-  }
-
-  public showCloudAuthentication(
-    resolveUser: boolean = false,
-  ): Promise<raas.user.IMeResponse> {
-    return new Promise((resolve, reject) => {
-      const window = this.windowManager.createWindow({
-        type: 'cloud-authentication',
-      });
-      // If resolve user is true - we wait for the authentication before resolving
-      if (resolveUser) {
-        const listener = (status: ICloudStatus) => {
-          if (status.kind === 'authenticated') {
-            this.cloudManager.removeListener(listener);
-            resolve(status.user);
-          } else if (status.kind === 'error') {
-            this.cloudManager.removeListener(listener);
-            reject(new Error(status.message));
-          }
-        };
-        this.cloudManager.addListener(listener);
-        // Reject the promise if the window is closed before cloud status turns authenticated
-        window.once('close', () => {
-          // We need a timeout here, because the close event fires before the cloud status updates
-          setTimeout(() => {
-            reject(new Error('Window was closed'));
-          }, 500);
-        });
-      } else {
-        window.webContents.once('did-finish-load', () => {
-          resolve();
-        });
-      }
-      window.show();
     });
   }
 
@@ -330,7 +231,6 @@ export class Application {
     electron.app.addListener('ready', this.onReady);
     electron.app.addListener('activate', this.onActivate);
     electron.app.addListener('open-file', this.onOpenFile);
-    electron.app.addListener('open-url', this.onOpenUrl);
     electron.app.addListener('window-all-closed', this.onWindowAllClosed);
     electron.app.addListener('web-contents-created', this.onWebContentsCreated);
   }
@@ -339,7 +239,6 @@ export class Application {
     electron.app.removeListener('ready', this.onReady);
     electron.app.removeListener('activate', this.onActivate);
     electron.app.removeListener('open-file', this.onOpenFile);
-    electron.app.removeListener('open-url', this.onOpenUrl);
     electron.app.removeListener('window-all-closed', this.onWindowAllClosed);
     electron.app.removeListener(
       'web-contents-created',
@@ -456,75 +355,6 @@ export class Application {
     const menuTemplate = getDefaultMenuTemplate(this.setDefaultMenu);
     const menu = electron.Menu.buildFromTemplate(menuTemplate);
     electron.Menu.setApplicationMenu(menu);
-  };
-
-  private async openCloudUrl(url: URL): Promise<void> {
-    // Test that any user id matches the currently authenticated user
-    const currentUser = raas.user.hasToken() ? await raas.user.getAuth() : null;
-    if (url.username) {
-      try {
-        if (!currentUser) {
-          await this.cloudManager.deauthenticate();
-          const newUser = await this.showCloudAuthentication(true);
-          // Retry
-          return this.openCloudUrl(url);
-        } else if (url.username !== currentUser.id) {
-          const answer = electron.dialog.showMessageBox({
-            type: 'warning',
-            message: `You're trying to connect to a cloud instance that is not owned by you.\n\nDo you want to login as another user?`,
-            buttons: ['Yes, login with another user!', 'No, abort!'],
-            defaultId: 0,
-            cancelId: 1,
-          });
-          if (answer === 1) {
-            // Abort!
-            return;
-          } else {
-            await this.cloudManager.deauthenticate();
-            const newUser = await this.showCloudAuthentication(true);
-            // Retry
-            return this.openCloudUrl(url);
-          }
-        }
-      } catch (err) {
-        // We consider closing the window aborting the opening
-        if (err.message === 'Window was closed') {
-          // Abort!
-          return;
-        } else {
-          throw err;
-        }
-      }
-    }
-
-    // Check the hostname to ensure it ends on a trusted domain
-    const trustedHosts = ['.realm.io', '.realmlab.net'];
-    const trusted = trustedHosts.reduce((result, host) => {
-      return result || url.host.endsWith(host);
-    }, false);
-
-    const serverUrl = new URL(`https://${url.host}`);
-
-    if (!trusted) {
-      const answer = electron.dialog.showMessageBox({
-        type: 'warning',
-        message: `You're about to connect to ${serverUrl.toString()}.\n\nThis will reveal your cloud token to the server. Do you wish to proceed?`,
-        buttons: ['Yes, connect!', 'No, abort!'],
-        defaultId: 0,
-        cancelId: 1,
-      });
-      if (answer === 1) {
-        // Abort!
-        return;
-      }
-    }
-
-    await this.showServerAdministration({
-      credentials: raas.user.getTenantCredentials(serverUrl.toString()),
-      isCloudTenant: true,
-      type: 'server-administration',
-      validateCertificates: true,
-    });
   }
 
   private openLocalRealmAtPath = (filePath: string) => {

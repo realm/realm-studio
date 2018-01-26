@@ -2,6 +2,7 @@ const path = require("path");
 const nodeExternals = require("webpack-node-externals");
 const webpack = require('webpack');
 const { CheckerPlugin } = require("awesome-typescript-loader");
+const SpriteLoaderPlugin = require("svg-sprite-loader/plugin");
 
 module.exports = (env) => {
   const isProduction = env && env.NODE_ENV === "production";
@@ -13,8 +14,6 @@ module.exports = (env) => {
       whitelist: [
         /webpack(\/.*)?/,
         'electron-devtools-installer',
-        /svg-baker-runtime(\/.*)?/,
-        /svg-sprite-loader(\/.*)?/,
       ]
     }),
   ];
@@ -27,8 +26,7 @@ module.exports = (env) => {
   const resolve = {
     alias: {
       "realm-studio-styles": path.resolve(__dirname, "styles"),
-      "realm-studio-svgs": path.resolve(__dirname, "static/svgs"),
-      "realm-studio-tutorials": path.resolve(__dirname, "tutorials"),
+      "realm-studio-svgs": path.resolve(__dirname, "static/svgs")
     },
     extensions: [".ts", ".tsx", ".js", ".jsx", ".html", ".scss", ".svg"],
   };
@@ -49,6 +47,7 @@ module.exports = (env) => {
       new webpack.DefinePlugin({
         "process.env.NODE_ENV": JSON.stringify(env ? env.NODE_ENV : 'development'),
       }),
+      new SpriteLoaderPlugin(),
     ].concat(isProduction ? [
       // Plugins for production
       // @see https://reactjs.org/docs/optimizing-performance.html#webpack

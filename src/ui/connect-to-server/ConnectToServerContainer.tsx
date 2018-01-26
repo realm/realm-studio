@@ -17,10 +17,6 @@ import { ConnectToServer } from './ConnectToServer';
 const MISSING_PARAMS_MESSAGE =
   'Your request did not validate because of missing parameters.';
 
-interface IConnectToServerContainerProps {
-  url?: string;
-}
-
 interface IConnectToServerContainerState {
   isConnecting: boolean;
   method: AuthenticationMethod;
@@ -33,7 +29,7 @@ interface IConnectToServerContainerState {
 }
 
 export class ConnectToServerContainer extends React.Component<
-  IConnectToServerContainerProps,
+  {},
   IConnectToServerContainerState
 > {
   constructor() {
@@ -41,25 +37,18 @@ export class ConnectToServerContainer extends React.Component<
     this.state = {
       isConnecting: false,
       method: AuthenticationMethod.usernamePassword,
-      url: '',
+      url: this.getLatestUrl(),
       username: '',
       password: '',
       token: '',
       otherOptions: '',
       saveCredentials: false,
     };
+    this.restoreCredentials(this.state.url);
   }
 
   public render() {
     return <ConnectToServer {...this.state} {...this} />;
-  }
-
-  public componentDidMount() {
-    const url = this.props.url || this.getLatestUrl() || '';
-    this.setState({
-      url,
-    });
-    this.restoreCredentials(url);
   }
 
   public componentDidUpdate(

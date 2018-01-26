@@ -1,10 +1,7 @@
 import * as electron from 'electron';
-import * as fs from 'fs-extra';
 import * as mixpanel from 'mixpanel-browser';
-import * as path from 'path';
-import { v4 as uuid } from 'uuid';
 
-import { store } from '../../store';
+import * as settings from './settings';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -39,48 +36,11 @@ const browserParams = {
 // Sends the browser version on every request
 mixpanel.register(browserParams);
 
-const getIdentity = () => {
-  // Get the identity from the store
-  const identityFromStore = store.get('identity');
-  if (identityFromStore) {
-    return identityFromStore;
-  } else {
-    // Try migrating from the old settings
-    const settingsPath = path.resolve(
-      electron.remote.app.getPath('userData'),
-      'settings.json',
-    );
-    if (fs.existsSync(settingsPath)) {
-      const legacySettings = fs.readJsonSync(settingsPath);
-      // Delete the legacy settings.json
-      fs.removeSync(settingsPath);
-      if (legacySettings && legacySettings.identity) {
-        store.set('identity', legacySettings.identity);
-        return legacySettings.identity;
-      } else {
-        return null;
-      }
-    }
-  }
-};
-
-const getOrCreateIdentity = () => {
-  const existingIdentity = getIdentity();
-  if (existingIdentity) {
-    return existingIdentity;
-  } else {
-    // Generate a new idendity and store it
-    const newIdentity = uuid();
-    store.set('identity', newIdentity);
-    return newIdentity;
-  }
-};
-
-const identity = getOrCreateIdentity();
-// Tell mixpanel about the identity
-mixpanel.identify(identity);
-// Update the persons latest browser version
-mixpanel.people.set(browserParams);
+settings.getSettings().then(({ identity }) => {
+  mixpanel.identify(identity);
+  // Update the persons latest browser version
+  mixpanel.people.set(browserParams);
+});
 
 // Track every click on external links
 
