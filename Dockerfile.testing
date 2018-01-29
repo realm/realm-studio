@@ -1,9 +1,25 @@
-FROM electronuserland/builder:wine-chrome
+FROM electronuserland/builder:8
 
-# Install libsecret-1 and remove the apt-get cache afterwards
-RUN apt-get -qq update && apt-get -qq install -y \
-  libsecret-1-dev \
- && rm -rf /var/lib/apt/lists/*
+# This got copied from https://github.com/electron-userland/electron-builder/blob/master/docker/wine/Dockerfile
+# See https://github.com/electron-userland/electron-builder/issues/2531
+
+RUN apt-get update && apt-get install -y --no-install-recommends software-properties-common && dpkg --add-architecture i386 && curl -L https://dl.winehq.org/wine-builds/Release.key > Release.key && apt-key add Release.key && apt-add-repository https://dl.winehq.org/wine-builds/ubuntu && \
+  apt-get update && \
+  apt-get -y remove software-properties-common libdbus-glib-1-2 python3-dbus python3-gi python3-pycurl python3-software-properties && \
+  apt-get install -y --no-install-recommends winehq-stable && \
+  # Next three lines are copied from https://github.com/electron-userland/electron-builder/blob/master/docker/wine-chrome/Dockerfile
+  wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+  echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google.list && \
+  apt-get update -y && apt-get install -y --no-install-recommends xvfb google-chrome-stable && \
+  # clean
+  apt-get clean && rm -rf /var/lib/apt/lists/* && unlink Release.key
+
+RUN curl -L https://github.com/electron-userland/electron-builder-binaries/releases/download/wine-2.0.3-mac-10.13/wine-home.zip > /tmp/wine-home.zip && unzip /tmp/wine-home.zip -d /root/.wine && unlink /tmp/wine-home.zip
+
+ENV WINEDEBUG -all,err+all
+ENV WINEDLLOVERRIDES winemenubuilder.exe=d
+
+# The next few lines are the only commands special to our Dockerfile
 
 ADD package.json /tmp/package.json
 ADD package-lock.json /tmp/package-lock.json
