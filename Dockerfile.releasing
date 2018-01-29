@@ -7,6 +7,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends software-proper
   apt-get update && \
   apt-get -y remove software-properties-common libdbus-glib-1-2 python3-dbus python3-gi python3-pycurl python3-software-properties && \
   apt-get install -y --no-install-recommends winehq-stable && \
+  # Install a dependency used by keytar
+  apt-get -qq install -y libsecret-1-dev && \
   # clean
   apt-get clean && rm -rf /var/lib/apt/lists/* && unlink Release.key
 
