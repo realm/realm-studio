@@ -138,12 +138,13 @@ export class ServerAdministrationContainer extends RealmLoadingComponent<
     }
   };
 
-  public onReconnect = () => {
+  public onReconnect = async () => {
     // TODO: Use reopen the Realm instead of reloading
     /*
     this.setState({ syncError: undefined });
     this.authenticate();
     */
+    await this.ensureServerIsAvailable(this.props.credentials.url);
     location.reload();
   };
 
@@ -288,8 +289,16 @@ export class ServerAdministrationContainer extends RealmLoadingComponent<
     if (error.message === 'SSL server certificate rejected') {
       this.certificateWasRejected = true;
     } else {
-      await this.ensureServerIsAvailable(session.user.server);
-      this.onReconnect();
+      this.setState({
+        progress: {
+          status: 'failed',
+          message: error.message,
+          retry: {
+            label: 'Reconnect',
+            onRetry: this.onReconnect,
+          },
+        },
+      });
     }
   };
 
