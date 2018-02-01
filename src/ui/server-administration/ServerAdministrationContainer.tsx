@@ -75,7 +75,7 @@ export class ServerAdministrationContainer extends RealmLoadingComponent<
 
     if (this.props.isCloudTenant) {
       this.setState({
-        activeTab: Tab.Dashboard,
+        activeTab: Tab.GettingStarted,
       });
     } else {
       this.setState({
