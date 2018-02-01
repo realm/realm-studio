@@ -124,7 +124,7 @@ SASS was added to achieve mainly two goals:
 - To import (Bootstrap)[https://getbootstrap.com/] from source, enabling overriding variables with the shared variables.
 
 To make sure one part of the applications styles are not overriding another we use a convention for class names called
-[BEM styling](https://en.bem.info/methodology/key-concepts/). The dialect we use is a variant of
+[BEM styling](http://getbem.com/introduction/). The dialect we use is a variant of
 ["hyphernated BEM"](https://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/), which requires
 that the first letter of the classname is Uppercase. This is because we use the components to model the BEM blocks and
 expect the names to be exactly the same as the class name of the React component that it's styling.
