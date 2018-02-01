@@ -17,7 +17,7 @@ jobWrapper {
         // Update the package-lock.json with this new version - npm version doesn't do that.
         sh("node scripts/copy-version-to-lock.js")
       }
-      setBuildName("${nextVersion}");
+      setBuildName(nextVersion);
       // Push the change to GitHub
       input(message: "Push ${nextVersion} and start a release?", id: 'push')
       // Set the email and name used when committing
