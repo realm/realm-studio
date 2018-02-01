@@ -2,6 +2,8 @@
 
 @Library('realm-ci') _
 
+setBuildName(env.VERSION_TAG);
+
 jobWrapper {
   stage('Checkout') {
     node('docker') {
