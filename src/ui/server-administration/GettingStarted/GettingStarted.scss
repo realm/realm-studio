@@ -21,6 +21,10 @@ $transparent-black-darker: rgba($color-black, .25);
   }
 
   &__Image {
+    background: url("../../../assets/images/instance-detail-bg.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
     flex-basis: 35%;
   }
 
