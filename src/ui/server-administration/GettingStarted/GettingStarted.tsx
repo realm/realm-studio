@@ -60,7 +60,7 @@ export const GettingStarted = ({
             onShowTutorial('cloud');
           }}
         >
-          Start the Realm Cloud tutorial
+          Start with Node.js
         </Button>
       </section>
     </div>
