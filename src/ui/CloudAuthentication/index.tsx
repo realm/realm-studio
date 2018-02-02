@@ -3,6 +3,7 @@ import * as React from 'react';
 
 import { main } from '../../actions/main';
 import * as raas from '../../services/raas';
+import { showError } from '../reusable/errors';
 
 import { CloudAuthentication } from './CloudAuthentication';
 
@@ -11,7 +12,6 @@ const INTRODUCED_STORAGE_KEY = 'cloud-introduced';
 export type Mode = 'introduction' | 'log-in' | 'sign-up' | 'waitlist';
 
 interface ICloudAuthenticationContainerState {
-  error?: Error;
   isLoading: boolean;
   mode: Mode;
 }
@@ -33,7 +33,6 @@ class CloudAuthenticationContainer extends React.Component<
   public render() {
     return (
       <CloudAuthentication
-        error={this.state.error}
         isLoading={this.state.isLoading}
         mode={this.state.mode}
         onAuthenticateWithEmail={this.onAuthenticateWithEmail}
@@ -48,35 +47,35 @@ class CloudAuthenticationContainer extends React.Component<
     email: string,
     password: string,
   ) => {
+    this.setState({ isLoading: true });
     try {
-      this.setState({ isLoading: true, error: undefined });
       await main.authenticateWithEmail(email, password);
-      this.setState({ isLoading: false });
       this.setCloudIntroduced(true);
       // Close this window ..
       window.close();
     } catch (err) {
-      this.setState({ error: err, isLoading: false });
+      showError('Failed to authenticate with email', err);
     }
+    this.setState({ isLoading: false });
   };
 
   protected onAuthenticateWithGitHub = async () => {
+    this.setState({ isLoading: true });
     try {
-      this.setState({ isLoading: true, error: undefined });
       const response = await main.authenticateWithGitHub();
       this.setCloudIntroduced(true);
       if (!response.canCreate) {
-        this.setState({ isLoading: false, mode: 'waitlist' });
+        this.setState({ mode: 'waitlist' });
         // Focus the window to show the waitlist message
         window.focus();
       } else {
-        this.setState({ isLoading: false });
         // Close this window ..
         window.close();
       }
     } catch (err) {
-      this.setState({ error: err, isLoading: false });
+      showError('Failed to authenticate with GitHub', err);
     }
+    this.setState({ isLoading: false });
   };
 
   protected onModeChange = (mode: Mode) => {
@@ -84,14 +83,20 @@ class CloudAuthenticationContainer extends React.Component<
   };
 
   protected onSignUp = async (email: string) => {
+    /*
+    this.setState({ isLoading: true });
     try {
-      this.setState({ isLoading: true, error: undefined });
       await raas.user.postEmailSignup(email);
-      this.setState({ isLoading: false, mode: 'waitlist' });
+      this.setState({ mode: 'waitlist' });
       this.setCloudIntroduced(true);
     } catch (err) {
-      this.setState({ error: err, isLoading: false });
+      showError('Failed to sign up', err);
     }
+    this.setState({ isLoading: false });
+    */
+    // TODO: Re-enable this once the recaptcha is added
+    const baseUrl = raas.getEndpoint();
+    electron.shell.openExternal(`${baseUrl}/login/sign-up`);
   };
 
   protected setCloudIntroduced(introduced: boolean) {

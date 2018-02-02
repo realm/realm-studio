@@ -53,6 +53,7 @@ export const LogInForm = ({
           type="email"
           id="login-email"
           placeholder="Email"
+          required
           value={email}
           onChange={e => {
             onEmailChange(e.target.value);
@@ -69,6 +70,7 @@ export const LogInForm = ({
           type="password"
           id="login-password"
           placeholder="Password"
+          required
           value={password}
           onChange={e => {
             onPasswordChange(e.target.value);

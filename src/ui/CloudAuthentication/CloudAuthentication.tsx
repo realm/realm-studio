@@ -13,7 +13,6 @@ import { WaitlistOverlay } from './WaitlistOverlay';
 import './CloudAuthentication.scss';
 
 interface ICloudAuthenticationProps {
-  error?: Error;
   isLoading: boolean;
   mode: Mode;
   onAuthenticateWithEmail: (email: string, password: string) => void;
@@ -23,7 +22,6 @@ interface ICloudAuthenticationProps {
 }
 
 export const CloudAuthentication = ({
-  error,
   isLoading,
   mode,
   onAuthenticateWithEmail,
@@ -44,7 +42,6 @@ export const CloudAuthentication = ({
       <h3 className="CloudAuthentication__Title">Realm Cloud</h3>
     </div>
     <div className="CloudAuthentication__Form">
-      {error && <Alert color="danger">{error.message}</Alert>}
       {mode === 'log-in' && (
         <LogInForm
           onAuthenticateWithEmail={onAuthenticateWithEmail}

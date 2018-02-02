@@ -19,7 +19,6 @@ import './SignUpForm.scss';
 export const SignUpForm = ({
   className,
   email,
-  error,
   onAuthenticateWithGitHub,
   onEmailChange,
   onEmailSubmit,
@@ -27,7 +26,6 @@ export const SignUpForm = ({
 }: {
   className?: string;
   email: string;
-  error?: Error;
   onAuthenticateWithGitHub: () => void;
   onEmailChange: (email: string) => void;
   onEmailSubmit: () => void;
@@ -48,6 +46,7 @@ export const SignUpForm = ({
         type="email"
         id="sign-up-email"
         placeholder="Email"
+        required
         value={email}
         onChange={e => {
           onEmailChange(e.target.value);
@@ -80,6 +79,5 @@ export const SignUpForm = ({
         log into an existing account!
       </a>
     </FormGroup>
-    {error ? <Alert color="danger">{error.message}</Alert> : null}
   </Form>
 );
