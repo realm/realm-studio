@@ -7,10 +7,12 @@ export const showError = (
 ) => {
   // tslint:disable-next-line:no-console
   console.error(error);
-  let message = (error && (error.title || error.message)) || failedIntent;
+  let message = error && (error.title || error.message);
   if (message in messageOverrides) {
     message = messageOverrides[message];
   }
+  // Prepend the intent
+  message = message.length > 0 ? `${failedIntent}:\n${message}` : failedIntent;
   const messageOptions = {
     type: 'error',
     message,

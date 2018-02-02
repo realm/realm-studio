@@ -8,7 +8,6 @@ import { SignUpForm } from './SignUpForm';
 
 interface ISignUpFormProps {
   className?: string;
-  error?: Error;
   onAuthenticateWithGitHub: () => void;
   onSignUp: (email: string) => void;
   onModeChange: (mode: Mode) => void;
@@ -16,7 +15,6 @@ interface ISignUpFormProps {
 
 interface ISignUpFormState {
   email: string;
-  error?: Error;
 }
 
 export class SignUpFormContainer extends React.Component<
@@ -35,7 +33,6 @@ export class SignUpFormContainer extends React.Component<
       <SignUpForm
         className={this.props.className}
         email={this.state.email}
-        error={this.props.error || this.state.error}
         onAuthenticateWithGitHub={this.props.onAuthenticateWithGitHub}
         onEmailChange={this.onEmailChange}
         onEmailSubmit={this.onEmailSubmit}
@@ -49,17 +46,7 @@ export class SignUpFormContainer extends React.Component<
   };
 
   public onEmailSubmit = async () => {
-    try {
-      this.setState({ error: undefined });
-      /*
-      const user = await raas.postEmailSignup({
-        email: this.state.email,
-      });
-      */
-      this.props.onSignUp(this.state.email);
-    } catch (err) {
-      this.setState({ error: err });
-    }
+    this.props.onSignUp(this.state.email);
   };
 }
 

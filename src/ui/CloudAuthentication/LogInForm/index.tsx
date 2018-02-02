@@ -8,7 +8,6 @@ import { LogInForm } from './LogInForm';
 
 interface ILogInFormProps {
   className?: string;
-  error?: Error;
   onAuthenticateWithEmail: (email: string, password: string) => void;
   onAuthenticateWithGitHub: () => void;
   onModeChange: (mode: Mode) => void;
@@ -16,7 +15,6 @@ interface ILogInFormProps {
 
 interface ILogInFormState {
   email: string;
-  error?: Error;
   password: string;
 }
 
@@ -37,7 +35,6 @@ export class LogInFormContainer extends React.Component<
       <LogInForm
         className={this.props.className}
         email={this.state.email}
-        error={this.props.error}
         onAuthenticateWithGitHub={this.props.onAuthenticateWithGitHub}
         onEmailChange={this.onEmailChange}
         onEmailSubmit={this.onEmailSubmit}
@@ -57,12 +54,7 @@ export class LogInFormContainer extends React.Component<
   };
 
   public onEmailSubmit = async () => {
-    try {
-      this.setState({ error: undefined });
-      this.props.onAuthenticateWithEmail(this.state.email, this.state.password);
-    } catch (err) {
-      this.setState({ error: err });
-    }
+    this.props.onAuthenticateWithEmail(this.state.email, this.state.password);
   };
 }
 
