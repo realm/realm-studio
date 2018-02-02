@@ -36,9 +36,9 @@ export const TopBar = ({
     {isCloudTenant ? (
       <TabButton
         activeTab={activeTab}
-        label="Dashboard"
+        label="Getting Started"
         onTabChanged={onTabChanged}
-        tab={Tab.Dashboard}
+        tab={Tab.GettingStarted}
       />
     ) : null}
     <TabButton

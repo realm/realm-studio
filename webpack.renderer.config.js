@@ -36,13 +36,16 @@ module.exports = (env) => {
           test: /\.scss$/,
           use: [ "style-loader", "css-loader", "resolve-url-loader", "sass-loader?sourceMap" ]
         }, {
+          test: /\.(jpe?g|png|gif)$/i,
+          use: [ 'file-loader' ],
+        }, {
           test: /\.svg$/,
-          loader: "svg-sprite-loader",
-          include: path.resolve(__dirname, "static/svgs"),
+          use: "svg-sprite-loader",
+          include: path.resolve(__dirname, "static/svgs")
         }, {
           test: /\.(eot|svg|ttf|woff|woff2)$/,
-          exclude: path.resolve(__dirname, "static/svgs"),
-          use: "file-loader"
+          use: "file-loader",
+          exclude: path.resolve(__dirname, "static/svgs")
         }, {
           test: /\.md$/,
           use: "file-loader"

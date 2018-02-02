@@ -5,6 +5,7 @@ import { Button } from 'reactstrap';
 import * as ros from '../../services/ros';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
 import { Dashboard } from './Dashboard';
+import { GettingStarted } from './GettingStarted';
 import { LogContainer } from './logs/LogContainer';
 import {
   RealmsTableContainer,
@@ -17,6 +18,7 @@ import { UsersTableContainer } from './users/UsersTableContainer';
 import './ServerAdministration.scss';
 
 export enum Tab {
+  GettingStarted = 'getting-started',
   Dashboard = 'dashboard',
   Realms = 'realms',
   Users = 'users',
@@ -50,7 +52,9 @@ const renderContent = ({
   user,
   validateCertificates,
 }: IServerAdministrationProps) => {
-  if (user && activeTab === Tab.Dashboard) {
+  if (user && activeTab === Tab.GettingStarted) {
+    return <GettingStarted serverUrl={user.server} />;
+  } else if (user && activeTab === Tab.Dashboard) {
     return <Dashboard isCloudTenant={isCloudTenant} serverUrl={user.server} />;
   } else if (user && adminRealm && activeTab === Tab.Realms) {
     return (
