@@ -74,10 +74,7 @@ export abstract class RealmLoadingComponent<
           {
             errorCallback: this.onSyncError,
             validateCertificates,
-            // Uncomment the line below to test failing certificate validation
-            /*
-            certificatePath: '... some path of a valid but failing certificate',
-            */
+            openSslVerifyCallback: this.openSslVerifyCallback,
           },
           schema,
           schemaVersion,
@@ -148,6 +145,10 @@ export abstract class RealmLoadingComponent<
     } else {
       showError('Failed while synchronizing Realm', error);
     }
+  };
+
+  protected openSslVerifyCallback: realms.SSLVerifyCallback = level => {
+    return level.acceptedByOpenSSL;
   };
 
   private async openRealm(

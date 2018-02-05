@@ -25,10 +25,20 @@ export interface ILocalRealmToLoad extends IRealmToLoad {
   sync?: boolean;
 }
 
+export type SSLVerifyCallback = (
+  level: {
+    serverAddress: string;
+    serverPort: number;
+    pemCertificate: string;
+    acceptedByOpenSSL: boolean;
+    depth: number;
+  },
+) => boolean;
+
 export interface ISslConfiguration {
   validateCertificates: boolean;
   errorCallback?: Realm.Sync.ErrorCallback;
-  certificatePath?: string;
+  openSslVerifyCallback?: SSLVerifyCallback;
 }
 
 export const defaultSyncErrorCallback = (sender: any, err: any) => {
@@ -59,7 +69,8 @@ export const open = async (
       user,
       error: ssl.errorCallback || defaultSyncErrorCallback,
       validate_ssl: ssl.validateCertificates,
-      ssl_trust_certificate_path: ssl.certificatePath,
+      // We need to use `as any` because of https://github.com/realm/realm-js/issues/1652
+      open_ssl_verify_callback: ssl.openSslVerifyCallback as any,
     },
   });
 
