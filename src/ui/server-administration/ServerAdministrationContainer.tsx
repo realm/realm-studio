@@ -288,7 +288,19 @@ export class ServerAdministrationContainer extends RealmLoadingComponent<
   ) => {
     if (error.message === 'SSL server certificate rejected') {
       this.certificateWasRejected = true;
-    } else {
+      this.setState({
+        progress: {
+          status: 'failed',
+          message: 'The servers certificate could not be trusted',
+          retry: {
+            label: 'Reconnect, trusting the certificate',
+            onRetry: () => {
+              this.props.onValidateCertificatesChange(false);
+            },
+          },
+        },
+      });
+    } else if (error.isFatal) {
       this.setState({
         progress: {
           status: 'failed',
