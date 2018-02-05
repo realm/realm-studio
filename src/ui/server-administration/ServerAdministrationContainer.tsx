@@ -1,4 +1,5 @@
 import * as electron from 'electron';
+import * as rsa from 'node-rsa';
 import * as React from 'react';
 import * as Realm from 'realm';
 
@@ -312,6 +313,11 @@ export class ServerAdministrationContainer extends RealmLoadingComponent<
         },
       });
     }
+  };
+
+  protected openSslVerifyCallback: realms.SSLVerifyCallback = level => {
+    console.log(level);
+    return level.acceptedByOpenSSL;
   };
 
   protected cloudStatusChanged = (
