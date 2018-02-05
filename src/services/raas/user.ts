@@ -123,7 +123,7 @@ export const getTenantCredentials = (url: string): IServerCredentials => {
     kind: 'other',
     url,
     options: {
-      provider: 'jwt',
+      provider: 'jwt/central-owner',
       data: getToken(),
     },
   };
