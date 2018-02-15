@@ -83,7 +83,6 @@ class CloudAuthenticationContainer extends React.Component<
   };
 
   protected onSignUp = async (email: string) => {
-    /*
     this.setState({ isLoading: true });
     try {
       await raas.user.postEmailSignup(email);
@@ -93,10 +92,6 @@ class CloudAuthenticationContainer extends React.Component<
       showError('Failed to sign up', err);
     }
     this.setState({ isLoading: false });
-    */
-    // TODO: Re-enable this once the recaptcha is added
-    const baseUrl = raas.getEndpoint();
-    electron.shell.openExternal(`${baseUrl}/login/sign-up`);
   };
 
   protected setCloudIntroduced(introduced: boolean) {
