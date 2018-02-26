@@ -26,7 +26,7 @@ export const RealmsTable = ({
   searchString,
   onSearchStringChange,
 }: {
-  getRealmFromId: (path: string) => IRealmFile | null;
+  getRealmFromId: (path: string) => IRealmFile | undefined;
   getRealmPermissions: (path: string) => Realm.Results<IPermission>;
   isCreateRealmOpen: boolean;
   onRealmCreated: (path: string) => void;
@@ -77,7 +77,9 @@ export const RealmsTable = ({
         onRealmOpened={onRealmOpened}
         onToggle={() => onRealmSelected(null)}
         realm={
-          selectedRealmPath !== null ? getRealmFromId(selectedRealmPath) : null
+          selectedRealmPath !== null
+            ? getRealmFromId(selectedRealmPath)
+            : undefined
         }
       />
     </FilterableTableWrapper>

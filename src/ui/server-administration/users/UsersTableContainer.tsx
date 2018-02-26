@@ -60,7 +60,7 @@ export class UsersTableContainer extends React.Component<
     });
   };
 
-  public getUserFromId = (userId: string): ros.IUser | null => {
+  public getUserFromId = (userId: string): ros.IUser | undefined => {
     const { adminRealm } = this.props;
     return adminRealm.objectForPrimaryKey<ros.IUser>('User', userId);
   };

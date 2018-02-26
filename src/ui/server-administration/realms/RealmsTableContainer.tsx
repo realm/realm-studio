@@ -59,7 +59,7 @@ export class RealmsTableContainer extends React.PureComponent<
     return <RealmsTable realms={this.realms} {...this.state} {...this} />;
   }
 
-  public getRealmFromId = (path: string): ros.IRealmFile | null => {
+  public getRealmFromId = (path: string): ros.IRealmFile | undefined => {
     const { adminRealm } = this.props;
     return adminRealm.objectForPrimaryKey<ros.IRealmFile>('RealmFile', path);
   };
