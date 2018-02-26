@@ -8,7 +8,7 @@ export interface IChangePasswordDialogContainerProps {
   isOpen: boolean;
   onPasswordChanged: (userId: string, password: string) => void;
   toggle: () => void;
-  user: IUser | null;
+  user?: IUser;
 }
 
 export interface IChangePasswordDialogContainerState {

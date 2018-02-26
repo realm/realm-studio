@@ -21,7 +21,7 @@ export interface IUserSidebarContainerProps {
   onUserMetadataDeleted: (userId: string, index: number) => void;
   onUserRoleChanged: (userId: string, role: ros.UserRole) => void;
   realms: ros.IRealmFile[];
-  user: ros.IUser | null;
+  user?: ros.IUser;
 }
 
 export interface IUserSidebarContainerState {

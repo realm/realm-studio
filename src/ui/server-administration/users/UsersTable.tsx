@@ -34,7 +34,7 @@ export const UsersTable = ({
   searchString,
   onSearchStringChange,
 }: {
-  getUserFromId: (userId: string) => ros.IUser | null;
+  getUserFromId: (userId: string) => ros.IUser | undefined;
   getUsersRealms: (userId: string) => ros.IRealmFile[];
   isChangePasswordOpen: boolean;
   isCreateUserOpen: boolean;
@@ -122,14 +122,18 @@ export const UsersTable = ({
         onUserMetadataDeleted={onUserMetadataDeleted}
         onUserRoleChanged={onUserRoleChanged}
         realms={selectedUserId !== null ? getUsersRealms(selectedUserId) : []}
-        user={selectedUserId !== null ? getUserFromId(selectedUserId) : null}
+        user={
+          selectedUserId !== null ? getUserFromId(selectedUserId) : undefined
+        }
       />
 
       <ChangePasswordDialogContainer
         isOpen={isChangePasswordOpen}
         toggle={toggleChangePassword}
         onPasswordChanged={onUserPasswordChanged}
-        user={selectedUserId !== null ? getUserFromId(selectedUserId) : null}
+        user={
+          selectedUserId !== null ? getUserFromId(selectedUserId) : undefined
+        }
       />
 
       <CreateUserDialogContainer

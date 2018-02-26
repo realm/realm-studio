@@ -10,7 +10,7 @@ export interface IRealmSidebarContainerProps {
   onRealmDeletion: (path: string) => void;
   onRealmOpened: (path: string) => void;
   onToggle: () => void;
-  realm: ros.IRealmFile | null;
+  realm?: ros.IRealmFile;
 }
 
 export class RealmSidebarContainer extends React.Component<

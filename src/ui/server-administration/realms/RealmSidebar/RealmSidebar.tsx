@@ -20,7 +20,7 @@ export const RealmSidebar = ({
   onRealmDeletion: (path: string) => void;
   onRealmOpened: (path: string) => void;
   onToggle: () => void;
-  realm: ros.IRealmFile | null;
+  realm?: ros.IRealmFile;
 }) => {
   const permissions = realm ? getRealmPermissions(realm.path) : null;
   return (
