@@ -18,6 +18,7 @@ export interface IAddPropertyModalState {
   type: string;
   isList: boolean;
   optional: boolean;
+  primitiveTypeSelected: boolean;
   nameIsValid: boolean;
   typeOptions: ITypeOption[];
 }
@@ -33,6 +34,7 @@ const initialState = {
   optional: false,
   nameIsValid: true,
   isList: false,
+  primitiveTypeSelected: false,
 };
 
 export class AddPropertyModal extends React.Component<
@@ -74,6 +76,7 @@ export class AddPropertyModal extends React.Component<
     const newValue = e.target.value;
     this.setState({
       type: newValue,
+      primitiveTypeSelected: this.isPrimitiveType(newValue, this.props.schemas),
     });
   };
 
@@ -122,12 +125,25 @@ export class AddPropertyModal extends React.Component<
   };
 
   private getSchemaProperty = () => {
-    const { name, type: propertyType, optional, isList } = this.state;
+    const {
+      name,
+      type: propertyType,
+      optional,
+      isList,
+      primitiveTypeSelected,
+    } = this.state;
     return {
-      [name]: `${propertyType}${optional ? '?' : ''}${isList ? '[]' : ''}`,
+      [name]: `${propertyType}${optional && !(isList && !primitiveTypeSelected)
+        ? '?'
+        : ''}${isList ? '[]' : ''}`,
     };
   };
 
   private getClassesTypes = (schemas: Realm.ObjectSchema[]): string[] =>
     schemas.map(schema => schema.name);
+
+  private isPrimitiveType = (
+    type: string,
+    schemas: Realm.ObjectSchema[],
+  ): boolean => schemas.filter(schema => schema.name === type).length === 0;
 }

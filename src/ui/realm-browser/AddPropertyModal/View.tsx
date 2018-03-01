@@ -19,6 +19,7 @@ export const View = ({
   focus,
   isList,
   isOpen,
+  primitiveTypeSelected,
   name,
   nameIsValid,
   onIsListChange,
@@ -34,6 +35,7 @@ export const View = ({
   focus: IClassFocus;
   isList: boolean;
   isOpen: boolean;
+  primitiveTypeSelected: boolean;
   name: string;
   nameIsValid: boolean;
   onIsListChange: () => void;
@@ -103,7 +105,7 @@ export const View = ({
               Make this a list of {type}s
             </Label>
           </FormGroup>
-          <FormGroup check>
+          <FormGroup check style={{visibility: !primitiveTypeSelected && isList ? 'hidden' : 'visible' }}>
             <Label check>
               <Input
                 type="checkbox"
