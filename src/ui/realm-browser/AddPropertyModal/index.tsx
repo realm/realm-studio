@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { IClassFocus } from '../focus';
-import { TYPES } from '../primitives';
+import * as primitives from '../primitives';
 import { View } from './View';
 
 export interface IAddPropertyModalProps {
@@ -18,6 +18,7 @@ export interface IAddPropertyModalState {
   type: string;
   isList: boolean;
   optional: boolean;
+  primitiveTypeSelected: boolean;
   nameIsValid: boolean;
   typeOptions: ITypeOption[];
 }
@@ -33,6 +34,7 @@ const initialState = {
   optional: false,
   nameIsValid: true,
   isList: false,
+  primitiveTypeSelected: false,
 };
 
 export class AddPropertyModal extends React.Component<
@@ -74,6 +76,7 @@ export class AddPropertyModal extends React.Component<
     const newValue = e.target.value;
     this.setState({
       type: newValue,
+      primitiveTypeSelected: primitives.isPrimitive(newValue),
     });
   };
 
@@ -95,7 +98,7 @@ export class AddPropertyModal extends React.Component<
       disabled: true,
       show: true,
     };
-    const primitiveTypesOptions = TYPES.map(type => ({
+    const primitiveTypesOptions = primitives.TYPES.map(type => ({
       value: type,
       disabled: false,
       show: true,
@@ -122,9 +125,18 @@ export class AddPropertyModal extends React.Component<
   };
 
   private getSchemaProperty = () => {
-    const { name, type: propertyType, optional, isList } = this.state;
+    const {
+      name,
+      type: propertyType,
+      optional,
+      isList,
+      primitiveTypeSelected,
+    } = this.state;
+    const optionalMarker =
+      optional && !(isList && !primitiveTypeSelected) ? '?' : '';
+    const listMarker = isList ? '[]' : '';
     return {
-      [name]: `${propertyType}${optional ? '?' : ''}${isList ? '[]' : ''}`,
+      [name]: `${propertyType}${optionalMarker}${listMarker}`,
     };
   };
 
