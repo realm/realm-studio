@@ -105,7 +105,13 @@ export const View = ({
               Make this a list of {type}s
             </Label>
           </FormGroup>
-          <FormGroup check style={{visibility: !primitiveTypeSelected && isList ? 'hidden' : 'visible' }}>
+          <FormGroup
+            check
+            style={{
+              visibility:
+                !primitiveTypeSelected && isList ? 'hidden' : 'visible',
+            }}
+          >
             <Label check>
               <Input
                 type="checkbox"

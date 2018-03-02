@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { IClassFocus } from '../focus';
-import { TYPES } from '../primitives';
+import * as primitives from '../primitives';
 import { View } from './View';
 
 export interface IAddPropertyModalProps {
@@ -76,7 +76,7 @@ export class AddPropertyModal extends React.Component<
     const newValue = e.target.value;
     this.setState({
       type: newValue,
-      primitiveTypeSelected: this.isPrimitiveType(newValue, this.props.schemas),
+      primitiveTypeSelected: primitives.isPrimitive(newValue),
     });
   };
 
@@ -98,7 +98,7 @@ export class AddPropertyModal extends React.Component<
       disabled: true,
       show: true,
     };
-    const primitiveTypesOptions = TYPES.map(type => ({
+    const primitiveTypesOptions = primitives.TYPES.map(type => ({
       value: type,
       disabled: false,
       show: true,
@@ -132,18 +132,14 @@ export class AddPropertyModal extends React.Component<
       isList,
       primitiveTypeSelected,
     } = this.state;
+    const optionalMarker =
+      optional && !(isList && !primitiveTypeSelected) ? '?' : '';
+    const listMarker = isList ? '[]' : '';
     return {
-      [name]: `${propertyType}${optional && !(isList && !primitiveTypeSelected)
-        ? '?'
-        : ''}${isList ? '[]' : ''}`,
+      [name]: `${propertyType}${optionalMarker}${listMarker}`,
     };
   };
 
   private getClassesTypes = (schemas: Realm.ObjectSchema[]): string[] =>
     schemas.map(schema => schema.name);
-
-  private isPrimitiveType = (
-    type: string,
-    schemas: Realm.ObjectSchema[],
-  ): boolean => schemas.filter(schema => schema.name === type).length === 0;
 }
