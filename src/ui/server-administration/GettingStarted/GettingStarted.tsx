@@ -32,10 +32,7 @@ export const GettingStarted = ({
         Our Tasks demo app is the best way to get started with Realm Cloud. It's
         less than 30 minutes to get it up and running, and we’ve got
         step-by-step instructions — just copy your app link from above, and then
-        choose an OS:{' '}
-        <a target="__blank" href="https://forums.realm.io/c/realm-cloud">
-          Beta Forums
-        </a>.
+        choose an OS:
       </p>
       <section className="GettingStarted__Tutorial">
         <Button
@@ -63,6 +60,10 @@ export const GettingStarted = ({
           Start with Node.js
         </Button>
       </section>
+      If you any issues, questions or comments. Visit our{' '}
+      <a target="__blank" href="https://forums.realm.io/c/realm-cloud">
+        Beta Forums
+      </a>.
     </div>
     <div className="GettingStarted__Image" />
   </div>
