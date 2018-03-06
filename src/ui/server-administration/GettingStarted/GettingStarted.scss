@@ -29,9 +29,14 @@ $transparent-black-darker: rgba($color-black, .25);
   }
 
   &__Heading,
-  &__Tutorial,
   &__Button,
   &__Input {
+    margin-bottom: $spacer;
+  }
+
+  &__Tutorial {
+    display: flex;
+    flex-direction: row;
     margin-bottom: $spacer;
   }
 
@@ -45,7 +50,7 @@ $transparent-black-darker: rgba($color-black, .25);
     border: 0;
     clear: both;
     color: $color-white;
-    float: left;
+    margin-right: $spacer;
 
     &:hover,
     &:active {
