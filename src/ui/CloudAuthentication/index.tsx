@@ -9,7 +9,7 @@ import { CloudAuthentication } from './CloudAuthentication';
 
 const INTRODUCED_STORAGE_KEY = 'cloud-introduced';
 
-export type Mode = 'introduction' | 'log-in' | 'sign-up' | 'waitlist';
+export type Mode = 'introduction' | 'log-in' | 'sign-up';
 
 interface ICloudAuthenticationContainerState {
   isLoading: boolean;
@@ -65,7 +65,6 @@ class CloudAuthenticationContainer extends React.Component<
       const response = await main.authenticateWithGitHub();
       this.setCloudIntroduced(true);
       if (!response.canCreate) {
-        this.setState({ mode: 'waitlist' });
         // Focus the window to show the waitlist message
         window.focus();
       } else {

@@ -59,7 +59,6 @@ export const CloudAuthentication = ({
       {mode === 'introduction' && (
         <IntroductionOverlay onModeChange={onModeChange} />
       )}
-      {mode === 'waitlist' && <WaitlistOverlay onModeChange={onModeChange} />}
     </div>
     <LoadingOverlay loading={isLoading} />
   </div>
