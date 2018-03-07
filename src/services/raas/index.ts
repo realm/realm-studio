@@ -68,9 +68,9 @@ export const getErrorMessage = async (response: Response): Promise<string> => {
   } catch (err) {
     try {
       const message = await response.text();
-      return `Error from RaaS: ${message}`;
+      return message || 'Error from Realm Cloud';
     } catch (err) {
-      return `Error without a message from RaaS (status = ${response.status})`;
+      return `Error from Realm Cloud (status = ${response.status})`;
     }
   }
 };
