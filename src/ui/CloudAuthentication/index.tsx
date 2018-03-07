@@ -56,12 +56,11 @@ class CloudAuthenticationContainer extends React.Component<
     try {
       await main.authenticateWithEmail(email, password);
       this.setCloudIntroduced(true);
-      // Close this window ..
-      window.close();
+      // We could have closed not but it will get closed when the status updates
     } catch (err) {
       showError('Failed to authenticate with email', err);
+      this.setState({ isLoading: false });
     }
-    this.setState({ isLoading: false });
   };
 
   protected onAuthenticateWithGitHub = async () => {
@@ -69,17 +68,11 @@ class CloudAuthenticationContainer extends React.Component<
     try {
       const response = await main.authenticateWithGitHub();
       this.setCloudIntroduced(true);
-      if (!response.canCreate) {
-        // Focus the window to show the waitlist message
-        window.focus();
-      } else {
-        // Close this window ..
-        window.close();
-      }
+      // We could have closed not but it will get closed when the status updates
     } catch (err) {
       showError('Failed to authenticate with GitHub', err);
+      this.setState({ isLoading: false });
     }
-    this.setState({ isLoading: false });
   };
 
   protected onModeChange = (mode: Mode) => {

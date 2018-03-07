@@ -296,29 +296,27 @@ export class Application {
     resolveUser: boolean = false,
   ): Promise<raas.user.IMeResponse> {
     return new Promise((resolve, reject) => {
-      const window = this.windowManager.createWindow({
-        type: 'cloud-authentication',
+      const window = this.windowManager.createWindow(props);
+      const listener = (status: ICloudStatus) => {
+        if (status.kind === 'authenticated') {
+          this.cloudManager.removeListener(listener);
+          resolve(status.user);
+          // Close the window once we're authenticated
+          window.close();
+        } else if (status.kind === 'error') {
+          this.cloudManager.removeListener(listener);
+          reject(new Error(status.message));
+        }
+      };
+      this.cloudManager.addListener(listener);
+      // Reject the promise if the window is closed before cloud status turns authenticated
+      window.once('close', () => {
+        // We need a timeout here, because the close event fires before the cloud status updates
+        reject(new Error('Window was closed instead of authenticating'));
+        this.cloudManager.removeListener(listener);
       });
-      // If resolve user is true - we wait for the authentication before resolving
-      if (resolveUser) {
-        const listener = (status: ICloudStatus) => {
-          if (status.kind === 'authenticated') {
-            this.cloudManager.removeListener(listener);
-            resolve(status.user);
-          } else if (status.kind === 'error') {
-            this.cloudManager.removeListener(listener);
-            reject(new Error(status.message));
-          }
-        };
-        this.cloudManager.addListener(listener);
-        // Reject the promise if the window is closed before cloud status turns authenticated
-        window.once('close', () => {
-          // We need a timeout here, because the close event fires before the cloud status updates
-          setTimeout(() => {
-            reject(new Error('Window was closed'));
-          }, 500);
-        });
-      } else {
+      // If resolveUser is false - we resolve the promise as soon as the window loads
+      if (!resolveUser) {
         window.webContents.once('did-finish-load', () => {
           resolve();
         });
