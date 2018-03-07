@@ -14,6 +14,7 @@ import './CloudAuthentication.scss';
 
 interface ICloudAuthenticationProps {
   isLoading: boolean;
+  message?: string;
   mode: Mode;
   onAuthenticateWithEmail: (email: string, password: string) => void;
   onAuthenticateWithGitHub: () => void;
@@ -23,6 +24,7 @@ interface ICloudAuthenticationProps {
 
 export const CloudAuthentication = ({
   isLoading,
+  message,
   mode,
   onAuthenticateWithEmail,
   onAuthenticateWithGitHub,
@@ -41,6 +43,7 @@ export const CloudAuthentication = ({
       </svg>
       <h3 className="CloudAuthentication__Title">Realm Cloud</h3>
     </div>
+    {message ? <small>{message}</small> : null}
     <div className="CloudAuthentication__Form">
       {mode === 'log-in' && (
         <LogInForm

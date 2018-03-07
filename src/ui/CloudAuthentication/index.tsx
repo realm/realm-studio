@@ -11,13 +11,17 @@ const INTRODUCED_STORAGE_KEY = 'cloud-introduced';
 
 export type Mode = 'introduction' | 'log-in' | 'sign-up';
 
+interface ICloudAuthenticationContainerProps {
+  message?: string;
+}
+
 interface ICloudAuthenticationContainerState {
   isLoading: boolean;
   mode: Mode;
 }
 
 class CloudAuthenticationContainer extends React.Component<
-  {},
+  ICloudAuthenticationContainerProps,
   ICloudAuthenticationContainerState
 > {
   constructor() {
@@ -34,6 +38,7 @@ class CloudAuthenticationContainer extends React.Component<
     return (
       <CloudAuthentication
         isLoading={this.state.isLoading}
+        message={this.props.message}
         mode={this.state.mode}
         onAuthenticateWithEmail={this.onAuthenticateWithEmail}
         onAuthenticateWithGitHub={this.onAuthenticateWithGitHub}

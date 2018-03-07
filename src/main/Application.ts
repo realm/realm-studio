@@ -11,6 +11,7 @@ import * as raas from '../services/raas';
 import { realms } from '../services/ros';
 import { showError } from '../ui/reusable/errors';
 import {
+  ICloudAuthenticationWindowProps,
   IRealmBrowserWindowProps,
   IServerAdministrationWindowProps,
   ITutorialWindowProps,
@@ -53,8 +54,11 @@ export class Application {
     [MainActions.SetRaasEndpoint]: (endpoint: raas.Endpoint) => {
       return this.setRaasEndpoint(endpoint);
     },
-    [MainActions.ShowCloudAuthentication]: () => {
-      return this.showCloudAuthentication();
+    [MainActions.ShowCloudAuthentication]: (
+      props: ICloudAuthenticationWindowProps,
+      resolveUser: boolean,
+    ) => {
+      return this.showCloudAuthentication(props, resolveUser);
     },
     [MainActions.ShowConnectToServer]: (url?: string) => {
       return this.showConnectToServer(url);
@@ -288,6 +292,7 @@ export class Application {
   }
 
   public showCloudAuthentication(
+    props: ICloudAuthenticationWindowProps,
     resolveUser: boolean = false,
   ): Promise<raas.user.IMeResponse> {
     return new Promise((resolve, reject) => {
@@ -465,7 +470,10 @@ export class Application {
       try {
         if (!currentUser) {
           await this.cloudManager.deauthenticate();
-          const newUser = await this.showCloudAuthentication(true);
+          const newUser = await this.showCloudAuthentication(
+            { type: 'cloud-authentication' },
+            true,
+          );
           // Retry
           return this.openCloudUrl(url);
         } else if (url.username !== currentUser.id) {
@@ -481,7 +489,10 @@ export class Application {
             return;
           } else {
             await this.cloudManager.deauthenticate();
-            const newUser = await this.showCloudAuthentication(true);
+            const newUser = await this.showCloudAuthentication(
+              { type: 'cloud-authentication' },
+              true,
+            );
             // Retry
             return this.openCloudUrl(url);
           }
