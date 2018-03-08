@@ -39,13 +39,12 @@ We strive to separate components into two categories:
 For more information on the difference between the two, please read
 [Dan Abramov's article](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0).
 
-React component files should be named in CamelCase. If the component needs more than a file, we should follow the [component folder pattern](https://medium.com/styled-components/component-folder-pattern-ee42df37ec68).
-Creating a folder named as the component and containing an `index.tsx` file with the main component and all the others files needed.
+React component files should be named in CamelCase. If the component needs more than a file (because it has other components that it uses internally or because it has styling), we should follow the [component folder pattern](https://medium.com/styled-components/component-folder-pattern-ee42df37ec68): Creating a folder with the same name as the component, containing an `index.tsx` that exports a class by the same name as the component. The folder should also contain all the others files needed to render the component as well as any sub-components that are only used by this particular component.
 
-Also, we should avoid using default export in JS. [More info about why](https://blog.neufund.org/why-we-have-banned-default-exports-and-you-should-do-the-same-d51fdc2cf2ad)
+At certain levels of the component tree it might make sense to create groups of similar components, we name these folders with a lower-case name. For example the project contains a directory of "reusable" components in `./src/ui/reusable` for components which implements UI that has been used three or more places across the app.
 
-The project contains a directory of "reusable" components in `./src/ui/reusable` for components which implements
-UI that has been used three or more places in the app.
+We should generally avoid using default exports.
+[More info about why](https://blog.neufund.org/why-we-have-banned-default-exports-and-you-should-do-the-same-d51fdc2cf2ad)
 
 Use the `classnames` module to conditionally produce a className attribute for components.
 
