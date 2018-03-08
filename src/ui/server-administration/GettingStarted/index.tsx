@@ -31,7 +31,7 @@ class GettingStartedContainer extends React.Component<
     // Strip / suffix
     url = url.replace(/\/$/, '');
     return url;
-  }
+  };
 
   public onShowTutorial = (name: 'ios' | 'android' | 'cloud') => {
     if (name === 'cloud') {
