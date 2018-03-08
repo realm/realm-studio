@@ -1,3 +1,6 @@
+console.error("Disabled due to https://github.com/realm/realm-object-server-private/issues/874");
+
+/*
 const ros = require('realm-object-server');
 const path = require('path');
 
@@ -27,3 +30,4 @@ server.start(config).then(() => {
     }
   }, 10000);
 }, console.error);
+*/

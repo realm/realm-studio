@@ -2,7 +2,7 @@
   "name": "realm-studio",
   "productName": "Realm Studio",
   "version": "1.18.5",
-  "description": "A tool for everything Realm.",
+  "description": "A tool for everything Realm",
   "author": {
     "name": "Realm Inc.",
     "email": "info@realm.io",
@@ -195,7 +195,6 @@
     "prettier": "^1.7.4",
     "react-dom": "^15.6.2",
     "react-hot-loader": "^3.1.1",
-    "realm-object-server": "^2.6.2",
     "resolve-url-loader": "^2.1.1",
     "sass-lint": "^1.12.1",
     "sass-loader": "^6.0.6",
