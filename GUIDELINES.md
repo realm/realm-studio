@@ -43,8 +43,7 @@ React component files should be named in CamelCase. If the component needs more 
 
 At certain levels of the component tree it might make sense to create groups of similar components, we name these folders with a lower-case name. For example the project contains a directory of "reusable" components in `./src/ui/reusable` for components which implements UI that has been used three or more places across the app.
 
-We should generally avoid using default exports.
-[More info about why](https://blog.neufund.org/why-we-have-banned-default-exports-and-you-should-do-the-same-d51fdc2cf2ad)
+Please see this [example of how to name files and folders](docs/NAMING-EXAMPLE.md).
 
 Use the `classnames` module to conditionally produce a className attribute for components.
 
@@ -70,6 +69,7 @@ ES6 modules, this could be changed once the issue is fixed.
 Besides the syntax-level code styles we should strive to:
 - Use interfaces to describe the shape of objects, and strive to avoid using the
   [any](https://www.typescriptlang.org/docs/handbook/basic-types.html#any) type when possible.
+- We should generally [avoid using default exports](https://blog.neufund.org/why-we-have-banned-default-exports-and-you-should-do-the-same-d51fdc2cf2ad).
 
 # webpack
 
