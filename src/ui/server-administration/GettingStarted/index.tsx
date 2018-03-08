@@ -1,6 +1,5 @@
 import * as electron from 'electron';
 import * as React from 'react';
-import * as Realm from 'realm';
 
 import { main } from '../../../actions/main';
 
@@ -19,11 +18,19 @@ class GettingStartedContainer extends React.Component<
   public render() {
     return (
       <GettingStarted
-        serverUrl={this.props.serverUrl}
+        serverUrl={this.normalizeUrl(this.props.serverUrl)}
         {...this.state}
         {...this}
       />
     );
+  }
+
+  public normalizeUrl = (url: string): string => {
+    // Strip protocol
+    url = url.replace(/(^\w+:|^)\/\//, '');
+    // Strip / suffix
+    url = url.replace(/\/$/, '');
+    return url;
   }
 
   public onShowTutorial = (name: 'ios' | 'android' | 'cloud') => {
