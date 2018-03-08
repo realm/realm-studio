@@ -2,6 +2,7 @@ import { MainActions } from '../../main/MainActions';
 import { ImportFormat } from '../../services/data-importer';
 import * as raas from '../../services/raas';
 import {
+  ICloudAuthenticationWindowProps,
   IRealmBrowserWindowProps,
   IServerAdministrationWindowProps,
   ITutorialWindowProps,
@@ -46,8 +47,11 @@ export class Sender extends ActionSender {
     return this.send(MainActions.SetRaasEndpoint, endpoint);
   }
 
-  public showCloudAuthentication() {
-    return this.send(MainActions.ShowCloudAuthentication);
+  public showCloudAuthentication(
+    props: ICloudAuthenticationWindowProps = { type: 'cloud-authentication' },
+    resolveUser: boolean = false,
+  ) {
+    return this.send(MainActions.ShowCloudAuthentication, props, resolveUser);
   }
 
   public showConnectToServer(url?: string) {

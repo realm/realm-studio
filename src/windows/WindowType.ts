@@ -20,6 +20,7 @@ export interface IWindowProps {
 
 export interface ICloudAuthenticationWindowProps extends IWindowProps {
   type: 'cloud-authentication';
+  message?: string;
 }
 
 export interface IConnectToServerWindowProps extends IWindowProps {
