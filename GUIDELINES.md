@@ -28,28 +28,6 @@ Or just run `npm run lint` to run one followed by the other.
 
 Please discuss or create a pull-request if a part of the code-style feels impeding - we can change them if we choose to.
 
-# React
-
-We use [React](https://facebook.github.io/react/) as our primary framework for building the user interface.
-
-We strive to separate components into two categories:
-- Presentational components, that ideally has no state and only cares about rendering and importing stylesheets.
-- Container components, that wraps presentation components, and holds some application state and defines behaviour by mutating this according to the users interactions.
-
-For more information on the difference between the two, please read
-[Dan Abramov's article](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0).
-
-React component files should be named in CamelCase. If the component needs more than a file (because it has other components that it uses internally or because it has styling), we should follow the [component folder pattern](https://medium.com/styled-components/component-folder-pattern-ee42df37ec68):
-1. Creating a folder with the same name as the component, containing an `index.tsx` that exports a class by the same name as the component.
-2. The folder should contain all the files needed to render the component as well as any sub-components, that are only used by this particular component.
-3. We deviate from the "component folder pattern" as we use TypeScript and name the representational component the same as the component itself (instead of `View`).
-
-At certain levels of the component tree it might make sense to create groups of similar components, we name these folders with a lower-case name. For example the project contains a directory of "reusable" components in `./src/ui/reusable` for components which implements UI that has been used three or more places across the app.
-
-Please see this [example of how to name files and folders](docs/NAMING-EXAMPLE.md).
-
-Use the `classnames` module to conditionally produce a className attribute for components.
-
 # TypeScript
 
 We use TypeScript (configured from `./tsconfig.json`) as it helps us reason about our code and catch errors at
@@ -73,6 +51,29 @@ Besides the syntax-level code styles we should strive to:
 - Use interfaces to describe the shape of objects, and strive to avoid using the
   [any](https://www.typescriptlang.org/docs/handbook/basic-types.html#any) type when possible.
 - We should generally [avoid using default exports](https://blog.neufund.org/why-we-have-banned-default-exports-and-you-should-do-the-same-d51fdc2cf2ad).
+- We should generally strive to use lower-case-with-dashes for folders and filenames, except for React components (see below).
+
+# React
+
+We use [React](https://facebook.github.io/react/) as our primary framework for building the user interface.
+
+We strive to separate components into two categories:
+- Presentational components, that ideally has no state and only cares about rendering and importing stylesheets.
+- Container components, that wraps presentation components, and holds some application state and defines behaviour by mutating this according to the users interactions.
+
+For more information on the difference between the two, please read
+[Dan Abramov's article](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0).
+
+React component files should be named in UpperCamelCase. If the component needs more than a file (because it has other components that it uses internally or because it has styling), we should follow the [component folder pattern](https://medium.com/styled-components/component-folder-pattern-ee42df37ec68):
+1. Creating a folder with the same name as the component (still UpperCamelCased), containing an `index.tsx` that exports a class by the same name as the component.
+2. The folder should contain all the files needed to render the component as well as any sub-components, that are only used by this particular component.
+3. We deviate from the "component folder pattern" as we use TypeScript and name the representational component the same as the component itself (instead of `View`).
+
+At certain levels of the component tree it might make sense to create groups of similar components, we name these folders with a lower-case-with-dashes name. For example the project contains a directory of "reusable" components in `./src/ui/reusable` for components which implements UI that has been used three or more places across the app.
+
+Please see this [example of how to name files and folders](docs/NAMING-EXAMPLE.md).
+
+Use the `classnames` module to conditionally produce a className attribute for components.
 
 # webpack
 
