@@ -56,7 +56,7 @@ This is `Status/Status.scss`:
 
 Note: We with our current use of styling we have a limitiation on the components that they need to have a unique name in the component tree to avoid clashes with other components, adopting CSS-modules could fix this.
 
-## Styled representational functional and container component
+## Styled representational functional component, wrapped by a container component
 
 Now - if we wanted to add behaviour and a state to the component, we want to separate it into it's representational part (which we already have) and a container part, as mentioned in the React specific [guidelines](GUIDELINES.md).
 
