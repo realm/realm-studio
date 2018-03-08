@@ -4,6 +4,7 @@ import { GITHUB_CLIENT_ID, GITHUB_REDIRECT_URI } from '../github';
 export const ENDPOINT_STORAGE_KEY = 'cloud.endpoint';
 export const TOKEN_STORAGE_KEY = 'cloud.token';
 
+import { reauthenticate } from './reauthenticate';
 import * as user from './user';
 export { user };
 
@@ -29,19 +30,36 @@ export const buildUrl = (service: string, version: string, path: string) => {
   return `${endpoint}/api/${service}/${version}/${path}`;
 };
 
-export const fetchAuthenticated = (url: string, options: RequestInit) => {
+export const fetchAuthenticated = async (
+  url: string,
+  options: RequestInit,
+): Promise<Response> => {
   const token = store.get(TOKEN_STORAGE_KEY);
   if (!token) {
     throw new Error('Missing the Cloud token - please authenticate first');
   }
-  const headers = new Headers({
-    authorization: `Bearer ${token}`,
-    'Content-Type': 'application/json',
-  });
-  return fetch(url, {
-    headers,
-    ...options,
-  });
+  // Append the "Authorization" header or initialize
+  if (options.headers instanceof Headers) {
+    options.headers.set('Authorization', `Bearer ${token}`);
+  } else {
+    options.headers = new Headers({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+  }
+  const response = await fetch(url, options);
+  if (response.status === 401) {
+    // We assumed an authenticated user - but request failed with "Unauthorized" status.
+    // Logout the user if they are logged in
+    if (user.hasToken()) {
+      user.forgetToken();
+    }
+    // Make the user authenticate again
+    await reauthenticate('Authentication failed, you need to login again');
+    // Retry the request
+    return fetchAuthenticated(url, options);
+  }
+  return response;
 };
 
 export const getErrorMessage = async (response: Response): Promise<string> => {
@@ -50,9 +68,9 @@ export const getErrorMessage = async (response: Response): Promise<string> => {
   } catch (err) {
     try {
       const message = await response.text();
-      return `Error from RaaS: ${message}`;
+      return message || 'Error from Realm Cloud';
     } catch (err) {
-      return `Error without a message from RaaS (status = ${response.status})`;
+      return `Error from Realm Cloud (status = ${response.status})`;
     }
   }
 };

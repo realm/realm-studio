@@ -47,8 +47,6 @@ export class GreetingContainer extends React.Component<
         isSyncEnabled: !!Realm.Sync,
       });
     });
-    // Ask the main process to send a cloud status message
-    main.refreshCloudStatus();
   }
 
   public componentWillUnmount() {

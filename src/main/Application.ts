@@ -11,6 +11,7 @@ import * as raas from '../services/raas';
 import { realms } from '../services/ros';
 import { showError } from '../ui/reusable/errors';
 import {
+  ICloudAuthenticationWindowProps,
   IRealmBrowserWindowProps,
   IServerAdministrationWindowProps,
   ITutorialWindowProps,
@@ -53,8 +54,11 @@ export class Application {
     [MainActions.SetRaasEndpoint]: (endpoint: raas.Endpoint) => {
       return this.setRaasEndpoint(endpoint);
     },
-    [MainActions.ShowCloudAuthentication]: () => {
-      return this.showCloudAuthentication();
+    [MainActions.ShowCloudAuthentication]: (
+      props: ICloudAuthenticationWindowProps,
+      resolveUser: boolean,
+    ) => {
+      return this.showCloudAuthentication(props, resolveUser);
     },
     [MainActions.ShowConnectToServer]: (url?: string) => {
       return this.showConnectToServer(url);
@@ -288,32 +292,31 @@ export class Application {
   }
 
   public showCloudAuthentication(
+    props: ICloudAuthenticationWindowProps,
     resolveUser: boolean = false,
   ): Promise<raas.user.IMeResponse> {
     return new Promise((resolve, reject) => {
-      const window = this.windowManager.createWindow({
-        type: 'cloud-authentication',
+      const window = this.windowManager.createWindow(props);
+      const listener = (status: ICloudStatus) => {
+        if (status.kind === 'authenticated') {
+          this.cloudManager.removeListener(listener);
+          resolve(status.user);
+          // Close the window once we're authenticated
+          window.close();
+        } else if (status.kind === 'error') {
+          this.cloudManager.removeListener(listener);
+          reject(new Error(status.message));
+        }
+      };
+      this.cloudManager.addListener(listener);
+      // Reject the promise if the window is closed before cloud status turns authenticated
+      window.once('close', () => {
+        // We need a timeout here, because the close event fires before the cloud status updates
+        reject(new Error('Window was closed instead of authenticating'));
+        this.cloudManager.removeListener(listener);
       });
-      // If resolve user is true - we wait for the authentication before resolving
-      if (resolveUser) {
-        const listener = (status: ICloudStatus) => {
-          if (status.kind === 'authenticated') {
-            this.cloudManager.removeListener(listener);
-            resolve(status.user);
-          } else if (status.kind === 'error') {
-            this.cloudManager.removeListener(listener);
-            reject(new Error(status.message));
-          }
-        };
-        this.cloudManager.addListener(listener);
-        // Reject the promise if the window is closed before cloud status turns authenticated
-        window.once('close', () => {
-          // We need a timeout here, because the close event fires before the cloud status updates
-          setTimeout(() => {
-            reject(new Error('Window was closed'));
-          }, 500);
-        });
-      } else {
+      // If resolveUser is false - we resolve the promise as soon as the window loads
+      if (!resolveUser) {
         window.webContents.once('did-finish-load', () => {
           resolve();
         });
@@ -465,7 +468,10 @@ export class Application {
       try {
         if (!currentUser) {
           await this.cloudManager.deauthenticate();
-          const newUser = await this.showCloudAuthentication(true);
+          const newUser = await this.showCloudAuthentication(
+            { type: 'cloud-authentication' },
+            true,
+          );
           // Retry
           return this.openCloudUrl(url);
         } else if (url.username !== currentUser.id) {
@@ -481,7 +487,10 @@ export class Application {
             return;
           } else {
             await this.cloudManager.deauthenticate();
-            const newUser = await this.showCloudAuthentication(true);
+            const newUser = await this.showCloudAuthentication(
+              { type: 'cloud-authentication' },
+              true,
+            );
             // Retry
             return this.openCloudUrl(url);
           }

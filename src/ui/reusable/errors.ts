@@ -7,7 +7,12 @@ export const showError = (
 ) => {
   // tslint:disable-next-line:no-console
   console.error(error);
-  let message = error && (error.title || error.message);
+  let message: string = '';
+  if (typeof error === 'string') {
+    message = error;
+  } else if (typeof error === 'object') {
+    message = error.title || error.message || message;
+  }
   if (message in messageOverrides) {
     message = messageOverrides[message];
   }

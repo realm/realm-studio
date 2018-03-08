@@ -9,6 +9,6 @@ export class CloudAuthenticationWindow extends Window<
   {}
 > {
   public render() {
-    return <CloudAuthentication />;
+    return <CloudAuthentication message={this.props.message} />;
   }
 }
