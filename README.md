@@ -23,6 +23,8 @@ If you've checked out this repository, install and start it by running
 
 ## Developing
 
+Please read the [guidelines](./GUIDELINES.md) to familiarize with the code style and tools used to develop Realm Studio.
+
 Check out this git repository.
 
 Install dependencies from NPM:
@@ -32,8 +34,6 @@ Install dependencies from NPM:
 Start the developer (concurrently running 2x webpack and electron internally):
 
     npm run dev
-
-Please read the [guidelines](./GUIDELINES.md) to familiarize with the code style and tools used to develop Realm Studio.
 
 To check if the source code complies with the TypeScript and SASS rules that we've decided, use your editors builtin
 checker or run the lint command:
