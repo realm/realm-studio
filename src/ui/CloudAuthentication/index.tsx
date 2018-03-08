@@ -83,7 +83,6 @@ class CloudAuthenticationContainer extends React.Component<
     this.setState({ isLoading: true });
     try {
       await raas.user.postEmailSignup(email);
-      this.setState({ mode: 'waitlist' });
       this.setCloudIntroduced(true);
     } catch (err) {
       showError('Failed to sign up', err);

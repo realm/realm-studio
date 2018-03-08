@@ -8,7 +8,6 @@ import { LoadingOverlay } from '../reusable/loading-overlay';
 import { IntroductionOverlay } from './IntroductionOverlay';
 import { LogInForm } from './LogInForm';
 import { SignUpForm } from './SignUpForm';
-import { WaitlistOverlay } from './WaitlistOverlay';
 
 import './CloudAuthentication.scss';
 
