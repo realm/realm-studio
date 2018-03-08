@@ -39,7 +39,10 @@ We strive to separate components into two categories:
 For more information on the difference between the two, please read
 [Dan Abramov's article](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0).
 
-React component files should be named in CamelCase. If the component needs more than a file (because it has other components that it uses internally or because it has styling), we should follow the [component folder pattern](https://medium.com/styled-components/component-folder-pattern-ee42df37ec68): Creating a folder with the same name as the component, containing an `index.tsx` that exports a class by the same name as the component. The folder should also contain all the others files needed to render the component as well as any sub-components that are only used by this particular component.
+React component files should be named in CamelCase. If the component needs more than a file (because it has other components that it uses internally or because it has styling), we should follow the [component folder pattern](https://medium.com/styled-components/component-folder-pattern-ee42df37ec68):
+1. Creating a folder with the same name as the component, containing an `index.tsx` that exports a class by the same name as the component.
+2. The folder should contain all the files needed to render the component as well as any sub-components, that are only used by this particular component.
+3. We deviate from the "component folder pattern" as we use TypeScript and name the representational component the same as the component itself (instead of `View`).
 
 At certain levels of the component tree it might make sense to create groups of similar components, we name these folders with a lower-case name. For example the project contains a directory of "reusable" components in `./src/ui/reusable` for components which implements UI that has been used three or more places across the app.
 
