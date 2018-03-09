@@ -15,7 +15,7 @@ export interface ICloudActionButtonProps {
   onConnectToPrimarySubscription: () => void;
   onDeauthenticate: () => void;
   onRefresh: () => void;
-  onServerCreate: () => void;
+  onInstanceCreate: () => void;
   onShare: (socialNetwork: SocialNetwork) => void;
 }
 
@@ -25,7 +25,7 @@ export const CloudAction = ({
   onConnectToPrimarySubscription,
   onDeauthenticate,
   onRefresh,
-  onServerCreate,
+  onInstanceCreate,
   onShare,
 }: ICloudActionButtonProps) => {
   if (cloudStatus && cloudStatus.kind === 'authenticating') {
@@ -56,8 +56,8 @@ export const CloudAction = ({
       );
     } else if (cloudStatus.account.emailVerified) {
       return (
-        <Button onClick={onServerCreate} color="primary">
-          Create Realm Cloud server
+        <Button onClick={onInstanceCreate} color="primary">
+          Create Realm Cloud Instance
         </Button>
       );
     } else {
