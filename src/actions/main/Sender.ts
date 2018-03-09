@@ -50,7 +50,7 @@ export class Sender extends ActionSender {
   public showCloudAuthentication(
     props: ICloudAuthenticationWindowProps = { type: 'cloud-authentication' },
     resolveUser: boolean = false,
-  ) {
+  ): Promise<void | raas.user.IAccountResponse> {
     return this.send(MainActions.ShowCloudAuthentication, props, resolveUser);
   }
 

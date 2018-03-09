@@ -12,10 +12,10 @@ import { IServerCredentials } from '../ros';
 const buildUserUrl = (path: string) => buildUrl('user', 'v1beta', path);
 
 export interface IAuthResponse {
-  canCreate?: boolean;
   email?: string;
   id: string;
   token: string;
+  emailVerified?: boolean;
 }
 
 export interface ICreateSubscriptionOptions {
@@ -25,13 +25,13 @@ export interface ICreateSubscriptionOptions {
 }
 
 export interface IMeResponse {
-  canCreate: boolean;
   email: string;
   id: string;
   name: string;
 }
 
 export interface IAccountResponse {
+  admin: boolean;
   company: string;
   country: string;
   email: string;
@@ -39,6 +39,8 @@ export interface IAccountResponse {
   nameLast: string;
   phoneNumber: string;
   githubUserId?: string;
+  features: string[];
+  emailVerified: boolean;
 }
 
 export interface IEmailSignupResponse {

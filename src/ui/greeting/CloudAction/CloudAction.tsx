@@ -54,7 +54,7 @@ export const CloudAction = ({
           Connect to Realm Cloud
         </Button>
       );
-    } else if (cloudStatus.user.canCreate) {
+    } else if (cloudStatus.account.emailVerified) {
       return (
         <Button onClick={onServerCreate} color="primary">
           Create Realm Cloud server
@@ -63,44 +63,7 @@ export const CloudAction = ({
     } else {
       return (
         <Alert className="CloudAction__Alert" color="info">
-          You're on the waitlist to use Realm Cloud!{' '}
-          <span
-            className="CloudAction__ActionIcon"
-            onClick={() => onShare('twitter')}
-            title="Now that's something worth tweeting about!"
-          >
-            <i className="fa fa-twitter" />
-          </span>{' '}
-          <span
-            className="CloudAction__ActionIcon"
-            onClick={() => onShare('facebook')}
-            title="Now that's something worth sharing!"
-          >
-            <i className="fa fa-facebook" />
-          </span>{' '}
-          <span
-            className="CloudAction__ActionIcon"
-            onClick={() => onRefresh()}
-            title="Refresh this status"
-          >
-            <i className="fa fa-refresh" />
-          </span>
-          {/*
-        <span
-          className="Greeting__ShareAction"
-          onClick={() => onShare('reddit')}
-          title="Now that's something worth upvoting!"
-        >
-          <i className="fa fa-reddit" />
-        </span>{' '}
-        <span
-          className="Greeting__ShareAction"
-          onClick={() => onShare('hacker-news')}
-          title="Now that's something worth upvoting!"
-        >
-          <i className="fa fa-hacker-news" />
-        </span>
-        */}
+          You need to verify your email, please check your inbox
         </Alert>
       );
     }
