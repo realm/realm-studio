@@ -9,7 +9,7 @@ import { CloudAuthentication } from './CloudAuthentication';
 
 const INTRODUCED_STORAGE_KEY = 'cloud-introduced';
 
-export type Mode = 'introduction' | 'log-in' | 'sign-up';
+export type Mode = 'introduction' | 'log-in' | 'sign-up' | 'verify-email';
 
 interface ICloudAuthenticationContainerProps {
   message?: string;
@@ -84,6 +84,7 @@ class CloudAuthenticationContainer extends React.Component<
     try {
       await raas.user.postEmailSignup(email);
       this.setCloudIntroduced(true);
+      this.setState({ mode: 'verify-email' });
     } catch (err) {
       showError('Failed to sign up', err);
     }
