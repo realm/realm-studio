@@ -5,7 +5,7 @@
 jobWrapper {
   node('docker') {
     stage('Checkout') {
-      rlmCheckout scm
+      checkout scm
     }
 
     if (env.CHANGE_TARGET) {
