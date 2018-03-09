@@ -152,7 +152,7 @@ export class GreetingContainer extends React.Component<
 
   public onServerCreate = () => {
     const endpoint = raas.getEndpoint();
-    electron.remote.shell.openExternal(`${endpoint}/apps/create`);
+    electron.remote.shell.openExternal(`${endpoint}/instances/create`);
   };
 
   public onShare = (socialNetwork: SocialNetwork) => {
