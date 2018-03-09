@@ -11,7 +11,8 @@
     margin-left: $spacer / 2;
   }
 
-  &__Close {
+  &__Close,
+  &__Refresh {
     cursor: pointer;
     margin-left: $spacer / 2;
   }

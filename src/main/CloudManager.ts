@@ -31,7 +31,7 @@ export interface IAuthenticatedCloudStatus extends IBaseCloudStatus {
   justAuthenticated: boolean;
   primarySubscription?: raas.user.ISubscription;
   raasToken: string;
-  user: raas.user.IMeResponse;
+  account: raas.user.IAccountResponse;
 }
 
 export type ICloudStatus =
@@ -137,14 +137,14 @@ export class CloudManager {
           kind: 'fetching',
           endpoint,
         });
-        const user = await raas.user.getAuth();
+        const account = await raas.user.getAccount();
         const subscriptions = await raas.user.getSubscriptions();
         const status: IAuthenticatedCloudStatus = {
           kind: 'authenticated',
           endpoint,
           justAuthenticated,
           raasToken,
-          user,
+          account,
         };
         if (subscriptions.length > 0) {
           status.primarySubscription = subscriptions[0];

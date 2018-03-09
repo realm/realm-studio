@@ -23,6 +23,8 @@ export const SignUpForm = ({
   onEmailChange,
   onEmailSubmit,
   onModeChange,
+  onPasswordChange,
+  password,
 }: {
   className?: string;
   email: string;
@@ -30,6 +32,8 @@ export const SignUpForm = ({
   onEmailChange: (email: string) => void;
   onEmailSubmit: () => void;
   onModeChange: (mode: Mode) => void;
+  onPasswordChange: (password: string) => void;
+  password: string;
 }) => (
   <Form
     className={classNames('SignUpForm', className)}
@@ -50,6 +54,21 @@ export const SignUpForm = ({
         value={email}
         onChange={e => {
           onEmailChange(e.target.value);
+        }}
+      />
+    </FormGroup>
+    <FormGroup>
+      <Label for="sign-up-password" hidden>
+        Password
+      </Label>
+      <Input
+        type="password"
+        id="sign-up-password"
+        placeholder="Password"
+        required
+        value={password}
+        onChange={e => {
+          onPasswordChange(e.target.value);
         }}
       />
     </FormGroup>

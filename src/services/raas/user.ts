@@ -12,10 +12,10 @@ import { IServerCredentials } from '../ros';
 const buildUserUrl = (path: string) => buildUrl('user', 'v1beta', path);
 
 export interface IAuthResponse {
-  canCreate?: boolean;
   email?: string;
   id: string;
   token: string;
+  emailVerified?: boolean;
 }
 
 export interface ICreateSubscriptionOptions {
@@ -25,13 +25,13 @@ export interface ICreateSubscriptionOptions {
 }
 
 export interface IMeResponse {
-  canCreate: boolean;
   email: string;
   id: string;
   name: string;
 }
 
 export interface IAccountResponse {
+  admin: boolean;
   company: string;
   country: string;
   email: string;
@@ -39,6 +39,8 @@ export interface IAccountResponse {
   nameLast: string;
   phoneNumber: string;
   githubUserId?: string;
+  features: string[];
+  emailVerified: boolean;
 }
 
 export interface IEmailSignupResponse {
@@ -129,7 +131,7 @@ export const getTenantCredentials = (url: string): IServerCredentials => {
   };
 };
 
-export const postEmailSignup = async (email: string) => {
+export const postEmailSignup = async (email: string, password: string) => {
   const url = buildUserUrl('auth/email-signup');
   const response = await fetch(url, {
     method: 'POST',
@@ -138,6 +140,7 @@ export const postEmailSignup = async (email: string) => {
     }),
     body: JSON.stringify({
       email,
+      password,
     }),
   });
   if (response.ok) {
