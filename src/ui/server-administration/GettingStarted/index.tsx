@@ -43,7 +43,9 @@ class GettingStartedContainer extends React.Component<
         },
       });
     } else if (name === 'ios') {
-      electron.shell.openExternal('https://docs.realm.io/platform/v/3.x/getting-started/ios-quick-start');
+      electron.shell.openExternal(
+        'https://docs.realm.io/platform/v/3.x/getting-started/ios-quick-start',
+      );
     } else if (name === 'android') {
       electron.shell.openExternal(
         'https://docs.realm.io/platform/v/3.x/getting-started/android-quick-start',
