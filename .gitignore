@@ -15,3 +15,7 @@ secrets.sh
 
 # Test results from JUnit
 test-results.xml
+
+# Realm locks and management files
+*.realm.lock
+*.realm.management
