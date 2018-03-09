@@ -9,12 +9,13 @@ import { SignUpForm } from './SignUpForm';
 interface ISignUpFormProps {
   className?: string;
   onAuthenticateWithGitHub: () => void;
-  onSignUp: (email: string) => void;
+  onSignUp: (email: string, password: string) => void;
   onModeChange: (mode: Mode) => void;
 }
 
 interface ISignUpFormState {
   email: string;
+  password: string;
 }
 
 export class SignUpFormContainer extends React.Component<
@@ -25,6 +26,7 @@ export class SignUpFormContainer extends React.Component<
     super(props);
     this.state = {
       email: '',
+      password: '',
     };
   }
 
@@ -37,6 +39,8 @@ export class SignUpFormContainer extends React.Component<
         onEmailChange={this.onEmailChange}
         onEmailSubmit={this.onEmailSubmit}
         onModeChange={this.props.onModeChange}
+        onPasswordChange={this.onPasswordChange}
+        password={this.state.password}
       />
     );
   }
@@ -45,8 +49,12 @@ export class SignUpFormContainer extends React.Component<
     this.setState({ email });
   };
 
+  public onPasswordChange = (password: string) => {
+    this.setState({ password });
+  };
+
   public onEmailSubmit = async () => {
-    this.props.onSignUp(this.state.email);
+    this.props.onSignUp(this.state.email, this.state.password);
   };
 }
 

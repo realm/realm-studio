@@ -20,7 +20,7 @@ interface ICloudAuthenticationProps {
   onAuthenticateWithEmail: (email: string, password: string) => void;
   onAuthenticateWithGitHub: () => void;
   onModeChange: (mode: Mode) => void;
-  onSignUp: (email: string) => void;
+  onSignUp: (email: string, password: string) => void;
 }
 
 export const CloudAuthentication = ({

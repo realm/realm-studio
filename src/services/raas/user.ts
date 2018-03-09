@@ -129,7 +129,7 @@ export const getTenantCredentials = (url: string): IServerCredentials => {
   };
 };
 
-export const postEmailSignup = async (email: string) => {
+export const postEmailSignup = async (email: string, password: string) => {
   const url = buildUserUrl('auth/email-signup');
   const response = await fetch(url, {
     method: 'POST',
@@ -138,6 +138,7 @@ export const postEmailSignup = async (email: string) => {
     }),
     body: JSON.stringify({
       email,
+      password,
     }),
   });
   if (response.ok) {

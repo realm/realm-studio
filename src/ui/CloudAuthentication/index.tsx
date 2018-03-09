@@ -79,10 +79,10 @@ class CloudAuthenticationContainer extends React.Component<
     this.setState({ mode });
   };
 
-  protected onSignUp = async (email: string) => {
+  protected onSignUp = async (email: string, password: string) => {
     this.setState({ isLoading: true });
     try {
-      await raas.user.postEmailSignup(email);
+      await raas.user.postEmailSignup(email, password);
       this.setCloudIntroduced(true);
       this.setState({ mode: 'verify-email' });
     } catch (err) {
