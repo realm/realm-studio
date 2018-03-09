@@ -21,6 +21,8 @@ jobWrapper {
 
       stage('Test') {
         image.inside("-e HOME=${env.WORKSPACE} -v /etc/passwd:/etc/passwd:ro") {
+          // Remove any node_modules that might already be here
+          sh 'rm -rf node_modules'
           // Link in the node_modules from the image
           sh 'ln -s /tmp/node_modules .'
           // Test that the package-lock has changed while building the image
