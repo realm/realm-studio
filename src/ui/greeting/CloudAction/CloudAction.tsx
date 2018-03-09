@@ -63,7 +63,12 @@ export const CloudAction = ({
     } else {
       return (
         <Alert className="CloudAction__Alert" color="info">
-          You need to verify your email, please check your inbox
+          You need to verify your email
+          <i
+            className="CloudAction__Refresh fa fa-refresh"
+            title="Click to refresh"
+            onClick={onRefresh}
+          />
         </Alert>
       );
     }
