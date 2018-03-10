@@ -21,6 +21,11 @@ If you've checked out this repository, install and start it by running
     npm install
     npm start
 
+Some internal features, only usable by Realm employees, are hidden by default and are only shown if the following
+environment variable is set:
+
+    export ENABLE_REALM_STUDIO_INTERNAL_FEATURES=""
+
 ## Developing
 
 Please read the [guidelines](./GUIDELINES.md) to familiarize with the code style and tools used to develop Realm Studio.
