@@ -27,7 +27,7 @@ export const Greeting = ({
   onDeauthenticate,
   onOpenLocalRealm,
   onRefreshCloudStatus,
-  onServerCreate,
+  onInstanceCreate,
   onShare,
   updateStatus,
   version,
@@ -42,7 +42,7 @@ export const Greeting = ({
   onDeauthenticate: () => void;
   onOpenLocalRealm: () => void;
   onRefreshCloudStatus: () => void;
-  onServerCreate: () => void;
+  onInstanceCreate: () => void;
   onShare: (socialNetwork: SocialNetwork) => void;
   updateStatus: IUpdateStatus;
   version: string;
@@ -68,7 +68,7 @@ export const Greeting = ({
             onConnectToPrimarySubscription={onConnectToPrimarySubscription}
             onDeauthenticate={onDeauthenticate}
             onRefresh={onRefreshCloudStatus}
-            onServerCreate={onServerCreate}
+            onInstanceCreate={onInstanceCreate}
             onShare={onShare}
           />
         </div>

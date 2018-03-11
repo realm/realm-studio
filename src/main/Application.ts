@@ -294,13 +294,13 @@ export class Application {
   public showCloudAuthentication(
     props: ICloudAuthenticationWindowProps,
     resolveUser: boolean = false,
-  ): Promise<raas.user.IMeResponse> {
+  ): Promise<raas.user.IAccountResponse> {
     return new Promise((resolve, reject) => {
       const window = this.windowManager.createWindow(props);
       const listener = (status: ICloudStatus) => {
         if (status.kind === 'authenticated') {
           this.cloudManager.removeListener(listener);
-          resolve(status.user);
+          resolve(status.account);
           // Close the window once we're authenticated
           window.close();
         } else if (status.kind === 'error') {

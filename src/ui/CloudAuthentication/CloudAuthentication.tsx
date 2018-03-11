@@ -5,9 +5,11 @@ import { Alert, Button, Form, FormGroup, Input } from 'reactstrap';
 import { Mode } from '.';
 import cloudLogo from '../../../static/svgs/cloud-logo.svg';
 import { LoadingOverlay } from '../reusable/loading-overlay';
+
 import { IntroductionOverlay } from './IntroductionOverlay';
 import { LogInForm } from './LogInForm';
 import { SignUpForm } from './SignUpForm';
+import { VerifyEmailOverlay } from './VerifyEmailOverlay';
 
 import './CloudAuthentication.scss';
 
@@ -18,7 +20,7 @@ interface ICloudAuthenticationProps {
   onAuthenticateWithEmail: (email: string, password: string) => void;
   onAuthenticateWithGitHub: () => void;
   onModeChange: (mode: Mode) => void;
-  onSignUp: (email: string) => void;
+  onSignUp: (email: string, password: string) => void;
 }
 
 export const CloudAuthentication = ({
@@ -60,6 +62,9 @@ export const CloudAuthentication = ({
       )}
       {mode === 'introduction' && (
         <IntroductionOverlay onModeChange={onModeChange} />
+      )}
+      {mode === 'verify-email' && (
+        <VerifyEmailOverlay onModeChange={onModeChange} />
       )}
     </div>
     <LoadingOverlay loading={isLoading} />

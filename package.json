@@ -1,7 +1,7 @@
 {
   "name": "realm-studio",
   "productName": "Realm Studio",
-  "version": "1.18.5",
+  "version": "1.18.6",
   "description": "A tool for everything Realm",
   "author": {
     "name": "Realm Inc.",
@@ -149,7 +149,7 @@
     "react-sortable-hoc": "^0.6.8",
     "react-virtualized": "^9.11.1",
     "reactstrap": "^4.8.0",
-    "realm": "^2.2.12",
+    "realm": "^2.2.14",
     "uuid": "^3.1.0"
   },
   "devDependencies": {
