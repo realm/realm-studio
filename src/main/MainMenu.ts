@@ -4,7 +4,7 @@ import { main } from '../actions/main';
 import { ImportFormat } from '../services/data-importer';
 import * as raas from '../services/raas';
 
-const isProduction = process.env.NODE_ENV !== 'production';
+const isProduction = process.env.NODE_ENV === 'production';
 const internalFeatureKey = 'ENABLE_REALM_STUDIO_INTERNAL_FEATURES';
 const showInternalFeatures = process.env[internalFeatureKey] !== undefined; // Show features only relevant for Realm employees
 
@@ -165,7 +165,7 @@ export const getDefaultMenuTemplate = (
       for (let j = menuItem.submenu.length - 1; j >= 0; j--) {
         const subMenuItem: electron.MenuItemConstructorOptions =
           menuItem.submenu[j];
-        if (!subMenuItem.visible) {
+        if (subMenuItem.visible === false) {
           menuItem.submenu.splice(j, 1);
         }
       }
