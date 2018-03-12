@@ -3,6 +3,7 @@ import * as electron from 'electron';
 import { main } from '../actions/main';
 import { ImportFormat } from '../services/data-importer';
 import * as raas from '../services/raas';
+import { store } from '../store';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -59,6 +60,25 @@ export const getDefaultMenuTemplate = (
         { role: 'reload', visible: !isProduction },
         { role: 'toggledevtools', visible: !isProduction },
         { type: 'separator', visible: !isProduction },
+        {
+          label: `Show partial Realms`,
+          type: 'checkbox',
+          checked: store.showPartialRealms(),
+          click: async () => {
+            await store.toggleShowPartialRealms();
+            updateMenu();
+          },
+        },
+        {
+          label: `Show system Realms`,
+          type: 'checkbox',
+          checked: store.showSystemRealms(),
+          click: async () => {
+            await store.toggleShowSystemRealms();
+            updateMenu();
+          },
+        },
+        { type: 'separator' },
         { role: 'resetzoom' },
         { role: 'zoomin' },
         { role: 'zoomout' },

@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as Realm from 'realm';
 
 import * as ros from '../../../services/ros';
+import { store } from '../../../store';
 
 import { showError } from '../../reusable/errors';
 import { querySomeFieldContainsText } from '../utils';
@@ -25,6 +26,8 @@ export interface IRealmTableContainerState {
   selectedRealmPath: string | null;
   isCreateRealmOpen: boolean;
   searchString: string;
+  showPartialRealms: boolean;
+  showSystemRealms: boolean;
 }
 
 export class RealmsTableContainer extends React.PureComponent<
@@ -39,24 +42,54 @@ export class RealmsTableContainer extends React.PureComponent<
       isCreateRealmOpen: false,
       selectedRealmPath: null,
       searchString: '',
+      showPartialRealms: store.showPartialRealms(),
+      showSystemRealms: store.showSystemRealms(),
     };
   }
 
   public componentWillMount() {
-    this.setRealms();
+    this.setRealms(
+      this.state.searchString,
+      this.state.showPartialRealms,
+      this.state.showSystemRealms,
+    );
   }
 
   public componentWillUpdate(
     nextProps: IRealmTableContainerProps,
     nextState: IRealmTableContainerState,
   ) {
-    if (this.state.searchString !== nextState.searchString) {
-      this.setRealms(nextState.searchString);
+    if (
+      this.state.searchString !== nextState.searchString ||
+      this.state.showPartialRealms !== nextState.showPartialRealms ||
+      this.state.showSystemRealms !== nextState.showSystemRealms
+    ) {
+      this.setRealms(
+        nextState.searchString,
+        nextState.showPartialRealms,
+        nextState.showSystemRealms,
+      );
     }
   }
 
   public render() {
     return <RealmsTable realms={this.realms} {...this.state} {...this} />;
+  }
+
+  public componentDidMount() {
+    store.onDidChange(store.KEY_SHOW_PARTIAL_REALMS, (newVal, oldVal) => {
+      if (oldVal !== newVal) {
+        const val = newVal === true;
+        this.setState({ showPartialRealms: val });
+      }
+    });
+
+    store.onDidChange(store.KEY_SHOW_SYSTEM_REALMS, (newVal, oldVal) => {
+      if (oldVal !== newVal) {
+        const val = newVal === true;
+        this.setState({ showSystemRealms: val });
+      }
+    });
   }
 
   public getRealmFromId = (path: string): ros.IRealmFile | undefined => {
@@ -122,7 +155,11 @@ export class RealmsTableContainer extends React.PureComponent<
     this.setState({ searchString });
   };
 
-  protected setRealms(searchString?: string) {
+  protected setRealms(
+    searchString: string,
+    showPartialRealms: boolean,
+    showSystemRealms: boolean,
+  ) {
     if (!searchString || searchString === '') {
       this.realms = this.props.adminRealm.objects<ros.IRealmFile>('RealmFile');
     } else {
@@ -138,6 +175,14 @@ export class RealmsTableContainer extends React.PureComponent<
         // tslint:disable-next-line:no-console
         console.warn(`Could not filter on "${filterQuery}"`, err);
       }
+    }
+
+    // Filter out System and Partial Realms based on global preferences
+    if (showPartialRealms === false) {
+      this.realms = this.realms.filtered("NOT path CONTAINS '/__partial/'");
+    }
+    if (showSystemRealms === false) {
+      this.realms = this.realms.filtered("NOT path BEGINSWITH '/__'");
     }
   }
 
