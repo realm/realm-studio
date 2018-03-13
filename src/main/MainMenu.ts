@@ -63,7 +63,7 @@ export const getDefaultMenuTemplate = (
         {
           label: `Show partial Realms`,
           type: 'checkbox',
-          checked: store.showPartialRealms(),
+          checked: store.shouldShowPartialRealms(),
           click: async () => {
             await store.toggleShowPartialRealms();
             updateMenu();
@@ -72,7 +72,7 @@ export const getDefaultMenuTemplate = (
         {
           label: `Show system Realms`,
           type: 'checkbox',
-          checked: store.showSystemRealms(),
+          checked: store.shouldShowSystemRealms(),
           click: async () => {
             await store.toggleShowSystemRealms();
             updateMenu();

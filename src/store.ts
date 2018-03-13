@@ -20,11 +20,11 @@ class RealmStudioStore {
     this.store.set(this.KEY_SHOW_SYSTEM_REALMS, !currentValue);
   }
 
-  public showPartialRealms(): boolean {
+  public shouldShowPartialRealms(): boolean {
     return this.store.get(this.KEY_SHOW_PARTIAL_REALMS, false);
   }
 
-  public showSystemRealms(): boolean {
+  public shouldShowSystemRealms(): boolean {
     return this.store.get(this.KEY_SHOW_SYSTEM_REALMS, false);
   }
 

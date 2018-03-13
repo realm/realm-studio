@@ -42,8 +42,8 @@ export class RealmsTableContainer extends React.PureComponent<
       isCreateRealmOpen: false,
       selectedRealmPath: null,
       searchString: '',
-      showPartialRealms: store.showPartialRealms(),
-      showSystemRealms: store.showSystemRealms(),
+      showPartialRealms: store.shouldShowPartialRealms(),
+      showSystemRealms: store.shouldShowSystemRealms(),
     };
   }
 
