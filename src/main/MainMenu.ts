@@ -5,8 +5,8 @@ import { ImportFormat } from '../services/data-importer';
 import * as raas from '../services/raas';
 
 const isProduction = process.env.NODE_ENV === 'production';
-const internalFeatureKey = 'ENABLE_REALM_STUDIO_INTERNAL_FEATURES';
-const showInternalFeatures = process.env[internalFeatureKey] !== undefined; // Show features only relevant for Realm employees
+const showInternalFeatures =
+  process.env.REALM_STUDIO_INTERNAL_FEATURES === 'true'; // Show features only relevant for Realm employees
 
 export const getDefaultMenuTemplate = (
   updateMenu: () => void,

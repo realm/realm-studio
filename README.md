@@ -21,11 +21,6 @@ If you've checked out this repository, install and start it by running
     npm install
     npm start
 
-Some internal features, only usable by Realm employees, are hidden by default and are only shown if the following
-environment variable is set:
-
-    export ENABLE_REALM_STUDIO_INTERNAL_FEATURES=""
-
 ## Developing
 
 Please read the [guidelines](./GUIDELINES.md) to familiarize with the code style and tools used to develop Realm Studio.
@@ -48,6 +43,11 @@ checker or run the lint command:
 ### Parameters
 
 The application has support for some parameters that can be supplied when starting it:
+
+- THe `REALM_STUDIO_INTERNAL_FEATURES` environment variable can be set to show features in Realm Studio that
+  are only useful for Realm employees, like being able to select the Staging server for the Cloud.
+
+      REALM_STUDIO_INTERNAL_FEATURES=true
 
 - The `DISPLAY` environment variable can be set to the index of the display that windows should be created on.
   So to start the application, opening windows on your secondary monitor, run
