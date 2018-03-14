@@ -78,6 +78,15 @@ export const getDefaultMenuTemplate = (
             updateMenu();
           },
         },
+        {
+          label: `Show system users`,
+          type: 'checkbox',
+          checked: store.shouldShowSystemUsers(),
+          click: async () => {
+            await store.toggleShowSystemUsers();
+            updateMenu();
+          },
+        },
         { type: 'separator' },
         { role: 'resetzoom' },
         { role: 'zoomin' },

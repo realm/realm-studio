@@ -7,6 +7,7 @@ export { store };
 class RealmStudioStore {
   public readonly KEY_SHOW_PARTIAL_REALMS = 'realmlist.show-partial-realms';
   public readonly KEY_SHOW_SYSTEM_REALMS = 'realmlist.show-system-realms';
+  public readonly KEY_SHOW_SYSTEM_USERS = 'userlist.show-system-users';
 
   private store = new ElectronStore();
 
@@ -20,12 +21,21 @@ class RealmStudioStore {
     this.store.set(this.KEY_SHOW_SYSTEM_REALMS, !currentValue);
   }
 
+  public toggleShowSystemUsers() {
+    const currentValue = this.store.get(this.KEY_SHOW_SYSTEM_USERS, false);
+    this.store.set(this.KEY_SHOW_SYSTEM_USERS, !currentValue);
+  }
+
   public shouldShowPartialRealms(): boolean {
     return this.store.get(this.KEY_SHOW_PARTIAL_REALMS, false);
   }
 
   public shouldShowSystemRealms(): boolean {
     return this.store.get(this.KEY_SHOW_SYSTEM_REALMS, false);
+  }
+
+  public shouldShowSystemUsers(): boolean {
+    return this.store.get(this.KEY_SHOW_SYSTEM_USERS, false);
   }
 
   // Subclassing ElectronStore results in

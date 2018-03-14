@@ -1,6 +1,7 @@
 import * as electron from 'electron';
 import * as React from 'react';
 import * as Realm from 'realm';
+import { store } from '../../../store'
 
 import * as ros from '../../../services/ros';
 import { showError } from '../../reusable/errors';
@@ -19,6 +20,7 @@ export interface IUsersTableContainerState {
   isCreateUserOpen: boolean;
   selectedUserId: string | null;
   searchString: string;
+  showSystemUsers: boolean;
 }
 
 export class UsersTableContainer extends React.Component<
@@ -34,20 +36,33 @@ export class UsersTableContainer extends React.Component<
       isCreateUserOpen: false,
       selectedUserId: null,
       searchString: '',
+      showSystemUsers: store.shouldShowSystemUsers(),
     };
   }
 
   public componentWillMount() {
-    this.setUsers();
+    this.setUsers(this.state.searchString, this.state.showSystemUsers);
   }
 
   public componentWillUpdate(
     nextProps: IUsersTableContainerProps,
     nextState: IUsersTableContainerState,
   ) {
-    if (this.state.searchString !== nextState.searchString) {
-      this.setUsers(nextState.searchString);
+    if (
+      this.state.searchString !== nextState.searchString ||
+      this.state.showSystemUsers !== nextState.showSystemUsers
+    ) {
+      this.setUsers(nextState.searchString, nextState.showSystemUsers);
     }
+  }
+
+  public componentDidMount() {
+    store.onDidChange(store.KEY_SHOW_SYSTEM_USERS, (newVal, oldVal) => {
+      if (oldVal !== newVal) {
+        const val = newVal === true;
+        this.setState({ showSystemUsers: val });
+      }
+    });
   }
 
   public render() {
@@ -192,7 +207,7 @@ export class UsersTableContainer extends React.Component<
     this.forceUpdate();
   };
 
-  protected setUsers(searchString?: string) {
+  protected setUsers(searchString: string, showSystemUsers: boolean) {
     if (!searchString || searchString === '') {
       this.users = this.props.adminRealm
         .objects<ros.IUser>('User')
@@ -211,6 +226,13 @@ export class UsersTableContainer extends React.Component<
         // tslint:disable-next-line:no-console
         console.warn(`Could not filter on "${filterQuery}"`, err);
       }
+    }
+
+    // Filter out System users if needed
+    if (showSystemUsers === false) {
+      this.users = this.users.filtered(
+        "NOT userId == '__admin' AND NOT userId BEGINSWITH 'system-accessibility'",
+      );
     }
   }
 
