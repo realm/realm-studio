@@ -56,7 +56,7 @@ export const CloudAction = ({
       </Alert>
     );
   } else if (cloudStatus && cloudStatus.kind === 'authenticated') {
-    if (cloudStatus.instances.length > 0) {
+    if (cloudStatus.instances.length > 1) {
       return (
         <ButtonDropdown
           isOpen={isCloudInstancesDropdownOpen}
@@ -73,6 +73,15 @@ export const CloudAction = ({
             ))}
           </DropdownMenu>
         </ButtonDropdown>
+      );
+    } else if (cloudStatus.instances.length === 1) {
+      return (
+        <Button
+          color="primary"
+          onClick={() => onConnectToCloudInstance(cloudStatus.instances[0])}
+        >
+          Connect to Realm Cloud
+        </Button>
       );
     } else if (cloudStatus.account.emailVerified) {
       return (
