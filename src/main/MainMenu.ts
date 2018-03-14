@@ -5,6 +5,8 @@ import { ImportFormat } from '../services/data-importer';
 import * as raas from '../services/raas';
 
 const isProduction = process.env.NODE_ENV === 'production';
+const showInternalFeatures =
+  process.env.REALM_STUDIO_INTERNAL_FEATURES === 'true'; // Show features only relevant for Realm employees
 
 export const getDefaultMenuTemplate = (
   updateMenu: () => void,
@@ -89,6 +91,7 @@ export const getDefaultMenuTemplate = (
         },
         {
           label: 'Change endpoint',
+          visible: showInternalFeatures,
           submenu: [
             {
               type: 'radio',
@@ -147,6 +150,26 @@ export const getDefaultMenuTemplate = (
         { role: 'quit' },
       ],
     });
+  }
+
+  // Workaround for https://github.com/electron/electron/issues/8703
+  // In some cases the setting for `visible` is not respected, instead
+  // just manually remove all items marked invisible.
+  for (let i = template.length - 1; i >= 0; i--) {
+    const menuItem: electron.MenuItemConstructorOptions = template[i];
+    if (menuItem.visible === false) {
+      template.splice(i, 1);
+      continue;
+    }
+    if (menuItem.submenu instanceof Array) {
+      for (let j = menuItem.submenu.length - 1; j >= 0; j--) {
+        const subMenuItem: electron.MenuItemConstructorOptions =
+          menuItem.submenu[j];
+        if (subMenuItem.visible === false) {
+          menuItem.submenu.splice(j, 1);
+        }
+      }
+    }
   }
 
   return template;
