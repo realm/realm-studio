@@ -1,9 +1,16 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import { Alert, Button } from 'reactstrap';
+import {
+  Alert,
+  Button,
+  ButtonDropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownToggle,
+} from 'reactstrap';
 
 import cloudLogo from '../../../../static/svgs/cloud-logo-simple.svg';
-import { ICloudStatus } from '../../../main/CloudManager';
+import { ICloudStatus, IInstance } from '../../../main/CloudManager';
 import { LoadingDots } from '../../reusable/loading-dots';
 import { SocialNetwork } from '../GreetingContainer';
 
@@ -11,22 +18,26 @@ import './CloudAction.scss';
 
 export interface ICloudActionButtonProps {
   cloudStatus?: ICloudStatus;
+  isCloudInstancesDropdownOpen: boolean;
   onAuthenticate: () => void;
-  onConnectToPrimarySubscription: () => void;
+  onConnectToCloudInstance: (instance: IInstance) => void;
   onDeauthenticate: () => void;
-  onRefresh: () => void;
   onInstanceCreate: () => void;
+  onRefresh: () => void;
   onShare: (socialNetwork: SocialNetwork) => void;
+  onToggleCloudInstancesDropdown: () => void;
 }
 
 export const CloudAction = ({
   cloudStatus,
+  isCloudInstancesDropdownOpen,
   onAuthenticate,
-  onConnectToPrimarySubscription,
+  onConnectToCloudInstance,
   onDeauthenticate,
-  onRefresh,
   onInstanceCreate,
+  onRefresh,
   onShare,
+  onToggleCloudInstancesDropdown,
 }: ICloudActionButtonProps) => {
   if (cloudStatus && cloudStatus.kind === 'authenticating') {
     return (
@@ -45,14 +56,23 @@ export const CloudAction = ({
       </Alert>
     );
   } else if (cloudStatus && cloudStatus.kind === 'authenticated') {
-    if (cloudStatus.primarySubscription) {
+    if (cloudStatus.instances.length > 0) {
       return (
-        <Button
-          onClick={() => onConnectToPrimarySubscription()}
-          color="primary"
+        <ButtonDropdown
+          isOpen={isCloudInstancesDropdownOpen}
+          toggle={onToggleCloudInstancesDropdown}
         >
-          Connect to Realm Cloud
-        </Button>
+          <DropdownToggle color="primary" caret>
+            Connect to Realm Cloud
+          </DropdownToggle>
+          <DropdownMenu>
+            {cloudStatus.instances.map(instance => (
+              <DropdownItem onClick={() => onConnectToCloudInstance(instance)}>
+                {instance.projectName || instance.tenantUrl}
+              </DropdownItem>
+            ))}
+          </DropdownMenu>
+        </ButtonDropdown>
       );
     } else if (cloudStatus.account.emailVerified) {
       return (

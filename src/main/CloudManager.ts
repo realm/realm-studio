@@ -3,6 +3,8 @@ import * as raas from '../services/raas';
 import * as ros from '../services/ros';
 import { timeout } from '../utils';
 
+export type IInstance = raas.user.ISubscription;
+
 interface IBaseCloudStatus {
   kind: string;
   endpoint: raas.Endpoint;
@@ -29,7 +31,7 @@ export interface IAuthenticatingCloudStatus extends IBaseCloudStatus {
 export interface IAuthenticatedCloudStatus extends IBaseCloudStatus {
   kind: 'authenticated';
   justAuthenticated: boolean;
-  primarySubscription?: raas.user.ISubscription;
+  instances: IInstance[];
   raasToken: string;
   account: raas.user.IAccountResponse;
 }
@@ -138,17 +140,16 @@ export class CloudManager {
           endpoint,
         });
         const account = await raas.user.getAccount();
-        const subscriptions = await raas.user.getSubscriptions();
+        // We use "instance" internally instead of subscriptions
+        const instances = await raas.user.getSubscriptions();
         const status: IAuthenticatedCloudStatus = {
           kind: 'authenticated',
+          account,
           endpoint,
           justAuthenticated,
           raasToken,
-          account,
+          instances,
         };
-        if (subscriptions.length > 0) {
-          status.primarySubscription = subscriptions[0];
-        }
         this.sendCloudStatus(status);
       } else {
         this.sendCloudStatus({
