@@ -3,7 +3,7 @@ import * as qs from 'querystring';
 import * as React from 'react';
 
 import { main } from '../../actions/main';
-import { ICloudStatus } from '../../main/CloudManager';
+import { ICloudStatus, IInstance } from '../../main/CloudManager';
 import { IUpdateStatus } from '../../main/Updater';
 import * as raas from '../../services/raas';
 import { IServerCredentials } from '../../services/ros';
@@ -16,6 +16,7 @@ export type SocialNetwork = 'twitter' | 'facebook' | 'reddit' | 'hacker-news';
 
 interface IGreetingContainerState {
   cloudStatus?: ICloudStatus;
+  isCloudInstancesDropdownOpen: boolean;
   isSyncEnabled: boolean;
   updateStatus: IUpdateStatus;
   version: string;
@@ -28,6 +29,7 @@ export class GreetingContainer extends React.Component<
   constructor() {
     super();
     this.state = {
+      isCloudInstancesDropdownOpen: false,
       isSyncEnabled: false,
       updateStatus: {
         state: 'up-to-date',
@@ -68,43 +70,26 @@ export class GreetingContainer extends React.Component<
     await main.showCloudAuthentication();
   };
 
-  public onCloudSubscriptionCreated = async (
-    subscription?: raas.user.ISubscription,
-  ) => {
+  public onCloudInstanceCreated = async (instance: IInstance) => {
     await main.refreshCloudStatus();
-    this.onConnectToPrimarySubscription(subscription);
+    this.onConnectToCloudInstance(instance);
   };
 
-  public onConnectToPrimarySubscription = async (
-    subscription?: raas.user.ISubscription,
+  public onConnectToCloudInstance = async (
+    instance: IInstance,
   ): Promise<void> => {
     try {
-      if (!subscription) {
-        const { cloudStatus } = this.state;
-        if (
-          cloudStatus &&
-          cloudStatus.kind === 'authenticated' &&
-          cloudStatus.primarySubscription
-        ) {
-          return this.onConnectToPrimarySubscription(
-            cloudStatus.primarySubscription,
-          );
-        } else {
-          throw new Error(`Missing a primary subscription`);
-        }
+      const tenantUrl = instance.tenantUrl;
+      if (tenantUrl) {
+        const credentials = raas.user.getTenantCredentials(tenantUrl);
+        return main.showServerAdministration({
+          type: 'server-administration',
+          credentials,
+          validateCertificates: true,
+          isCloudTenant: true,
+        });
       } else {
-        const tenantUrl = subscription.tenantUrl;
-        if (tenantUrl) {
-          const credentials = raas.user.getTenantCredentials(tenantUrl);
-          return main.showServerAdministration({
-            type: 'server-administration',
-            credentials,
-            validateCertificates: true,
-            isCloudTenant: true,
-          });
-        } else {
-          throw new Error(`Couldn't determine the URL of the server`);
-        }
+        throw new Error(`Couldn't determine the URL of the server`);
       }
     } catch (err) {
       showError('Failed to connect to the server', err);
@@ -162,6 +147,13 @@ export class GreetingContainer extends React.Component<
     } else {
       alert('We have not announced this yet');
     }
+  };
+
+  public onToggleCloudInstancesDropdown = () => {
+    const { isCloudInstancesDropdownOpen } = this.state;
+    this.setState({
+      isCloudInstancesDropdownOpen: !isCloudInstancesDropdownOpen,
+    });
   };
 
   protected getShareUrl(socialNetwork: SocialNetwork) {

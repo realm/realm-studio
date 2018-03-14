@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Button, ButtonGroup } from 'reactstrap';
 import * as util from 'util';
 
-import { ICloudStatus } from '../../main/CloudManager';
+import { ICloudStatus, IInstance } from '../../main/CloudManager';
 import { IUpdateStatus } from '../../main/Updater';
 import { IServerCredentials } from '../../services/ros';
 
@@ -18,32 +18,34 @@ import './Greeting.scss';
 
 export const Greeting = ({
   cloudStatus,
+  isCloudInstancesDropdownOpen,
   isSyncEnabled,
   onAuthenticate,
   onCheckForUpdates,
-  onCloudSubscriptionCreated,
-  onConnectToPrimarySubscription,
+  onConnectToCloudInstance,
   onConnectToServer,
   onDeauthenticate,
+  onInstanceCreate,
   onOpenLocalRealm,
   onRefreshCloudStatus,
-  onInstanceCreate,
   onShare,
+  onToggleCloudInstancesDropdown,
   updateStatus,
   version,
 }: {
   cloudStatus?: ICloudStatus;
+  isCloudInstancesDropdownOpen: boolean;
   isSyncEnabled: boolean;
   onAuthenticate: () => void;
   onCheckForUpdates: () => void;
-  onCloudSubscriptionCreated: () => void;
-  onConnectToPrimarySubscription: () => void;
+  onConnectToCloudInstance: (instance: IInstance) => void;
   onConnectToServer: () => void;
   onDeauthenticate: () => void;
+  onInstanceCreate: () => void;
   onOpenLocalRealm: () => void;
   onRefreshCloudStatus: () => void;
-  onInstanceCreate: () => void;
   onShare: (socialNetwork: SocialNetwork) => void;
+  onToggleCloudInstancesDropdown: () => void;
   updateStatus: IUpdateStatus;
   version: string;
 }) => (
@@ -64,12 +66,14 @@ export const Greeting = ({
         <div className="Greeting__Action">
           <CloudAction
             cloudStatus={cloudStatus}
+            isCloudInstancesDropdownOpen={isCloudInstancesDropdownOpen}
             onAuthenticate={onAuthenticate}
-            onConnectToPrimarySubscription={onConnectToPrimarySubscription}
+            onConnectToCloudInstance={onConnectToCloudInstance}
             onDeauthenticate={onDeauthenticate}
-            onRefresh={onRefreshCloudStatus}
             onInstanceCreate={onInstanceCreate}
+            onRefresh={onRefreshCloudStatus}
             onShare={onShare}
+            onToggleCloudInstancesDropdown={onToggleCloudInstancesDropdown}
           />
         </div>
         <div className="Greeting__SecondaryActions">
