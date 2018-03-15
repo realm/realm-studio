@@ -62,6 +62,21 @@ jobWrapper {
       dir('dist-finally') {
         rlmS3Put(bucket: s3Config.bucket, path: s3Config.path)
       }
+      
+      // Publish GitHub release
+      if (env.GITHUB_RELEASE_ID) {
+        withCredentials([string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')]) {
+          // Update to publish the release
+          sh """
+            curl \
+              -H "Content-Type: application/json" \
+              -H "Authorization: token ${GITHUB_TOKEN}" \
+              -X PATCH \
+              -d '{"draft": false}' \
+              https://api.github.com/repos/realm/realm-studio/releases/${env.GITHUB_RELEASE_ID}
+          """
+        }
+      }
 
       // Notify by posting to Slack
       def url = "https://studio-releases.realm.io/${env.VERSION_TAG}"
