@@ -32,6 +32,19 @@ jobWrapper {
         // Push with tags
         sh "git push --tags origin HEAD"
       }
+      
+      // Create a draft release on GitHub
+      withCredentials([string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')]) {
+        sh """
+          curl \
+            -H "Content-Type: application/json" \
+            -H "Authorization: token ${GITHUB_TOKEN}"
+            -X POST \
+            -d '{ "tag_name": "${nextVersion}", "name": "${nextVersion.substring(1)}: ...", "body": "${releaseBody}", "draft": true }' \
+            https://api.github.com/repos/realm/realm-studio/releases
+        """
+      }
+      
       // Start a release job
       build(
         job: 'realm-studio/release',
