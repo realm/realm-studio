@@ -6,7 +6,10 @@ jobWrapper {
   stage('Bump version and tag commit') {
     node('docker') {
       doCheckout()
-
+      // Read the current version of the package
+      packageJson = readJSON file: 'package.json'
+      currentVersion = packageJson.version
+      // Change the package version
       docker.image('node:6.11.2').inside("-e HOME=${env.WORKSPACE} -v /etc/passwd:/etc/passwd:ro") {
         // Bump the version and tag the branch
         // Using --no-git-tag-version because the default does not add the package-lock.json
@@ -35,6 +38,12 @@ jobWrapper {
       
       // Create a draft release on GitHub
       withCredentials([string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')]) {
+        // Read the release body and replace in any variables
+        releaseBody = readFile 'RELEASE_BODY.md'
+        releaseBody = releaseBody
+          .replaceAll('{{previous version}}', "v${currentVersion}")
+          .replaceAll('{{current version}}', nextVersion)
+        // Send a request to GitHub, creating the draft release
         sh """
           curl \
             -H "Content-Type: application/json" \
