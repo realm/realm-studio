@@ -41,13 +41,13 @@ jobWrapper {
         // Read the release body and replace in any variables
         releaseBody = readFile 'RELEASE_BODY.md'
         releaseBody = releaseBody
-          .replaceAll('{{previous version}}', "v${currentVersion}")
-          .replaceAll('{{current version}}', nextVersion)
+          .replaceAll("\\[PREVIOUS_VERSION\\]", "v${currentVersion}")
+          .replaceAll("\\[CURRENT_VERSION\\]", nextVersion)
         // Send a request to GitHub, creating the draft release
         sh """
           curl \
             -H "Content-Type: application/json" \
-            -H "Authorization: token ${GITHUB_TOKEN}"
+            -H "Authorization: token ${GITHUB_TOKEN}" \
             -X POST \
             -d '{ "tag_name": "${nextVersion}", "name": "${nextVersion.substring(1)}: ...", "body": "${releaseBody}", "draft": true }' \
             https://api.github.com/repos/realm/realm-studio/releases
