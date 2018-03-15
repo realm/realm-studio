@@ -16,8 +16,15 @@ jobWrapper {
 
   stage('Build, test and package') {
     parallel (
-      macos: packageOnMacos(),
-      others: packageOthers()
+      stage('Build for MacOS') {
+        // Retrying to mitigate https://github.com/realm/realm-studio/issues/316
+        retry(3) {
+          packageForMac()
+        }
+      }
+      stage('Build for Linux and Windows') {
+        packageForLinuxAndWindows()
+      }
     )
   }
 
@@ -87,7 +94,7 @@ def checkoutAtVersion() {
   ])
 }
 
-def packageOthers() {
+def packageForLinuxAndWindows() {
   return {
     node('docker') {
       checkoutAtVersion()
@@ -119,7 +126,7 @@ def packageOthers() {
   }
 }
 
-def packageOnMacos() {
+def packageForMac() {
   return {
     node('macos') {
       checkoutAtVersion()
