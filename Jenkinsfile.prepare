@@ -1,5 +1,7 @@
 #!groovy
 
+import groovy.json.JsonOutput
+
 @Library('realm-ci') _
 
 jobWrapper {
