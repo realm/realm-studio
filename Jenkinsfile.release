@@ -64,11 +64,11 @@ jobWrapper {
       }
 
       // Notify by posting to Slack
-      def url = "https://github.com/realm/realm-studio/releases/tag/${env.VERSION_TAG}"
+      def url = "https://studio-releases.realm.io/${env.VERSION_TAG}"
       def slackPost = [[
         'title': "Realm Studio ${env.VERSION_TAG} has been released!",
         'title_link': url,
-        'text': "Github Release and artifacts are available <${url}|here>",
+        'text': "Release notes and artifacts are available <${url}|here>",
         'color': 'good',
         'unfurl_links': false
       ]]
