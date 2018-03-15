@@ -16,13 +16,13 @@ jobWrapper {
 
   stage('Build, test and package') {
     parallel (
-      stage('Build for MacOS') {
+      'Build for MacOS': {
         // Retrying to mitigate https://github.com/realm/realm-studio/issues/316
         retry(3) {
           packageForMac()
         }
-      }
-      stage('Build for Linux and Windows') {
+      },
+      'Build for Linux and Windows': {
         packageForLinuxAndWindows()
       }
     )
