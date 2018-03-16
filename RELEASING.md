@@ -76,8 +76,8 @@ In the case where we've released something that needs to be rolled back we have 
     2. Find the latest (broken) release and click the "Edit" button
     3. Click "Save draft"
 2. To prevent existing users from updating to the broken version, override the latest.yml files on S3 in one of two ways:
-    1. **Automatically:** By going to https://ci.realm.io/job/realm-studio/job/release/build and starting a new build of a non-broken version.
-    1. **Manually:** By downloading and re-uploading the .yml files that defines which is the latest version towards the auto updater:
+    1. Automatically: By going to https://ci.realm.io/job/realm-studio/job/release/build and starting a new build of a non-broken version.
+    2. Manually: By downloading and re-uploading the .yml files that defines which is the latest version towards the auto updater:
         1. Find the latest successful build of the latest non-broken version on https://ci.realm.io/job/realm-studio/job/release/
         2. Download the `latest-linux.yml` `latest-mac.json` `latest-mac.yml` and `latest.yml` files
         3. Navigate to https://s3.console.aws.amazon.com/s3/buckets/static.realm.io/downloads/realm-studio/
