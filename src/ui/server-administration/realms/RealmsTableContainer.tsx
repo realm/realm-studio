@@ -182,7 +182,14 @@ export class RealmsTableContainer extends React.PureComponent<
       this.realms = this.realms.filtered("NOT path CONTAINS '/__partial/'");
     }
     if (showSystemRealms === false) {
-      this.realms = this.realms.filtered("NOT path BEGINSWITH '/__'");
+      // Hide all system realms, including the old Permission system Realms,
+      // but make sure to not hide partial Realms.
+      this.realms = this.realms.filtered(
+        "NOT path BEGINSWITH '/__' " +
+          "AND NOT path ENDSWITH '__management' " +
+          "AND NOT path ENDSWITH '__perm' " +
+          "AND NOT path ENDSWITH '__permission' ",
+      );
     }
   }
 
