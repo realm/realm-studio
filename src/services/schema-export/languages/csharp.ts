@@ -118,8 +118,9 @@ export default class CSharpSchemaExporter extends SchemaExporter {
       }
 
       this.appendLine(
-        `${this
-          .PropertyPadding}public ${prop.type} ${prop.name} { get;${prop.setter} }`,
+        `${this.PropertyPadding}public ${prop.type} ${prop.name} { get;${
+          prop.setter
+        } }`,
       );
     }
 

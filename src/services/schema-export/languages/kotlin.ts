@@ -85,9 +85,11 @@ export default class KotlinSchemaExporter extends SchemaExporter {
     if (!prop.optional && prop.type === 'list') {
       this.fieldsContent += `${KotlinSchemaExporter.PADDING}@Required\n`;
     }
-    this.fieldsContent += `${KotlinSchemaExporter.PADDING}var ${prop.name}: ${this.kotlinTypeForProperty(
+    this.fieldsContent += `${KotlinSchemaExporter.PADDING}var ${
+      prop.name
+    }: ${this.kotlinTypeForProperty(prop)} ${this.sensibleDefaultForProperty(
       prop,
-    )} ${this.sensibleDefaultForProperty(prop)}\n`;
+    )}\n`;
   }
 
   private sensibleDefaultForProperty(property: any): string {

@@ -139,12 +139,13 @@ export class UsersTableContainer extends React.Component<
     const user = this.getUserFromId(userId);
     if (user) {
       adminRealm.write(() => {
-        const metadataRow = adminRealm.create<
-          ros.IUserMetadataRow
-        >('UserMetadataRow', {
-          key: '',
-          value: '',
-        });
+        const metadataRow = adminRealm.create<ros.IUserMetadataRow>(
+          'UserMetadataRow',
+          {
+            key: '',
+            value: '',
+          },
+        );
         user.metadata.push(metadataRow);
       });
     }

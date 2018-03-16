@@ -84,9 +84,9 @@ export class AddClassModal extends React.Component<
 
     return {
       name,
-      ...primaryKey ? { primaryKey: primaryKeyName } : {},
+      ...(primaryKey ? { primaryKey: primaryKeyName } : {}),
       properties: {
-        ...primaryKey ? { [primaryKeyName]: primaryKeyType } : {},
+        ...(primaryKey ? { [primaryKeyName]: primaryKeyType } : {}),
       },
     };
   };

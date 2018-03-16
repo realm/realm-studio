@@ -61,10 +61,12 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   isAddPropertyOpen: boolean;
 }
 
-export class RealmBrowserContainer extends RealmLoadingComponent<
-  IRealmBrowserWindowProps & IMenuGeneratorProps,
-  IRealmBrowserState
-> implements IMenuGenerator {
+export class RealmBrowserContainer
+  extends RealmLoadingComponent<
+    IRealmBrowserWindowProps & IMenuGeneratorProps,
+    IRealmBrowserState
+  >
+  implements IMenuGenerator {
   private clickTimeout?: any;
   private latestCellValidation?: {
     columnIndex: number;

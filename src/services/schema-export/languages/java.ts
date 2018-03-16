@@ -96,21 +96,23 @@ export default class JavaSchemaExporter extends SchemaExporter {
       this.fieldsContent += `${JavaSchemaExporter.PADDING}@Required\n`;
     }
 
-    this.fieldsContent += `${JavaSchemaExporter.PADDING}private ${this.javaNameForProperty(
-      prop,
-    )} ${prop.name};\n`;
+    this.fieldsContent += `${
+      JavaSchemaExporter.PADDING
+    }private ${this.javaNameForProperty(prop)} ${prop.name};\n`;
 
-    this.gettersSetterContent += `${JavaSchemaExporter.PADDING}public ${this.javaNameForProperty(
-      prop,
-    )} ${prop.type === 'bool' ? 'is' : 'get'}${this.capitalizedString(
-      prop.name,
-    )}() { return ${prop.name}; }\n\n`;
+    this.gettersSetterContent += `${
+      JavaSchemaExporter.PADDING
+    }public ${this.javaNameForProperty(prop)} ${
+      prop.type === 'bool' ? 'is' : 'get'
+    }${this.capitalizedString(prop.name)}() { return ${prop.name}; }\n\n`;
 
-    this.gettersSetterContent += `${JavaSchemaExporter.PADDING}public void set${this.capitalizedString(
+    this.gettersSetterContent += `${
+      JavaSchemaExporter.PADDING
+    }public void set${this.capitalizedString(
       prop.name,
-    )}(${this.javaNameForProperty(
-      prop,
-    )} ${prop.name}) { this.${prop.name} = ${prop.name}; }\n\n`;
+    )}(${this.javaNameForProperty(prop)} ${prop.name}) { this.${prop.name} = ${
+      prop.name
+    }; }\n\n`;
   }
 
   private javaPropertyTypeCanBeMarkedRequired(type: any): boolean {

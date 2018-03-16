@@ -54,10 +54,11 @@ export class CSVDataImporter extends DataImporter {
               // abort transaction and delete the Realm
               realm.cancelTransaction();
               throw new Error(
-                `Parsing error at line ${lineIndex}, expected type "${schema
-                  .properties[prop]}" but got "${row[
-                  prop
-                ]}" for column "${prop}"\nError details: ${e}`,
+                `Parsing error at line ${lineIndex}, expected type "${
+                  schema.properties[prop]
+                }" but got "${
+                  row[prop]
+                }" for column "${prop}"\nError details: ${e}`,
               );
             }
           }
