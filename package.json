@@ -171,7 +171,7 @@
     "@types/source-map-support": "^0.4.0",
     "@types/uuid": "^3.4.2",
     "@types/webdriverio": "^4.8.6",
-    "@types/webpack": "^4.1.1",
+    "@types/webpack": "3.8.5",
     "@types/webpack-env": "^1.13.5",
     "awesome-typescript-loader": "^v5.0.0-1",
     "bootstrap": "4.0.0-alpha.6",
