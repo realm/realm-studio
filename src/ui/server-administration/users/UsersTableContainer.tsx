@@ -27,7 +27,7 @@ export class UsersTableContainer extends React.Component<
   IUsersTableContainerProps,
   IUsersTableContainerState
 > {
-  protected users: Realm.Results<ros.IUser>;
+  protected users?: Realm.Results<ros.IUser>;
 
   constructor() {
     super();
@@ -66,7 +66,9 @@ export class UsersTableContainer extends React.Component<
   }
 
   public render() {
-    return <UsersTable users={this.users} {...this.state} {...this} />;
+    return this.users ? (
+      <UsersTable users={this.users} {...this.state} {...this} />
+    ) : null;
   }
 
   public onUserSelected = (userId: string | null) => {
@@ -208,20 +210,18 @@ export class UsersTableContainer extends React.Component<
   };
 
   protected setUsers(searchString: string, showSystemUsers: boolean) {
-    if (!searchString || searchString === '') {
-      this.users = this.props.adminRealm
-        .objects<ros.IUser>('User')
-        .sorted('userId');
-    } else {
+    this.users = this.props.adminRealm
+      .objects<ros.IUser>('User')
+      .sorted('userId');
+
+    // Filter if a search string is specified
+    if (searchString && searchString !== '') {
       const filterQuery = querySomeFieldContainsText(
         ['userId', 'accounts.providerId', 'metadata.key', 'metadata.value'],
         searchString,
       );
       try {
-        this.users = this.props.adminRealm
-          .objects<ros.IUser>('User')
-          .filtered(filterQuery)
-          .sorted('userId');
+        this.users = this.users.filtered(filterQuery);
       } catch (err) {
         // tslint:disable-next-line:no-console
         console.warn(`Could not filter on "${filterQuery}"`, err);

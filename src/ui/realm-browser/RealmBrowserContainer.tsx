@@ -66,7 +66,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   IRealmBrowserState
 > implements IMenuGenerator {
   private clickTimeout?: any;
-  private latestCellValidation: {
+  private latestCellValidation?: {
     columnIndex: number;
     rowIndex: number;
     valid: boolean;
@@ -109,7 +109,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   public render() {
     return (
       <RealmBrowser
-        inTransaction={this.realm && this.realm.isInTransaction}
+        inTransaction={this.realm && this.realm.isInTransaction ? true : false}
         {...this.state}
         {...this}
       />
@@ -389,32 +389,37 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     let rowIndex = -1;
 
     this.write(() => {
-      // Adding a primitive value into a list
-      if (primitives.isPrimitive(className)) {
-        if (focus && focus.kind === 'list') {
-          const valueToPush = (values as any)[className];
-          focus.results.push(valueToPush);
-          rowIndex = focus.results.indexOf(valueToPush);
+      // Writing makes no sense if the realm was not loaded
+      if (this.realm) {
+        // Adding a primitive value into a list
+        if (primitives.isPrimitive(className)) {
+          if (focus && focus.kind === 'list') {
+            const valueToPush = (values as any)[className];
+            focus.results.push(valueToPush);
+            rowIndex = focus.results.indexOf(valueToPush);
+          }
+        } else {
+          // Adding a new object into a class
+          const object = this.realm.create(className, values);
+          if (focus) {
+            // New object has been created from a list, so we add it too into the list
+            if (focus.kind === 'list') {
+              focus.results.push(object);
+            }
+            if (getClassName(focus) === className) {
+              rowIndex = focus.results.indexOf(object);
+            }
+          }
+        }
+        if (rowIndex >= 0) {
+          this.setState({
+            highlight: {
+              row: rowIndex,
+            },
+          });
         }
       } else {
-        // Adding a new object into a class
-        const object = this.realm.create(className, values);
-        if (focus) {
-          // New object has been created from a list, so we add it too into the list
-          if (focus.kind === 'list') {
-            focus.results.push(object);
-          }
-          if (getClassName(focus) === className) {
-            rowIndex = focus.results.indexOf(object);
-          }
-        }
-      }
-      if (rowIndex >= 0) {
-        this.setState({
-          highlight: {
-            row: rowIndex,
-          },
-        });
+        throw new Error('onCreateObject called before realm was loaded');
       }
     });
   };
@@ -442,15 +447,19 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   };
 
   public getClassFocus = (className: string) => {
-    const results = this.realm.objects(className);
-    const focus: IClassFocus = {
-      kind: 'class',
-      className,
-      results,
-      properties: this.derivePropertiesFromClassName(className),
-      addColumnEnabled: true,
-    };
-    return focus;
+    if (this.realm) {
+      const results = this.realm.objects(className);
+      const focus: IClassFocus = {
+        kind: 'class',
+        className,
+        results,
+        properties: this.derivePropertiesFromClassName(className),
+        addColumnEnabled: true,
+      };
+      return focus;
+    } else {
+      throw new Error('getClassFocus called before realm was loaded');
+    }
   };
 
   public getSchemaLength = (name: string) => {
@@ -689,7 +698,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     contentToUpdate: Realm.Object | Realm.List<any>,
     property: IPropertyWithName,
   ) => {
-    if (property.objectType) {
+    if (this.realm && property.objectType) {
       const className = property.objectType;
       const results = this.realm.objects(className) || null;
       const focus: IClassFocus = {
@@ -707,7 +716,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         },
       });
     } else {
-      throw new Error('Expected a property with an objectType');
+      throw new Error('Expected a loaded realm a property with an objectType');
     }
   };
 
@@ -752,7 +761,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
     if (focus) {
       try {
         this.write(() => {
-          if (focus.kind === 'class') {
+          if (this.realm && focus.kind === 'class') {
             this.realm.delete(object);
           } else if (focus.kind === 'list') {
             focus.results.splice(index, 1);
@@ -783,6 +792,9 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   };
 
   protected onRealmLoaded = () => {
+    if (!this.realm) {
+      throw new Error('onRealmLoaded was called without a realm sat');
+    }
     const firstSchemaName =
       this.realm.schema.length > 0 ? this.realm.schema[0].name : undefined;
     this.setState({
@@ -871,6 +883,11 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   protected derivePropertiesFromClassName(
     className: string,
   ): IPropertyWithName[] {
+    if (!this.realm) {
+      throw new Error(
+        'derivePropertiesFromClassName called before realm was loaded',
+      );
+    }
     // Deriving the ObjectSchema from the className
     const objectSchema = this.realm.schema.find(schema => {
       return schema.name === className;
@@ -894,6 +911,9 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   }
 
   protected generateHighlight(object?: Realm.Object): IHighlight | undefined {
+    if (!this.realm) {
+      throw new Error('generateHighlight called before realm was loaded');
+    }
     if (object) {
       const className = object.objectSchema().name;
       const row = this.realm.objects(className).indexOf(object);
@@ -921,7 +941,10 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
   }
 
   protected write(callback: () => void) {
-    if (this.realm && this.realm.isInTransaction) {
+    if (!this.realm) {
+      throw new Error('write called before realm was loaded');
+    }
+    if (this.realm.isInTransaction) {
       callback();
       // We have to signal changes manually
       this.onRealmChanged();
@@ -947,7 +970,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         message: `Select a directory to store the ${language} schema files`,
       },
       selectedPath => {
-        if (selectedPath) {
+        if (selectedPath && this.realm) {
           const exporter = SchemaExporter(language);
           exporter.exportSchema(this.realm);
           exporter.writeFilesToDisk(selectedPath);
@@ -963,7 +986,7 @@ export class RealmBrowserContainer extends RealmLoadingComponent<
         filters: [{ name: 'CSV File(s)', extensions: ['csv', 'CSV'] }],
       },
       selectedPaths => {
-        if (selectedPaths) {
+        if (selectedPaths && this.realm) {
           const schemaGenerator = new ImportSchemaGenerator(
             ImportFormat.CSV,
             selectedPaths,

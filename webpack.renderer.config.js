@@ -12,22 +12,12 @@ module.exports = (env) => {
       hot: true,
       inline: true
     },
-    entry: isProduction ? [
-      "./src/renderer.tsx"
-    ] : [
-      "react-hot-loader/patch",
-      "./src/renderer.tsx"
-    ],
+    entry: "./src/renderer.tsx",
     module: {
       rules: baseConfig.module.rules.concat([
         {
           test: /\.tsx?$/,
-          use: isProduction ? [
-            "awesome-typescript-loader"
-          ] : [
-            "react-hot-loader/webpack",
-            "awesome-typescript-loader"
-          ],
+          use: "awesome-typescript-loader",
           // exclude: path.resolve(__dirname, "node_modules"),
         }, {
           test: /\.html$/,

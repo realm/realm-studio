@@ -30,9 +30,9 @@ export abstract class RealmLoadingComponent<
   protected abstract onRealmChanged: () => void;
   protected abstract onRealmLoaded: () => void;
 
-  protected realm: Realm;
+  protected realm?: Realm;
   protected cancellations: Array<() => void> = [];
-  protected certificateWasRejected: boolean;
+  protected certificateWasRejected: boolean = false;
 
   public componentWillUnmount() {
     // Closing and remove any existing a change listeners

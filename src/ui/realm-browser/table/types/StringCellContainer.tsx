@@ -27,7 +27,7 @@ export class StringCellContainer extends React.Component<
   IStringCellContainerProps,
   IStringCellContainerState
 > {
-  private inputElement: HTMLInputElement;
+  private inputElement?: HTMLInputElement;
 
   constructor(props: IStringCellContainerProps) {
     super();

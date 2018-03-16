@@ -32,8 +32,8 @@ export default class ImportSchemaGenerator {
     const schemas = Array<Realm.ObjectSchema>();
 
     this.files.map(file => {
-      const schema = new ImportObjectSchema();
-      schema.name = fsPath.basename(file, fsPath.extname(file));
+      const name = fsPath.basename(file, fsPath.extname(file));
+      const schema = new ImportObjectSchema(name);
       let rawCSV = fs.readFileSync(file, 'utf8');
 
       // Read header only

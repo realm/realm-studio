@@ -9,8 +9,8 @@ import {
 
 export class Receiver extends ActionReceiver {
   constructor(handlers: IActionHandlers, webContents?: electron.WebContents) {
-    super(handlers);
-    this.setTransport(
+    super(
+      handlers,
       webContents
         ? new MainTransport(webContents)
         : LoopbackTransport.getInstance(),

@@ -1,30 +1,46 @@
 import { IActionHandlers } from '.';
-import { Transport } from './transports';
+import { DummyTransport, Transport } from './transports';
 
 export abstract class ActionReceiver {
   private transport: Transport;
   private handlers: IActionHandlers;
 
-  constructor(handlers: IActionHandlers) {
+  constructor(
+    handlers: IActionHandlers,
+    transport: Transport = new DummyTransport(),
+  ) {
     this.handlers = handlers;
+    this.transport = transport;
+    this.addTransportListener();
   }
 
   public destroy() {
+    this.removeTransportListener();
+  }
+
+  public setTransport(transport: Transport) {
+    this.removeTransportListener();
+    this.transport = transport;
+    this.addTransportListener();
+  }
+
+  public getTransport() {
+    return this.transport;
+  }
+
+  protected addTransportListener() {
+    if (this.transport) {
+      this.transport.on(Transport.REQUEST_EVENT_NAME, this.onRequest);
+    }
+  }
+
+  protected removeTransportListener() {
     if (this.transport) {
       this.transport.removeListener(
         Transport.REQUEST_EVENT_NAME,
         this.onRequest,
       );
     }
-  }
-
-  public setTransport(transport: Transport) {
-    this.transport = transport;
-    this.transport.on(Transport.REQUEST_EVENT_NAME, this.onRequest);
-  }
-
-  public getTransport() {
-    return this.transport;
   }
 
   private onRequest = async (

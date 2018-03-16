@@ -61,8 +61,8 @@ export interface IContentGridProps extends Partial<GridProps> {
 }
 
 export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
-  private cellRangeRenderer: GridCellRangeRenderer;
-  private cellRenderers: GridCellRenderer[];
+  private cellRangeRenderer?: GridCellRangeRenderer;
+  private cellRenderers: GridCellRenderer[] = [];
 
   public componentWillMount() {
     this.generateRenderers(this.props);

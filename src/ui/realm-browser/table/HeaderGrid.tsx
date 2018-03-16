@@ -25,7 +25,7 @@ export interface IHeaderGridProps extends Partial<GridProps> {
 }
 
 export class HeaderGrid extends React.PureComponent<IHeaderGridProps, {}> {
-  private cellRenderers: GridCellRenderer[];
+  private cellRenderers: GridCellRenderer[] = [];
 
   public componentWillMount() {
     this.generateRenderers(this.props);

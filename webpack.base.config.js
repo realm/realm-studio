@@ -1,6 +1,7 @@
 const path = require("path");
 const nodeExternals = require("webpack-node-externals");
 const webpack = require('webpack');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const { CheckerPlugin } = require("awesome-typescript-loader");
 
 module.exports = (env) => {
@@ -50,9 +51,9 @@ module.exports = (env) => {
         "process.env.NODE_ENV": JSON.stringify(env ? env.NODE_ENV : 'development'),
       }),
     ].concat(isProduction ? [
-      // Plugins for production
-      // @see https://reactjs.org/docs/optimizing-performance.html#webpack
-      new webpack.optimize.UglifyJsPlugin(),
+      new UglifyJsPlugin({
+        sourceMap: true,
+      }),
     ] : [
       // Plugins for development
       new webpack.NamedModulesPlugin(),

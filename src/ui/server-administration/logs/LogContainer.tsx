@@ -22,7 +22,7 @@ export class LogContainer extends React.Component<
   ILogContainerProps,
   ILogContainerState
 > {
-  private socket: WebSocket | null;
+  private socket?: WebSocket;
 
   constructor() {
     super();
@@ -114,7 +114,7 @@ export class LogContainer extends React.Component<
   private disconnect() {
     if (this.socket) {
       this.socket.close();
-      this.socket = null;
+      delete this.socket;
     }
   }
 

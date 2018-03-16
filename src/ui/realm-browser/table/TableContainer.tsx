@@ -55,8 +55,8 @@ export class TableContainer extends React.PureComponent<
   ITableContainerState
 > {
   // A reference to the grid inside the content container is needed to resize collumns
-  private gridContent: Grid | null;
-  private gridHeader: Grid | null;
+  private gridContent: Grid | null = null;
+  private gridHeader: Grid | null = null;
 
   constructor() {
     super();
