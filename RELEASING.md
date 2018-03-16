@@ -66,3 +66,17 @@ what it's basically doing:
 Go to [the release on GitHub](https://github.com/realm/realm-studio/releases) and publish the release.
 This turns the release in to the latest release for users downloading the latest version via
 https://studio-releases.realm.io/latest.
+
+# How do I roll-back a release?
+
+In the case where we've released something that needs to be rolled back we have the following options:
+
+1. To prevent new users from downloading the broken version, unpublish the release on GitHub:
+    1. Navigate to https://github.com/realm/realm-studio/releases/
+    2. Find the latest (broken) release and click the "Edit" button
+    3. Click "Save draft"
+2. To prevent existing users from updating to the broken version, override the latest.yml files on S3:
+    1. Find the latest successful build of the latest non-broken version on https://ci.realm.io/job/realm-studio/job/release/
+    2. Download the `latest-linux.yml` `latest-mac.json` `latest-mac.yml` and `latest.yml` files
+    3. Navigate to https://s3.console.aws.amazon.com/s3/buckets/static.realm.io/downloads/realm-studio/
+    4. Upload and override the four .yml files to the S3 bucket.
