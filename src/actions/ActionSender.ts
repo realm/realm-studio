@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid';
 
 import { IActionHandlers } from '.';
-import { DummyTransport, Transport } from './transports';
+import { Transport } from './transports';
 
 interface IRequestHandle {
   promise: Promise<any>;
@@ -16,7 +16,7 @@ export abstract class ActionSender {
     [id: string]: IRequestHandle;
   } = {};
 
-  constructor(transport: Transport = new DummyTransport()) {
+  constructor(transport: Transport) {
     this.transport = transport;
     this.addTransportListener();
   }

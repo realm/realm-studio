@@ -1,14 +1,11 @@
 import { IActionHandlers } from '.';
-import { DummyTransport, Transport } from './transports';
+import { Transport } from './transports';
 
 export abstract class ActionReceiver {
   private transport: Transport;
   private handlers: IActionHandlers;
 
-  constructor(
-    handlers: IActionHandlers,
-    transport: Transport = new DummyTransport(),
-  ) {
+  constructor(handlers: IActionHandlers, transport: Transport) {
     this.handlers = handlers;
     this.transport = transport;
     this.addTransportListener();

@@ -2,7 +2,7 @@ import * as assert from 'assert';
 
 import { ActionReceiver } from './ActionReceiver';
 import { ActionSender } from './ActionSender';
-import { LoopbackTransport } from './transports';
+import { LoopbackTransport, Transport } from './transports';
 
 enum Actions {
   TestAction = 'test-action',
@@ -29,25 +29,28 @@ describe('Actions', () => {
     }
 
     class TestReceiver extends ActionReceiver {
-      constructor() {
-        super({
-          [Actions.TestAction]: (message: IEchoMessage) => {
-            return new Promise(resolve => {
-              setTimeout(() => {
-                // Wait for it ...
-                resolve(`${message.echo} World!`);
-              }, 10);
-            });
+      constructor(transport: Transport) {
+        super(
+          {
+            [Actions.TestAction]: (message: IEchoMessage) => {
+              return new Promise(resolve => {
+                setTimeout(() => {
+                  // Wait for it ...
+                  resolve(`${message.echo} World!`);
+                }, 10);
+              });
+            },
+            [Actions.FailAction]: (reason: string) => {
+              return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  const err = new Error(reason);
+                  reject(err);
+                }, 10);
+              });
+            },
           },
-          [Actions.FailAction]: (reason: string) => {
-            return new Promise((resolve, reject) => {
-              setTimeout(() => {
-                const err = new Error(reason);
-                reject(err);
-              }, 10);
-            });
-          },
-        });
+          transport,
+        );
       }
     }
 
@@ -55,12 +58,9 @@ describe('Actions', () => {
     let receiver: TestReceiver;
 
     beforeEach(() => {
-      sender = new TestSender();
-      receiver = new TestReceiver();
-
       const loopbackTransport = LoopbackTransport.getInstance();
-      sender.setTransport(loopbackTransport);
-      receiver.setTransport(loopbackTransport);
+      sender = new TestSender(loopbackTransport);
+      receiver = new TestReceiver(loopbackTransport);
     });
 
     afterEach(() => {
