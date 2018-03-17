@@ -43,7 +43,8 @@ const ListFocusComponent = ({
           {!focus.parent.objectSchema().primaryKey ? 'a ' : null}
           <span
             onClick={() =>
-              onClassSelected(focus.parent.objectSchema().name, focus.parent)}
+              onClassSelected(focus.parent.objectSchema().name, focus.parent)
+            }
             className="RealmBrowser__Sidebar__List__ParentObject"
             title={displayObject(focus.parent, true)}
           >

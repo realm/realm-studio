@@ -34,7 +34,7 @@ export class RealmsTableContainer extends React.PureComponent<
   IRealmTableContainerProps,
   IRealmTableContainerState
 > {
-  protected realms: Realm.Results<ros.IRealmFile>;
+  protected realms?: Realm.Results<ros.IRealmFile>;
 
   constructor() {
     super();
@@ -73,7 +73,9 @@ export class RealmsTableContainer extends React.PureComponent<
   }
 
   public render() {
-    return <RealmsTable realms={this.realms} {...this.state} {...this} />;
+    return this.realms ? (
+      <RealmsTable realms={this.realms} {...this.state} {...this} />
+    ) : null;
   }
 
   public componentDidMount() {
@@ -160,17 +162,16 @@ export class RealmsTableContainer extends React.PureComponent<
     showPartialRealms: boolean,
     showSystemRealms: boolean,
   ) {
-    if (!searchString || searchString === '') {
-      this.realms = this.props.adminRealm.objects<ros.IRealmFile>('RealmFile');
-    } else {
+    this.realms = this.props.adminRealm.objects<ros.IRealmFile>('RealmFile');
+
+    // Filter if a search string is specified
+    if (searchString || searchString !== '') {
       const filterQuery = querySomeFieldContainsText(
         ['path', 'owner.accounts.providerId'],
         searchString,
       );
       try {
-        this.realms = this.props.adminRealm
-          .objects<ros.IRealmFile>('RealmFile')
-          .filtered(filterQuery);
+        this.realms = this.realms.filtered(filterQuery);
       } catch (err) {
         // tslint:disable-next-line:no-console
         console.warn(`Could not filter on "${filterQuery}"`, err);

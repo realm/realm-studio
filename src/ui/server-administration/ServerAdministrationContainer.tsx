@@ -46,7 +46,7 @@ export class ServerAdministrationContainer extends RealmLoadingComponent<
   IServerAdministrationContainerProps,
   IServerAdministrationContainerState
 > {
-  protected availabilityPromise: Promise<void>;
+  protected availabilityPromise?: Promise<void>;
 
   constructor() {
     super();
@@ -105,7 +105,7 @@ export class ServerAdministrationContainer extends RealmLoadingComponent<
   }
 
   public render() {
-    return (
+    return this.realm ? (
       <ServerAdministration
         {...this.state}
         {...this}
@@ -116,7 +116,7 @@ export class ServerAdministrationContainer extends RealmLoadingComponent<
         onValidateCertificatesChange={this.props.onValidateCertificatesChange}
         validateCertificates={this.props.validateCertificates}
       />
-    );
+    ) : null;
   }
 
   // TODO: Once the user serializes better, this method should be moved to the ./realms/RealmsTableContainer.tsx

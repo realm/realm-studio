@@ -16,18 +16,19 @@ export abstract class ActionSender {
     [id: string]: IRequestHandle;
   } = {};
 
+  constructor(transport: Transport) {
+    this.transport = transport;
+    this.addTransportListener();
+  }
+
   public destroy() {
-    if (this.transport) {
-      this.transport.removeListener(
-        Transport.RESPONSE_EVENT_NAME,
-        this.onResponse,
-      );
-    }
+    this.removeTransportListener();
   }
 
   public setTransport(transport: Transport) {
+    this.removeTransportListener();
     this.transport = transport;
-    this.transport.on(Transport.RESPONSE_EVENT_NAME, this.onResponse);
+    this.addTransportListener();
   }
 
   public async send(action: string, ...args: any[]) {
@@ -38,6 +39,21 @@ export abstract class ActionSender {
       return result;
     } else {
       throw new Error('ActionSender is missing a transport');
+    }
+  }
+
+  protected addTransportListener() {
+    if (this.transport) {
+      this.transport.on(Transport.RESPONSE_EVENT_NAME, this.onResponse);
+    }
+  }
+
+  protected removeTransportListener() {
+    if (this.transport) {
+      this.transport.removeListener(
+        Transport.RESPONSE_EVENT_NAME,
+        this.onResponse,
+      );
     }
   }
 

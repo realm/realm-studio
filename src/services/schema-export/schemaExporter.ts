@@ -13,8 +13,8 @@ export interface ISchemaFile {
 }
 
 export abstract class SchemaExporter implements ISchemaExporter {
-  public realm: Realm;
-  public realmName: string;
+  public realm?: Realm;
+  public realmName?: string;
   public files: ISchemaFile[];
   public content = '';
 

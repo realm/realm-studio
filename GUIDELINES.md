@@ -43,9 +43,7 @@ The only deviations from the recommended rules are:
 - `indent`: we are using two spaces (but tslint is currently not warning about this).
 - `object-literal-sort-keys`: Keys do not need to be sorted alphabetically.
 
-The project is currently transpiling TypeScript to ES5 due to an issue with the `react-hot-loader` module.
-(see the section on "Configuring `react-hot-loader`"). As both Node and Chromium supports almost all of ES6 except the
-ES6 modules, this could be changed once the issue is fixed.
+The project is currently transpiling TypeScript to ES6.
 
 Besides the syntax-level code styles we should strive to:
 - Use interfaces to describe the shape of objects, and strive to avoid using the
@@ -113,12 +111,6 @@ This gives us two undesired effects:
 ## webpack: TypeScript
 
 ## webpack: Hot Module Replacement
-
-### Configuring `react-hot-loader`
-
-It seems that there is a bug in `react-hot-loader` (https://github.com/gaearon/react-hot-loader/issues/457), which
-is why we have to target `es5` instead of `es6` in our `tsconfig.json`. The of the proposed solutions on the issue only
-this worked. We should probably create a repository reproducing the error.
 
 # SASS
 

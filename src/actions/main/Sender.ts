@@ -12,11 +12,11 @@ import { LoopbackTransport, RendererTransport } from '../transports';
 
 export class Sender extends ActionSender {
   constructor() {
-    super();
     // Use the renderer transport if the sender is accessed from the renderer and the loopback otherwise.
-    const isRenderer = process.type === 'renderer';
-    this.setTransport(
-      isRenderer ? new RendererTransport() : LoopbackTransport.getInstance(),
+    super(
+      process.type === 'renderer'
+        ? new RendererTransport()
+        : LoopbackTransport.getInstance(),
     );
   }
 

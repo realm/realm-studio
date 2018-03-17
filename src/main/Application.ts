@@ -33,7 +33,7 @@ export class Application {
   private cloudManager = new CloudManager();
 
   // Saving a reference for a single greeting window
-  private greetingWindow: electron.BrowserWindow;
+  private greetingWindow?: electron.BrowserWindow;
 
   private actionHandlers = {
     [MainActions.AuthenticateWithEmail]: (email: string, password: string) => {
