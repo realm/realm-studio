@@ -2,13 +2,6 @@
 
 ## Prepare a release
 
-### On GitHub
-
-First create a draft release on GitHub for the upcoming release: https://github.com/realm/realm-studio/releases/new.
-
-Use "tag version" with includes the v-prefix (ex. "v.1.2.0") and document the enhancements, bug-fixes and internal
-changes in the body of the release. Save this as a draft release. Remember to use the correct branch (probably master).
-
 ### On Jenkins
 
 Start by preparing a release from the branch you want to release from (default: `master`).
@@ -35,6 +28,7 @@ what it's basically doing:
    [the console output](https://ci.realm.io/blue/organizations/jenkins/realm-studio%2Fprepare/activity)
    if you're wondering why the build is taking so long
 7. Push the changes and tag to GitHub
+8. Create a drafted GitHub release
 8. Start a release job
 
 ## Release a prepared release
