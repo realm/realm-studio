@@ -1,7 +1,9 @@
+import * as classNames from 'classnames';
 import * as moment from 'moment';
 import * as React from 'react';
 import { Badge } from 'reactstrap';
 
+import { ContextInspector } from './ContextInspector';
 import { LogLevel } from './LevelSelector';
 
 const calendarFormats = {
@@ -9,46 +11,32 @@ const calendarFormats = {
   sameDay: 'LTS',
 };
 
-const levelColors: { [level: string]: string } = {
-  fatal: 'danger',
-  error: 'danger',
-  warn: 'warning',
-  info: 'info',
-  detail: 'default',
-  debug: 'default',
-  trace: 'default',
+const LevelIcon = ({ level }: { level: LogLevel }) => {
+  if (level === LogLevel.fatal) {
+    return <i className="fa fa-fire" />;
+  } else if (level === LogLevel.error) {
+    return <i className="fa fa-times-circle" />;
+  } else if (level === LogLevel.warn) {
+    return <i className="fa fa-exclamation-circle" />;
+  } else if (level === LogLevel.info) {
+    return <i className="fa fa-info-circle" />;
+  } else if (level === LogLevel.detail) {
+    return <i className="fa fa-circle" />;
+  } else if (level === LogLevel.debug) {
+    return <i className="fa fa-circle-o" />;
+  } else if (level === LogLevel.trace) {
+    return <i className="fa fa-arrow-circle-right" />;
+  } else {
+    return null;
+  }
 };
 
-const LogLevelBadge = ({ level }: { level: LogLevel }) => {
-  const color = levelColors[level] || 'default';
-  return (
-    <Badge color={color} className="Log__Entry__Badge">
-      <span unselectable={true}>{level}</span>
-    </Badge>
-  );
-};
-
-const ContextBadge = ({
-  contextKey,
-  contextValue,
-}: {
-  contextKey: string;
-  contextValue: string;
-}) => {
+const TimestampBadge = ({ timestamp }: { timestamp: string }) => {
   return (
     <Badge color="default" className="Log__Entry__Badge">
-      {contextKey === 'timestamp' ? (
-        <span
-          title={`${contextKey}: ${moment(contextValue).toISOString()}`}
-          unselectable={true}
-        >
-          {moment(contextValue).calendar(undefined, calendarFormats)}
-        </span>
-      ) : (
-        <span title={contextKey} unselectable={true}>
-          {contextValue}
-        </span>
-      )}
+      <span unselectable={true} title={timestamp}>
+        {moment(timestamp).calendar(undefined, calendarFormats)}
+      </span>
     </Badge>
   );
 };
@@ -61,21 +49,39 @@ export interface ILogEntry {
 
 export interface IEntryProps extends ILogEntry {
   style: any;
+  onResized: () => void;
 }
 
-export const Entry = ({ context, level, message, style }: IEntryProps) => {
+export const Entry = ({
+  context,
+  level,
+  message,
+  style,
+  onResized,
+}: IEntryProps) => {
+  const { timestamp, ...restOfContext } = context;
   return (
-    <div className="Log__Entry" style={style}>
-      <span className="Log__Entry__Message">{message}</span>
-      <div className="Log__Entry__Badges">
-        {Object.keys(context || {}).map(key => (
-          <ContextBadge
-            key={key}
-            contextKey={key}
-            contextValue={context[key]}
+    <div
+      className={classNames('Log__Entry', `Log__Entry--${level}`)}
+      style={style}
+    >
+      <div className="Log__Entry__Level" title={level}>
+        <LevelIcon level={level} />
+      </div>
+      <div className="Log__Entry__Rows">
+        <div className="Log__Entry__Row">
+          <span className="Log__Entry__Message">{message}</span>
+          <div className="Log__Entry__Badges">
+            {timestamp ? <TimestampBadge timestamp={timestamp} /> : null}
+          </div>
+        </div>
+        {Object.keys(restOfContext).length > 0 ? (
+          <ContextInspector
+            data={context}
+            onUpdated={onResized}
+            name="context"
           />
-        ))}
-        <LogLevelBadge level={level} />
+        ) : null}
       </div>
     </div>
   );

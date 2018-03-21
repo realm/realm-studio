@@ -1,6 +1,8 @@
 import * as React from 'react';
 import {
   AutoSizer,
+  CellMeasurer,
+  CellMeasurerCache,
   Column,
   Dimensions as IAutoSizerDimensions,
   List,
@@ -24,19 +26,21 @@ interface IListScrollParams {
 }
 
 export const Log = ({
+  cellMeasurerCache,
   entries,
   isLevelSelectorOpen,
   level,
   onLevelChanged,
-  toggleLevelSelector,
   progress,
+  toggleLevelSelector,
 }: {
+  cellMeasurerCache: CellMeasurerCache;
   entries: ILogEntry[];
   isLevelSelectorOpen: boolean;
   level: LogLevel;
   onLevelChanged: (level: LogLevel) => void;
-  toggleLevelSelector: () => void;
   progress: ILoadingProgress;
+  toggleLevelSelector: () => void;
 }) => {
   return (
     <div className="Log">
@@ -54,6 +58,7 @@ export const Log = ({
                   <List
                     width={width}
                     height={height}
+                    deferredMeasurementCache={cellMeasurerCache}
                     onScroll={(params: IListScrollParams) => {
                       onScroll({
                         ...params,
@@ -63,10 +68,29 @@ export const Log = ({
                       });
                     }}
                     rowCount={entries.length}
-                    rowHeight={20}
-                    rowRenderer={({ key, style, index, isScrolling }) => {
+                    rowHeight={({ index }) =>
+                      cellMeasurerCache.rowHeight({ index }) || 20
+                    }
+                    rowRenderer={({ index, key, parent, style }) => {
                       const entry = entries[index] as ILogEntry;
-                      return <Entry key={key} style={style} {...entry} />;
+                      return (
+                        <CellMeasurer
+                          cache={cellMeasurerCache}
+                          columnIndex={0}
+                          key={key}
+                          rowIndex={index}
+                          parent={parent as any /* Types are misbehaving */}
+                        >
+                          {({ measure }) => (
+                            <Entry
+                              key={key}
+                              style={style}
+                              onResized={measure}
+                              {...entry}
+                            />
+                          )}
+                        </CellMeasurer>
+                      );
                     }}
                     scrollToIndex={scrollToIndex}
                   />

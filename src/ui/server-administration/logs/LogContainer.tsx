@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { CellMeasurerCache } from 'react-virtualized';
 import * as Realm from 'realm';
 
 import { ILoadingProgress } from '../../reusable/loading-overlay';
@@ -23,6 +24,10 @@ export class LogContainer extends React.Component<
   ILogContainerState
 > {
   private socket?: WebSocket;
+  private cellMeasurerCache: CellMeasurerCache = new CellMeasurerCache({
+    fixedWidth: true,
+    minHeight: 20,
+  });
 
   constructor() {
     super();
@@ -38,8 +43,10 @@ export class LogContainer extends React.Component<
     return (
       <Log
         isLevelSelectorOpen={this.state.isLevelSelectorOpen}
+        cellMeasurerCache={this.cellMeasurerCache}
+        onLevelChanged={this.onLevelChanged}
+        toggleLevelSelector={this.toggleLevelSelector}
         {...this.state}
-        {...this}
       />
     );
   }
@@ -55,10 +62,12 @@ export class LogContainer extends React.Component<
 
   public componentDidMount() {
     this.connect();
+    window.addEventListener('resize', this.onWindowResize);
   }
 
   public componentWillUnmount() {
     this.disconnect();
+    window.removeEventListener('resize', this.onWindowResize);
   }
 
   public onLevelChanged = (level: LogLevel) => {
@@ -73,7 +82,7 @@ export class LogContainer extends React.Component<
     });
   };
 
-  private connect() {
+  protected connect() {
     this.setState({
       progress: {
         status: 'in-progress',
@@ -86,6 +95,8 @@ export class LogContainer extends React.Component<
       this.setState({
         entries: [],
       });
+      // Clear the cell cache
+      this.cellMeasurerCache.clearAll();
     }
 
     const url = this.generateLogUrl();
@@ -111,14 +122,14 @@ export class LogContainer extends React.Component<
     this.socket.addEventListener('message', this.onLogMessage);
   }
 
-  private disconnect() {
+  protected disconnect() {
     if (this.socket) {
       this.socket.close();
       delete this.socket;
     }
   }
 
-  private generateLogUrl() {
+  protected generateLogUrl() {
     const url = new URL(this.props.user.server);
     // Use ws instead of http
     url.protocol = url.protocol.replace('http', 'ws');
@@ -127,7 +138,7 @@ export class LogContainer extends React.Component<
     return url.toString();
   }
 
-  private onLogMessage = (e: MessageEvent) => {
+  protected onLogMessage = (e: MessageEvent) => {
     const newEntries = JSON.parse(e.data).reverse();
     this.setState({
       entries: this.state.entries.concat(newEntries),
@@ -136,5 +147,9 @@ export class LogContainer extends React.Component<
     if (this.state.progress.status !== 'done') {
       this.setState({ progress: { status: 'done' } });
     }
+  };
+
+  protected onWindowResize = () => {
+    this.cellMeasurerCache.clearAll();
   };
 }
