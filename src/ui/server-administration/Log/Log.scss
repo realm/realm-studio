@@ -88,6 +88,10 @@
     &__Badge {
       margin-left: $spacer / 4;
     }
+
+    &__Context {
+      user-select: text;
+    }
   }
 
   &__Controls {
@@ -97,5 +101,11 @@
     font-size: .875rem;
     justify-content: space-between;
     padding: $spacer / 2;
+  }
+
+  &__LevelSelector {
+    &__Icon {
+      float: right;
+    }
   }
 }

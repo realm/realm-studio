@@ -22,6 +22,11 @@ function didExpandedPathsChange(a: IExpandedPaths, b: IExpandedPaths) {
   const aProps = Object.getOwnPropertyNames(a);
   const bProps = Object.getOwnPropertyNames(b);
 
+  // With no expanded paths in either - they cannot differ
+  if (aProps.length === 0 && bProps.length === 0) {
+    return false;
+  }
+
   // If number of properties is different,
   // objects are not equivalent
   if (aProps.length !== bProps.length) {

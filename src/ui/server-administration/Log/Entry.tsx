@@ -3,32 +3,13 @@ import * as moment from 'moment';
 import * as React from 'react';
 import { Badge } from 'reactstrap';
 
+import { LogLevel } from '.';
 import { ContextInspector } from './ContextInspector';
-import { LogLevel } from './LevelSelector';
+import { LevelIcon } from './LevelIcon';
 
 const calendarFormats = {
   // See https://momentjs.com/docs/#localized-formats
   sameDay: 'LTS',
-};
-
-const LevelIcon = ({ level }: { level: LogLevel }) => {
-  if (level === LogLevel.fatal) {
-    return <i className="fa fa-fire" />;
-  } else if (level === LogLevel.error) {
-    return <i className="fa fa-times-circle" />;
-  } else if (level === LogLevel.warn) {
-    return <i className="fa fa-exclamation-circle" />;
-  } else if (level === LogLevel.info) {
-    return <i className="fa fa-info-circle" />;
-  } else if (level === LogLevel.detail) {
-    return <i className="fa fa-circle" />;
-  } else if (level === LogLevel.debug) {
-    return <i className="fa fa-circle-o" />;
-  } else if (level === LogLevel.trace) {
-    return <i className="fa fa-arrow-circle-right" />;
-  } else {
-    return null;
-  }
 };
 
 const TimestampBadge = ({ timestamp }: { timestamp: string }) => {
@@ -76,11 +57,13 @@ export const Entry = ({
           </div>
         </div>
         {Object.keys(restOfContext).length > 0 ? (
-          <ContextInspector
-            data={context}
-            onUpdated={onResized}
-            name="context"
-          />
+          <div className="Log__Entry__Context">
+            <ContextInspector
+              data={context}
+              onUpdated={onResized}
+              name="context"
+            />
+          </div>
         ) : null}
       </div>
     </div>

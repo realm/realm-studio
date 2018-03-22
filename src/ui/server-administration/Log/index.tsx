@@ -5,11 +5,22 @@ import * as Realm from 'realm';
 import { ILoadingProgress } from '../../reusable/loading-overlay';
 
 import { ILogEntry } from './Entry';
-import { LogLevel } from './LevelSelector';
 import { Log } from './Log';
 
+export enum LogLevel {
+  fatal = 'fatal',
+  error = 'error',
+  warn = 'warn',
+  info = 'info',
+  detail = 'detail',
+  debug = 'debug',
+  trace = 'trace',
+  all = 'all',
+}
+
 export interface ILogContainerProps {
-  user: Realm.Sync.User;
+  serverUrl: string;
+  token: string;
 }
 
 export interface ILogContainerState {
@@ -19,7 +30,7 @@ export interface ILogContainerState {
   progress: ILoadingProgress;
 }
 
-export class LogContainer extends React.Component<
+class LogContainer extends React.Component<
   ILogContainerProps,
   ILogContainerState
 > {
@@ -100,7 +111,7 @@ export class LogContainer extends React.Component<
     }
 
     const url = this.generateLogUrl();
-    const userRefreshToken = this.props.user.token;
+    const userRefreshToken = this.props.token;
     this.socket = new WebSocket(url);
     this.socket.addEventListener('open', e => {
       this.setState({
@@ -114,7 +125,7 @@ export class LogContainer extends React.Component<
         this.socket.send(
           JSON.stringify({
             action: 'authenticate',
-            token: this.props.user.token,
+            token: this.props.token,
           }),
         );
       }
@@ -130,7 +141,7 @@ export class LogContainer extends React.Component<
   }
 
   protected generateLogUrl() {
-    const url = new URL(this.props.user.server);
+    const url = new URL(this.props.serverUrl);
     // Use ws instead of http
     url.protocol = url.protocol.replace('http', 'ws');
     // Replace the path
@@ -153,3 +164,5 @@ export class LogContainer extends React.Component<
     this.cellMeasurerCache.clearAll();
   };
 }
+
+export { LogContainer as Log };
