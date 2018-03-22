@@ -13,6 +13,9 @@ export class RendererTransport extends Transport {
 
   public constructor() {
     super();
+    if (process.type !== 'renderer') {
+      throw new Error('Can only use the RendererTransport in a renderer');
+    }
     ipcRenderer.on(Transport.RESPONSE_EVENT_NAME, this.onResponseMessage);
     ipcRenderer.on(Transport.REQUEST_EVENT_NAME, this.onRequestMessage);
   }
