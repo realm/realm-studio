@@ -6,16 +6,8 @@ import {
   DropdownToggle,
 } from 'reactstrap';
 
-export enum LogLevel {
-  fatal = 'fatal',
-  error = 'error',
-  warn = 'warn',
-  info = 'info',
-  detail = 'detail',
-  debug = 'debug',
-  trace = 'trace',
-  all = 'all',
-}
+import { LogLevel } from '.';
+import { LevelIcon } from './LevelIcon';
 
 export const LevelSelector = ({
   className,
@@ -46,6 +38,10 @@ export const LevelSelector = ({
             onClick={() => onLevelChanged(level as LogLevel)}
           >
             {level}
+            <LevelIcon
+              className="Log__LevelSelector__Icon"
+              level={level as LogLevel}
+            />
           </DropdownItem>
         ))}
       </DropdownMenu>

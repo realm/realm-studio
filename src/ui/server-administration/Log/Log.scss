@@ -1,0 +1,111 @@
+@import "~realm-studio-styles/variables";
+
+.Log {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  user-select: none;
+
+  .ReactVirtualized {
+    &__List {
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+
+  &__Table {
+    flex-grow: 1;
+  }
+
+  &__Entry {
+    align-items: flex-start;
+    border-bottom: 1px solid $color-dove;
+    display: flex;
+    padding: .1rem 0;
+
+    $danger-text: darken($brand-danger, 20%);
+    $danger-background: rgba($brand-danger, .1);
+
+    &--fatal,
+    &--error {
+      background: $danger-background;
+
+      .Log__Entry__Level,
+      .Log__Entry__Message {
+        color: $danger-text;
+      }
+    }
+
+    &--warn {
+      .Log__Entry__Level,
+      .Log__Entry__Message {
+        color: $brand-warning;
+      }
+    }
+
+    &--debug,
+    &--detail,
+    &--trace {
+      .Log__Entry__Level,
+      .Log__Entry__Message {
+        color: $color-elephant;
+      }
+    }
+
+    &__Rows {
+      flex-grow: 1;
+    }
+
+    &__Row {
+      align-items: flex-start;
+      display: flex;
+    }
+
+    &__Level,
+    &__Message {
+      font-size: .7rem;
+    }
+
+    &__Level {
+      flex-shrink: 0;
+      text-align: center;
+      width: 1.2 * $spacer;
+    }
+
+    &__Message {
+      flex-grow: 1;
+      font-family: $font-family-monospace;
+      user-select: text;
+    }
+
+    &__Badges {
+      flex: none;
+      font-size: .8rem;
+      margin-right: .25rem;
+    }
+
+    &__Badge {
+      margin-left: $spacer / 4;
+    }
+
+    &__Context {
+      user-select: text;
+    }
+  }
+
+  &__Controls {
+    align-items: center;
+    background: $window-background;
+    display: flex;
+    font-size: .875rem;
+    justify-content: space-between;
+    padding: $spacer / 2;
+  }
+
+  &__LevelSelector {
+    &__Icon {
+      float: right;
+    }
+  }
+}

@@ -1,14 +1,26 @@
 import * as React from 'react';
+import { CellMeasurerCache } from 'react-virtualized';
 import * as Realm from 'realm';
 
 import { ILoadingProgress } from '../../reusable/loading-overlay';
 
 import { ILogEntry } from './Entry';
-import { LogLevel } from './LevelSelector';
 import { Log } from './Log';
 
+export enum LogLevel {
+  fatal = 'fatal',
+  error = 'error',
+  warn = 'warn',
+  info = 'info',
+  detail = 'detail',
+  debug = 'debug',
+  trace = 'trace',
+  all = 'all',
+}
+
 export interface ILogContainerProps {
-  user: Realm.Sync.User;
+  serverUrl: string;
+  token: string;
 }
 
 export interface ILogContainerState {
@@ -18,11 +30,15 @@ export interface ILogContainerState {
   progress: ILoadingProgress;
 }
 
-export class LogContainer extends React.Component<
+class LogContainer extends React.Component<
   ILogContainerProps,
   ILogContainerState
 > {
   private socket?: WebSocket;
+  private cellMeasurerCache: CellMeasurerCache = new CellMeasurerCache({
+    fixedWidth: true,
+    minHeight: 20,
+  });
 
   constructor() {
     super();
@@ -38,8 +54,10 @@ export class LogContainer extends React.Component<
     return (
       <Log
         isLevelSelectorOpen={this.state.isLevelSelectorOpen}
+        cellMeasurerCache={this.cellMeasurerCache}
+        onLevelChanged={this.onLevelChanged}
+        toggleLevelSelector={this.toggleLevelSelector}
         {...this.state}
-        {...this}
       />
     );
   }
@@ -55,10 +73,12 @@ export class LogContainer extends React.Component<
 
   public componentDidMount() {
     this.connect();
+    window.addEventListener('resize', this.onWindowResize);
   }
 
   public componentWillUnmount() {
     this.disconnect();
+    window.removeEventListener('resize', this.onWindowResize);
   }
 
   public onLevelChanged = (level: LogLevel) => {
@@ -73,7 +93,7 @@ export class LogContainer extends React.Component<
     });
   };
 
-  private connect() {
+  protected connect() {
     this.setState({
       progress: {
         status: 'in-progress',
@@ -86,10 +106,12 @@ export class LogContainer extends React.Component<
       this.setState({
         entries: [],
       });
+      // Clear the cell cache
+      this.cellMeasurerCache.clearAll();
     }
 
     const url = this.generateLogUrl();
-    const userRefreshToken = this.props.user.token;
+    const userRefreshToken = this.props.token;
     this.socket = new WebSocket(url);
     this.socket.addEventListener('open', e => {
       this.setState({
@@ -103,7 +125,7 @@ export class LogContainer extends React.Component<
         this.socket.send(
           JSON.stringify({
             action: 'authenticate',
-            token: this.props.user.token,
+            token: this.props.token,
           }),
         );
       }
@@ -111,15 +133,15 @@ export class LogContainer extends React.Component<
     this.socket.addEventListener('message', this.onLogMessage);
   }
 
-  private disconnect() {
+  protected disconnect() {
     if (this.socket) {
       this.socket.close();
       delete this.socket;
     }
   }
 
-  private generateLogUrl() {
-    const url = new URL(this.props.user.server);
+  protected generateLogUrl() {
+    const url = new URL(this.props.serverUrl);
     // Use ws instead of http
     url.protocol = url.protocol.replace('http', 'ws');
     // Replace the path
@@ -127,7 +149,7 @@ export class LogContainer extends React.Component<
     return url.toString();
   }
 
-  private onLogMessage = (e: MessageEvent) => {
+  protected onLogMessage = (e: MessageEvent) => {
     const newEntries = JSON.parse(e.data).reverse();
     this.setState({
       entries: this.state.entries.concat(newEntries),
@@ -137,4 +159,10 @@ export class LogContainer extends React.Component<
       this.setState({ progress: { status: 'done' } });
     }
   };
+
+  protected onWindowResize = () => {
+    this.cellMeasurerCache.clearAll();
+  };
 }
+
+export { LogContainer as Log };

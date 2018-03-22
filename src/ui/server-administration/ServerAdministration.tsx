@@ -6,7 +6,7 @@ import * as ros from '../../services/ros';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
 import { Dashboard } from './Dashboard';
 import { GettingStarted } from './GettingStarted';
-import { LogContainer } from './logs/LogContainer';
+import { Log } from './Log';
 import {
   RealmsTableContainer,
   ValidateCertificatesChangeHandler,
@@ -77,7 +77,7 @@ const renderContent = ({
       />
     );
   } else if (user && activeTab === Tab.Logs) {
-    return <LogContainer user={user} />;
+    return <Log serverUrl={user.server} token={user.token} />;
   } else if (user && activeTab === Tab.Tools) {
     return <ToolsContainer user={user} />;
   } else {
