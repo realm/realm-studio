@@ -7,6 +7,9 @@ export class MainTransport extends Transport {
 
   public constructor(webContents: Electron.WebContents) {
     super();
+    if (process.type !== 'browser') {
+      throw new Error('Can only use the MainTransport in the main process');
+    }
     this.webContents = webContents;
     ipcMain.on(Transport.REQUEST_EVENT_NAME, this.onRequestMessage);
     ipcMain.on(Transport.RESPONSE_EVENT_NAME, this.onResponseMessage);
