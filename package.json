@@ -111,7 +111,7 @@
     "generate-https-certificate": "openssl req -x509 -newkey rsa:4096 -keyout data/keys/server.key -out data/keys/server.crt -days 365 -nodes",
     "generate-all-types-realm": "node ./scripts/generate-realm.js",
     "start": "electron .",
-    "test:ci": "mocha-webpack --mode development --reporter mocha-junit-reporter",
+    "test:ci": "mocha-webpack --mode development --webpack-config=webpack.test.config.js --reporter mocha-junit-reporter",
     "test": "mocha-webpack --mode development --webpack-config=webpack.test.config.js",
     "tslint-prettier": "tslint --fix 'src/**/*.ts' 'src/**/*.tsx'",
     "wait-for-bundle": "node ./webpack.wait-for-bundle.js",
