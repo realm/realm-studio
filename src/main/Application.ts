@@ -352,8 +352,10 @@ export class Application {
 
   private onReady = async () => {
     this.setDefaultMenu();
-    // Wait for the greeting window to show
-    await this.showGreeting();
+    if (this.windowManager.windows.length === 0) {
+      // Wait for the greeting window to show - if no other windows are open
+      await this.showGreeting();
+    }
     this.performDelayedTasks();
   };
 
