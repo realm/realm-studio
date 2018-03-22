@@ -63,12 +63,6 @@ if (isProduction) {
   // Load devtron - if not in production
   // tslint:disable-next-line:no-var-requires
   require('devtron').install();
-  // tslint:disable-next-line:no-var-requires
-  const devtools = require('electron-devtools-installer');
-  devtools.default(devtools.REACT_DEVELOPER_TOOLS).then((name: string) => {
-    // tslint:disable-next-line:no-console
-    console.warn(`${name} loaded`);
-  });
   // Add a tool that will notify us when components update
   if (process.env.WHY_DID_YOU_UPDATE) {
     // tslint:disable-next-line:no-console
