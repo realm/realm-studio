@@ -33,7 +33,9 @@ export type CellContextMenuHandler = (
   },
 ) => void;
 
-export type CellHighlightedHandler = (highlight: IHighlight) => void;
+export type CellHighlightedHandler = (
+  cell: { rowIndex: number; columnIndex: number },
+) => void;
 
 export type CellValidatedHandler = (
   rowIndex: number,
@@ -42,15 +44,11 @@ export type CellValidatedHandler = (
 ) => void;
 
 export interface IHighlight {
-  rows: number[];
+  rows: Set<number>;
   column?: number;
   center?: boolean;
-  rowReferenceShiftClick?: number | undefined;
+  lastRowIndexClicked?: number;
 }
-
-export const defaultHighlightValue = {
-  rows: [],
-};
 
 export interface ISorting {
   property: IPropertyWithName;

@@ -62,9 +62,9 @@ export interface IContentGridProps extends Partial<GridProps> {
 const isRowHighlighted = (
   highlight: IHighlight | undefined,
   rowIndex: number,
-): boolean =>
-  (highlight && highlight.rows.find(row => row === rowIndex) !== undefined) ||
-  false;
+): boolean => {
+  return highlight ? highlight.rows.has(rowIndex) : false;
+};
 
 export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
   private cellRangeRenderer?: GridCellRangeRenderer;
@@ -170,8 +170,7 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
           const rowObject = filteredSortedResults[cellProps.rowIndex];
           const cellValue = getCellValue(rowObject, cellProps);
           const isCellHighlighted = highlight
-            ? isRowHighlighted(highlight, rowIndex) &&
-              highlight.column === columnIndex
+            ? isRowHighlighted(highlight, rowIndex)
             : false;
 
           return (
@@ -200,6 +199,7 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
               }}
               onContextMenu={e => {
                 e.stopPropagation();
+                // Open the context menu
                 if (onContextMenu) {
                   onContextMenu(e, {
                     cellValue,
@@ -213,9 +213,8 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
               onHighlighted={() => {
                 if (onCellHighlighted) {
                   onCellHighlighted({
-                    rows: [rowIndex],
-                    column: columnIndex,
-                    rowReferenceShiftClick: rowIndex,
+                    rowIndex,
+                    columnIndex,
                   });
                 }
               }}

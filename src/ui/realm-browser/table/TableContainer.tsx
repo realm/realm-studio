@@ -135,7 +135,7 @@ export class TableContainer extends React.PureComponent<
       if (rowsChanged || columnChanged) {
         this.gridContent.scrollToCell({
           columnIndex: this.props.highlight.column || 0,
-          rowIndex: this.props.highlight.rows[0] || 0,
+          rowIndex: this.props.highlight.lastRowIndexClicked || 0,
         });
       }
     } else if (this.gridContent && this.props.focus !== prevProps.focus) {

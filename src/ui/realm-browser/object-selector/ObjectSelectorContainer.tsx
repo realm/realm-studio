@@ -50,7 +50,7 @@ export class ObjectSelectorContainer extends React.Component<
     this.setState({
       highlight: {
         column: columnIndex,
-        rows: [rowIndex],
+        rows: new Set([rowIndex]),
       },
       selectedObject: rowObject,
     });
