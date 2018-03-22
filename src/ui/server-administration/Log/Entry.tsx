@@ -1,26 +1,11 @@
 import * as classNames from 'classnames';
-import * as moment from 'moment';
 import * as React from 'react';
 import { Badge } from 'reactstrap';
 
 import { LogLevel } from '.';
 import { ContextInspector } from './ContextInspector';
 import { LevelIcon } from './LevelIcon';
-
-const calendarFormats = {
-  // See https://momentjs.com/docs/#localized-formats
-  sameDay: 'LTS',
-};
-
-const TimestampBadge = ({ timestamp }: { timestamp: string }) => {
-  return (
-    <Badge color="default" className="Log__Entry__Badge">
-      <span unselectable={true} title={timestamp}>
-        {moment(timestamp).calendar(undefined, calendarFormats)}
-      </span>
-    </Badge>
-  );
-};
+import { TimestampBadge } from './TimestampBadge';
 
 export interface ILogEntry {
   level: LogLevel;
@@ -40,7 +25,8 @@ export const Entry = ({
   style,
   onResized,
 }: IEntryProps) => {
-  const { timestamp, ...restOfContext } = context;
+  // Timestamp and service are considered special enough to be promoted to badges
+  const { timestamp, service, ...restOfContext } = context;
   return (
     <div
       className={classNames('Log__Entry', `Log__Entry--${level}`)}
@@ -53,7 +39,17 @@ export const Entry = ({
         <div className="Log__Entry__Row">
           <span className="Log__Entry__Message">{message}</span>
           <div className="Log__Entry__Badges">
-            {timestamp ? <TimestampBadge timestamp={timestamp} /> : null}
+            {service ? (
+              <Badge className="Log__Entry__Badge" color="default">
+                <span title="service">{service}</span>
+              </Badge>
+            ) : null}
+            {timestamp ? (
+              <TimestampBadge
+                className="Log__Entry__Badge"
+                timestamp={timestamp}
+              />
+            ) : null}
           </div>
         </div>
         {Object.keys(restOfContext).length > 0 ? (
