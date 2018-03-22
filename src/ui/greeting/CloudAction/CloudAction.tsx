@@ -67,7 +67,10 @@ export const CloudAction = ({
           </DropdownToggle>
           <DropdownMenu>
             {cloudStatus.instances.map(instance => (
-              <DropdownItem onClick={() => onConnectToCloudInstance(instance)}>
+              <DropdownItem
+                key={instance.id}
+                onClick={() => onConnectToCloudInstance(instance)}
+              >
                 {instance.projectName || instance.tenantUrl}
               </DropdownItem>
             ))}
