@@ -41,14 +41,6 @@ export const getUrl = (user: Realm.Sync.User, realmPath: string) => {
   return url.toString();
 };
 
-interface IExtendedRealmSyncConfiguration extends Realm.Sync.SyncConfiguration {
-  _disablePartialSyncUrlChecks?: true;
-}
-
-interface IExtendedRealmConfiguration extends Realm.Configuration {
-  sync: IExtendedRealmSyncConfiguration;
-}
-
 export const open = async (
   user: Realm.Sync.User,
   realmPath: string,
@@ -59,7 +51,7 @@ export const open = async (
 ): Promise<Realm> => {
   const url = getUrl(user, realmPath);
 
-  const config: IExtendedRealmConfiguration = {
+  const realm = Realm.open({
     encryptionKey,
     schema,
     sync: {
@@ -68,11 +60,8 @@ export const open = async (
       error: ssl.errorCallback || defaultSyncErrorCallback,
       validate_ssl: ssl.validateCertificates,
       ssl_trust_certificate_path: ssl.certificatePath,
-      _disablePartialSyncUrlChecks: true,
     },
-  };
-
-  const realm = Realm.open(config as Realm.Configuration);
+  });
 
   if (progressCallback) {
     realm.progress(progressCallback);
