@@ -876,6 +876,10 @@ export class RealmBrowserContainer
     });
   };
 
+  public onResetHighlight = () => {
+    this.setState({ highlight: this.generateHighlight() });
+  };
+
   protected onRealmChanged = () => {
     this.setState({ dataVersion: this.state.dataVersion + 1 });
   };
@@ -928,10 +932,6 @@ export class RealmBrowserContainer
         },
       );
     }
-  };
-
-  protected onResetHighlight = () => {
-    this.setState({ highlight: this.generateHighlight() });
   };
 
   protected addListeners() {

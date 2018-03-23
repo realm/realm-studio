@@ -12,29 +12,32 @@ export interface IObjectSelectorStateProps {
 }
 
 export interface IObjectSelectorProps extends IObjectSelectorStateProps {
-  toggle: () => void;
   highlight?: IHighlight;
   isOptional: boolean;
   onCellClick: CellClickHandler;
+  onResetHighlight: () => void;
   onSelectObject: () => void;
   selectedObject: Realm.Object | null;
+  toggle: () => void;
 }
 
 export const ObjectSelector = ({
-  toggle,
   focus,
   highlight,
+  isOpen,
   isOptional,
   onCellClick,
+  onResetHighlight,
   onSelectObject,
   selectedObject,
-  isOpen,
+  toggle,
 }: IObjectSelectorProps) => (
   <Modal size="lg" isOpen={isOpen} toggle={toggle} className="ConfirmModal">
     <ModalHeader toggle={toggle}>Select a new {focus.className}</ModalHeader>
     <ModalBody className="RealmBrowser__SelectObject">
       <ContentContainer
         editMode={EditMode.Disabled}
+        onResetHighlight={onResetHighlight}
         focus={focus}
         highlight={highlight}
         onCellClick={onCellClick}
