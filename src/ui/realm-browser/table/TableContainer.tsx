@@ -34,6 +34,8 @@ export interface IBaseTableContainerProps {
   onCellHighlighted?: CellHighlightedHandler;
   onCellValidated?: CellValidatedHandler;
   onContextMenu?: CellContextMenuHandler;
+  onResetHighlight: () => void;
+  onTableBackgroundClick: () => void;
   onSortEnd?: SortEndHandler;
   onSortStart?: SortStartHandler;
   query: string;
@@ -93,6 +95,7 @@ export class TableContainer extends React.PureComponent<
         onSortClick={this.onSortClick}
         onSortEnd={this.onSortEnd}
         onSortStart={this.onSortStart}
+        onTableBackgroundClick={this.props.onTableBackgroundClick}
         scrollProps={this.props.scrollProps}
         sizeProps={this.props.sizeProps}
         sorting={this.state.sorting}
@@ -126,16 +129,16 @@ export class TableContainer extends React.PureComponent<
     prevState: ITableContainerState,
   ) {
     if (this.gridContent && this.props.highlight) {
-      const rowChanged =
+      const rowsChanged =
         !prevProps.highlight ||
-        prevProps.highlight.row !== this.props.highlight.row;
+        prevProps.highlight.rows !== this.props.highlight.rows;
       const columnChanged =
         !prevProps.highlight ||
         prevProps.highlight.column !== this.props.highlight.column;
-      if (rowChanged || columnChanged) {
+      if (rowsChanged || columnChanged) {
         this.gridContent.scrollToCell({
           columnIndex: this.props.highlight.column || 0,
-          rowIndex: this.props.highlight.row || 0,
+          rowIndex: this.props.highlight.lastRowIndexClicked || 0,
         });
       }
     } else if (this.gridContent && this.props.focus !== prevProps.focus) {
@@ -152,6 +155,10 @@ export class TableContainer extends React.PureComponent<
         this.gridContent.recomputeGridSize();
         this.gridHeader.recomputeGridSize();
       }
+    }
+
+    if (this.state.sorting !== prevState.sorting) {
+      this.props.onResetHighlight();
     }
   }
 

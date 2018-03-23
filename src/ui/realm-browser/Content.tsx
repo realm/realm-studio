@@ -36,8 +36,10 @@ export const Content = ({
   onNewObjectClick,
   onQueryChange,
   onQueryHelp,
+  onResetHighlight,
   onSortEnd,
   onSortStart,
+  onTableBackgroundClick,
   progress,
   query,
 }: {
@@ -58,8 +60,10 @@ export const Content = ({
   onNewObjectClick?: () => void;
   onQueryChange: (query: string) => void;
   onQueryHelp: () => void;
+  onResetHighlight: () => void;
   onSortEnd?: SortEndHandler;
   onSortStart?: SortStartHandler;
+  onTableBackgroundClick: () => void;
   progress?: ILoadingProgress;
   query: string;
 }) => {
@@ -95,8 +99,10 @@ export const Content = ({
           onCellHighlighted={onCellHighlighted}
           onCellValidated={onCellValidated}
           onContextMenu={onContextMenu}
+          onResetHighlight={onResetHighlight}
           onSortEnd={onSortEnd}
           onSortStart={onSortStart}
+          onTableBackgroundClick={onTableBackgroundClick}
           query={query}
         />
         <Bottombar

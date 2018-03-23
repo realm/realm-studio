@@ -49,6 +49,7 @@ export interface ITableProps {
   onSortClick: (property: IPropertyWithName) => void;
   onSortEnd?: SortEndHandler;
   onSortStart?: SortStartHandler;
+  onTableBackgroundClick: () => void;
   scrollProps: ScrollSyncProps;
   sizeProps: AutoSizerProps;
   sorting?: ISorting;
@@ -75,6 +76,7 @@ export const Table = ({
   onSortClick,
   onSortEnd,
   onSortStart,
+  onTableBackgroundClick,
   scrollProps,
   sizeProps,
   sorting,
@@ -99,6 +101,9 @@ export const Table = ({
         if (onContextMenu) {
           onContextMenu(e);
         }
+      }}
+      onClick={e => {
+        onTableBackgroundClick();
       }}
     >
       <MoreIndicator position="bottom" visible={scrollBottom > 0} />

@@ -1,7 +1,12 @@
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import { CreateObjectHandler, EditMode, ISelectObjectState } from '.';
+import {
+  CreateObjectHandler,
+  EditMode,
+  IConfirmModal,
+  ISelectObjectState,
+} from '.';
 import { ConfirmModal } from '../reusable/confirm-modal';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
 import { AddClassModal } from './AddClassModal';
@@ -27,10 +32,7 @@ import './RealmBrowser.scss';
 
 export interface IRealmBrowserProps {
   columnToHighlight?: number;
-  confirmModal?: {
-    yes: () => void;
-    no: () => void;
-  };
+  confirmModal?: IConfirmModal;
   createObjectSchema?: Realm.ObjectSchema;
   dataVersion: number;
   dataVersionAtBeginning?: number;
@@ -56,10 +58,11 @@ export interface IRealmBrowserProps {
   onCommitTransaction: () => void;
   onContextMenu: CellContextMenuHandler;
   onCreateDialogToggle: () => void;
-  onNewObjectClick: () => void;
   onCreateObject: CreateObjectHandler;
   onHideEncryptionDialog: () => void;
+  onNewObjectClick: () => void;
   onOpenWithEncryption: (key: string) => void;
+  onResetHighlight: () => void;
   onSortEnd: SortEndHandler;
   onSortStart: SortStartHandler;
   progress: ILoadingProgress;
@@ -98,11 +101,12 @@ export const RealmBrowser = ({
   onClassSelected,
   onCommitTransaction,
   onContextMenu,
-  onNewObjectClick,
   onCreateDialogToggle,
   onCreateObject,
   onHideEncryptionDialog,
+  onNewObjectClick,
   onOpenWithEncryption,
+  onResetHighlight,
   onSortEnd,
   onSortStart,
   progress,
@@ -144,6 +148,7 @@ export const RealmBrowser = ({
           onCommitTransaction={onCommitTransaction}
           onContextMenu={onContextMenu}
           onNewObjectClick={onNewObjectClick}
+          onResetHighlight={onResetHighlight}
           onSortEnd={onSortEnd}
           onSortStart={onSortStart}
           progress={progress}
@@ -151,8 +156,8 @@ export const RealmBrowser = ({
       </div>
       {confirmModal && (
         <ConfirmModal
-          title="Deleting object ..."
-          description="Are you sure you want to delete this object?"
+          title={confirmModal.title}
+          description={confirmModal.description}
           status={true}
           yes={confirmModal.yes}
           no={confirmModal.no}

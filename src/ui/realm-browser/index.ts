@@ -21,3 +21,10 @@ export enum EditMode {
 
 export type CreateObjectHandler = (className: string, values: {}) => void;
 export type EditModeChangeHandler = (editMode: EditMode) => void;
+
+export interface IConfirmModal {
+  title: string;
+  description: string;
+  yes: () => void;
+  no: () => void;
+}

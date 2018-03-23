@@ -14,7 +14,6 @@ $realm-browser-more-indicator-light-color: rgba(0, 0, 0, 0);
 
 $color-row-stripe: mix($white, $color-dove, 50%);
 $highlight-row-bg: mix($white, $color-indigo, 75%);
-$highlight-cell-bg: mix($white, $color-indigo, 60%);
 $highlight-row-color: $black;
 
 .RealmBrowser {
@@ -203,7 +202,7 @@ $highlight-row-color: $black;
     &__Row {
       background: $white;
       position: relative;
-      transition: background-color 400ms;
+      transition: background-color 200ms;
 
       &--striped {
         background: $color-row-stripe;
@@ -243,9 +242,7 @@ $highlight-row-color: $black;
     }
 
     &__Cell {
-      &--highlighted {
-        background: $highlight-cell-bg;
-      }
+      user-select: none;
     }
 
     &__HeaderCell {

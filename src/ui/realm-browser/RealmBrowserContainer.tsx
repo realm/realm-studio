@@ -6,6 +6,7 @@ import * as Realm from 'realm';
 import {
   EditMode,
   EditModeChangeHandler,
+  IConfirmModal,
   IPropertyWithName,
   ISelectObjectState,
 } from '.';
@@ -35,15 +36,13 @@ import {
 import { ImportFormat } from '../../services/data-importer';
 import { CSVDataImporter } from '../../services/data-importer/csv/CSVDataImporter';
 import ImportSchemaGenerator from '../../services/data-importer/ImportSchemaGenerator';
+import { getRange } from '../reusable/utils';
 import { RealmBrowser } from './RealmBrowser';
 
 const EDIT_MODE_STORAGE_KEY = 'realm-browser-edit-mode';
 
 export interface IRealmBrowserState extends IRealmLoadingComponentState {
-  confirmModal?: {
-    yes: () => void;
-    no: () => void;
-  };
+  confirmModal?: IConfirmModal;
   createObjectSchema?: Realm.ObjectSchema;
   // A number that we can use to make components update on changes to data
   dataVersion: number;
@@ -51,14 +50,14 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   editMode: EditMode;
   encryptionKey?: string;
   focus: Focus | null;
-  isEncryptionDialogVisible: boolean;
   highlight?: IHighlight;
+  isAddClassOpen: boolean;
+  isAddPropertyOpen: boolean;
+  isEncryptionDialogVisible: boolean;
   // The schemas are only supposed to be used to produce a list of schemas in the sidebar
   schemas: Realm.ObjectSchema[];
   // TODO: Rename - Unclear if this is this an action or a piece of data
   selectObject?: ISelectObjectState;
-  isAddClassOpen: boolean;
-  isAddPropertyOpen: boolean;
 }
 
 export class RealmBrowserContainer
@@ -416,7 +415,8 @@ export class RealmBrowserContainer
         if (rowIndex >= 0) {
           this.setState({
             highlight: {
-              row: rowIndex,
+              ...this.state.highlight,
+              rows: new Set([rowIndex]),
             },
           });
         }
@@ -472,15 +472,50 @@ export class RealmBrowserContainer
     }
   };
 
-  public onCellClick: CellClickHandler = ({
-    rowObject,
-    property,
-    cellValue,
-    rowIndex,
-    columnIndex,
-  }) => {
-    // Ensuring that the last cell validation didn't fail
+  public onCellClick: CellClickHandler = (
+    { rowObject, property, cellValue, rowIndex, columnIndex },
+    e,
+  ) => {
+    const shiftClick = e && e.shiftKey;
+    const metaClick = e && e.metaKey; // Command key in MacOs
+
+    const currentRowReferenceShiftClick =
+      this.state.highlight && this.state.highlight.lastRowIndexClicked;
+    const clickWhenNoRowHighlighted =
+      currentRowReferenceShiftClick === undefined;
+    const normalClick = !shiftClick && !metaClick;
+    const nextRowReferenceShiftClick =
+      clickWhenNoRowHighlighted || normalClick || metaClick
+        ? rowIndex
+        : currentRowReferenceShiftClick;
+
+    const nextRowsHighlighted =
+      this.state.highlight && this.state.highlight.rows
+        ? new Set(this.state.highlight.rows)
+        : new Set();
+
+    if (metaClick) {
+      // Unselect the row when It was already selected otherwise select it
+      if (nextRowsHighlighted.has(rowIndex)) {
+        nextRowsHighlighted.delete(rowIndex);
+      } else {
+        nextRowsHighlighted.add(rowIndex);
+      }
+    } else if (shiftClick) {
+      // Select all the rows from the row previously referenced to the last row clicked
+      if (nextRowReferenceShiftClick !== undefined) {
+        const rowIndexRange = getRange(nextRowReferenceShiftClick, rowIndex);
+        for (const i of rowIndexRange) {
+          nextRowsHighlighted.add(i);
+        }
+      }
+    } else {
+      nextRowsHighlighted.clear();
+      nextRowsHighlighted.add(rowIndex);
+    }
+
     if (!this.latestCellValidation || this.latestCellValidation.valid) {
+      // Ensuring that the last cell validation didn't fail
       if (this.clickTimeout) {
         clearTimeout(this.clickTimeout);
         this.onCellDoubleClick(rowObject, property, cellValue);
@@ -494,8 +529,9 @@ export class RealmBrowserContainer
 
       this.setState({
         highlight: {
+          rows: nextRowsHighlighted,
           column: columnIndex,
-          row: rowIndex,
+          lastRowIndexClicked: rowIndex,
         },
       });
     }
@@ -522,11 +558,12 @@ export class RealmBrowserContainer
       const className = property.objectType;
       if (className) {
         const focus = this.getClassFocus(className);
-        const index = focus.results.indexOf(value);
+        const rowIndex = focus.results.indexOf(value);
+
         this.setState({
           focus,
           highlight: {
-            row: index,
+            rows: new Set([rowIndex]),
             center: true,
           },
         });
@@ -544,9 +581,21 @@ export class RealmBrowserContainer
     }
   };
 
-  public onCellHighlighted = (highlight: IHighlight) => {
+  public onCellHighlighted = ({
+    rowIndex,
+    columnIndex,
+  }: {
+    rowIndex: number;
+    columnIndex: number;
+  }) => {
     if (!this.latestCellValidation || this.latestCellValidation.valid) {
-      this.setState({ highlight });
+      this.setState({
+        highlight: {
+          rows: new Set([rowIndex]),
+          column: columnIndex,
+          lastRowIndexClicked: rowIndex,
+        },
+      });
     }
   };
 
@@ -560,7 +609,17 @@ export class RealmBrowserContainer
     const menu = new remote.Menu();
 
     if (params) {
-      const { property, rowObject, rowIndex } = params;
+      const { property, rowObject, rowIndex, columnIndex } = params;
+
+      // If the clicked row was not highlighted - highlight only that
+      if (!this.state.highlight || !this.state.highlight.rows.has(rowIndex)) {
+        this.onCellHighlighted({ rowIndex, columnIndex });
+        // Wait 200ms to allow the state to update and call recursively
+        window.setTimeout(() => {
+          return this.onContextMenu(e, params);
+        }, 200);
+        return;
+      }
 
       // If we clicked a property that refers to an object
       if (property && property.type === 'object') {
@@ -574,18 +633,35 @@ export class RealmBrowserContainer
         );
       }
 
-      // If we right-clicking on a row we can delete it
-      if (focus && rowObject && rowIndex >= 0) {
+      // If we have one or more rows highlighted - we can delete those
+      if (focus && this.state.highlight && this.state.highlight.rows.size > 0) {
+        const { label, title, description } = this.generateDeleteTexts(
+          focus,
+          this.state.highlight.rows.size > 1,
+        );
+
         menu.append(
           new remote.MenuItem({
-            label: 'Delete',
+            label,
             click: () => {
-              this.openConfirmModal(() =>
-                this.deleteObject(rowObject, rowIndex),
-              );
+              this.openConfirmModal(title, description, () => {
+                if (this.state.highlight) {
+                  this.deleteObjects(this.state.highlight.rows);
+                  this.setState({ highlight: undefined });
+                }
+              });
             },
           }),
         );
+      }
+    }
+
+    if (focus) {
+      const rowsHighlighted = this.state.highlight && this.state.highlight.rows;
+
+      if (rowsHighlighted && rowsHighlighted.size > 1) {
+        const title = 'Deleting objects...';
+        const description = 'Are you sure you want to delete this objects?';
       }
     }
 
@@ -691,7 +767,8 @@ export class RealmBrowserContainer
     }
     this.setState({
       highlight: {
-        row: newIndex,
+        ...this.state.highlight,
+        rows: new Set([newIndex]),
       },
     });
   };
@@ -743,9 +820,15 @@ export class RealmBrowserContainer
     this.setState({ selectObject: undefined });
   };
 
-  public openConfirmModal = (onYesCallback: () => void) => {
+  public openConfirmModal = (
+    title: string,
+    description: string,
+    onYesCallback: () => void,
+  ) => {
     this.setState({
       confirmModal: {
+        title,
+        description,
         yes: () => {
           onYesCallback();
           this.closeConfirmModal();
@@ -757,19 +840,23 @@ export class RealmBrowserContainer
 
   public closeConfirmModal = () => this.setState({ confirmModal: undefined });
 
-  public deleteObject = (object: Realm.Object, index: number) => {
+  public deleteObjects = (rowIndecies: Set<number>) => {
     const { focus } = this.state;
 
     if (focus) {
       try {
         this.write(() => {
           if (this.realm && focus.kind === 'class') {
-            this.realm.delete(object);
+            for (const index of rowIndecies) {
+              const object = focus.results[index];
+              this.realm.delete(object);
+            }
           } else if (focus.kind === 'list') {
-            focus.results.splice(index, 1);
+            for (const index of rowIndecies) {
+              focus.results.splice(index, 1);
+            }
           }
         });
-        this.setState({ highlight: undefined });
       } catch (err) {
         showError('Error deleting the object', err);
       }
@@ -787,6 +874,10 @@ export class RealmBrowserContainer
       ...this.props.realm,
       encryptionKey,
     });
+  };
+
+  public onResetHighlight = () => {
+    this.setState({ highlight: this.generateHighlight() });
   };
 
   protected onRealmChanged = () => {
@@ -918,12 +1009,10 @@ export class RealmBrowserContainer
     }
     if (object) {
       const className = object.objectSchema().name;
-      const row = this.realm.objects(className).indexOf(object);
-      if (row) {
-        return {
-          row,
-        };
-      }
+      const rowIndex = this.realm.objects(className).indexOf(object);
+      return {
+        rows: new Set(rowIndex >= 0 ? [rowIndex] : []),
+      };
     }
   }
 
@@ -961,6 +1050,40 @@ export class RealmBrowserContainer
         dataVersion: this.state.dataVersionAtBeginning,
         dataVersionAtBeginning: undefined,
       });
+    }
+  }
+
+  protected generateDeleteTexts(focus: Focus, multiple: boolean) {
+    if (focus.kind === 'list') {
+      if (multiple) {
+        return {
+          label: 'Remove selected rows from the list',
+          title: 'Removing rows',
+          description:
+            'Are you sure you want to remove these rows from the list?',
+        };
+      } else {
+        return {
+          label: 'Remove selected row from the list',
+          title: 'Removing row',
+          description:
+            'Are you sure you want to remove this row from the list?',
+        };
+      }
+    } else {
+      if (multiple) {
+        return {
+          label: 'Delete selected objects',
+          title: 'Delete objects',
+          description: 'Are you sure you want to delete these objects?',
+        };
+      } else {
+        return {
+          label: 'Delete selected object',
+          title: 'Delete object',
+          description: 'Are you sure you want to delete this object?',
+        };
+      }
     }
   }
 

@@ -59,6 +59,12 @@ export interface IContentGridProps extends Partial<GridProps> {
   rowHeight: number;
   width: number;
 }
+const isRowHighlighted = (
+  highlight: IHighlight | undefined,
+  rowIndex: number,
+): boolean => {
+  return highlight ? highlight.rows.has(rowIndex) : false;
+};
 
 export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
   private cellRangeRenderer?: GridCellRangeRenderer;
@@ -112,6 +118,8 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
       key={cellProps.key}
       className="RealmBrowser__Table__Cell"
       style={cellProps.style}
+      // Prevent a click through to the table
+      onClick={e => e.stopPropagation()}
     />
   );
 
@@ -120,11 +128,10 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
 
     const rowRenderer: GridRowRenderer = (rowProps: IGridRowProps) => {
       const { highlight, isSorting } = this.props;
-      const isHighlighted =
-        (highlight && highlight.row === rowProps.rowIndex) || false;
+
       return (
         <Row
-          isHighlighted={isHighlighted}
+          isHighlighted={isRowHighlighted(highlight, rowProps.rowIndex)}
           key={rowProps.key}
           isSorting={isSorting}
           {...rowProps}
@@ -164,24 +171,29 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
           const { rowIndex, columnIndex } = cellProps;
           const rowObject = filteredSortedResults[cellProps.rowIndex];
           const cellValue = getCellValue(rowObject, cellProps);
-          const isHighlighted = highlight
-            ? highlight.row === rowIndex && highlight.column === columnIndex
+          const isCellHighlighted = highlight
+            ? isRowHighlighted(highlight, rowIndex)
             : false;
 
           return (
             <Cell
               editMode={editMode}
-              isHighlighted={isHighlighted}
+              isHighlighted={isCellHighlighted}
               key={cellProps.key}
               onCellClick={e => {
+                // Prevent a click through to the table
+                e.stopPropagation();
                 if (onCellClick) {
-                  onCellClick({
-                    cellValue,
-                    columnIndex,
-                    property,
-                    rowIndex,
-                    rowObject,
-                  });
+                  onCellClick(
+                    {
+                      cellValue,
+                      columnIndex,
+                      property,
+                      rowIndex,
+                      rowObject,
+                    },
+                    e,
+                  );
                 }
               }}
               onValidated={valid => {
@@ -191,6 +203,7 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
               }}
               onContextMenu={e => {
                 e.stopPropagation();
+                // Open the context menu
                 if (onContextMenu) {
                   onContextMenu(e, {
                     cellValue,
@@ -204,8 +217,8 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
               onHighlighted={() => {
                 if (onCellHighlighted) {
                   onCellHighlighted({
-                    row: rowIndex,
-                    column: columnIndex,
+                    rowIndex,
+                    columnIndex,
                   });
                 }
               }}

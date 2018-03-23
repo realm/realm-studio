@@ -34,6 +34,7 @@ export class ObjectSelectorContainer extends React.Component<
         isOpen={this.props.isOpen}
         isOptional={this.props.isOptional || false}
         onCellClick={this.onCellClick}
+        onResetHighlight={this.onResetHighlight}
         onSelectObject={this.onSelectObject}
         toggle={this.props.toggle}
         {...this.state}
@@ -50,9 +51,19 @@ export class ObjectSelectorContainer extends React.Component<
     this.setState({
       highlight: {
         column: columnIndex,
-        row: rowIndex,
+        rows: new Set([rowIndex]),
       },
       selectedObject: rowObject,
+    });
+  };
+
+  private onResetHighlight = () => {
+    this.setState({
+      highlight: {
+        column: 0,
+        rows: new Set([]),
+      },
+      selectedObject: null,
     });
   };
 
