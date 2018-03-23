@@ -118,6 +118,8 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
       key={cellProps.key}
       className="RealmBrowser__Table__Cell"
       style={cellProps.style}
+      // Prevent a click through to the table
+      onClick={e => e.stopPropagation()}
     />
   );
 
@@ -179,6 +181,8 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
               isHighlighted={isCellHighlighted}
               key={cellProps.key}
               onCellClick={e => {
+                // Prevent a click through to the table
+                e.stopPropagation();
                 if (onCellClick) {
                   onCellClick(
                     {

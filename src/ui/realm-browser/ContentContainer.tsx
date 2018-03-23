@@ -32,6 +32,7 @@ export interface IContentContainerProps {
   onCommitTransaction?: () => void;
   onContextMenu?: CellContextMenuHandler;
   onNewObjectClick?: () => void;
+  onResetHighlight: () => void;
   onSortEnd?: SortEndHandler;
   onSortStart?: SortStartHandler;
   progress?: ILoadingProgress;
@@ -52,10 +53,20 @@ export class ContentContainer extends React.Component<
     };
   }
 
+  public componentDidUpdate(
+    prevProps: IContentContainerProps,
+    prevState: IContentContainerState,
+  ) {
+    if (this.state.query !== prevState.query) {
+      this.props.onResetHighlight();
+    }
+  }
+
   public render() {
     return (
       <Content
         editMode={this.props.editMode || EditMode.InputBlur}
+        onTableBackgroundClick={this.onTableBackgroundClick}
         {...this.state}
         {...this.props}
         {...this}
@@ -71,5 +82,10 @@ export class ContentContainer extends React.Component<
     const url =
       'https://realm.io/docs/javascript/latest/api/tutorial-query-language.html';
     electron.shell.openExternal(url);
+  };
+
+  protected onTableBackgroundClick = () => {
+    // When clicking outside a cell. Reset the highlight.
+    this.props.onResetHighlight();
   };
 }

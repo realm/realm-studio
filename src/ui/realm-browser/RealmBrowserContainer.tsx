@@ -930,6 +930,10 @@ export class RealmBrowserContainer
     }
   };
 
+  protected onResetHighlight = () => {
+    this.setState({ highlight: this.generateHighlight() });
+  };
+
   protected addListeners() {
     ipcRenderer.addListener('export-schema', this.onExportSchema);
     window.addEventListener<'beforeunload'>(

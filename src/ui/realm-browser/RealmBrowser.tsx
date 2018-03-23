@@ -58,10 +58,11 @@ export interface IRealmBrowserProps {
   onCommitTransaction: () => void;
   onContextMenu: CellContextMenuHandler;
   onCreateDialogToggle: () => void;
-  onNewObjectClick: () => void;
   onCreateObject: CreateObjectHandler;
   onHideEncryptionDialog: () => void;
+  onNewObjectClick: () => void;
   onOpenWithEncryption: (key: string) => void;
+  onResetHighlight: () => void;
   onSortEnd: SortEndHandler;
   onSortStart: SortStartHandler;
   progress: ILoadingProgress;
@@ -100,11 +101,12 @@ export const RealmBrowser = ({
   onClassSelected,
   onCommitTransaction,
   onContextMenu,
-  onNewObjectClick,
   onCreateDialogToggle,
   onCreateObject,
   onHideEncryptionDialog,
+  onNewObjectClick,
   onOpenWithEncryption,
+  onResetHighlight,
   onSortEnd,
   onSortStart,
   progress,
@@ -146,6 +148,7 @@ export const RealmBrowser = ({
           onCommitTransaction={onCommitTransaction}
           onContextMenu={onContextMenu}
           onNewObjectClick={onNewObjectClick}
+          onResetHighlight={onResetHighlight}
           onSortEnd={onSortEnd}
           onSortStart={onSortStart}
           progress={progress}

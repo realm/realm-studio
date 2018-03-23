@@ -34,6 +34,8 @@ export interface IBaseTableContainerProps {
   onCellHighlighted?: CellHighlightedHandler;
   onCellValidated?: CellValidatedHandler;
   onContextMenu?: CellContextMenuHandler;
+  onResetHighlight: () => void;
+  onTableBackgroundClick: () => void;
   onSortEnd?: SortEndHandler;
   onSortStart?: SortStartHandler;
   query: string;
@@ -93,6 +95,7 @@ export class TableContainer extends React.PureComponent<
         onSortClick={this.onSortClick}
         onSortEnd={this.onSortEnd}
         onSortStart={this.onSortStart}
+        onTableBackgroundClick={this.props.onTableBackgroundClick}
         scrollProps={this.props.scrollProps}
         sizeProps={this.props.sizeProps}
         sorting={this.state.sorting}
@@ -152,6 +155,10 @@ export class TableContainer extends React.PureComponent<
         this.gridContent.recomputeGridSize();
         this.gridHeader.recomputeGridSize();
       }
+    }
+
+    if (this.state.sorting !== prevState.sorting) {
+      this.props.onResetHighlight();
     }
   }
 
