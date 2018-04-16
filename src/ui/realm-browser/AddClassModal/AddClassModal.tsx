@@ -14,7 +14,7 @@ import {
   ModalHeader,
 } from 'reactstrap';
 
-export const View = ({
+export const AddClassModal = ({
   isOpen,
   toggle,
   onNameChange,
