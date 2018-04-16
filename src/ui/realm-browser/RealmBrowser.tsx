@@ -13,7 +13,7 @@ import { AddClassModal } from './AddClassModal';
 import { AddPropertyModal } from './AddPropertyModal';
 import { ContentContainer } from './ContentContainer';
 import { CreateObjectDialog } from './CreateObjectDialog';
-import { EncryptionDialog } from './encryption-dialog';
+import { EncryptionDialog } from './EncryptionDialog';
 import { Focus, IClassFocus } from './focus';
 import { ObjectSelector } from './object-selector';
 import { Sidebar } from './Sidebar';
