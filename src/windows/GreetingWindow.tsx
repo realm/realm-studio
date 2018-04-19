@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { GreetingContainer } from '../ui/greeting/GreetingContainer';
+import { GreetingContainer } from '../ui/Greeting/GreetingContainer';
 import { Window } from './Window';
 import { IGreetingWindowProps } from './WindowType';
 

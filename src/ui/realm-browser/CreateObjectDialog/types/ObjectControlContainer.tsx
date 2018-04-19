@@ -6,7 +6,7 @@ import * as Realm from 'realm';
 import { IPropertyWithName } from '../..';
 import { displayObject } from '../../display';
 import { IClassFocus } from '../../focus';
-import { ObjectSelector } from '../../object-selector';
+import { ObjectSelector } from '../../ObjectSelector';
 
 import { IBaseControlProps } from './TypeControl';
 

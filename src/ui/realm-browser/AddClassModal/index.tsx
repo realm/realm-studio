@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { View } from './View';
+import { AddClassModal } from './AddClassModal';
 
 export interface IAddClassModalProps {
   isOpen: boolean;
@@ -25,7 +25,7 @@ const initialState = {
   primaryKeyType: 'string',
 };
 
-export class AddClassModal extends React.Component<
+class AddClassModalContainer extends React.Component<
   IAddClassModalProps,
   IAddClassModalState
 > {
@@ -37,7 +37,7 @@ export class AddClassModal extends React.Component<
   }
 
   public render() {
-    return <View {...this.props} {...this.state} {...this} />;
+    return <AddClassModal {...this.props} {...this.state} {...this} />;
   }
 
   public onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -91,3 +91,5 @@ export class AddClassModal extends React.Component<
     };
   };
 }
+
+export { AddClassModalContainer as AddClassModal };

@@ -70,3 +70,5 @@ export class ObjectSelectorContainer extends React.Component<
   private onSelectObject = () =>
     this.props.onObjectSelected(this.state.selectedObject);
 }
+
+export { ObjectSelectorContainer as ObjectSelector };

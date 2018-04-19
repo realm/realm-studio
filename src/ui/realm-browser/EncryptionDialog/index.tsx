@@ -12,7 +12,7 @@ export interface IEncryptionDialogContainerState {
   key: string;
 }
 
-export class EncryptionDialogContainer extends React.Component<
+class EncryptionDialogContainer extends React.Component<
   IEncryptionDialogContainerProps,
   IEncryptionDialogContainerState
 > {
@@ -37,3 +37,5 @@ export class EncryptionDialogContainer extends React.Component<
     this.props.onOpenWithEncryption(this.state.key);
   };
 }
+
+export { EncryptionDialogContainer as EncryptionDialog };

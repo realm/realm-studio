@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { ConnectToServerContainer } from '../ui/connect-to-server/ConnectToServerContainer';
+import { ConnectToServerContainer } from '../ui/ConnectToServer/ConnectToServerContainer';
 import { Window } from './Window';
 import { IConnectToServerWindowProps } from './WindowType';
 

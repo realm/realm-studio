@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { IClassFocus } from '../focus';
 import * as primitives from '../primitives';
-import { View } from './View';
+import { View } from './AddPropertyModal';
 
 export interface IAddPropertyModalProps {
   focus: IClassFocus;
@@ -37,7 +37,7 @@ const initialState = {
   primitiveTypeSelected: false,
 };
 
-export class AddPropertyModal extends React.Component<
+class AddPropertyModalContainer extends React.Component<
   IAddPropertyModalProps,
   IAddPropertyModalState
 > {
@@ -143,3 +143,5 @@ export class AddPropertyModal extends React.Component<
   private getClassesTypes = (schemas: Realm.ObjectSchema[]): string[] =>
     schemas.map(schema => schema.name);
 }
+
+export { AddPropertyModalContainer as AddPropertyModal };

@@ -12,10 +12,10 @@ import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
 import { AddClassModal } from './AddClassModal';
 import { AddPropertyModal } from './AddPropertyModal';
 import { ContentContainer } from './ContentContainer';
-import { CreateObjectDialog } from './create-object-dialog';
-import { EncryptionDialog } from './encryption-dialog';
+import { CreateObjectDialog } from './CreateObjectDialog';
+import { EncryptionDialog } from './EncryptionDialog';
 import { Focus, IClassFocus } from './focus';
-import { ObjectSelector } from './object-selector';
+import { ObjectSelector } from './ObjectSelector';
 import { Sidebar } from './Sidebar';
 import {
   CellChangeHandler,

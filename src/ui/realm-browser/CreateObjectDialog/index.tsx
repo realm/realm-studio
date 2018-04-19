@@ -25,7 +25,7 @@ export interface ICreateObjectDialogContainerState {
   values: IRealmObject;
 }
 
-export class CreateObjectDialogContainer extends React.PureComponent<
+class CreateObjectDialogContainer extends React.PureComponent<
   ICreateObjectDialogContainerProps,
   ICreateObjectDialogContainerState
 > {
@@ -144,3 +144,5 @@ export class CreateObjectDialogContainer extends React.PureComponent<
     }
   };
 }
+
+export { CreateObjectDialogContainer as CreateObjectDialog };
