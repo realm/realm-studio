@@ -2,7 +2,7 @@ import * as electron from 'electron';
 import * as React from 'react';
 
 import { EditMode, IPropertyWithName } from '.';
-import { ILoadingProgress } from '../reusable/loading-overlay';
+import { ILoadingProgress } from '../reusable/LoadingOverlay';
 import { Content } from './Content';
 import { Focus } from './focus';
 import {
