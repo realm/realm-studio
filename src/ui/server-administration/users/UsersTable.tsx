@@ -8,7 +8,7 @@ import {
   FilterableTable,
   FilterableTableWrapper,
 } from '../shared/FilterableTable/FilterableTable';
-import { FloatingControls } from '../shared/FloatingControls';
+import { FloatingControls } from '../shared/FloatingControls/FloatingControls';
 import { ChangePasswordDialogContainer } from './ChangePasswordDialogContainer';
 import { CreateUserDialogContainer } from './CreateUserDialogContainer';
 import { UserSidebar } from './UserSidebar';

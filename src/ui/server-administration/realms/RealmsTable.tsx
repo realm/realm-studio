@@ -7,7 +7,7 @@ import {
   FilterableTable,
   FilterableTableWrapper,
 } from '../shared/FilterableTable/FilterableTable';
-import { FloatingControls } from '../shared/FloatingControls';
+import { FloatingControls } from '../shared/FloatingControls/FloatingControls';
 import { displayUser } from '../utils';
 import { CreateRealmDialogContainer } from './CreateRealmDialogContainer';
 import { RealmSidebar } from './RealmSidebar';
