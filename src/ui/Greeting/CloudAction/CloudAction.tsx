@@ -1,4 +1,3 @@
-import * as classNames from 'classnames';
 import * as React from 'react';
 import {
   Alert,
@@ -9,10 +8,10 @@ import {
   DropdownToggle,
 } from 'reactstrap';
 
+import { SocialNetwork } from '../';
 import cloudLogo from '../../../../static/svgs/cloud-logo-simple.svg';
 import { ICloudStatus, IInstance } from '../../../main/CloudManager';
 import { LoadingDots } from '../../reusable/loading-dots';
-import { SocialNetwork } from '../GreetingContainer';
 
 import './CloudAction.scss';
 

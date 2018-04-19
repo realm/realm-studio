@@ -6,8 +6,6 @@ import { main } from '../../actions/main';
 import { ICloudStatus, IInstance } from '../../main/CloudManager';
 import { IUpdateStatus } from '../../main/Updater';
 import * as raas from '../../services/raas';
-import { IServerCredentials } from '../../services/ros';
-import { store } from '../../store';
 import { showError } from '../reusable/errors';
 
 import { Greeting } from './Greeting';
@@ -22,10 +20,7 @@ interface IGreetingContainerState {
   version: string;
 }
 
-export class GreetingContainer extends React.Component<
-  {},
-  IGreetingContainerState
-> {
+class GreetingContainer extends React.Component<{}, IGreetingContainerState> {
   constructor() {
     super();
     this.state = {
@@ -179,3 +174,5 @@ export class GreetingContainer extends React.Component<
     }
   }
 }
+
+export { GreetingContainer as Greeting };
