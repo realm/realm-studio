@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 
-export interface IProps {
+export interface IConfirmModal {
   status: boolean;
   title: string;
   description: string;
@@ -9,7 +9,7 @@ export interface IProps {
   no: () => any;
 }
 
-const ConfirmModal = ({
+export const ConfirmModal = ({
   status,
   title,
   description,
@@ -35,5 +35,3 @@ const ConfirmModal = ({
     </ModalFooter>
   </Modal>
 );
-
-export default ConfirmModal;

@@ -7,7 +7,7 @@ import {
   IConfirmModal,
   ISelectObjectState,
 } from '.';
-import { ConfirmModal } from '../reusable/confirm-modal';
+import { ConfirmModal } from '../reusable/ConfirmModal/ConfirmModal';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
 import { AddClassModal } from './AddClassModal';
 import { AddPropertyModal } from './AddPropertyModal';
