@@ -7,7 +7,7 @@ import * as ros from '../../../services/ros';
 import {
   FilterableTable,
   FilterableTableWrapper,
-} from '../shared/FilterableTable';
+} from '../shared/FilterableTable/FilterableTable';
 import { FloatingControls } from '../shared/FloatingControls';
 import { ChangePasswordDialogContainer } from './ChangePasswordDialogContainer';
 import { CreateUserDialogContainer } from './CreateUserDialogContainer';
