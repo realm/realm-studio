@@ -20,7 +20,7 @@ import { showError } from '../reusable/errors';
 import {
   IRealmLoadingComponentState,
   RealmLoadingComponent,
-} from '../reusable/realm-loading-component';
+} from '../reusable/RealmLoadingComponent/RealmLoadingComponent';
 import { Focus, getClassName, IClassFocus, IListFocus } from './focus';
 import * as primitives from './primitives';
 import { isSelected } from './Sidebar';
