@@ -6,7 +6,7 @@ import { Mode } from '.';
 import cloudLogo from '../../../static/svgs/cloud-logo.svg';
 import { LoadingOverlay } from '../reusable/LoadingOverlay';
 
-import { IntroductionOverlay } from './IntroductionOverlay';
+import { IntroductionOverlay } from './IntroductionOverlay/IntroductionOverlay';
 import { LogInForm } from './LogInForm';
 import { SignUpForm } from './SignUpForm';
 import { VerifyEmailOverlay } from './VerifyEmailOverlay';
