@@ -13,10 +13,10 @@ import {
 import * as ros from '../../../../services/ros';
 
 import { Sidebar } from '../../shared/Sidebar/Sidebar';
+import { IUserSidebarContainerProps } from './';
 import { AccountsTable } from './AccountsTable';
 import { MetadataTable } from './MetadataTable';
 import { RealmsTable } from './RealmsTable';
-import { IUserSidebarContainerProps } from './UserSidebarContainer';
 
 export interface IUserSidebarProps extends IUserSidebarContainerProps {
   onChangePassword: () => void;
