@@ -11,8 +11,6 @@ import {
   ModalHeader,
 } from 'reactstrap';
 
-import { IUser } from '../../../services/ros';
-
 export const CreateUserDialog = ({
   isOpen,
   toggle,

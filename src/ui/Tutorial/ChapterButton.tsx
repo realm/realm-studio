@@ -1,6 +1,5 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import * as ReactMarkdown from 'react-markdown';
 
 import { ITutorialChapter } from '../../services/tutorials';
 

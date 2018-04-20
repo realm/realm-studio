@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { IHistoryEntry, IServerEntry, ISyncedRealmEntry } from './HistoryEntry';
+import { IHistoryEntry } from './HistoryEntry';
 import { HistoryPanel } from './HistoryPanel';
 
 export class HistoryPanelContainer extends React.Component<

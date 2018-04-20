@@ -1,6 +1,5 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import { Alert, Button, Form, FormGroup, Input } from 'reactstrap';
 
 import { Mode } from '.';
 import cloudLogo from '../../../static/svgs/cloud-logo.svg';

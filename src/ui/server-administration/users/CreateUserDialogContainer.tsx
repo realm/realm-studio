@@ -1,7 +1,5 @@
 import * as React from 'react';
 
-import { IUser } from '../../../services/ros';
-
 import { CreateUserDialog } from './CreateUserDialog';
 
 export interface ICreateUserDialogContainerProps {
