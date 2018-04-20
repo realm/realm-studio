@@ -7,7 +7,7 @@ import { IUpdateStatus } from '../../main/Updater';
 
 import realmLogo from '../../../static/svgs/realm-logo.svg';
 import { SocialNetwork } from './';
-import { CloudAction } from './CloudAction';
+import { CloudAction } from './CloudAction/CloudAction';
 import { HistoryPanelContainer } from './HistoryPanelContainer';
 import { SignupOverlayContainer } from './SignupOverlayContainer';
 import { UpdateStatusIndicator } from './UpdateStatusIndicator';
