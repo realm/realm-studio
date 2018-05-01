@@ -12,7 +12,7 @@ import {
 
 import * as ros from '../../../../services/ros';
 
-import { Sidebar } from '../../shared/Sidebar/Sidebar';
+import { Sidebar } from '../../shared/Sidebar';
 import { IUserSidebarContainerProps } from './';
 import { AccountsTable } from './AccountsTable';
 import { MetadataTable } from './MetadataTable';

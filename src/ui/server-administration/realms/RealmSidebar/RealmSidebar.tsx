@@ -3,7 +3,7 @@ import { Button, Card, CardBlock, CardTitle } from 'reactstrap';
 
 import * as ros from '../../../../services/ros';
 
-import { Sidebar } from '../../shared/Sidebar/Sidebar';
+import { Sidebar } from '../../shared/Sidebar';
 import { displayUser, shortenRealmPath } from '../../utils';
 import { PermissionsTable } from './PermissionsTable';
 

@@ -2,7 +2,7 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 import { Button, Progress } from 'reactstrap';
 
-import { LoadingDots } from '../LoadingDots/LoadingDots';
+import { LoadingDots } from '../LoadingDots';
 import { ILoadingProgress } from './index';
 
 import './LoadingOverlay.scss';

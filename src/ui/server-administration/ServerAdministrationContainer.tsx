@@ -22,7 +22,7 @@ import { showError } from '../reusable/errors';
 import {
   IRealmLoadingComponentState,
   RealmLoadingComponent,
-} from '../reusable/RealmLoadingComponent/RealmLoadingComponent';
+} from '../reusable/RealmLoadingComponent';
 
 import { ValidateCertificatesChangeHandler } from './realms/RealmsTableContainer';
 import { ServerAdministration, Tab } from './ServerAdministration';

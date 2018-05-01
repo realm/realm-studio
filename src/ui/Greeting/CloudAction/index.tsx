@@ -11,7 +11,7 @@ import {
 import { SocialNetwork } from '../';
 import cloudLogo from '../../../../static/svgs/cloud-logo-simple.svg';
 import { ICloudStatus, IInstance } from '../../../main/CloudManager';
-import { LoadingDots } from '../../reusable/LoadingDots/LoadingDots';
+import { LoadingDots } from '../../reusable/LoadingDots';
 
 import './CloudAction.scss';
 

@@ -6,8 +6,8 @@ import { IPermission, IRealmFile } from '../../../services/ros';
 import {
   FilterableTable,
   FilterableTableWrapper,
-} from '../shared/FilterableTable/FilterableTable';
-import { FloatingControls } from '../shared/FloatingControls/FloatingControls';
+} from '../shared/FilterableTable';
+import { FloatingControls } from '../shared/FloatingControls';
 import { displayUser } from '../utils';
 import { CreateRealmDialogContainer } from './CreateRealmDialogContainer';
 import { RealmSidebar } from './RealmSidebar';

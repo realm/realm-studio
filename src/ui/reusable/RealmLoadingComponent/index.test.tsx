@@ -7,10 +7,7 @@ import * as ReactTestUtils from 'react-dom/test-utils';
 import * as Realm from 'realm';
 // import { TestRealmObjectServer } from '../../../testing/TestRealmObjectServer';
 
-import {
-  IRealmLoadingComponentState,
-  RealmLoadingComponent,
-} from './RealmLoadingComponent';
+import { IRealmLoadingComponentState, RealmLoadingComponent } from './index';
 
 // tslint:disable-next-line:interface-name
 interface Global {
