@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Col, FormGroup, Input, Label, Row } from 'reactstrap';
 
 import { AdminTokenForm } from './AdminTokenForm';
 import { AuthenticationMethodSelector } from './AuthenticationMethodSelector';

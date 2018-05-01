@@ -4,8 +4,6 @@ import { Progress } from 'reactstrap';
 
 import { IUpdateStatus } from '../../main/Updater';
 
-import { LoadingDots } from '../reusable/loading-dots/LoadingDots';
-
 const getDisplayText = (status: IUpdateStatus) => {
   switch (status.state) {
     case 'checking':

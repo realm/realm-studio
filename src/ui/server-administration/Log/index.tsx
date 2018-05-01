@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { CellMeasurerCache } from 'react-virtualized';
-import * as Realm from 'realm';
 
-import { ILoadingProgress } from '../../reusable/loading-overlay';
+import { ILoadingProgress } from '../../reusable/LoadingOverlay';
 
 import { ILogEntry } from './Entry';
 import { Log } from './Log';

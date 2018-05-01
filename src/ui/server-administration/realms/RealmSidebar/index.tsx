@@ -21,3 +21,5 @@ export class RealmSidebarContainer extends React.Component<
     return <RealmSidebar {...this.props} {...this.state} {...this} />;
   }
 }
+
+export { RealmSidebarContainer as RealmSidebar };

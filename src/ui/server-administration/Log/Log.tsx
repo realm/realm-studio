@@ -13,7 +13,7 @@ import {
 import {
   ILoadingProgress,
   LoadingOverlay,
-} from '../../reusable/loading-overlay';
+} from '../../reusable/LoadingOverlay';
 
 import { LogLevel } from '.';
 import { Entry, ILogEntry } from './Entry';

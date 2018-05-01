@@ -1,10 +1,9 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import { Alert, Button, Form, FormGroup, Input } from 'reactstrap';
 
 import { Mode } from '.';
 import cloudLogo from '../../../static/svgs/cloud-logo.svg';
-import { LoadingOverlay } from '../reusable/loading-overlay';
+import { LoadingOverlay } from '../reusable/LoadingOverlay';
 
 import { IntroductionOverlay } from './IntroductionOverlay';
 import { LogInForm } from './LogInForm';

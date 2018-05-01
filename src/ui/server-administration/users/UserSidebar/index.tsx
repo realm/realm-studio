@@ -1,6 +1,4 @@
-import * as electron from 'electron';
 import * as React from 'react';
-import * as Realm from 'realm';
 
 import * as ros from '../../../../services/ros';
 
@@ -28,7 +26,7 @@ export interface IUserSidebarContainerState {
   roleDropdownOpen: boolean;
 }
 
-export class UserSidebarContainer extends React.Component<
+class UserSidebarContainer extends React.Component<
   IUserSidebarContainerProps,
   IUserSidebarContainerState
 > {
@@ -90,3 +88,5 @@ export class UserSidebarContainer extends React.Component<
     }
   };
 }
+
+export { UserSidebarContainer as UserSidebar };

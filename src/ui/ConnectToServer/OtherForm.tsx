@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { Input } from 'reactstrap';
 
-import { CredentialsFormGroup } from './CredentialsFormGroup';
-
 const placeholder = `{
   "provider": "...",
   "data": { ... }

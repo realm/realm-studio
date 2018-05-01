@@ -1,15 +1,13 @@
 import * as os from 'os';
 import * as React from 'react';
-import { Button, ButtonGroup } from 'reactstrap';
-import * as util from 'util';
+import { Button } from 'reactstrap';
 
 import { ICloudStatus, IInstance } from '../../main/CloudManager';
 import { IUpdateStatus } from '../../main/Updater';
-import { IServerCredentials } from '../../services/ros';
 
 import realmLogo from '../../../static/svgs/realm-logo.svg';
+import { SocialNetwork } from './';
 import { CloudAction } from './CloudAction';
-import { SocialNetwork } from './GreetingContainer';
 import { HistoryPanelContainer } from './HistoryPanelContainer';
 import { SignupOverlayContainer } from './SignupOverlayContainer';
 import { UpdateStatusIndicator } from './UpdateStatusIndicator';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Col, Form, FormGroup, Input, Label, Row } from 'reactstrap';
 
-import { LoadingOverlay } from '../reusable/loading-overlay';
+import { LoadingOverlay } from '../reusable/LoadingOverlay';
 import { AuthenticationForm, AuthenticationMethod } from './AuthenticationForm';
 
 import './ConnectToServer.scss';

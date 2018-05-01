@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { Button } from 'reactstrap';
 import { EditMode } from '.';
-import { ILoadingProgress } from '../reusable/loading-overlay';
+import { ILoadingProgress } from '../reusable/LoadingOverlay';
 import { QuerySearch } from '../reusable/QuerySearch';
 import { Bottombar } from './Bottombar';
 import { Focus, getClassName } from './focus';

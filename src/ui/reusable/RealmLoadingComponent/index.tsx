@@ -13,7 +13,7 @@ import {
 } from '../../../services/ros';
 
 import { showError } from '../errors';
-import { ILoadingProgress } from '../loading-overlay';
+import { ILoadingProgress } from '../LoadingOverlay';
 
 export interface IRealmLoadingComponentState {
   progress: ILoadingProgress;

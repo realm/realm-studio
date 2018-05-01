@@ -6,7 +6,7 @@ import {
   Table,
 } from 'react-virtualized';
 import { QuerySearch } from '../../../reusable/QuerySearch';
-import './Table.scss';
+import './FilterableTable.scss';
 
 export const FilterableTableWrapper = ({
   children,

@@ -1,6 +1,5 @@
 import * as electron from 'electron';
 import * as React from 'react';
-import * as Realm from 'realm';
 
 import { main } from '../../actions/main';
 import {

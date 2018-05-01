@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactMarkdown from 'react-markdown';
 import { Button } from 'reactstrap';
 
 import { ITutorialChapter } from '../../services/tutorials';

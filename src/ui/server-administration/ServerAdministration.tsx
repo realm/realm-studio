@@ -1,9 +1,6 @@
-import * as classnames from 'classnames';
 import * as React from 'react';
-import { Button } from 'reactstrap';
 
-import * as ros from '../../services/ros';
-import { ILoadingProgress, LoadingOverlay } from '../reusable/loading-overlay';
+import { ILoadingProgress, LoadingOverlay } from '../reusable/LoadingOverlay';
 import { Dashboard } from './Dashboard';
 import { GettingStarted } from './GettingStarted';
 import { Log } from './Log';
@@ -11,7 +8,7 @@ import {
   RealmsTableContainer,
   ValidateCertificatesChangeHandler,
 } from './realms/RealmsTableContainer';
-import { ToolsContainer } from './tools/ToolsContainer';
+import { ToolsContainer } from './Tools';
 import { TopBar } from './Topbar';
 import { UsersTableContainer } from './users/UsersTableContainer';
 

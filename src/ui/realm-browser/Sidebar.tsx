@@ -2,7 +2,7 @@ import * as classnames from 'classnames';
 import * as React from 'react';
 import { Badge, Button } from 'reactstrap';
 
-import { ILoadingProgress } from '../reusable/loading-overlay';
+import { ILoadingProgress } from '../reusable/LoadingOverlay';
 import { displayObject } from './display';
 import { Focus, IClassFocus, IListFocus } from './focus';
 

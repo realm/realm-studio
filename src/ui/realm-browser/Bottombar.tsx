@@ -1,6 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import { Button, Input, InputGroup, InputGroupButton } from 'reactstrap';
+import { Button } from 'reactstrap';
 
 export interface IBottombarProps {
   changeCount?: number;

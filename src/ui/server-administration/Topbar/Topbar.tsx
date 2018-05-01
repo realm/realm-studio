@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Button, Navbar } from 'reactstrap';
+import { Navbar } from 'reactstrap';
 
 import realmLogo from '../../../../static/svgs/realm-logo.svg';
-import { ILoadingProgress } from '../../reusable/loading-overlay';
+import { ILoadingProgress } from '../../reusable/LoadingOverlay';
 import { Tab } from '../ServerAdministration';
 import { Status } from './Status';
 import { TabButton } from './TabButton';
