@@ -1,0 +1,5 @@
+@import "../../shared/Sidebar/Sidebar";
+
+.UserSidebar {
+  @include sidebar;
+}

@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import * as ros from '../../../../services/ros';
 
+import { ISelection } from '..';
 import { UserSidebar } from './UserSidebar';
 
 export interface IUserSidebarContainerProps {
@@ -18,12 +19,12 @@ export interface IUserSidebarContainerProps {
   ) => void;
   onUserMetadataDeleted: (userId: string, index: number) => void;
   onUserRoleChanged: (userId: string, role: ros.UserRole) => void;
-  realms: ros.IRealmFile[];
-  user?: ros.IUser;
+  selection: ISelection | null;
 }
 
 export interface IUserSidebarContainerState {
   roleDropdownOpen: boolean;
+  selection: ISelection | null;
 }
 
 class UserSidebarContainer extends React.Component<
@@ -34,7 +35,18 @@ class UserSidebarContainer extends React.Component<
     super();
     this.state = {
       roleDropdownOpen: false,
+      selection: null,
     };
+  }
+
+  public componentDidUpdate(
+    prevProps: IUserSidebarContainerProps,
+    prevState: IUserSidebarContainerState,
+  ) {
+    // Update the state if a new user was passed in via the props.
+    if (this.props.selection && prevProps.selection !== this.props.selection) {
+      this.setState({ selection: this.props.selection });
+    }
   }
 
   public render() {
@@ -48,33 +60,33 @@ class UserSidebarContainer extends React.Component<
   };
 
   public onRoleChanged = (role: ros.UserRole) => {
-    if (this.props.user) {
-      this.props.onUserRoleChanged(this.props.user.userId, role);
+    if (this.props.selection) {
+      this.props.onUserRoleChanged(this.props.selection.user.userId, role);
     }
   };
 
   public onDeletion = () => {
-    if (this.props.user) {
-      this.props.onUserDeletion(this.props.user.userId);
+    if (this.props.selection) {
+      this.props.onUserDeletion(this.props.selection.user.userId);
     }
   };
 
   public onChangePassword = () => {
-    if (this.props.user) {
-      this.props.onUserChangePassword(this.props.user.userId);
+    if (this.props.selection) {
+      this.props.onUserChangePassword(this.props.selection.user.userId);
     }
   };
 
   public onMetadataAppended = () => {
-    if (this.props.user) {
-      this.props.onUserMetadataAppended(this.props.user.userId);
+    if (this.props.selection) {
+      this.props.onUserMetadataAppended(this.props.selection.user.userId);
     }
   };
 
   public onMetadataChanged = (index: number, key: string, value: string) => {
-    if (this.props.user) {
+    if (this.props.selection) {
       this.props.onUserMetadataChanged(
-        this.props.user.userId,
+        this.props.selection.user.userId,
         index,
         key,
         value,
@@ -83,8 +95,8 @@ class UserSidebarContainer extends React.Component<
   };
 
   public onMetadataDeleted = (index: number) => {
-    if (this.props.user) {
-      this.props.onUserMetadataDeleted(this.props.user.userId, index);
+    if (this.props.selection) {
+      this.props.onUserMetadataDeleted(this.props.selection.user.userId, index);
     }
   };
 }

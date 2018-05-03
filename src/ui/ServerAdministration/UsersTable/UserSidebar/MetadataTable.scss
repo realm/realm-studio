@@ -1,0 +1,5 @@
+@import "../../shared/Sidebar/SidebarTable";
+
+.MetadataTable {
+  @include sidebar-table;
+}

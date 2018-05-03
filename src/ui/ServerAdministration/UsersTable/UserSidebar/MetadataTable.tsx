@@ -2,7 +2,8 @@ import * as React from 'react';
 import { Button, Input, Table } from 'reactstrap';
 
 import * as ros from '../../../../services/ros';
-import '../../shared/Sidebar/SidebarTable.scss';
+
+import './MetadataTable.scss';
 
 export const MetadataTable = ({
   metadatas,
@@ -16,13 +17,13 @@ export const MetadataTable = ({
   onMetadataDeleted: (index: number) => void;
 }) => {
   return (
-    <Table size="sm" className="SidebarTable">
+    <Table size="sm" className="MetadataTable">
       <thead>
         <tr>
           {/* We mention "Metadata" in this header, so we don't need a separate header */}
           <th>Metadata key</th>
           <th>Value</th>
-          <th className="SidebarTable__ControlCell">
+          <th className="MetadataTable__ControlCell">
             <Button
               size="sm"
               onClick={onMetadataAppended}
@@ -36,7 +37,7 @@ export const MetadataTable = ({
       <tbody>
         {metadatas.length === 0 ? (
           <tr>
-            <td colSpan={3} className="SidebarTable__EmptyExplanation">
+            <td colSpan={3} className="MetadataTable__EmptyExplanation">
               This user has no metadata
             </td>
           </tr>
@@ -70,7 +71,7 @@ export const MetadataTable = ({
                     }}
                   />
                 </td>
-                <td className="SidebarTable__ControlCell">
+                <td className="MetadataTable__ControlCell">
                   <Button
                     size="sm"
                     title={

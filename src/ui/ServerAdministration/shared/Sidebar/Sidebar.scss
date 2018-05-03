@@ -1,0 +1,115 @@
+@import "~realm-studio-styles/variables";
+@import "../variables";
+
+@mixin sidebar {
+  $close-toggle-size: 2.5rem;
+
+  background: $white;
+  box-shadow: -5px 0 5px $sidebar-shadow;
+  flex: 0 0 0;
+  height: 100%;
+  position: relative;
+  transition-duration: $sidebar-transition-duration;
+  transition-property: flex-basis;
+  transition-timing-function: ease-in-out;
+  z-index: 1;
+
+  &__Card {
+    // Defining its width makes sure it doesn't collapse when sliding in / out
+    border-bottom: 0;
+    border-radius: 0;
+    border-right: 0;
+    border-top: 0;
+    display: flex;
+    height: 100%;
+    // Using absolute positioning prevents allows the parent to collapse
+    position: absolute;
+    width: $sidebar-width;
+  }
+
+  &__Top,
+  &__Tables {
+    padding-bottom: 0;
+  }
+
+  &__Top,
+  &__Controls {
+    flex: 0 0 auto;
+  }
+
+  &__Tables {
+    overflow-y: scroll;
+  }
+
+  &__Title {
+    line-height: 1.2;
+  }
+
+  &__TitleText {
+    flex-grow: 1;
+    word-break: break-all;
+  }
+
+  &__CloseToggle {
+    align-items: center;
+    background-color: $color-white;
+    border-radius: $border-radius-lg;
+    bottom: 1rem;
+    color: $color-elephant;
+    display: flex;
+    font-size: 1.5rem;
+    height: $close-toggle-size;
+    justify-content: center;
+    left: $spacer; // Hiding before sidebar gets opened
+    position: absolute;
+    transition-duration: $sidebar-transition-duration;
+    transition-property: left;
+    width: $close-toggle-size;
+
+    &::after {
+      border: 1px solid $card-border-color;
+      border-radius: $border-radius-lg;
+      box-shadow: -3px 0 3px $sidebar-shadow;
+      box-sizing: content-box;
+      content: "";
+      height: $close-toggle-size;
+      position: absolute;
+      width: $close-toggle-size;
+      z-index: -1;
+    }
+
+    &:hover {
+      color: $color-charcoal;
+
+      &::after {
+        box-shadow: -5px 0 5px $sidebar-shadow;
+      }
+    }
+  }
+
+  &__SubTitle {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__Controls {
+    display: block;
+    text-align: center;
+
+    // Add spacing between the controls
+    * {
+      &:not(:first-child) {
+        margin-left: $spacer / 2;
+      }
+    }
+  }
+
+  &--open {
+    flex-basis: $sidebar-width;
+  }
+
+  &--open &__CloseToggle {
+    left: - $close-toggle-size / 2;
+  }
+}

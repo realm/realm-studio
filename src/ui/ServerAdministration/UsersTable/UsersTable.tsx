@@ -9,12 +9,13 @@ import {
   FilterableTableWrapper,
 } from '../shared/FilterableTable';
 import { FloatingControls } from '../shared/FloatingControls';
+
+import { ISelection } from '.';
 import { ChangePasswordDialogContainer } from './ChangePasswordDialogContainer';
 import { CreateUserDialogContainer } from './CreateUserDialogContainer';
 import { UserSidebar } from './UserSidebar';
 
 export const UsersTable = ({
-  getUserFromId,
   getUsersRealms,
   isChangePasswordOpen,
   isCreateUserOpen,
@@ -27,15 +28,14 @@ export const UsersTable = ({
   onUserPasswordChanged,
   onUserRoleChanged,
   onUserSelected,
-  selectedUserId,
+  selection,
   toggleChangePassword,
   toggleCreateUser,
   users,
   searchString,
   onSearchStringChange,
 }: {
-  getUserFromId: (userId: string) => ros.IUser | undefined;
-  getUsersRealms: (userId: string) => ros.IRealmFile[];
+  getUsersRealms: (user: ros.IUser) => Realm.Results<ros.IRealmFile>;
   isChangePasswordOpen: boolean;
   isCreateUserOpen: boolean;
   onUserChangePassword: (userId: string) => void;
@@ -52,7 +52,7 @@ export const UsersTable = ({
   onUserPasswordChanged: (userId: string, password: string) => void;
   onUserRoleChanged: (userId: string, role: ros.UserRole) => void;
   onUserSelected: (userId: string | null) => void;
-  selectedUserId: string | null;
+  selection: ISelection | null;
   toggleChangePassword: () => void;
   toggleCreateUser: () => void;
   users: Realm.Results<ros.IUser>;
@@ -69,7 +69,7 @@ export const UsersTable = ({
         onElementDoubleClick={onUserSelected}
         elements={users}
         elementIdProperty="userId"
-        selectedIdPropertyValue={selectedUserId}
+        selectedIdPropertyValue={selection ? selection.user.userId : null}
       >
         <Column
           label="Provider Id(s)"
@@ -101,19 +101,19 @@ export const UsersTable = ({
           label="# Realms"
           dataKey="userId"
           width={100}
-          cellRenderer={({ cellData }) => {
-            const userId = cellData as string;
-            return getUsersRealms(userId).length;
+          cellRenderer={({ rowData }) => {
+            const user = rowData as ros.IUser;
+            return getUsersRealms(user).length;
           }}
         />
       </FilterableTable>
 
-      <FloatingControls isOpen={selectedUserId === null}>
+      <FloatingControls isOpen={selection === null}>
         <Button onClick={toggleCreateUser}>Create new user</Button>
       </FloatingControls>
 
       <UserSidebar
-        isOpen={selectedUserId !== null}
+        isOpen={selection !== null}
         onToggle={() => onUserSelected(null)}
         onUserChangePassword={onUserChangePassword}
         onUserDeletion={onUserDeletion}
@@ -121,19 +121,14 @@ export const UsersTable = ({
         onUserMetadataChanged={onUserMetadataChanged}
         onUserMetadataDeleted={onUserMetadataDeleted}
         onUserRoleChanged={onUserRoleChanged}
-        realms={selectedUserId !== null ? getUsersRealms(selectedUserId) : []}
-        user={
-          selectedUserId !== null ? getUserFromId(selectedUserId) : undefined
-        }
+        selection={selection}
       />
 
       <ChangePasswordDialogContainer
         isOpen={isChangePasswordOpen}
         toggle={toggleChangePassword}
         onPasswordChanged={onUserPasswordChanged}
-        user={
-          selectedUserId !== null ? getUserFromId(selectedUserId) : undefined
-        }
+        user={selection ? selection.user : undefined}
       />
 
       <CreateUserDialogContainer

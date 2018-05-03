@@ -1,6 +1,6 @@
 @import "~realm-studio-styles/variables";
 
-.SidebarTable {
+@mixin sidebar-table {
   table-layout: fixed;
 
   &--non-fixed {

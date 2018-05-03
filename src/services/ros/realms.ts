@@ -1,6 +1,6 @@
 import * as Realm from 'realm';
 
-import { IRealmFile, IServerCredentials } from '.';
+import { IRealmFile, IServerCredentials, RealmType } from '.';
 import { showError } from '../../ui/reusable/errors';
 
 export enum RealmLoadingMode {
@@ -111,6 +111,39 @@ export const remove = async (user: Realm.Sync.User, realmPath: string) => {
     throw new Error(`Could not remove Realm: ${body.message}`);
   } else {
     throw new Error(`Could not remove Realm`);
+  }
+};
+
+export const changeType = async (
+  user: Realm.Sync.User,
+  realmPath: string,
+  type: RealmType,
+) => {
+  const server = user.server;
+  const encodedUrl = encodeURIComponent(realmPath);
+  const url = new URL(`/realms/files/${encodedUrl}`, server);
+  const request = new Request(url.toString(), {
+    method: 'PATCH',
+    headers: new Headers({
+      Authorization: user.token,
+      Accept: 'application/json, text/plain, */*',
+      'Content-Type': 'application/json',
+    }),
+    body: JSON.stringify({
+      realmType: type,
+    }),
+  });
+  const response = await fetch(request);
+  if (response.ok) {
+    return response.json();
+  } else {
+    if (response.status === 404) {
+      throw new Error(
+        'Failed to change the type of the Realm: Is the server running the latest version?',
+      );
+    } else {
+      throw new Error('Failed to change type of the Realm');
+    }
   }
 };
 
