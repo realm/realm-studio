@@ -1,0 +1,19 @@
+@import "~realm-studio-styles/variables";
+@import "../../shared/Sidebar/Sidebar";
+
+.RealmSidebar {
+  @include sidebar;
+
+  &__UpgradeTypeBlock {
+    background: $color-dove;
+    flex-grow: 0;
+    font-size: .8rem;
+    margin-bottom: - $spacer / 2;
+    text-align: center;
+  }
+
+  &__TypeBadge {
+    float: left;
+    margin-right: $spacer / 2;
+  }
+}

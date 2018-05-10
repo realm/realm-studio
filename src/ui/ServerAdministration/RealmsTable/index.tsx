@@ -30,7 +30,7 @@ export interface IRealmTableContainerState {
   showSystemRealms: boolean;
 }
 
-export class RealmsTableContainer extends React.PureComponent<
+class RealmsTableContainer extends React.PureComponent<
   IRealmTableContainerProps,
   IRealmTableContainerState
 > {
@@ -110,7 +110,7 @@ export class RealmsTableContainer extends React.PureComponent<
   };
 
   public onRealmDeletion = async (path: string) => {
-    const confirmed = await this.confirmRealmDeletion(path);
+    const confirmed = this.confirmRealmDeletion(path);
     if (confirmed) {
       try {
         await ros.realms.remove(this.props.user, path);
@@ -145,6 +145,15 @@ export class RealmsTableContainer extends React.PureComponent<
     this.props.onRealmOpened(path);
     // Make sure the Realm that just got opened, is selected
     this.onRealmSelected(path);
+  };
+
+  public onRealmTypeUpgrade = async (path: string) => {
+    const confirmed = this.confirmRealmTypeUpgrade(path);
+    try {
+      await ros.realms.changeType(this.props.user, path, 'reference');
+    } catch (err) {
+      showError('Failed to upgrade the Realm', err);
+    }
   };
 
   public onRealmSelected = (path: string | null) => {
@@ -208,4 +217,21 @@ export class RealmsTableContainer extends React.PureComponent<
 
     return result === 1;
   }
+
+  private confirmRealmTypeUpgrade(path: string): boolean {
+    const result = electron.remote.dialog.showMessageBox(
+      electron.remote.getCurrentWindow(),
+      {
+        type: 'warning',
+        message:
+          'Upgrading the Realm to be a Reference Realm will delete all current permissions for it. WARNING: This operation cannot be reverted.',
+        title: `Upgrading type of ${path}`,
+        buttons: ['Cancel', 'Upgrade to "reference" Realm'],
+      },
+    );
+
+    return result === 1;
+  }
 }
+
+export { RealmsTableContainer as RealmsTable };

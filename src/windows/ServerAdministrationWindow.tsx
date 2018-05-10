@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { ServerAdministrationContainer } from '../ui/server-administration/ServerAdministrationContainer';
+import { ServerAdministration } from '../ui/ServerAdministration';
 import { Window } from './Window';
 import { IServerAdministrationWindowProps } from './WindowType';
 
@@ -12,7 +12,7 @@ export class ServerAdministrationWindow extends Window<
 > {
   public render() {
     return (
-      <ServerAdministrationContainer
+      <ServerAdministration
         onValidateCertificatesChange={this.onValidateCertificatesChange}
         {...this.props}
       />

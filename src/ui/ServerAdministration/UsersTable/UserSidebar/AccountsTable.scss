@@ -1,0 +1,5 @@
+@import "../../shared/Sidebar/SidebarTable";
+
+.AccountsTable {
+  @include sidebar-table;
+}

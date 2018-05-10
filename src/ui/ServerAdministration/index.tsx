@@ -24,7 +24,7 @@ import {
   RealmLoadingComponent,
 } from '../reusable/RealmLoadingComponent';
 
-import { ValidateCertificatesChangeHandler } from './realms/RealmsTableContainer';
+import { ValidateCertificatesChangeHandler } from './RealmsTable';
 import { ServerAdministration, Tab } from './ServerAdministration';
 
 export interface IServerAdministrationContainerProps
@@ -42,7 +42,7 @@ export interface IServerAdministrationContainerState
   user: Realm.Sync.User | null;
 }
 
-export class ServerAdministrationContainer extends RealmLoadingComponent<
+class ServerAdministrationContainer extends RealmLoadingComponent<
   IServerAdministrationContainerProps,
   IServerAdministrationContainerState
 > {
@@ -324,3 +324,5 @@ export class ServerAdministrationContainer extends RealmLoadingComponent<
     }
   };
 }
+
+export { ServerAdministrationContainer as ServerAdministration };

@@ -8,6 +8,11 @@ import { showError } from '../../reusable/errors';
 import { querySomeFieldContainsText } from '../utils';
 import { UsersTable } from './UsersTable';
 
+export interface ISelection {
+  user: ros.IUser;
+  realms: Realm.Results<ros.IRealmFile>;
+}
+
 export interface IUsersTableContainerProps {
   adminRealm: Realm;
   adminRealmChanges: number;
@@ -18,12 +23,12 @@ export interface IUsersTableContainerProps {
 export interface IUsersTableContainerState {
   isChangePasswordOpen: boolean;
   isCreateUserOpen: boolean;
-  selectedUserId: string | null;
   searchString: string;
   showSystemUsers: boolean;
+  selection: ISelection | null;
 }
 
-export class UsersTableContainer extends React.Component<
+class UsersTableContainer extends React.Component<
   IUsersTableContainerProps,
   IUsersTableContainerState
 > {
@@ -34,7 +39,7 @@ export class UsersTableContainer extends React.Component<
     this.state = {
       isChangePasswordOpen: false,
       isCreateUserOpen: false,
-      selectedUserId: null,
+      selection: null,
       searchString: '',
       showSystemUsers: store.shouldShowSystemUsers(),
     };
@@ -72,27 +77,23 @@ export class UsersTableContainer extends React.Component<
   }
 
   public onUserSelected = (userId: string | null) => {
-    this.setState({
-      selectedUserId: userId,
-    });
-  };
-
-  public getUserFromId = (userId: string): ros.IUser | undefined => {
     const { adminRealm } = this.props;
-    return adminRealm.objectForPrimaryKey<ros.IUser>('User', userId);
-  };
-
-  public getUsersRealms = (userId: string): ros.IRealmFile[] => {
-    const { adminRealm } = this.props;
-    const user = adminRealm.objectForPrimaryKey<ros.IRealmFile>('User', userId);
-    if (user) {
-      const realms = adminRealm
-        .objects<ros.IRealmFile>('RealmFile')
-        .filtered('owner = $0', user);
-      return realms.slice();
+    if (userId) {
+      const user = adminRealm.objectForPrimaryKey<ros.IUser>('User', userId);
+      if (!user) {
+        throw new Error(`Couldn't select user with ID ${userId}`);
+      }
+      const realms = this.getUsersRealms(user);
+      this.setState({ selection: { user, realms } });
     } else {
-      return [];
+      this.setState({ selection: null });
     }
+  };
+
+  public getUsersRealms = (user: ros.IUser): Realm.Results<ros.IRealmFile> => {
+    return this.props.adminRealm
+      .objects<ros.IRealmFile>('RealmFile')
+      .filtered('owner = $0', user);
   };
 
   public toggleChangePassword = () => {
@@ -108,10 +109,8 @@ export class UsersTableContainer extends React.Component<
   };
 
   public onUserChangePassword = (userId: string) => {
-    this.setState({
-      isChangePasswordOpen: true,
-      selectedUserId: userId,
-    });
+    this.setState({ isChangePasswordOpen: true });
+    this.onUserSelected(userId);
   };
 
   public onUserCreated = async (username: string, password: string) => {
@@ -128,7 +127,7 @@ export class UsersTableContainer extends React.Component<
     if (confirmed) {
       // Use the ROS API to delete a user, instead of changing the realm directly
       await ros.users.remove(this.props.user, userId);
-      if (userId === this.state.selectedUserId) {
+      if (this.state.selection && this.state.selection.user.userId === userId) {
         this.onUserSelected(null);
       }
     }
@@ -136,7 +135,7 @@ export class UsersTableContainer extends React.Component<
 
   public onUserMetadataAppended = (userId: string) => {
     const { adminRealm } = this.props;
-    const user = this.getUserFromId(userId);
+    const user = adminRealm.objectForPrimaryKey<ros.IUser>('User', userId);
     if (user) {
       adminRealm.write(() => {
         const metadataRow = adminRealm.create<ros.IUserMetadataRow>(
@@ -157,9 +156,10 @@ export class UsersTableContainer extends React.Component<
     key: string,
     value: string,
   ) => {
-    const user = this.getUserFromId(userId);
+    const { adminRealm } = this.props;
+    const user = adminRealm.objectForPrimaryKey<ros.IUser>('User', userId);
     if (user && index >= 0 && index < user.metadata.length) {
-      this.props.adminRealm.write(() => {
+      adminRealm.write(() => {
         user.metadata[index].key = key;
         user.metadata[index].value = value;
       });
@@ -171,10 +171,11 @@ export class UsersTableContainer extends React.Component<
   };
 
   public onUserMetadataDeleted = (userId: string, index: number) => {
-    const user = this.getUserFromId(userId);
+    const { adminRealm } = this.props;
+    const user = adminRealm.objectForPrimaryKey<ros.IUser>('User', userId);
     if (user && index >= 0 && index < user.metadata.length) {
-      this.props.adminRealm.write(() => {
-        this.props.adminRealm.delete(user.metadata[index]);
+      adminRealm.write(() => {
+        adminRealm.delete(user.metadata[index]);
       });
     } else {
       throw new Error(
@@ -256,3 +257,5 @@ export class UsersTableContainer extends React.Component<
     return result === 1;
   }
 }
+
+export { UsersTableContainer as UsersTable };

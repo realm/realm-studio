@@ -2,10 +2,9 @@ import * as React from 'react';
 import { Table } from 'reactstrap';
 import * as Realm from 'realm';
 
-import * as ros from '../../../../services/ros';
-import { displayUser } from '../../utils';
+import * as ros from '../../../../../services/ros';
+import { displayUser } from '../../../utils';
 
-import '../../shared/Sidebar/SidebarTable.scss';
 import { PermissionsBadge } from './PermissionsBadge';
 import './PermissionsTable.scss';
 
@@ -14,7 +13,7 @@ export const PermissionsTable = ({
 }: {
   permissions: Realm.Results<ros.IPermission>;
 }) => (
-  <Table size="sm" className="SidebarTable">
+  <Table size="sm" className="PermissionsTable">
     <thead>
       <tr>
         <th>User permissions</th>
@@ -24,7 +23,7 @@ export const PermissionsTable = ({
     <tbody>
       {permissions.length === 0 ? (
         <tr>
-          <td colSpan={2} className="SidebarTable__EmptyExplanation">
+          <td colSpan={2} className="PermissionsTable__EmptyExplanation">
             This realm has no permissions
           </td>
         </tr>

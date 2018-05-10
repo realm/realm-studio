@@ -28,12 +28,15 @@ export interface IUserMetadataRow {
   value?: string;
 }
 
+export type RealmType = 'reference' | 'partial' | 'full';
+
 export interface IRealmFile {
   path: string;
   syncLabel: string;
   owner: IUser;
   createdAt: Date;
   permissions: IPermission[];
+  realmType?: RealmType;
 }
 
 export interface IPermission {

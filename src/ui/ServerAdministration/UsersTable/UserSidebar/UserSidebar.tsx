@@ -12,11 +12,15 @@ import {
 
 import * as ros from '../../../../services/ros';
 
+import { ISelection } from '..';
 import { Sidebar } from '../../shared/Sidebar';
-import { IUserSidebarContainerProps } from './';
+
+import { IUserSidebarContainerProps } from '.';
 import { AccountsTable } from './AccountsTable';
 import { MetadataTable } from './MetadataTable';
 import { RealmsTable } from './RealmsTable';
+
+import './UserSidebar.scss';
 
 export interface IUserSidebarProps extends IUserSidebarContainerProps {
   onChangePassword: () => void;
@@ -27,6 +31,7 @@ export interface IUserSidebarProps extends IUserSidebarContainerProps {
   onRoleChanged: (role: ros.UserRole) => void;
   onToggle: () => void;
   roleDropdownOpen: boolean;
+  selection: ISelection | null;
   toggleRoleDropdown: () => void;
 }
 
@@ -39,31 +44,29 @@ export const UserSidebar = ({
   onMetadataDeleted,
   onRoleChanged,
   onToggle,
-  realms,
   roleDropdownOpen,
+  selection,
   toggleRoleDropdown,
-  user,
 }: IUserSidebarProps) => {
   return (
-    <Sidebar isOpen={isOpen}>
-      {user && (
-        <Card className="Sidebar__Card">
-          <CardBlock className="Sidebar__Top">
-            <CardTitle className="Sidebar__Title">
-              <span className="Sidebar__TitleText" title={user.userId}>
-                {user.userId}
+    <Sidebar className="UserSidebar" isOpen={isOpen} onToggle={onToggle}>
+      {selection && (
+        <Card className="UserSidebar__Card">
+          <CardBlock className="UserSidebar__Top">
+            <CardTitle className="UserSidebar__Title">
+              <span
+                className="UserSidebar__TitleText"
+                title={selection.user.userId}
+              >
+                {selection.user.userId}
               </span>
-              <i
-                onClick={onToggle}
-                className="Sidebar__TitleToggle fa fa-close"
-              />
             </CardTitle>
             <ButtonDropdown
               isOpen={roleDropdownOpen}
               toggle={toggleRoleDropdown}
             >
               <DropdownToggle caret={true}>
-                {user.isAdmin ? 'Administrator' : 'Regular user'}
+                {selection.user.isAdmin ? 'Administrator' : 'Regular user'}
               </DropdownToggle>
               <DropdownMenu>
                 <DropdownItem
@@ -79,17 +82,17 @@ export const UserSidebar = ({
               </DropdownMenu>
             </ButtonDropdown>
           </CardBlock>
-          <CardBlock className="Sidebar__Tables">
-            <AccountsTable accounts={user.accounts} />
+          <CardBlock className="UserSidebar__Tables">
+            <AccountsTable accounts={selection.user.accounts} />
             <MetadataTable
-              metadatas={user.metadata}
+              metadatas={selection.user.metadata}
               onMetadataAppended={onMetadataAppended}
               onMetadataChanged={onMetadataChanged}
               onMetadataDeleted={onMetadataDeleted}
             />
-            <RealmsTable realms={realms} />
+            <RealmsTable realms={selection.realms} />
           </CardBlock>
-          <CardBlock className="Sidebar__Controls">
+          <CardBlock className="UserSidebar__Controls">
             <Button size="sm" onClick={() => onChangePassword()}>
               Change password
             </Button>

@@ -1,6 +1,9 @@
 @import "~realm-studio-styles/variables";
+@import "../../../shared/Sidebar/SidebarTable";
 
 .PermissionsTable {
+  @include sidebar-table;
+
   &__PermissionsCell {
     width: 80px;
 

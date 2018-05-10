@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Column } from 'react-virtualized';
 import { Button } from 'reactstrap';
 
-import { IPermission, IRealmFile } from '../../../services/ros';
+import { IPermission, IRealmFile, RealmType } from '../../../services/ros';
 import {
   FilterableTable,
   FilterableTableWrapper,
@@ -20,6 +20,7 @@ export const RealmsTable = ({
   onRealmDeletion,
   onRealmOpened,
   onRealmSelected,
+  onRealmTypeUpgrade,
   realms,
   selectedRealmPath,
   toggleCreateRealm,
@@ -33,6 +34,7 @@ export const RealmsTable = ({
   onRealmDeletion: (path: string) => void;
   onRealmOpened: (path: string) => void;
   onRealmSelected: (path: string | null) => void;
+  onRealmTypeUpgrade: (path: string) => void;
   realms: Realm.Results<IRealmFile>;
   selectedRealmPath: string | null;
   toggleCreateRealm: () => void;
@@ -55,8 +57,14 @@ export const RealmsTable = ({
         <Column
           label="Owner"
           dataKey="owner"
-          width={500}
+          width={300}
           cellRenderer={({ cellData }) => displayUser(cellData)}
+        />
+        <Column
+          label="Type"
+          dataKey="realmType"
+          width={200}
+          cellRenderer={({ cellData }) => cellData || 'full'}
         />
       </FilterableTable>
 
@@ -75,6 +83,7 @@ export const RealmsTable = ({
         isOpen={selectedRealmPath !== null}
         onRealmDeletion={onRealmDeletion}
         onRealmOpened={onRealmOpened}
+        onRealmTypeUpgrade={onRealmTypeUpgrade}
         onToggle={() => onRealmSelected(null)}
         realm={
           selectedRealmPath !== null

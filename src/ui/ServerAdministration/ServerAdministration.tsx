@@ -4,13 +4,10 @@ import { ILoadingProgress, LoadingOverlay } from '../reusable/LoadingOverlay';
 import { Dashboard } from './Dashboard';
 import { GettingStarted } from './GettingStarted';
 import { Log } from './Log';
-import {
-  RealmsTableContainer,
-  ValidateCertificatesChangeHandler,
-} from './realms/RealmsTableContainer';
+import { RealmsTable, ValidateCertificatesChangeHandler } from './RealmsTable';
 import { ToolsContainer } from './Tools';
 import { TopBar } from './Topbar';
-import { UsersTableContainer } from './users/UsersTableContainer';
+import { UsersTable } from './UsersTable';
 
 import './ServerAdministration.scss';
 
@@ -55,7 +52,7 @@ const renderContent = ({
     return <Dashboard isCloudTenant={isCloudTenant} serverUrl={user.server} />;
   } else if (user && adminRealm && activeTab === Tab.Realms) {
     return (
-      <RealmsTableContainer
+      <RealmsTable
         adminRealm={adminRealm}
         adminRealmChanges={adminRealmChanges}
         onRealmOpened={onRealmOpened}
@@ -66,7 +63,7 @@ const renderContent = ({
     );
   } else if (user && adminRealm && activeTab === Tab.Users) {
     return (
-      <UsersTableContainer
+      <UsersTable
         adminRealm={adminRealm}
         adminRealmChanges={adminRealmChanges}
         user={user}
