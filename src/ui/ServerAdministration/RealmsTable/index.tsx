@@ -9,9 +9,6 @@ import { showError } from '../../reusable/errors';
 import { querySomeFieldContainsText } from '../utils';
 import { RealmsTable } from './RealmsTable';
 
-const ACCESS_CONTROL_URL =
-  'https://docs.realm.io/platform/using-synced-realms/access-control';
-
 export type ValidateCertificatesChangeHandler = (
   validateCertificates: boolean,
 ) => void;
@@ -227,7 +224,7 @@ class RealmsTableContainer extends React.PureComponent<
       {
         type: 'warning',
         message:
-          'Upgrading the type of the Realm to "reference" will reset permissions for it.',
+          'Upgrading the Realm to be a Reference Realm will delete all current permissions for it. WARNING: This operation cannot be reverted.',
         title: `Upgrading type of ${path}`,
         buttons: ['Cancel', 'Upgrade to "reference" Realm'],
       },

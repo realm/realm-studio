@@ -58,22 +58,20 @@ export const RealmSidebar = ({
           </CardBlock>
           {canUpgradeType ? (
             <CardBlock className="RealmSidebar__UpgradeTypeBlock">
-              <p className="RealmSidebar__UpgradeTypeText">
-                This Realm can be upgraded to enable{' '}
-                <a
-                  target="_blank"
-                  href="https://docs.realm.io/platform/using-synced-realms/access-control#overview"
-                >
-                  Fine-Grained Permissions
-                </a>. Note: Doing so will clear path-level permissions.
-              </p>
-              <Button
-                size="sm"
-                color="secondary"
-                onClick={() => onRealmTypeUpgrade(realm.path)}
+              This Realm can be upgraded to a Reference Realm which will enable{' '}
+              <a
+                target="_blank"
+                href="https://docs.realm.io/platform/using-synced-realms/syncing-data"
               >
-                Upgrade and change type to "reference"
-              </Button>
+                query-based synchronization
+              </a>{' '}
+              and{' '}
+              <a
+                target="_blank"
+                href="https://docs.realm.io/platform/using-synced-realms/access-control#overview"
+              >
+                Fine-Grained Permissions
+              </a>. Note: Doing so will remove any existing permissions.
             </CardBlock>
           ) : null}
           <CardBlock className="RealmSidebar__Controls">
@@ -84,6 +82,15 @@ export const RealmSidebar = ({
             >
               Open
             </Button>
+            {canUpgradeType ? (
+              <Button
+                size="sm"
+                color="secondary"
+                onClick={() => onRealmTypeUpgrade(realm.path)}
+              >
+                Upgrade
+              </Button>
+            ) : null}
             <Button
               size="sm"
               color="danger"

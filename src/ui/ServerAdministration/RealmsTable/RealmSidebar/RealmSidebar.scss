@@ -5,14 +5,11 @@
   @include sidebar;
 
   &__UpgradeTypeBlock {
-    background: $window-background;
+    background: $color-dove;
     flex-grow: 0;
+    font-size: .8rem;
     margin-bottom: - $spacer / 2;
     text-align: center;
-  }
-
-  &__UpgradeTypeText {
-    font-size: .8rem;
   }
 
   &__TypeBadge {
