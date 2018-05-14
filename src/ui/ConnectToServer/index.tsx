@@ -31,7 +31,7 @@ interface IConnectToServerContainerState {
   saveCredentials: boolean;
 }
 
-export class ConnectToServerContainer extends React.Component<
+class ConnectToServerContainer extends React.Component<
   IConnectToServerContainerProps,
   IConnectToServerContainerState
 > {
@@ -288,3 +288,5 @@ export class ConnectToServerContainer extends React.Component<
     return localStorage.getItem('latest-ros-url') || '';
   }
 }
+
+export { ConnectToServerContainer as ConnectToServer };

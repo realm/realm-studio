@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { ConnectToServerContainer } from '../ui/ConnectToServer/ConnectToServerContainer';
+import { ConnectToServer } from '../ui/ConnectToServer';
 import { Window } from './Window';
 import { IConnectToServerWindowProps } from './WindowType';
 
@@ -9,6 +9,6 @@ export class ConnectToServerDialog extends Window<
   {}
 > {
   public render() {
-    return <ConnectToServerContainer url={this.props.url} />;
+    return <ConnectToServer url={this.props.url} />;
   }
 }
