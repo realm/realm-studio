@@ -62,16 +62,8 @@ class ServerAdministrationContainer extends RealmLoadingComponent<
   public async componentDidMount() {
     // Start listening on changes to the cloud-status
     electron.ipcRenderer.on('cloud-status', this.cloudStatusChanged);
-    try {
-      await this.ensureServerIsAvailable(this.props.credentials.url);
-      // Authenticate towards the server
-      const user = await users.authenticate(this.props.credentials);
-      this.setState({
-        user,
-      });
-    } catch (err) {
-      showError('Failed when authenticating with the Realm Object Server', err);
-    }
+
+    await this.authenticate();
 
     if (this.props.isCloudTenant) {
       this.setState({
@@ -82,10 +74,6 @@ class ServerAdministrationContainer extends RealmLoadingComponent<
         activeTab: Tab.Realms,
       });
     }
-  }
-
-  public async componentWillMount() {
-    this.authenticate();
   }
 
   public async componentWillUpdate(
@@ -105,7 +93,7 @@ class ServerAdministrationContainer extends RealmLoadingComponent<
   }
 
   public render() {
-    return this.realm ? (
+    return (
       <ServerAdministration
         {...this.state}
         {...this}
@@ -116,7 +104,7 @@ class ServerAdministrationContainer extends RealmLoadingComponent<
         onValidateCertificatesChange={this.props.onValidateCertificatesChange}
         validateCertificates={this.props.validateCertificates}
       />
-    ) : null;
+    );
   }
 
   // TODO: Once the user serializes better, this method should be moved to the ./realms/RealmsTableContainer.tsx
@@ -156,6 +144,9 @@ class ServerAdministrationContainer extends RealmLoadingComponent<
 
   protected async authenticate() {
     try {
+      // Ensure the server is available before authenticating ..
+      await this.ensureServerIsAvailable(this.props.credentials.url);
+
       this.setState({
         progress: {
           status: 'in-progress',

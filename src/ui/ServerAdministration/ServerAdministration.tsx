@@ -22,7 +22,7 @@ export enum Tab {
 
 interface IServerAdministrationProps {
   activeTab: Tab | null;
-  adminRealm: Realm;
+  adminRealm?: Realm;
   adminRealmChanges: number;
   adminRealmProgress: ILoadingProgress;
   isCloudTenant: boolean;
