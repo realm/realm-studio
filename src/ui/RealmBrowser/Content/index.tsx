@@ -1,10 +1,9 @@
 import * as electron from 'electron';
 import * as React from 'react';
 
-import { EditMode, IPropertyWithName } from '.';
-import { ILoadingProgress } from '../reusable/LoadingOverlay';
-import { Content } from './Content';
-import { Focus } from './focus';
+import { EditMode, IPropertyWithName } from '..';
+import { ILoadingProgress } from '../../reusable/LoadingOverlay';
+import { Focus } from '../focus';
 import {
   CellChangeHandler,
   CellClickHandler,
@@ -14,7 +13,9 @@ import {
   IHighlight,
   SortEndHandler,
   SortStartHandler,
-} from './table';
+} from '../Table';
+
+import { Content } from './Content';
 
 export interface IContentContainerProps {
   changeCount?: number;
@@ -42,7 +43,7 @@ export interface IContentContainerState {
   query: string;
 }
 
-export class ContentContainer extends React.Component<
+class ContentContainer extends React.Component<
   IContentContainerProps,
   IContentContainerState
 > {
@@ -89,3 +90,5 @@ export class ContentContainer extends React.Component<
     this.props.onResetHighlight();
   };
 }
+
+export { ContentContainer as Content };

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { AutoSizer, ScrollSync } from 'react-virtualized';
 
-import { IBaseTableContainerProps, TableContainer } from './TableContainer';
+import { IBaseTableContainerProps, Table } from './Table';
 
 export class ResponsiveTable extends React.PureComponent<
   IBaseTableContainerProps,
@@ -14,7 +14,7 @@ export class ResponsiveTable extends React.PureComponent<
           {sizeProps => (
             <ScrollSync>
               {scrollProps => (
-                <TableContainer
+                <Table
                   {...this.props}
                   scrollProps={scrollProps}
                   sizeProps={sizeProps}

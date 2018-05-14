@@ -3,13 +3,6 @@ import * as path from 'path';
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import {
-  EditMode,
-  EditModeChangeHandler,
-  IConfirmModal,
-  IPropertyWithName,
-  ISelectObjectState,
-} from '.';
 import { Language, SchemaExporter } from '../../services/schema-export';
 import {
   IMenuGenerator,
@@ -39,6 +32,35 @@ import ImportSchemaGenerator from '../../services/data-importer/ImportSchemaGene
 import { getRange } from '../reusable/utils';
 import { RealmBrowser } from './RealmBrowser';
 
+// TODO: Remove this interface once the Realm.ObjectSchemaProperty
+// has a name parameter in its type definition.
+export interface IPropertyWithName extends Realm.ObjectSchemaProperty {
+  name: string | null;
+  readOnly: boolean;
+}
+
+export interface ISelectObjectState {
+  focus: IClassFocus;
+  property: IPropertyWithName;
+  contentToUpdate: Realm.Object | Realm.List<any>;
+}
+
+export enum EditMode {
+  Disabled = 'disabled',
+  InputBlur = 'input-blur',
+  KeyPress = 'key-press',
+}
+
+export type CreateObjectHandler = (className: string, values: {}) => void;
+export type EditModeChangeHandler = (editMode: EditMode) => void;
+
+export interface IConfirmModal {
+  title: string;
+  description: string;
+  yes: () => void;
+  no: () => void;
+}
+
 const EDIT_MODE_STORAGE_KEY = 'realm-browser-edit-mode';
 
 export interface IRealmBrowserState extends IRealmLoadingComponentState {
@@ -60,7 +82,7 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   selectObject?: ISelectObjectState;
 }
 
-export class RealmBrowserContainer
+class RealmBrowserContainer
   extends RealmLoadingComponent<
     IRealmBrowserWindowProps & IMenuGeneratorProps,
     IRealmBrowserState
@@ -1129,3 +1151,5 @@ export class RealmBrowserContainer
     );
   };
 }
+
+export { RealmBrowserContainer as RealmBrowser };

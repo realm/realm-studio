@@ -6,7 +6,7 @@ export * from './ListFocus';
 
 import { GridCellRenderer } from 'react-virtualized';
 
-import { IPropertyWithName } from '..';
+import { IPropertyWithName } from '.';
 
 export interface IRenderers {
   columnCount: number;

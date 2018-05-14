@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 
 import { EditMode, IPropertyWithName } from '..';
-import { ContentContainer } from '../ContentContainer';
+import { Content } from '../Content';
 import { IClassFocus } from '../focus';
 import { CellClickHandler, IHighlight } from '../table';
 
@@ -35,7 +35,7 @@ export const ObjectSelector = ({
   <Modal size="lg" isOpen={isOpen} toggle={toggle} className="ConfirmModal">
     <ModalHeader toggle={toggle}>Select a new {focus.className}</ModalHeader>
     <ModalBody className="RealmBrowser__SelectObject">
-      <ContentContainer
+      <Content
         editMode={EditMode.Disabled}
         onResetHighlight={onResetHighlight}
         focus={focus}

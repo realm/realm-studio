@@ -11,7 +11,7 @@ import { ConfirmModal } from '../reusable/ConfirmModal';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/LoadingOverlay';
 import { AddClassModal } from './AddClassModal';
 import { AddPropertyModal } from './AddPropertyModal';
-import { ContentContainer } from './ContentContainer';
+import { Content } from './Content';
 import { CreateObjectDialog } from './CreateObjectDialog';
 import { EncryptionDialog } from './EncryptionDialog';
 import { Focus, IClassFocus } from './focus';
@@ -132,7 +132,7 @@ export const RealmBrowser = ({
         toggleAddSchema={toggleAddSchema}
       />
       <div className="RealmBrowser__Wrapper">
-        <ContentContainer
+        <Content
           changeCount={changeCount}
           dataVersion={dataVersion}
           editMode={editMode}

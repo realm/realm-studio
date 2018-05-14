@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { SortEndHandler, SortStartHandler } from 'react-sortable-hoc';
 import {
   AutoSizerProps,
   Grid,
@@ -6,19 +7,64 @@ import {
   ScrollSyncProps,
 } from 'react-virtualized';
 
-import {
-  CellChangeHandler,
-  CellClickHandler,
-  CellContextMenuHandler,
-  CellHighlightedHandler,
-  CellValidatedHandler,
-  IHighlight,
-  ISorting,
-  SortEndHandler,
-  SortStartHandler,
-} from '.';
 import { EditMode, IPropertyWithName } from '..';
 import { Focus } from '../focus';
+
+export type CellChangeHandler = (
+  params: {
+    parent: any;
+    property: IPropertyWithName;
+    rowIndex: number;
+    cellValue: any;
+  },
+) => void;
+
+export type CellClickHandler = (
+  params: {
+    rowObject: any;
+    property: IPropertyWithName;
+    cellValue: any;
+    rowIndex: number;
+    columnIndex: number;
+  },
+  e?: React.MouseEvent<any>,
+) => void;
+
+export type CellContextMenuHandler = (
+  e: React.MouseEvent<any>,
+  params?: {
+    rowObject: any;
+    property: IPropertyWithName;
+    cellValue: any;
+    rowIndex: number;
+    columnIndex: number;
+  },
+) => void;
+
+export type CellHighlightedHandler = (
+  cell: { rowIndex: number; columnIndex: number },
+) => void;
+
+export type CellValidatedHandler = (
+  rowIndex: number,
+  columnIndex: number,
+  valid: boolean,
+) => void;
+
+export interface IHighlight {
+  rows: Set<number>;
+  column?: number;
+  center?: boolean;
+  lastRowIndexClicked?: number;
+}
+
+export interface ISorting {
+  property: IPropertyWithName;
+  reverse: boolean;
+}
+
+export type SortClickHandler = (property: IPropertyWithName) => void;
+
 import { Table } from './Table';
 
 const MINIMUM_COLUMN_WIDTH = 20;
@@ -52,7 +98,7 @@ export interface ITableContainerState {
   sorting?: ISorting;
 }
 
-export class TableContainer extends React.PureComponent<
+class TableContainer extends React.PureComponent<
   ITableContainerProps,
   ITableContainerState
 > {
@@ -278,3 +324,6 @@ export class TableContainer extends React.PureComponent<
     });
   }
 }
+
+export { TableContainer as Table };
+export { SortEndHandler, SortStartHandler };

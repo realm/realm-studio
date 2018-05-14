@@ -1,11 +1,12 @@
 import * as React from 'react';
-
 import { Button } from 'reactstrap';
-import { EditMode } from '.';
-import { ILoadingProgress } from '../reusable/LoadingOverlay';
-import { QuerySearch } from '../reusable/QuerySearch';
-import { Bottombar } from './Bottombar';
-import { Focus, getClassName } from './focus';
+
+import { EditMode } from '..';
+import { ILoadingProgress } from '../../reusable/LoadingOverlay';
+import { QuerySearch } from '../../reusable/QuerySearch';
+import { Bottombar } from '../Bottombar';
+import { Focus, getClassName } from '../focus';
+import { ResponsiveTable } from '../ResponsiveTable';
 import {
   CellChangeHandler,
   CellClickHandler,
@@ -15,8 +16,7 @@ import {
   IHighlight,
   SortEndHandler,
   SortStartHandler,
-} from './table';
-import { ResponsiveTable } from './table/ResponsiveTable';
+} from '../Table';
 
 export const Content = ({
   changeCount,
