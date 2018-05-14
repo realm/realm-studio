@@ -24,7 +24,7 @@ import {
   IHighlight,
   SortEndHandler,
   SortStartHandler,
-} from './table';
+} from './Table';
 
 import { ImportFormat } from '../../services/data-importer';
 import { CSVDataImporter } from '../../services/data-importer/csv/CSVDataImporter';

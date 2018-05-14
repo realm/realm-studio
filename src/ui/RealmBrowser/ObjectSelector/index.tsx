@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { IPropertyWithName } from '..';
 import { IClassFocus } from '../focus';
-import { CellClickHandler, IHighlight } from '../table';
+import { CellClickHandler, IHighlight } from '../Table';
 
 import { ObjectSelector } from './ObjectSelector';
 

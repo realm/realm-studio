@@ -26,7 +26,7 @@ import {
   IHighlight,
   SortEndHandler,
   SortStartHandler,
-} from './table';
+} from './Table';
 
 import './RealmBrowser.scss';
 

@@ -4,7 +4,7 @@ import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { EditMode, IPropertyWithName } from '..';
 import { Content } from '../Content';
 import { IClassFocus } from '../focus';
-import { CellClickHandler, IHighlight } from '../table';
+import { CellClickHandler, IHighlight } from '../Table';
 
 export interface IObjectSelectorStateProps {
   focus: IClassFocus;
