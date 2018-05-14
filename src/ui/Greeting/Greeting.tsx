@@ -8,8 +8,8 @@ import { IUpdateStatus } from '../../main/Updater';
 import realmLogo from '../../../static/svgs/realm-logo.svg';
 import { SocialNetwork } from './';
 import { CloudAction } from './CloudAction';
-import { HistoryPanelContainer } from './HistoryPanelContainer';
-import { SignupOverlayContainer } from './SignupOverlayContainer';
+import { HistoryPanel } from './HistoryPanel';
+import { SignupOverlay } from './SignupOverlay';
 import { UpdateStatusIndicator } from './UpdateStatusIndicator';
 
 import './Greeting.scss';
@@ -103,7 +103,7 @@ export const Greeting = ({
         </a>
       </div>
     </div>
-    <HistoryPanelContainer />
-    <SignupOverlayContainer />
+    <HistoryPanel />
+    <SignupOverlay />
   </div>
 );

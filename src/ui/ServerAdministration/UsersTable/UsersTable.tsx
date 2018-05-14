@@ -11,8 +11,8 @@ import {
 import { FloatingControls } from '../shared/FloatingControls';
 
 import { ISelection } from '.';
-import { ChangePasswordDialogContainer } from './ChangePasswordDialogContainer';
-import { CreateUserDialogContainer } from './CreateUserDialogContainer';
+import { ChangePasswordDialog } from './ChangePasswordDialog';
+import { CreateUserDialog } from './CreateUserDialog';
 import { UserSidebar } from './UserSidebar';
 
 export const UsersTable = ({
@@ -124,14 +124,14 @@ export const UsersTable = ({
         selection={selection}
       />
 
-      <ChangePasswordDialogContainer
+      <ChangePasswordDialog
         isOpen={isChangePasswordOpen}
         toggle={toggleChangePassword}
         onPasswordChanged={onUserPasswordChanged}
         user={selection ? selection.user : undefined}
       />
 
-      <CreateUserDialogContainer
+      <CreateUserDialog
         isOpen={isCreateUserOpen}
         toggle={toggleCreateUser}
         onUserCreated={onUserCreated}
