@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { IUser } from '../../../services/ros';
+import { IUser } from '../../../../services/ros';
 
 import { ChangePasswordDialog } from './ChangePasswordDialog';
 
@@ -16,7 +16,7 @@ export interface IChangePasswordDialogContainerState {
   passwordRepeated: string;
 }
 
-export class ChangePasswordDialogContainer extends React.Component<
+class ChangePasswordDialogContainer extends React.Component<
   IChangePasswordDialogContainerProps,
   IChangePasswordDialogContainerState
 > {
@@ -69,3 +69,5 @@ export class ChangePasswordDialogContainer extends React.Component<
     });
   };
 }
+
+export { ChangePasswordDialogContainer as ChangePasswordDialog };

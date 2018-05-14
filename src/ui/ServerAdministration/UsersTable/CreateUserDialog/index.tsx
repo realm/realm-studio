@@ -14,7 +14,7 @@ export interface ICreateUserDialogContainerState {
   username: string;
 }
 
-export class CreateUserDialogContainer extends React.Component<
+class CreateUserDialogContainer extends React.Component<
   ICreateUserDialogContainerProps,
   ICreateUserDialogContainerState
 > {
@@ -65,3 +65,5 @@ export class CreateUserDialogContainer extends React.Component<
     });
   };
 }
+
+export { CreateUserDialogContainer as CreateUserDialog };

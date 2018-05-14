@@ -11,7 +11,7 @@ import {
   ModalHeader,
 } from 'reactstrap';
 
-import { IUser } from '../../../services/ros';
+import { IUser } from '../../../../services/ros';
 
 export const ChangePasswordDialog = ({
   isOpen,
@@ -44,7 +44,7 @@ export const ChangePasswordDialog = ({
               name="password"
               id="password"
               type="password"
-              required={true}
+              required
               value={password}
               onChange={onPasswordChanged}
             />
@@ -55,7 +55,7 @@ export const ChangePasswordDialog = ({
               name="password-repeated"
               id="password-repeated"
               type="password"
-              required={true}
+              required
               value={passwordRepeated}
               onChange={onPasswordRepeatedChanged}
             />
