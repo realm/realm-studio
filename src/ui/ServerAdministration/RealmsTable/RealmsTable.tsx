@@ -9,7 +9,7 @@ import {
 } from '../shared/FilterableTable';
 import { FloatingControls } from '../shared/FloatingControls';
 import { displayUser } from '../utils';
-import { CreateRealmDialogContainer } from './CreateRealmDialogContainer';
+import { CreateRealmDialog } from './CreateRealmDialog';
 import { RealmSidebar } from './RealmSidebar';
 
 export const RealmsTable = ({
@@ -72,7 +72,7 @@ export const RealmsTable = ({
         <Button onClick={toggleCreateRealm}>Create new Realm</Button>
       </FloatingControls>
 
-      <CreateRealmDialogContainer
+      <CreateRealmDialog
         isOpen={isCreateRealmOpen}
         toggle={toggleCreateRealm}
         onRealmCreated={onRealmCreated}

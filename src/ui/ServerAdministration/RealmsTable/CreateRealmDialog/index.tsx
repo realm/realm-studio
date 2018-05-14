@@ -12,7 +12,7 @@ export interface ICreateRealmDialogContainerState {
   path: string;
 }
 
-export class CreateRealmDialogContainer extends React.Component<
+class CreateRealmDialogContainer extends React.Component<
   ICreateRealmDialogContainerProps,
   ICreateRealmDialogContainerState
 > {
@@ -46,3 +46,5 @@ export class CreateRealmDialogContainer extends React.Component<
     });
   };
 }
+
+export { CreateRealmDialogContainer as CreateRealmDialog };

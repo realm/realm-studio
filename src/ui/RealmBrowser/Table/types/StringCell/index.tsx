@@ -2,9 +2,9 @@ import { remote } from 'electron';
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import { CellValidatedHandler } from '..';
-import { EditMode, IPropertyWithName } from '../..';
-import { parse } from '../../parsers';
+import { CellValidatedHandler } from '../..';
+import { EditMode, IPropertyWithName } from '../../..';
+import { parse } from '../../../parsers';
 import { StringCell } from './StringCell';
 
 export interface IStringCellContainerProps {
@@ -190,3 +190,5 @@ export class StringCellContainer extends React.Component<
     }
   }
 }
+
+export { StringCellContainer as StringCell };

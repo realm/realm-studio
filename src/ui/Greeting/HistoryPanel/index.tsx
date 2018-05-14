@@ -3,7 +3,7 @@ import * as React from 'react';
 import { IHistoryEntry } from './HistoryEntry';
 import { HistoryPanel } from './HistoryPanel';
 
-export class HistoryPanelContainer extends React.Component<
+class HistoryPanelContainer extends React.Component<
   {},
   {
     entries: IHistoryEntry[];
@@ -26,3 +26,5 @@ export class HistoryPanelContainer extends React.Component<
     return <HistoryPanel {...this.state} />;
   }
 }
+
+export { HistoryPanelContainer as HistoryPanel };

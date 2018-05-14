@@ -1,12 +1,12 @@
 import * as electron from 'electron';
 import * as React from 'react';
-import * as mixpanel from '../../services/mixpanel';
+import * as mixpanel from '../../../services/mixpanel';
 
 import { SignupOverlay } from './SignupOverlay';
 
 const HAS_SIGNED_UP_STORAGE_KEY = 'has-signed-up';
 
-export class SignupOverlayContainer extends React.Component<
+class SignupOverlayContainer extends React.Component<
   {},
   {
     email: string;
@@ -66,3 +66,5 @@ export class SignupOverlayContainer extends React.Component<
     });
   };
 }
+
+export { SignupOverlayContainer as SignupOverlay };

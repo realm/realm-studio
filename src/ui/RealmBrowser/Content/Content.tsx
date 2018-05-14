@@ -78,15 +78,17 @@ export const Content = ({
             query={query}
             placeholder="Enter a query to filter the list"
           />
-          <Button
-            size="sm"
-            color="primary"
-            className="RealmBrowser__Topbar__Button"
-            onClick={onNewObjectClick}
-            title={`Create new ${getClassName(focus)}`}
-          >
-            Create new {getClassName(focus)}
-          </Button>
+          {onNewObjectClick ? (
+            <Button
+              size="sm"
+              color="primary"
+              className="RealmBrowser__Topbar__Button"
+              onClick={onNewObjectClick}
+              title={`Create new ${getClassName(focus)}`}
+            >
+              Create new {getClassName(focus)}
+            </Button>
+          ) : null}
         </div>
         <ResponsiveTable
           dataVersion={dataVersion}

@@ -9,7 +9,7 @@ import { DateControl } from './DateControl';
 import { DefaultControl } from './DefaultControl';
 import { ListControl } from './ListControl';
 import { NummericControl } from './NummericControl';
-import { ObjectControlContainer as ObjectControl } from './ObjectControlContainer';
+import { ObjectControl } from './ObjectControl';
 import { StringControl } from './StringControl';
 
 export interface IBaseControlProps {

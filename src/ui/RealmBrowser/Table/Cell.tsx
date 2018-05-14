@@ -3,12 +3,14 @@ import * as React from 'react';
 
 import { CellValidatedHandler } from '.';
 import { EditMode, IPropertyWithName } from '..';
-import { DataCell } from './types/DataCell';
-import { DefaultCell } from './types/DefaultCell';
-import { ListCell } from './types/ListCell';
-import { ListIndexCell } from './types/ListIndexCell';
-import { ObjectCell } from './types/ObjectCell';
-import { StringCellContainer } from './types/StringCellContainer';
+import {
+  DataCell,
+  DefaultCell,
+  ListCell,
+  ListIndexCell,
+  ObjectCell,
+  StringCell,
+} from './types';
 
 const getCellContent = ({
   editMode,
@@ -41,7 +43,7 @@ const getCellContent = ({
     case 'bool':
     case 'string': {
       return (
-        <StringCellContainer
+        <StringCell
           editMode={editMode}
           isHighlighted={isHighlighted}
           onHighlighted={onHighlighted}
@@ -54,7 +56,7 @@ const getCellContent = ({
     }
     case 'date': {
       return (
-        <StringCellContainer
+        <StringCell
           editMode={editMode}
           isHighlighted={isHighlighted}
           onHighlighted={onHighlighted}
