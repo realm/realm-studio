@@ -118,3 +118,28 @@ See the section on [releasing](./RELEASING.md).
       v8.6.0 is already installed.
       Now using node v8.6.0 (npm v5.3.0)
       v8.6.0
+
+## Code of Conduct
+
+This project adheres to the Contributor Covenant [code of conduct](https://realm.io/conduct/).
+By participating, you are expected to uphold this code. Please report unacceptable behavior to [info@realm.io](mailto:info+conduct@realm.io).
+
+## Contributing
+
+See [CONTRIBUTING.md](https://github.com/realm/realm-studio/blob/master/CONTRIBUTING.md) for more details!
+
+## License
+
+Realm Studio is published under the Apache 2.0 license.
+
+**This product is not being made available to any person located in Cuba, Iran,
+North Korea, Sudan, Syria or the Crimea region, or to any other person that is
+not eligible to receive the product under U.S. law.**
+
+## Feedback
+
+**_If you use Realm and are happy with it, all we ask is that you please consider sending out a tweet mentioning [@realm](https://twitter.com/realm) to share your thoughts_**
+
+**_And if you don't like it, please let us know what you would like improved, so we can fix it!_**
+
+![analytics](https://ga-beacon.appspot.com/UA-50247013-2/realm-studio/README?pixel)
