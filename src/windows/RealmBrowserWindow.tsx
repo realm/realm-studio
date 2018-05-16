@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { RealmBrowserContainer } from '../ui/realm-browser/RealmBrowserContainer';
+import { RealmBrowser } from '../ui/RealmBrowser';
 import { Window } from './Window';
 import { IRealmBrowserWindowProps } from './WindowType';
 
@@ -9,7 +9,7 @@ import { IRealmBrowserWindowProps } from './WindowType';
 export class RealmBrowserWindow extends Window<IRealmBrowserWindowProps, {}> {
   public render() {
     return (
-      <RealmBrowserContainer
+      <RealmBrowser
         {...this.props}
         addMenuGenerator={this.addMenuGenerator}
         removeMenuGenerator={this.removeMenuGenerator}
