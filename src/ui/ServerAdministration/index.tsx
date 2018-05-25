@@ -40,13 +40,14 @@ export interface IServerAdministrationContainerState
   adminRealmChanges: number;
   isRealmOpening: boolean;
   user: Realm.Sync.User | null;
+  serverVersion?: string;
 }
 
 class ServerAdministrationContainer extends RealmLoadingComponent<
   IServerAdministrationContainerProps,
   IServerAdministrationContainerState
 > {
-  protected availabilityPromise?: Promise<void>;
+  protected availabilityPromise?: Promise<string | undefined>;
 
   constructor() {
     super();
@@ -145,9 +146,12 @@ class ServerAdministrationContainer extends RealmLoadingComponent<
   protected async authenticate() {
     try {
       // Ensure the server is available before authenticating ..
-      await this.ensureServerIsAvailable(this.props.credentials.url);
+      const version = await this.ensureServerIsAvailable(
+        this.props.credentials.url,
+      );
 
       this.setState({
+        serverVersion: version,
         progress: {
           status: 'in-progress',
           message: 'Authenticating',
@@ -177,7 +181,9 @@ class ServerAdministrationContainer extends RealmLoadingComponent<
     }
   }
 
-  protected async ensureServerIsAvailable(url: string) {
+  protected async ensureServerIsAvailable(
+    url: string,
+  ): Promise<string | undefined> {
     // Return a previous promise if that's available
     if (!this.availabilityPromise) {
       this.availabilityPromise = new Promise(async resolve => {
@@ -189,10 +195,10 @@ class ServerAdministrationContainer extends RealmLoadingComponent<
                 message: `Checking availability`,
               },
             });
-            const available = await isAvailable(url);
-            if (available) {
+            const availability = await isAvailable(url);
+            if (availability.available) {
               // Let's resolve the promise, delete it and break the endless loop
-              resolve();
+              resolve(availability.version);
               delete this.availabilityPromise;
               return;
             } else {

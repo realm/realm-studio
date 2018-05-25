@@ -4,8 +4,10 @@ import { Navbar } from 'reactstrap';
 import realmLogo from '../../../../static/svgs/realm-logo.svg';
 import { ILoadingProgress } from '../../reusable/LoadingOverlay';
 import { Tab } from '../ServerAdministration';
+
 import { Status } from './Status';
 import { TabButton } from './TabButton';
+import { VersionBadge } from './VersionBadge';
 
 export interface ITopbarProps {
   activeTab: Tab | null;
@@ -13,6 +15,7 @@ export interface ITopbarProps {
   isCloudTenant: boolean;
   onReconnect: () => void;
   onTabChanged: (tab: Tab) => void;
+  serverVersion?: string;
   syncError?: Realm.Sync.SyncError;
   user: Realm.Sync.User | null;
 }
@@ -23,13 +26,14 @@ export const TopBar = ({
   isCloudTenant,
   onReconnect,
   onTabChanged,
+  serverVersion,
   syncError,
   user,
 }: ITopbarProps) => (
-  <Navbar className="ServerAdministration__TobBar">
+  <Navbar className="ServerAdministration__TopBar">
     <svg
       viewBox={realmLogo.viewBox}
-      className="ServerAdministration__TobBar__logo"
+      className="ServerAdministration__TopBar__logo"
     >
       <use xlinkHref={`#${realmLogo.id}`} />
     </svg>
@@ -64,5 +68,6 @@ export const TopBar = ({
       progress={adminRealmProgress}
       user={user}
     />
+    <VersionBadge serverVersion={serverVersion} />
   </Navbar>
 );

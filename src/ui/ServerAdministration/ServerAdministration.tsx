@@ -31,6 +31,7 @@ interface IServerAdministrationProps {
   onReconnect: () => void;
   onTabChanged: (tab: Tab) => void;
   onValidateCertificatesChange: ValidateCertificatesChangeHandler;
+  serverVersion?: string;
   syncError?: Realm.Sync.SyncError;
   user: Realm.Sync.User | null;
   validateCertificates: boolean;
@@ -87,6 +88,7 @@ export const ServerAdministration = (props: IServerAdministrationProps) => {
     isRealmOpening,
     onReconnect,
     onTabChanged,
+    serverVersion,
     syncError,
     user,
   } = props;
@@ -99,6 +101,7 @@ export const ServerAdministration = (props: IServerAdministrationProps) => {
         isCloudTenant={isCloudTenant}
         onReconnect={onReconnect}
         onTabChanged={onTabChanged}
+        serverVersion={serverVersion}
         user={user}
       />
       <div className="ServerAdministration__content">

@@ -60,9 +60,23 @@ export enum UserRole {
   Regular = 'regular',
 }
 
-export const isAvailable = async (url: string) => {
+export type Availability =
+  | { available: true; version?: string }
+  | { available: false };
+
+export const isAvailable = async (url: string): Promise<Availability> => {
   const parsedUrl = new URL(url);
   parsedUrl.pathname = 'health';
   const response = await fetch(parsedUrl.toString());
-  return response.status === 200;
+  if (response.status === 200) {
+    const contentType = response.headers.get('content-type') || '';
+    if (contentType.indexOf('application/json') !== -1) {
+      const body = await response.json();
+      return { available: true, version: body.version };
+    } else {
+      return { available: true };
+    }
+  } else {
+    return { available: false };
+  }
 };
