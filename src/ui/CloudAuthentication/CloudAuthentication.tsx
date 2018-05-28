@@ -1,7 +1,7 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
 
-import { Mode } from '.';
+import { Mode, Status } from '.';
 import cloudLogo from '../../../static/svgs/cloud-logo.svg';
 import { LoadingOverlay } from '../reusable/LoadingOverlay';
 
@@ -13,23 +13,25 @@ import { VerifyEmailOverlay } from './VerifyEmailOverlay';
 import './CloudAuthentication.scss';
 
 interface ICloudAuthenticationProps {
-  isLoading: boolean;
   message?: string;
   mode: Mode;
   onAuthenticateWithEmail: (email: string, password: string) => void;
   onAuthenticateWithGitHub: () => void;
   onModeChange: (mode: Mode) => void;
+  onReopenGitHubUrl: () => void;
   onSignUp: (email: string, password: string) => void;
+  status: Status;
 }
 
 export const CloudAuthentication = ({
-  isLoading,
   message,
   mode,
   onAuthenticateWithEmail,
   onAuthenticateWithGitHub,
   onModeChange,
+  onReopenGitHubUrl,
   onSignUp,
+  status,
 }: ICloudAuthenticationProps) => (
   <div
     className={classNames(
@@ -66,6 +68,20 @@ export const CloudAuthentication = ({
         <VerifyEmailOverlay onModeChange={onModeChange} />
       )}
     </div>
-    <LoadingOverlay loading={isLoading} />
+    <LoadingOverlay
+      loading={status !== 'idle'}
+      progress={
+        status === 'awaiting-github'
+          ? {
+              status: 'in-progress',
+              message: 'Waiting for you to grant access',
+              retry: {
+                onRetry: onReopenGitHubUrl,
+                label: 'Open GitHub again',
+              },
+            }
+          : undefined
+      }
+    />
   </div>
 );

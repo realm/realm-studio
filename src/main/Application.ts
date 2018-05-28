@@ -51,6 +51,9 @@ export class Application {
     [MainActions.RefreshCloudStatus]: () => {
       this.cloudManager.refresh();
     },
+    [MainActions.ReopenGitHubUrl]: () => {
+      this.cloudManager.reopenGitHubUrl();
+    },
     [MainActions.SetRaasEndpoint]: (endpoint: raas.Endpoint) => {
       return this.setRaasEndpoint(endpoint);
     },

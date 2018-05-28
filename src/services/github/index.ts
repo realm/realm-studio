@@ -7,6 +7,7 @@ import { STUDIO_PROTOCOL } from '../../constants';
 interface IAuthenticationHandler {
   resolve: (code: string) => void;
   reject: (err: Error) => void;
+  url: URL;
 }
 
 const authenticationPromises: { [state: string]: IAuthenticationHandler } = {};
@@ -23,6 +24,7 @@ export interface IOAuthCallbackOptions {
 
 export const authenticate = (
   scope: string = 'read:org read:user user:email',
+  onState?: (state: string) => void,
 ) => {
   // Throw an error if accessed from the renderer
   if (process.type !== 'browser') {
@@ -31,16 +33,32 @@ export const authenticate = (
   return new Promise<string>((resolve, reject) => {
     // Create a temporary uuid that will transfered back to the callback when authenticated
     const state = uuid();
-    // Save the promise resolve function - so the callback can call it
-    authenticationPromises[state] = { resolve, reject };
 
     const url = new URL(GITHUB_AUTHORIZE_URL);
     url.searchParams.set('client_id', GITHUB_CLIENT_ID);
     url.searchParams.set('redirect_uri', GITHUB_REDIRECT_URI);
     url.searchParams.set('scope', scope);
     url.searchParams.set('state', state);
-    electron.shell.openExternal(url.toString());
+
+    // Save the promise resolve function - so the callback can call it
+    authenticationPromises[state] = { resolve, reject, url };
+
+    // Open the GitHub URL using the users external browser
+    openUrl(state);
+    // Call the callback as the state is now known
+    if (onState) {
+      onState(state);
+    }
   });
+};
+
+export const openUrl = (state: string) => {
+  if (state in authenticationPromises) {
+    const { url } = authenticationPromises[state];
+    electron.shell.openExternal(url.toString());
+  } else {
+    throw new Error(`Unexpected state ${state}`);
+  }
 };
 
 export const handleOauthCallback = (options: IOAuthCallbackOptions) => {
