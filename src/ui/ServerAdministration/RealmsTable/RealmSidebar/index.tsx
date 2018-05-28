@@ -23,6 +23,8 @@ export class RealmSidebarContainer extends React.Component<
   IRealmSidebarContainerProps,
   IRealmSidebarContainerState
 > {
+  public state: IRealmSidebarContainerState = {};
+
   public componentDidUpdate(
     prevProps: IRealmSidebarContainerProps,
     prevState: IRealmSidebarContainerState,
