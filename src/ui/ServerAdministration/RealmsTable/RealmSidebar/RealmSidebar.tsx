@@ -25,6 +25,10 @@ export const RealmSidebar = ({
   onToggle: () => void;
   realm?: ros.IRealmFile;
 }) => {
+  // We need this type-hax because we don't want the IRealmFile to have a isValid method when it gets created
+  const currentRealm = realm
+    ? ((realm as any) as ros.IRealmFile & Realm.Object)
+    : undefined;
   return (
     <Sidebar className="RealmSidebar" isOpen={isOpen} onToggle={onToggle}>
       {currentRealm &&
