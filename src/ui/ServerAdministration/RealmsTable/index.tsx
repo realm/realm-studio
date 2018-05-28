@@ -149,10 +149,12 @@ class RealmsTableContainer extends React.PureComponent<
 
   public onRealmTypeUpgrade = async (path: string) => {
     const confirmed = this.confirmRealmTypeUpgrade(path);
-    try {
-      await ros.realms.changeType(this.props.user, path, 'reference');
-    } catch (err) {
-      showError('Failed to upgrade the Realm', err);
+    if (confirmed) {
+      try {
+        await ros.realms.changeType(this.props.user, path, 'reference');
+      } catch (err) {
+        showError('Failed to upgrade the Realm', err);
+      }
     }
   };
 
