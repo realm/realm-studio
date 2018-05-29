@@ -66,6 +66,9 @@ export const CreateUserDialog = ({
               id="password-repeated"
               type="password"
               required={true}
+              valid={
+                passwordRepeated ? password === passwordRepeated : undefined
+              }
               value={passwordRepeated}
               onChange={onPasswordRepeatedChanged}
             />
