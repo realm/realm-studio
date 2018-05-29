@@ -19,6 +19,9 @@ export const UsersTable = ({
   getUsersRealms,
   isChangePasswordOpen,
   isCreateUserOpen,
+  onSearchStringChange,
+  onToggleChangePassword,
+  onToggleCreateUser,
   onUserChangePassword,
   onUserCreated,
   onUserDeletion,
@@ -28,16 +31,15 @@ export const UsersTable = ({
   onUserPasswordChanged,
   onUserRoleChanged,
   onUserSelected,
-  selection,
-  toggleChangePassword,
-  toggleCreateUser,
-  users,
   searchString,
-  onSearchStringChange,
+  selection,
+  users,
 }: {
   getUsersRealms: (user: ros.IUser) => Realm.Results<ros.IRealmFile>;
   isChangePasswordOpen: boolean;
   isCreateUserOpen: boolean;
+  onToggleChangePassword: () => void;
+  onToggleCreateUser: () => void;
   onUserChangePassword: (userId: string) => void;
   onUserCreated: (username: string, password: string) => void;
   onUserDeletion: (userId: string) => void;
@@ -53,8 +55,6 @@ export const UsersTable = ({
   onUserRoleChanged: (userId: string, role: ros.UserRole) => void;
   onUserSelected: (userId: string | null) => void;
   selection: ISelection | null;
-  toggleChangePassword: () => void;
-  toggleCreateUser: () => void;
   users: Realm.Results<ros.IUser>;
   searchString: string;
   onSearchStringChange: (query: string) => void;
@@ -109,7 +109,7 @@ export const UsersTable = ({
       </FilterableTable>
 
       <FloatingControls isOpen={selection === null}>
-        <Button onClick={toggleCreateUser}>Create new user</Button>
+        <Button onClick={onToggleCreateUser}>Create new user</Button>
       </FloatingControls>
 
       <UserSidebar
@@ -126,14 +126,14 @@ export const UsersTable = ({
 
       <ChangePasswordDialog
         isOpen={isChangePasswordOpen}
-        toggle={toggleChangePassword}
+        onToggle={onToggleChangePassword}
         onPasswordChanged={onUserPasswordChanged}
         user={selection ? selection.user : undefined}
       />
 
       <CreateUserDialog
         isOpen={isCreateUserOpen}
-        toggle={toggleCreateUser}
+        onToggle={onToggleCreateUser}
         onUserCreated={onUserCreated}
       />
     </FilterableTableWrapper>

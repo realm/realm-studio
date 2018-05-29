@@ -7,7 +7,7 @@ import { ChangePasswordDialog } from './ChangePasswordDialog';
 export interface IChangePasswordDialogContainerProps {
   isOpen: boolean;
   onPasswordChanged: (userId: string, password: string) => void;
-  toggle: () => void;
+  onToggle: () => void;
   user?: IUser;
 }
 
@@ -46,7 +46,7 @@ class ChangePasswordDialogContainer extends React.Component<
           password: '',
           passwordRepeated: '',
         });
-        this.props.toggle();
+        this.props.onToggle();
         this.props.onPasswordChanged(this.props.user.userId, password);
       }
     }

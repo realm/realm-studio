@@ -93,13 +93,13 @@ class UsersTableContainer extends React.Component<
       .filtered('owner = $0', user);
   };
 
-  public toggleChangePassword = () => {
+  public onToggleChangePassword = () => {
     this.setState({
       isChangePasswordOpen: !this.state.isChangePasswordOpen,
     });
   };
 
-  public toggleCreateUser = () => {
+  public onToggleCreateUser = () => {
     this.setState({
       isCreateUserOpen: !this.state.isCreateUserOpen,
     });

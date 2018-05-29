@@ -5,7 +5,7 @@ import { CreateUserDialog } from './CreateUserDialog';
 export interface ICreateUserDialogContainerProps {
   isOpen: boolean;
   onUserCreated: (username: string, password: string) => void;
-  toggle: () => void;
+  onToggle: () => void;
 }
 
 export interface ICreateUserDialogContainerState {
@@ -14,18 +14,27 @@ export interface ICreateUserDialogContainerState {
   username: string;
 }
 
+const initialState: ICreateUserDialogContainerState = {
+  password: '',
+  passwordRepeated: '',
+  username: '',
+};
+
 class CreateUserDialogContainer extends React.Component<
   ICreateUserDialogContainerProps,
   ICreateUserDialogContainerState
 > {
-  public state: ICreateUserDialogContainerState = {
-    password: '',
-    passwordRepeated: '',
-    username: '',
-  };
+  public state: ICreateUserDialogContainerState = { ...initialState };
 
   public render() {
-    return <CreateUserDialog {...this.props} {...this.state} {...this} />;
+    return (
+      <CreateUserDialog
+        isOpen={this.props.isOpen}
+        onToggle={this.onToggle}
+        {...this.state}
+        {...this}
+      />
+    );
   }
 
   public onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -37,7 +46,7 @@ class CreateUserDialogContainer extends React.Component<
         passwordRepeated: '',
         username: '',
       });
-      this.props.toggle();
+      this.props.onToggle();
       this.props.onUserCreated(username, password);
     }
   };
@@ -60,6 +69,11 @@ class CreateUserDialogContainer extends React.Component<
     this.setState({
       username: e.target.value,
     });
+  };
+
+  protected onToggle = () => {
+    this.setState({ ...initialState });
+    this.props.onToggle();
   };
 }
 

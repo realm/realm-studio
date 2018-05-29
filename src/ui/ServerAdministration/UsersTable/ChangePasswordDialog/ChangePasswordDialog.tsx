@@ -15,7 +15,7 @@ import { IUser } from '../../../../services/ros';
 
 export const ChangePasswordDialog = ({
   isOpen,
-  toggle,
+  onToggle,
   onPasswordChanged,
   onPasswordRepeatedChanged,
   onSubmit,
@@ -24,7 +24,7 @@ export const ChangePasswordDialog = ({
   user,
 }: {
   isOpen: boolean;
-  toggle: () => void;
+  onToggle: () => void;
   onPasswordChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onPasswordRepeatedChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -33,9 +33,9 @@ export const ChangePasswordDialog = ({
   user: IUser;
 }) => {
   return (
-    <Modal isOpen={isOpen} toggle={toggle}>
+    <Modal isOpen={isOpen} toggle={onToggle}>
       <Form onSubmit={onSubmit}>
-        <ModalHeader toggle={toggle}>Change password</ModalHeader>
+        <ModalHeader toggle={onToggle}>Change password</ModalHeader>
         <ModalBody>
           <p>Enter the new password for {user.userId}.</p>
           <FormGroup>
@@ -56,6 +56,8 @@ export const ChangePasswordDialog = ({
               id="password-repeated"
               type="password"
               required
+              valid={passwordRepeated !== '' && password === passwordRepeated}
+              invalid={password !== passwordRepeated}
               value={passwordRepeated}
               onChange={onPasswordRepeatedChanged}
             />
@@ -63,7 +65,7 @@ export const ChangePasswordDialog = ({
         </ModalBody>
         <ModalFooter>
           <Button color="primary">Change password</Button>{' '}
-          <Button color="secondary" onClick={toggle}>
+          <Button color="secondary" onClick={onToggle}>
             Cancel
           </Button>
         </ModalFooter>
