@@ -175,7 +175,7 @@ class RealmsTableContainer extends React.PureComponent<
     // Filter if a search string is specified
     if (searchString || searchString !== '') {
       const filterQuery = querySomeFieldContainsText(
-        ['path', 'owner.accounts.providerId'],
+        ['path', 'realmType', 'owner.accounts.providerId'],
         searchString,
       );
       try {
