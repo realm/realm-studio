@@ -149,6 +149,11 @@ export class CloudManager {
     }
   }
 
+  public abortPendingGitHubAuthentications() {
+    github.abortPendingAuthentications();
+    this.refresh();
+  }
+
   protected async authenticate(
     performAuthentication: () => Promise<raas.user.IAuthResponse>,
   ) {

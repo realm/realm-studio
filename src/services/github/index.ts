@@ -80,3 +80,12 @@ export const handleOauthCallback = (options: IOAuthCallbackOptions) => {
     });
   }
 };
+
+export const abortPendingAuthentications = () => {
+  const err = new Error('Pending GitHub authentications were aborted');
+  Object.entries(authenticationPromises).forEach(([state, { reject }]) => {
+    // Forget about the promise and reject it
+    delete authenticationPromises[state];
+    reject(err);
+  });
+};

@@ -77,7 +77,10 @@ class CloudAuthenticationContainer extends React.Component<
       this.setCloudIntroduced(true);
       // We could have closed not but it will get closed when the status updates
     } catch (err) {
-      showError('Failed to authenticate with GitHub', err);
+      // This error is expected when closing down
+      if (err.message !== 'Pending GitHub authentications were aborted') {
+        showError('Failed to authenticate with GitHub', err);
+      }
     } finally {
       this.setState({ status: 'idle' });
     }
