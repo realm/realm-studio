@@ -333,6 +333,7 @@ $highlight-row-color: $black;
       border: 0;
       color: inherit;
       height: 100%;
+      line-height: 1.1rem;
       white-space: nowrap;
 
       &--null {
@@ -348,6 +349,7 @@ $highlight-row-color: $black;
       }
 
       &:focus {
+        box-shadow: none;
         color: inherit;
       }
     }

@@ -32,12 +32,12 @@ export class StringCellContainer extends React.Component<
     prevState: IStringCellContainerState,
   ) {
     const { value, isHighlighted } = nextProps;
-    const { isEditing, temporalValue } = prevState;
+    const isEditing = !isHighlighted ? false : prevState.isEditing;
 
     return {
       temporalValue: !isEditing
         ? StringCellContainer.getValueString(nextProps, value)
-        : temporalValue,
+        : prevState.temporalValue,
       isEditing: !isHighlighted ? false : isEditing,
     };
   }
