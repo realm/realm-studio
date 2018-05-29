@@ -18,6 +18,9 @@ export const GettingStarted = ({
       <Input
         className="GettingStarted__Input"
         value={serverUrl}
+        onChange={() => {
+          /* Do nothing ... */
+        }}
         onFocus={e => {
           e.currentTarget.select();
         }}

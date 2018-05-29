@@ -40,7 +40,7 @@ export const Entry = ({
           <span className="Log__Entry__Message">{message}</span>
           <div className="Log__Entry__Badges">
             {service ? (
-              <Badge className="Log__Entry__Badge" color="default">
+              <Badge className="Log__Entry__Badge" color="secondary">
                 <span title="service">{service}</span>
               </Badge>
             ) : null}
