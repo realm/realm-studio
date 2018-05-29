@@ -35,19 +35,16 @@ class ConnectToServerContainer extends React.Component<
   IConnectToServerContainerProps,
   IConnectToServerContainerState
 > {
-  constructor() {
-    super();
-    this.state = {
-      isConnecting: false,
-      method: AuthenticationMethod.usernamePassword,
-      url: '',
-      username: '',
-      password: '',
-      token: '',
-      otherOptions: '',
-      saveCredentials: false,
-    };
-  }
+  public state: IConnectToServerContainerState = {
+    isConnecting: false,
+    method: AuthenticationMethod.usernamePassword,
+    url: '',
+    username: '',
+    password: '',
+    token: '',
+    otherOptions: '',
+    saveCredentials: false,
+  };
 
   public render() {
     return <ConnectToServer {...this.state} {...this} />;

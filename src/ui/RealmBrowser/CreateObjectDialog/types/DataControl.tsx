@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button, Input, InputGroup, InputGroupButton } from 'reactstrap';
+import { Button, Input, InputGroup, InputGroupAddon } from 'reactstrap';
 import * as Realm from 'realm';
 
 import { IBaseControlProps } from './TypeControl';
@@ -28,13 +28,13 @@ export const DataControl = ({
           }
         }}
         required={!property.optional}
-        getRef={(element: HTMLInputElement) => {
+        innerRef={(element: HTMLInputElement) => {
           fileInput = element;
         }}
         placeholder={value === null ? 'null' : ''}
       />
       {value !== null && property.optional ? (
-        <InputGroupButton>
+        <InputGroupAddon addonType="append">
           <Button
             size="sm"
             onClick={() => {
@@ -47,7 +47,7 @@ export const DataControl = ({
           >
             <i className="fa fa-close" />
           </Button>
-        </InputGroupButton>
+        </InputGroupAddon>
       ) : null}
       {children}
     </InputGroup>

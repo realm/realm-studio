@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Input, InputGroup, InputGroupButton } from 'reactstrap';
+import { Button, Input, InputGroup, InputGroupAddon } from 'reactstrap';
 import * as Realm from 'realm';
 
 import { parseNumber } from '../../parsers';
@@ -44,11 +44,11 @@ export const BooleanControl = ({
       </BooleanButton>
     </div>
     {value !== null && property.optional ? (
-      <InputGroupButton>
+      <InputGroupAddon addonType="append">
         <Button size="sm" onClick={() => onChange(null)}>
           <i className="fa fa-close" />
         </Button>
-      </InputGroupButton>
+      </InputGroupAddon>
     ) : null}
     {children}
   </InputGroup>

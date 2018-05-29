@@ -20,13 +20,10 @@ class ChangePasswordDialogContainer extends React.Component<
   IChangePasswordDialogContainerProps,
   IChangePasswordDialogContainerState
 > {
-  public constructor() {
-    super();
-    this.state = {
-      password: '',
-      passwordRepeated: '',
-    };
-  }
+  public state: IChangePasswordDialogContainerState = {
+    password: '',
+    passwordRepeated: '',
+  };
 
   public render() {
     const user = this.props.user;

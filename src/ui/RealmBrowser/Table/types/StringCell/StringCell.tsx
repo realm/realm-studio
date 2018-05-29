@@ -28,12 +28,12 @@ export const StringCell = ({
         'RealmBrowser__Table__Input',
         `RealmBrowser__Table__Input--${property.type}`,
       )}
-      getRef={getRef}
+      innerRef={getRef}
       onBlur={onBlur}
       onClick={onClick}
       onChange={e => onChange(e.target.value)}
       onKeyPress={e => e.key === 'Enter' && e.currentTarget.blur()}
-      size="sm"
+      bsSize="sm"
       value={value}
     />
   ) : (

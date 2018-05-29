@@ -1,18 +1,18 @@
 @import "~realm-studio-styles/variables";
 
-$transparent-white: rgba($color-white, .15);
-$transparent-white-lighter: rgba($color-white, .25);
-$transparent-black: rgba($color-black, .15);
-$transparent-black-darker: rgba($color-black, .25);
+$transparent-white: rgba($white, .15);
+$transparent-white-lighter: rgba($white, .25);
+$transparent-black: rgba($black, .15);
+$transparent-black-darker: rgba($black, .25);
 
 .GettingStarted {
-  background: $color-indigo;
-  color: $color-white;
+  background: $indigo;
+  color: $white;
   display: flex;
   padding: 2 * $spacer;
 
   a {
-    color: $color-white;
+    color: $white;
     text-decoration: underline;
   }
 
@@ -42,20 +42,20 @@ $transparent-black-darker: rgba($color-black, .25);
 
   &__Input {
     background: $transparent-black;
-    color: $color-white;
+    color: $white;
   }
 
   &__Button {
     background: $transparent-white;
     border: 0;
     clear: both;
-    color: $color-white;
+    color: $white;
     margin-right: $spacer;
 
     &:hover,
     &:active {
       background: $transparent-white-lighter;
-      color: $color-white;
+      color: $white;
     }
   }
 }

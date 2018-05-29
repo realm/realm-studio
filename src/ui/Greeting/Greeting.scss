@@ -88,13 +88,13 @@ $history-panel-icon-size: 20px;
   }
 
   &__HistoryPanel {
-    background: $color-charcoal;
-    color: $color-dove;
+    background: $charcoal;
+    color: $dove;
     font-size: .9rem;
     width: 40%;
 
     a {
-      color: $color-dove;
+      color: $dove;
     }
 
     &__Entry {
@@ -139,7 +139,7 @@ $history-panel-icon-size: 20px;
   &__CloudOverlay {
     background: $overlay-background;
     bottom: 0;
-    color: $color-dove;
+    color: $dove;
     display: flex;
     flex-direction: column;
     left: 0;

@@ -27,32 +27,38 @@ export class StringCellContainer extends React.Component<
   IStringCellContainerProps,
   IStringCellContainerState
 > {
-  private inputElement?: HTMLInputElement;
+  public static getDerivedStateFromProps(
+    nextProps: IStringCellContainerProps,
+    prevState: IStringCellContainerState,
+  ) {
+    const { value, isHighlighted } = nextProps;
+    const isEditing = !isHighlighted ? false : prevState.isEditing;
 
-  constructor(props: IStringCellContainerProps) {
-    super();
-    this.state = {
-      temporalValue: props.value,
-      isEditing: false,
+    return {
+      temporalValue: !isEditing
+        ? StringCellContainer.getValueString(nextProps, value)
+        : prevState.temporalValue,
+      isEditing: !isHighlighted ? false : isEditing,
     };
   }
 
-  public componentWillReceiveProps(nextProps: IStringCellContainerProps) {
-    const { value, isHighlighted } = nextProps;
-    const { isEditing } = this.state;
-
-    if (this.props.isHighlighted && !isHighlighted) {
-      // The field is no longer highlighted
-      this.setState({
-        isEditing: false,
-      });
-    } else if (!this.props.isHighlighted && isHighlighted) {
-      // The field just got highlighted - lets start editing
-      this.setState({
-        temporalValue: this.getValueString(value),
-      });
+  private static getValueString(
+    props: IStringCellContainerProps,
+    value: string,
+  ) {
+    if (props.valueToString) {
+      return props.valueToString(value);
+    } else {
+      return value;
     }
   }
+
+  public state: IStringCellContainerState = {
+    temporalValue: '',
+    isEditing: false,
+  };
+
+  private inputElement?: HTMLInputElement;
 
   public shouldComponentUpdate(
     nextProps: IStringCellContainerProps,
@@ -82,17 +88,14 @@ export class StringCellContainer extends React.Component<
   }
 
   public render() {
-    const { isHighlighted, value, property } = this.props;
-    const valueString = this.state.isEditing
-      ? this.state.temporalValue
-      : this.getValueString(value);
+    const { isHighlighted, property } = this.props;
     return (
       <StringCell
         getRef={this.getInputRef}
         isEditing={this.state.isEditing}
         isHighlighted={isHighlighted || false}
         property={property}
-        value={valueString}
+        value={this.state.temporalValue}
         {...this}
       />
     );
@@ -180,14 +183,6 @@ export class StringCellContainer extends React.Component<
       cancelId: 1,
     });
     return answer === 0;
-  }
-
-  private getValueString(value: string) {
-    if (this.props.valueToString) {
-      return this.props.valueToString(value);
-    } else {
-      return value;
-    }
   }
 }
 

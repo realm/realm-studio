@@ -48,18 +48,15 @@ class ServerAdministrationContainer extends RealmLoadingComponent<
   IServerAdministrationContainerProps,
   IServerAdministrationContainerState
 > {
-  protected availabilityPromise?: Promise<string | undefined>;
+  public state: IServerAdministrationContainerState = {
+    activeTab: null,
+    adminRealmChanges: 0,
+    isRealmOpening: false,
+    progress: { status: 'idle' },
+    user: null,
+  };
 
-  constructor() {
-    super();
-    this.state = {
-      activeTab: null,
-      adminRealmChanges: 0,
-      isRealmOpening: false,
-      progress: { status: 'idle' },
-      user: null,
-    };
-  }
+  protected availabilityPromise?: Promise<string | undefined>;
 
   public async componentDidMount() {
     // Start listening on changes to the cloud-status

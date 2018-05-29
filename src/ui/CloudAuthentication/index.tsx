@@ -29,15 +29,13 @@ class CloudAuthenticationContainer extends React.Component<
   ICloudAuthenticationContainerProps,
   ICloudAuthenticationContainerState
 > {
-  constructor() {
-    super();
-    const wasCloudIntroduced =
-      localStorage.getItem(INTRODUCED_STORAGE_KEY) !== null;
-    this.state = {
-      status: 'idle',
-      mode: wasCloudIntroduced ? 'log-in' : 'introduction',
-    };
-  }
+  public state: ICloudAuthenticationContainerState = {
+    status: 'idle',
+    mode:
+      localStorage.getItem(INTRODUCED_STORAGE_KEY) !== null
+        ? 'log-in'
+        : 'introduction',
+  };
 
   public render() {
     return (

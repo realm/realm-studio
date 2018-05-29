@@ -18,14 +18,11 @@ class CreateUserDialogContainer extends React.Component<
   ICreateUserDialogContainerProps,
   ICreateUserDialogContainerState
 > {
-  public constructor() {
-    super();
-    this.state = {
-      password: '',
-      passwordRepeated: '',
-      username: '',
-    };
-  }
+  public state: ICreateUserDialogContainerState = {
+    password: '',
+    passwordRepeated: '',
+    username: '',
+  };
 
   public render() {
     return <CreateUserDialog {...this.props} {...this.state} {...this} />;

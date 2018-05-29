@@ -20,12 +20,9 @@ class ObjectControlContainer extends React.Component<
   IObjectControlContainerProps,
   IObjectControlContainerState
 > {
-  constructor() {
-    super();
-    this.state = {
-      isObjectSelectorOpen: false,
-    };
-  }
+  public state: IObjectControlContainerState = {
+    isObjectSelectorOpen: false,
+  };
 
   public componentDidMount() {
     if (this.props.property.objectType) {

@@ -32,18 +32,15 @@ class UsersTableContainer extends React.Component<
   IUsersTableContainerProps,
   IUsersTableContainerState
 > {
-  protected users?: Realm.Results<ros.IUser>;
+  public state: IUsersTableContainerState = {
+    isChangePasswordOpen: false,
+    isCreateUserOpen: false,
+    selection: null,
+    searchString: '',
+    showSystemUsers: store.shouldShowSystemUsers(),
+  };
 
-  constructor() {
-    super();
-    this.state = {
-      isChangePasswordOpen: false,
-      isCreateUserOpen: false,
-      selection: null,
-      searchString: '',
-      showSystemUsers: store.shouldShowSystemUsers(),
-    };
-  }
+  protected users?: Realm.Results<ros.IUser>;
 
   public componentWillMount() {
     this.setUsers(this.state.searchString, this.state.showSystemUsers);

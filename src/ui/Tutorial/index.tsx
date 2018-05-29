@@ -15,13 +15,10 @@ class TutorialContainer extends React.Component<
   ITutorialWindowProps,
   ITutorialContainerState
 > {
-  constructor() {
-    super();
-    this.state = {
-      activeChapterIndex: 0,
-      context: {},
-    };
-  }
+  public state: ITutorialContainerState = {
+    activeChapterIndex: 0,
+    context: {},
+  };
 
   public componentDidMount() {
     const serverHostname = this.getServerHostname(this.props.context.serverUrl);
