@@ -38,37 +38,39 @@ export const LoadingOverlay = ({
         'LoadingOverlay--no-fade': !fade,
       })}
     >
-      {progress && progress.status === 'failed' ? (
-        <section className="LoadingOverlay__Failure">
-          <i
-            className="LoadingOverlay__FailureIcon fa fa-exclamation-circle"
-            aria-hidden="true"
-          />
-        </section>
-      ) : null}
-      {progress && progress.message ? (
-        <section className="LoadingOverlay__Message">
-          {progress.message}
-        </section>
-      ) : null}
-      {progress &&
-        showProgress && (
-          <Progress
-            className="LoadingOverlay__Progress"
-            value={progress.transferred}
-            max={progress.transferable}
-          />
-        )}
-      {showDots ? <LoadingDots /> : null}
-      {progress && progress.retry ? (
-        <Button
-          className="LoadingOverlay__RetryButton"
-          color="primary"
-          onClick={progress.retry.onRetry}
-        >
-          {progress.retry.label}
-        </Button>
-      ) : null}
+      <div className="LoadingOverlay__Content">
+        {progress && progress.status === 'failed' ? (
+          <section className="LoadingOverlay__Failure">
+            <i
+              className="LoadingOverlay__FailureIcon fa fa-exclamation-circle"
+              aria-hidden="true"
+            />
+          </section>
+        ) : null}
+        {progress && progress.message ? (
+          <section className="LoadingOverlay__Message">
+            {progress.message}
+          </section>
+        ) : null}
+        {progress &&
+          showProgress && (
+            <Progress
+              className="LoadingOverlay__Progress"
+              value={progress.transferred}
+              max={progress.transferable}
+            />
+          )}
+        {showDots ? <LoadingDots /> : null}
+        {progress && progress.retry ? (
+          <Button
+            className="LoadingOverlay__RetryButton"
+            color="primary"
+            onClick={progress.retry.onRetry}
+          >
+            {progress.retry.label}
+          </Button>
+        ) : null}
+      </div>
     </div>
   ) : null;
 };
