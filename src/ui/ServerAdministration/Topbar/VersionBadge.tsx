@@ -7,7 +7,7 @@ export interface IVersionBadgeProps {
 
 export const VersionBadge = ({ serverVersion }: IVersionBadgeProps) => {
   return serverVersion ? (
-    <Badge className="ServerAdministration__TopBar__VersionBadge">
+    <Badge className="TopBar__VersionBadge">
       <span title={`Server is version ${serverVersion}`}>v{serverVersion}</span>
     </Badge>
   ) : null;

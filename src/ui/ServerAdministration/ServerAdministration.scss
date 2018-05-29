@@ -6,21 +6,7 @@
   height: 100%;
 
   &__TopBar {
-    background: $window-background;
-    cursor: default;
     flex-shrink: 0;
-    justify-content: flex-start;
-    user-select: none;
-    z-index: 2;
-
-    &__logo {
-      height: 30px;
-      margin-right: $spacer;
-    }
-
-    &__VersionBadge {
-      margin-left: $spacer / 2;
-    }
   }
 
   // TODO: Remove this block once we're using bootstrap-v4.0.0-beta
@@ -28,26 +14,6 @@
     align-items: center;
     display: flex;
     flex-direction: row;
-  }
-
-  &__tab {
-    margin-right: $spacer / 2;
-  }
-
-  &__version {
-    color: $color-elephant;
-  }
-
-  &__Status {
-    flex-grow: 1;
-    font-size: .9rem;
-    margin: 0;
-    text-align: right;
-
-    &__error,
-    &__server {
-      user-select: text;
-    }
   }
 
   &__content {

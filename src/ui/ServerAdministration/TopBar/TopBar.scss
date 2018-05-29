@@ -1,0 +1,40 @@
+@import "~realm-studio-styles/variables";
+
+.TopBar {
+  background: $window-background;
+  cursor: default;
+  justify-content: flex-start;
+  overflow-x: auto;
+  user-select: none;
+  z-index: 2;
+
+  &__Logo {
+    flex-shrink: 0;
+    height: 30px;
+    margin-right: $spacer;
+  }
+
+  &__TabButton {
+    margin-right: $spacer / 2;
+  }
+
+  &__Status {
+    flex-grow: 1;
+    font-size: .9rem;
+    margin: 0;
+    overflow: hidden;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &__error,
+    &__server {
+      user-select: text;
+    }
+  }
+
+  &__VersionBadge {
+    margin-left: $spacer / 2;
+    user-select: text;
+  }
+}

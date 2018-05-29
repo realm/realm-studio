@@ -1,17 +1,21 @@
+import * as classNames from 'classnames';
 import * as React from 'react';
 import { Navbar } from 'reactstrap';
 
-import realmLogo from '../../../../static/svgs/realm-logo.svg';
 import { ILoadingProgress } from '../../reusable/LoadingOverlay';
 import { Tab } from '../ServerAdministration';
 
+import { Logo } from './Logo';
 import { Status } from './Status';
 import { TabButton } from './TabButton';
 import { VersionBadge } from './VersionBadge';
 
+import './TopBar.scss';
+
 export interface ITopbarProps {
   activeTab: Tab | null;
   adminRealmProgress: ILoadingProgress;
+  className?: string;
   isCloudTenant: boolean;
   onReconnect: () => void;
   onTabChanged: (tab: Tab) => void;
@@ -23,6 +27,7 @@ export interface ITopbarProps {
 export const TopBar = ({
   activeTab,
   adminRealmProgress,
+  className,
   isCloudTenant,
   onReconnect,
   onTabChanged,
@@ -30,13 +35,8 @@ export const TopBar = ({
   syncError,
   user,
 }: ITopbarProps) => (
-  <Navbar className="ServerAdministration__TopBar">
-    <svg
-      viewBox={realmLogo.viewBox}
-      className="ServerAdministration__TopBar__logo"
-    >
-      <use xlinkHref={`#${realmLogo.id}`} />
-    </svg>
+  <Navbar className={classNames('TopBar', className)}>
+    <Logo />
     {isCloudTenant ? (
       <TabButton
         activeTab={activeTab}

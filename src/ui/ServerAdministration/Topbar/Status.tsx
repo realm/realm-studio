@@ -13,9 +13,9 @@ export const Status = ({ onReconnect, progress, user }: IStatusProps) => {
   if (user) {
     if (progress.status === 'failed') {
       return (
-        <p className="ServerAdministration__Status">
+        <p className="TopBar__Status">
           <i className="fa fa-exclamation-circle" /> Disconnected: "
-          <span className="ServerAdministration__Status__error">
+          <span className="TopBar__Status__error">
             {progress.message}
           </span>"&nbsp;
           {/* progress.retry ? (
@@ -27,30 +27,26 @@ export const Status = ({ onReconnect, progress, user }: IStatusProps) => {
       );
     } else if (progress.status === 'in-progress') {
       return (
-        <p className="ServerAdministration__Status">
+        <p className="TopBar__Status">
           Connecting to&nbsp;
-          <span className="ServerAdministration__Status__server">
-            {user.server}
-          </span>
+          <span className="TopBar__Status__server">{user.server}</span>
         </p>
       );
     } else if (progress.status === 'done') {
       return (
-        <p className="ServerAdministration__Status">
+        <p className="TopBar__Status">
           Connected to&nbsp;
-          <span className="ServerAdministration__Status__server">
-            {user.server}
-          </span>
+          <span className="TopBar__Status__server">{user.server}</span>
         </p>
       );
     } else {
       return (
-        <p className="ServerAdministration__Status">
+        <p className="TopBar__Status">
           <i className="fa fa-exclamation-circle" /> Not connected
         </p>
       );
     }
   } else {
-    return <p className="ServerAdministration__Status">Authenticating ...</p>;
+    return <p className="TopBar__Status">Authenticating ...</p>;
   }
 };

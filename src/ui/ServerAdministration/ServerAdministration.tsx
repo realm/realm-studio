@@ -6,7 +6,7 @@ import { GettingStarted } from './GettingStarted';
 import { Log } from './Log';
 import { RealmsTable, ValidateCertificatesChangeHandler } from './RealmsTable';
 import { ToolsContainer } from './Tools';
-import { TopBar } from './Topbar';
+import { TopBar } from './TopBar';
 import { UsersTable } from './UsersTable';
 
 import './ServerAdministration.scss';
@@ -98,6 +98,7 @@ export const ServerAdministration = (props: IServerAdministrationProps) => {
       <TopBar
         activeTab={activeTab}
         adminRealmProgress={adminRealmProgress}
+        className="ServerAdministration__TopBar"
         isCloudTenant={isCloudTenant}
         onReconnect={onReconnect}
         onTabChanged={onTabChanged}
