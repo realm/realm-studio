@@ -19,7 +19,7 @@ export const TabButton = ({
   return (
     <Button
       color={activeTab === tab ? 'primary' : 'secondary'}
-      className="ServerAdministration__tab"
+      className="TopBar__TabButton"
       onClick={() => {
         onTabChanged(tab);
       }}

@@ -6,7 +6,7 @@ import { GettingStarted } from './GettingStarted';
 import { Log } from './Log';
 import { RealmsTable, ValidateCertificatesChangeHandler } from './RealmsTable';
 import { ToolsContainer } from './Tools';
-import { TopBar } from './Topbar';
+import { TopBar } from './TopBar';
 import { UsersTable } from './UsersTable';
 
 import './ServerAdministration.scss';
@@ -31,6 +31,7 @@ interface IServerAdministrationProps {
   onReconnect: () => void;
   onTabChanged: (tab: Tab) => void;
   onValidateCertificatesChange: ValidateCertificatesChangeHandler;
+  serverVersion?: string;
   syncError?: Realm.Sync.SyncError;
   user: Realm.Sync.User | null;
   validateCertificates: boolean;
@@ -87,6 +88,7 @@ export const ServerAdministration = (props: IServerAdministrationProps) => {
     isRealmOpening,
     onReconnect,
     onTabChanged,
+    serverVersion,
     syncError,
     user,
   } = props;
@@ -96,9 +98,11 @@ export const ServerAdministration = (props: IServerAdministrationProps) => {
       <TopBar
         activeTab={activeTab}
         adminRealmProgress={adminRealmProgress}
+        className="ServerAdministration__TopBar"
         isCloudTenant={isCloudTenant}
         onReconnect={onReconnect}
         onTabChanged={onTabChanged}
+        serverVersion={serverVersion}
         user={user}
       />
       <div className="ServerAdministration__content">

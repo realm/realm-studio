@@ -18,13 +18,10 @@
   animation-name: fade;
   background: $overlay-background;
   bottom: 0;
-  color: $color-dove;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   left: 0;
   opacity: 0;
   overflow: auto;
+  padding: 2 * $spacer;
   position: absolute;
   right: 0;
   top: 0;
@@ -36,27 +33,43 @@
     opacity: 1;
   }
 
+  &__Content {
+    align-items: center;
+    color: $color-dove;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100%;
+    width: 100%;
+  }
+
   &__Progress {
     margin: $spacer;
     width: 60vw;
   }
 
-  &__Message,
-  &__Failure {
+  &__Failure,
+  &__Message {
     align-items: center;
     display: flex;
     flex-direction: column;
-    padding: $spacer / 2;
     text-align: center;
-    white-space: pre;
-    width: 70%;
+    white-space: pre-line;
+    width: 80%;
+  }
+
+  &__Failure {
+    flex-basis: 4rem;
+    flex-shrink: 0;
+    font-size: 4rem;
+    margin: $spacer;
+  }
+
+  &__Message {
+    padding: $spacer;
   }
 
   &__RetryButton {
     margin-top: $spacer;
-  }
-
-  &__FailureIcon {
-    font-size: 4rem;
   }
 }
