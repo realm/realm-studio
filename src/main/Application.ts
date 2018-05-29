@@ -51,6 +51,9 @@ export class Application {
     [MainActions.RefreshCloudStatus]: () => {
       this.cloudManager.refresh();
     },
+    [MainActions.ReopenGitHubUrl]: () => {
+      this.cloudManager.reopenGitHubUrl();
+    },
     [MainActions.SetRaasEndpoint]: (endpoint: raas.Endpoint) => {
       return this.setRaasEndpoint(endpoint);
     },
@@ -314,6 +317,7 @@ export class Application {
         // We need a timeout here, because the close event fires before the cloud status updates
         reject(new Error('Window was closed instead of authenticating'));
         this.cloudManager.removeListener(listener);
+        this.cloudManager.abortPendingGitHubAuthentications();
       });
       // If resolveUser is false - we resolve the promise as soon as the window loads
       if (!resolveUser) {

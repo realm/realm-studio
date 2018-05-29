@@ -43,6 +43,10 @@ export class Sender extends ActionSender {
     return this.send(MainActions.RefreshCloudStatus);
   }
 
+  public reopenGitHubUrl() {
+    return this.send(MainActions.ReopenGitHubUrl);
+  }
+
   public setRaasEndpoint(endpoint: raas.Endpoint) {
     return this.send(MainActions.SetRaasEndpoint, endpoint);
   }

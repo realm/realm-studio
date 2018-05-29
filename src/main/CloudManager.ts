@@ -52,6 +52,7 @@ export class CloudManager {
   private static AUTHENTICATION_TIMEOUT = 5000;
   private listeningWindows: Electron.BrowserWindow[] = [];
   private listeners: CloudStatusListener[] = [];
+  private lastGitHubState?: string;
 
   public addListeningWindow(window: Electron.BrowserWindow) {
     this.listeningWindows.push(window);
@@ -78,7 +79,12 @@ export class CloudManager {
       waitingForUser: true,
       endpoint,
     });
-    const code = await github.authenticate();
+    const code = await github.authenticate(undefined, state => {
+      this.lastGitHubState = state;
+    });
+    // Forget the github state again ...
+    delete this.lastGitHubState;
+    // Authenticate with the newly obtained GitHub code
     return this.authenticate(() => {
       return raas.user.authenticateWithGitHub(code);
     });
@@ -88,39 +94,6 @@ export class CloudManager {
     return this.authenticate(() => {
       return raas.user.authenticateWithEmail(email, password);
     });
-  }
-
-  public async authenticate(
-    performAuthentication: () => Promise<raas.user.IAuthResponse>,
-  ) {
-    const endpoint = raas.getEndpoint();
-    try {
-      this.sendCloudStatus({
-        kind: 'authenticating',
-        waitingForUser: false,
-        endpoint,
-      });
-      const response = await timeout<raas.user.IAuthResponse>(
-        CloudManager.AUTHENTICATION_TIMEOUT,
-        new Error(
-          `Request timed out (waited ${
-            CloudManager.AUTHENTICATION_TIMEOUT
-          } ms)`,
-        ),
-        performAuthentication(),
-      );
-      raas.user.setToken(response.token);
-      this.refresh(true);
-      return response;
-    } catch (err) {
-      this.sendCloudStatus({
-        kind: 'error',
-        message: err.message,
-        endpoint,
-      });
-      // Allow callers to catch this error too, by rethrowing
-      throw err;
-    }
   }
 
   public async deauthenticate() {
@@ -165,6 +138,52 @@ export class CloudManager {
         message: err.message,
         endpoint,
       });
+    }
+  }
+
+  public reopenGitHubUrl() {
+    if (this.lastGitHubState) {
+      github.openUrl(this.lastGitHubState);
+    } else {
+      throw new Error('Expected an active GitHub authenticating state');
+    }
+  }
+
+  public abortPendingGitHubAuthentications() {
+    github.abortPendingAuthentications();
+    this.refresh();
+  }
+
+  protected async authenticate(
+    performAuthentication: () => Promise<raas.user.IAuthResponse>,
+  ) {
+    const endpoint = raas.getEndpoint();
+    try {
+      this.sendCloudStatus({
+        kind: 'authenticating',
+        waitingForUser: false,
+        endpoint,
+      });
+      const response = await timeout<raas.user.IAuthResponse>(
+        CloudManager.AUTHENTICATION_TIMEOUT,
+        new Error(
+          `Request timed out (waited ${
+            CloudManager.AUTHENTICATION_TIMEOUT
+          } ms)`,
+        ),
+        performAuthentication(),
+      );
+      raas.user.setToken(response.token);
+      this.refresh(true);
+      return response;
+    } catch (err) {
+      this.sendCloudStatus({
+        kind: 'error',
+        message: err.message,
+        endpoint,
+      });
+      // Allow callers to catch this error too, by rethrowing
+      throw err;
     }
   }
 

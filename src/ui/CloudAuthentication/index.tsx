@@ -10,13 +10,18 @@ import { CloudAuthentication } from './CloudAuthentication';
 const INTRODUCED_STORAGE_KEY = 'cloud-introduced';
 
 export type Mode = 'introduction' | 'log-in' | 'sign-up' | 'verify-email';
+export type Status =
+  | 'idle'
+  | 'authenticating'
+  | 'signing-up'
+  | 'awaiting-github';
 
 interface ICloudAuthenticationContainerProps {
   message?: string;
 }
 
 interface ICloudAuthenticationContainerState {
-  isLoading: boolean;
+  status: Status;
   mode: Mode;
 }
 
@@ -29,7 +34,7 @@ class CloudAuthenticationContainer extends React.Component<
     const wasCloudIntroduced =
       localStorage.getItem(INTRODUCED_STORAGE_KEY) !== null;
     this.state = {
-      isLoading: false,
+      status: 'idle',
       mode: wasCloudIntroduced ? 'log-in' : 'introduction',
     };
   }
@@ -37,13 +42,14 @@ class CloudAuthenticationContainer extends React.Component<
   public render() {
     return (
       <CloudAuthentication
-        isLoading={this.state.isLoading}
         message={this.props.message}
         mode={this.state.mode}
         onAuthenticateWithEmail={this.onAuthenticateWithEmail}
         onAuthenticateWithGitHub={this.onAuthenticateWithGitHub}
         onModeChange={this.onModeChange}
+        onReopenGitHubUrl={this.onReopenGitHubUrl}
         onSignUp={this.onSignUp}
+        status={this.state.status}
       />
     );
   }
@@ -52,26 +58,31 @@ class CloudAuthenticationContainer extends React.Component<
     email: string,
     password: string,
   ) => {
-    this.setState({ isLoading: true });
+    this.setState({ status: 'authenticating' });
     try {
       await main.authenticateWithEmail(email, password);
       this.setCloudIntroduced(true);
       // We could have closed not but it will get closed when the status updates
     } catch (err) {
       showError('Failed to authenticate with email', err);
-      this.setState({ isLoading: false });
+    } finally {
+      this.setState({ status: 'idle' });
     }
   };
 
   protected onAuthenticateWithGitHub = async () => {
-    this.setState({ isLoading: true });
+    this.setState({ status: 'awaiting-github' });
     try {
       const response = await main.authenticateWithGitHub();
       this.setCloudIntroduced(true);
       // We could have closed not but it will get closed when the status updates
     } catch (err) {
-      showError('Failed to authenticate with GitHub', err);
-      this.setState({ isLoading: false });
+      // This error is expected when closing down
+      if (err.message !== 'Pending GitHub authentications were aborted') {
+        showError('Failed to authenticate with GitHub', err);
+      }
+    } finally {
+      this.setState({ status: 'idle' });
     }
   };
 
@@ -79,16 +90,21 @@ class CloudAuthenticationContainer extends React.Component<
     this.setState({ mode });
   };
 
+  protected onReopenGitHubUrl = () => {
+    main.reopenGitHubUrl();
+  };
+
   protected onSignUp = async (email: string, password: string) => {
-    this.setState({ isLoading: true });
+    this.setState({ status: 'signing-up' });
     try {
       await raas.user.postEmailSignup(email, password);
       this.setCloudIntroduced(true);
       this.setState({ mode: 'verify-email' });
     } catch (err) {
       showError('Failed to sign up', err);
+    } finally {
+      this.setState({ status: 'idle' });
     }
-    this.setState({ isLoading: false });
   };
 
   protected setCloudIntroduced(introduced: boolean) {
