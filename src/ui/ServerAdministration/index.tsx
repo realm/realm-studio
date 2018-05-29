@@ -287,8 +287,10 @@ class ServerAdministrationContainer extends RealmLoadingComponent<
       serverVersion: version,
       progress: {
         status: 'failed',
-        message: `You are connecting to a Realm Object Server, which version is not longer supported by this version of Realm Studio.\n
-          You can download a version of Studio that is backwards compatible with older versions of the Realm Object Server, but that release won't receive updates.`,
+        message: `You are connecting to an old Realm Object Server,
+          no longer supported by Realm Studio.\n
+          You can download an older compatible version of Realm Studio,
+          which won't receive updates.`,
         retry: {
           label: 'Downgrade Realm Studio',
           onRetry: this.onDowngradeStudio,
