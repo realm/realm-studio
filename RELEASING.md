@@ -1,5 +1,7 @@
 # Releasing Realm Studio
 
+Below is only possible to do for Realm employees.
+
 ## Prepare a release
 
 ### On Jenkins
