@@ -60,6 +60,7 @@ export const open = async (
       error: ssl.errorCallback || defaultSyncErrorCallback,
       validate_ssl: ssl.validateCertificates,
       ssl_trust_certificate_path: ssl.certificatePath,
+      _disablePartialSyncUrlChecks: true,
     },
   });
 
