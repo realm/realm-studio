@@ -3,7 +3,7 @@ import {
   Button,
   ButtonDropdown,
   Card,
-  CardBlock,
+  CardBody,
   CardTitle,
   DropdownItem,
   DropdownMenu,
@@ -47,7 +47,7 @@ export const UserSidebarCard = ({
 }: IUserSidebarCardProps) => {
   return (
     <Card className="UserSidebar__Card">
-      <CardBlock className="UserSidebar__Top">
+      <CardBody className="UserSidebar__Top">
         <CardTitle className="UserSidebar__Title">
           <span
             className="UserSidebar__TitleText"
@@ -71,8 +71,8 @@ export const UserSidebarCard = ({
             </DropdownItem>
           </DropdownMenu>
         </ButtonDropdown>
-      </CardBlock>
-      <CardBlock className="UserSidebar__Tables">
+      </CardBody>
+      <CardBody className="UserSidebar__Tables">
         <AccountsTable accounts={selection.user.accounts} />
         <MetadataTable
           metadatas={selection.user.metadata}
@@ -81,15 +81,15 @@ export const UserSidebarCard = ({
           onMetadataDeleted={onMetadataDeleted}
         />
         <RealmsTable realms={selection.realms} />
-      </CardBlock>
-      <CardBlock className="UserSidebar__Controls">
+      </CardBody>
+      <CardBody className="UserSidebar__Controls">
         <Button size="sm" onClick={() => onChangePassword()}>
           Change password
         </Button>
         <Button size="sm" color="danger" onClick={() => onDeletion()}>
           Delete
         </Button>
-      </CardBlock>
+      </CardBody>
     </Card>
   );
 };

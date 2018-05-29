@@ -7,6 +7,7 @@ import {
   Input,
   InputGroup,
   InputGroupAddon,
+  InputGroupText,
   Label,
   Modal,
   ModalBody,
@@ -65,15 +66,17 @@ export const AddClassModal = ({
           <FormGroup className={nameIsValid ? '' : 'has-danger'}>
             <Label for="primaryKey">Primary key</Label>
             <InputGroup>
-              <InputGroupAddon>
-                <Input
-                  addon
-                  type="checkbox"
-                  id="primaryKey"
-                  name="primaryKey"
-                  checked={primaryKey}
-                  onChange={onPKChange}
-                />
+              <InputGroupAddon addonType="prepend">
+                <InputGroupText>
+                  <Input
+                    addon
+                    type="checkbox"
+                    id="primaryKey"
+                    name="primaryKey"
+                    checked={primaryKey}
+                    onChange={onPKChange}
+                  />
+                </InputGroupText>
               </InputGroupAddon>
               <Input
                 placeholder="uuid"
@@ -83,31 +86,35 @@ export const AddClassModal = ({
                 onChange={onPKNameChange}
                 disabled={!primaryKey}
               />
-              <InputGroupAddon>
-                <Label check>
-                  <Input
-                    type="radio"
-                    name="primaryKeyType"
-                    value="int"
-                    checked={primaryKeyType === 'int'}
-                    onChange={onPKTypeChange}
-                    disabled={!primaryKey}
-                  />{' '}
-                  int
-                </Label>
-              </InputGroupAddon>
-              <InputGroupAddon>
-                <Label check>
-                  <Input
-                    type="radio"
-                    name="primaryKeyType"
-                    value="string"
-                    checked={primaryKeyType === 'string'}
-                    onChange={onPKTypeChange}
-                    disabled={!primaryKey}
-                  />{' '}
-                  string
-                </Label>
+              <InputGroupAddon addonType="append">
+                <InputGroupText>
+                  <Label check>
+                    <Input
+                      addon
+                      type="radio"
+                      name="primaryKeyType"
+                      value="int"
+                      checked={primaryKeyType === 'int'}
+                      onChange={onPKTypeChange}
+                      disabled={!primaryKey}
+                    />{' '}
+                    int
+                  </Label>
+                </InputGroupText>
+                <InputGroupText>
+                  <Label check>
+                    <Input
+                      addon
+                      type="radio"
+                      name="primaryKeyType"
+                      value="string"
+                      checked={primaryKeyType === 'string'}
+                      onChange={onPKTypeChange}
+                      disabled={!primaryKey}
+                    />{' '}
+                    string
+                  </Label>
+                </InputGroupText>
               </InputGroupAddon>
             </InputGroup>
           </FormGroup>

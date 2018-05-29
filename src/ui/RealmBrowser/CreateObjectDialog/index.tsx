@@ -29,12 +29,9 @@ class CreateObjectDialogContainer extends React.PureComponent<
   ICreateObjectDialogContainerProps,
   ICreateObjectDialogContainerState
 > {
-  constructor() {
-    super();
-    this.state = {
-      values: {},
-    };
-  }
+  public state: ICreateObjectDialogContainerState = {
+    values: {},
+  };
 
   public componentDidMount() {
     this.generateInitialValues(this.props);

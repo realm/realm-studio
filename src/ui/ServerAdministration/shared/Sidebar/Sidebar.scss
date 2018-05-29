@@ -52,10 +52,10 @@
 
   &__CloseToggle {
     align-items: center;
-    background-color: $color-white;
+    background-color: $white;
     border-radius: $border-radius-lg;
     bottom: 1rem;
-    color: $color-elephant;
+    color: $elephant;
     display: flex;
     font-size: 1.5rem;
     height: $close-toggle-size;
@@ -79,7 +79,7 @@
     }
 
     &:hover {
-      color: $color-charcoal;
+      color: $charcoal;
 
       &::after {
         box-shadow: -5px 0 5px $sidebar-shadow;

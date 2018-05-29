@@ -17,7 +17,7 @@ export interface IAddClassModalState {
   primaryKeyType: string;
 }
 
-const initialState = {
+const initialState: IAddClassModalState = {
   name: '',
   nameIsValid: true,
   primaryKey: false,
@@ -29,12 +29,7 @@ class AddClassModalContainer extends React.Component<
   IAddClassModalProps,
   IAddClassModalState
 > {
-  public constructor() {
-    super();
-    this.state = {
-      ...initialState,
-    };
-  }
+  public state = { ...initialState };
 
   public render() {
     return <AddClassModal {...this.props} {...this.state} {...this} />;

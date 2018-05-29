@@ -60,14 +60,11 @@ export class HeaderCell extends React.Component<
   IHeaderCellProps,
   IHeaderCellState
 > {
-  private handle: React.ReactNode;
+  public state: IHeaderCellState = {
+    isDragging: false,
+  };
 
-  constructor() {
-    super();
-    this.state = {
-      isDragging: false,
-    };
-  }
+  private handle: React.ReactNode;
 
   public shouldComponentUpdate(
     nextProps: IHeaderCellProps,

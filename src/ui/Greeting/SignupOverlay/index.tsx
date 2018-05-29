@@ -6,25 +6,24 @@ import { SignupOverlay } from './SignupOverlay';
 
 const HAS_SIGNED_UP_STORAGE_KEY = 'has-signed-up';
 
+interface ISignupOverlayContainerState {
+  email: string;
+  newsletter: boolean;
+  isVisible: boolean;
+}
+
 class SignupOverlayContainer extends React.Component<
   {},
-  {
-    email: string;
-    newsletter: boolean;
-    isVisible: boolean;
-  }
+  ISignupOverlayContainerState
 > {
-  constructor() {
-    super();
-    const hasSignedUp =
+  public state: ISignupOverlayContainerState = {
+    email: '',
+    newsletter: false,
+    isVisible: !(
       mixpanel.get_property('has_signed_up') ||
-      localStorage.getItem(HAS_SIGNED_UP_STORAGE_KEY) === 'true';
-    this.state = {
-      email: '',
-      newsletter: false,
-      isVisible: !hasSignedUp,
-    };
-  }
+      localStorage.getItem(HAS_SIGNED_UP_STORAGE_KEY) === 'true'
+    ),
+  };
 
   public render() {
     return <SignupOverlay {...this.state} {...this} />;

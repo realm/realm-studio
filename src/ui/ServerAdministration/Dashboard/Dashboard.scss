@@ -19,7 +19,7 @@
   }
 
   &__Separator {
-    color: $color-elephant;
+    color: $elephant;
 
     &::before,
     &::after {
@@ -45,7 +45,7 @@
   }
 
   &__PlatformTip {
-    color: $color-elephant;
+    color: $elephant;
     height: 1rem;
     text-align: center;
   }

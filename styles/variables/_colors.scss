@@ -1,44 +1,31 @@
-$color-melon: #fcc397;
-$color-peach: #fc9f95;
-$color-sexy-salmon: #f77c88;
-$color-flamingo: #f25192;
-$color-mulberry: #d34ca3;
-$color-grape-jelly: #9a50a5;
-$color-indigo: #59569e;
-$color-ultramarine: #39477f;
-$color-charcoal: #1c233f;
-$color-elephant: #9a9ba5;
-$color-dove: #ebebf2;
+// Realm theme colors
+$melon: #fcc397;
+$peach: #fc9f95;
+$sexy-salmon: #f77c88;
+$flamingo: #f25192;
+$mulberry: #d34ca3;
+$grape-jelly: #9a50a5;
+$indigo: #59569e;
+$ultramarine: #39477f;
+$charcoal: #1c233f;
+$elephant: #9a9ba5;
+$dove: #ebebf2;
 
-$color-white: #fff;
-$color-black: #000;
-
+// Other color overrides
 $green: #28a745;
 
 // Override bootstrap colors
-$brand-primary: $color-ultramarine;
-$brand-danger: $color-sexy-salmon;
-$brand-info: $color-ultramarine;
-$btn-secondary-bg: $color-dove;
-$btn-secondary-border: $color-dove;
-$input-color-placeholder: rgba($color-elephant, .6);
+$primary: $ultramarine;
+$secondary: $dove;
+$danger: $sexy-salmon;
+$info: $ultramarine;
 
-$state-info-text: $color-ultramarine;
-$state-info-bg: lighten($color-ultramarine, 50%);
+$btn-secondary-bg: $dove;
+$btn-secondary-border: $dove;
+$input-color-placeholder: rgba($elephant, .6);
 
-$window-background: mix(#fff, $color-dove, 50%);
-$overlay-background: rgba($color-charcoal, .6);
+$state-info-text: $ultramarine;
+$state-info-bg: lighten($ultramarine, 50%);
 
-/*
-// TODO: Use this once reactstrap is up-to-date https://github.com/reactstrap/reactstrap/issues/487
-$theme-colors: (
-  primary: $color-ultramarine,
-  secondary: $color-dove,
-  success: $green,
-  info: $color-dove,
-  warning: $color-melon,
-  danger: $color-flamingo,
-  light: $color-dove,
-  dark: $color-charcoal
-);
-*/
+$window-background: mix(#fff, $dove, 50%);
+$overlay-background: rgba($charcoal, .6);

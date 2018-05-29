@@ -1,6 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import { Button, InputGroup, InputGroupButton } from 'reactstrap';
+import { Button, InputGroup, InputGroupAddon } from 'reactstrap';
 
 import { displayObject } from '../../../display';
 import { IClassFocus } from '../../../focus';
@@ -40,11 +40,11 @@ export const ObjectControl = ({
         </span>
       </div>
       {value !== null && property.optional ? (
-        <InputGroupButton>
+        <InputGroupAddon addonType="append">
           <Button size="sm" onClick={() => updateObjectReference(null)}>
             <i className="fa fa-close" />
           </Button>
-        </InputGroupButton>
+        </InputGroupAddon>
       ) : null}
       {children}
     </InputGroup>

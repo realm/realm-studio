@@ -15,8 +15,7 @@ const getColor = (type?: ros.RealmType) => {
   } else if (type === 'partial') {
     return 'warning';
   } else {
-    // TODO: Update this to "secondary" if upgrading Reactstrap
-    return 'default';
+    return 'secondary';
   }
 };
 

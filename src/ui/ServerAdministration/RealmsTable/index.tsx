@@ -34,18 +34,15 @@ class RealmsTableContainer extends React.PureComponent<
   IRealmTableContainerProps,
   IRealmTableContainerState
 > {
-  protected realms?: Realm.Results<ros.IRealmFile>;
+  public state: IRealmTableContainerState = {
+    isCreateRealmOpen: false,
+    selectedRealmPath: null,
+    searchString: '',
+    showPartialRealms: store.shouldShowPartialRealms(),
+    showSystemRealms: store.shouldShowSystemRealms(),
+  };
 
-  constructor() {
-    super();
-    this.state = {
-      isCreateRealmOpen: false,
-      selectedRealmPath: null,
-      searchString: '',
-      showPartialRealms: store.shouldShowPartialRealms(),
-      showSystemRealms: store.shouldShowSystemRealms(),
-    };
-  }
+  protected realms?: Realm.Results<ros.IRealmFile>;
 
   public componentWillMount() {
     this.setRealms(

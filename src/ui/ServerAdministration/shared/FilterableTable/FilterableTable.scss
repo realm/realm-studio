@@ -11,13 +11,13 @@
   }
 
   &__topbar {
-    background-color: $color-dove;
+    background-color: $dove;
     padding: $spacer / 2;
   }
 
   &__row {
     &--selected {
-      background: $color-dove;
+      background: $dove;
     }
   }
 

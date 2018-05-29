@@ -20,12 +20,12 @@
 
   &__Entry {
     align-items: flex-start;
-    border-bottom: 1px solid $color-dove;
+    border-bottom: 1px solid $dove;
     display: flex;
     padding: .1rem 0;
 
-    $danger-text: darken($brand-danger, 20%);
-    $danger-background: rgba($brand-danger, .1);
+    $danger-text: darken($danger, 20%);
+    $danger-background: rgba($danger, .1);
 
     &--fatal,
     &--error {
@@ -40,7 +40,7 @@
     &--warn {
       .Log__Entry__Level,
       .Log__Entry__Message {
-        color: $brand-warning;
+        color: $warning;
       }
     }
 
@@ -49,7 +49,7 @@
     &--trace {
       .Log__Entry__Level,
       .Log__Entry__Message {
-        color: $color-elephant;
+        color: $elephant;
       }
     }
 

@@ -88,28 +88,26 @@ class RealmBrowserContainer
     IRealmBrowserState
   >
   implements IMenuGenerator {
+  public state: IRealmBrowserState = {
+    confirmModal: undefined,
+    editMode:
+      (localStorage.getItem(EDIT_MODE_STORAGE_KEY) as EditMode) ||
+      EditMode.InputBlur,
+    dataVersion: 0,
+    focus: null,
+    isEncryptionDialogVisible: false,
+    progress: { status: 'idle' },
+    schemas: [],
+    isAddClassOpen: false,
+    isAddPropertyOpen: false,
+  };
+
   private clickTimeout?: any;
   private latestCellValidation?: {
     columnIndex: number;
     rowIndex: number;
     valid: boolean;
   };
-
-  constructor() {
-    super();
-    const editMode = localStorage.getItem(EDIT_MODE_STORAGE_KEY) as EditMode;
-    this.state = {
-      confirmModal: undefined,
-      editMode: editMode || EditMode.InputBlur,
-      dataVersion: 0,
-      focus: null,
-      isEncryptionDialogVisible: false,
-      progress: { status: 'idle' },
-      schemas: [],
-      isAddClassOpen: false,
-      isAddPropertyOpen: false,
-    };
-  }
 
   public componentWillMount() {
     this.props.addMenuGenerator(this);
