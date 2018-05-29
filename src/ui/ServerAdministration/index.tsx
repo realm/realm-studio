@@ -1,4 +1,5 @@
 import * as electron from 'electron';
+import * as os from 'os';
 import * as React from 'react';
 import * as Realm from 'realm';
 
@@ -150,6 +151,12 @@ class ServerAdministrationContainer extends RealmLoadingComponent<
         this.props.credentials.url,
       );
 
+      const compatible = this.isCompatibleVersion(version);
+      if (!compatible) {
+        this.failWithIncompatibleVersion(version);
+        return;
+      }
+
       this.setState({
         serverVersion: version,
         progress: {
@@ -271,6 +278,39 @@ class ServerAdministrationContainer extends RealmLoadingComponent<
     }
   }
 
+  protected isCompatibleVersion(version?: string) {
+    return typeof version === 'string' && version.charAt(0) === '3';
+  }
+
+  protected failWithIncompatibleVersion(version?: string) {
+    this.setState({
+      serverVersion: version,
+      progress: {
+        status: 'failed',
+        message: `You are connecting to a Realm Object Server, which version is not longer supported by this version of Realm Studio.\n
+          You can download a version of Studio that is backwards compatible with older versions of the Realm Object Server, but that release won't receive updates.`,
+        retry: {
+          label: 'Downgrade Realm Studio',
+          onRetry: this.onDowngradeStudio,
+        },
+      },
+    });
+  }
+
+  protected downgradedStudioUrl() {
+    const baseUrl = 'https://studio-releases.realm.io/v1.19.2-ros2';
+    const platform = os.platform();
+    if (platform === 'darwin') {
+      return `${baseUrl}/download/mac-dmg`;
+    } else if (platform === 'linux') {
+      return `${baseUrl}/download/linux-appimage`;
+    } else if (platform === 'win32') {
+      return `${baseUrl}/download/win-setup`;
+    } else {
+      return baseUrl;
+    }
+  }
+
   protected onRealmChanged = () => {
     this.setState({ adminRealmChanges: this.state.adminRealmChanges + 1 });
   };
@@ -319,6 +359,12 @@ class ServerAdministrationContainer extends RealmLoadingComponent<
     if (this.props.isCloudTenant && status.kind === 'not-authenticated') {
       electron.remote.getCurrentWindow().close();
     }
+  };
+
+  protected onDowngradeStudio = () => {
+    const url = this.downgradedStudioUrl();
+    electron.remote.shell.openExternal(url);
+    window.close();
   };
 }
 
