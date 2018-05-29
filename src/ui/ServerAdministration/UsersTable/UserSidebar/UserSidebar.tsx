@@ -16,9 +16,7 @@ import { ISelection } from '..';
 import { Sidebar } from '../../shared/Sidebar';
 
 import { IUserSidebarContainerProps } from '.';
-import { AccountsTable } from './AccountsTable';
-import { MetadataTable } from './MetadataTable';
-import { RealmsTable } from './RealmsTable';
+import { UserSidebarCard } from './UserSidebarCard';
 
 import './UserSidebar.scss';
 
@@ -48,60 +46,27 @@ export const UserSidebar = ({
   selection,
   toggleRoleDropdown,
 }: IUserSidebarProps) => {
+  // We need this type-hax because we don't want the IRealmFile to have a isValid method when it gets created
+  const currentUser = selection
+    ? ((selection.user as any) as ros.IUser & Realm.Object)
+    : null;
   return (
     <Sidebar className="UserSidebar" isOpen={isOpen} onToggle={onToggle}>
-      {selection && (
-        <Card className="UserSidebar__Card">
-          <CardBlock className="UserSidebar__Top">
-            <CardTitle className="UserSidebar__Title">
-              <span
-                className="UserSidebar__TitleText"
-                title={selection.user.userId}
-              >
-                {selection.user.userId}
-              </span>
-            </CardTitle>
-            <ButtonDropdown
-              isOpen={roleDropdownOpen}
-              toggle={toggleRoleDropdown}
-            >
-              <DropdownToggle caret={true}>
-                {selection.user.isAdmin ? 'Administrator' : 'Regular user'}
-              </DropdownToggle>
-              <DropdownMenu>
-                <DropdownItem
-                  onClick={() => onRoleChanged(ros.UserRole.Administrator)}
-                >
-                  Administrator
-                </DropdownItem>
-                <DropdownItem
-                  onClick={() => onRoleChanged(ros.UserRole.Regular)}
-                >
-                  Regular user
-                </DropdownItem>
-              </DropdownMenu>
-            </ButtonDropdown>
-          </CardBlock>
-          <CardBlock className="UserSidebar__Tables">
-            <AccountsTable accounts={selection.user.accounts} />
-            <MetadataTable
-              metadatas={selection.user.metadata}
-              onMetadataAppended={onMetadataAppended}
-              onMetadataChanged={onMetadataChanged}
-              onMetadataDeleted={onMetadataDeleted}
-            />
-            <RealmsTable realms={selection.realms} />
-          </CardBlock>
-          <CardBlock className="UserSidebar__Controls">
-            <Button size="sm" onClick={() => onChangePassword()}>
-              Change password
-            </Button>
-            <Button size="sm" color="danger" onClick={() => onDeletion()}>
-              Delete
-            </Button>
-          </CardBlock>
-        </Card>
-      )}
+      {selection &&
+        currentUser &&
+        currentUser.isValid() && (
+          <UserSidebarCard
+            onChangePassword={onChangePassword}
+            onDeletion={onDeletion}
+            onMetadataAppended={onMetadataAppended}
+            onMetadataChanged={onMetadataChanged}
+            onMetadataDeleted={onMetadataDeleted}
+            onRoleChanged={onRoleChanged}
+            roleDropdownOpen={roleDropdownOpen}
+            selection={selection}
+            toggleRoleDropdown={toggleRoleDropdown}
+          />
+        )}
     </Sidebar>
   );
 };
