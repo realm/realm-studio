@@ -47,12 +47,9 @@ class ContentContainer extends React.Component<
   IContentContainerProps,
   IContentContainerState
 > {
-  constructor() {
-    super();
-    this.state = {
-      query: '',
-    };
-  }
+  public state: IContentContainerState = {
+    query: '',
+  };
 
   public componentDidUpdate(
     prevProps: IContentContainerProps,

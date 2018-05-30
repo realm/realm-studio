@@ -34,7 +34,7 @@ export const OtherForm = ({
       className="ConnectToServer__AuthenticationForm__Payload"
       value={options}
       onChange={onOptionsChanged}
-      size="sm"
+      bsSize="sm"
     />
   </div>
 );

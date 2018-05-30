@@ -25,7 +25,7 @@ export const LevelSelector = ({
   return (
     <ButtonDropdown
       size="sm"
-      dropup={true}
+      direction="up"
       className={className}
       isOpen={isDropdownOpen}
       toggle={toggle}

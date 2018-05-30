@@ -16,12 +16,9 @@ class CreateRealmDialogContainer extends React.Component<
   ICreateRealmDialogContainerProps,
   ICreateRealmDialogContainerState
 > {
-  public constructor() {
-    super();
-    this.state = {
-      path: '',
-    };
-  }
+  public state: ICreateRealmDialogContainerState = {
+    path: '',
+  };
 
   public render() {
     return <CreateRealmDialog {...this.props} {...this.state} {...this} />;

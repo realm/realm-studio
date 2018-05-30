@@ -5,17 +5,6 @@
   flex-direction: column;
   height: 100%;
 
-  &__TopBar {
-    flex-shrink: 0;
-  }
-
-  // TODO: Remove this block once we're using bootstrap-v4.0.0-beta
-  &__TopBar { // sass-lint:disable-line no-mergeable-selectors
-    align-items: center;
-    display: flex;
-    flex-direction: row;
-  }
-
   &__content {
     background: $white;
     display: flex;

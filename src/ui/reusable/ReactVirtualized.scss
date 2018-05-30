@@ -9,11 +9,11 @@
     }
 
     &__headerRow {
-      border-bottom: 2px solid $color-dove;
+      border-bottom: 2px solid $dove;
     }
 
     &__row {
-      border-bottom: 1px solid $color-dove;
+      border-bottom: 1px solid $dove;
 
       &:focus {
         // Disabling the default focus outline

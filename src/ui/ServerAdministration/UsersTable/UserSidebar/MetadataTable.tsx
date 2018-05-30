@@ -48,7 +48,7 @@ export const MetadataTable = ({
                 <td title={metadata.key}>
                   <Input
                     value={metadata.key || ''}
-                    size="sm"
+                    bsSize="sm"
                     onChange={e => {
                       onMetadataChanged(
                         index,
@@ -61,7 +61,7 @@ export const MetadataTable = ({
                 <td title={metadata.value}>
                   <Input
                     value={metadata.value || ''}
-                    size="sm"
+                    bsSize="sm"
                     onChange={e => {
                       onMetadataChanged(
                         index,

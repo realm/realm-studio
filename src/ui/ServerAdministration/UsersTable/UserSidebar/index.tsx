@@ -31,13 +31,10 @@ class UserSidebarContainer extends React.Component<
   IUserSidebarContainerProps,
   IUserSidebarContainerState
 > {
-  constructor() {
-    super();
-    this.state = {
-      roleDropdownOpen: false,
-      selection: null,
-    };
-  }
+  public state: IUserSidebarContainerState = {
+    roleDropdownOpen: false,
+    selection: null,
+  };
 
   public componentDidUpdate(
     prevProps: IUserSidebarContainerProps,

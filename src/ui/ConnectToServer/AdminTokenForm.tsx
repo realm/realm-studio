@@ -19,7 +19,7 @@ export const AdminTokenForm = ({
         name="token"
         onChange={onTokenChanged}
         required={isRequired}
-        size="sm"
+        bsSize="sm"
         type="text"
         value={token}
       />

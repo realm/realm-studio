@@ -22,7 +22,7 @@ export const UsernamePasswordForm = ({
         type="text"
         name="username"
         id="username"
-        size="sm"
+        bsSize="sm"
         placeholder="realm-admin"
         value={username}
         onChange={onUsernameChanged}
@@ -33,7 +33,7 @@ export const UsernamePasswordForm = ({
         type="password"
         name="password"
         id="password"
-        size="sm"
+        bsSize="sm"
         value={password}
         onChange={onPasswordChanged}
       />

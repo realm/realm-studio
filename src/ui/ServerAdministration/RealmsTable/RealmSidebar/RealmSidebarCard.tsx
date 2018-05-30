@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Card, CardBlock, CardTitle } from 'reactstrap';
+import { Button, Card, CardBody, CardText, CardTitle } from 'reactstrap';
 import * as Realm from 'realm';
 
 import * as ros from '../../../../services/ros';
@@ -29,7 +29,7 @@ export const RealmSidebarCard = ({
     : false;
   return (
     <Card className="RealmSidebar__Card">
-      <CardBlock className="RealmSidebar__Top">
+      <CardBody className="RealmSidebar__Top">
         <CardTitle className="RealmSidebar__Title">
           <RealmTypeBadge
             className="RealmSidebar__TypeBadge"
@@ -39,15 +39,15 @@ export const RealmSidebarCard = ({
             {shortenRealmPath(realm.path)}
           </span>
         </CardTitle>
-        <p className="RealmSidebar__SubTitle">
+        <CardText className="RealmSidebar__SubTitle">
           Owned by {displayUser(realm.owner)}
-        </p>
-      </CardBlock>
-      <CardBlock className="RealmSidebar__Tables">
+        </CardText>
+      </CardBody>
+      <CardBody className="RealmSidebar__Tables">
         {permissions ? <PermissionsTable permissions={permissions} /> : null}
-      </CardBlock>
+      </CardBody>
       {canUpgradeType ? (
-        <CardBlock className="RealmSidebar__UpgradeTypeBlock">
+        <CardBody className="RealmSidebar__UpgradeTypeBlock">
           This Realm can be upgraded to a Reference Realm which will enable{' '}
           <a
             target="_blank"
@@ -62,9 +62,9 @@ export const RealmSidebarCard = ({
           >
             Fine-Grained Permissions
           </a>. Note: Doing so will remove any existing permissions.
-        </CardBlock>
+        </CardBody>
       ) : null}
-      <CardBlock className="RealmSidebar__Controls">
+      <CardBody className="RealmSidebar__Controls">
         <Button
           size="sm"
           color="primary"
@@ -88,7 +88,7 @@ export const RealmSidebarCard = ({
         >
           Delete
         </Button>
-      </CardBlock>
+      </CardBody>
     </Card>
   );
 };

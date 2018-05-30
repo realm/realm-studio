@@ -3,6 +3,7 @@
 .TopBar {
   background: $window-background;
   cursor: default;
+  flex-wrap: nowrap;
   justify-content: flex-start;
   overflow-x: auto;
   user-select: none;

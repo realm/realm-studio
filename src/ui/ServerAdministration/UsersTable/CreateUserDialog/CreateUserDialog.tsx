@@ -13,7 +13,7 @@ import {
 
 export const CreateUserDialog = ({
   isOpen,
-  toggle,
+  onToggle,
   onPasswordChanged,
   onPasswordRepeatedChanged,
   onUsernameChanged,
@@ -23,7 +23,7 @@ export const CreateUserDialog = ({
   username,
 }: {
   isOpen: boolean;
-  toggle: () => void;
+  onToggle: () => void;
   onPasswordChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onPasswordRepeatedChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onUsernameChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -33,9 +33,9 @@ export const CreateUserDialog = ({
   username: string;
 }) => {
   return (
-    <Modal isOpen={isOpen} toggle={toggle}>
+    <Modal isOpen={isOpen} toggle={onToggle}>
       <Form onSubmit={onSubmit}>
-        <ModalHeader toggle={toggle}>Create a new user</ModalHeader>
+        <ModalHeader toggle={onToggle}>Create a new user</ModalHeader>
         <ModalBody>
           <FormGroup>
             <Label for="username">Username</Label>
@@ -43,7 +43,7 @@ export const CreateUserDialog = ({
               name="username"
               id="username"
               type="text"
-              required={true}
+              required
               value={username}
               onChange={onUsernameChanged}
             />
@@ -54,7 +54,7 @@ export const CreateUserDialog = ({
               name="password"
               id="password"
               type="password"
-              required={true}
+              required
               value={password}
               onChange={onPasswordChanged}
             />
@@ -65,10 +65,9 @@ export const CreateUserDialog = ({
               name="password-repeated"
               id="password-repeated"
               type="password"
-              required={true}
-              valid={
-                passwordRepeated ? password === passwordRepeated : undefined
-              }
+              required
+              valid={passwordRepeated !== '' && password === passwordRepeated}
+              invalid={password !== passwordRepeated}
               value={passwordRepeated}
               onChange={onPasswordRepeatedChanged}
             />
@@ -76,7 +75,7 @@ export const CreateUserDialog = ({
         </ModalBody>
         <ModalFooter>
           <Button color="primary">Create user</Button>{' '}
-          <Button color="secondary" onClick={toggle}>
+          <Button color="secondary" onClick={onToggle}>
             Cancel
           </Button>
         </ModalFooter>

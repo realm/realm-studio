@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Input, InputGroup, InputGroupButton } from 'reactstrap';
+import { Button, Input, InputGroup, InputGroupAddon } from 'reactstrap';
 
 export interface IQuerySearchProps {
   onQueryChange: (query: string) => void;
@@ -26,11 +26,11 @@ export const QuerySearch = ({
         value={query}
       />
       {onQueryHelp && (
-        <InputGroupButton>
+        <InputGroupAddon addonType="append">
           <Button onClick={onQueryHelp}>
             <i className="fa fa-question" aria-hidden="true" />
           </Button>
-        </InputGroupButton>
+        </InputGroupAddon>
       )}
     </InputGroup>
   </section>

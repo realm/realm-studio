@@ -1,6 +1,6 @@
 import * as React from 'react';
 // import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import { Alert, Button, InputGroupButton } from 'reactstrap';
+import { Alert, Button, InputGroupAddon } from 'reactstrap';
 import * as Realm from 'realm';
 
 import { isPrimitive } from '../../primitives';
@@ -34,11 +34,11 @@ const Item = ({
       property={property}
       value={value}
     >
-      <InputGroupButton>
+      <InputGroupAddon addonType="append">
         <Button onClick={onDelete} size="sm">
           <i className="fa fa-trash" />
         </Button>
-      </InputGroupButton>
+      </InputGroupAddon>
     </TypeControl>
   </section>
 );

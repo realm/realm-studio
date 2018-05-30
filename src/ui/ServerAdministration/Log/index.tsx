@@ -33,21 +33,18 @@ class LogContainer extends React.Component<
   ILogContainerProps,
   ILogContainerState
 > {
+  public state: ILogContainerState = {
+    entries: [],
+    isLevelSelectorOpen: false,
+    level: LogLevel.info,
+    progress: { status: 'idle' },
+  };
+
   private socket?: WebSocket;
   private cellMeasurerCache: CellMeasurerCache = new CellMeasurerCache({
     fixedWidth: true,
     minHeight: 20,
   });
-
-  constructor() {
-    super();
-    this.state = {
-      entries: [],
-      isLevelSelectorOpen: false,
-      level: LogLevel.info,
-      progress: { status: 'idle' },
-    };
-  }
 
   public render() {
     return (

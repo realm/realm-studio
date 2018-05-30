@@ -2,13 +2,7 @@
 @import "variables/fonts";
 @import "variables/sizes";
 
-// Bootstrap variables for which functions are a dependency
-
-// TODO: Use this once reactstrap is up-to-date https://github.com/reactstrap/reactstrap/issues/487
-// @import "~bootstrap/scss/functions";
-// @import "~bootstrap/scss/variables";
-
-// Core bootstrap (v4.0.0-alpha.6) variables and mixins
+// Core bootstrap (v4.0.0) functions, variables and mixins
+@import "~bootstrap/scss/functions";
 @import "~bootstrap/scss/variables";
 @import "~bootstrap/scss/mixins";
-@import "~bootstrap/scss/custom";

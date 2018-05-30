@@ -21,17 +21,14 @@ interface IGreetingContainerState {
 }
 
 class GreetingContainer extends React.Component<{}, IGreetingContainerState> {
-  constructor() {
-    super();
-    this.state = {
-      isCloudInstancesDropdownOpen: false,
-      isSyncEnabled: false,
-      updateStatus: {
-        state: 'up-to-date',
-      },
-      version: electron.remote.app.getVersion() || 'unknown',
-    };
-  }
+  public state: IGreetingContainerState = {
+    isCloudInstancesDropdownOpen: false,
+    isSyncEnabled: false,
+    updateStatus: {
+      state: 'up-to-date',
+    },
+    version: electron.remote.app.getVersion() || 'unknown',
+  };
 
   public componentDidMount() {
     electron.ipcRenderer.on('cloud-status', this.cloudStatusChanged);

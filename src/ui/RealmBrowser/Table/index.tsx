@@ -102,17 +102,13 @@ class TableContainer extends React.PureComponent<
   ITableContainerProps,
   ITableContainerState
 > {
+  public state: ITableContainerState = {
+    columnWidths: [],
+    isSorting: false,
+  };
   // A reference to the grid inside the content container is needed to resize collumns
   private gridContent: Grid | null = null;
   private gridHeader: Grid | null = null;
-
-  constructor() {
-    super();
-    this.state = {
-      columnWidths: [],
-      isSorting: false,
-    };
-  }
 
   public render() {
     const filteredSortedResults = this.getFilteredSortedResults({
