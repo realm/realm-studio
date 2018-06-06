@@ -28,10 +28,10 @@ import { IPropertyWithName } from '..';
 const HANDLE_WIDTH = 5;
 const HANDLE_OFFSET = Math.ceil(HANDLE_WIDTH / 2);
 
-const getPropertyDescription = (property: Realm.ObjectSchemaProperty) => {
+const getPropertyType = (property: Realm.ObjectSchemaProperty) => {
   switch (property.type) {
     case 'list':
-      return `${property.objectType}[]`;
+      return property.objectType;
     case 'object':
     case 'linkingObjects':
       return property.objectType;
@@ -40,12 +40,12 @@ const getPropertyDescription = (property: Realm.ObjectSchemaProperty) => {
   }
 };
 
-const getPropertyPostfix = (property: Realm.ObjectSchemaProperty) => {
-  return property.optional ? '?' : '';
-};
-
 export const getPropertyDisplayed = (property: Realm.ObjectSchemaProperty) => {
-  return getPropertyDescription(property) + getPropertyPostfix(property);
+  return [
+    getPropertyType(property),
+    property.optional ? '?' : '',
+    property.type === 'list' ? '[]' : '',
+  ].join('');
 };
 
 const isPropertySortable = (property: IPropertyWithName) => {

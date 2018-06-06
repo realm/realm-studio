@@ -66,7 +66,7 @@ export interface IRealmBrowserProps {
   isEncryptionDialogVisible: boolean;
   isPropertyNameAvailable: (name: string) => boolean;
   onAddClass: (schema: Realm.ObjectSchema) => void;
-  onAddProperty: (property: Realm.PropertiesTypes) => void;
+  onAddProperty: (name: string, type: Realm.PropertyType) => void;
   onCancelTransaction: () => void;
   onCellChange: CellChangeHandler;
   onCellClick: CellClickHandler;

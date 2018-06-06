@@ -21,6 +21,9 @@ import * as path from 'path';
 import * as React from 'react';
 import * as Realm from 'realm';
 
+import { ImportFormat } from '../../services/data-importer';
+import { CSVDataImporter } from '../../services/data-importer/csv/CSVDataImporter';
+import ImportSchemaGenerator from '../../services/data-importer/ImportSchemaGenerator';
 import { Language, SchemaExporter } from '../../services/schema-export';
 import {
   IMenuGenerator,
@@ -32,8 +35,12 @@ import {
   IRealmLoadingComponentState,
   RealmLoadingComponent,
 } from '../reusable/RealmLoadingComponent';
+import { getRange } from '../reusable/utils';
+
 import { Focus, getClassName, IClassFocus, IListFocus } from './focus';
 import * as primitives from './primitives';
+import { RealmBrowser } from './RealmBrowser';
+import * as schemaUtils from './schema-utils';
 import { isSelected } from './Sidebar';
 import {
   CellChangeHandler,
@@ -43,12 +50,6 @@ import {
   SortEndHandler,
   SortStartHandler,
 } from './Table';
-
-import { ImportFormat } from '../../services/data-importer';
-import { CSVDataImporter } from '../../services/data-importer/csv/CSVDataImporter';
-import ImportSchemaGenerator from '../../services/data-importer/ImportSchemaGenerator';
-import { getRange } from '../reusable/utils';
-import { RealmBrowser } from './RealmBrowser';
 
 // TODO: Remove this interface once the Realm.ObjectSchemaProperty
 // has a name parameter in its type definition.
@@ -353,6 +354,8 @@ class RealmBrowserContainer
       try {
         // The schema version needs to be bumped for local realms
         const nextSchemaVersion = this.realm.schemaVersion + 1;
+        const cleanedSchema = schemaUtils.cleanUpSchema(this.state.schemas);
+        const modifiedSchema = [...cleanedSchema, schema];
         // Close the current Realm
         this.realm.close();
         // Deleting the object to indicate we've closed it
@@ -360,7 +363,7 @@ class RealmBrowserContainer
         // Load it again with the new schema
         await this.loadRealm(
           this.props.realm,
-          [...this.state.schemas, schema],
+          modifiedSchema,
           nextSchemaVersion,
         );
         // Select the schema when it the realm has loaded
@@ -384,7 +387,7 @@ class RealmBrowserContainer
     });
   };
 
-  public onAddProperty = async (property: Realm.PropertiesTypes) => {
+  public onAddProperty = async (name: string, type: Realm.PropertyType) => {
     if (
       this.realm &&
       this.state.focus &&
@@ -394,24 +397,23 @@ class RealmBrowserContainer
       try {
         const focusedClassName = this.state.focus.className;
         const nextSchemaVersion = this.realm.schemaVersion + 1;
-        const schemas = this.state.schemas.map(
-          schema =>
-            isSelected(this.state.focus, schema.name)
-              ? {
-                  ...schema,
-                  properties: {
-                    ...schema.properties,
-                    ...property,
-                  },
-                }
-              : schema,
+        const cleanedSchema = schemaUtils.cleanUpSchema(this.state.schemas);
+        const modifiedSchema = schemaUtils.addProperty(
+          cleanedSchema,
+          this.state.focus.className,
+          name,
+          type,
         );
         // Close the current Realm
         this.realm.close();
         // Deleting the object to indicate we've closed it
         delete this.realm;
         // Load it again with the new schema
-        await this.loadRealm(this.props.realm, schemas, nextSchemaVersion);
+        await this.loadRealm(
+          this.props.realm,
+          modifiedSchema,
+          nextSchemaVersion,
+        );
         // Ensure we've selected the class that we've just added a property to
         this.onClassSelected(focusedClassName);
       } catch (err) {
