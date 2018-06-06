@@ -19,13 +19,13 @@ function readHeader() {
 
 const header = readHeader();
 
-function processFolder(path) {
+function processDirectory(path) {
   const subPaths = fs.readdirSync(path);
   for (const subPath of subPaths) {
     const absoluteSubPath = resolve(path, subPath);
     const stat = fs.statSync(absoluteSubPath);
     if (stat.isDirectory()) {
-      processFolder(absoluteSubPath);
+      processDirectory(absoluteSubPath);
     } else if (stat.isFile()) {
       processFile(absoluteSubPath);
     }
@@ -66,5 +66,13 @@ function locateHeader(lines) {
   };
 }
 
-const srcPath = resolve(__dirname, '../src');
-processFolder(srcPath);
+if(process.argv.length === 2) {
+  const srcPath = resolve(__dirname, '../src');
+  processDirectory(srcPath);
+} else {
+  // The script was asked to run on specific file(s)
+  const [_node, _script, ...paths] = process.argv;
+  for (const path of paths) {
+    processFile(path);
+  }
+}
