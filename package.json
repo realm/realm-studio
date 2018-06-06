@@ -121,7 +121,8 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": [
-      "tslint --fix"
+      "tslint --fix",
+      "fix-headers"
     ],
     "package.json": [
       "check:package-lock"
