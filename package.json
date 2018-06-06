@@ -124,6 +124,9 @@
       "tslint --fix",
       "fix-headers"
     ],
+    "*.scss": [
+      "fix-headers"
+    ],
     "package.json": [
       "check:package-lock"
     ]

@@ -1,7 +1,7 @@
 const fs = require('fs');
 const { resolve, extname } = require('path');
 
-const EXTENSIONS_WITH_HEADERS = ['.ts', '.tsx'];
+const EXTENSIONS_WITH_HEADERS = ['.ts', '.tsx', '.scss'];
 
 function readHeader() {
   const headerPath = resolve(__dirname, 'header.txt');
