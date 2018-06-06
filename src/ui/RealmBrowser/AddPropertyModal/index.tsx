@@ -26,7 +26,7 @@ export interface IAddPropertyModalProps {
   focus: IClassFocus;
   isOpen: boolean;
   isPropertyNameAvailable: (name: string) => boolean;
-  onAddProperty: (property: Realm.PropertiesTypes) => void;
+  onAddProperty: (name: string, type: Realm.PropertyType) => void;
   schemas: Realm.ObjectSchema[];
   toggle: () => void;
 }
@@ -77,7 +77,8 @@ class AddPropertyModalContainer extends React.Component<
 
   public onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    this.props.onAddProperty(this.getSchemaProperty());
+    const type = this.getSchemaType();
+    this.props.onAddProperty(this.state.name, type);
     this.props.toggle();
     this.setState(initialState);
   };
@@ -142,9 +143,8 @@ class AddPropertyModalContainer extends React.Component<
     });
   };
 
-  private getSchemaProperty = () => {
+  private getSchemaType = () => {
     const {
-      name,
       type: propertyType,
       optional,
       isList,
@@ -153,9 +153,7 @@ class AddPropertyModalContainer extends React.Component<
     const optionalMarker =
       optional && !(isList && !primitiveTypeSelected) ? '?' : '';
     const listMarker = isList ? '[]' : '';
-    return {
-      [name]: `${propertyType}${optionalMarker}${listMarker}`,
-    };
+    return `${propertyType}${optionalMarker}${listMarker}`;
   };
 
   private getClassesTypes = (schemas: Realm.ObjectSchema[]): string[] =>
