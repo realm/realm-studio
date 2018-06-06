@@ -42,9 +42,9 @@ export const addProperty = (
   });
 };
 
-function cleanUpProperty(
+const cleanUpProperty = (
   property: Realm.ObjectSchemaProperty,
-): Realm.ObjectSchemaProperty | string {
+): Realm.ObjectSchemaProperty | string => {
   if (
     property.type === 'list' &&
     property.objectType &&
@@ -54,16 +54,16 @@ function cleanUpProperty(
   } else {
     return property;
   }
-}
+};
 
 // A mitigation before https://github.com/realm/realm-js/issues/1847 gets fixed
 export const cleanUpSchema = (objectSchemas: Realm.ObjectSchema[]) => {
   return objectSchemas.map(schema => {
     const properties: Realm.PropertiesTypes = {};
-    for (const [name, property] of Object.entries(schema.properties)) {
+    Object.entries(schema.properties).forEach(([name, property]) => {
       properties[name] =
         typeof property === 'string' ? property : cleanUpProperty(property);
-    }
+    });
     // Return the modified object schema
     return {
       ...schema,
