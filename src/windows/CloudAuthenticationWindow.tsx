@@ -16,25 +16,23 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import { Window } from './Window';
+import { IWindow } from './Window';
 import { ICloudAuthenticationWindowTypedProps } from './WindowTypedProps';
 
 export interface ICloudAuthenticationWindowProps {
   message?: string;
 }
 
-export class CloudAuthenticationWindow extends Window {
-  public static getWindowOptions(
+export const CloudAuthenticationWindow: IWindow = {
+  getWindowOptions: (
     props: ICloudAuthenticationWindowProps,
-  ): Partial<Electron.BrowserWindowConstructorOptions> {
+  ): Partial<Electron.BrowserWindowConstructorOptions> => {
     return {
       title: `Realm Cloud`,
       width: 400,
       height: 450,
     };
-  }
-
-  public static getComponent() {
-    return require('../ui').CloudAuthentication;
-  }
-}
+  },
+  getComponent: () => require('../ui').CloudAuthentication,
+  getTrackedProperties: () => ({}),
+};
