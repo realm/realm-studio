@@ -20,7 +20,6 @@
 // @see https://github.com/realm/realm-studio/blob/master/src/renderer.tsx#L15-L30
 
 import ElectronStore = require('electron-store');
-export { store };
 
 class RealmStudioStore {
   public readonly KEY_SHOW_PARTIAL_REALMS = 'realmlist.show-partial-realms';
@@ -82,4 +81,15 @@ class RealmStudioStore {
   }
 }
 
-const store = new RealmStudioStore();
+function createStore(): RealmStudioStore {
+  // Export a store - if we're running in electron, null otherwise
+  if (process.type) {
+    return new RealmStudioStore();
+  } else {
+    // tslint:disable-next-line:no-console
+    console.warn('Running outside electron, RealmStudioStore was not created');
+    return null as any;
+  }
+}
+
+export const store = createStore();
