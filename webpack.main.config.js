@@ -1,5 +1,6 @@
 const _ = require("lodash");
 const path = require("path");
+const webpack = require("webpack");
 const Visualizer = require('webpack-visualizer-plugin');
 
 module.exports = (env) => {
@@ -39,7 +40,9 @@ module.exports = (env) => {
       // See https://github.com/webpack/hot-node-example#real-app
       libraryTarget: "commonjs2"
     },
-    plugins: baseConfig.plugins.concat(isProduction ? [] : [
+    plugins: baseConfig.plugins.concat([
+      new webpack.IgnorePlugin(/^.*$/, /src\/ui$/),
+    ], isProduction ? [] : [
       new Visualizer({
         filename: './main.statistics.html',
       }),

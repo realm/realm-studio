@@ -18,21 +18,40 @@
 
 import * as React from 'react';
 
-import { Tutorial } from '../ui/Tutorial';
+import * as tutorials from '../services/tutorials';
+
 import { Window } from './Window';
-import { ITutorialWindowProps } from './WindowType';
+import { ITutorialWindowTypedProps } from './WindowTypedProps';
+
+export interface ITutorialWindowProps {
+  id: string;
+  context: {
+    serverUrl: string;
+  };
+}
 
 // TODO: Consider if we can have the window not show before a connection has been established.
 
-export class TutorialWindow extends Window<ITutorialWindowProps, {}> {
-  public render() {
-    return <Tutorial {...this.props} />;
+export class TutorialWindow extends Window {
+  public static getWindowOptions(
+    props: ITutorialWindowProps,
+  ): Partial<Electron.BrowserWindowConstructorOptions> {
+    const config = tutorials.getConfig(props.id);
+    const title = config ? config.title : 'Missing a title';
+    return {
+      title: `Tutorial: ${title}`,
+      width: 800,
+      height: 500,
+    };
   }
 
-  protected getTrackedProperties() {
+  public static getComponent() {
+    return require('../ui').Tutorial;
+  }
+
+  protected getTrackedProperties(props: ITutorialWindowProps) {
     return {
-      ...super.getTrackedProperties(),
-      id: this.props.id,
+      id: props.id,
     };
   }
 }

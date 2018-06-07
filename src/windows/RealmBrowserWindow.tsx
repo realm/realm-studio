@@ -18,28 +18,48 @@
 
 import * as React from 'react';
 
-import { RealmBrowser } from '../ui/RealmBrowser';
+import * as ros from '../services/ros';
+import { RealmBrowser } from '../ui';
+
 import { Window } from './Window';
-import { IRealmBrowserWindowProps } from './WindowType';
+import { IRealmBrowserWindowTypedProps } from './WindowTypedProps';
+
+export interface IRealmBrowserWindowProps {
+  realm: ros.realms.ISyncedRealmToLoad | ros.realms.ILocalRealmToLoad;
+}
+
+const getRealmUrl = (realm: ros.realms.ISyncedRealmToLoad) => {
+  const url = new URL(
+    realm.authentication instanceof Realm.Sync.User
+      ? realm.authentication.server
+      : realm.authentication.url,
+  );
+  url.pathname = realm.path;
+  return url.toString();
+};
 
 // TODO: Consider if we can have the window not show before a connection has been established.
 
-export class RealmBrowserWindow extends Window<IRealmBrowserWindowProps, {}> {
-  public render() {
-    return (
-      <RealmBrowser
-        {...this.props}
-        addMenuGenerator={this.addMenuGenerator}
-        removeMenuGenerator={this.removeMenuGenerator}
-        updateMenu={this.updateMenu}
-      />
-    );
+export class RealmBrowserWindow extends Window {
+  public static getWindowOptions(
+    props: IRealmBrowserWindowProps,
+  ): Partial<Electron.BrowserWindowConstructorOptions> {
+    const title =
+      props.realm.mode === 'synced'
+        ? getRealmUrl(props.realm)
+        : props.realm.path;
+    return {
+      title,
+    };
   }
 
-  protected getTrackedProperties() {
+  public static getComponent() {
+    return require('../ui').RealmBrowser;
+  }
+
+  public static getTrackedProperties(props: IRealmBrowserWindowProps) {
     return {
-      ...super.getTrackedProperties(),
-      mode: this.props.realm.mode,
+      mode: props.realm.mode,
     };
   }
 }

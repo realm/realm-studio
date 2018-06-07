@@ -28,11 +28,9 @@ let promise: Promise<void> | null;
 export const reauthenticate = (message: string) => {
   // Check if we are already trying to reauthenticate the user
   if (!promise) {
-    promise = main
-      .showCloudAuthentication({ type: 'cloud-authentication', message }, true)
-      .then(() => {
-        promise = null;
-      });
+    promise = main.showCloudAuthentication({ message }, true).then(() => {
+      promise = null;
+    });
   }
   return promise;
 };

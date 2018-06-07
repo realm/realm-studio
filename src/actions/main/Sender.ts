@@ -24,7 +24,7 @@ import {
   IRealmBrowserWindowProps,
   IServerAdministrationWindowProps,
   ITutorialWindowProps,
-} from '../../windows/WindowType';
+} from '../../windows/WindowProps';
 import { ActionSender } from '../ActionSender';
 import { LoopbackTransport, RendererTransport } from '../transports';
 
@@ -70,7 +70,7 @@ export class Sender extends ActionSender {
   }
 
   public showCloudAuthentication(
-    props: ICloudAuthenticationWindowProps = { type: 'cloud-authentication' },
+    props: ICloudAuthenticationWindowProps = {},
     resolveUser: boolean = false,
   ): Promise<void | raas.user.IAccountResponse> {
     return this.send(MainActions.ShowCloudAuthentication, props, resolveUser);

@@ -33,7 +33,7 @@ import {
   IRealmBrowserWindowProps,
   IServerAdministrationWindowProps,
   ITutorialWindowProps,
-} from '../windows/WindowType';
+} from '../windows/WindowProps';
 
 import { CertificateManager } from './CertificateManager';
 import { CloudManager, ICloudStatus } from './CloudManager';
@@ -276,7 +276,10 @@ export class Application {
 
   public showRealmBrowser(props: IRealmBrowserWindowProps) {
     return new Promise(resolve => {
-      const window = this.windowManager.createWindow(props);
+      const window = this.windowManager.createWindow({
+        type: 'realm-browser',
+        ...props,
+      });
       window.show();
       window.webContents.once('did-finish-load', () => {
         resolve();
@@ -288,7 +291,10 @@ export class Application {
     return new Promise(resolve => {
       // TODO: Change this once the realm-js Realm.Sync.User serializes correctly
       // @see https://github.com/realm/realm-js/issues/1276
-      const window = this.windowManager.createWindow(props);
+      const window = this.windowManager.createWindow({
+        type: 'server-administration',
+        ...props,
+      });
       window.show();
       window.webContents.once('did-finish-load', () => {
         resolve();
@@ -304,7 +310,10 @@ export class Application {
 
   public showTutorial(props: ITutorialWindowProps) {
     return new Promise(resolve => {
-      const window = this.windowManager.createWindow(props);
+      const window = this.windowManager.createWindow({
+        type: 'tutorial',
+        ...props,
+      });
       window.show();
       window.webContents.once('did-finish-load', () => {
         resolve();
@@ -317,7 +326,10 @@ export class Application {
     resolveUser: boolean = false,
   ): Promise<raas.user.IAccountResponse> {
     return new Promise((resolve, reject) => {
-      const window = this.windowManager.createWindow(props);
+      const window = this.windowManager.createWindow({
+        type: 'cloud-authentication',
+        ...props,
+      });
       const listener = (status: ICloudStatus) => {
         if (status.kind === 'authenticated') {
           this.cloudManager.removeListener(listener);
@@ -492,10 +504,7 @@ export class Application {
       try {
         if (!currentUser) {
           await this.cloudManager.deauthenticate();
-          const newUser = await this.showCloudAuthentication(
-            { type: 'cloud-authentication' },
-            true,
-          );
+          const newUser = await this.showCloudAuthentication({}, true);
           // Retry
           return this.openCloudUrl(url);
         } else if (url.username !== currentUser.id) {
@@ -511,10 +520,7 @@ export class Application {
             return;
           } else {
             await this.cloudManager.deauthenticate();
-            const newUser = await this.showCloudAuthentication(
-              { type: 'cloud-authentication' },
-              true,
-            );
+            const newUser = await this.showCloudAuthentication({}, true);
             // Retry
             return this.openCloudUrl(url);
           }
@@ -555,20 +561,17 @@ export class Application {
     await this.showServerAdministration({
       credentials: raas.user.getTenantCredentials(serverUrl.toString()),
       isCloudTenant: true,
-      type: 'server-administration',
       validateCertificates: true,
     });
   }
 
   private openLocalRealmAtPath = (filePath: string) => {
-    const props: IRealmBrowserWindowProps = {
-      type: 'realm-browser',
+    return this.showRealmBrowser({
       realm: {
         mode: realms.RealmLoadingMode.Local,
         path: filePath,
       },
-    };
-    return this.showRealmBrowser(props);
+    });
   };
 
   private processArguments(argv: string[]) {

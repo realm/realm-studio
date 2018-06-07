@@ -20,7 +20,8 @@ import { BrowserWindow, screen, shell } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 
-import { getWindowOptions, WindowProps } from '../windows/WindowType';
+import { getWindowOptions } from '../windows/Window';
+import { WindowTypedProps } from '../windows/WindowTypedProps';
 
 export interface IEventListenerCallbacks {
   blur?: () => void;
@@ -41,7 +42,7 @@ function getRendererHtmlPath() {
 export class WindowManager {
   public windows: Electron.BrowserWindow[] = [];
 
-  public createWindow(props: WindowProps) {
+  public createWindow(props: WindowTypedProps) {
     const window = new BrowserWindow({
       title: 'Realm Studio',
       width: 800,

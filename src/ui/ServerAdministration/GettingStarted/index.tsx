@@ -54,7 +54,6 @@ class GettingStartedContainer extends React.Component<
   public onShowTutorial = (name: 'ios' | 'android' | 'cloud') => {
     if (name === 'cloud') {
       main.showTutorial({
-        type: 'tutorial',
         id: 'cloud-intro',
         context: {
           serverUrl: this.props.serverUrl,
