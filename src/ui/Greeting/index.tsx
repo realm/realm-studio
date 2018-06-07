@@ -93,7 +93,6 @@ class GreetingContainer extends React.Component<{}, IGreetingContainerState> {
       if (tenantUrl) {
         const credentials = raas.user.getTenantCredentials(tenantUrl);
         return main.showServerAdministration({
-          type: 'server-administration',
           credentials,
           validateCertificates: true,
           isCloudTenant: true,

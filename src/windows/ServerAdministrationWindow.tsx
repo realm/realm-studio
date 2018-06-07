@@ -18,37 +18,40 @@
 
 import * as React from 'react';
 
-import { ServerAdministration } from '../ui/ServerAdministration';
+import * as ros from '../services/ros';
+import { ServerAdministration } from '../ui';
+
 import { Window } from './Window';
-import { IServerAdministrationWindowProps } from './WindowType';
+import { IServerAdministrationWindowTypedProps } from './WindowTypedProps';
+
+export interface IServerAdministrationWindowProps {
+  credentials: ros.IServerCredentials;
+  isCloudTenant?: boolean;
+  validateCertificates: boolean;
+}
 
 // TODO: Consider if we can have the window not show before a connection has been established.
 
-export class ServerAdministrationWindow extends Window<
-  IServerAdministrationWindowProps,
-  {}
-> {
-  public render() {
-    return (
-      <ServerAdministration
-        onValidateCertificatesChange={this.onValidateCertificatesChange}
-        {...this.props}
-      />
-    );
-  }
-
-  protected getTrackedProperties() {
+export class ServerAdministrationWindow extends Window {
+  public static getWindowOptions(
+    props: IServerAdministrationWindowProps,
+  ): Partial<Electron.BrowserWindowConstructorOptions> {
+    const credentials = props.credentials;
+    const url = credentials ? credentials.url : 'http://...';
     return {
-      ...super.getTrackedProperties(),
-      url: this.props.credentials.url,
+      title: `Realm Object Server: ${url}`,
+      width: 1024,
+      height: 600,
     };
   }
 
-  protected onValidateCertificatesChange = (validateCertificates: boolean) => {
-    const url = new URL(location.href);
-    const props = { ...this.props };
-    props.validateCertificates = validateCertificates;
-    url.searchParams.set('props', JSON.stringify(props));
-    location.replace(url.toString());
-  };
+  public static getComponent() {
+    return require('../ui').ServerAdministration;
+  }
+
+  public static getTrackedProperties(props: IServerAdministrationWindowProps) {
+    return {
+      url: props.credentials.url,
+    };
+  }
 }

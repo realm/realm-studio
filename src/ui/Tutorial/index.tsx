@@ -20,7 +20,7 @@ import * as React from 'react';
 
 import * as tutorials from '../../services/tutorials';
 
-import { ITutorialWindowProps } from '../../windows/WindowType';
+import { ITutorialWindowProps } from '../../windows/WindowProps';
 import { Tutorial } from './Tutorial';
 
 interface ITutorialContainerState {

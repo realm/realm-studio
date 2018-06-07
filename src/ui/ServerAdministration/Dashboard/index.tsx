@@ -50,7 +50,6 @@ class DashboardContainer extends React.Component<
 
   public onShowCloudTutorial = () => {
     main.showTutorial({
-      type: 'tutorial',
       id: 'cloud-intro',
       context: {
         serverUrl: this.props.serverUrl,

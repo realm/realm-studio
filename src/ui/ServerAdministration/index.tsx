@@ -33,10 +33,7 @@ import {
   users,
 } from '../../services/ros';
 import { countdown, wait } from '../../utils';
-import {
-  IRealmBrowserWindowProps,
-  IServerAdministrationWindowProps,
-} from '../../windows/WindowType';
+import { IServerAdministrationWindowProps } from '../../windows/WindowProps';
 import { showError } from '../reusable/errors';
 import {
   IRealmLoadingComponentState,
@@ -48,7 +45,6 @@ import { ServerAdministration, Tab } from './ServerAdministration';
 
 export interface IServerAdministrationContainerProps
   extends IServerAdministrationWindowProps {
-  onValidateCertificatesChange: ValidateCertificatesChangeHandler;
   isCloudTenant?: boolean;
 }
 
@@ -118,7 +114,7 @@ class ServerAdministrationContainer extends RealmLoadingComponent<
         adminRealmChanges={this.state.adminRealmChanges}
         adminRealmProgress={this.state.progress}
         isCloudTenant={this.props.isCloudTenant || false}
-        onValidateCertificatesChange={this.props.onValidateCertificatesChange}
+        onValidateCertificatesChange={this.onValidateCertificatesChange}
         validateCertificates={this.props.validateCertificates}
       />
     );
@@ -135,10 +131,7 @@ class ServerAdministrationContainer extends RealmLoadingComponent<
         path,
         validateCertificates: this.props.validateCertificates,
       };
-      await main.showRealmBrowser({
-        type: 'realm-browser',
-        realm,
-      });
+      await main.showRealmBrowser({ realm });
       this.setState({ isRealmOpening: false });
     }
   };
@@ -287,7 +280,7 @@ class ServerAdministrationContainer extends RealmLoadingComponent<
     ) {
       // TODO: Remove this hack once this Realm JS issue has resolved:
       // https://github.com/realm/realm-js/issues/1469
-      this.props.onValidateCertificatesChange(realm.validateCertificates);
+      this.onValidateCertificatesChange(realm.validateCertificates);
     } else {
       return super.loadRealm(realm);
     }
@@ -349,7 +342,7 @@ class ServerAdministrationContainer extends RealmLoadingComponent<
           retry: {
             label: 'Reconnect, trusting the certificate',
             onRetry: () => {
-              this.props.onValidateCertificatesChange(false);
+              this.onValidateCertificatesChange(false);
             },
           },
         },
@@ -382,6 +375,14 @@ class ServerAdministrationContainer extends RealmLoadingComponent<
     const url = this.downgradedStudioUrl();
     electron.remote.shell.openExternal(url);
     window.close();
+  };
+
+  protected onValidateCertificatesChange = (validateCertificates: boolean) => {
+    const url = new URL(location.href);
+    const props = { ...this.props };
+    props.validateCertificates = validateCertificates;
+    url.searchParams.set('props', JSON.stringify(props));
+    location.replace(url.toString());
   };
 }
 

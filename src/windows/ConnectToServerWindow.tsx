@@ -16,17 +16,26 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
-
-import { ConnectToServer } from '../ui/ConnectToServer';
 import { Window } from './Window';
-import { IConnectToServerWindowProps } from './WindowType';
+import { IConnectToServerWindowTypedProps } from './WindowTypedProps';
 
-export class ConnectToServerDialog extends Window<
-  IConnectToServerWindowProps,
-  {}
-> {
-  public render() {
-    return <ConnectToServer url={this.props.url} />;
+export interface IConnectToServerWindowProps {
+  url?: string;
+}
+
+export class ConnectToServerWindow extends Window {
+  public static getWindowOptions(
+    props: IConnectToServerWindowProps,
+  ): Partial<Electron.BrowserWindowConstructorOptions> {
+    return {
+      title: 'Connect to Realm Object Server',
+      width: 500,
+      height: 300,
+      resizable: false,
+    };
+  }
+
+  public static getComponent() {
+    return require('../ui').ConnectToServer;
   }
 }

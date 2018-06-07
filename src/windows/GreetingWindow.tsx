@@ -16,14 +16,27 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
-
-import { Greeting } from '../ui/Greeting';
 import { Window } from './Window';
-import { IGreetingWindowProps } from './WindowType';
+import { IGreetingWindowTypedProps } from './WindowTypedProps';
 
-export class GreetingWindow extends Window<IGreetingWindowProps, {}> {
-  public render() {
-    return <Greeting />;
+// tslint:disable-next-line:no-empty-interface
+export interface IGreetingWindowProps {
+  // Tumbleweed
+}
+
+export class GreetingWindow extends Window {
+  public static getWindowOptions(): Partial<
+    Electron.BrowserWindowConstructorOptions
+  > {
+    return {
+      title: `Realm Studio`,
+      width: 600,
+      height: 400,
+      resizable: false,
+    };
+  }
+
+  public static getComponent() {
+    return require('../ui').Greeting;
   }
 }

@@ -29,7 +29,7 @@ import {
   IMenuGenerator,
   IMenuGeneratorProps,
 } from '../../windows/MenuGenerator';
-import { IRealmBrowserWindowProps } from '../../windows/WindowType';
+import { IRealmBrowserWindowProps } from '../../windows/WindowProps';
 import { showError } from '../reusable/errors';
 import {
   IRealmLoadingComponentState,
