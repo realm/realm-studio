@@ -26,6 +26,7 @@ import { getDefaultMenuTemplate } from '../main/MainMenu';
 export interface IMenuGenerator {
   generateMenu(
     template: MenuItemConstructorOptions[],
+    updateMenu: () => void,
   ): MenuItemConstructorOptions[];
 }
 
@@ -36,10 +37,12 @@ export interface IMenuGeneratorProps {
 const isProduction = process.env.NODE_ENV === 'production';
 
 export const generateMenu = (
-  generator: IMenuGenerator,
+  generator: IMenuGenerator | undefined,
   updateMenu: () => void,
 ) => {
   const defaultTemplate = getDefaultMenuTemplate(updateMenu);
-  const template = generator.generateMenu(defaultTemplate);
+  const template = generator
+    ? generator.generateMenu(defaultTemplate, updateMenu)
+    : defaultTemplate;
   return remote.Menu.buildFromTemplate(template);
 };
