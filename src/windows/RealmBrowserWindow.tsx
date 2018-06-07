@@ -17,6 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
+import { URL } from 'url';
 
 import * as ros from '../services/ros';
 import { RealmBrowser } from '../ui';

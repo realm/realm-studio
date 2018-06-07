@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import { Menu, MenuItemConstructorOptions, remote } from 'electron';
+import { MenuItem, MenuItemConstructorOptions, remote } from 'electron';
 
 import { main } from '../actions/main';
 import { getDefaultMenuTemplate } from '../main/MainMenu';
@@ -30,20 +30,16 @@ export interface IMenuGenerator {
 }
 
 export interface IMenuGeneratorProps {
-  addMenuGenerator(generator: IMenuGenerator): void;
-  removeMenuGenerator(generator: IMenuGenerator): void;
   updateMenu(): void;
 }
 
 const isProduction = process.env.NODE_ENV === 'production';
 
 export const generateMenu = (
-  generators: IMenuGenerator[],
+  generator: IMenuGenerator,
   updateMenu: () => void,
 ) => {
   const defaultTemplate = getDefaultMenuTemplate(updateMenu);
-  const template = generators.reduce((partialTemplate, generator) => {
-    return generator.generateMenu(partialTemplate);
-  }, defaultTemplate);
+  const template = generator.generateMenu(defaultTemplate);
   return remote.Menu.buildFromTemplate(template);
 };

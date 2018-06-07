@@ -124,15 +124,20 @@ class ServerAdministrationContainer extends RealmLoadingComponent<
   public onRealmOpened = async (path: string) => {
     if (!this.state.isRealmOpening) {
       this.setState({ isRealmOpening: true });
-      // Let the UI update before sync waiting on the window to appear
-      const realm: realms.ISyncedRealmToLoad = {
-        authentication: this.props.credentials,
-        mode: realms.RealmLoadingMode.Synced,
-        path,
-        validateCertificates: this.props.validateCertificates,
-      };
-      await main.showRealmBrowser({ realm });
-      this.setState({ isRealmOpening: false });
+      try {
+        // Let the UI update before sync waiting on the window to appear
+        const realm: realms.ISyncedRealmToLoad = {
+          authentication: this.props.credentials,
+          mode: realms.RealmLoadingMode.Synced,
+          path,
+          validateCertificates: this.props.validateCertificates,
+        };
+        await main.showRealmBrowser({ realm });
+      } catch (err) {
+        showError('Failed to open Realm', err);
+      } finally {
+        this.setState({ isRealmOpening: false });
+      }
     }
   };
 

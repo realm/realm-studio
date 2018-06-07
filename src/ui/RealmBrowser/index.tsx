@@ -25,6 +25,7 @@ import { ImportFormat } from '../../services/data-importer';
 import { CSVDataImporter } from '../../services/data-importer/csv/CSVDataImporter';
 import ImportSchemaGenerator from '../../services/data-importer/ImportSchemaGenerator';
 import { Language, SchemaExporter } from '../../services/schema-export';
+import { getRange, menuUtils } from '../../utils';
 import {
   IMenuGenerator,
   IMenuGeneratorProps,
@@ -35,7 +36,6 @@ import {
   IRealmLoadingComponentState,
   RealmLoadingComponent,
 } from '../reusable/RealmLoadingComponent';
-import { getRange } from '../reusable/utils';
 
 import { Focus, getClassName, IClassFocus, IListFocus } from './focus';
 import * as primitives from './primitives';
@@ -128,10 +128,6 @@ class RealmBrowserContainer
     valid: boolean;
   };
 
-  public componentWillMount() {
-    this.props.addMenuGenerator(this);
-  }
-
   public componentDidMount() {
     this.loadRealm(this.props.realm);
     this.addListeners();
@@ -140,7 +136,6 @@ class RealmBrowserContainer
   public componentWillUnmount() {
     super.componentWillUnmount();
     this.removeListeners();
-    this.props.removeMenuGenerator(this);
     if (this.realm && this.realm.isInTransaction) {
       this.realm.cancelTransaction();
     }
@@ -167,11 +162,7 @@ class RealmBrowserContainer
       ],
     };
 
-    const separator: MenuItemConstructorOptions = {
-      type: 'separator',
-    };
-
-    const exportMenu: MenuItemConstructorOptions = {
+    const exportSchemaMenu: MenuItemConstructorOptions = {
       label: 'Save model definitions',
       submenu: [
         {
@@ -247,47 +238,23 @@ class RealmBrowserContainer
       ],
     };
 
-    return template.map(menu => {
-      if (menu.id === 'file' && Array.isArray(menu.submenu)) {
-        const closeIndex = menu.submenu.findIndex(item => item.id === 'close');
-        if (closeIndex) {
-          const submenu = [
-            ...menu.submenu.slice(0, closeIndex),
-            exportMenu,
-            importMenu,
-            separator,
-            ...menu.submenu.slice(closeIndex),
-          ];
-          return {
-            ...menu,
-            submenu,
-          };
-        } else {
-          return menu;
-        }
-      } else if (menu.id === 'edit' && Array.isArray(menu.submenu)) {
-        const selectAllIndex = menu.submenu.findIndex(
-          item => item.id === 'select-all',
-        );
-        if (selectAllIndex) {
-          const submenu = [
-            ...menu.submenu.slice(0, selectAllIndex + 1),
-            separator,
-            ...transactionMenuItems,
-            editModeMenu,
-            ...menu.submenu.slice(selectAllIndex + 1),
-          ];
-          return {
-            ...menu,
-            submenu,
-          };
-        } else {
-          return menu;
-        }
-      } else {
-        return menu;
-      }
-    });
+    return menuUtils.performModifications(template, [
+      {
+        action: 'append',
+        id: 'import',
+        items: [importMenu],
+      },
+      {
+        action: 'prepend',
+        id: 'close',
+        items: [exportSchemaMenu, { type: 'separator' }],
+      },
+      {
+        action: 'append',
+        id: 'select-all',
+        items: [{ type: 'separator' }, ...transactionMenuItems, editModeMenu],
+      },
+    ]);
   }
 
   public onCellChange: CellChangeHandler = params => {

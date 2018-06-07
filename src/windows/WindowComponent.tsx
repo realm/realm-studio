@@ -59,7 +59,7 @@ const getCurrentWindowProps = (): WindowTypedProps => {
 
 export abstract class WindowComponent extends React.Component
   implements IMenuGeneratorProps {
-  protected menuGenerators: IMenuGenerator[] = [];
+  protected menuGenerator?: IMenuGenerator;
   protected windowProps = getCurrentWindowProps();
   protected CurrentWindow = getWindowClass(this.windowProps);
   protected CurrentWindowComponent = this.CurrentWindow.getComponent();
@@ -84,33 +84,24 @@ export abstract class WindowComponent extends React.Component
     return (
       <this.CurrentWindowComponent
         {...this.windowProps}
-        addMenuGenerator={this.addMenuGenerator}
-        removeMenuGenerator={this.removeMenuGenerator}
         updateMenu={this.updateMenu}
+        ref={this.windowComponentRef}
       />
     );
   }
 
-  public addMenuGenerator = (generator: IMenuGenerator) => {
-    if (this.menuGenerators.indexOf(generator) === -1) {
-      // Add the menu generator to the array
-      this.menuGenerators.push(generator);
-    }
-  };
-
-  public removeMenuGenerator = (generator: IMenuGenerator) => {
-    const index = this.menuGenerators.indexOf(generator);
-    if (index >= 0) {
-      // Remove this menu generator from the array
-      this.menuGenerators.splice(index, 1);
+  public windowComponentRef = (element: any) => {
+    if (typeof element.generateMenu === 'function') {
+      // The window component has a method to generate a menu
+      this.menuGenerator = element;
     }
   };
 
   public updateMenu = () => {
     // Let's only generate menus of windows that are focused
-    if (remote.getCurrentWindow().isFocused()) {
+    if (this.menuGenerator && remote.getCurrentWindow().isFocused()) {
       // Generate and set the application
-      const menu = generateMenu(this.menuGenerators, this.updateMenu);
+      const menu = generateMenu(this.menuGenerator, this.updateMenu);
       remote.Menu.setApplicationMenu(menu);
     }
   };

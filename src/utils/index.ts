@@ -19,3 +19,7 @@
 export { countdown } from './countdown';
 export { timeout } from './timeout';
 export { wait } from './wait';
+export { getRange } from './range';
+
+import * as menu from './menu';
+export { menu as menuUtils };
