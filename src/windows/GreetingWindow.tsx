@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import { Window } from './Window';
+import { IWindow } from './Window';
 import { IGreetingWindowTypedProps } from './WindowTypedProps';
 
 // tslint:disable-next-line:no-empty-interface
@@ -24,19 +24,13 @@ export interface IGreetingWindowProps {
   // Tumbleweed
 }
 
-export class GreetingWindow extends Window {
-  public static getWindowOptions(): Partial<
-    Electron.BrowserWindowConstructorOptions
-  > {
-    return {
-      title: `Realm Studio`,
-      width: 600,
-      height: 400,
-      resizable: false,
-    };
-  }
-
-  public static getComponent() {
-    return require('../ui').Greeting;
-  }
-}
+export const GreetingWindow: IWindow = {
+  getWindowOptions: (): Partial<Electron.BrowserWindowConstructorOptions> => ({
+    title: `Realm Studio`,
+    width: 600,
+    height: 400,
+    resizable: false,
+  }),
+  getComponent: () => require('../ui').Greeting,
+  getTrackedProperties: () => ({}),
+};

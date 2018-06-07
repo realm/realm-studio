@@ -25,24 +25,12 @@ interface ITrackedProperties {
   [name: string]: string;
 }
 
-export abstract class Window {
-  public static getComponent(): React.ComponentClass<
-    WindowTypedProps & IMenuGeneratorProps
-  > {
-    throw new Error('The static getComponent must be implemented');
-  }
-
-  public static getWindowOptions(
+export interface IWindow {
+  getComponent(): React.ComponentClass<WindowTypedProps & IMenuGeneratorProps>;
+  getWindowOptions(
     props: WindowProps,
-  ): Partial<Electron.BrowserWindowConstructorOptions> {
-    return {};
-  }
-
-  public static getTrackedProperties(
-    props: WindowProps,
-  ): { [key: string]: string } {
-    return {};
-  }
+  ): Partial<Electron.BrowserWindowConstructorOptions>;
+  getTrackedProperties(props: WindowProps): { [key: string]: string };
 }
 
 import { CloudAuthenticationWindow } from './CloudAuthenticationWindow';
@@ -52,7 +40,7 @@ import { RealmBrowserWindow } from './RealmBrowserWindow';
 import { ServerAdministrationWindow } from './ServerAdministrationWindow';
 import { TutorialWindow } from './TutorialWindow';
 
-export function getWindowClass(props: WindowTypedProps): typeof Window {
+export function getWindowClass(props: WindowTypedProps): IWindow {
   // We're using calls to require here, to prevent loading anything that does not
   // relate to the specific window being loaded.
   if (props.type === 'cloud-authentication') {

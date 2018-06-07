@@ -21,7 +21,7 @@ import * as React from 'react';
 import * as ros from '../services/ros';
 import { ServerAdministration } from '../ui';
 
-import { Window } from './Window';
+import { IWindow } from './Window';
 import { IServerAdministrationWindowTypedProps } from './WindowTypedProps';
 
 export interface IServerAdministrationWindowProps {
@@ -32,10 +32,10 @@ export interface IServerAdministrationWindowProps {
 
 // TODO: Consider if we can have the window not show before a connection has been established.
 
-export class ServerAdministrationWindow extends Window {
-  public static getWindowOptions(
+export const ServerAdministrationWindow: IWindow = {
+  getWindowOptions: (
     props: IServerAdministrationWindowProps,
-  ): Partial<Electron.BrowserWindowConstructorOptions> {
+  ): Partial<Electron.BrowserWindowConstructorOptions> => {
     const credentials = props.credentials;
     const url = credentials ? credentials.url : 'http://...';
     return {
@@ -43,15 +43,9 @@ export class ServerAdministrationWindow extends Window {
       width: 1024,
       height: 600,
     };
-  }
-
-  public static getComponent() {
-    return require('../ui').ServerAdministration;
-  }
-
-  public static getTrackedProperties(props: IServerAdministrationWindowProps) {
-    return {
-      url: props.credentials.url,
-    };
-  }
-}
+  },
+  getComponent: () => require('../ui').ServerAdministration,
+  getTrackedProperties: (props: IServerAdministrationWindowProps) => ({
+    url: props.credentials.url,
+  }),
+};
