@@ -24,6 +24,7 @@ import { main } from '../../actions/main';
 import { ICloudStatus, IInstance } from '../../main/CloudManager';
 import { IUpdateStatus } from '../../main/Updater';
 import * as raas from '../../services/raas';
+import { IMenuGeneratorProps } from '../../windows/MenuGenerator';
 import { showError } from '../reusable/errors';
 
 import { Greeting } from './Greeting';
@@ -38,7 +39,10 @@ interface IGreetingContainerState {
   version: string;
 }
 
-class GreetingContainer extends React.Component<{}, IGreetingContainerState> {
+class GreetingContainer extends React.Component<
+  IMenuGeneratorProps,
+  IGreetingContainerState
+> {
   public state: IGreetingContainerState = {
     isCloudInstancesDropdownOpen: false,
     isSyncEnabled: false,
@@ -138,6 +142,7 @@ class GreetingContainer extends React.Component<{}, IGreetingContainerState> {
     }
     // Update the cloud status
     this.setState({ cloudStatus: status });
+    this.props.updateMenu();
   };
 
   public onRefreshCloudStatus = () => {

@@ -99,7 +99,7 @@ export abstract class WindowComponent extends React.Component
 
   public updateMenu = () => {
     // Let's only generate menus of windows that are focused
-    if (this.menuGenerator && remote.getCurrentWindow().isFocused()) {
+    if (remote.getCurrentWindow().isFocused()) {
       // Generate and set the application
       const menu = generateMenu(this.menuGenerator, this.updateMenu);
       remote.Menu.setApplicationMenu(menu);
