@@ -25,6 +25,7 @@ import { ImportFormat } from '../../services/data-importer';
 import { CSVDataImporter } from '../../services/data-importer/csv/CSVDataImporter';
 import ImportSchemaGenerator from '../../services/data-importer/ImportSchemaGenerator';
 import { Language, SchemaExporter } from '../../services/schema-export';
+import { getRange, menuUtils } from '../../utils';
 import {
   IMenuGenerator,
   IMenuGeneratorProps,
@@ -35,7 +36,6 @@ import {
   IRealmLoadingComponentState,
   RealmLoadingComponent,
 } from '../reusable/RealmLoadingComponent';
-import { getRange } from '../reusable/utils';
 
 import { Focus, getClassName, IClassFocus, IListFocus } from './focus';
 import * as primitives from './primitives';
