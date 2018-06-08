@@ -16,14 +16,11 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
 import { URL } from 'url';
 
-import * as ros from '../services/ros';
-import { RealmBrowser } from '../ui';
+import { ros } from '../services';
 
 import { IWindow } from './Window';
-import { IRealmBrowserWindowTypedProps } from './WindowTypedProps';
 
 export interface IRealmBrowserWindowProps {
   realm: ros.realms.ISyncedRealmToLoad | ros.realms.ILocalRealmToLoad;
