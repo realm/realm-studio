@@ -25,7 +25,7 @@ import { ImportFormat } from '../../services/data-importer';
 import { CSVDataImporter } from '../../services/data-importer/csv/CSVDataImporter';
 import ImportSchemaGenerator from '../../services/data-importer/ImportSchemaGenerator';
 import { Language, SchemaExporter } from '../../services/schema-export';
-import { getRange, menuUtils } from '../../utils';
+import { getRange, menu } from '../../utils';
 import {
   IMenuGenerator,
   IMenuGeneratorProps,
@@ -237,7 +237,7 @@ class RealmBrowserContainer
       ],
     };
 
-    return menuUtils.performModifications(template, [
+    return menu.performModifications(template, [
       {
         action: 'append',
         id: 'import',
