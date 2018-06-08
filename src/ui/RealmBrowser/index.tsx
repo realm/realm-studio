@@ -679,7 +679,7 @@ class RealmBrowserContainer
       !primitives.isPrimitive(focus.property.objectType)
     ) {
       const className = getClassName(focus);
-      menu.append(
+      contextMenu.append(
         new remote.MenuItem({
           label: `Add existing ${className}`,
           click: () => {
@@ -692,7 +692,7 @@ class RealmBrowserContainer
     // If we right-clicking on the content we can always create a new object
     if (focus) {
       const className = getClassName(focus);
-      menu.append(
+      contextMenu.append(
         new remote.MenuItem({
           label: `Create new ${className}`,
           click: () => {
@@ -703,8 +703,8 @@ class RealmBrowserContainer
     }
 
     // If we have items to show - popup the menu
-    if (menu.items.length > 0) {
-      menu.popup(remote.getCurrentWindow(), {
+    if (contextMenu.items.length > 0) {
+      contextMenu.popup(remote.getCurrentWindow(), {
         x: e.clientX,
         y: e.clientY,
       });
