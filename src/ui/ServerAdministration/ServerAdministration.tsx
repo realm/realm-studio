@@ -18,7 +18,10 @@
 
 import * as React from 'react';
 
+import { ros } from '../../services';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/LoadingOverlay';
+
+import { CreateRealmDialog } from './CreateRealmDialog';
 import { Dashboard } from './Dashboard';
 import { GettingStarted } from './GettingStarted';
 import { Log } from './Log';
@@ -43,8 +46,13 @@ interface IServerAdministrationProps {
   adminRealm?: Realm;
   adminRealmChanges: number;
   adminRealmProgress: ILoadingProgress;
+  createRealm: () => Promise<ros.IRealmFile>;
   isCloudTenant: boolean;
+  isCreateRealmOpen: boolean;
+  isCreatingRealm: boolean;
   isRealmOpening: boolean;
+  onCancelRealmCreation: () => void;
+  onRealmCreation: (path: string) => void;
   onRealmOpened: (path: string) => void;
   onReconnect: () => void;
   onTabChanged: (tab: Tab) => void;
@@ -59,6 +67,7 @@ const renderContent = ({
   activeTab,
   adminRealm,
   adminRealmChanges,
+  createRealm,
   isCloudTenant,
   onRealmOpened,
   onValidateCertificatesChange,
@@ -74,6 +83,7 @@ const renderContent = ({
       <RealmsTable
         adminRealm={adminRealm}
         adminRealmChanges={adminRealmChanges}
+        createRealm={createRealm}
         onRealmOpened={onRealmOpened}
         onValidateCertificatesChange={onValidateCertificatesChange}
         user={user}
@@ -103,11 +113,14 @@ export const ServerAdministration = (props: IServerAdministrationProps) => {
     activeTab,
     adminRealmProgress,
     isCloudTenant,
+    isCreateRealmOpen,
+    isCreatingRealm,
     isRealmOpening,
+    onCancelRealmCreation,
+    onRealmCreation,
     onReconnect,
     onTabChanged,
     serverVersion,
-    syncError,
     user,
   } = props;
 
@@ -126,6 +139,14 @@ export const ServerAdministration = (props: IServerAdministrationProps) => {
       <div className="ServerAdministration__content">
         {adminRealmProgress.status === 'done' ? renderContent(props) : null}
       </div>
+
+      <CreateRealmDialog
+        isBusy={isCreatingRealm}
+        isOpen={isCreateRealmOpen}
+        onCancelRealmCreation={onCancelRealmCreation}
+        onRealmCreation={onRealmCreation}
+      />
+
       <LoadingOverlay
         loading={!user || isRealmOpening}
         progress={adminRealmProgress}

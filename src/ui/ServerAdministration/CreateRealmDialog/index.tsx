@@ -21,9 +21,10 @@ import * as React from 'react';
 import { CreateRealmDialog } from './CreateRealmDialog';
 
 export interface ICreateRealmDialogContainerProps {
+  isBusy: boolean;
   isOpen: boolean;
-  onRealmCreated: (path: string) => void;
-  toggle: () => void;
+  onRealmCreation: (path: string) => void;
+  onCancelRealmCreation: () => void;
 }
 
 export interface ICreateRealmDialogContainerState {
@@ -34,25 +35,24 @@ class CreateRealmDialogContainer extends React.Component<
   ICreateRealmDialogContainerProps,
   ICreateRealmDialogContainerState
 > {
-  public state: ICreateRealmDialogContainerState = {
-    path: '',
-  };
+  public state: ICreateRealmDialogContainerState = { path: '' };
+
+  public componentDidUpdate(prevProps: ICreateRealmDialogContainerProps) {
+    // Reset the path when the dialog opens
+    if (this.props.isOpen && !prevProps.isOpen) {
+      this.setState({ path: '' });
+    }
+  }
 
   public render() {
     return <CreateRealmDialog {...this.props} {...this.state} {...this} />;
   }
 
-  public onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  public onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { path } = this.state;
     // Await the realm being created
-    await this.props.onRealmCreated(path);
-    // Reset the state
-    this.setState({
-      path: '',
-    });
-    // And hide the dialog
-    this.props.toggle();
+    this.props.onRealmCreation(path);
   };
 
   public onPathChanged = (e: React.ChangeEvent<HTMLInputElement>) => {

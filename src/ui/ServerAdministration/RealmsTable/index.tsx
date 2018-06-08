@@ -34,6 +34,7 @@ export type ValidateCertificatesChangeHandler = (
 export interface IRealmTableContainerProps {
   adminRealm: Realm;
   adminRealmChanges: number;
+  createRealm: () => Promise<ros.IRealmFile>;
   onRealmOpened: (path: string) => void;
   onValidateCertificatesChange: ValidateCertificatesChangeHandler;
   user: Realm.Sync.User;
@@ -42,7 +43,6 @@ export interface IRealmTableContainerProps {
 
 export interface IRealmTableContainerState {
   selectedRealmPath: string | null;
-  isCreateRealmOpen: boolean;
   searchString: string;
   showPartialRealms: boolean;
   showSystemRealms: boolean;
@@ -53,7 +53,6 @@ class RealmsTableContainer extends React.PureComponent<
   IRealmTableContainerState
 > {
   public state: IRealmTableContainerState = {
-    isCreateRealmOpen: false,
     selectedRealmPath: null,
     searchString: '',
     showPartialRealms: store.shouldShowPartialRealms(),
@@ -89,7 +88,12 @@ class RealmsTableContainer extends React.PureComponent<
 
   public render() {
     return this.realms ? (
-      <RealmsTable realms={this.realms} {...this.state} {...this} />
+      <RealmsTable
+        realms={this.realms}
+        onRealmCreation={this.onRealmCreation}
+        {...this.state}
+        {...this}
+      />
     ) : null;
   }
 
@@ -124,6 +128,15 @@ class RealmsTableContainer extends React.PureComponent<
       .filtered('realmFile == $0', realmFile);
   };
 
+  public onRealmCreation = async () => {
+    try {
+      const realm = await this.props.createRealm();
+      this.onRealmSelected(realm.path);
+    } catch (err) {
+      showError('Failed to create Realm', err);
+    }
+  };
+
   public onRealmDeletion = async (path: string) => {
     const confirmed = this.confirmRealmDeletion(path);
     if (confirmed) {
@@ -136,24 +149,6 @@ class RealmsTableContainer extends React.PureComponent<
         showError('Error deleting realm', err);
       }
     }
-  };
-
-  public onRealmCreated = async (path: string) => {
-    const realm = await ros.realms.create(this.props.user, path);
-    // Close the Realm right away - we don't need it open
-    realm.close();
-    // Cannot use the realm.path as that is the local path
-    // Instead - let's just select the latest Realm
-    if (this.realms) {
-      const lastRealm = this.realms[this.realms.length - 1];
-      this.onRealmSelected(lastRealm.path);
-    }
-  };
-
-  public toggleCreateRealm = () => {
-    this.setState({
-      isCreateRealmOpen: !this.state.isCreateRealmOpen,
-    });
   };
 
   public onRealmOpened = (path: string) => {

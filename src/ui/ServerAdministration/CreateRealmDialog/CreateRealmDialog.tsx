@@ -30,18 +30,22 @@ import {
 } from 'reactstrap';
 
 export const CreateRealmDialog = ({
+  isBusy,
   isOpen,
-  toggle,
+  onCancelRealmCreation,
   onPathChanged,
   onSubmit,
   path,
 }: {
+  isBusy: boolean;
   isOpen: boolean;
-  toggle: () => void;
+  onCancelRealmCreation: () => void;
   onPathChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   path: string;
 }) => {
+  // Toggling is only supporting cancellation - wonder if the other could ever happen?
+  const toggle = isOpen ? onCancelRealmCreation : undefined;
   return (
     <Modal isOpen={isOpen} toggle={toggle}>
       <Form onSubmit={onSubmit}>
@@ -61,8 +65,10 @@ export const CreateRealmDialog = ({
           </FormGroup>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary">Create Realm</Button>{' '}
-          <Button color="secondary" onClick={toggle}>
+          <Button color="primary" disabled={isBusy}>
+            Create Realm
+          </Button>{' '}
+          <Button color="secondary" disabled={isBusy} onClick={toggle}>
             Cancel
           </Button>
         </ModalFooter>
