@@ -24,26 +24,11 @@ export interface IPromiseHandle<T> {
   reject: (reason: any) => void;
 }
 
-export const createPromiseHandle = <T extends any>(
-  cleanupCallback?: () => void,
-) => {
+export const createPromiseHandle = <T extends any>() => {
   const handle: Partial<IPromiseHandle<T>> = {};
   handle.promise = new Promise<T>((resolve, reject) => {
     handle.resolve = resolve;
     handle.reject = reject;
-  }).then(
-    (value: T) => {
-      if (cleanupCallback) {
-        cleanupCallback();
-      }
-      return value;
-    },
-    (reason: any) => {
-      if (cleanupCallback) {
-        cleanupCallback();
-      }
-      throw reason;
-    },
-  );
+  });
   return handle as IPromiseHandle<T>;
 };

@@ -29,14 +29,10 @@ describe('promise handle', () => {
     assert(handle.promise instanceof Promise);
   });
 
-  it('can resolve the promise (calling cleanup)', done => {
-    let cleanedUp = false;
-    const handle = createPromiseHandle(() => {
-      cleanedUp = true;
-    });
+  it('can resolve the promise', done => {
+    const handle = createPromiseHandle();
     handle.promise.then(result => {
       assert.equal(result, 'w00t');
-      assert.equal(cleanedUp, true);
       done();
     });
     process.nextTick(() => {
@@ -44,14 +40,10 @@ describe('promise handle', () => {
     });
   });
 
-  it('can reject the promise (calling cleanup)', done => {
-    let cleanedUp = false;
-    const handle = createPromiseHandle(() => {
-      cleanedUp = true;
-    });
+  it('can reject the promise', done => {
+    const handle = createPromiseHandle();
     handle.promise.catch(result => {
       assert.equal(result, 'w00t');
-      assert.equal(cleanedUp, true);
       done();
     });
     process.nextTick(() => {
