@@ -93,21 +93,20 @@ export const create = (
   user: Realm.Sync.User,
   realmPath: string,
 ): Promise<Realm> => {
-  const url = getUrl(user, realmPath);
-  const config = {
-    sync: {
-      user,
-      url,
-      error: onCreateRealmErrorCallback,
-    },
-    schema: [],
-  };
-  // Using the async Realm.open to now block the UI and wait for the Realm to upload
-  return Realm.open(config);
-};
-
-export const onCreateRealmErrorCallback = (err: any) => {
-  showError('Error while creating new synced realm', err);
+  return new Promise((resolve, reject) => {
+    const url = getUrl(user, realmPath);
+    // Using the async Realm.open to allow the caller to know when the Realm to got uploaded
+    Realm.open({
+      sync: {
+        user,
+        url,
+        error: (session, err) => {
+          reject(err);
+        },
+      },
+      schema: [],
+    }).then(resolve, reject);
+  });
 };
 
 export const remove = async (user: Realm.Sync.User, realmPath: string) => {
