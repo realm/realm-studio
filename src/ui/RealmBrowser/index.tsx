@@ -1110,30 +1110,46 @@ class RealmBrowserContainer
     );
   };
 
-  private onImportIntoExistingRealm = () => {
+  private onImportIntoExistingRealm = (
+    format: ImportFormat = ImportFormat.CSV,
+  ) => {
+    if (format !== ImportFormat.CSV) {
+      throw new Error(
+        `Currently, only CSV import is supported - format was ${format}`,
+      );
+    }
     remote.dialog.showOpenDialog(
       {
         properties: ['openFile', 'multiSelections'],
         filters: [{ name: 'CSV File(s)', extensions: ['csv', 'CSV'] }],
       },
       selectedPaths => {
-        if (selectedPaths && this.realm) {
-          const schemaGenerator = new ImportSchemaGenerator(
-            ImportFormat.CSV,
-            selectedPaths,
-          );
-          const schema = schemaGenerator.generate();
-          const importer = new CSVDataImporter(selectedPaths, schema);
-          try {
-            importer.importInto(this.realm);
-          } catch (e) {
-            const { dialog } = require('electron').remote;
-            dialog.showErrorBox('Inserting CSV data failed', e.message);
-          }
+        if (selectedPaths && selectedPaths.length > 0) {
+          this.performCSVImport(selectedPaths);
         }
       },
     );
   };
+
+  private performCSVImport(fromPaths: string[]) {
+    if (this.realm) {
+      const schemaGenerator = new ImportSchemaGenerator(
+        ImportFormat.CSV,
+        fromPaths,
+      );
+      try {
+        const schema = schemaGenerator.generate();
+        try {
+          const importer = new CSVDataImporter(fromPaths, schema);
+          importer.importInto(this.realm);
+        } catch (err) {
+          showError('Faild to import data', err);
+        }
+      } catch (err) {
+        showError('Faild to generate schema', err);
+      }
+    }
+  }
 }
 
 export { RealmBrowserContainer as RealmBrowser };
