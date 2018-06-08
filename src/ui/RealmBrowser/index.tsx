@@ -41,7 +41,6 @@ import { Focus, getClassName, IClassFocus, IListFocus } from './focus';
 import * as primitives from './primitives';
 import { RealmBrowser } from './RealmBrowser';
 import * as schemaUtils from './schema-utils';
-import { isSelected } from './Sidebar';
 import {
   CellChangeHandler,
   CellClickHandler,
@@ -613,7 +612,7 @@ class RealmBrowserContainer
     e.preventDefault();
     const { focus } = this.state;
 
-    const menu = new remote.Menu();
+    const contextMenu = new remote.Menu();
 
     if (params) {
       const { property, rowObject, rowIndex, columnIndex } = params;
@@ -630,7 +629,7 @@ class RealmBrowserContainer
 
       // If we clicked a property that refers to an object
       if (property && property.type === 'object') {
-        menu.append(
+        contextMenu.append(
           new remote.MenuItem({
             label: 'Update reference',
             click: () => {
@@ -647,7 +646,7 @@ class RealmBrowserContainer
           this.state.highlight.rows.size > 1,
         );
 
-        menu.append(
+        contextMenu.append(
           new remote.MenuItem({
             label,
             click: () => {

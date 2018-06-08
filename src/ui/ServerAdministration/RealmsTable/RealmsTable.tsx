@@ -20,7 +20,7 @@ import * as React from 'react';
 import { Column } from 'react-virtualized';
 import { Button } from 'reactstrap';
 
-import { IPermission, IRealmFile, RealmType } from '../../../services/ros';
+import { IPermission, IRealmFile } from '../../../services/ros';
 import {
   FilterableTable,
   FilterableTableWrapper,
