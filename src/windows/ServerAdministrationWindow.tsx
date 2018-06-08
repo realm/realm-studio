@@ -16,13 +16,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
-
 import * as ros from '../services/ros';
-import { ServerAdministration } from '../ui';
 
 import { IWindow } from './Window';
-import { IServerAdministrationWindowTypedProps } from './WindowTypedProps';
 
 export interface IServerAdministrationWindowProps {
   credentials: ros.IServerCredentials;

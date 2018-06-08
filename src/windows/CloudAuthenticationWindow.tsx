@@ -17,7 +17,6 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import { IWindow } from './Window';
-import { ICloudAuthenticationWindowTypedProps } from './WindowTypedProps';
 
 export interface ICloudAuthenticationWindowProps {
   message?: string;

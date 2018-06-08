@@ -16,12 +16,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
-
 import * as tutorials from '../services/tutorials';
 
 import { IWindow } from './Window';
-import { ITutorialWindowTypedProps } from './WindowTypedProps';
 
 export interface ITutorialWindowProps {
   id: string;

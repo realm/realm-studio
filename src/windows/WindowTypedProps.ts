@@ -16,8 +16,6 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import { IMenuGeneratorProps } from './MenuGenerator';
-
 import {
   ICloudAuthenticationWindowProps,
   IConnectToServerWindowProps,

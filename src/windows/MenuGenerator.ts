@@ -16,9 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import { MenuItem, MenuItemConstructorOptions, remote } from 'electron';
+import { MenuItemConstructorOptions, remote } from 'electron';
 
-import { main } from '../actions/main';
 import { getDefaultMenuTemplate } from '../main/MainMenu';
 
 // TODO: Throw if this is called from the main process
@@ -33,8 +32,6 @@ export interface IMenuGenerator {
 export interface IMenuGeneratorProps {
   updateMenu(): void;
 }
-
-const isProduction = process.env.NODE_ENV === 'production';
 
 export const generateMenu = (
   generator: IMenuGenerator | undefined,

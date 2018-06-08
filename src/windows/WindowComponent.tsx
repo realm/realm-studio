@@ -32,7 +32,6 @@ import {
   IMenuGeneratorProps,
 } from './MenuGenerator';
 import { getWindowClass } from './Window';
-import { WindowProps } from './WindowProps';
 import { WindowType, WindowTypedProps } from './WindowTypedProps';
 
 // TODO: Consider if we can have the window not show before a connection has been established.
@@ -40,10 +39,6 @@ import { WindowType, WindowTypedProps } from './WindowTypedProps';
 interface ITrackedProperties {
   type: WindowType;
   [name: string]: string;
-}
-
-interface IWindowComponentProps {
-  children: React.ReactChild;
 }
 
 const getCurrentWindowProps = (): WindowTypedProps => {
@@ -65,7 +60,7 @@ export abstract class WindowComponent extends React.Component
   protected CurrentWindowComponent = this.CurrentWindow.getComponent();
 
   public componentDidMount() {
-    const trackedProperties = {
+    const trackedProperties: ITrackedProperties = {
       ...this.CurrentWindow.getTrackedProperties(this.windowProps),
       type: this.windowProps.type,
     };

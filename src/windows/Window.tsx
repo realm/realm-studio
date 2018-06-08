@@ -20,11 +20,6 @@ import { IMenuGeneratorProps } from './MenuGenerator';
 import { WindowProps } from './WindowProps';
 import { WindowType, WindowTypedProps } from './WindowTypedProps';
 
-interface ITrackedProperties {
-  type: WindowType;
-  [name: string]: string;
-}
-
 export interface IWindow {
   getComponent(): React.ComponentClass<WindowTypedProps & IMenuGeneratorProps>;
   getWindowOptions(
