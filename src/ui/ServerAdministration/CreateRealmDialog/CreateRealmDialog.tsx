@@ -68,7 +68,16 @@ export const CreateRealmDialog = ({
           <Button color="primary" disabled={isBusy}>
             Create Realm
           </Button>{' '}
-          <Button color="secondary" disabled={isBusy} onClick={toggle}>
+          <Button
+            color="secondary"
+            disabled={isBusy}
+            onClick={e => {
+              e.preventDefault();
+              if (toggle) {
+                toggle();
+              }
+            }}
+          >
             Cancel
           </Button>
         </ModalFooter>
