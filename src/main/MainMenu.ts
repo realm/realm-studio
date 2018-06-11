@@ -22,6 +22,7 @@ import { main } from '../actions/main';
 import { ImportFormat } from '../services/data-importer';
 import * as raas from '../services/raas';
 import { store } from '../store';
+import { showError } from '../ui/reusable/errors';
 
 const isProduction = process.env.NODE_ENV === 'production';
 const showInternalFeatures =
@@ -52,7 +53,9 @@ export const getDefaultMenuTemplate = (
               id: 'import-csv',
               label: 'CSV',
               click: () => {
-                main.showImportData(ImportFormat.CSV);
+                main.showImportData(ImportFormat.CSV).catch(err => {
+                  showError('Failed to import data', err);
+                });
               },
             },
           ],
