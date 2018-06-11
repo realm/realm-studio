@@ -133,6 +133,10 @@ class RealmsTableContainer extends React.PureComponent<
       const realm = await this.props.createRealm();
       this.onRealmSelected(realm.path);
     } catch (err) {
+      if (err.message === 'Realm creation cancelled') {
+        // This is an expected expression to be thrown - no need to show it
+        return;
+      }
       showError('Failed to create Realm', err);
     }
   };

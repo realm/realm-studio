@@ -78,8 +78,12 @@ class ServerAdministrationContainer
     user: null,
   };
 
+  /* A single promise that resolves when the server is available */
   protected availabilityPromise?: Promise<string | undefined>;
+  /* A promise handle that gets returned when a user calls createRealm */
   protected createRealmPromiseHandle?: IPromiseHandle<ros.IRealmFile>;
+  /* A list of object schemas to use when creating the next Realm */
+  protected createRealmSchema?: Realm.ObjectSchema[];
 
   public async componentDidMount() {
     // Start listening on changes to the cloud-status
@@ -131,6 +135,17 @@ class ServerAdministrationContainer
         validateCertificates={this.props.validateCertificates}
       />
     );
+  }
+
+  public generateMenu(template: electron.MenuItemConstructorOptions[]) {
+    const importItem: electron.MenuItemConstructorOptions = {
+      id: 'import-csv',
+      label: 'CSV',
+      click: () => this.showImportData(dataImporter.ImportFormat.CSV),
+    };
+    return menu.performModifications(template, [
+      { action: 'replace', id: 'import-csv', items: [importItem] },
+    ]);
   }
 
   // TODO: Once the user serializes better, this method should be moved to the ./realms/RealmsTableContainer.tsx
@@ -339,8 +354,47 @@ class ServerAdministrationContainer
     }
   }
 
-  protected showImportData(format: dataImporter.ImportFormat) {
-    // Tumbleweed
+  protected async showImportData(format: dataImporter.ImportFormat) {
+    try {
+      // First create the Realm for the data
+      const paths = dataImporter.showOpenDialog(format);
+      if (!paths || paths.length === 0) {
+        // Don't do anything if the user cancelled or selected no files
+        return;
+      }
+      // Generate a schema from the import files
+      const schema = dataImporter.generateSchema(format, paths);
+      // Passing the generated schema to createRealm
+      const newRealmFile = await this.createRealm(schema);
+      // Import the data into the Realm
+      const importer = dataImporter.getDataImporter(format, paths, schema);
+      if (!this.state.user) {
+        throw new Error('Cannot open realm without a user');
+      }
+      const newRealm = await ros.realms.open(
+        this.state.user,
+        newRealmFile.path,
+        undefined,
+        { validateCertificates: this.props.validateCertificates },
+      );
+      // Import the data
+      importer.importInto(newRealm);
+      // Open the Realm browser in "import mode"
+      const realm: ros.realms.ISyncedRealmToLoad = {
+        authentication: this.props.credentials,
+        mode: ros.realms.RealmLoadingMode.Synced,
+        path: newRealmFile.path,
+        validateCertificates: this.props.validateCertificates,
+      };
+      // Open the newly created realm
+      await main.showRealmBrowser({ realm });
+    } catch (err) {
+      if (err.message === 'Realm creation cancelled') {
+        // This is an expected expression to be thrown - no need to show it
+        return;
+      }
+      showError('Failed when importing data', err);
+    }
   }
 
   protected onRealmChanged = () => {
@@ -421,7 +475,11 @@ class ServerAdministrationContainer
           throw new Error('Another Realm with this path already exists');
         }
         // Create a new Realm at the path specificed by the user
-        const newRealm = await ros.realms.create(this.state.user, path);
+        const newRealm = await ros.realms.create(
+          this.state.user,
+          path,
+          this.createRealmSchema,
+        );
         // Close the Realm - we don't need it open anymore
         newRealm.close();
         // If we are waiting for the realm to be created - hang on to the path
@@ -463,20 +521,24 @@ class ServerAdministrationContainer
     return path;
   }
 
-  protected createRealm = () => {
+  // TODO: Move this into the CreateRealmDialog
+  protected createRealm = (schema?: Realm.ObjectSchema[]) => {
     if (this.createRealmPromiseHandle) {
       throw new Error('You can only create one Realm at a time');
     } else {
       this.setState({ isCreateRealmOpen: true });
+      this.createRealmSchema = schema;
       this.createRealmPromiseHandle = createPromiseHandle();
       return this.createRealmPromiseHandle.promise.then(
         realmFile => {
           delete this.createRealmPromiseHandle;
+          delete this.createRealmSchema;
           this.setState({ isCreateRealmOpen: false });
           return realmFile;
         },
         reason => {
           delete this.createRealmPromiseHandle;
+          delete this.createRealmSchema;
           this.setState({ isCreateRealmOpen: false });
           throw reason;
         },

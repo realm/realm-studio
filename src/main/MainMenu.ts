@@ -49,6 +49,7 @@ export const getDefaultMenuTemplate = (
           id: 'import',
           submenu: [
             {
+              id: 'import-csv',
               label: 'CSV',
               click: () => {
                 main.showImportData(ImportFormat.CSV);

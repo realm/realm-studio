@@ -16,5 +16,22 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-export { CSVDataImporter } from './CSVDataImporter';
-export { CSVSchemaGenerator } from './CSVSchemaGenerator';
+import * as electron from 'electron';
+
+import { ImportFormat } from '.';
+
+export const showOpenDialog = (
+  format: ImportFormat = ImportFormat.CSV,
+): string[] => {
+  const dialog = electron.dialog || electron.remote.dialog;
+
+  if (format !== ImportFormat.CSV) {
+    throw new Error(
+      `Currently, only CSV import is supported - format was ${format}`,
+    );
+  }
+  return dialog.showOpenDialog({
+    properties: ['openFile', 'multiSelections'],
+    filters: [{ name: 'CSV File(s)', extensions: ['csv', 'CSV'] }],
+  });
+};

@@ -92,6 +92,7 @@ export const open = async (
 export const create = (
   user: Realm.Sync.User,
   realmPath: string,
+  schema: Realm.ObjectSchema[] = [],
 ): Promise<Realm> => {
   return new Promise((resolve, reject) => {
     const url = getUrl(user, realmPath);
@@ -104,7 +105,7 @@ export const create = (
           reject(err);
         },
       },
-      schema: [],
+      schema,
     }).then(resolve, reject);
   });
 };
