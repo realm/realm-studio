@@ -22,8 +22,7 @@ import { URL } from 'url';
 import * as path from 'path';
 import { MainReceiver } from '../actions/main';
 import { CLOUD_PROTOCOL, STUDIO_PROTOCOL } from '../constants';
-import { getDataImporter, ImportFormat } from '../services/data-importer';
-import ImportSchemaGenerator from '../services/data-importer/ImportSchemaGenerator';
+import * as dataImporter from '../services/data-importer';
 import * as github from '../services/github';
 import * as raas from '../services/raas';
 import { realms } from '../services/ros';
@@ -87,7 +86,7 @@ export class Application {
     [MainActions.ShowGreeting]: () => {
       return this.showGreeting();
     },
-    [MainActions.ShowImportData]: (format: ImportFormat) => {
+    [MainActions.ShowImportData]: (format: dataImporter.ImportFormat) => {
       return this.showImportData(format);
     },
     [MainActions.ShowOpenLocalRealm]: () => {
@@ -241,7 +240,7 @@ export class Application {
     });
   }
 
-  public showImportData(format: ImportFormat) {
+  public showImportData(format: dataImporter.ImportFormat) {
     return new Promise((resolve, reject) => {
       electron.dialog.showOpenDialog(
         {

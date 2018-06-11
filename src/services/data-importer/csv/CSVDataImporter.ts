@@ -16,10 +16,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import fs = require('fs-extra');
-import fsExtra = require('fs-extra');
-import papaparse = require('papaparse');
-import * as fsPath from 'path';
+import * as fs from 'fs-extra';
+import * as papaparse from 'papaparse';
+
 import { DataImporter } from '../DataImporter';
 
 export class CSVDataImporter extends DataImporter {
@@ -114,7 +113,7 @@ export class CSVDataImporter extends DataImporter {
     } catch (e) {
       realm.close();
       // in case of an error remove the created Realm
-      fsExtra.removeSync(realm.path);
+      fs.removeSync(realm.path);
       throw e;
     }
     return realm;

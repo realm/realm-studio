@@ -38,11 +38,11 @@ export abstract class DataImporter {
    * Creates a new, empty Realm file, formatted with the schema properties provided
    * with the `ImportSchema` parameter.
    *
-   * @param output An absolute path to the folder that will hold the new Realm file.
+   * @param output An absolute path to the new Realm file.
    */
-  public createNewRealmFile(output: string): Realm {
+  public createNewRealmFile(path: string): Realm {
     const realm = new Realm({
-      path: `${output}/default.realm`,
+      path,
       schema: this.importSchema,
     });
     return realm;

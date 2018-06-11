@@ -21,9 +21,8 @@ import * as path from 'path';
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import { ImportFormat } from '../../services/data-importer';
-import { CSVDataImporter } from '../../services/data-importer/csv/CSVDataImporter';
-import ImportSchemaGenerator from '../../services/data-importer/ImportSchemaGenerator';
+import * as dataImporter from '../../services/data-importer';
+import { CSVDataImporter } from '../../services/data-importer/csv';
 import { Language, SchemaExporter } from '../../services/schema-export';
 import { getRange, menu } from '../../utils';
 import {
@@ -1111,7 +1110,7 @@ class RealmBrowserContainer
   };
 
   private onImportIntoExistingRealm = (
-    format: ImportFormat = ImportFormat.CSV,
+    format: dataImporter.ImportFormat = dataImporter.ImportFormat.CSV,
   ) => {
     if (format !== ImportFormat.CSV) {
       throw new Error(

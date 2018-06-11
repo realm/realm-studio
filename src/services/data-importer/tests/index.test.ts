@@ -17,11 +17,12 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as assert from 'assert';
-import fs = require('fs-extra');
+import * as fs from 'fs-extra';
+import { resolve } from 'path';
 import { ObjectSchemaProperty } from 'realm';
+
+import { generateSchema, ImportFormat } from '..';
 import { CSVDataImporter } from '../csv/CSVDataImporter';
-import ImportSchemaGenerator from '../ImportSchemaGenerator';
-import { ImportFormat } from '../index';
 import Util from '../Util';
 
 const TESTS_PATH = './src/services/data-importer/tests';
@@ -59,10 +60,9 @@ describe('Import CSV tests', () => {
   });
 
   it('Generates a valid Cat schema', () => {
-    const files: string[] = [`${TESTS_PATH}/csv/Cat.csv`];
+    const files: string[] = [resolve(TESTS_PATH, 'csv/Cat.csv')];
 
-    const schemaGenerator = new ImportSchemaGenerator(ImportFormat.CSV, files);
-    const schema = schemaGenerator.generate();
+    const schema = generateSchema(ImportFormat.CSV, files);
 
     assert.equal(schema.length, 1, 'Expected to parse one schema (Cat)');
     const catSchema = schema[0];
@@ -78,7 +78,8 @@ describe('Import CSV tests', () => {
   });
 
   describe('Creating and populating the Realm', () => {
-    const REALM_FILE_DIR = `${TESTS_PATH}/temporal`;
+    const REALM_FILE_DIR = resolve(TESTS_PATH, 'temporal');
+    const REALM_FILE_PATH = resolve(REALM_FILE_DIR, 'default.realm');
 
     before(() => {
       fs.removeSync(REALM_FILE_DIR);
@@ -86,26 +87,21 @@ describe('Import CSV tests', () => {
     });
 
     it('Create a valid Cat Realm file', () => {
-      const files: string[] = [`${TESTS_PATH}/csv/Cat.csv`];
+      const files: string[] = [resolve(TESTS_PATH, 'csv/Cat.csv')];
 
-      const schemaGenerator = new ImportSchemaGenerator(
-        ImportFormat.CSV,
-        files,
-      );
-      const schema = schemaGenerator.generate();
+      const schema = generateSchema(ImportFormat.CSV, files);
       const csvImporter = new CSVDataImporter(files, schema);
 
-      csvImporter.createNewRealmFile(REALM_FILE_DIR);
+      csvImporter.createNewRealmFile(REALM_FILE_PATH);
 
-      const expectedRealmFile = `${REALM_FILE_DIR}/default.realm`;
       assert.equal(
-        fs.existsSync(expectedRealmFile),
+        fs.existsSync(REALM_FILE_PATH),
         true,
-        `Realm file was not found at the expected path: ${expectedRealmFile}`,
+        `Realm file was not found at the expected path: ${REALM_FILE_PATH}`,
       );
 
       // open the Realm and make sure the schema matches
-      const realm = new Realm(expectedRealmFile);
+      const realm = new Realm(REALM_FILE_PATH);
 
       assert.equal(realm.schema.length, 1, 'Expected to find one schema (Cat)');
       const catSchema = realm.schema[0];
@@ -172,16 +168,12 @@ describe('Import CSV tests', () => {
     });
 
     it('Populate a valid Cat Realm file', () => {
-      const files: string[] = [`${TESTS_PATH}/csv/Cat.csv`];
+      const files: string[] = [resolve(TESTS_PATH, 'csv/Cat.csv')];
 
-      const schemaGenerator = new ImportSchemaGenerator(
-        ImportFormat.CSV,
-        files,
-      );
-      const schema = schemaGenerator.generate();
+      const schema = generateSchema(ImportFormat.CSV, files);
       const csvImporter = new CSVDataImporter(files, schema);
 
-      const realm = csvImporter.import(REALM_FILE_DIR);
+      const realm = csvImporter.import(REALM_FILE_PATH);
       const cats = realm.objects('Cat').sorted('name');
       assert.equal(cats.length, 2);
       let cat = cats[0] as any;
@@ -211,32 +203,26 @@ describe('Import CSV tests', () => {
       // the types of the generated Realm are infered automatically from the first line
       // of the CSV, if the subsequent lines contains data that doesn't match the schema
       // the parsing will stop and the empty file will be removed.
-      const files: string[] = [`${TESTS_PATH}/csv/invalid_second_line.csv`];
+      const files: string[] = [
+        resolve(TESTS_PATH, 'csv/invalid_second_line.csv'),
+      ];
 
-      const schemaGenerator = new ImportSchemaGenerator(
-        ImportFormat.CSV,
-        files,
-      );
-      const schema = schemaGenerator.generate();
+      const schema = generateSchema(ImportFormat.CSV, files);
       const csvImporter = new CSVDataImporter(files, schema);
 
-      assert.throws(() => csvImporter.import(REALM_FILE_DIR), Error);
+      assert.throws(() => csvImporter.import(REALM_FILE_PATH), Error);
     });
 
     it('Multiple CSV should generate one Realm file', () => {
       const files: string[] = [
-        `${TESTS_PATH}/csv/dogs.csv`,
-        `${TESTS_PATH}/csv/people.csv`,
+        resolve(TESTS_PATH, 'csv/dogs.csv'),
+        resolve(TESTS_PATH, 'csv/people.csv'),
       ];
 
-      const schemaGenerator = new ImportSchemaGenerator(
-        ImportFormat.CSV,
-        files,
-      );
-      const schema = schemaGenerator.generate();
+      const schema = generateSchema(ImportFormat.CSV, files);
       const csvImporter = new CSVDataImporter(files, schema);
 
-      const realm = csvImporter.import(REALM_FILE_DIR);
+      const realm = csvImporter.import(REALM_FILE_PATH);
       const people = realm.objects('people');
       const dogs = realm.objects('dogs');
       assert.equal(people.length, 2);
@@ -245,16 +231,12 @@ describe('Import CSV tests', () => {
     });
 
     it('Parsing should support optional values', () => {
-      const files: string[] = [`${TESTS_PATH}/csv/optional.csv`];
+      const files: string[] = [resolve(TESTS_PATH, 'csv/optional.csv')];
 
-      const schemaGenerator = new ImportSchemaGenerator(
-        ImportFormat.CSV,
-        files,
-      );
-      const schema = schemaGenerator.generate();
+      const schema = generateSchema(ImportFormat.CSV, files);
       const csvImporter = new CSVDataImporter(files, schema);
 
-      const realm = csvImporter.import(REALM_FILE_DIR);
+      const realm = csvImporter.import(REALM_FILE_PATH);
       const optionals: any = realm.objects('optional').sorted('integerValue');
       assert.equal(optionals.length, 5);
 
@@ -269,33 +251,29 @@ describe('Import CSV tests', () => {
     it('Import large CSV file', () => {
       // This file should be imported using two write transactions
       // since we're batching inserts every 10000 elements
-      const files: string[] = [`${TESTS_PATH}/csv/inspections.csv`];
+      const files: string[] = [resolve(TESTS_PATH, 'csv/inspections.csv')];
 
-      const schemaGenerator = new ImportSchemaGenerator(
-        ImportFormat.CSV,
-        files,
-      );
-      const schema = schemaGenerator.generate();
+      const schema = generateSchema(ImportFormat.CSV, files);
       const csvImporter = new CSVDataImporter(files, schema);
 
-      const realm = csvImporter.import(REALM_FILE_DIR);
+      const realm = csvImporter.import(REALM_FILE_PATH);
       assert.equal(realm.objects('inspections').length, 18480);
 
       realm.close();
     });
 
     it('Imports into existing Realm file', () => {
-      const files: string[] = [`${TESTS_PATH}/csv/Dog.csv`];
+      const files: string[] = [resolve(TESTS_PATH, 'csv/Dog.csv')];
 
-      const schemaGenerator = new ImportSchemaGenerator(
-        ImportFormat.CSV,
-        files,
-      );
-      const schema = schemaGenerator.generate();
+      const schema = generateSchema(ImportFormat.CSV, files);
       const csvImporter = new CSVDataImporter(files, schema);
 
+      const originalPath = resolve(TESTS_PATH, 'csv/asset_file.realm');
+      const temporaryPath = resolve(REALM_FILE_DIR, 'asset_file.realm');
+      fs.copyFileSync(originalPath, temporaryPath);
+
       // Open existing Realm file containing schema for Dog, Cat, Owner and DogPromaryKey
-      const assetRealm = new Realm(`${TESTS_PATH}/csv/asset_file.realm`);
+      const assetRealm = new Realm({ path: temporaryPath });
       assert.equal(assetRealm.schema.length, 4);
       assert.notEqual(
         assetRealm.schema.find(objectSchema => objectSchema.name === 'Dog'),
@@ -328,17 +306,16 @@ describe('Import CSV tests', () => {
     });
 
     it('Imports into existing Realm file fails', () => {
-      const files: string[] = [`${TESTS_PATH}/csv/Cat.csv`];
+      const files: string[] = [resolve(TESTS_PATH, 'csv/Cat.csv')];
 
-      const schemaGenerator = new ImportSchemaGenerator(
-        ImportFormat.CSV,
-        files,
-      );
-      const schema = schemaGenerator.generate();
+      const schema = generateSchema(ImportFormat.CSV, files);
       const csvImporter = new CSVDataImporter(files, schema);
 
       // the CSV Cat schema does not corespond to the existing Cat as defined in the Realm
-      const assetRealm = new Realm(`${TESTS_PATH}/csv/asset_file.realm`);
+      const assetRealm = new Realm({
+        path: resolve(TESTS_PATH, 'csv/asset_file.realm'),
+        readOnly: true,
+      });
       assert.throws(() => csvImporter.importInto(assetRealm), Error);
       assetRealm.close();
     });

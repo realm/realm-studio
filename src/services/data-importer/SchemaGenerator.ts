@@ -16,35 +16,18 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as Realm from 'realm';
+/**
+ * Will analyze the contents of files provided to it, and intelligently
+ * generate a schema definition object with which the structure of a Realm file can be created.
+ *
+ * This is then used to map the raw data to the appropriate properties when performing the import to Realm.
+ */
+export abstract class SchemaGenerator {
+  protected paths: string[];
 
-import * as csv from './csv';
-export { csv };
+  constructor(paths: string[]) {
+    this.paths = paths;
+  }
 
-export * from './ui';
-
-export enum ImportFormat {
-  CSV = 'csv',
-  // JSON = 'json',
+  public abstract generate(): Realm.ObjectSchema[];
 }
-
-export const generateSchema = (format: ImportFormat, paths: string[]) => {
-  if (format === ImportFormat.CSV) {
-    const generator = new csv.CSVSchemaGenerator(paths);
-    return generator.generate();
-  } else {
-    throw new Error('Not supported yet');
-  }
-};
-
-export const getDataImporter = (
-  format: ImportFormat,
-  paths: string[],
-  schema: Realm.ObjectSchema[],
-) => {
-  if (format === ImportFormat.CSV) {
-    return new csv.CSVDataImporter(paths, schema);
-  } else {
-    throw new Error('Not supported yet');
-  }
-};
