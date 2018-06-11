@@ -16,31 +16,18 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as tutorials from '../services/tutorials';
+/**
+ * Will analyze the contents of files provided to it, and intelligently
+ * generate a schema definition object with which the structure of a Realm file can be created.
+ *
+ * This is then used to map the raw data to the appropriate properties when performing the import to Realm.
+ */
+export abstract class SchemaGenerator {
+  protected paths: string[];
 
-import { IWindow } from './Window';
+  constructor(paths: string[]) {
+    this.paths = paths;
+  }
 
-export interface ITutorialWindowProps {
-  id: string;
-  context: {
-    serverUrl: string;
-  };
+  public abstract generate(): Realm.ObjectSchema[];
 }
-
-export const TutorialWindow: IWindow = {
-  getWindowOptions: (
-    props: ITutorialWindowProps,
-  ): Partial<Electron.BrowserWindowConstructorOptions> => {
-    const config = tutorials.getConfig(props.id);
-    const title = config ? config.title : 'Missing a title';
-    return {
-      title: `Tutorial: ${title}`,
-      width: 800,
-      height: 500,
-    };
-  },
-  getComponent: () => require('../ui').Tutorial,
-  getTrackedProperties: (props: ITutorialWindowProps) => ({
-    id: props.id,
-  }),
-};

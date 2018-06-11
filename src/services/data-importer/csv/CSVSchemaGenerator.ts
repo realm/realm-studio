@@ -16,11 +16,13 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import fs = require('fs-extra');
-import papaparse = require('papaparse');
-import * as fsPath from 'path';
-import { ImportFormat, ImportObjectSchema } from '../data-importer';
-import Util from './Util';
+import * as fs from 'fs-extra';
+import * as papaparse from 'papaparse';
+import { basename, extname } from 'path';
+
+import { ImportObjectSchema } from '../ImportObjectSchema';
+import { SchemaGenerator } from '../SchemaGenerator';
+import Util from '../Util';
 
 /**
  * Will analyze the contents of files provided to it, and intelligently
@@ -28,31 +30,14 @@ import Util from './Util';
  *
  * This is then used to map the raw data to the appropriate properties when performing the import to Realm.
  */
-export default class ImportSchemaGenerator {
-  private files: string[];
-  private format: ImportFormat;
-
-  constructor(format: ImportFormat, files: string[]) {
-    this.format = format;
-    this.files = files;
-  }
-
+export class CSVSchemaGenerator extends SchemaGenerator {
   public generate(): Realm.ObjectSchema[] {
-    switch (this.format) {
-      case ImportFormat.CSV:
-        return this.generateForCSV();
-      default:
-        throw new Error('Not supported yet');
-    }
-  }
-
-  private generateForCSV(): Realm.ObjectSchema[] {
     const schemas = Array<Realm.ObjectSchema>();
 
-    this.files.map(file => {
-      const name = fsPath.basename(file, fsPath.extname(file));
+    this.paths.map(path => {
+      const name = basename(path, extname(path));
       const schema = new ImportObjectSchema(name);
-      let rawCSV = fs.readFileSync(file, 'utf8');
+      let rawCSV = fs.readFileSync(path, 'utf8');
 
       // Read header only
       const content = papaparse.parse(rawCSV, {
@@ -62,7 +47,7 @@ export default class ImportSchemaGenerator {
       rawCSV = '';
       const headers: string[] = content.meta.fields;
       const data: any[] = content.data;
-      headers.forEach((header, index) => {
+      headers.forEach(header => {
         const value: string = data[0][header];
         schema.properties[header] = Util.isBoolean(value)
           ? 'bool?'

@@ -21,11 +21,10 @@ import * as path from 'path';
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import { ImportFormat } from '../../services/data-importer';
-import { CSVDataImporter } from '../../services/data-importer/csv/CSVDataImporter';
-import ImportSchemaGenerator from '../../services/data-importer/ImportSchemaGenerator';
+import * as dataImporter from '../../services/data-importer';
+import { CSVDataImporter } from '../../services/data-importer/csv';
 import { Language, SchemaExporter } from '../../services/schema-export';
-import { getRange, menuUtils } from '../../utils';
+import { getRange, menu } from '../../utils';
 import {
   IMenuGenerator,
   IMenuGeneratorProps,
@@ -41,7 +40,6 @@ import { Focus, getClassName, IClassFocus, IListFocus } from './focus';
 import * as primitives from './primitives';
 import { RealmBrowser } from './RealmBrowser';
 import * as schemaUtils from './schema-utils';
-import { isSelected } from './Sidebar';
 import {
   CellChangeHandler,
   CellClickHandler,
@@ -238,7 +236,7 @@ class RealmBrowserContainer
       ],
     };
 
-    return menuUtils.performModifications(template, [
+    return menu.performModifications(template, [
       {
         action: 'append',
         id: 'import',
@@ -613,7 +611,7 @@ class RealmBrowserContainer
     e.preventDefault();
     const { focus } = this.state;
 
-    const menu = new remote.Menu();
+    const contextMenu = new remote.Menu();
 
     if (params) {
       const { property, rowObject, rowIndex, columnIndex } = params;
@@ -630,7 +628,7 @@ class RealmBrowserContainer
 
       // If we clicked a property that refers to an object
       if (property && property.type === 'object') {
-        menu.append(
+        contextMenu.append(
           new remote.MenuItem({
             label: 'Update reference',
             click: () => {
@@ -647,7 +645,7 @@ class RealmBrowserContainer
           this.state.highlight.rows.size > 1,
         );
 
-        menu.append(
+        contextMenu.append(
           new remote.MenuItem({
             label,
             click: () => {
@@ -680,7 +678,7 @@ class RealmBrowserContainer
       !primitives.isPrimitive(focus.property.objectType)
     ) {
       const className = getClassName(focus);
-      menu.append(
+      contextMenu.append(
         new remote.MenuItem({
           label: `Add existing ${className}`,
           click: () => {
@@ -693,7 +691,7 @@ class RealmBrowserContainer
     // If we right-clicking on the content we can always create a new object
     if (focus) {
       const className = getClassName(focus);
-      menu.append(
+      contextMenu.append(
         new remote.MenuItem({
           label: `Create new ${className}`,
           click: () => {
@@ -704,8 +702,8 @@ class RealmBrowserContainer
     }
 
     // If we have items to show - popup the menu
-    if (menu.items.length > 0) {
-      menu.popup(remote.getCurrentWindow(), {
+    if (contextMenu.items.length > 0) {
+      contextMenu.popup(remote.getCurrentWindow(), {
         x: e.clientX,
         y: e.clientY,
       });
@@ -1111,29 +1109,23 @@ class RealmBrowserContainer
     );
   };
 
-  private onImportIntoExistingRealm = () => {
-    remote.dialog.showOpenDialog(
-      {
-        properties: ['openFile', 'multiSelections'],
-        filters: [{ name: 'CSV File(s)', extensions: ['csv', 'CSV'] }],
-      },
-      selectedPaths => {
-        if (selectedPaths && this.realm) {
-          const schemaGenerator = new ImportSchemaGenerator(
-            ImportFormat.CSV,
-            selectedPaths,
-          );
-          const schema = schemaGenerator.generate();
-          const importer = new CSVDataImporter(selectedPaths, schema);
-          try {
-            importer.importInto(this.realm);
-          } catch (e) {
-            const { dialog } = require('electron').remote;
-            dialog.showErrorBox('Inserting CSV data failed', e.message);
-          }
+  private onImportIntoExistingRealm = (
+    format: dataImporter.ImportFormat = dataImporter.ImportFormat.CSV,
+  ) => {
+    const paths = dataImporter.showOpenDialog(format);
+    if (this.realm && paths.length > 0) {
+      try {
+        const schema = dataImporter.generateSchema(format, paths);
+        try {
+          const importer = dataImporter.getDataImporter(format, paths, schema);
+          importer.importInto(this.realm);
+        } catch (err) {
+          showError('Faild to import data', err);
         }
-      },
-    );
+      } catch (err) {
+        showError('Faild to generate schema', err);
+      }
+    }
   };
 }
 

@@ -16,31 +16,11 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as tutorials from '../services/tutorials';
+export class ImportObjectSchema implements Realm.ObjectSchema {
+  public name: string;
+  public properties: Realm.PropertiesTypes = {};
 
-import { IWindow } from './Window';
-
-export interface ITutorialWindowProps {
-  id: string;
-  context: {
-    serverUrl: string;
-  };
+  constructor(name: string) {
+    this.name = name;
+  }
 }
-
-export const TutorialWindow: IWindow = {
-  getWindowOptions: (
-    props: ITutorialWindowProps,
-  ): Partial<Electron.BrowserWindowConstructorOptions> => {
-    const config = tutorials.getConfig(props.id);
-    const title = config ? config.title : 'Missing a title';
-    return {
-      title: `Tutorial: ${title}`,
-      width: 800,
-      height: 500,
-    };
-  },
-  getComponent: () => require('../ui').Tutorial,
-  getTrackedProperties: (props: ITutorialWindowProps) => ({
-    id: props.id,
-  }),
-};

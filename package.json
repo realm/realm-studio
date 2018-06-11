@@ -214,7 +214,7 @@
     "tslint-eslint-rules": "^4.1.1",
     "tslint-plugin-prettier": "^1.2.0",
     "tslint-react": "^3.2.0",
-    "typescript": "^2.7.2",
+    "typescript": "^2.9.1",
     "uglifyjs-webpack-plugin": "^1.2.4",
     "url-loader": "^0.6.2",
     "webpack": "^4.1.1",

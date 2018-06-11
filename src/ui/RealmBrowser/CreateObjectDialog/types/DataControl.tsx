@@ -17,9 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { Button, Input, InputGroup, InputGroupAddon } from 'reactstrap';
-import * as Realm from 'realm';
 
 import { IBaseControlProps } from './TypeControl';
 
@@ -38,11 +36,13 @@ export const DataControl = ({
         onChange={e => {
           if (fileInput && fileInput.files && fileInput.files.length >= 1) {
             const firstFile = fileInput.files.item(0);
-            const reader = new FileReader();
-            reader.addEventListener('load', () => {
-              onChange(reader.result);
-            });
-            reader.readAsArrayBuffer(firstFile);
+            if (firstFile) {
+              const reader = new FileReader();
+              reader.addEventListener('load', () => {
+                onChange(reader.result);
+              });
+              reader.readAsArrayBuffer(firstFile);
+            }
           }
         }}
         required={!property.optional}

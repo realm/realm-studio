@@ -18,30 +18,32 @@
 
 import * as Realm from 'realm';
 
-import { CSVDataImporter } from './csv/CSVDataImporter';
-import ImportSchemaGenerator from './ImportSchemaGenerator';
+import * as csv from './csv';
+export { csv };
+
+export * from './ui';
 
 export enum ImportFormat {
   CSV = 'csv',
-  JSON = 'json',
+  // JSON = 'json',
 }
 
-export class ImportObjectSchema implements Realm.ObjectSchema {
-  public name: string;
-  public properties: Realm.PropertiesTypes = {};
-
-  constructor(name: string) {
-    this.name = name;
+export const generateSchema = (format: ImportFormat, paths: string[]) => {
+  if (format === ImportFormat.CSV) {
+    const generator = new csv.CSVSchemaGenerator(paths);
+    return generator.generate();
+  } else {
+    throw new Error('Not supported yet');
   }
-}
+};
 
 export const getDataImporter = (
   format: ImportFormat,
-  files: string[],
-  importSchema: Realm.ObjectSchema[],
+  paths: string[],
+  schema: Realm.ObjectSchema[],
 ) => {
   if (format === ImportFormat.CSV) {
-    return new CSVDataImporter(files, importSchema);
+    return new csv.CSVDataImporter(paths, schema);
   } else {
     throw new Error('Not supported yet');
   }

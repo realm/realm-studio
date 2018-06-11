@@ -16,10 +16,11 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-export { countdown } from './countdown';
-export { timeout } from './timeout';
-export { wait } from './wait';
-export { getRange } from './range';
+export * from './countdown';
+export * from './timeout';
+export * from './wait';
+export * from './range';
+export * from './promise-handle';
 
 import * as menu from './menu';
-export { menu as menuUtils };
+export { menu };

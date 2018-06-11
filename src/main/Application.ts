@@ -22,8 +22,7 @@ import { URL } from 'url';
 import * as path from 'path';
 import { MainReceiver } from '../actions/main';
 import { CLOUD_PROTOCOL, STUDIO_PROTOCOL } from '../constants';
-import { getDataImporter, ImportFormat } from '../services/data-importer';
-import ImportSchemaGenerator from '../services/data-importer/ImportSchemaGenerator';
+import * as dataImporter from '../services/data-importer';
 import * as github from '../services/github';
 import * as raas from '../services/raas';
 import { realms } from '../services/ros';
@@ -87,7 +86,7 @@ export class Application {
     [MainActions.ShowGreeting]: () => {
       return this.showGreeting();
     },
-    [MainActions.ShowImportData]: (format: ImportFormat) => {
+    [MainActions.ShowImportData]: (format: dataImporter.ImportFormat) => {
       return this.showImportData(format);
     },
     [MainActions.ShowOpenLocalRealm]: () => {
@@ -241,36 +240,37 @@ export class Application {
     });
   }
 
-  public showImportData(format: ImportFormat) {
+  public showImportData(format: dataImporter.ImportFormat) {
     return new Promise((resolve, reject) => {
-      electron.dialog.showOpenDialog(
-        {
-          properties: ['openFile', 'multiSelections'],
-          filters: [{ name: 'CSV File(s)', extensions: ['csv', 'CSV'] }],
-        },
-        selectedPaths => {
-          if (selectedPaths) {
-            // Generate the Realm from the provided CSV file(s)
-            const schemaGenerator = new ImportSchemaGenerator(
-              ImportFormat.CSV,
-              selectedPaths,
-            );
-            const schema = schemaGenerator.generate();
-            const importer = getDataImporter(format, selectedPaths, schema);
-            const generatedRealm = importer.import(
-              path.dirname(selectedPaths[0]),
-            );
-            // close Realm in main process (to be opened in Renderer process)
-            generatedRealm.close();
-
-            // Open a RealmBrowser using the generated Realm file.
-            this.openLocalRealmAtPath(generatedRealm.path).then(
-              resolve,
-              reject,
-            );
-          }
-        },
+      // Ask the users for the file names of files to import
+      const paths = dataImporter.showOpenDialog(format);
+      if (!paths || paths.length === 0) {
+        // Don't do anything if the user cancelled or selected no files
+        return;
+      }
+      // Generate the Realm from the provided CSV file(s)
+      const schema = dataImporter.generateSchema(
+        dataImporter.ImportFormat.CSV,
+        paths,
       );
+      // Get the importer
+      const importer = dataImporter.getDataImporter(format, paths, schema);
+      // Start the import
+      const defaultPath = path.dirname(paths[0]) + '/default.realm';
+      const destinationPath = electron.dialog.showSaveDialog({
+        defaultPath,
+        title: 'Choose where to store the imported data',
+        filters: [{ name: 'Realm file', extensions: ['realm'] }],
+      });
+      if (!destinationPath) {
+        // Don't do anything if the user cancelled or selected no files
+        return;
+      }
+      const generatedRealm = importer.import(destinationPath);
+      // Close Realm in main process (to be opened in Renderer process)
+      generatedRealm.close();
+      // Open a RealmBrowser using the generated Realm file.
+      this.openLocalRealmAtPath(generatedRealm.path).then(resolve, reject);
     });
   }
 

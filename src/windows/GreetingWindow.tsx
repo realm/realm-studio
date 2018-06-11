@@ -17,7 +17,6 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import { IWindow } from './Window';
-import { IGreetingWindowTypedProps } from './WindowTypedProps';
 
 // tslint:disable-next-line:no-empty-interface
 export interface IGreetingWindowProps {

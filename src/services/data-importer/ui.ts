@@ -16,31 +16,22 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as tutorials from '../services/tutorials';
+import * as electron from 'electron';
 
-import { IWindow } from './Window';
+import { ImportFormat } from '.';
 
-export interface ITutorialWindowProps {
-  id: string;
-  context: {
-    serverUrl: string;
-  };
-}
+export const showOpenDialog = (
+  format: ImportFormat = ImportFormat.CSV,
+): string[] => {
+  const dialog = electron.dialog || electron.remote.dialog;
 
-export const TutorialWindow: IWindow = {
-  getWindowOptions: (
-    props: ITutorialWindowProps,
-  ): Partial<Electron.BrowserWindowConstructorOptions> => {
-    const config = tutorials.getConfig(props.id);
-    const title = config ? config.title : 'Missing a title';
-    return {
-      title: `Tutorial: ${title}`,
-      width: 800,
-      height: 500,
-    };
-  },
-  getComponent: () => require('../ui').Tutorial,
-  getTrackedProperties: (props: ITutorialWindowProps) => ({
-    id: props.id,
-  }),
+  if (format !== ImportFormat.CSV) {
+    throw new Error(
+      `Currently, only CSV import is supported - format was ${format}`,
+    );
+  }
+  return dialog.showOpenDialog({
+    properties: ['openFile', 'multiSelections'],
+    filters: [{ name: 'CSV File(s)', extensions: ['csv', 'CSV'] }],
+  });
 };

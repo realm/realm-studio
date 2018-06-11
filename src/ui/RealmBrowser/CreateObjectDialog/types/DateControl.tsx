@@ -19,7 +19,6 @@
 import * as moment from 'moment';
 import * as React from 'react';
 import { Button, Input, InputGroup, InputGroupAddon } from 'reactstrap';
-import * as Realm from 'realm';
 
 import { parseDate } from '../../parsers';
 

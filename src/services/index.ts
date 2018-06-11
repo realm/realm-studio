@@ -16,31 +16,22 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as tutorials from '../services/tutorials';
+import * as dataImporter from './data-importer';
+import * as github from './github';
+import * as keytar from './keytar';
+import * as mixpanel from './mixpanel';
+import * as raas from './raas';
+import * as ros from './ros';
+import * as schemaExport from './schema-export';
+import * as tutorials from './tutorials';
 
-import { IWindow } from './Window';
-
-export interface ITutorialWindowProps {
-  id: string;
-  context: {
-    serverUrl: string;
-  };
-}
-
-export const TutorialWindow: IWindow = {
-  getWindowOptions: (
-    props: ITutorialWindowProps,
-  ): Partial<Electron.BrowserWindowConstructorOptions> => {
-    const config = tutorials.getConfig(props.id);
-    const title = config ? config.title : 'Missing a title';
-    return {
-      title: `Tutorial: ${title}`,
-      width: 800,
-      height: 500,
-    };
-  },
-  getComponent: () => require('../ui').Tutorial,
-  getTrackedProperties: (props: ITutorialWindowProps) => ({
-    id: props.id,
-  }),
+export {
+  dataImporter,
+  github,
+  keytar,
+  mixpanel,
+  raas,
+  ros,
+  schemaExport,
+  tutorials,
 };

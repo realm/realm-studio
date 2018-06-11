@@ -16,31 +16,19 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as tutorials from '../services/tutorials';
+// This utility can be used to create a promise and externalize the resolve and reject methods to the caller
 
-import { IWindow } from './Window';
-
-export interface ITutorialWindowProps {
-  id: string;
-  context: {
-    serverUrl: string;
-  };
+export interface IPromiseHandle<T> {
+  promise: Promise<T>;
+  resolve: (result: T) => void;
+  reject: (reason: any) => void;
 }
 
-export const TutorialWindow: IWindow = {
-  getWindowOptions: (
-    props: ITutorialWindowProps,
-  ): Partial<Electron.BrowserWindowConstructorOptions> => {
-    const config = tutorials.getConfig(props.id);
-    const title = config ? config.title : 'Missing a title';
-    return {
-      title: `Tutorial: ${title}`,
-      width: 800,
-      height: 500,
-    };
-  },
-  getComponent: () => require('../ui').Tutorial,
-  getTrackedProperties: (props: ITutorialWindowProps) => ({
-    id: props.id,
-  }),
+export const createPromiseHandle = <T extends any>() => {
+  const handle: Partial<IPromiseHandle<T>> = {};
+  handle.promise = new Promise<T>((resolve, reject) => {
+    handle.resolve = resolve;
+    handle.reject = reject;
+  });
+  return handle as IPromiseHandle<T>;
 };

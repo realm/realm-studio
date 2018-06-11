@@ -20,42 +20,37 @@ import * as React from 'react';
 import { Column } from 'react-virtualized';
 import { Button } from 'reactstrap';
 
-import { IPermission, IRealmFile, RealmType } from '../../../services/ros';
+import { IPermission, IRealmFile } from '../../../services/ros';
 import {
   FilterableTable,
   FilterableTableWrapper,
 } from '../shared/FilterableTable';
 import { FloatingControls } from '../shared/FloatingControls';
 import { displayUser } from '../utils';
-import { CreateRealmDialog } from './CreateRealmDialog';
 import { RealmSidebar } from './RealmSidebar';
 
 export const RealmsTable = ({
   getRealmFromId,
   getRealmPermissions,
-  isCreateRealmOpen,
-  onRealmCreated,
   onRealmDeletion,
   onRealmOpened,
   onRealmSelected,
   onRealmTypeUpgrade,
   realms,
   selectedRealmPath,
-  toggleCreateRealm,
+  onRealmCreation,
   searchString,
   onSearchStringChange,
 }: {
   getRealmFromId: (path: string) => IRealmFile | undefined;
   getRealmPermissions: (path: string) => Realm.Results<IPermission>;
-  isCreateRealmOpen: boolean;
-  onRealmCreated: (path: string) => void;
   onRealmDeletion: (path: string) => void;
   onRealmOpened: (path: string) => void;
   onRealmSelected: (path: string | null) => void;
   onRealmTypeUpgrade: (path: string) => void;
   realms: Realm.Results<IRealmFile>;
   selectedRealmPath: string | null;
-  toggleCreateRealm: () => void;
+  onRealmCreation: () => void;
   searchString: string;
   onSearchStringChange: (query: string) => void;
 }) => {
@@ -87,14 +82,8 @@ export const RealmsTable = ({
       </FilterableTable>
 
       <FloatingControls isOpen={selectedRealmPath === null}>
-        <Button onClick={toggleCreateRealm}>Create new Realm</Button>
+        <Button onClick={onRealmCreation}>Create new Realm</Button>
       </FloatingControls>
-
-      <CreateRealmDialog
-        isOpen={isCreateRealmOpen}
-        toggle={toggleCreateRealm}
-        onRealmCreated={onRealmCreated}
-      />
 
       <RealmSidebar
         getRealmPermissions={getRealmPermissions}
