@@ -21,9 +21,10 @@ import * as React from 'react';
 import { DraggableCore, DraggableData } from 'react-draggable';
 import * as Realm from 'realm';
 
+import { ISorting } from '..';
 import { IPropertyWithName } from '../..';
 
-import { ISorting, SortClickHandler } from '.';
+import { SortClickHandler } from '.';
 
 // This constant should match the $realm-browser-header-handle-width in scss
 const HANDLE_WIDTH = 5;

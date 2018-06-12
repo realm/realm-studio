@@ -24,6 +24,7 @@ import {
   ScrollSyncProps,
 } from 'react-virtualized';
 
+import { ISorting } from '..';
 import { EditMode, IPropertyWithName } from '../..';
 import { Focus } from '../../focus';
 
@@ -34,7 +35,6 @@ import {
   CellHighlightedHandler,
   CellValidatedHandler,
   IHighlight,
-  ISorting,
   SortEndHandler,
   SortStartHandler,
 } from '.';

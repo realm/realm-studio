@@ -25,6 +25,7 @@ import {
   ScrollSyncProps,
 } from 'react-virtualized';
 
+import { ISorting, SortingChangeHandler } from '..';
 import { EditMode, IPropertyWithName } from '../..';
 import { Focus } from '../../focus';
 
@@ -76,11 +77,6 @@ export interface IHighlight {
   lastRowIndexClicked?: number;
 }
 
-export interface ISorting {
-  property: IPropertyWithName;
-  reverse: boolean;
-}
-
 export type SortClickHandler = (property: IPropertyWithName) => void;
 
 import { Table } from './Table';
@@ -90,6 +86,7 @@ const MINIMUM_COLUMN_WIDTH = 20;
 export interface IBaseTableContainerProps {
   dataVersion?: number;
   editMode: EditMode;
+  filteredSortedResults: Realm.Collection<any>;
   focus: Focus;
   highlight?: IHighlight;
   onAddColumnClick?: () => void;
@@ -99,10 +96,12 @@ export interface IBaseTableContainerProps {
   onCellValidated?: CellValidatedHandler;
   onContextMenu?: CellContextMenuHandler;
   onResetHighlight: () => void;
-  onTableBackgroundClick: () => void;
   onSortEnd?: SortEndHandler;
+  onSortingChange: SortingChangeHandler;
   onSortStart?: SortStartHandler;
+  onTableBackgroundClick: () => void;
   query: string;
+  sorting?: ISorting;
 }
 
 export interface ITableContainerProps extends IBaseTableContainerProps {
@@ -113,7 +112,6 @@ export interface ITableContainerProps extends IBaseTableContainerProps {
 export interface ITableContainerState {
   columnWidths: number[];
   isSorting: boolean;
-  sorting?: ISorting;
 }
 
 class TableContainer extends React.PureComponent<
@@ -129,16 +127,12 @@ class TableContainer extends React.PureComponent<
   private gridHeader: Grid | null = null;
 
   public render() {
-    const filteredSortedResults = this.getFilteredSortedResults({
-      query: this.props.query,
-      sorting: this.state.sorting,
-    });
-    return filteredSortedResults ? (
+    return (
       <Table
         columnWidths={this.state.columnWidths}
         dataVersion={this.props.dataVersion}
         editMode={this.props.editMode}
-        filteredSortedResults={filteredSortedResults}
+        filteredSortedResults={this.props.filteredSortedResults}
         focus={this.props.focus}
         getCellValue={this.getCellValue}
         gridContentRef={this.gridContentRef}
@@ -158,9 +152,9 @@ class TableContainer extends React.PureComponent<
         onTableBackgroundClick={this.props.onTableBackgroundClick}
         scrollProps={this.props.scrollProps}
         sizeProps={this.props.sizeProps}
-        sorting={this.state.sorting}
+        sorting={this.props.sorting}
       />
-    ) : null;
+    );
   }
 
   public componentWillMount() {
@@ -180,7 +174,6 @@ class TableContainer extends React.PureComponent<
         properties,
         this.props.focus.addColumnEnabled,
       );
-      this.setState({ sorting: undefined });
     }
   }
 
@@ -216,10 +209,6 @@ class TableContainer extends React.PureComponent<
         this.gridHeader.recomputeGridSize();
       }
     }
-
-    if (this.state.sorting !== prevState.sorting) {
-      this.props.onResetHighlight();
-    }
   }
 
   private getCellValue = (object: any, props: GridCellProps) => {
@@ -248,23 +237,19 @@ class TableContainer extends React.PureComponent<
   };
 
   private onSortClick = (property: IPropertyWithName) => {
-    const { sorting } = this.state;
+    const { sorting } = this.props;
     if (!sorting || sorting.property.name !== property.name) {
-      this.setState({
-        sorting: {
-          property,
-          reverse: false,
-        },
+      this.props.onSortingChange({
+        property,
+        reverse: false,
       });
     } else if (sorting.property.name === property.name && !sorting.reverse) {
-      this.setState({
-        sorting: {
-          property,
-          reverse: true,
-        },
+      this.props.onSortingChange({
+        property,
+        reverse: true,
       });
     } else {
-      this.setState({ sorting: undefined });
+      this.props.onSortingChange(undefined);
     }
   };
 
@@ -281,36 +266,6 @@ class TableContainer extends React.PureComponent<
       this.props.onSortStart(sortEvent, e);
     }
   };
-
-  private getFilteredSortedResults({
-    query,
-    sorting,
-  }: {
-    query?: string;
-    sorting?: ISorting;
-  }): Realm.Collection<any> | null {
-    if (this.props.focus) {
-      let results = this.props.focus.results;
-      if (query) {
-        try {
-          results = results.filtered(query);
-        } catch (err) {
-          // tslint:disable-next-line:no-console
-          console.warn(`Could not filter on "${query}"`, err);
-        }
-      }
-
-      if (sorting) {
-        const propertyName = sorting.property.name;
-        if (propertyName) {
-          results = results.sorted(propertyName, sorting.reverse);
-        }
-      }
-      return results;
-    } else {
-      return null;
-    }
-  }
 
   private setDefaultColumnWidths(
     properties: IPropertyWithName[],

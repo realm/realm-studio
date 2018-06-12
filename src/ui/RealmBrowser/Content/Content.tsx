@@ -25,6 +25,7 @@ import { QuerySearch } from '../../reusable/QuerySearch';
 import { Bottombar } from '../Bottombar';
 import { Focus, getClassName } from '../focus';
 
+import { ISorting, QueryChangeHandler, SortingChangeHandler } from '.';
 import { ResponsiveTable } from './ResponsiveTable';
 import {
   CellChangeHandler,
@@ -41,6 +42,7 @@ export const Content = ({
   changeCount,
   dataVersion,
   editMode,
+  filteredSortedResults,
   focus,
   highlight,
   inTransaction,
@@ -57,14 +59,17 @@ export const Content = ({
   onQueryHelp,
   onResetHighlight,
   onSortEnd,
+  onSortingChange,
   onSortStart,
   onTableBackgroundClick,
   progress,
   query,
+  sorting,
 }: {
   changeCount?: number;
   dataVersion?: number;
   editMode: EditMode;
+  filteredSortedResults: Realm.Collection<any>;
   focus: Focus;
   highlight?: IHighlight;
   inTransaction?: boolean;
@@ -77,66 +82,63 @@ export const Content = ({
   onCommitTransaction?: () => void;
   onContextMenu?: CellContextMenuHandler;
   onNewObjectClick?: () => void;
-  onQueryChange: (query: string) => void;
+  onQueryChange: QueryChangeHandler;
   onQueryHelp: () => void;
   onResetHighlight: () => void;
   onSortEnd?: SortEndHandler;
+  onSortingChange: SortingChangeHandler;
   onSortStart?: SortStartHandler;
   onTableBackgroundClick: () => void;
   progress?: ILoadingProgress;
   query: string;
-}) => {
-  if (focus) {
-    return (
-      <div className="RealmBrowser__Content">
-        <div className="RealmBrowser__Topbar">
-          <QuerySearch
-            className="RealmBrowser__Topbar__Filter"
-            onQueryChange={onQueryChange}
-            onQueryHelp={onQueryHelp}
-            query={query}
-            placeholder="Enter a query to filter the list"
-          />
-          {onNewObjectClick ? (
-            <Button
-              size="sm"
-              color="primary"
-              className="RealmBrowser__Topbar__Button"
-              onClick={onNewObjectClick}
-              title={`Create new ${getClassName(focus)}`}
-            >
-              Create new {getClassName(focus)}
-            </Button>
-          ) : null}
-        </div>
-        <ResponsiveTable
-          dataVersion={dataVersion}
-          editMode={editMode}
-          focus={focus}
-          highlight={highlight}
-          onAddColumnClick={onAddColumnClick}
-          onCellChange={onCellChange}
-          onCellClick={onCellClick}
-          onCellHighlighted={onCellHighlighted}
-          onCellValidated={onCellValidated}
-          onContextMenu={onContextMenu}
-          onResetHighlight={onResetHighlight}
-          onSortEnd={onSortEnd}
-          onSortStart={onSortStart}
-          onTableBackgroundClick={onTableBackgroundClick}
-          query={query}
-        />
-        <Bottombar
-          changeCount={changeCount}
-          onCancelTransaction={onCancelTransaction}
-          onCommitTransaction={onCommitTransaction}
-          inTransaction={inTransaction}
-        />
-      </div>
-    );
-  } else if (progress && progress.status !== 'done') {
-    return <div className="RealmBrowser__Content--no-schema-selected" />;
-  } else {
-    return null;
-  }
-};
+  sorting: ISorting | undefined;
+}) => (
+  <div className="RealmBrowser__Content">
+    <div className="RealmBrowser__Topbar">
+      <QuerySearch
+        className="RealmBrowser__Topbar__Filter"
+        onQueryChange={onQueryChange}
+        onQueryHelp={onQueryHelp}
+        query={query}
+        placeholder="Enter a query to filter the list"
+      />
+      {onNewObjectClick ? (
+        <Button
+          size="sm"
+          color="primary"
+          className="RealmBrowser__Topbar__Button"
+          onClick={onNewObjectClick}
+          title={`Create new ${getClassName(focus)}`}
+        >
+          Create new {getClassName(focus)}
+        </Button>
+      ) : null}
+    </div>
+    <ResponsiveTable
+      dataVersion={dataVersion}
+      editMode={editMode}
+      filteredSortedResults={filteredSortedResults}
+      focus={focus}
+      highlight={highlight}
+      onAddColumnClick={onAddColumnClick}
+      onCellChange={onCellChange}
+      onCellClick={onCellClick}
+      onCellHighlighted={onCellHighlighted}
+      onCellValidated={onCellValidated}
+      onContextMenu={onContextMenu}
+      onResetHighlight={onResetHighlight}
+      onSortEnd={onSortEnd}
+      onSortingChange={onSortingChange}
+      onSortStart={onSortStart}
+      onTableBackgroundClick={onTableBackgroundClick}
+      query={query}
+      sorting={sorting}
+    />
+    <Bottombar
+      changeCount={changeCount}
+      onCancelTransaction={onCancelTransaction}
+      onCommitTransaction={onCommitTransaction}
+      inTransaction={inTransaction}
+    />
+  </div>
+);
