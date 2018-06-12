@@ -44,6 +44,7 @@ import {
 import { CreateObjectDialog } from './CreateObjectDialog';
 import { EncryptionDialog } from './EncryptionDialog';
 import { Focus, IClassFocus } from './focus';
+import { NoFocusPlaceholder } from './NoFocusPlaceholder';
 import { ObjectSelector } from './ObjectSelector';
 import { Sidebar } from './Sidebar';
 
@@ -151,27 +152,31 @@ export const RealmBrowser = ({
         toggleAddSchema={toggleAddSchema}
       />
       <div className="RealmBrowser__Wrapper">
-        <Content
-          changeCount={changeCount}
-          dataVersion={dataVersion}
-          editMode={editMode}
-          focus={focus}
-          highlight={highlight}
-          inTransaction={inTransaction}
-          onAddColumnClick={toggleAddSchemaProperty}
-          onCancelTransaction={onCancelTransaction}
-          onCellChange={onCellChange}
-          onCellClick={onCellClick}
-          onCellHighlighted={onCellHighlighted}
-          onCellValidated={onCellValidated}
-          onCommitTransaction={onCommitTransaction}
-          onContextMenu={onContextMenu}
-          onNewObjectClick={onNewObjectClick}
-          onResetHighlight={onResetHighlight}
-          onSortEnd={onSortEnd}
-          onSortStart={onSortStart}
-          progress={progress}
-        />
+        {focus ? (
+          <Content
+            changeCount={changeCount}
+            dataVersion={dataVersion}
+            editMode={editMode}
+            focus={focus}
+            highlight={highlight}
+            inTransaction={inTransaction}
+            onAddColumnClick={toggleAddSchemaProperty}
+            onCancelTransaction={onCancelTransaction}
+            onCellChange={onCellChange}
+            onCellClick={onCellClick}
+            onCellHighlighted={onCellHighlighted}
+            onCellValidated={onCellValidated}
+            onCommitTransaction={onCommitTransaction}
+            onContextMenu={onContextMenu}
+            onNewObjectClick={onNewObjectClick}
+            onResetHighlight={onResetHighlight}
+            onSortEnd={onSortEnd}
+            onSortStart={onSortStart}
+            progress={progress}
+          />
+        ) : (
+          <NoFocusPlaceholder />
+        )}
       </div>
       {confirmModal && (
         <ConfirmModal

@@ -174,18 +174,6 @@ $highlight-row-color: $black;
     display: flex;
     flex: 1 1 0;
     flex-direction: column;
-
-    &--no-schema-selected {
-      align-items: center;
-      display: flex;
-      height: 100%;
-      justify-content: center;
-
-      &::before {
-        color: $elephant;
-        content: "No schema selected";
-      }
-    }
   }
 
   &__Topbar {
@@ -486,6 +474,18 @@ $highlight-row-color: $black;
     }
 
     @import "../reusable/ReactVirtualized";
+  }
+
+  &__NoFocusPlaceholder {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+
+    &::before {
+      color: $elephant;
+      content: "No schema selected";
+    }
   }
 
   &__Bottombar {

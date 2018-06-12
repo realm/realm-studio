@@ -65,7 +65,7 @@ export const Content = ({
   changeCount?: number;
   dataVersion?: number;
   editMode: EditMode;
-  focus: Focus | null;
+  focus: Focus;
   highlight?: IHighlight;
   inTransaction?: boolean;
   onAddColumnClick?: () => void;
