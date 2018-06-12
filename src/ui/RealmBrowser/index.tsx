@@ -22,7 +22,6 @@ import * as React from 'react';
 import * as Realm from 'realm';
 
 import * as dataImporter from '../../services/data-importer';
-import { CSVDataImporter } from '../../services/data-importer/csv';
 import { Language, SchemaExporter } from '../../services/schema-export';
 import { getRange, menu } from '../../utils';
 import {
@@ -36,10 +35,6 @@ import {
   RealmLoadingComponent,
 } from '../reusable/RealmLoadingComponent';
 
-import { Focus, getClassName, IClassFocus, IListFocus } from './focus';
-import * as primitives from './primitives';
-import { RealmBrowser } from './RealmBrowser';
-import * as schemaUtils from './schema-utils';
 import {
   CellChangeHandler,
   CellClickHandler,
@@ -47,7 +42,11 @@ import {
   IHighlight,
   SortEndHandler,
   SortStartHandler,
-} from './Table';
+} from './Content/Table';
+import { Focus, getClassName, IClassFocus, IListFocus } from './focus';
+import * as primitives from './primitives';
+import { RealmBrowser } from './RealmBrowser';
+import * as schemaUtils from './schema-utils';
 
 // TODO: Remove this interface once the Realm.ObjectSchemaProperty
 // has a name parameter in its type definition.

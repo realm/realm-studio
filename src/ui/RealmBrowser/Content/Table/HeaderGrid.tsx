@@ -25,8 +25,9 @@ import {
   Index,
 } from 'react-virtualized';
 
+import { IPropertyWithName } from '../..';
+
 import { ISorting } from '.';
-import { IPropertyWithName } from '..';
 import { HeaderCell } from './HeaderCell';
 
 export interface IHeaderGridProps extends Partial<GridProps> {

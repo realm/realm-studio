@@ -19,10 +19,10 @@
 import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 
-import { EditMode, IPropertyWithName } from '..';
+import { EditMode } from '..';
 import { Content } from '../Content';
+import { CellClickHandler, IHighlight } from '../Content/Table';
 import { IClassFocus } from '../focus';
-import { CellClickHandler, IHighlight } from '../Table';
 
 export interface IObjectSelectorStateProps {
   focus: IClassFocus;

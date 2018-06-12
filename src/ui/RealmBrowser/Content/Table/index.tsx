@@ -25,8 +25,8 @@ import {
   ScrollSyncProps,
 } from 'react-virtualized';
 
-import { EditMode, IPropertyWithName } from '..';
-import { Focus } from '../focus';
+import { EditMode, IPropertyWithName } from '../..';
+import { Focus } from '../../focus';
 
 export type CellChangeHandler = (
   params: {

@@ -19,8 +19,8 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
 
-import { CellValidatedHandler } from '.';
-import { EditMode, IPropertyWithName } from '..';
+import { EditMode, IPropertyWithName } from '../..';
+
 import {
   DataCell,
   DefaultCell,

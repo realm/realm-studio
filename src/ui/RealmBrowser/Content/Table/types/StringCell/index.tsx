@@ -18,11 +18,10 @@
 
 import { remote } from 'electron';
 import * as React from 'react';
-import * as Realm from 'realm';
 
-import { CellValidatedHandler } from '../..';
-import { EditMode, IPropertyWithName } from '../../..';
-import { parse } from '../../../parsers';
+import { EditMode, IPropertyWithName } from '../../../..';
+import { parse } from '../../../../parsers';
+
 import { StringCell } from './StringCell';
 
 export interface IStringCellContainerProps {

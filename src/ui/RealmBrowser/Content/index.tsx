@@ -19,9 +19,11 @@
 import * as electron from 'electron';
 import * as React from 'react';
 
-import { EditMode, IPropertyWithName } from '..';
+import { EditMode } from '..';
 import { ILoadingProgress } from '../../reusable/LoadingOverlay';
 import { Focus } from '../focus';
+
+import { Content } from './Content';
 import {
   CellChangeHandler,
   CellClickHandler,
@@ -31,9 +33,7 @@ import {
   IHighlight,
   SortEndHandler,
   SortStartHandler,
-} from '../Table';
-
-import { Content } from './Content';
+} from './Table';
 
 export interface IContentContainerProps {
   changeCount?: number;

@@ -32,6 +32,8 @@ import {
   Index,
 } from 'react-virtualized';
 
+import { EditMode, IPropertyWithName } from '../..';
+
 import {
   CellChangeHandler,
   CellClickHandler,
@@ -40,7 +42,6 @@ import {
   CellValidatedHandler,
   IHighlight,
 } from '.';
-import { EditMode, IPropertyWithName } from '..';
 import { Cell } from './Cell';
 import { Row } from './Row';
 import {

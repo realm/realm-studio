@@ -19,22 +19,18 @@
 import * as React from 'react';
 import * as Realm from 'realm';
 
+import { ConfirmModal } from '../reusable/ConfirmModal';
+import { ILoadingProgress, LoadingOverlay } from '../reusable/LoadingOverlay';
+
 import {
   CreateObjectHandler,
   EditMode,
   IConfirmModal,
   ISelectObjectState,
 } from '.';
-import { ConfirmModal } from '../reusable/ConfirmModal';
-import { ILoadingProgress, LoadingOverlay } from '../reusable/LoadingOverlay';
 import { AddClassModal } from './AddClassModal';
 import { AddPropertyModal } from './AddPropertyModal';
 import { Content } from './Content';
-import { CreateObjectDialog } from './CreateObjectDialog';
-import { EncryptionDialog } from './EncryptionDialog';
-import { Focus, IClassFocus } from './focus';
-import { ObjectSelector } from './ObjectSelector';
-import { Sidebar } from './Sidebar';
 import {
   CellChangeHandler,
   CellClickHandler,
@@ -44,7 +40,12 @@ import {
   IHighlight,
   SortEndHandler,
   SortStartHandler,
-} from './Table';
+} from './Content/Table';
+import { CreateObjectDialog } from './CreateObjectDialog';
+import { EncryptionDialog } from './EncryptionDialog';
+import { Focus, IClassFocus } from './focus';
+import { ObjectSelector } from './ObjectSelector';
+import { Sidebar } from './Sidebar';
 
 import './RealmBrowser.scss';
 

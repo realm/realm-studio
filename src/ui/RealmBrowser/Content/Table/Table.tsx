@@ -24,6 +24,9 @@ import {
   ScrollSyncProps,
 } from 'react-virtualized';
 
+import { EditMode, IPropertyWithName } from '../..';
+import { Focus } from '../../focus';
+
 import {
   CellChangeHandler,
   CellClickHandler,
@@ -35,8 +38,6 @@ import {
   SortEndHandler,
   SortStartHandler,
 } from '.';
-import { EditMode, IPropertyWithName } from '..';
-import { Focus } from '../focus';
 import { ContentGrid } from './ContentGrid';
 import { HeaderGrid } from './HeaderGrid';
 import { MoreIndicator } from './MoreIndicator';

@@ -18,9 +18,8 @@
 
 import * as React from 'react';
 
-import { IPropertyWithName } from '..';
+import { CellClickHandler, IHighlight } from '../Content/Table';
 import { IClassFocus } from '../focus';
-import { CellClickHandler, IHighlight } from '../Table';
 
 import { ObjectSelector } from './ObjectSelector';
 

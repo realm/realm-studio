@@ -21,7 +21,8 @@ import * as React from 'react';
 import { Badge } from 'reactstrap';
 import * as Realm from 'realm';
 
-import * as primitives from '../../primitives';
+import * as primitives from '../../../primitives';
+
 import * as DataCell from './DataCell';
 
 const VALUE_LENGTH_LIMIT = 10;

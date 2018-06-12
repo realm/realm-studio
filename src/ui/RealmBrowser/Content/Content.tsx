@@ -24,7 +24,8 @@ import { ILoadingProgress } from '../../reusable/LoadingOverlay';
 import { QuerySearch } from '../../reusable/QuerySearch';
 import { Bottombar } from '../Bottombar';
 import { Focus, getClassName } from '../focus';
-import { ResponsiveTable } from '../ResponsiveTable';
+
+import { ResponsiveTable } from './ResponsiveTable';
 import {
   CellChangeHandler,
   CellClickHandler,
@@ -34,7 +35,7 @@ import {
   IHighlight,
   SortEndHandler,
   SortStartHandler,
-} from '../Table';
+} from './Table';
 
 export const Content = ({
   changeCount,

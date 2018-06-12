@@ -20,7 +20,7 @@ import * as classnames from 'classnames';
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import { displayObject } from '../../display';
+import { displayObject } from '../../../display';
 
 export const ObjectCell = ({
   property,
