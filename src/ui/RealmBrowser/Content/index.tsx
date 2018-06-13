@@ -33,6 +33,9 @@ import { Focus, getClassName, IClassFocus } from '../focus';
 import { isPrimitive } from '../primitives';
 
 import { Content, IContentProps } from './Content';
+import { ICreateObjectDialogContainerProps } from './CreateObjectDialog';
+import { IDeleteObjectsDialogProps } from './DeleteObjectsDialog';
+import { IOpenSelectObjectDialogContainerProps } from './SelectObjectDialog';
 import {
   CellChangeHandler,
   CellClickHandler,
@@ -53,38 +56,14 @@ export interface ISorting {
   reverse: boolean;
 }
 
-interface IOpenCreateObjectDialog {
-  getClassFocus: (className: string) => IClassFocus;
-  isOpen: true;
-  onCancel: () => void;
-  onCreate: CreateObjectHandler;
-  schema: Realm.ObjectSchema;
-}
-
-export type ICreateObjectDialog = IOpenCreateObjectDialog | { isOpen: false };
-
-export interface IOpenDeleteObjectsDialog {
-  actionLabel: string;
-  description: string;
-  isOpen: true;
-  onCancel: () => void;
-  onDelete: () => void;
-  title: string;
-}
-
-export type IDeleteObjectsDialog = IOpenDeleteObjectsDialog | { isOpen: false };
-
 export type SelectObjectAction =
   | { type: 'object'; object: Realm.Object; propertyName: string }
   | { type: 'list'; list: Realm.List<any> };
 
-export interface IOpenSelectObjectDialog {
+export interface IOpenSelectObjectDialog
+  extends IOpenSelectObjectDialogContainerProps {
   action: SelectObjectAction;
-  focus: IClassFocus;
   isOpen: true;
-  isOptional: boolean;
-  onCancel: () => void;
-  onSelect: (object: any) => void;
 }
 
 export type ISelectObjectDialog = IOpenSelectObjectDialog | { isOpen: false };
@@ -123,8 +102,8 @@ export type IContentContainerProps =
   | IReadWriteContentContainerProps;
 
 export interface IContentContainerState {
-  createObjectDialog: ICreateObjectDialog;
-  deleteObjectsDialog: IDeleteObjectsDialog;
+  createObjectDialog: ICreateObjectDialogContainerProps;
+  deleteObjectsDialog: IDeleteObjectsDialogProps;
   error?: Error;
   highlight?: IHighlight;
   query: string;

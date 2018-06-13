@@ -22,18 +22,20 @@ import { EditMode } from '..';
 import { Bottombar } from '../Bottombar';
 import { Focus, IClassFocus } from '../focus';
 
+import { ISorting, QueryChangeHandler, SortingChangeHandler } from '.';
 import {
-  ICreateObjectDialog,
-  IDeleteObjectsDialog,
-  ISelectObjectDialog,
-  ISorting,
-  QueryChangeHandler,
-  SortingChangeHandler,
-} from '.';
-import { CreateObjectDialog } from './CreateObjectDialog';
-import { DeleteObjectsDialog } from './DeleteObjectsDialog';
+  CreateObjectDialog,
+  ICreateObjectDialogContainerProps,
+} from './CreateObjectDialog';
+import {
+  DeleteObjectsDialog,
+  IDeleteObjectsDialogProps,
+} from './DeleteObjectsDialog';
 import { ResponsiveTable } from './ResponsiveTable';
-import { SelectObjectDialog } from './SelectObjectDialog';
+import {
+  ISelectObjectDialogContainerProps,
+  SelectObjectDialog,
+} from './SelectObjectDialog';
 import {
   CellChangeHandler,
   CellClickHandler,
@@ -76,8 +78,8 @@ interface IReadOnlyContentProps extends IBaseContentProps {
 
 interface IReadWriteContentProps extends IBaseContentProps {
   changeCount: number;
-  createObjectDialog: ICreateObjectDialog;
-  deleteObjectsDialog: IDeleteObjectsDialog;
+  createObjectDialog: ICreateObjectDialogContainerProps;
+  deleteObjectsDialog: IDeleteObjectsDialogProps;
   editMode: EditMode;
   getClassFocus: (className: string) => IClassFocus;
   inTransaction: boolean;
@@ -86,7 +88,7 @@ interface IReadWriteContentProps extends IBaseContentProps {
   onReorderingEnd: ReorderingEndHandler;
   onReorderingStart: ReorderingStartHandler;
   readOnly: false;
-  selectObjectDialog: ISelectObjectDialog;
+  selectObjectDialog: ISelectObjectDialogContainerProps;
 }
 
 export type IContentProps = IReadOnlyContentProps | IReadWriteContentProps;
