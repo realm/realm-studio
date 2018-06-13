@@ -134,7 +134,7 @@ export const Content = ({
         filteredSortedResults={filteredSortedResults}
         focus={focus}
         highlight={highlight}
-        onAddColumnClick={onAddColumnClick}
+        onAddColumnClick={focus.kind === 'class' ? onAddColumnClick : undefined}
         onCellChange={onCellChange}
         onCellClick={onCellClick}
         onCellHighlighted={onCellHighlighted}

@@ -53,7 +53,7 @@ const SortableGrid = SortableContainer<GridProps>(Grid as any, {
 });
 
 export interface IContentGridProps extends Partial<GridProps> {
-  columnCount: number;
+  onAddColumnEnabled: boolean;
   columnWidths: number[];
   dataVersion?: number;
   editMode: EditMode;
@@ -104,7 +104,13 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
       highlight,
       onReorderingEnd,
       onReorderingStart,
+      onAddColumnEnabled,
+      properties,
     } = this.props;
+
+    const columnCount = onAddColumnEnabled
+      ? properties.length + 1
+      : properties.length;
 
     return (
       <SortableGrid
@@ -115,6 +121,7 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
         cellRenderer={this.getCellRenderer}
         className="RealmBrowser__Table__ContentGrid"
         columnWidth={this.getColumnWidth}
+        columnCount={columnCount}
         distance={5}
         onSortEnd={onReorderingEnd}
         onSortStart={onReorderingStart}
@@ -133,16 +140,6 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
       />
     );
   }
-
-  private addColumnCell = () => (cellProps: GridCellProps) => (
-    <div
-      key={cellProps.key}
-      className="RealmBrowser__Table__Cell"
-      style={cellProps.style}
-      // Prevent a click through to the table
-      onClick={e => e.stopPropagation()}
-    />
-  );
 
   private generateRenderers(props: IContentGridProps) {
     const { properties } = props;
@@ -174,103 +171,136 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
       );
     });
 
-    this.cellRenderers = [
-      ...properties.map(property => {
-        return (cellProps: GridCellProps) => {
-          const {
-            columnWidths,
-            editMode,
-            filteredSortedResults,
-            getCellValue,
-            highlight,
-            onCellChange,
-            onCellClick,
-            onCellHighlighted,
-            onCellValidated,
-            onContextMenu,
-          } = this.props;
-          const { rowIndex, columnIndex } = cellProps;
-          const rowObject = filteredSortedResults[cellProps.rowIndex];
-          const cellValue = getCellValue(rowObject, cellProps);
-          const isCellHighlighted = highlight
-            ? isRowHighlighted(highlight, rowIndex)
-            : false;
+    this.cellRenderers = properties.map(property => {
+      return (cellProps: GridCellProps) => {
+        const {
+          columnWidths,
+          editMode,
+          filteredSortedResults,
+          getCellValue,
+          highlight,
+          onCellChange,
+          onCellClick,
+          onCellHighlighted,
+          onCellValidated,
+          onContextMenu,
+        } = this.props;
+        const { rowIndex, columnIndex } = cellProps;
+        const rowObject = filteredSortedResults[cellProps.rowIndex];
+        const cellValue = getCellValue(rowObject, cellProps);
+        const isCellHighlighted = highlight
+          ? isRowHighlighted(highlight, rowIndex)
+          : false;
 
-          return (
-            <Cell
-              editMode={editMode}
-              isHighlighted={isCellHighlighted}
-              key={cellProps.key}
-              onCellClick={e => {
-                // Prevent a click through to the table
-                e.stopPropagation();
-                if (onCellClick) {
-                  onCellClick(
-                    {
-                      cellValue,
-                      columnIndex,
-                      property,
-                      rowIndex,
-                      rowObject,
-                    },
-                    e,
-                  );
-                }
-              }}
-              onValidated={valid => {
-                if (onCellValidated) {
-                  onCellValidated(rowIndex, columnIndex, valid);
-                }
-              }}
-              onContextMenu={e => {
-                e.stopPropagation();
-                // Open the context menu
-                if (onContextMenu) {
-                  onContextMenu(e, {
+        return (
+          <Cell
+            editMode={editMode}
+            isHighlighted={isCellHighlighted}
+            key={cellProps.key}
+            onCellClick={e => {
+              // Prevent a click through to the table
+              e.stopPropagation();
+              if (onCellClick) {
+                onCellClick(
+                  {
                     cellValue,
                     columnIndex,
                     property,
                     rowIndex,
                     rowObject,
-                  });
-                }
-              }}
-              onHighlighted={() => {
-                if (onCellHighlighted) {
-                  onCellHighlighted({
-                    rowIndex,
-                    columnIndex,
-                  });
-                }
-              }}
-              onUpdateValue={value => {
-                if (onCellChange) {
-                  onCellChange({
-                    cellValue: value,
-                    parent: filteredSortedResults,
-                    property,
-                    rowIndex,
-                  });
-                }
-              }}
-              property={property}
-              style={cellProps.style}
-              value={cellValue}
-              width={columnWidths[cellProps.columnIndex]}
-            />
-          );
-        };
-      }),
-      this.addColumnCell(),
-    ];
+                  },
+                  e,
+                );
+              }
+            }}
+            onValidated={valid => {
+              if (onCellValidated) {
+                onCellValidated(rowIndex, columnIndex, valid);
+              }
+            }}
+            onContextMenu={e => {
+              e.stopPropagation();
+              // Open the context menu
+              if (onContextMenu) {
+                onContextMenu(e, {
+                  cellValue,
+                  columnIndex,
+                  property,
+                  rowIndex,
+                  rowObject,
+                });
+              }
+            }}
+            onHighlighted={() => {
+              if (onCellHighlighted) {
+                onCellHighlighted({
+                  rowIndex,
+                  columnIndex,
+                });
+              }
+            }}
+            onUpdateValue={value => {
+              if (onCellChange) {
+                onCellChange({
+                  cellValue: value,
+                  parent: filteredSortedResults,
+                  property,
+                  rowIndex,
+                });
+              }
+            }}
+            property={property}
+            style={cellProps.style}
+            value={cellValue}
+            width={columnWidths[cellProps.columnIndex]}
+          />
+        );
+      };
+    });
   }
 
   private getColumnWidth = ({ index }: Index) => {
-    return this.props.columnWidths[index];
+    const { columnWidths, onAddColumnEnabled } = this.props;
+    if (onAddColumnEnabled && index === columnWidths.length) {
+      return 50;
+    } else {
+      return this.props.columnWidths[index];
+    }
   };
 
   private getCellRenderer = (cellProps: GridCellProps) => {
-    return this.cellRenderers[cellProps.columnIndex](cellProps);
+    if (
+      this.props.onAddColumnEnabled &&
+      cellProps.columnIndex >= this.cellRenderers.length
+    ) {
+      return this.renderAddColumnCell(cellProps);
+    } else {
+      return this.cellRenderers[cellProps.columnIndex](cellProps);
+    }
+  };
+
+  private renderAddColumnCell = ({
+    key,
+    style,
+    columnIndex,
+    rowIndex,
+  }: GridCellProps) => {
+    const rowObject = this.props.filteredSortedResults[rowIndex];
+    const clickParams = { columnIndex, rowIndex, rowObject };
+    return (
+      <div
+        key={key}
+        className="RealmBrowser__Table__Cell"
+        style={style}
+        // Prevent a click through to the table
+        onClick={e => {
+          e.stopPropagation();
+          if (this.props.onCellClick) {
+            this.props.onCellClick(clickParams, e);
+          }
+        }}
+      />
+    );
   };
 
   private getNoContentDiv = () => {

@@ -43,11 +43,11 @@ export type CellChangeHandler = (
 
 export type CellClickHandler = (
   params: {
-    rowObject: any;
-    property: IPropertyWithName;
-    cellValue: any;
-    rowIndex: number;
+    cellValue?: any;
     columnIndex: number;
+    property?: IPropertyWithName;
+    rowIndex: number;
+    rowObject: any;
   },
   e?: React.MouseEvent<any>,
 ) => void;
@@ -264,27 +264,21 @@ class TableContainer extends React.PureComponent<
   };
 
   private setDefaultColumnWidths(properties: IPropertyWithName[]) {
-    const addColumnEnabled = !this.props.readOnly;
-    const columnWidths = [
-      ...properties.map(property => {
-        switch (property.type) {
-          case 'int':
-            return property.name === '#' ? 50 : 100;
-          case 'bool':
-            return 100;
-          case 'string':
-            return 300;
-          case 'date':
-            return 200;
-          default:
-            return 300;
-        }
-      }),
-      addColumnEnabled ? 50 : 0,
-    ];
-    this.setState({
-      columnWidths,
+    const columnWidths = properties.map(property => {
+      switch (property.type) {
+        case 'int':
+          return property.name === '#' ? 50 : 100;
+        case 'bool':
+          return 100;
+        case 'string':
+          return 300;
+        case 'date':
+          return 200;
+        default:
+          return 300;
+      }
     });
+    this.setState({ columnWidths });
   }
 }
 

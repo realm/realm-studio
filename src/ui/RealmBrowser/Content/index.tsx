@@ -408,29 +408,33 @@ class ContentContainer extends React.Component<
 
   private onCellSingleClick = (
     object: any,
-    property: IPropertyWithName,
-    value: any,
+    property?: IPropertyWithName,
+    value?: any,
   ) => {
-    if (property.type === 'list' && this.props.onListFocussed) {
+    if (property && property.type === 'list' && this.props.onListFocussed) {
       this.props.onListFocussed(object, property);
     } else if (
+      property &&
       property.type === 'object' &&
+      property.objectType &&
       value &&
       this.props.onClassFocussed
     ) {
-      const className = property.objectType;
-      if (className) {
-        this.props.onClassFocussed(className, value);
-      }
+      this.props.onClassFocussed(property.objectType, value);
     }
   };
 
   private onCellDoubleClick = (
     object: any,
-    property: IPropertyWithName,
-    value: any,
+    property?: IPropertyWithName,
+    value?: any,
   ) => {
-    if (property.type === 'object' && property.name && property.objectType) {
+    if (
+      property &&
+      property.type === 'object' &&
+      property.name &&
+      property.objectType
+    ) {
       this.onShowSelectObjectDialog({
         action: { type: 'object', object, propertyName: property.name },
         className: property.objectType,

@@ -37,7 +37,7 @@ import {
 
 import { Content } from './Content';
 import { Focus, IClassFocus, IListFocus } from './focus';
-import * as primitives from './primitives';
+import { isPrimitive } from './primitives';
 import { RealmBrowser } from './RealmBrowser';
 import * as schemaUtils from './schema-utils';
 
@@ -456,13 +456,25 @@ class RealmBrowserContainer
     property: IPropertyWithName,
   ): IListFocus => {
     if (property.name) {
-      return {
-        kind: 'list',
+      const common = {
         parent: object,
         property,
         properties: this.derivePropertiesFromProperty(property),
         results: object[property.name],
       };
+      if (property.objectType && isPrimitive(property.objectType)) {
+        return {
+          ...common,
+          kind: 'list',
+          ofPrimitives: true,
+        };
+      } else {
+        return {
+          ...common,
+          kind: 'list',
+          ofPrimitives: false,
+        };
+      }
     } else {
       throw new Error('Expected a property with a name property');
     }
@@ -568,7 +580,7 @@ class RealmBrowserContainer
       const properties: IPropertyWithName[] = [
         { name: '#', type: 'int', readOnly: true },
       ];
-      if (primitives.isPrimitive(property.objectType)) {
+      if (isPrimitive(property.objectType)) {
         return properties.concat([
           {
             name: null,

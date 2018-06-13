@@ -112,9 +112,6 @@ export const Table = ({
   const { height, width } = sizeProps;
   const scrollBottom = rowHeights.header + scrollHeight - height - scrollTop;
   const scrollRight = scrollWidth - width - scrollLeft;
-  const totalColumns = readOnly // For the add column
-    ? focus.properties.length
-    : focus.properties.length + 1;
 
   return (
     <div
@@ -132,7 +129,6 @@ export const Table = ({
       <MoreIndicator position="right" visible={scrollRight > 0} />
       <MoreIndicator position="top" visible={scrollTop > 0} />
       <HeaderGrid
-        columnCount={totalColumns}
         columnWidths={columnWidths}
         gridRef={gridHeaderRef}
         height={rowHeights.header}
@@ -146,8 +142,8 @@ export const Table = ({
         width={width}
       />
       <ContentGrid
+        onAddColumnEnabled={!!onAddColumnClick}
         className="RealmBrowser__Table__ValueGrid"
-        columnCount={totalColumns}
         columnWidths={columnWidths}
         dataVersion={dataVersion}
         editMode={editMode}

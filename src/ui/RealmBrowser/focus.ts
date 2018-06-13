@@ -45,13 +45,22 @@ export interface IClassFocus extends IFocus {
   className: string;
 }
 
-export interface IListFocus extends IFocus {
+interface IBaseListFocus extends IFocus {
   kind: 'list';
   parent: Realm.Object;
   property: IPropertyWithName;
   results: Realm.List<any>;
 }
 
+export interface IObjectListFocus extends IBaseListFocus {
+  ofPrimitives: false;
+}
+
+export interface IPrimitiveListFocus extends IBaseListFocus {
+  ofPrimitives: true;
+}
+
+export type IListFocus = IObjectListFocus | IPrimitiveListFocus;
 export type Focus = IClassFocus | IListFocus;
 
 export const getClassName = (focus: Focus): string => {
