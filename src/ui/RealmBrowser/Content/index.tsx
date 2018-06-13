@@ -287,16 +287,26 @@ class ContentContainer extends React.Component<
     this.onResetHighlight();
   };
 
-  private generateHighlight(object: Realm.Object): IHighlight {
+  private generateHighlight(
+    object: Realm.Object,
+    scrollToObject: boolean = true,
+  ): IHighlight {
     const filteredSortedResults = this.filteredSortedResults(
       this.props.focus.results,
       this.state.query,
       this.state.sorting,
     );
     const index = filteredSortedResults.indexOf(object);
-    return {
+    const result: IHighlight = {
       rows: new Set(index > -1 ? [index] : []),
     };
+    if (scrollToObject) {
+      result.scrollTo = {
+        center: true,
+        row: index,
+      };
+    }
+    return result;
   }
 
   private onCellChange: CellChangeHandler = params => {
