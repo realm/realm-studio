@@ -17,14 +17,25 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
-import { Button } from 'reactstrap';
 
 import { EditMode } from '..';
-import { ILoadingProgress } from '../../reusable/LoadingOverlay';
-import { QuerySearch } from '../../reusable/QuerySearch';
 import { Bottombar } from '../Bottombar';
-import { Focus, getClassName } from '../focus';
-import { ResponsiveTable } from '../ResponsiveTable';
+import { Focus, IClassFocus } from '../focus';
+
+import { ISorting, QueryChangeHandler, SortingChangeHandler } from '.';
+import {
+  CreateObjectDialog,
+  ICreateObjectDialogContainerProps,
+} from './CreateObjectDialog';
+import {
+  DeleteObjectsDialog,
+  IDeleteObjectsDialogProps,
+} from './DeleteObjectsDialog';
+import { ResponsiveTable } from './ResponsiveTable';
+import {
+  ISelectObjectDialogContainerProps,
+  SelectObjectDialog,
+} from './SelectObjectDialog';
 import {
   CellChangeHandler,
   CellClickHandler,
@@ -32,110 +43,127 @@ import {
   CellHighlightedHandler,
   CellValidatedHandler,
   IHighlight,
-  SortEndHandler,
-  SortStartHandler,
-} from '../Table';
+  ReorderingEndHandler,
+  ReorderingStartHandler,
+} from './Table';
+import { TopBar } from './TopBar';
+
+interface IBaseContentProps {
+  dataVersion?: number;
+  editMode: EditMode;
+  error?: Error;
+  filteredSortedResults: Realm.Collection<any>;
+  focus: Focus;
+  highlight?: IHighlight;
+  onAddColumnClick?: () => void;
+  onCellChange: CellChangeHandler;
+  onCellClick: CellClickHandler;
+  onCellHighlighted: CellHighlightedHandler;
+  onCellValidated: CellValidatedHandler;
+  onContextMenu: CellContextMenuHandler;
+  onNewObjectClick?: () => void;
+  onQueryChange: QueryChangeHandler;
+  onQueryHelp: () => void;
+  onResetHighlight: () => void;
+  onSortingChange: SortingChangeHandler;
+  onTableBackgroundClick: () => void;
+  query: string;
+  sorting?: ISorting;
+}
+
+interface IReadOnlyContentProps extends IBaseContentProps {
+  editMode: EditMode.Disabled;
+  readOnly: true;
+}
+
+interface IReadWriteContentProps extends IBaseContentProps {
+  changeCount: number;
+  createObjectDialog: ICreateObjectDialogContainerProps;
+  deleteObjectsDialog: IDeleteObjectsDialogProps;
+  editMode: EditMode;
+  getClassFocus: (className: string) => IClassFocus;
+  inTransaction: boolean;
+  onCancelTransaction: () => void;
+  onCommitTransaction: () => void;
+  onReorderingEnd: ReorderingEndHandler;
+  onReorderingStart: ReorderingStartHandler;
+  readOnly: false;
+  selectObjectDialog: ISelectObjectDialogContainerProps;
+}
+
+export type IContentProps = IReadOnlyContentProps | IReadWriteContentProps;
 
 export const Content = ({
-  changeCount,
   dataVersion,
   editMode,
+  error,
+  filteredSortedResults,
   focus,
   highlight,
-  inTransaction,
   onAddColumnClick,
-  onCancelTransaction,
   onCellChange,
   onCellClick,
   onCellHighlighted,
   onCellValidated,
-  onCommitTransaction,
   onContextMenu,
   onNewObjectClick,
   onQueryChange,
   onQueryHelp,
   onResetHighlight,
-  onSortEnd,
-  onSortStart,
+  onSortingChange,
   onTableBackgroundClick,
-  progress,
   query,
-}: {
-  changeCount?: number;
-  dataVersion?: number;
-  editMode: EditMode;
-  focus: Focus | null;
-  highlight?: IHighlight;
-  inTransaction?: boolean;
-  onAddColumnClick?: () => void;
-  onCancelTransaction?: () => void;
-  onCellChange?: CellChangeHandler;
-  onCellClick?: CellClickHandler;
-  onCellHighlighted?: CellHighlightedHandler;
-  onCellValidated?: CellValidatedHandler;
-  onCommitTransaction?: () => void;
-  onContextMenu?: CellContextMenuHandler;
-  onNewObjectClick?: () => void;
-  onQueryChange: (query: string) => void;
-  onQueryHelp: () => void;
-  onResetHighlight: () => void;
-  onSortEnd?: SortEndHandler;
-  onSortStart?: SortStartHandler;
-  onTableBackgroundClick: () => void;
-  progress?: ILoadingProgress;
-  query: string;
-}) => {
-  if (focus) {
-    return (
-      <div className="RealmBrowser__Content">
-        <div className="RealmBrowser__Topbar">
-          <QuerySearch
-            className="RealmBrowser__Topbar__Filter"
-            onQueryChange={onQueryChange}
-            onQueryHelp={onQueryHelp}
-            query={query}
-            placeholder="Enter a query to filter the list"
+  sorting,
+  ...props
+}: IContentProps) =>
+  error ? (
+    <div className="RealmBrowser__Content RealmBrowser__Content--error">
+      <span className="RealmBrowser__Content__Error">{error.message}</span>
+    </div>
+  ) : (
+    <div className="RealmBrowser__Content">
+      <TopBar
+        focus={focus}
+        onNewObjectClick={onNewObjectClick}
+        onQueryChange={onQueryChange}
+        onQueryHelp={onQueryHelp}
+        query={query}
+        readOnly={props.readOnly}
+      />
+      <ResponsiveTable
+        dataVersion={dataVersion}
+        editMode={editMode}
+        filteredSortedResults={filteredSortedResults}
+        focus={focus}
+        highlight={highlight}
+        onAddColumnClick={focus.kind === 'class' ? onAddColumnClick : undefined}
+        onCellChange={onCellChange}
+        onCellClick={onCellClick}
+        onCellHighlighted={onCellHighlighted}
+        onCellValidated={onCellValidated}
+        onContextMenu={onContextMenu}
+        onReorderingEnd={props.readOnly ? undefined : props.onReorderingEnd}
+        onReorderingStart={props.readOnly ? undefined : props.onReorderingStart}
+        onResetHighlight={onResetHighlight}
+        onSortingChange={onSortingChange}
+        onTableBackgroundClick={onTableBackgroundClick}
+        query={query}
+        readOnly={props.readOnly}
+        sorting={sorting}
+      />
+
+      {!props.readOnly ? (
+        <React.Fragment>
+          <Bottombar
+            changeCount={props.changeCount}
+            onCancelTransaction={props.onCancelTransaction}
+            onCommitTransaction={props.onCommitTransaction}
+            inTransaction={props.inTransaction}
           />
-          {onNewObjectClick ? (
-            <Button
-              size="sm"
-              color="primary"
-              className="RealmBrowser__Topbar__Button"
-              onClick={onNewObjectClick}
-              title={`Create new ${getClassName(focus)}`}
-            >
-              Create new {getClassName(focus)}
-            </Button>
-          ) : null}
-        </div>
-        <ResponsiveTable
-          dataVersion={dataVersion}
-          editMode={editMode}
-          focus={focus}
-          highlight={highlight}
-          onAddColumnClick={onAddColumnClick}
-          onCellChange={onCellChange}
-          onCellClick={onCellClick}
-          onCellHighlighted={onCellHighlighted}
-          onCellValidated={onCellValidated}
-          onContextMenu={onContextMenu}
-          onResetHighlight={onResetHighlight}
-          onSortEnd={onSortEnd}
-          onSortStart={onSortStart}
-          onTableBackgroundClick={onTableBackgroundClick}
-          query={query}
-        />
-        <Bottombar
-          changeCount={changeCount}
-          onCancelTransaction={onCancelTransaction}
-          onCommitTransaction={onCommitTransaction}
-          inTransaction={inTransaction}
-        />
-      </div>
-    );
-  } else if (progress && progress.status !== 'done') {
-    return <div className="RealmBrowser__Content--no-schema-selected" />;
-  } else {
-    return null;
-  }
-};
+          <CreateObjectDialog {...props.createObjectDialog} />
+          <SelectObjectDialog {...props.selectObjectDialog} />
+          <DeleteObjectsDialog {...props.deleteObjectsDialog} />
+        </React.Fragment>
+      ) : null}
+    </div>
+  );

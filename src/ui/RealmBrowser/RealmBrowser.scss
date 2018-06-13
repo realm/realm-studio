@@ -45,115 +45,7 @@ $highlight-row-color: $black;
   }
 
   &__Sidebar {
-    background: $window-background;
-    border-right: 1px solid $dove;
-    display: flex;
-    flex-direction: column;
-    padding: $spacer / 2;
-    padding-bottom: 0;
     width: 200px;
-
-    &__Header {
-      align-items: baseline;
-      border-bottom: 1px solid $dove;
-      color: $elephant;
-      display: flex;
-      font-size: .9rem;
-      font-weight: bold;
-      height: 2rem;
-      justify-content: space-between;
-      line-height: 2em;
-      margin-bottom: $spacer / 2;
-      text-transform: uppercase;
-    }
-
-    &__SchemaList {
-      flex-grow: 1;
-      margin: 0 (-$spacer / 2);
-      overflow-x: hidden;
-      overflow-y: auto;
-      padding: 0;
-
-      &--empty {
-        display: flex;
-        height: 100%;
-        justify-content: flex-start;
-
-        &::before {
-          color: $elephant;
-          content: "This Realm has no schemas defined";
-          text-align: center;
-        }
-      }
-    }
-
-    &__Schema {
-      flex-direction: column;
-      list-style: none;
-
-      &__Name {
-        flex-shrink: 1;
-        overflow: hidden;
-        padding-right: $spacer / 4;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-
-      &__Info {
-        align-items: center;
-        background: $window-background;
-        cursor: pointer;
-        display: flex;
-        justify-content: space-between;
-        padding: $spacer / 2;
-
-        &:hover,
-        &:focus {
-          background: $dove;
-        }
-
-        &--selected {
-          background: $primary;
-          color: $dove;
-
-          &:hover,
-          &:focus {
-            background: $primary;
-          }
-        }
-      }
-    }
-
-    &__List {
-      background: $dove;
-      // box-shadow: inset 0 0 .4rem $realm-browser-list-box-shadow-color;
-      padding: $spacer / 2;
-
-      &__Name {
-        align-items: center;
-        display: flex;
-        justify-content: space-between;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-
-        &__Text {
-          font-size: .8rem;
-          margin-right: $spacer / 2;
-          overflow: hidden;
-        }
-      }
-
-      &__Parent {
-        font-size: .8rem;
-      }
-
-      &__ParentObject {
-        color: $primary;
-        cursor: pointer;
-        text-decoration: underline;
-      }
-    }
   }
 
   &__Wrapper {
@@ -175,16 +67,9 @@ $highlight-row-color: $black;
     flex: 1 1 0;
     flex-direction: column;
 
-    &--no-schema-selected {
+    &--error {
       align-items: center;
-      display: flex;
-      height: 100%;
       justify-content: center;
-
-      &::before {
-        color: $elephant;
-        content: "No schema selected";
-      }
     }
   }
 
@@ -486,6 +371,18 @@ $highlight-row-color: $black;
     }
 
     @import "../reusable/ReactVirtualized";
+  }
+
+  &__NoFocusPlaceholder {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+
+    &::before {
+      color: $elephant;
+      content: "No schema selected";
+    }
   }
 
   &__Bottombar {

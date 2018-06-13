@@ -59,3 +59,21 @@ declare module 'react-object-inspector' {
   }
   export = ObjectInspector;
 }
+
+declare module 'memoize-one' {
+  // Type definitions for memoize-one 3.1
+  // Project: https://github.com/alexreardon/memoize-one#readme
+  // Definitions by: Karol Majewski <https://github.com/karol-majewski>
+  // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
+
+  export default memoizeOne;
+
+  function memoizeOne<T extends (...args: any[]) => any>(
+    resultFn: T,
+    isEqual?: memoizeOne.EqualityFn,
+  ): T;
+
+  namespace memoizeOne {
+    type EqualityFn = (a: any, b: any) => boolean;
+  }
+}
