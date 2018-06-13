@@ -37,7 +37,6 @@ interface IFocus {
   kind: string;
   properties: IPropertyWithName[];
   results: Realm.Collection<any>;
-  addColumnEnabled?: boolean;
 }
 
 export interface IClassFocus extends IFocus {
@@ -51,10 +50,16 @@ export interface IListFocus extends IFocus {
   parent: Realm.Object;
   property: IPropertyWithName;
   results: Realm.List<any>;
-  addColumnEnabled?: false;
 }
 
 export type Focus = IClassFocus | IListFocus;
 
-export const getClassName = (focus: Focus): string | undefined =>
-  focus.kind === 'class' ? focus.className : focus.property.objectType;
+export const getClassName = (focus: Focus): string => {
+  if (focus.kind === 'class') {
+    return focus.className;
+  } else if (focus.property.objectType) {
+    return focus.property.objectType;
+  } else {
+    throw new Error('Failed to get class named from focus');
+  }
+};

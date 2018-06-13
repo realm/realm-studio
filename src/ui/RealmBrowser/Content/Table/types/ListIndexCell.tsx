@@ -18,8 +18,6 @@
 
 import * as classnames from 'classnames';
 import * as React from 'react';
-import * as Realm from 'realm';
-import * as util from 'util';
 
 export const ListIndexCell = ({ value }: { value: number }) => (
   <div

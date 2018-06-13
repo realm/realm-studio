@@ -20,33 +20,33 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 import { Button, InputGroup, InputGroupAddon } from 'reactstrap';
 
-import { displayObject } from '../../../display';
-import { IClassFocus } from '../../../focus';
-import { ObjectSelector } from '../../../ObjectSelector';
+import { displayObject } from '../../../../display';
+import { IClassFocus } from '../../../../focus';
+import { SelectObjectDialog } from '../../../SelectObjectDialog';
+
+import { ISelectObjectDialog } from '.';
 
 export interface IObjectControlProps {
   children?: React.ReactNode;
-  focus?: IClassFocus;
-  isObjectSelectorOpen: boolean;
+  onShowSelectObjectDialog: () => void;
   property: Realm.ObjectSchemaProperty;
-  toggleObjectSelector: () => void;
+  selectObjectDialog: ISelectObjectDialog;
   updateObjectReference: (object: Realm.Object | null) => void;
   value: any;
 }
 
 export const ObjectControl = ({
   children,
-  focus,
-  isObjectSelectorOpen,
+  onShowSelectObjectDialog,
   property,
-  toggleObjectSelector,
+  selectObjectDialog,
   updateObjectReference,
   value,
 }: IObjectControlProps) => (
   <section className="CreateObjectDialog__ObjectControl">
     <InputGroup>
       <div
-        onClick={toggleObjectSelector}
+        onClick={onShowSelectObjectDialog}
         className="CreateObjectDialog__ObjectControl__FormControl form-control"
       >
         <span
@@ -67,14 +67,6 @@ export const ObjectControl = ({
       {children}
     </InputGroup>
 
-    {focus ? (
-      <ObjectSelector
-        focus={focus}
-        isOpen={isObjectSelectorOpen}
-        isOptional={property.optional}
-        onObjectSelected={updateObjectReference}
-        toggle={toggleObjectSelector}
-      />
-    ) : null}
+    <SelectObjectDialog {...selectObjectDialog} />
   </section>
 );

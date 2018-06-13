@@ -17,12 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
-import {
-  SortableContainer,
-  SortableElement,
-  SortEndHandler,
-  SortStartHandler,
-} from 'react-sortable-hoc';
+import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import {
   Grid,
   GridCellProps,
@@ -41,6 +36,8 @@ import {
   CellHighlightedHandler,
   CellValidatedHandler,
   IHighlight,
+  ReorderingEndHandler,
+  ReorderingStartHandler,
 } from '.';
 import { Cell } from './Cell';
 import { Row } from './Row';
@@ -72,12 +69,13 @@ export interface IContentGridProps extends Partial<GridProps> {
   onCellHighlighted?: CellHighlightedHandler;
   onCellValidated?: CellValidatedHandler;
   onContextMenu?: CellContextMenuHandler;
-  onSortEnd?: SortEndHandler;
-  onSortStart?: SortStartHandler;
+  onReorderingEnd?: ReorderingEndHandler;
+  onReorderingStart?: ReorderingStartHandler;
   properties: IPropertyWithName[];
   rowHeight: number;
   width: number;
 }
+
 const isRowHighlighted = (
   highlight: IHighlight | undefined,
   rowIndex: number,
@@ -104,8 +102,8 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
       filteredSortedResults,
       gridRef,
       highlight,
-      onSortEnd,
-      onSortStart,
+      onReorderingEnd,
+      onReorderingStart,
     } = this.props;
 
     return (
@@ -118,15 +116,19 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
         className="RealmBrowser__Table__ContentGrid"
         columnWidth={this.getColumnWidth}
         distance={5}
-        onSortEnd={onSortEnd}
-        onSortStart={onSortStart}
+        onSortEnd={onReorderingEnd}
+        onSortStart={onReorderingStart}
         ref={(sortableContainer: any) => {
           if (sortableContainer) {
             gridRef(sortableContainer.getWrappedInstance());
           }
         }}
         rowCount={filteredSortedResults.length}
-        scrollToAlignment={highlight && highlight.center ? 'center' : 'auto'}
+        scrollToAlignment={
+          highlight && highlight.scrollTo && highlight.scrollTo.center
+            ? 'center'
+            : 'auto'
+        }
         noContentRenderer={this.getNoContentDiv}
       />
     );

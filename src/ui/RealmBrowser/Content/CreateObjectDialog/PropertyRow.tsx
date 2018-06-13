@@ -17,10 +17,10 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
-import { Badge, FormGroup, Input, Label } from 'reactstrap';
+import { Badge, FormGroup, Label } from 'reactstrap';
 import * as Realm from 'realm';
 
-import { IClassFocus } from '../focus';
+import { IClassFocus } from '../../focus';
 
 import { TypeControl } from './types/TypeControl';
 

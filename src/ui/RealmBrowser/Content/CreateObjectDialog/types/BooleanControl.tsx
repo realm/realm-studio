@@ -17,10 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
-import { Button, Input, InputGroup, InputGroupAddon } from 'reactstrap';
-import * as Realm from 'realm';
-
-import { parseNumber } from '../../parsers';
+import { Button, InputGroup, InputGroupAddon } from 'reactstrap';
 
 import { IBaseControlProps } from './TypeControl';
 

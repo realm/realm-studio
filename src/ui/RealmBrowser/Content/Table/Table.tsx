@@ -35,8 +35,8 @@ import {
   CellHighlightedHandler,
   CellValidatedHandler,
   IHighlight,
-  SortEndHandler,
-  SortStartHandler,
+  ReorderingEndHandler,
+  ReorderingStartHandler,
 } from '.';
 import { ContentGrid } from './ContentGrid';
 import { HeaderGrid } from './HeaderGrid';
@@ -66,9 +66,10 @@ export interface ITableProps {
   onColumnWidthChanged: (index: number, width: number) => void;
   onContextMenu?: CellContextMenuHandler;
   onSortClick: (property: IPropertyWithName) => void;
-  onSortEnd?: SortEndHandler;
-  onSortStart?: SortStartHandler;
+  onReorderingEnd?: ReorderingEndHandler;
+  onReorderingStart?: ReorderingStartHandler;
   onTableBackgroundClick: () => void;
+  readOnly: boolean;
   scrollProps: ScrollSyncProps;
   sizeProps: AutoSizerProps;
   sorting?: ISorting;
@@ -93,9 +94,10 @@ export const Table = ({
   onColumnWidthChanged,
   onContextMenu,
   onSortClick,
-  onSortEnd,
-  onSortStart,
+  onReorderingEnd,
+  onReorderingStart,
   onTableBackgroundClick,
+  readOnly,
   scrollProps,
   sizeProps,
   sorting,
@@ -110,9 +112,9 @@ export const Table = ({
   const { height, width } = sizeProps;
   const scrollBottom = rowHeights.header + scrollHeight - height - scrollTop;
   const scrollRight = scrollWidth - width - scrollLeft;
-  const totalColumns = focus.addColumnEnabled
-    ? focus.properties.length + 1
-    : focus.properties.length;
+  const totalColumns = readOnly // For the add column
+    ? focus.properties.length
+    : focus.properties.length + 1;
 
   return (
     <div
@@ -162,8 +164,8 @@ export const Table = ({
         onCellValidated={onCellValidated}
         onContextMenu={onContextMenu}
         onScroll={onScroll}
-        onSortEnd={onSortEnd}
-        onSortStart={onSortStart}
+        onReorderingEnd={onReorderingEnd}
+        onReorderingStart={onReorderingStart}
         overscanRowCount={30}
         properties={focus.properties}
         rowHeight={rowHeights.content}

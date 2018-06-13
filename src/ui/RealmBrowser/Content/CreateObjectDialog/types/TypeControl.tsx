@@ -19,7 +19,7 @@
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import { IClassFocus } from '../../focus';
+import { IClassFocus } from '../../../focus';
 
 import { BooleanControl } from './BooleanControl';
 import { DataControl } from './DataControl';

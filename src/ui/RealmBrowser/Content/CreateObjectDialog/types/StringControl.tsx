@@ -17,39 +17,30 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import { Button, Input, InputGroup, InputGroupAddon } from 'reactstrap';
 
-export interface IConfirmModal {
-  status: boolean;
-  title: string;
-  description: string;
-  yes: () => any;
-  no: () => any;
-}
+import { IBaseControlProps } from './TypeControl';
 
-export const ConfirmModal = ({
-  status,
-  title,
-  description,
-  yes,
-  no,
-}: {
-  status: boolean;
-  title: string;
-  description: string;
-  yes: () => any;
-  no: () => any;
-}) => (
-  <Modal isOpen={status} toggle={no} className="ConfirmModal">
-    <ModalHeader toggle={no}>{title}</ModalHeader>
-    <ModalBody>{description}</ModalBody>
-    <ModalFooter>
-      <Button color="primary" onClick={yes}>
-        Yes
-      </Button>
-      <Button color="secondary" onClick={no}>
-        No
-      </Button>
-    </ModalFooter>
-  </Modal>
+export const StringControl = ({
+  children,
+  onChange,
+  property,
+  value,
+}: IBaseControlProps) => (
+  <InputGroup className="CreateObjectDialog__StringControl">
+    <Input
+      className="CreateObjectDialog__StringControl__Input"
+      onChange={e => onChange(e.target.value)}
+      placeholder={value === null ? 'null' : ''}
+      value={value ? value : ''}
+    />
+    {value !== null && property.optional ? (
+      <InputGroupAddon addonType="append">
+        <Button size="sm" onClick={() => onChange(null)}>
+          <i className="fa fa-close" />
+        </Button>
+      </InputGroupAddon>
+    ) : null}
+    {children}
+  </InputGroup>
 );

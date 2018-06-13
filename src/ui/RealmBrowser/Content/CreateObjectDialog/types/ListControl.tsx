@@ -21,7 +21,8 @@ import * as React from 'react';
 import { Alert, Button, InputGroupAddon } from 'reactstrap';
 import * as Realm from 'realm';
 
-import { isPrimitive } from '../../primitives';
+import { isPrimitive } from '../../../primitives';
+
 import { ITypeControlProps, TypeControl } from './TypeControl';
 
 interface IItemProps

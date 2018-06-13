@@ -23,7 +23,7 @@ import * as Realm from 'realm';
 
 import * as dataImporter from '../../services/data-importer';
 import { Language, SchemaExporter } from '../../services/schema-export';
-import { getRange, menu } from '../../utils';
+import { menu } from '../../utils';
 import {
   IMenuGenerator,
   IMenuGeneratorProps,
@@ -35,15 +35,8 @@ import {
   RealmLoadingComponent,
 } from '../reusable/RealmLoadingComponent';
 
-import {
-  CellChangeHandler,
-  CellClickHandler,
-  CellContextMenuHandler,
-  IHighlight,
-  SortEndHandler,
-  SortStartHandler,
-} from './Content/Table';
-import { Focus, getClassName, IClassFocus, IListFocus } from './focus';
+import { Content } from './Content';
+import { Focus, IClassFocus, IListFocus } from './focus';
 import * as primitives from './primitives';
 import { RealmBrowser } from './RealmBrowser';
 import * as schemaUtils from './schema-utils';
@@ -55,47 +48,37 @@ export interface IPropertyWithName extends Realm.ObjectSchemaProperty {
   readOnly: boolean;
 }
 
-export interface ISelectObjectState {
-  focus: IClassFocus;
-  property: IPropertyWithName;
-  contentToUpdate: Realm.Object | Realm.List<any>;
-}
-
 export enum EditMode {
   Disabled = 'disabled',
   InputBlur = 'input-blur',
   KeyPress = 'key-press',
 }
 
-export type CreateObjectHandler = (className: string, values: {}) => void;
 export type EditModeChangeHandler = (editMode: EditMode) => void;
-
-export interface IConfirmModal {
-  title: string;
-  description: string;
-  yes: () => void;
-  no: () => void;
-}
+export type ListFocussedHandler = (
+  object: Realm.Object,
+  property: IPropertyWithName,
+  highlightedObject?: Realm.Object,
+) => void;
+export type ClassFocussedHandler = (
+  className: string,
+  highlightedObject?: Realm.Object,
+) => void;
 
 const EDIT_MODE_STORAGE_KEY = 'realm-browser-edit-mode';
 
 export interface IRealmBrowserState extends IRealmLoadingComponentState {
-  confirmModal?: IConfirmModal;
-  createObjectSchema?: Realm.ObjectSchema;
   // A number that we can use to make components update on changes to data
   dataVersion: number;
   dataVersionAtBeginning?: number;
   editMode: EditMode;
   encryptionKey?: string;
   focus: Focus | null;
-  highlight?: IHighlight;
   isAddClassOpen: boolean;
   isAddPropertyOpen: boolean;
   isEncryptionDialogVisible: boolean;
   // The schemas are only supposed to be used to produce a list of schemas in the sidebar
   schemas: Realm.ObjectSchema[];
-  // TODO: Rename - Unclear if this is this an action or a piece of data
-  selectObject?: ISelectObjectState;
 }
 
 class RealmBrowserContainer
@@ -105,7 +88,6 @@ class RealmBrowserContainer
   >
   implements IMenuGenerator {
   public state: IRealmBrowserState = {
-    confirmModal: undefined,
     editMode:
       (localStorage.getItem(EDIT_MODE_STORAGE_KEY) as EditMode) ||
       EditMode.InputBlur,
@@ -118,12 +100,7 @@ class RealmBrowserContainer
     isAddPropertyOpen: false,
   };
 
-  private clickTimeout?: any;
-  private latestCellValidation?: {
-    columnIndex: number;
-    rowIndex: number;
-    valid: boolean;
-  };
+  private contentInstance: Content | null = null;
 
   public componentDidMount() {
     this.loadRealm(this.props.realm);
@@ -139,11 +116,36 @@ class RealmBrowserContainer
   }
 
   public render() {
+    const contentKey = this.generateContentKey();
     return (
       <RealmBrowser
-        inTransaction={this.realm && this.realm.isInTransaction ? true : false}
-        {...this.state}
-        {...this}
+        contentKey={contentKey}
+        contentRef={this.contentRef}
+        dataVersion={this.state.dataVersion}
+        dataVersionAtBeginning={this.state.dataVersionAtBeginning}
+        editMode={this.state.editMode}
+        focus={this.state.focus}
+        getClassFocus={this.getClassFocus}
+        getSchemaLength={this.getSchemaLength}
+        isAddClassOpen={this.state.isAddClassOpen}
+        isAddPropertyOpen={this.state.isAddPropertyOpen}
+        isClassNameAvailable={this.isClassNameAvailable}
+        isEncryptionDialogVisible={this.state.isEncryptionDialogVisible}
+        isPropertyNameAvailable={this.isPropertyNameAvailable}
+        onAddClass={this.onAddClass}
+        onAddProperty={this.onAddProperty}
+        onCancelTransaction={this.onCancelTransaction}
+        onClassFocussed={this.onClassFocussed}
+        onCommitTransaction={this.onCommitTransaction}
+        onHideEncryptionDialog={this.onHideEncryptionDialog}
+        onListFocussed={this.onListFocussed}
+        onOpenWithEncryption={this.onOpenWithEncryption}
+        onRealmChanged={this.onRealmChanged}
+        progress={this.state.progress}
+        realm={this.realm}
+        schemas={this.state.schemas}
+        toggleAddSchema={this.toggleAddSchema}
+        toggleAddSchemaProperty={this.toggleAddSchemaProperty}
       />
     );
   }
@@ -254,635 +256,20 @@ class RealmBrowserContainer
     ]);
   }
 
-  public onCellChange: CellChangeHandler = params => {
-    try {
-      this.write(() => {
-        const { parent, property, rowIndex, cellValue } = params;
-        if (property.name !== null) {
-          parent[rowIndex][property.name] = cellValue;
-        } else {
-          parent[rowIndex] = cellValue;
-        }
-      });
-    } catch (err) {
-      showError('Failed when saving the value', err);
-    }
-  };
-
-  public onBeginTransaction = () => {
-    if (this.realm && !this.realm.isInTransaction) {
-      this.realm.beginTransaction();
-      // Ask the menu to update
-      this.props.updateMenu();
-      // Hang on to the dataVersion
+  protected loadingRealmFailed(err: Error) {
+    const message = err.message || '';
+    const mightBeEncrypted = message.indexOf('Not a Realm file.') >= 0;
+    if (mightBeEncrypted) {
       this.setState({
-        dataVersionAtBeginning: this.state.dataVersion,
-      });
-    } else {
-      throw new Error(`Realm is not ready or already in transaction`);
-    }
-  };
-
-  public onCommitTransaction = () => {
-    if (this.realm && this.realm.isInTransaction) {
-      this.realm.commitTransaction();
-      this.props.updateMenu();
-      this.resetDataVersion();
-    } else {
-      throw new Error('Cannot commit when not in a transaction');
-    }
-  };
-
-  public onCancelTransaction = () => {
-    if (this.realm && this.realm.isInTransaction) {
-      this.realm.cancelTransaction();
-      this.props.updateMenu();
-      this.resetDataVersion();
-    } else {
-      throw new Error('Cannot cancel when not in a transaction');
-    }
-  };
-
-  public isClassNameAvailable = (name: string): boolean => {
-    return !this.state.schemas.find(schema => schema.name === name);
-  };
-
-  public toggleAddSchema = () => {
-    this.setState({
-      isAddClassOpen: !this.state.isAddClassOpen,
-    });
-  };
-
-  public onAddClass = async (schema: Realm.ObjectSchema) => {
-    if (this.realm) {
-      try {
-        // The schema version needs to be bumped for local realms
-        const nextSchemaVersion = this.realm.schemaVersion + 1;
-        const cleanedSchema = schemaUtils.cleanUpSchema(this.state.schemas);
-        const modifiedSchema = [...cleanedSchema, schema];
-        // Close the current Realm
-        this.realm.close();
-        // Deleting the object to indicate we've closed it
-        delete this.realm;
-        // Load it again with the new schema
-        await this.loadRealm(
-          this.props.realm,
-          modifiedSchema,
-          nextSchemaVersion,
-        );
-        // Select the schema when it the realm has loaded
-        this.onClassSelected(schema.name);
-      } catch (err) {
-        showError(`Failed creating the model "${schema.name}"`, err);
-      }
-    }
-  };
-
-  public isPropertyNameAvailable = (name: string): boolean => {
-    return (
-      this.state.focus !== null &&
-      !this.state.focus.properties.find(property => property.name === name)
-    );
-  };
-
-  public toggleAddSchemaProperty = () => {
-    this.setState({
-      isAddPropertyOpen: !this.state.isAddPropertyOpen,
-    });
-  };
-
-  public onAddProperty = async (name: string, type: Realm.PropertyType) => {
-    if (
-      this.realm &&
-      this.state.focus &&
-      this.state.focus.kind === 'class' &&
-      this.state.focus.addColumnEnabled
-    ) {
-      try {
-        const focusedClassName = this.state.focus.className;
-        const nextSchemaVersion = this.realm.schemaVersion + 1;
-        const cleanedSchema = schemaUtils.cleanUpSchema(this.state.schemas);
-        const modifiedSchema = schemaUtils.addProperty(
-          cleanedSchema,
-          this.state.focus.className,
-          name,
-          type,
-        );
-        // Close the current Realm
-        this.realm.close();
-        // Deleting the object to indicate we've closed it
-        delete this.realm;
-        // Load it again with the new schema
-        await this.loadRealm(
-          this.props.realm,
-          modifiedSchema,
-          nextSchemaVersion,
-        );
-        // Ensure we've selected the class that we've just added a property to
-        this.onClassSelected(focusedClassName);
-      } catch (err) {
-        showError(
-          `Failed adding the property named "${name}" to the selected schema`,
-          err,
-        );
-      }
-    }
-  };
-
-  public onCreateObject = (className: string, values: {}) => {
-    const { focus } = this.state;
-    let rowIndex = -1;
-
-    this.write(() => {
-      // Writing makes no sense if the realm was not loaded
-      if (this.realm) {
-        // Adding a primitive value into a list
-        if (primitives.isPrimitive(className)) {
-          if (focus && focus.kind === 'list') {
-            const valueToPush = (values as any)[className];
-            focus.results.push(valueToPush);
-            rowIndex = focus.results.indexOf(valueToPush);
-          }
-        } else {
-          // Adding a new object into a class
-          const object = this.realm.create(className, values);
-          if (focus) {
-            // New object has been created from a list, so we add it too into the list
-            if (focus.kind === 'list') {
-              focus.results.push(object);
-            }
-            if (getClassName(focus) === className) {
-              rowIndex = focus.results.indexOf(object);
-            }
-          }
-        }
-        if (rowIndex >= 0) {
-          this.setState({
-            highlight: {
-              ...this.state.highlight,
-              rows: new Set([rowIndex]),
-            },
-          });
-        }
-      } else {
-        throw new Error('onCreateObject called before realm was loaded');
-      }
-    });
-  };
-
-  public onClassSelected = (className: string, objectToScroll?: any) => {
-    if (this.realm) {
-      if (!this.latestCellValidation || this.latestCellValidation.valid) {
-        const focus: IClassFocus = {
-          kind: 'class',
-          className,
-          results: this.realm.objects(className),
-          properties: this.derivePropertiesFromClassName(className),
-          addColumnEnabled: true,
-        };
-        this.setState({
-          focus,
-          highlight: this.generateHighlight(objectToScroll),
-        });
-      } else {
-        // Don't do anything before we have a valid cell validation.
-      }
-    } else {
-      throw new Error(`Cannot select ${className} as the Realm is not opened`);
-    }
-  };
-
-  public getClassFocus = (className: string) => {
-    if (this.realm) {
-      const results = this.realm.objects(className);
-      const focus: IClassFocus = {
-        kind: 'class',
-        className,
-        results,
-        properties: this.derivePropertiesFromClassName(className),
-        addColumnEnabled: true,
-      };
-      return focus;
-    } else {
-      throw new Error('getClassFocus called before realm was loaded');
-    }
-  };
-
-  public getSchemaLength = (name: string) => {
-    if (this.realm) {
-      return this.realm.objects(name).length;
-    } else {
-      return 0;
-    }
-  };
-
-  public onCellClick: CellClickHandler = (
-    { rowObject, property, cellValue, rowIndex, columnIndex },
-    e,
-  ) => {
-    const shiftClick = e && e.shiftKey;
-    const metaClick = e && e.metaKey; // Command key in MacOs
-
-    const currentRowReferenceShiftClick =
-      this.state.highlight && this.state.highlight.lastRowIndexClicked;
-    const clickWhenNoRowHighlighted =
-      currentRowReferenceShiftClick === undefined;
-    const normalClick = !shiftClick && !metaClick;
-    const nextRowReferenceShiftClick =
-      clickWhenNoRowHighlighted || normalClick || metaClick
-        ? rowIndex
-        : currentRowReferenceShiftClick;
-
-    const nextRowsHighlighted =
-      this.state.highlight && this.state.highlight.rows
-        ? new Set(this.state.highlight.rows)
-        : new Set();
-
-    if (metaClick) {
-      // Unselect the row when It was already selected otherwise select it
-      if (nextRowsHighlighted.has(rowIndex)) {
-        nextRowsHighlighted.delete(rowIndex);
-      } else {
-        nextRowsHighlighted.add(rowIndex);
-      }
-    } else if (shiftClick) {
-      // Select all the rows from the row previously referenced to the last row clicked
-      if (nextRowReferenceShiftClick !== undefined) {
-        const rowIndexRange = getRange(nextRowReferenceShiftClick, rowIndex);
-        for (const i of rowIndexRange) {
-          nextRowsHighlighted.add(i);
-        }
-      }
-    } else {
-      nextRowsHighlighted.clear();
-      nextRowsHighlighted.add(rowIndex);
-    }
-
-    if (!this.latestCellValidation || this.latestCellValidation.valid) {
-      // Ensuring that the last cell validation didn't fail
-      if (this.clickTimeout) {
-        clearTimeout(this.clickTimeout);
-        this.onCellDoubleClick(rowObject, property, cellValue);
-        this.clickTimeout = null;
-      } else {
-        this.clickTimeout = setTimeout(() => {
-          this.onCellSingleClick(rowObject, property, cellValue);
-          this.clickTimeout = null;
-        }, 200);
-      }
-
-      this.setState({
-        highlight: {
-          rows: nextRowsHighlighted,
-          column: columnIndex,
-          lastRowIndexClicked: rowIndex,
-        },
-      });
-    }
-  };
-
-  public onCellSingleClick = (
-    object: any,
-    property: IPropertyWithName,
-    value: any,
-  ) => {
-    if (property.type === 'list') {
-      const focus: IListFocus = {
-        kind: 'list',
-        parent: object,
-        property,
-        properties: this.derivePropertiesFromProperty(property),
-        results: value,
-      };
-      this.setState({
-        focus,
-        highlight: undefined,
-      });
-    } else if (property.type === 'object' && value) {
-      const className = property.objectType;
-      if (className) {
-        const focus = this.getClassFocus(className);
-        const rowIndex = focus.results.indexOf(value);
-
-        this.setState({
-          focus,
-          highlight: {
-            rows: new Set([rowIndex]),
-            center: true,
-          },
-        });
-      }
-    }
-  };
-
-  public onCellDoubleClick = (
-    object: any,
-    property: IPropertyWithName,
-    value: any,
-  ) => {
-    if (property.type === 'object') {
-      this.openSelectObject(object, property);
-    }
-  };
-
-  public onCellHighlighted = ({
-    rowIndex,
-    columnIndex,
-  }: {
-    rowIndex: number;
-    columnIndex: number;
-  }) => {
-    if (!this.latestCellValidation || this.latestCellValidation.valid) {
-      this.setState({
-        highlight: {
-          rows: new Set([rowIndex]),
-          column: columnIndex,
-          lastRowIndexClicked: rowIndex,
-        },
-      });
-    }
-  };
-
-  public onContextMenu: CellContextMenuHandler = (
-    e: React.MouseEvent<any>,
-    params,
-  ) => {
-    e.preventDefault();
-    const { focus } = this.state;
-
-    const contextMenu = new remote.Menu();
-
-    if (params) {
-      const { property, rowObject, rowIndex, columnIndex } = params;
-
-      // If the clicked row was not highlighted - highlight only that
-      if (!this.state.highlight || !this.state.highlight.rows.has(rowIndex)) {
-        this.onCellHighlighted({ rowIndex, columnIndex });
-        // Wait 200ms to allow the state to update and call recursively
-        window.setTimeout(() => {
-          return this.onContextMenu(e, params);
-        }, 200);
-        return;
-      }
-
-      // If we clicked a property that refers to an object
-      if (property && property.type === 'object') {
-        contextMenu.append(
-          new remote.MenuItem({
-            label: 'Update reference',
-            click: () => {
-              this.openSelectObject(rowObject, property);
-            },
-          }),
-        );
-      }
-
-      // If we have one or more rows highlighted - we can delete those
-      if (focus && this.state.highlight && this.state.highlight.rows.size > 0) {
-        const { label, title, description } = this.generateDeleteTexts(
-          focus,
-          this.state.highlight.rows.size > 1,
-        );
-
-        contextMenu.append(
-          new remote.MenuItem({
-            label,
-            click: () => {
-              this.openConfirmModal(title, description, () => {
-                if (this.state.highlight) {
-                  this.deleteObjects(this.state.highlight.rows);
-                  this.setState({ highlight: undefined });
-                }
-              });
-            },
-          }),
-        );
-      }
-    }
-
-    if (focus) {
-      const rowsHighlighted = this.state.highlight && this.state.highlight.rows;
-
-      if (rowsHighlighted && rowsHighlighted.size > 1) {
-        const title = 'Deleting objects...';
-        const description = 'Are you sure you want to delete this objects?';
-      }
-    }
-
-    // If we right-clicking on the content we can add an existing object when we are focusing an object list
-    if (
-      focus &&
-      focus.kind === 'list' &&
-      focus.property.objectType &&
-      !primitives.isPrimitive(focus.property.objectType)
-    ) {
-      const className = getClassName(focus);
-      contextMenu.append(
-        new remote.MenuItem({
-          label: `Add existing ${className}`,
-          click: () => {
-            this.openSelectObject(focus.results, focus.property);
-          },
-        }),
-      );
-    }
-
-    // If we right-clicking on the content we can always create a new object
-    if (focus) {
-      const className = getClassName(focus);
-      contextMenu.append(
-        new remote.MenuItem({
-          label: `Create new ${className}`,
-          click: () => {
-            this.onCreateDialogToggle(className);
-          },
-        }),
-      );
-    }
-
-    // If we have items to show - popup the menu
-    if (contextMenu.items.length > 0) {
-      contextMenu.popup(remote.getCurrentWindow(), {
-        x: e.clientX,
-        y: e.clientY,
-      });
-    }
-  };
-
-  public onNewObjectClick = () => {
-    const { focus } = this.state;
-
-    if (focus) {
-      const className = getClassName(focus);
-      this.onCreateDialogToggle(className);
-    }
-  };
-
-  public onCellValidated = (
-    rowIndex: number,
-    columnIndex: number,
-    valid: boolean,
-  ) => {
-    this.latestCellValidation = {
-      columnIndex,
-      rowIndex,
-      valid,
-    };
-  };
-
-  public onCreateDialogToggle = (className?: string) => {
-    if (this.realm && className) {
-      const createObjectSchema =
-        className && primitives.isPrimitive(className)
-          ? {
-              name: className,
-              properties: {
-                [className]: {
-                  type: className,
-                },
-              },
-            }
-          : this.realm.schema.find(schema => schema.name === className);
-      this.setState({ createObjectSchema });
-    } else {
-      this.setState({ createObjectSchema: undefined });
-    }
-  };
-
-  public onEditModeChange: EditModeChangeHandler = editMode => {
-    localStorage.setItem(EDIT_MODE_STORAGE_KEY, editMode);
-    this.setState({ editMode });
-  };
-
-  public onSortStart: SortStartHandler = ({ index }) => {
-    // Removing any highlight
-    this.setState({
-      highlight: undefined,
-    });
-  };
-
-  public onSortEnd: SortEndHandler = ({ oldIndex, newIndex }) => {
-    if (this.state.focus && this.state.focus.kind === 'list') {
-      const results = (this.state.focus.results as any) as Realm.List<any>;
-      this.write(() => {
-        const movedElements = results.splice(oldIndex, 1);
-        results.splice(newIndex, 0, movedElements[0]);
-      });
-    }
-    this.setState({
-      highlight: {
-        ...this.state.highlight,
-        rows: new Set([newIndex]),
-      },
-    });
-  };
-
-  public openSelectObject = (
-    contentToUpdate: Realm.Object | Realm.List<any>,
-    property: IPropertyWithName,
-  ) => {
-    if (this.realm && property.objectType) {
-      const className = property.objectType;
-      const results = this.realm.objects(className) || null;
-      const focus: IClassFocus = {
-        kind: 'class',
-        className,
-        properties: this.derivePropertiesFromClassName(className),
-        results,
-        addColumnEnabled: false,
-      };
-      this.setState({
-        selectObject: {
-          focus,
-          property,
-          contentToUpdate,
+        isEncryptionDialogVisible: true,
+        progress: {
+          status: 'done',
         },
       });
     } else {
-      throw new Error('Expected a loaded realm a property with an objectType');
+      super.loadingRealmFailed(err);
     }
-  };
-
-  public updateObjectReference = (reference: any) => {
-    const { selectObject } = this.state;
-    if (selectObject) {
-      const contentToUpdate: any = selectObject.contentToUpdate;
-      const propertyName = selectObject.property.name;
-      this.write(() => {
-        // Distinguish when we are updating an object or adding an existing object into a list
-        if (contentToUpdate.length >= 0) {
-          contentToUpdate.push(reference);
-        } else if (propertyName) {
-          contentToUpdate[propertyName] = reference;
-        }
-      });
-      this.setState({ selectObject: undefined });
-    }
-  };
-
-  public toggleSelectObject = () => {
-    this.setState({ selectObject: undefined });
-  };
-
-  public openConfirmModal = (
-    title: string,
-    description: string,
-    onYesCallback: () => void,
-  ) => {
-    this.setState({
-      confirmModal: {
-        title,
-        description,
-        yes: () => {
-          onYesCallback();
-          this.closeConfirmModal();
-        },
-        no: this.closeConfirmModal,
-      },
-    });
-  };
-
-  public closeConfirmModal = () => this.setState({ confirmModal: undefined });
-
-  public deleteObjects = (rowIndecies: Set<number>) => {
-    const { focus } = this.state;
-
-    if (focus) {
-      try {
-        this.write(() => {
-          if (this.realm && focus.kind === 'class') {
-            for (const index of rowIndecies) {
-              const object = focus.results[index];
-              this.realm.delete(object);
-            }
-          } else if (focus.kind === 'list') {
-            for (const index of rowIndecies) {
-              focus.results.splice(index, 1);
-            }
-          }
-        });
-      } catch (err) {
-        showError('Error deleting the object', err);
-      }
-    }
-  };
-
-  public onHideEncryptionDialog = () => {
-    this.setState({ isEncryptionDialogVisible: false });
-  };
-
-  public onOpenWithEncryption = (key: string) => {
-    this.setState({ encryptionKey: key });
-    const encryptionKey = Buffer.from(key, 'hex');
-    this.loadRealm({
-      ...this.props.realm,
-      encryptionKey,
-    });
-  };
-
-  public onResetHighlight = () => {
-    this.setState({ highlight: this.generateHighlight() });
-  };
+  }
 
   protected onRealmChanged = () => {
     this.setState({ dataVersion: this.state.dataVersion + 1 });
@@ -898,11 +285,233 @@ class RealmBrowserContainer
       schemas: this.realm.schema,
     });
     if (firstSchemaName) {
-      this.onClassSelected(firstSchemaName);
+      this.onClassFocussed(firstSchemaName);
     }
   };
 
-  protected onBeforeUnload = (e: BeforeUnloadEvent) => {
+  private onBeginTransaction = () => {
+    if (this.realm && !this.realm.isInTransaction) {
+      this.realm.beginTransaction();
+      // Ask the menu to update
+      this.props.updateMenu();
+      // Hang on to the dataVersion
+      this.setState({
+        dataVersionAtBeginning: this.state.dataVersion,
+      });
+    } else {
+      throw new Error(`Realm is not ready or already in transaction`);
+    }
+  };
+
+  private onCommitTransaction = () => {
+    if (this.realm && this.realm.isInTransaction) {
+      this.realm.commitTransaction();
+      this.props.updateMenu();
+      this.resetDataVersion();
+    } else {
+      throw new Error('Cannot commit when not in a transaction');
+    }
+  };
+
+  private onCancelTransaction = () => {
+    if (this.realm && this.realm.isInTransaction) {
+      this.realm.cancelTransaction();
+      this.props.updateMenu();
+      this.resetDataVersion();
+    } else {
+      throw new Error('Cannot cancel when not in a transaction');
+    }
+  };
+
+  private isClassNameAvailable = (name: string): boolean => {
+    return !this.state.schemas.find(schema => schema.name === name);
+  };
+
+  private toggleAddSchema = () => {
+    this.setState({
+      isAddClassOpen: !this.state.isAddClassOpen,
+    });
+  };
+
+  private isPropertyNameAvailable = (name: string): boolean => {
+    return (
+      this.state.focus !== null &&
+      !this.state.focus.properties.find(property => property.name === name)
+    );
+  };
+
+  private toggleAddSchemaProperty = () => {
+    this.setState({
+      isAddPropertyOpen: !this.state.isAddPropertyOpen,
+    });
+  };
+
+  private onAddClass = async (schema: Realm.ObjectSchema) => {
+    if (this.realm) {
+      try {
+        // The schema version needs to be bumped for local realms
+        const nextSchemaVersion = this.realm.schemaVersion + 1;
+        const cleanedSchema = schemaUtils.cleanUpSchema(this.state.schemas);
+        const modifiedSchema = [...cleanedSchema, schema];
+        // Close the current Realm
+        this.realm.close();
+        // Deleting the object to indicate we've closed it
+        delete this.realm;
+        // Clear the focus until the realm is re-loaded
+        this.setState({ focus: null });
+        // Load it again with the new schema
+        await this.loadRealm(
+          this.props.realm,
+          modifiedSchema,
+          nextSchemaVersion,
+        );
+        // Select the schema when it the realm has loaded
+        this.onClassFocussed(schema.name);
+      } catch (err) {
+        showError(`Failed creating the model "${schema.name}"`, err);
+      }
+    }
+  };
+
+  private onAddProperty = async (name: string, type: Realm.PropertyType) => {
+    if (this.realm && this.state.focus && this.state.focus.kind === 'class') {
+      try {
+        const focusedClassName = this.state.focus.className;
+        const nextSchemaVersion = this.realm.schemaVersion + 1;
+        const cleanedSchema = schemaUtils.cleanUpSchema(this.state.schemas);
+        const modifiedSchema = schemaUtils.addProperty(
+          cleanedSchema,
+          this.state.focus.className,
+          name,
+          type,
+        );
+        // Close the current Realm
+        this.realm.close();
+        // Deleting the object to indicate we've closed it
+        delete this.realm;
+        // Clear the focus until the realm is re-loaded
+        this.setState({ focus: null });
+        // Load it again with the new schema
+        await this.loadRealm(
+          this.props.realm,
+          modifiedSchema,
+          nextSchemaVersion,
+        );
+        // Ensure we've selected the class that we've just added a property to
+        this.onClassFocussed(focusedClassName);
+      } catch (err) {
+        showError(
+          `Failed adding the property named "${name}" to the selected schema`,
+          err,
+        );
+      }
+    }
+  };
+
+  private changeFocusIfAllowed(focus: Focus, highligtedObject?: Realm.Object) {
+    const canChangeFocus = this.canChangeFocus();
+    if (canChangeFocus) {
+      this.setState({ focus }, () => {
+        if (highligtedObject && this.contentInstance) {
+          this.contentInstance.highlightObject(highligtedObject);
+        }
+      });
+    }
+  }
+
+  private onClassFocussed: ClassFocussedHandler = (
+    className,
+    highlightedObject,
+  ) => {
+    const focus = this.getClassFocus(className);
+    this.changeFocusIfAllowed(focus, highlightedObject);
+  };
+
+  private onListFocussed: ListFocussedHandler = (
+    object: Realm.Object,
+    property: IPropertyWithName,
+    highlightedObject?: Realm.Object,
+  ) => {
+    const focus = this.getListFocus(object, property);
+    this.changeFocusIfAllowed(focus, highlightedObject);
+  };
+
+  private getClassFocus = (className: string): IClassFocus => {
+    if (this.realm) {
+      const results = this.realm.objects(className);
+      return {
+        kind: 'class',
+        className,
+        results,
+        properties: this.derivePropertiesFromClassName(className),
+      };
+    } else {
+      throw new Error('getClassFocus called before realm was loaded');
+    }
+  };
+
+  private getListFocus = (
+    // `{ [name: string]: any }` because of Realm JS types
+    object: Realm.Object & { [name: string]: any },
+    property: IPropertyWithName,
+  ): IListFocus => {
+    if (property.name) {
+      return {
+        kind: 'list',
+        parent: object,
+        property,
+        properties: this.derivePropertiesFromProperty(property),
+        results: object[property.name],
+      };
+    } else {
+      throw new Error('Expected a property with a name property');
+    }
+  };
+
+  private generateContentKey() {
+    if (this.state.focus && this.state.focus.kind === 'class') {
+      return `class:${this.state.focus.className}`;
+    } else if (this.state.focus && this.state.focus.kind === 'list') {
+      // The `[key: string]: any;` is needed because if Realm JS types
+      const parent: Realm.Object & {
+        [key: string]: any;
+      } = this.state.focus.parent;
+      const schema = parent.objectSchema();
+      const id = schema.primaryKey ? parent[schema.primaryKey] : '?';
+      const propertyName = this.state.focus.property.name;
+      return `list:${schema.name}[${id}]:${propertyName}`;
+    } else {
+      return 'null';
+    }
+  }
+
+  private getSchemaLength = (name: string) => {
+    if (this.realm) {
+      return this.realm.objects(name).length;
+    } else {
+      return 0;
+    }
+  };
+
+  private onEditModeChange: EditModeChangeHandler = editMode => {
+    localStorage.setItem(EDIT_MODE_STORAGE_KEY, editMode);
+    this.setState({ editMode });
+  };
+
+  private onHideEncryptionDialog = () => {
+    this.setState({ isEncryptionDialogVisible: false });
+  };
+
+  private onOpenWithEncryption = (key: string) => {
+    this.setState({ encryptionKey: key });
+    const encryptionKey = Buffer.from(key, 'hex');
+    this.loadRealm({
+      ...this.props.realm,
+      encryptionKey,
+    });
+  };
+
+  private onBeforeUnload = (e: BeforeUnloadEvent) => {
     if (this.realm && this.realm.isInTransaction) {
       e.returnValue = false;
 
@@ -938,7 +547,7 @@ class RealmBrowserContainer
     }
   };
 
-  protected addListeners() {
+  private addListeners() {
     ipcRenderer.addListener('export-schema', this.onExportSchema);
     window.addEventListener<'beforeunload'>(
       'beforeunload',
@@ -946,12 +555,12 @@ class RealmBrowserContainer
     );
   }
 
-  protected removeListeners() {
+  private removeListeners() {
     ipcRenderer.removeListener('export-schema', this.onExportSchema);
     window.removeEventListener('beforeunload', this.onBeforeUnload);
   }
 
-  protected derivePropertiesFromProperty(
+  private derivePropertiesFromProperty(
     property: IPropertyWithName,
   ): IPropertyWithName[] {
     // Determine the properties
@@ -977,7 +586,7 @@ class RealmBrowserContainer
     }
   }
 
-  protected derivePropertiesFromClassName(
+  private derivePropertiesFromClassName(
     className: string,
   ): IPropertyWithName[] {
     if (!this.realm) {
@@ -1007,48 +616,7 @@ class RealmBrowserContainer
     });
   }
 
-  protected generateHighlight(object?: Realm.Object): IHighlight | undefined {
-    if (!this.realm) {
-      throw new Error('generateHighlight called before realm was loaded');
-    }
-    if (object) {
-      const className = object.objectSchema().name;
-      const rowIndex = this.realm.objects(className).indexOf(object);
-      return {
-        rows: new Set(rowIndex >= 0 ? [rowIndex] : []),
-      };
-    }
-  }
-
-  protected loadingRealmFailed(err: Error) {
-    const message = err.message || '';
-    const mightBeEncrypted = message.indexOf('Not a Realm file.') >= 0;
-    if (mightBeEncrypted) {
-      this.setState({
-        isEncryptionDialogVisible: true,
-        progress: {
-          status: 'done',
-        },
-      });
-    } else {
-      super.loadingRealmFailed(err);
-    }
-  }
-
-  protected write(callback: () => void) {
-    if (!this.realm) {
-      throw new Error('write called before realm was loaded');
-    }
-    if (this.realm.isInTransaction) {
-      callback();
-      // We have to signal changes manually
-      this.onRealmChanged();
-    } else {
-      this.realm.write(callback);
-    }
-  }
-
-  protected resetDataVersion() {
+  private resetDataVersion() {
     if (typeof this.state.dataVersionAtBeginning === 'number') {
       this.setState({
         dataVersion: this.state.dataVersionAtBeginning,
@@ -1057,39 +625,18 @@ class RealmBrowserContainer
     }
   }
 
-  protected generateDeleteTexts(focus: Focus, multiple: boolean) {
-    if (focus.kind === 'list') {
-      if (multiple) {
-        return {
-          label: 'Remove selected rows from the list',
-          title: 'Removing rows',
-          description:
-            'Are you sure you want to remove these rows from the list?',
-        };
-      } else {
-        return {
-          label: 'Remove selected row from the list',
-          title: 'Removing row',
-          description:
-            'Are you sure you want to remove this row from the list?',
-        };
-      }
+  private canChangeFocus() {
+    if (this.contentInstance) {
+      const { latestCellValidation } = this.contentInstance;
+      return !latestCellValidation || latestCellValidation.valid;
     } else {
-      if (multiple) {
-        return {
-          label: 'Delete selected objects',
-          title: 'Delete objects',
-          description: 'Are you sure you want to delete these objects?',
-        };
-      } else {
-        return {
-          label: 'Delete selected object',
-          title: 'Delete object',
-          description: 'Are you sure you want to delete this object?',
-        };
-      }
+      return true;
     }
   }
+
+  private contentRef = (instance: Content | null) => {
+    this.contentInstance = instance;
+  };
 
   private onExportSchema = (language: Language): void => {
     const basename = path.basename(this.props.realm.path, '.realm');

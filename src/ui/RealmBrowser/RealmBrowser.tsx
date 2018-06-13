@@ -19,40 +19,22 @@
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import { ConfirmModal } from '../reusable/ConfirmModal';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/LoadingOverlay';
 
-import {
-  CreateObjectHandler,
-  EditMode,
-  IConfirmModal,
-  ISelectObjectState,
-} from '.';
+import { ClassFocussedHandler, EditMode, ListFocussedHandler } from '.';
 import { AddClassModal } from './AddClassModal';
 import { AddPropertyModal } from './AddPropertyModal';
 import { Content } from './Content';
-import {
-  CellChangeHandler,
-  CellClickHandler,
-  CellContextMenuHandler,
-  CellHighlightedHandler,
-  CellValidatedHandler,
-  IHighlight,
-  SortEndHandler,
-  SortStartHandler,
-} from './Content/Table';
-import { CreateObjectDialog } from './CreateObjectDialog';
 import { EncryptionDialog } from './EncryptionDialog';
 import { Focus, IClassFocus } from './focus';
 import { NoFocusPlaceholder } from './NoFocusPlaceholder';
-import { ObjectSelector } from './ObjectSelector';
 import { Sidebar } from './Sidebar';
 
 import './RealmBrowser.scss';
 
 export interface IRealmBrowserProps {
-  columnToHighlight?: number;
-  confirmModal?: IConfirmModal;
+  contentKey: string;
+  contentRef: (instance: Content | null) => void;
   createObjectSchema?: Realm.ObjectSchema;
   dataVersion: number;
   dataVersionAtBeginning?: number;
@@ -60,8 +42,6 @@ export interface IRealmBrowserProps {
   focus: Focus | null;
   getClassFocus: (className: string) => IClassFocus;
   getSchemaLength: (name: string) => number;
-  highlight?: IHighlight;
-  inTransaction: boolean;
   isAddClassOpen: boolean;
   isAddPropertyOpen: boolean;
   isClassNameAvailable: (name: string) => boolean;
@@ -70,42 +50,28 @@ export interface IRealmBrowserProps {
   onAddClass: (schema: Realm.ObjectSchema) => void;
   onAddProperty: (name: string, type: Realm.PropertyType) => void;
   onCancelTransaction: () => void;
-  onCellChange: CellChangeHandler;
-  onCellClick: CellClickHandler;
-  onCellHighlighted: CellHighlightedHandler;
-  onCellValidated: CellValidatedHandler;
-  onClassSelected: (name: string, objectToScroll: any) => void;
+  onClassFocussed: ClassFocussedHandler;
   onCommitTransaction: () => void;
-  onContextMenu: CellContextMenuHandler;
-  onCreateDialogToggle: () => void;
-  onCreateObject: CreateObjectHandler;
   onHideEncryptionDialog: () => void;
-  onNewObjectClick: () => void;
+  onListFocussed: ListFocussedHandler;
   onOpenWithEncryption: (key: string) => void;
-  onResetHighlight: () => void;
-  onSortEnd: SortEndHandler;
-  onSortStart: SortStartHandler;
+  onRealmChanged: () => void;
   progress: ILoadingProgress;
+  realm?: Realm;
   schemas: Realm.ObjectSchema[];
-  selectObject?: ISelectObjectState;
   toggleAddSchema: () => void;
   toggleAddSchemaProperty: () => void;
-  toggleSelectObject: () => void;
-  updateObjectReference: (object: any) => void;
 }
 
 export const RealmBrowser = ({
-  columnToHighlight,
-  confirmModal,
-  createObjectSchema,
+  contentKey,
+  contentRef,
   dataVersion,
   dataVersionAtBeginning,
   editMode,
   focus,
   getClassFocus,
   getSchemaLength,
-  highlight,
-  inTransaction,
   isAddClassOpen,
   isAddPropertyOpen,
   isClassNameAvailable,
@@ -114,89 +80,54 @@ export const RealmBrowser = ({
   onAddClass,
   onAddProperty,
   onCancelTransaction,
-  onCellChange,
-  onCellClick,
-  onCellHighlighted,
-  onCellValidated,
-  onClassSelected,
+  onClassFocussed,
   onCommitTransaction,
-  onContextMenu,
-  onCreateDialogToggle,
-  onCreateObject,
   onHideEncryptionDialog,
-  onNewObjectClick,
+  onListFocussed,
   onOpenWithEncryption,
-  onResetHighlight,
-  onSortEnd,
-  onSortStart,
+  onRealmChanged,
   progress,
+  realm,
   schemas,
-  selectObject,
   toggleAddSchema,
   toggleAddSchemaProperty,
-  toggleSelectObject,
-  updateObjectReference,
 }: IRealmBrowserProps) => {
-  const changeCount =
-    typeof dataVersionAtBeginning === 'number'
-      ? dataVersion - dataVersionAtBeginning
-      : 0;
   return (
     <div className="RealmBrowser">
       <Sidebar
+        className="RealmBrowser__Sidebar"
         focus={focus}
         getSchemaLength={getSchemaLength}
-        onClassSelected={onClassSelected}
+        onClassFocussed={onClassFocussed}
         progress={progress}
         schemas={schemas}
         toggleAddSchema={toggleAddSchema}
       />
       <div className="RealmBrowser__Wrapper">
-        {focus ? (
+        {focus && realm ? (
           <Content
-            changeCount={changeCount}
             dataVersion={dataVersion}
+            dataVersionAtBeginning={dataVersionAtBeginning}
             editMode={editMode}
             focus={focus}
-            highlight={highlight}
-            inTransaction={inTransaction}
+            getClassFocus={getClassFocus}
+            key={contentKey}
             onAddColumnClick={toggleAddSchemaProperty}
             onCancelTransaction={onCancelTransaction}
-            onCellChange={onCellChange}
-            onCellClick={onCellClick}
-            onCellHighlighted={onCellHighlighted}
-            onCellValidated={onCellValidated}
+            onClassFocussed={onClassFocussed}
             onCommitTransaction={onCommitTransaction}
-            onContextMenu={onContextMenu}
-            onNewObjectClick={onNewObjectClick}
-            onResetHighlight={onResetHighlight}
-            onSortEnd={onSortEnd}
-            onSortStart={onSortStart}
+            onListFocussed={onListFocussed}
+            onRealmChanged={onRealmChanged}
             progress={progress}
+            readOnly={false}
+            realm={realm}
+            ref={contentRef}
           />
         ) : (
+          // TODO: Use the loading overlay until Realm has fully loaded
           <NoFocusPlaceholder />
         )}
       </div>
-      {confirmModal && (
-        <ConfirmModal
-          title={confirmModal.title}
-          description={confirmModal.description}
-          status={true}
-          yes={confirmModal.yes}
-          no={confirmModal.no}
-        />
-      )}
-
-      {selectObject && (
-        <ObjectSelector
-          toggle={toggleSelectObject}
-          focus={selectObject.focus}
-          isOpen={!!selectObject}
-          isOptional={selectObject.property.optional}
-          onObjectSelected={updateObjectReference}
-        />
-      )}
 
       <AddClassModal
         isOpen={isAddClassOpen}
@@ -220,14 +151,6 @@ export const RealmBrowser = ({
         onHide={onHideEncryptionDialog}
         onOpenWithEncryption={onOpenWithEncryption}
         visible={isEncryptionDialogVisible}
-      />
-
-      <CreateObjectDialog
-        getClassFocus={getClassFocus}
-        isOpen={!!createObjectSchema}
-        onCreate={onCreateObject}
-        schema={createObjectSchema}
-        toggle={onCreateDialogToggle}
       />
 
       <LoadingOverlay progress={progress} fade={true} />

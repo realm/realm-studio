@@ -51,7 +51,7 @@ export const getPropertyDisplayed = (property: Realm.ObjectSchemaProperty) => {
 };
 
 const isPropertySortable = (property: IPropertyWithName) => {
-  if (property.name === '#') {
+  if (property.name === '#' || property.name === null) {
     return false;
   } else if (property.type === 'data') {
     return false;
