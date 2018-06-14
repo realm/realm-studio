@@ -38,6 +38,9 @@ export const authenticate = async (
     if (!options.providerToken && options.data) {
       options.providerToken = options.data;
     }
+    if (!options.userInfo && options.user_info) {
+      options.userInfo = options.user_info;
+    }
     return Realm.Sync.User.registerWithProvider(credentials.url, options);
   } else {
     throw new Error(`Unexpected kind of credentials`);
