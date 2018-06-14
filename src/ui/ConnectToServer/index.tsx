@@ -17,6 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as electron from 'electron';
+import * as json5 from 'json5';
 import * as React from 'react';
 
 import { main } from '../../actions/main';
@@ -234,7 +235,7 @@ class ConnectToServerContainer extends React.Component<
       };
     } else if (method === AuthenticationMethod.other) {
       try {
-        const options = JSON.parse(this.state.otherOptions);
+        const options = json5.parse(this.state.otherOptions);
         return {
           kind: 'other',
           url: preparedUrl,
