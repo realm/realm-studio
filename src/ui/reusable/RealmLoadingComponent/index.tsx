@@ -164,7 +164,12 @@ export abstract class RealmLoadingComponent<
     if (error.message === 'SSL server certificate rejected') {
       this.certificateWasRejected = true;
     } else if (error.isFatal) {
-      showError('Error while synchronizing Realm', error);
+      this.setState({
+        progress: {
+          message: error.message,
+          status: 'failed',
+        },
+      });
     } else {
       /* tslint:disable-next-line:no-console */
       console.warn(`A non-fatal sync error happened: ${error.message}`, error);

@@ -434,6 +434,9 @@ class ServerAdministrationContainer
           },
         },
       });
+    } else {
+      /* tslint:disable-next-line:no-console */
+      console.warn(`A non-fatal sync error happened: ${error.message}`, error);
     }
   };
 
