@@ -95,7 +95,7 @@ export const ConnectToServer = ({
         onTokenChanged={onTokenChanged}
       />
       <div className="ConnectToServer__Controls">
-        <div className="ConnectToServer__SaveCredentials">
+        <FormGroup check className="ConnectToServer__SaveCredentials">
           <Label check className="ConnectToServer__SaveCredentialsLabel">
             <Input
               type="checkbox"
@@ -106,8 +106,8 @@ export const ConnectToServer = ({
             />{' '}
             Save credentials for this server
           </Label>
-        </div>
-        <div className="ConnectToServer__Actions">
+        </FormGroup>
+        <FormGroup className="ConnectToServer__Actions">
           <Button
             color="secondary"
             size="sm"
@@ -126,7 +126,7 @@ export const ConnectToServer = ({
           >
             Connect
           </Button>
-        </div>
+        </FormGroup>
       </div>
       <LoadingOverlay loading={isConnecting} />
     </Form>
