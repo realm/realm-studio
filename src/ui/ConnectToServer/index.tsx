@@ -34,6 +34,7 @@ import { ConnectToServer } from './ConnectToServer';
 
 const MISSING_PARAMS_MESSAGE =
   'Your request did not validate because of missing parameters.';
+const INVALID_PARAMS_MESSAGE = 'Your request parameters did not validate.';
 
 interface IConnectToServerContainerProps {
   url?: string;
@@ -113,7 +114,10 @@ class ConnectToServerContainer extends React.Component<
       });
       electron.remote.getCurrentWindow().close();
     } catch (err) {
-      if (err.message === MISSING_PARAMS_MESSAGE) {
+      if (
+        err.message === MISSING_PARAMS_MESSAGE ||
+        err.message === INVALID_PARAMS_MESSAGE
+      ) {
         const missingParams = (err.invalid_params || [])
           .filter((params: any) => params.reason)
           .map((param: any) => {
