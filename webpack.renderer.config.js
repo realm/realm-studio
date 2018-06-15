@@ -1,3 +1,4 @@
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const _ = require("lodash");
 const path = require("path");
 const webpack = require("webpack");
@@ -46,7 +47,12 @@ module.exports = (env) => {
       filename: "renderer.bundle.js",
       publicPath: isProduction ? "" : "http://localhost:8080/"
     },
-    plugins: baseConfig.plugins.concat(isProduction ? [] : [
+    plugins: baseConfig.plugins.concat([
+      new CopyWebpackPlugin([
+        // Copy the Sentry initialization to the build folder
+        './src/sentry.js',
+      ]),
+    ], isProduction ? [] : [
       new Visualizer({
         filename: './renderer.statistics.html',
       }),

@@ -49,16 +49,19 @@ export interface IMeResponse {
 }
 
 export interface IAccountResponse {
+  acceptedTOS?: boolean;
   admin: boolean;
   company: string;
   country: string;
   email: string;
+  emailVerified: boolean;
+  features: string[];
+  githubUserId?: string;
+  id: string;
   nameFirst: string;
   nameLast: string;
   phoneNumber: string;
-  githubUserId?: string;
-  features: string[];
-  emailVerified: boolean;
+  status: 'suspended' | 'active';
 }
 
 export interface IEmailSignupResponse {
