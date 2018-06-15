@@ -19,3 +19,6 @@ test-results.xml
 # Realm locks and management files
 *.realm.lock
 *.realm.management
+
+# Sentry cache folder
+.electron-symbols/
