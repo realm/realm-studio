@@ -16,6 +16,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import * as sentry from '@sentry/electron';
+import { Severity } from '@sentry/shim';
+
 import * as electron from 'electron';
 
 export const showError = (
@@ -34,13 +37,20 @@ export const showError = (
   if (message in messageOverrides) {
     message = messageOverrides[message];
   }
-  // Prepend the intent
-  message = message.length > 0 ? `${failedIntent}:\n${message}` : failedIntent;
   const messageOptions = {
     type: 'error',
-    message,
+    // Prepend the intent
+    message: message.length > 0 ? `${failedIntent}:\n${message}` : failedIntent,
     title: failedIntent,
   };
+  // Tell Sentry about this error
+  sentry.captureEvent({
+    level: Severity.Debug,
+    // We don't want the message to wrap to the next line when reporting this to Sentry
+    message: message.length > 0 ? `${failedIntent}: ${message}` : failedIntent,
+    tags: { type: 'user-error' },
+  });
+  // Show a message box ...
   if (process.type === 'renderer') {
     electron.remote.dialog.showMessageBox(
       electron.remote.getCurrentWindow(),
