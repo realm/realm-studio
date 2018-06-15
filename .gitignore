@@ -1,14 +1,14 @@
-build
-dist
-node_modules
-realm-object-server
+build/
+dist/
+node_modules/
+realm-object-server/
 .idea
 
 .DS_Store
 data/
 
 # Created by mocha-webpack
-.tmp
+.tmp/
 
 # Secrets
 secrets.sh
