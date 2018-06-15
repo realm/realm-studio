@@ -28,6 +28,8 @@ import * as github from '../services/github';
 import * as raas from '../services/raas';
 import { realms } from '../services/ros';
 import { showError } from '../ui/reusable/errors';
+import { crashReporterStart } from './CrashReporter';
+
 import {
   ICloudAuthenticationWindowProps,
   IRealmBrowserWindowProps,
@@ -365,6 +367,7 @@ export class Application {
   }
 
   private addAppListeners() {
+    electron.app.addListener('will-finish-launching', crashReporterStart);
     electron.app.addListener('ready', this.onReady);
     electron.app.addListener('activate', this.onActivate);
     electron.app.addListener('open-file', this.onOpenFile);
@@ -374,6 +377,7 @@ export class Application {
   }
 
   private removeAppListeners() {
+    electron.app.removeListener('will-finish-launching', crashReporterStart);
     electron.app.removeListener('ready', this.onReady);
     electron.app.removeListener('activate', this.onActivate);
     electron.app.removeListener('open-file', this.onOpenFile);
