@@ -50,6 +50,13 @@ export class WindowManager {
       vibrancy: 'light',
       show: false,
       ...getWindowOptions(props),
+      webPreferences: {
+        // Load Sentry as a preload in production - this doesn't work in development because the
+        // sentry.js is not emitted to the build folder.
+        preload: isProduction
+          ? path.resolve(__dirname, './sentry.js')
+          : undefined,
+      },
     });
 
     // Open up the dev tools, if not in production mode

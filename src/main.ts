@@ -16,17 +16,14 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import { app, dialog } from 'electron';
+import './sentry';
+
+import { app } from 'electron';
 
 // Loading the fetch API polyfill - so we can use this from the node main process too.
 import 'isomorphic-fetch';
 
 import { Application } from './main/Application';
-
-// TODO: Submit these to a service like opbeat instead.
-process.on('uncaughtException', error => {
-  dialog.showErrorBox('Uncaught exception', `${error.message}: ${error.stack}`);
-});
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -40,7 +37,7 @@ if (!isProduction) {
 }
 
 Application.sharedApplication.run();
-app.on('will-quit', e => {
+app.on('will-quit', () => {
   Application.sharedApplication.destroy();
 });
 
