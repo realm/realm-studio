@@ -16,10 +16,11 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import * as sentry from '@sentry/electron';
 import * as electron from 'electron';
+import * as path from 'path';
 import { URL } from 'url';
 
-import * as path from 'path';
 import { MainReceiver } from '../actions/main';
 import { CLOUD_PROTOCOL, STUDIO_PROTOCOL } from '../constants';
 import * as dataImporter from '../services/data-importer';
@@ -457,6 +458,15 @@ export class Application {
     // Refresh the menu, as the authentication state might have changed
     // this.mainMenu.update();
     // TODO: Update the main menu
+    if (status.kind === 'authenticated') {
+      // Add the users account into the context for Raven to consume
+      const { id, email, nameFirst, nameLast, ...rest } = status.account;
+      sentry.setUserContext({
+        id,
+        email,
+        extra: { ...rest, name: `${nameFirst} ${nameLast}` },
+      });
+    }
   };
 
   private registerProtocols() {

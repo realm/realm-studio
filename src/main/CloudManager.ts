@@ -18,7 +18,6 @@
 
 import * as github from '../services/github';
 import * as raas from '../services/raas';
-import * as ros from '../services/ros';
 import { timeout } from '../utils';
 
 export type IInstance = raas.user.ISubscription;
