@@ -16,13 +16,13 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import './services/mixpanel';
+
 import * as electron from 'electron';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-
-import * as mixpanel from './services/mixpanel';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
