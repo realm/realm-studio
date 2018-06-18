@@ -58,7 +58,7 @@ jobWrapper {
       dir('dist-finally') {
         rlmS3Put(bucket: s3Config.bucket, path: s3Config.path)
       }
-      
+
       // Publish GitHub release
       if (env.GITHUB_RELEASE_ID) {
         withCredentials([string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')]) {
@@ -126,7 +126,7 @@ def packageForLinuxAndWindows() {
           // Build the package: Never publishing and failing if missing code signing
           sh 'node_modules/.bin/electron-builder -c.forceCodeSigning --linux --windows --publish never'
         }
-        
+
         // Check the auto-updating for versions and referenced files
         sh 'npm run check:auto-update-files'
 
@@ -142,25 +142,29 @@ def packageForMac() {
     node('macos') {
       checkoutAtVersion()
 
-      def nodeVersion = readFile('.nvmrc').trim()
-      nvm(version: nodeVersion) {
-        // Using via-nvm.sh wraps ensures the correct version of node and npm.
-        sh './scripts/via-nvm.sh npm install --quiet'
-        sh './scripts/via-nvm.sh npm run build'
+      withCredentials([
+        string(credentialsId: 'realm-studio-sentry-token', variable: 'SENTRY_AUTH_TOKEN')
+      ]) {
+        def nodeVersion = readFile('.nvmrc').trim()
+        nvm(version: nodeVersion) {
+          // Using via-nvm.sh wraps ensures the correct version of node and npm.
+          sh './scripts/via-nvm.sh npm install --quiet'
+          sh './scripts/via-nvm.sh npm run build'
 
-        // Run the tests
-        sh './scripts/via-nvm.sh node_modules/.bin/xvfb-maybe npm test'
+          // Run the tests
+          sh './scripts/via-nvm.sh node_modules/.bin/xvfb-maybe npm test'
 
-        // Build the package: Never publishing and failing if missing code signing
-        sh 'node_modules/.bin/electron-builder -c.forceCodeSigning --publish never'
-        
-        // Check the auto-updating for versions and referenced files
-        sh './scripts/via-nvm.sh npm run check:auto-update-files'
+          // Build the package: Never publishing and failing if missing code signing
+          sh 'node_modules/.bin/electron-builder -c.forceCodeSigning --publish never'
 
-        // TODO: Run a post-package test, to see if the packaged app boots
+          // Check the auto-updating for versions and referenced files
+          sh './scripts/via-nvm.sh npm run check:auto-update-files'
 
-        archiveArtifacts 'dist/*'
-        stash includes: 'dist/*', name: 'macos-artifacts'
+          // TODO: Run a post-package test, to see if the packaged app boots
+
+          archiveArtifacts 'dist/*'
+          stash includes: 'dist/*', name: 'macos-artifacts'
+        }
       }
     }
   }
