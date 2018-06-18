@@ -53,6 +53,11 @@ function getRendererHtmlPath() {
 export class WindowManager {
   public windows: IWindowHandle[] = [];
 
+  public constructor() {
+    // Call this to cleanup abandoned renderer process directories
+    this.cleanupRendererProcessDirectories();
+  }
+
   public createWindow(props: WindowTypedProps) {
     const window = new BrowserWindow({
       title: 'Realm Studio',
@@ -160,6 +165,17 @@ export class WindowManager {
 
   private cleanupRendererProcessDirectory(processDir: string) {
     fs.removeSync(processDir);
+  }
+
+  /** This will clean up any existing renderer directories */
+  private cleanupRendererProcessDirectories() {
+    const rendererPaths = getRendererProcessDirectories();
+    for (const rendererPath of rendererPaths) {
+      // Deleting these folders are not obvious side-effects, so let's log that
+      // tslint:disable-next-line:no-console
+      console.log(`Removing abandoned renderer directory ${rendererPath}`);
+      fs.removeSync(rendererPath);
+    }
   }
 
   private getDesiredDisplay(): Electron.Display {
