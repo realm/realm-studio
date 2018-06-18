@@ -164,8 +164,17 @@ export class WindowManager {
     });
   }
 
-  private cleanupRendererProcessDirectory(processDir: string) {
-    fs.removeSync(processDir);
+  private cleanupRendererProcessDirectory(rendererPath: string) {
+    try {
+      fs.removeSync(rendererPath);
+    } catch (err) {
+      // Deleting these folders are not obvious side-effects, so let's log if it fails
+      // tslint:disable-next-line:no-console
+      console.error(
+        `Failed while cleaning up renderer directory ${rendererPath}`,
+        err,
+      );
+    }
   }
 
   /** This will clean up any existing renderer directories */
