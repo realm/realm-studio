@@ -17,9 +17,14 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import { BrowserWindow, screen, shell } from 'electron';
+import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as url from 'url';
 
+import {
+  getRendererProcessDirectories,
+  getRendererProcessDirectory,
+} from '../utils';
 import { getWindowOptions } from '../windows/Window';
 import { WindowTypedProps } from '../windows/WindowTypedProps';
 
@@ -27,6 +32,12 @@ export interface IEventListenerCallbacks {
   blur?: () => void;
   focus?: () => void;
   closed?: () => void;
+}
+
+interface IWindowHandle {
+  window: Electron.BrowserWindow;
+  pid: number;
+  processDir: string;
 }
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -40,7 +51,7 @@ function getRendererHtmlPath() {
 }
 
 export class WindowManager {
-  public windows: Electron.BrowserWindow[] = [];
+  public windows: IWindowHandle[] = [];
 
   public createWindow(props: WindowTypedProps) {
     const window = new BrowserWindow({
@@ -116,22 +127,39 @@ export class WindowManager {
       }
     });
 
+    window.webContents.once('did-finish-load', () => {
+      const pid = window.webContents.getOSProcessId();
+      // The current working directory should be changed from within the renderer process
+      const processDir = getRendererProcessDirectory(pid);
+      this.windows.push({
+        window,
+        pid,
+        processDir,
+      });
+    });
+
+    // const processDir = getRendererProcessDirectory(pid);
+
     window.on('closed', () => {
-      const index = this.windows.indexOf(window);
+      const index = this.windows.findIndex(handle => handle.window === window);
+      const { processDir } = this.windows[index];
       if (index > -1) {
         this.windows.splice(index, 1);
       }
+      this.cleanupRendererProcessDirectory(processDir);
     });
-
-    this.windows.push(window);
 
     return window;
   }
 
   public closeAllWindows() {
-    this.windows.forEach(window => {
+    this.windows.forEach(({ window }) => {
       window.close();
     });
+  }
+
+  private cleanupRendererProcessDirectory(processDir: string) {
+    fs.removeSync(processDir);
   }
 
   private getDesiredDisplay(): Electron.Display {
