@@ -151,7 +151,10 @@ export class WindowManager {
       if (index > -1) {
         this.windows.splice(index, 1);
       }
-      this.cleanupRendererProcessDirectory(processDir);
+      // Wait a second for Windows to unlock the directory
+      setTimeout(() => {
+        this.cleanupRendererProcessDirectory(processDir);
+      }, 1000);
     });
 
     return window;
