@@ -4,6 +4,7 @@ const webpack = require('webpack');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const { CheckerPlugin } = require("awesome-typescript-loader");
 const SentryPlugin = require('@sentry/webpack-plugin');
+const SentryCli = require('@sentry/cli');
 
 const package = require('./package.json');
 
@@ -56,6 +57,7 @@ module.exports = (env, argv) => {
         configFile: resolve(__dirname, 'scripts/sentry.properties'),
         ext: ['map', 'js'],
         urlPrefix: '~/build/',
+        dryRun: !process.env.SENTRY_AUTH_TOKEN,
       }),
     ]),
     resolve: {
