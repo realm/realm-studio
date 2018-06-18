@@ -143,8 +143,6 @@ export class WindowManager {
       });
     });
 
-    // const processDir = getRendererProcessDirectory(pid);
-
     window.on('closed', () => {
       const index = this.windows.findIndex(handle => handle.window === window);
       const { processDir } = this.windows[index];
