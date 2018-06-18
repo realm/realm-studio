@@ -17,9 +17,14 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import { BrowserWindow, screen, shell } from 'electron';
+import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as url from 'url';
 
+import {
+  getRendererProcessDirectories,
+  getRendererProcessDirectory,
+} from '../utils';
 import { getWindowOptions } from '../windows/Window';
 import { WindowTypedProps } from '../windows/WindowTypedProps';
 
@@ -27,6 +32,12 @@ export interface IEventListenerCallbacks {
   blur?: () => void;
   focus?: () => void;
   closed?: () => void;
+}
+
+interface IWindowHandle {
+  window: Electron.BrowserWindow;
+  pid: number;
+  processDir: string;
 }
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -40,7 +51,12 @@ function getRendererHtmlPath() {
 }
 
 export class WindowManager {
-  public windows: Electron.BrowserWindow[] = [];
+  public windows: IWindowHandle[] = [];
+
+  public constructor() {
+    // Call this to cleanup abandoned renderer process directories
+    this.cleanupRendererProcessDirectories();
+  }
 
   public createWindow(props: WindowTypedProps) {
     const window = new BrowserWindow({
@@ -116,22 +132,60 @@ export class WindowManager {
       }
     });
 
+    window.webContents.once('did-finish-load', () => {
+      const pid = window.webContents.getOSProcessId();
+      // The current working directory should be changed from within the renderer process
+      const processDir = getRendererProcessDirectory(pid);
+      this.windows.push({
+        window,
+        pid,
+        processDir,
+      });
+    });
+
     window.on('closed', () => {
-      const index = this.windows.indexOf(window);
+      const index = this.windows.findIndex(handle => handle.window === window);
+      const { processDir } = this.windows[index];
       if (index > -1) {
         this.windows.splice(index, 1);
       }
+      // Wait a second for Windows to unlock the directory
+      setTimeout(() => {
+        this.cleanupRendererProcessDirectory(processDir);
+      }, 1000);
     });
-
-    this.windows.push(window);
 
     return window;
   }
 
   public closeAllWindows() {
-    this.windows.forEach(window => {
+    this.windows.forEach(({ window }) => {
       window.close();
     });
+  }
+
+  private cleanupRendererProcessDirectory(rendererPath: string) {
+    try {
+      fs.removeSync(rendererPath);
+    } catch (err) {
+      // Deleting these folders are not obvious side-effects, so let's log if it fails
+      // tslint:disable-next-line:no-console
+      console.error(
+        `Failed while cleaning up renderer directory ${rendererPath}`,
+        err,
+      );
+    }
+  }
+
+  /** This will clean up any existing renderer directories */
+  private cleanupRendererProcessDirectories() {
+    const rendererPaths = getRendererProcessDirectories();
+    for (const rendererPath of rendererPaths) {
+      // Deleting these folders are not obvious side-effects, so let's log that
+      // tslint:disable-next-line:no-console
+      console.log(`Removing abandoned renderer directory ${rendererPath}`);
+      fs.removeSync(rendererPath);
+    }
   }
 
   private getDesiredDisplay(): Electron.Display {

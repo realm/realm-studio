@@ -18,11 +18,10 @@
 
 import './services/mixpanel';
 
-import * as electron from 'electron';
-import * as fs from 'fs-extra';
-import * as path from 'path';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+
+import { changeRendererProcessDirectory } from './utils/renderer-process-directory';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -33,23 +32,7 @@ process.env.REALM_DISABLE_ANALYTICS = 'true';
 // Create and change working directory to aviod conflicts of opening two realms twice
 // FIXME: see https://github.com/realm/realm-js/issues/818
 // This needs to happen before realm is loaded
-
-// Generating a path for this process
-const userDataPath = electron.remote.app.getPath('userData');
-const pid = process.pid.toString();
-const processDir = path.resolve(userDataPath, `renderer-${pid}`);
-// Remove the directory if it already exists
-if (fs.existsSync(processDir)) {
-  fs.removeSync(processDir);
-}
-// Create the directory
-fs.mkdirSync(processDir);
-// Change to it
-process.chdir(processDir);
-// Make sure directory is removed when process / window is closed
-window.addEventListener('beforeunload', e => {
-  fs.removeSync(processDir);
-});
+changeRendererProcessDirectory();
 
 import '../styles/index.scss';
 
