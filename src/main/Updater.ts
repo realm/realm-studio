@@ -18,9 +18,8 @@
 
 import * as electron from 'electron';
 import { autoUpdater } from 'electron-updater';
-import * as path from 'path';
 
-const isProduction = process.env.NODE_ENV === 'production';
+const isDevelopment = process.env.NODE_ENV === 'development';
 
 export interface IDownloadProgress {
   total: number;
@@ -123,10 +122,10 @@ export class Updater {
     // Checking this prevents two updates at the same time
     if (!this.isBusy) {
       this.quite = quiet;
-      if (isProduction) {
-        autoUpdater.checkForUpdates();
-      } else {
+      if (isDevelopment) {
         this.performFakeUpdate();
+      } else {
+        autoUpdater.checkForUpdates();
       }
     }
   }

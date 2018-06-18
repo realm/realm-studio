@@ -40,12 +40,12 @@ interface IWindowHandle {
   processDir: string;
 }
 
-const isProduction = process.env.NODE_ENV === 'production';
+const isDevelopment = process.env.NODE_ENV === 'development';
 
 function getRendererHtmlPath() {
-  const indexPath = isProduction
-    ? require('../../static/index.html')
-    : require('../../static/index.development.html');
+  const indexPath = isDevelopment
+    ? require('../../static/index.development.html')
+    : require('../../static/index.html');
   // __dirname is the directory of the bundle
   return path.resolve(__dirname, indexPath);
 }
@@ -69,9 +69,9 @@ export class WindowManager {
       webPreferences: {
         // Load Sentry as a preload in production - this doesn't work in development because the
         // sentry.js is not emitted to the build folder.
-        preload: isProduction
-          ? path.resolve(__dirname, './sentry.js')
-          : undefined,
+        preload: isDevelopment
+          ? undefined
+          : path.resolve(__dirname, './sentry.js'),
       },
     });
 
@@ -105,7 +105,7 @@ export class WindowManager {
     };
 
     // @see https://reactjs.org/blog/2016/11/16/react-v15.4.0.html#profiling-components-with-chrome-timeline
-    if (!isProduction && process.env.REACT_PERF) {
+    if (isDevelopment && process.env.REACT_PERF) {
       query.react_perf = 'enabled';
     }
 

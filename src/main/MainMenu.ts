@@ -24,7 +24,7 @@ import * as raas from '../services/raas';
 import { store } from '../store';
 import { showError } from '../ui/reusable/errors';
 
-const isProduction = process.env.NODE_ENV === 'production';
+const isDevelopment = process.env.NODE_ENV === 'development';
 const showInternalFeatures =
   process.env.REALM_STUDIO_INTERNAL_FEATURES === 'true'; // Show features only relevant for Realm employees
 
@@ -81,9 +81,9 @@ export const getDefaultMenuTemplate = (
     {
       label: 'View',
       submenu: [
-        { role: 'reload', visible: !isProduction },
-        { role: 'toggledevtools', visible: !isProduction },
-        { type: 'separator', visible: !isProduction },
+        { role: 'reload', visible: isDevelopment },
+        { role: 'toggledevtools', visible: isDevelopment },
+        { type: 'separator', visible: isDevelopment },
         {
           label: `Show partial Realms`,
           type: 'checkbox',
