@@ -1,17 +1,19 @@
-const _ = require("lodash");
+const merge = require("webpack-merge");
 
 const PLUGIN_BLACKLIST = [
   'SVGSpritePlugin',
   'HotModuleReplacementPlugin',
 ];
 
-module.exports = (env) => {
-  const baseConfig = require("./webpack.base.config.js")(env);
-  const isProduction = env && env.NODE_ENV === "production";
+const baseConfig = require("./webpack.base.config.js");
 
-  const config = _.merge({}, baseConfig, {
+module.exports = (env, argv) => {
+
+  const baseConfig = require("./webpack.base.config.js")(env, argv);
+
+  const config = merge(baseConfig, {
     module: {
-      rules: baseConfig.module.rules.concat([
+      rules: [
         {
           test: /\.tsx?$/,
           use: "awesome-typescript-loader?silent=true"
@@ -21,8 +23,8 @@ module.exports = (env) => {
         }, {
           test: /\.(scss|svg)$/,
           use: "null-loader"
-        }
-      ])
+        },
+      ],
     },
     target: "node",
     node: {

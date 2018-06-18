@@ -93,7 +93,7 @@
     }
   },
   "scripts": {
-    "build": "webpack --mode production --env.NODE_ENV=production",
+    "build": "webpack --mode production",
     "check:package-lock": "node ./scripts/check-package-lock.js",
     "check:auto-update-files": "node ./scripts/check-auto-update-files.js",
     "dev:ros-https": "ros start --https --https-key ./data/keys/server.key --https-cert ./data/keys/server.crt",
@@ -166,6 +166,7 @@
   },
   "devDependencies": {
     "@sentry/cli": "^1.32.3",
+    "@sentry/webpack-plugin": "^1.5.2",
     "@types/classnames": "^2.2.3",
     "@types/electron-store": "^1.3.0",
     "@types/faker": "^4.1.1",
@@ -230,6 +231,7 @@
     "webpack": "^4.1.1",
     "webpack-cli": "^2.0.12",
     "webpack-dev-server": "^3.1.1",
+    "webpack-merge": "^4.1.3",
     "webpack-node-externals": "^1.6.0",
     "webpack-visualizer-plugin": "^0.1.11",
     "why-did-you-update": "^0.1.0",
