@@ -1,3 +1,0 @@
- --webpack-config webpack.test.config.js
- 'src/**/*.test.ts'
- 'src/**/*.test.tsx'

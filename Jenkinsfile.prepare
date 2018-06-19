@@ -37,11 +37,11 @@ jobWrapper {
         // Push with tags
         sh "git push --tags origin HEAD"
       }
-      
+
       // Create a draft release on GitHub
       withCredentials([string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')]) {
         // Read the release body and replace in any variables
-        releaseBody = readFile 'RELEASE_BODY.md'
+        releaseBody = readFile 'docs/RELEASE_BODY.md'
         releaseBody = releaseBody
           .replaceAll("\\[PREVIOUS_VERSION\\]", "v${currentVersion}")
           .replaceAll("\\[CURRENT_VERSION\\]", nextVersion)
@@ -61,7 +61,7 @@ jobWrapper {
             https://api.github.com/repos/realm/realm-studio/releases
         """
       }
-      
+
       // Start a release job
       build(
         job: 'realm-studio/release',

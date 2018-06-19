@@ -16,7 +16,6 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as fs from 'fs-extra';
 import * as path from 'path';
 import { Application } from 'spectron';
 import * as webpack from 'webpack';
@@ -30,7 +29,7 @@ export const createApp = (
   entries: { [name: string]: string },
   rendererHtmlPath: string,
 ) => {
-  const webpackTestConfig = require('../../webpack.test.config.js')();
+  const webpackTestConfig = require('../../configs/webpack.test.js')();
   return new Promise<Application>((resolve, reject) => {
     // Compile the .ts file before starting the Spectron app
     webpack(

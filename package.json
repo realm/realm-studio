@@ -93,7 +93,7 @@
     }
   },
   "scripts": {
-    "build": "webpack --mode production",
+    "build": "webpack --mode production --config=configs/webpack.js",
     "check:package-lock": "node ./scripts/check-package-lock.js",
     "check:auto-update-files": "node ./scripts/check-auto-update-files.js",
     "dev:ros-https": "ros start --https --https-key ./data/keys/server.key --https-cert ./data/keys/server.crt",
@@ -113,12 +113,12 @@
     "generate-all-types-realm": "node ./scripts/generate-realm.js",
     "start": "electron .",
     "sentry:upload-symbols": "node ./scripts/sentry-symbols.js",
-    "test:ci": "mocha-webpack --mode development --webpack-config=webpack.test.config.js --reporter mocha-junit-reporter",
-    "test": "mocha-webpack --mode=development --webpack-config=webpack.test.config.js",
+    "test:ci": "mocha-webpack --opts=configs/mocha-webpack.opts --reporter mocha-junit-reporter",
+    "test": "mocha-webpack --opts=configs/mocha-webpack.opts",
     "tslint-prettier": "tslint --fix 'src/**/*.ts' 'src/**/*.tsx'",
-    "wait-for-bundle": "node ./webpack.wait-for-bundle.js",
-    "webpack:main": "webpack --mode development --config=webpack.main.config.js",
-    "webpack:renderer": "webpack-dev-server --mode development --config=webpack.renderer.config.js"
+    "wait-for-bundle": "node ./scripts/wait-for-bundle.js",
+    "webpack:main": "webpack --mode development --config=configs/webpack.main.js",
+    "webpack:renderer": "webpack-dev-server --mode development --config=configs/webpack.renderer.js"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
