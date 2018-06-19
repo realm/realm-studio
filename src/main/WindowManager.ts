@@ -54,11 +54,6 @@ function getRendererHtmlPath() {
 export class WindowManager {
   public windows: IWindowHandle[] = [];
 
-  public constructor() {
-    // Call this to cleanup abandoned renderer process directories
-    this.cleanupRendererProcessDirectories();
-  }
-
   public createWindow(props: WindowTypedProps) {
     const windowOptions = getWindowOptions(props);
     sentry.addBreadcrumb({
@@ -179,6 +174,17 @@ export class WindowManager {
     });
   }
 
+  /** This will clean up any existing renderer directories */
+  public cleanupRendererProcessDirectories() {
+    const rendererPaths = getRendererProcessDirectories();
+    for (const rendererPath of rendererPaths) {
+      // Deleting these folders are not obvious side-effects, so let's log that
+      // tslint:disable-next-line:no-console
+      console.log(`Removing abandoned renderer directory ${rendererPath}`);
+      fs.removeSync(rendererPath);
+    }
+  }
+
   private cleanupRendererProcessDirectory(rendererPath: string) {
     try {
       fs.removeSync(rendererPath);
@@ -189,17 +195,6 @@ export class WindowManager {
         `Failed while cleaning up renderer directory ${rendererPath}`,
         err,
       );
-    }
-  }
-
-  /** This will clean up any existing renderer directories */
-  private cleanupRendererProcessDirectories() {
-    const rendererPaths = getRendererProcessDirectories();
-    for (const rendererPath of rendererPaths) {
-      // Deleting these folders are not obvious side-effects, so let's log that
-      // tslint:disable-next-line:no-console
-      console.log(`Removing abandoned renderer directory ${rendererPath}`);
-      fs.removeSync(rendererPath);
     }
   }
 

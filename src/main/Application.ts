@@ -124,6 +124,8 @@ export class Application {
       // Quit the app if started multiple times
       electron.app.quit();
     } else {
+      // Clean up from any renderer processes
+      this.windowManager.cleanupRendererProcessDirectories();
       // Register as a listener for specific URLs
       this.registerProtocols();
       // In Mac we detect the files opened with `open-file` event otherwise we need get it from `process.argv`
