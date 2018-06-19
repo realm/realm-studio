@@ -26,7 +26,7 @@ import { store } from '../../store';
 
 // Ensure that this is only called from the renderer process.
 if (process.type === 'renderer') {
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isDevelopment = process.env.NODE_ENV === 'development';
   // For official documentation on the config parameters,
   // @see https://github.com/mixpanel/mixpanel-js/blob/e10c33badec932badf64cbcc0d0f6165115eeb57/build/mixpanel.globals.js#L2146-L2171
   mixpanel.init('bbadd422d2866fc9431cb63baa70bb1a', {
@@ -35,9 +35,9 @@ if (process.type === 'renderer') {
     app_host: 'https://mixpanel.com',
     cdn: 'https://cdn.mxpnl.com',
     // Use test, debug and verbose when not in production
-    test: !isProduction,
-    debug: !isProduction,
-    verbose: !isProduction,
+    test: isDevelopment,
+    debug: isDevelopment,
+    verbose: isDevelopment,
     // Use local storage to persist the users id
     persistence: 'localStorage',
     // As we are currenly transfering credentials in the URLs, lets not send these

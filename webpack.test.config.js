@@ -1,17 +1,15 @@
-const _ = require("lodash");
-
-const PLUGIN_BLACKLIST = [
-  'SVGSpritePlugin',
-  'HotModuleReplacementPlugin',
-];
+const merge = require("webpack-merge");
 
 module.exports = (env) => {
-  const baseConfig = require("./webpack.base.config.js")(env);
-  const isProduction = env && env.NODE_ENV === "production";
+  const baseConfig = require("./webpack.base.config.js")(env, {
+    // We need to manually pass-in the mode due to
+    // https://github.com/zinserjan/mocha-webpack/pull/225
+    mode: 'testing',
+  });
 
-  const config = _.merge({}, baseConfig, {
+  const config = merge(baseConfig, {
     module: {
-      rules: baseConfig.module.rules.concat([
+      rules: [
         {
           test: /\.tsx?$/,
           use: "awesome-typescript-loader?silent=true"
@@ -21,18 +19,14 @@ module.exports = (env) => {
         }, {
           test: /\.(scss|svg)$/,
           use: "null-loader"
-        }
-      ])
+        },
+      ],
     },
     target: "node",
     node: {
       // This will make __dirname equal the actual file
       __dirname: true,
     },
-  });
-
-  config.plugins = baseConfig.plugins.filter(plugin => {
-    return PLUGIN_BLACKLIST.indexOf(plugin.constructor.name) === -1;
   });
 
   return config;

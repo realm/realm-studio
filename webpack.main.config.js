@@ -1,25 +1,27 @@
-const _ = require("lodash");
 const path = require("path");
 const webpack = require("webpack");
 const Visualizer = require('webpack-visualizer-plugin');
+const merge = require("webpack-merge");
 
-module.exports = (env) => {
-  const baseConfig = require("./webpack.base.config.js")(env);
-  const isProduction = env && env.NODE_ENV === "production";
 
-  return _.merge({}, baseConfig, {
-    devServer: isProduction ? {} : {
+module.exports = (env, argv) => {
+  const isDevelopment = argv.mode === "development";
+
+  const baseConfig = require("./webpack.base.config.js")(env, argv);
+
+  return merge(baseConfig, {
+    devServer: isDevelopment ? {
       hot: true,
       inline: true
-    },
-    entry: isProduction ? [
-      "./src/main.ts",
-    ] : [
+    } : {},
+    entry: isDevelopment ? [
       "webpack/hot/poll?1000",
       "./src/main.ts"
+    ] : [
+      "./src/main.ts",
     ],
     module: {
-      rules: baseConfig.module.rules.concat([
+      rules: [
         {
           test: /\.tsx?$/,
           use: "awesome-typescript-loader"
@@ -33,21 +35,21 @@ module.exports = (env) => {
           test: /\.md$/,
           use: "file-loader"
         }
-      ])
+      ]
     },
     output: {
       filename: "main.bundle.js",
       // See https://github.com/webpack/hot-node-example#real-app
       libraryTarget: "commonjs2"
     },
-    plugins: baseConfig.plugins.concat([
+    plugins: [
       new webpack.IgnorePlugin(/^.*$/, /src\/ui$/),
-    ], isProduction ? [] : [
+    ].concat(isDevelopment ? [
       new Visualizer({
         filename: './main.statistics.html',
       }),
-    ]),
+    ] : []),
     target: "electron-main",
-    watch: !isProduction,
+    watch: isDevelopment,
   });
 };

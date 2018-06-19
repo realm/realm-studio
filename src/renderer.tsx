@@ -23,7 +23,7 @@ import * as ReactDOM from 'react-dom';
 
 import { changeRendererProcessDirectory } from './utils/renderer-process-directory';
 
-const isProduction = process.env.NODE_ENV === 'production';
+const isDevelopment = process.env.NODE_ENV === 'development';
 
 // Don't report Realm JS analytics data
 // @see https://github.com/realm/realm-js/blob/master/lib/submit-analytics.js#L28
@@ -40,7 +40,7 @@ import { renderCurrentWindow } from './windows/WindowComponent';
 
 const appElement = document.getElementById('app');
 
-if (isProduction) {
+if (!isDevelopment) {
   const window = renderCurrentWindow();
   ReactDOM.render(window, appElement);
 } else {
