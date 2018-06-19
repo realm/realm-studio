@@ -140,11 +140,12 @@ class UsersTableContainer extends React.Component<
   public onUserDeletion = async (userId: string) => {
     const confirmed = await this.confirmUserDeletion(userId);
     if (confirmed) {
-      // Use the ROS API to delete a user, instead of changing the realm directly
-      await ros.users.remove(this.props.user, userId);
+      // Deselect the user before deleting it
       if (this.state.selection && this.state.selection.user.userId === userId) {
         this.onUserSelected(null);
       }
+      // Use the ROS API to delete a user, instead of changing the realm directly
+      await ros.users.remove(this.props.user, userId);
     }
   };
 
