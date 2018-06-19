@@ -1,13 +1,13 @@
-const path = require("path");
-const webpack = require("webpack");
+const path = require('path');
+const webpack = require('webpack');
 const Visualizer = require('webpack-visualizer-plugin');
-const merge = require("webpack-merge");
+const merge = require('webpack-merge');
 
 
 module.exports = (env, argv) => {
-  const isDevelopment = argv.mode === "development";
+  const isDevelopment = argv.mode === 'development';
 
-  const baseConfig = require("./webpack.base.config.js")(env, argv);
+  const baseConfig = require('./webpack.base.js')(env, argv);
 
   return merge(baseConfig, {
     devServer: isDevelopment ? {
@@ -15,32 +15,32 @@ module.exports = (env, argv) => {
       inline: true
     } : {},
     entry: isDevelopment ? [
-      "webpack/hot/poll?1000",
-      "./src/main.ts"
+      'webpack/hot/poll?1000',
+      './src/main.ts'
     ] : [
-      "./src/main.ts",
+      './src/main.ts',
     ],
     module: {
       rules: [
         {
           test: /\.tsx?$/,
-          use: "awesome-typescript-loader"
+          use: 'awesome-typescript-loader'
         }, {
           test: /\.html$/,
-          use: "file-loader"
+          use: 'file-loader'
         }, {
           test: /\.(scss|svg|png)$/,
-          use: "null-loader"
+          use: 'null-loader'
         }, {
           test: /\.md$/,
-          use: "file-loader"
+          use: 'file-loader'
         }
       ]
     },
     output: {
-      filename: "main.bundle.js",
+      filename: 'main.bundle.js',
       // See https://github.com/webpack/hot-node-example#real-app
-      libraryTarget: "commonjs2"
+      libraryTarget: 'commonjs2'
     },
     plugins: [
       new webpack.IgnorePlugin(/^.*$/, /src\/ui$/),
@@ -49,7 +49,7 @@ module.exports = (env, argv) => {
         filename: './main.statistics.html',
       }),
     ] : []),
-    target: "electron-main",
+    target: 'electron-main',
     watch: isDevelopment,
   });
 };

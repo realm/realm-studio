@@ -1,7 +1,7 @@
-const merge = require("webpack-merge");
+const merge = require('webpack-merge');
 
 module.exports = (env) => {
-  const baseConfig = require("./webpack.base.config.js")(env, {
+  const baseConfig = require('./webpack.base.js')(env, {
     // We need to manually pass-in the mode due to
     // https://github.com/zinserjan/mocha-webpack/pull/225
     mode: 'testing',
@@ -12,17 +12,17 @@ module.exports = (env) => {
       rules: [
         {
           test: /\.tsx?$/,
-          use: "awesome-typescript-loader?silent=true"
+          use: 'awesome-typescript-loader?silent=true'
         }, {
           test: /\.html$/,
-          use: "file-loader"
+          use: 'file-loader'
         }, {
           test: /\.(scss|svg)$/,
-          use: "null-loader"
+          use: 'null-loader'
         },
       ],
     },
-    target: "node",
+    target: 'node',
     node: {
       // This will make __dirname equal the actual file
       __dirname: true,
