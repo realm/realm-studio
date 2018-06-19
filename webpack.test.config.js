@@ -1,15 +1,11 @@
 const merge = require("webpack-merge");
 
-const PLUGIN_BLACKLIST = [
-  'SVGSpritePlugin',
-  'HotModuleReplacementPlugin',
-];
-
-const baseConfig = require("./webpack.base.config.js");
-
-module.exports = (env, argv) => {
-
-  const baseConfig = require("./webpack.base.config.js")(env, argv);
+module.exports = (env) => {
+  const baseConfig = require("./webpack.base.config.js")(env, {
+    // We need to manually pass-in the mode due to
+    // https://github.com/zinserjan/mocha-webpack/pull/225
+    mode: 'testing',
+  });
 
   const config = merge(baseConfig, {
     module: {
@@ -31,10 +27,6 @@ module.exports = (env, argv) => {
       // This will make __dirname equal the actual file
       __dirname: true,
     },
-  });
-
-  config.plugins = baseConfig.plugins.filter(plugin => {
-    return PLUGIN_BLACKLIST.indexOf(plugin.constructor.name) === -1;
   });
 
   return config;
