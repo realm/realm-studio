@@ -1,4 +1,4 @@
 --mode development
---webpack-config=config/webpack.test.js
+--webpack-config=configs/webpack.test.js
 'src/**/*.test.ts'
 'src/**/*.test.tsx'
