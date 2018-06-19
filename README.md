@@ -19,7 +19,7 @@ By participating, you are expected to uphold this code. Please report unacceptab
 
 ## Developing and contributing
 
-See [CONTRIBUTING.md](https://github.com/realm/realm-studio/blob/master/CONTRIBUTING.md) for more details!
+See [CONTRIBUTING.md](https://github.com/realm/realm-studio/blob/master/docs/CONTRIBUTING.md) for more details!
 
 ## License
 

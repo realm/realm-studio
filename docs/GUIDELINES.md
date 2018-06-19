@@ -87,9 +87,9 @@ A side effect of adding webpack is that it bundles together the source code into
 
 For our project, this is actually two bundles:
 1. the main process, emitted to `./build/main.bundle.js` from the `./src/main.ts` entry and configured from
-   `./webpack.main.config.js`.
+   `./config/webpack.main.js`.
 2. loaded into the renderer process, which is emitted to `./build/renderer.bundle.js` from the `./src/renderer.ts` entry
-   and configured from `./webpack.main.config.js`.
+   and configured from `./config/webpack.main.js`.
    Note: We could choose to have more than a single renderer process, but for now - let's differentiate the various
    types of windows from within the renderer source code.
 
@@ -97,8 +97,8 @@ This gives us two undesired effects:
 
 - Stack traces on errors will have references to the transpiled code rather than our original source code, which is why
   we use sourcemaps:
-   - By asking webpack to emit sourcemaps in the `./webpack.base.config.js` with `devtool: "inline-source-map"` when
-     we're not in production mode (i.e. building a release version of the app).
+   - By asking webpack to emit sourcemaps in the `./config/webpack.base.js` with `devtool: "inline-source-map"`
+     when we're not in production mode (i.e. building a release version of the app).
    - Chromium reads these sourcemaps and translates references, but Node does not automatically, which is why we've
      introduced the [source-map-support](http://npmjs.com/package/source-map-support) package, which is installed in
      `./main.ts`.

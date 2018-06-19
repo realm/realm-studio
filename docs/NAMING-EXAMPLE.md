@@ -58,7 +58,7 @@ Note: We with our current use of styling we have a limitiation on the components
 
 ## Styled representational functional component, wrapped by a container component
 
-Now - if we wanted to add behaviour and a state to the component, we want to separate it into it's representational part (which we already have) and a container part, as mentioned in the React specific [guidelines](../GUIDELINES.md#react).
+Now - if we wanted to add behaviour and a state to the component, we want to separate it into it's representational part (which we already have) and a container part, as mentioned in the React specific [guidelines](./GUIDELINES.md#react).
 
 Now we rename the `index.tsx` to `Status.tsx` and implement the container component (with state & behaviour):
 

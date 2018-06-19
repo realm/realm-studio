@@ -41,7 +41,9 @@ Realm welcomes all contributions! The only requirement we have is that, like man
 
 ### Developer Guidelines
 
-Please read the [Guidelines document](https://github.com/realm/realm-studio/blob/master/GUIDELINES.md) for information about how this repository is structured and what tools are being used. Any changes should follow the guidelines in that document.
+Please read the [Guidelines document](https://github.com/realm/realm-studio/blob/master/docs/GUIDELINES.md) for
+information about how this repository is structured and what tools are being used. Any changes should follow the
+guidelines in that document.
 
 
 ## Running
