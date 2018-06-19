@@ -17,7 +17,7 @@ try {
 const VERSION = /\bv?(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)(?:-[\da-z-]+(?:\.[\da-z-]+)*)?(?:\+[\da-z-]+(?:\.[\da-z-]+)*)?\b/i;
 const SYMBOL_CACHE_FOLDER = resolve(__dirname, '../.electron-symbols');
 const package = require('../package.json');
-const sentryPropertiesPath = resolve(__dirname, './sentry.properties');
+const sentryPropertiesPath = resolve(__dirname, '../config/sentry.properties');
 const sentryCli = new SentryCli(sentryPropertiesPath);
 
 async function main() {
