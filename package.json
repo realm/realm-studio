@@ -116,7 +116,7 @@
     "test:ci": "mocha-webpack --opts=config/mocha-webpack.opts --reporter mocha-junit-reporter",
     "test": "mocha-webpack --opts=config/mocha-webpack.opts",
     "tslint-prettier": "tslint --fix 'src/**/*.ts' 'src/**/*.tsx'",
-    "wait-for-bundle": "node ./webpack.wait-for-bundle.js",
+    "wait-for-bundle": "node ./scripts/wait-for-bundle.js",
     "webpack:main": "webpack --mode development --config=config/webpack.main.js",
     "webpack:renderer": "webpack-dev-server --mode development --config=config/webpack.renderer.js"
   },
