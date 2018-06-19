@@ -17,7 +17,6 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import { store } from '../../store';
-import { GITHUB_CLIENT_ID, GITHUB_REDIRECT_URI } from '../github';
 
 export const ENDPOINT_STORAGE_KEY = 'cloud.endpoint';
 export const TOKEN_STORAGE_KEY = 'cloud.token';
@@ -28,7 +27,8 @@ export { user };
 
 export enum Endpoint {
   Production = 'https://cloud.realm.io',
-  Staging = 'https://raas2.realmlab.net',
+  Staging = 'https://staging.raas.realmlab.net',
+  Testing = 'https://testing.raas.realmlab.net',
 }
 
 // {"id":"ie1","controllerUrl":"https://ie1.raas.realmlab.net","region":"ireland","label":"Ireland Dev 1"}
