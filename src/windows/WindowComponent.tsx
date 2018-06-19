@@ -21,9 +21,11 @@ if (process.type === 'browser') {
   throw new Error('This module should not be imported from the main process');
 }
 
+import * as sentry from '@sentry/electron';
 import { remote } from 'electron';
 import * as querystring from 'querystring';
 import * as React from 'react';
+
 import * as mixpanel from '../services/mixpanel';
 
 import {
@@ -66,13 +68,17 @@ export abstract class WindowComponent extends React.Component
     };
 
     mixpanel.track('Window opened', trackedProperties);
+    sentry.addBreadcrumb({
+      category: 'ui.window',
+      message: `Opened '${this.windowProps.type}' window`,
+    });
     // Generate the menu now and whenever the window gets focus
     this.updateMenu();
-    window.addEventListener('focus', this.updateMenu);
+    window.addEventListener('focus', this.onFocussed);
   }
 
   public componentWillUnmount() {
-    window.removeEventListener('focus', this.updateMenu);
+    window.removeEventListener('focus', this.onFocussed);
   }
 
   public render() {
@@ -99,6 +105,17 @@ export abstract class WindowComponent extends React.Component
       const menu = generateMenu(this.menuGenerator, this.updateMenu);
       remote.Menu.setApplicationMenu(menu);
     }
+  };
+
+  private onFocussed = () => {
+    this.updateMenu();
+    sentry.setTagsContext({
+      'window-type': this.windowProps.type,
+    });
+    sentry.addBreadcrumb({
+      category: 'ui.window',
+      message: `Focussed '${this.windowProps.type}' window`,
+    });
   };
 }
 

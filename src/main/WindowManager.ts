@@ -16,6 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import * as sentry from '@sentry/electron';
 import { BrowserWindow, screen, shell } from 'electron';
 import * as fs from 'fs-extra';
 import * as path from 'path';
@@ -59,13 +60,22 @@ export class WindowManager {
   }
 
   public createWindow(props: WindowTypedProps) {
+    const windowOptions = getWindowOptions(props);
+    sentry.addBreadcrumb({
+      category: 'ui.window',
+      message: `Opening '${props.type}' window`,
+      data: {
+        title: windowOptions.title,
+      },
+    });
+    // Construct the window
     const window = new BrowserWindow({
       title: 'Realm Studio',
       width: 800,
       height: 600,
       vibrancy: 'light',
       show: false,
-      ...getWindowOptions(props),
+      ...windowOptions,
       webPreferences: {
         // Load Sentry as a preload in production - this doesn't work in development because the
         // sentry.js is not emitted to the build folder.
@@ -149,6 +159,11 @@ export class WindowManager {
       if (index > -1) {
         this.windows.splice(index, 1);
       }
+      // Loaded
+      sentry.addBreadcrumb({
+        category: 'ui.window',
+        message: `Closed '${props.type}' window`,
+      });
       // Wait a second for Windows to unlock the directory
       setTimeout(() => {
         this.cleanupRendererProcessDirectory(processDir);
