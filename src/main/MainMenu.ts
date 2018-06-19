@@ -28,6 +28,23 @@ const isDevelopment = process.env.NODE_ENV === 'development';
 const showInternalFeatures =
   process.env.REALM_STUDIO_INTERNAL_FEATURES === 'true'; // Show features only relevant for Realm employees
 
+function generateCloudEndpointItems(
+  updateMenu: () => void,
+): Electron.MenuItemConstructorOptions[] {
+  return Object.entries(raas.Endpoint).map(([name, url]) => {
+    const item: Electron.MenuItemConstructorOptions = {
+      type: 'radio',
+      label: name,
+      click: async () => {
+        await main.setRaasEndpoint(url);
+        updateMenu();
+      },
+      checked: raas.getEndpoint() === url,
+    };
+    return item;
+  });
+}
+
 export const getDefaultMenuTemplate = (
   updateMenu: () => void,
 ): electron.MenuItemConstructorOptions[] => {
@@ -143,26 +160,7 @@ export const getDefaultMenuTemplate = (
         {
           label: 'Change endpoint',
           visible: showInternalFeatures,
-          submenu: [
-            {
-              type: 'radio',
-              label: 'Production',
-              click: async () => {
-                await main.setRaasEndpoint(raas.Endpoint.Production);
-                updateMenu();
-              },
-              checked: raas.getEndpoint() === raas.Endpoint.Production,
-            },
-            {
-              type: 'radio',
-              label: 'Staging',
-              click: async () => {
-                await main.setRaasEndpoint(raas.Endpoint.Staging);
-                updateMenu();
-              },
-              checked: raas.getEndpoint() === raas.Endpoint.Staging,
-            },
-          ],
+          submenu: generateCloudEndpointItems(updateMenu),
         },
       ],
     },
