@@ -194,9 +194,7 @@ export abstract class RealmLoadingComponent<
       } catch (error) {
         if (
           error instanceof Error &&
-          error.message.includes(
-            'Incompatible histories. Expected a Realm with no or in-realm history',
-          ) &&
+          error.message.includes('Incompatible histories.') &&
           realm.sync !== true
         ) {
           // Try to open the Realm locally with a sync history mode.
