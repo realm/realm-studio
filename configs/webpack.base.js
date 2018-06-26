@@ -54,7 +54,7 @@ module.exports = (env, argv) => {
         release: `${package.name}@${package.version}`,
         include: './build',
         ignore: ['node_modules', 'webpack.config.js'],
-        configFile: resolve(__dirname, '../scripts/sentry.properties'),
+        configFile: resolve(__dirname, 'sentry.properties'),
         ext: ['map', 'js'],
         urlPrefix: '~/build/',
         dryRun: !process.env.SENTRY_AUTH_TOKEN,
