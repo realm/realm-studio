@@ -17,6 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as electron from 'electron';
+import memoize from 'memoize-one';
 import * as React from 'react';
 import * as Realm from 'realm';
 
@@ -39,6 +40,7 @@ export interface IRealmTableContainerProps {
   onValidateCertificatesChange: ValidateCertificatesChangeHandler;
   user: Realm.Sync.User;
   validateCertificates: boolean;
+  serverVersion?: string;
 }
 
 export interface IRealmTableContainerState {
@@ -46,6 +48,7 @@ export interface IRealmTableContainerState {
   searchString: string;
   showPartialRealms: boolean;
   showSystemRealms: boolean;
+  realmStateSizes?: { [path: string]: number };
 }
 
 class RealmsTableContainer extends React.PureComponent<
@@ -59,42 +62,73 @@ class RealmsTableContainer extends React.PureComponent<
     showSystemRealms: store.shouldShowSystemRealms(),
   };
 
-  protected realms?: Realm.Results<ros.IRealmFile>;
+  protected realms = memoize(
+    (
+      adminRealm: Realm,
+      searchString: string,
+      showPartialRealms: boolean,
+      showSystemRealms: boolean,
+    ) => {
+      let realms = adminRealm.objects<ros.IRealmFile>('RealmFile');
 
-  public componentWillMount() {
-    this.setRealms(
+      // Filter if a search string is specified
+      if (searchString || searchString !== '') {
+        const filterQuery = querySomeFieldContainsText(
+          ['path', 'realmType', 'owner.accounts.providerId'],
+          searchString,
+        );
+        try {
+          realms = realms.filtered(filterQuery);
+        } catch (err) {
+          // tslint:disable-next-line:no-console
+          console.warn(`Could not filter on "${filterQuery}"`, err);
+        }
+      }
+
+      // Filter out System and Partial Realms based on global preferences
+      if (showPartialRealms === false) {
+        realms = realms.filtered("NOT path CONTAINS '/__partial/'");
+      }
+      if (showSystemRealms === false) {
+        // Hide all system realms, including the old Permission system Realms,
+        // but make sure to not hide partial Realms.
+        realms = realms.filtered(
+          [
+            "NOT path BEGINSWITH '/__'",
+            "NOT path ENDSWITH '__management'",
+            "NOT path ENDSWITH '__perm'",
+            "NOT path ENDSWITH '__permission'",
+          ].join(' AND '),
+        );
+      }
+      return realms;
+    },
+  );
+
+  public render() {
+    const realms = this.realms(
+      this.props.adminRealm,
       this.state.searchString,
       this.state.showPartialRealms,
       this.state.showSystemRealms,
     );
-  }
-
-  public componentWillUpdate(
-    nextProps: IRealmTableContainerProps,
-    nextState: IRealmTableContainerState,
-  ) {
-    if (
-      this.state.searchString !== nextState.searchString ||
-      this.state.showPartialRealms !== nextState.showPartialRealms ||
-      this.state.showSystemRealms !== nextState.showSystemRealms
-    ) {
-      this.setRealms(
-        nextState.searchString,
-        nextState.showPartialRealms,
-        nextState.showSystemRealms,
-      );
-    }
-  }
-
-  public render() {
-    return this.realms ? (
+    return (
       <RealmsTable
-        realms={this.realms}
+        realms={realms}
+        realmStateSizes={this.state.realmStateSizes}
         onRealmCreation={this.onRealmCreation}
-        {...this.state}
-        {...this}
+        getRealmFromId={this.getRealmFromId}
+        getRealmPermissions={this.getRealmPermissions}
+        getRealmStateSize={this.getRealmStateSize}
+        onRealmDeletion={this.onRealmDeletion}
+        onRealmOpened={this.onRealmOpened}
+        onRealmTypeUpgrade={this.onRealmTypeUpgrade}
+        onRealmSelected={this.onRealmSelected}
+        onSearchStringChange={this.onSearchStringChange}
+        selectedRealmPath={this.state.selectedRealmPath}
+        searchString={this.state.searchString}
       />
-    ) : null;
+    );
   }
 
   public componentDidMount() {
@@ -111,6 +145,12 @@ class RealmsTableContainer extends React.PureComponent<
         this.setState({ showSystemRealms: val });
       }
     });
+
+    // Fetch the realm sizes
+    // TODO: Check the this.props.serverVersion before fetching using the semver library
+    this.fetchRealmSizes().then(undefined, err => {
+      showError('Failed to fetch Realm sizes', err);
+    });
   }
 
   public getRealmFromId = (path: string): ros.IRealmFile | undefined => {
@@ -126,6 +166,12 @@ class RealmsTableContainer extends React.PureComponent<
     return adminRealm
       .objects<ros.IPermission>('Permission')
       .filtered('realmFile == $0', realmFile);
+  };
+
+  public getRealmStateSize = (path: string) => {
+    if (this.state.realmStateSizes) {
+      return this.state.realmStateSizes[path];
+    }
   };
 
   public onRealmCreation = async () => {
@@ -182,40 +228,24 @@ class RealmsTableContainer extends React.PureComponent<
     this.setState({ searchString });
   };
 
-  protected setRealms(
-    searchString: string,
-    showPartialRealms: boolean,
-    showSystemRealms: boolean,
-  ) {
-    this.realms = this.props.adminRealm.objects<ros.IRealmFile>('RealmFile');
-
-    // Filter if a search string is specified
-    if (searchString || searchString !== '') {
-      const filterQuery = querySomeFieldContainsText(
-        ['path', 'realmType', 'owner.accounts.providerId'],
-        searchString,
-      );
-      try {
-        this.realms = this.realms.filtered(filterQuery);
-      } catch (err) {
-        // tslint:disable-next-line:no-console
-        console.warn(`Could not filter on "${filterQuery}"`, err);
+  private async fetchRealmSizes() {
+    try {
+      // Ask the server to recompute the realm sizes
+      await ros.realms.reportRealmStateSize(this.props.user);
+      // Request the realm sizes from the server
+      const sizes = await ros.realms.getSizes(this.props.user);
+      // Update the state
+      this.setState({ realmStateSizes: sizes });
+    } catch (err) {
+      if (
+        err instanceof Error &&
+        err.message.indexOf('Is the server running the latest version?') > -1
+      ) {
+        // This is expected from an older server
+        // - but we should really check the version before fetching instead ...
+      } else {
+        throw err;
       }
-    }
-
-    // Filter out System and Partial Realms based on global preferences
-    if (showPartialRealms === false) {
-      this.realms = this.realms.filtered("NOT path CONTAINS '/__partial/'");
-    }
-    if (showSystemRealms === false) {
-      // Hide all system realms, including the old Permission system Realms,
-      // but make sure to not hide partial Realms.
-      this.realms = this.realms.filtered(
-        "NOT path BEGINSWITH '/__' " +
-          "AND NOT path ENDSWITH '__management' " +
-          "AND NOT path ENDSWITH '__perm' " +
-          "AND NOT path ENDSWITH '__permission' ",
-      );
     }
   }
 

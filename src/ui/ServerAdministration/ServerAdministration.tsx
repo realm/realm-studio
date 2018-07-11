@@ -73,6 +73,7 @@ const renderContent = ({
   onValidateCertificatesChange,
   user,
   validateCertificates,
+  serverVersion,
 }: IServerAdministrationProps) => {
   if (user && activeTab === Tab.GettingStarted) {
     return <GettingStarted serverUrl={user.server} />;
@@ -88,6 +89,7 @@ const renderContent = ({
         onValidateCertificatesChange={onValidateCertificatesChange}
         user={user}
         validateCertificates={validateCertificates}
+        serverVersion={serverVersion}
       />
     );
   } else if (user && adminRealm && activeTab === Tab.Users) {

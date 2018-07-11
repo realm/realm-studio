@@ -26,17 +26,21 @@ import {
   FilterableTableWrapper,
 } from '../shared/FilterableTable';
 import { FloatingControls } from '../shared/FloatingControls';
-import { displayUser } from '../utils';
+import { displayUser, prettyBytes } from '../utils';
+
+import { MissingSizeBadge } from './MissingSizeBadge';
 import { RealmSidebar } from './RealmSidebar';
 
 export const RealmsTable = ({
   getRealmFromId,
   getRealmPermissions,
+  getRealmStateSize,
   onRealmDeletion,
   onRealmOpened,
   onRealmSelected,
   onRealmTypeUpgrade,
   realms,
+  realmStateSizes,
   selectedRealmPath,
   onRealmCreation,
   searchString,
@@ -44,11 +48,13 @@ export const RealmsTable = ({
 }: {
   getRealmFromId: (path: string) => IRealmFile | undefined;
   getRealmPermissions: (path: string) => Realm.Results<IPermission>;
+  getRealmStateSize: (path: string) => number | undefined;
   onRealmDeletion: (path: string) => void;
   onRealmOpened: (path: string) => void;
   onRealmSelected: (path: string | null) => void;
   onRealmTypeUpgrade: (path: string) => void;
   realms: Realm.Results<IRealmFile>;
+  realmStateSizes?: { [path: string]: number };
   selectedRealmPath: string | null;
   onRealmCreation: () => void;
   searchString: string;
@@ -79,6 +85,19 @@ export const RealmsTable = ({
           width={200}
           cellRenderer={({ cellData }) => cellData || 'full'}
         />
+        <Column
+          label="State Size"
+          dataKey="path"
+          /* Don't show the size column if all sizes are unknown */
+          width={realmStateSizes ? 100 : 0}
+          cellRenderer={({ cellData }) =>
+            realmStateSizes && typeof realmStateSizes[cellData] === 'number' ? (
+              prettyBytes(realmStateSizes[cellData])
+            ) : (
+              <MissingSizeBadge />
+            )
+          }
+        />
       </FilterableTable>
 
       <FloatingControls isOpen={selectedRealmPath === null}>
@@ -87,6 +106,7 @@ export const RealmsTable = ({
 
       <RealmSidebar
         getRealmPermissions={getRealmPermissions}
+        getRealmStateSize={getRealmStateSize}
         isOpen={selectedRealmPath !== null}
         onRealmDeletion={onRealmDeletion}
         onRealmOpened={onRealmOpened}

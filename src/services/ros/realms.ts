@@ -169,3 +169,84 @@ export const changeType = async (
 export const update = (realmId: string, values: Partial<IRealmFile>) => {
   throw new Error('Not yet implemented');
 };
+
+interface IStatisticsResponse {
+  [metricName: string]: Array<{
+    labels: { [name: string]: string };
+    value: number;
+  }>;
+}
+
+export const getStats = async (
+  user: Realm.Sync.User,
+  metricNames: string,
+): Promise<IStatisticsResponse> => {
+  const server = user.server;
+  const url = new URL(`/stats/${metricNames}`, server);
+  const request = new Request(url.toString(), {
+    method: 'GET',
+    headers: new Headers({
+      Authorization: user.token,
+      Accept: 'application/json, text/plain, */*',
+      'Content-Type': 'application/json',
+    }),
+  });
+  const response = await fetch(request);
+  if (response.ok) {
+    return response.json();
+  } else {
+    if (response.status === 404) {
+      throw new Error(
+        'Failed to get statistics: Is the server running the latest version?',
+      );
+    } else {
+      throw new Error('Failed to get statistics');
+    }
+  }
+};
+
+export const reportRealmStateSize = async (
+  user: Realm.Sync.User,
+  path: string = '',
+) => {
+  const server = user.server;
+  const url = new URL(`/stats/report-realm-state-size/${path}`, server);
+  const request = new Request(url.toString(), {
+    method: 'POST',
+    headers: new Headers({
+      Authorization: user.token,
+      Accept: 'application/json, text/plain, */*',
+      'Content-Type': 'application/json',
+    }),
+  });
+  const response = await fetch(request);
+  if (response.ok) {
+    return response.json();
+  } else {
+    if (response.status === 404) {
+      throw new Error(
+        'Failed to report realm state size: Is the server running the latest version?',
+      );
+    } else {
+      throw new Error('Failed to report realm state size');
+    }
+  }
+};
+
+export const getSizes = async (user: Realm.Sync.User) => {
+  const metrics = await getStats(user, 'ros_sync_realm_state_size');
+  if (metrics.ros_sync_realm_state_size) {
+    const result: { [path: string]: number } = {};
+    const sizeMetric = metrics.ros_sync_realm_state_size;
+    for (const stat of sizeMetric) {
+      if (stat.labels.path) {
+        // The paths are URI encoded
+        const path = decodeURIComponent(stat.labels.path);
+        result[path] = stat.value;
+      }
+    }
+    return result;
+  } else {
+    throw new Error("Expected 'ros_sync_realm_state_size' in response");
+  }
+};

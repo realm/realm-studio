@@ -28,6 +28,7 @@ import './RealmSidebar.scss';
 
 export const RealmSidebar = ({
   getRealmPermissions,
+  getRealmStateSize,
   isOpen,
   onRealmDeletion,
   onRealmOpened,
@@ -36,6 +37,7 @@ export const RealmSidebar = ({
   realm,
 }: {
   getRealmPermissions: (path: string) => Realm.Results<ros.IPermission>;
+  getRealmStateSize: (path: string) => number | undefined;
   isOpen: boolean;
   onRealmDeletion: (path: string) => void;
   onRealmOpened: (path: string) => void;
@@ -52,11 +54,12 @@ export const RealmSidebar = ({
       {currentRealm &&
         currentRealm.isValid() && (
           <RealmSidebarCard
-            getRealmPermissions={getRealmPermissions}
             onRealmDeletion={onRealmDeletion}
             onRealmOpened={onRealmOpened}
             onRealmTypeUpgrade={onRealmTypeUpgrade}
+            permissions={getRealmPermissions(currentRealm.path)}
             realm={currentRealm}
+            stateSize={getRealmStateSize(currentRealm.path)}
           />
         )}
     </Sidebar>
