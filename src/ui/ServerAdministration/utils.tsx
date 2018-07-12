@@ -19,7 +19,7 @@
 import * as React from 'react';
 import * as ros from '../../services/ros';
 
-export { prettyBytes } from '../../utils';
+export { wait, prettyBytes } from '../../utils';
 
 export const displayUser = (
   user: ros.IUser | null,

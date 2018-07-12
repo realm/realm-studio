@@ -25,7 +25,7 @@ import * as ros from '../../../services/ros';
 import { store } from '../../../store';
 
 import { showError } from '../../reusable/errors';
-import { querySomeFieldContainsText } from '../utils';
+import { querySomeFieldContainsText, wait } from '../utils';
 import { RealmsTable } from './RealmsTable';
 
 export type ValidateCertificatesChangeHandler = (
@@ -107,6 +107,9 @@ class RealmsTableContainer extends React.PureComponent<
     },
   );
 
+  /* Prevents spamming the server too badly */
+  private isFetchRealmSizes: boolean = false;
+
   public render() {
     const realms = this.realms(
       this.props.adminRealm,
@@ -153,6 +156,27 @@ class RealmsTableContainer extends React.PureComponent<
     this.fetchRealmSizes().then(undefined, err => {
       showError('Failed to fetch Realm sizes', err);
     });
+  }
+
+  public componentDidUpdate() {
+    // Determine if a realm exists that does not have its stats up to date
+    const { realmStateSizes } = this.state;
+    if (realmStateSizes) {
+      const realmsWithoutSize = this.realms(
+        this.props.adminRealm,
+        this.state.searchString,
+        this.state.showPartialRealms,
+        this.state.showSystemRealms,
+      ).filter(realm => {
+        return !Object.keys(realmStateSizes).includes(realm.path);
+      });
+      if (realmsWithoutSize.length > 0) {
+        // We have realms without size!
+        this.fetchRealmSizes().then(undefined, err => {
+          showError('Failed to fetch Realm sizes', err);
+        });
+      }
+    }
   }
 
   public getRealmFromId = (path: string): ros.IRealmFile | undefined => {
@@ -231,22 +255,26 @@ class RealmsTableContainer extends React.PureComponent<
   };
 
   private async fetchRealmSizes() {
-    try {
-      // Ask the server to recompute the realm sizes
-      await ros.realms.reportRealmStateSize(this.props.user);
-      // Request the realm sizes from the server
-      const sizes = await ros.realms.getSizes(this.props.user);
-      // Update the state
-      this.setState({ realmStateSizes: sizes });
-    } catch (err) {
-      if (
-        err instanceof Error &&
-        err.message.indexOf('Is the server running the latest version?') > -1
-      ) {
-        // This is expected from an older server
-        // - but we should really check the version before fetching instead ...
-      } else {
-        throw err;
+    if (!this.isFetchRealmSizes) {
+      try {
+        this.isFetchRealmSizes = true;
+        // Ask the server to recompute the realm sizes
+        await ros.realms.reportRealmStateSize(this.props.user);
+        // Request the realm sizes from the server
+        const sizes = await ros.realms.getSizes(this.props.user);
+        // Update the state
+        this.setState({ realmStateSizes: sizes });
+        // Wait to avoid spamming the server
+        await wait(1000);
+      } catch (err) {
+        if (err instanceof ros.FetchError && err.response.status === 404) {
+          // This is expected from an older server
+          // - but we should really check the version before fetching instead ...
+        } else {
+          throw err;
+        }
+      } finally {
+        this.isFetchRealmSizes = false;
       }
     }
   }
