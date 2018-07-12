@@ -20,7 +20,7 @@ import * as React from 'react';
 
 import { Content } from '..';
 import { IClassFocus } from '../../focus';
-import { CellClickHandler, IHighlight } from '../Table';
+import { IHighlight } from '../Table';
 
 import {
   ISelectObjectDialogProps,
@@ -35,17 +35,29 @@ export interface IOpenSelectObjectDialogContainerProps {
   focus: IClassFocus;
   isOpen: true;
   isOptional: boolean;
+  multiple: boolean;
   onCancel: () => void;
+}
+
+export interface IOpenSelectSingleObjectDialogContainerProps
+  extends IOpenSelectObjectDialogContainerProps {
+  multiple: false;
   onSelect: (object: Realm.Object | null) => void;
+}
+
+export interface IOpenSelectMultipleObjectsDialogContainerProps
+  extends IOpenSelectObjectDialogContainerProps {
+  multiple: true;
+  onSelect: (object: Realm.Object[]) => void;
 }
 
 export type ISelectObjectDialogContainerProps =
   | IClosedSelectObjectDialogContainerProps
-  | IOpenSelectObjectDialogContainerProps;
+  | IOpenSelectSingleObjectDialogContainerProps
+  | IOpenSelectMultipleObjectsDialogContainerProps;
 
 export interface ISelectObjectDialogContainerState {
-  highlight?: IHighlight;
-  selectedObject: Realm.Object | null;
+  highlight: IHighlight;
 }
 
 export class SelectObjectDialogContainer extends React.Component<
@@ -53,7 +65,7 @@ export class SelectObjectDialogContainer extends React.Component<
   ISelectObjectDialogContainerState
 > {
   public state: ISelectObjectDialogContainerState = {
-    selectedObject: null,
+    highlight: { rows: new Set() },
   };
 
   private contentInstance: Content | null = null;
@@ -75,9 +87,10 @@ export class SelectObjectDialogContainer extends React.Component<
         focus: this.props.focus,
         highlight: this.state.highlight,
         isOptional: this.props.isOptional,
-        onCellClick: this.onCellClick,
-        selectedObject: this.state.selectedObject,
+        onHighlightChange: this.onHighlightChange,
+        onDeselect: this.onDeselect,
         contentRef: this.contentRef,
+        multiple: this.props.multiple,
       };
     } else {
       return {
@@ -91,16 +104,32 @@ export class SelectObjectDialogContainer extends React.Component<
     this.contentInstance = instance;
   };
 
-  private onCellClick: CellClickHandler = ({ rowObject }) => {
-    this.setState({ selectedObject: rowObject });
-    if (this.contentInstance) {
-      this.contentInstance.highlightObject(rowObject);
-    }
+  private onHighlightChange = (highlight: IHighlight | undefined) => {
+    this.setState({ highlight: highlight || { rows: new Set() } });
   };
 
   private onSelect = () => {
     if (this.props.isOpen) {
-      this.props.onSelect(this.state.selectedObject);
+      if (this.props.multiple) {
+        const objects = this.props.focus.results.filter((object, index) => {
+          return this.state.highlight.rows.has(index);
+        });
+        this.props.onSelect(objects);
+      } else {
+        if (this.state.highlight.rows.size > 0) {
+          const firstIndex = this.state.highlight.rows.values().next().value;
+          const firstObject = this.props.focus.results[firstIndex];
+          this.props.onSelect(firstObject);
+        } else {
+          this.props.onSelect(null);
+        }
+      }
+    }
+  };
+
+  private onDeselect = () => {
+    if (this.contentInstance) {
+      this.contentInstance.highlightObject(null);
     }
   };
 

@@ -21,10 +21,10 @@ import * as Realm from 'realm';
 
 import { ILoadingProgress, LoadingOverlay } from '../reusable/LoadingOverlay';
 
-import { ClassFocussedHandler, EditMode, ListFocussedHandler } from '.';
+import { ClassFocussedHandler, ListFocussedHandler } from '.';
 import { AddClassModal } from './AddClassModal';
 import { AddPropertyModal } from './AddPropertyModal';
-import { Content } from './Content';
+import { Content, EditMode, HighlightMode } from './Content';
 import { EncryptionDialog } from './EncryptionDialog';
 import { Focus, IClassFocus } from './focus';
 import { NoFocusPlaceholder } from './NoFocusPlaceholder';
@@ -109,6 +109,7 @@ export const RealmBrowser = ({
             dataVersion={dataVersion}
             dataVersionAtBeginning={dataVersionAtBeginning}
             editMode={editMode}
+            highlightMode={HighlightMode.Multiple}
             focus={focus}
             getClassFocus={getClassFocus}
             key={contentKey}

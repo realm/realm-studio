@@ -26,6 +26,7 @@ import { ObjectControl } from './ObjectControl';
 
 export interface IOpenSelectObjectDialog {
   isOpen: true;
+  multiple: false;
   focus: IClassFocus;
   isOptional: boolean;
   onCancel: () => void;
@@ -78,6 +79,7 @@ class ObjectControlContainer extends React.Component<
       this.setState({
         selectObjectDialog: {
           isOpen: true,
+          multiple: false,
           focus: this.state.focus,
           isOptional: this.props.property.optional || false,
           onCancel: this.onCancelSelectObjectDialog,

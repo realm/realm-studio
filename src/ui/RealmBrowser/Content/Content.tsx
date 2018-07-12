@@ -18,11 +18,15 @@
 
 import * as React from 'react';
 
-import { EditMode } from '..';
 import { Bottombar } from '../Bottombar';
 import { Focus, IClassFocus } from '../focus';
 
-import { ISorting, QueryChangeHandler, SortingChangeHandler } from '.';
+import {
+  EditMode,
+  ISorting,
+  QueryChangeHandler,
+  SortingChangeHandler,
+} from '.';
 import {
   CreateObjectDialog,
   ICreateObjectDialogContainerProps,

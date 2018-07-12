@@ -35,7 +35,7 @@ import {
   RealmLoadingComponent,
 } from '../reusable/RealmLoadingComponent';
 
-import { Content } from './Content';
+import { Content, EditMode } from './Content';
 import { Focus, IClassFocus, IListFocus } from './focus';
 import { isPrimitive } from './primitives';
 import { RealmBrowser } from './RealmBrowser';
@@ -46,12 +46,6 @@ import * as schemaUtils from './schema-utils';
 export interface IPropertyWithName extends Realm.ObjectSchemaProperty {
   name: string | null;
   readOnly: boolean;
-}
-
-export enum EditMode {
-  Disabled = 'disabled',
-  InputBlur = 'input-blur',
-  KeyPress = 'key-press',
 }
 
 export type EditModeChangeHandler = (editMode: EditMode) => void;

@@ -19,10 +19,9 @@
 import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 
-import { Content } from '..';
-import { EditMode } from '../..';
+import { Content, EditMode, HighlightMode } from '..';
 import { IClassFocus } from '../../focus';
-import { CellClickHandler, IHighlight } from '../Table';
+import { IHighlight } from '../Table';
 
 interface IBaseSelectObjectDialogProps {
   isOpen: boolean;
@@ -37,11 +36,12 @@ interface IClosedSelectObjectDialogProps extends IBaseSelectObjectDialogProps {
 interface IOpenSelectObjectDialogProps extends IBaseSelectObjectDialogProps {
   contentRef: (instance: Content | null) => void;
   focus: IClassFocus;
-  highlight?: IHighlight;
+  highlight: IHighlight;
   isOpen: true;
   isOptional: boolean;
-  onCellClick: CellClickHandler;
-  selectedObject: Realm.Object | null;
+  onDeselect: () => void;
+  onHighlightChange: (highlight: IHighlight | undefined) => void;
+  multiple: boolean;
 }
 
 export type ISelectObjectDialogProps =
@@ -60,14 +60,17 @@ export const SelectObjectDialog = ({
     className="ConfirmModal"
   >
     <ModalHeader toggle={onCancel}>
-      Select a new {props.isOpen ? props.focus.className : 'object'}
+      Select a {props.isOpen ? props.focus.className : 'object'}
     </ModalHeader>
     <ModalBody className="RealmBrowser__SelectObject">
       {props.isOpen ? (
         <Content
           editMode={EditMode.Disabled}
+          highlightMode={
+            props.multiple ? HighlightMode.Multiple : HighlightMode.Single
+          }
           focus={props.focus}
-          onCellClick={props.onCellClick}
+          onHighlightChange={props.onHighlightChange}
           readOnly={true}
           ref={props.contentRef}
         />
@@ -75,17 +78,19 @@ export const SelectObjectDialog = ({
     </ModalBody>
     <ModalFooter>
       {props.isOpen &&
-        !props.selectedObject &&
+        props.highlight.rows.size > 0 &&
         props.isOptional && (
-          <Button color="primary" onClick={onSelect}>
-            Set to null
+          <Button color="primary" onClick={props.onDeselect}>
+            Remove selection
           </Button>
         )}
       <Button color="primary" onClick={onSelect}>
-        Select
+        {props.isOpen && props.highlight.rows.size > 0
+          ? 'Select'
+          : 'Select null'}
       </Button>
       <Button color="secondary" onClick={onCancel}>
-        Close
+        Cancel
       </Button>
     </ModalFooter>
   </Modal>
