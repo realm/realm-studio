@@ -59,10 +59,12 @@ export const RealmSidebarCard = ({
           </span>
         </CardTitle>
         <CardText className="RealmSidebar__SubTitle">
-          Owned by: {displayUser(realm.owner)}
+          Owned by {displayUser(realm.owner)}
         </CardText>
         {typeof stateSize === 'number' ? (
-          <CardText>Size of state: {prettyBytes(stateSize)}</CardText>
+          <CardText className="RealmSidebar__SubTitle">
+            Data size: {prettyBytes(stateSize)}
+          </CardText>
         ) : null}
       </CardBody>
       <CardBody className="RealmSidebar__Tables">

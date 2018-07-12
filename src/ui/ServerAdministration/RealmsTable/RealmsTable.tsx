@@ -76,17 +76,17 @@ export const RealmsTable = ({
         <Column
           label="Owner"
           dataKey="owner"
-          width={300}
+          width={200}
           cellRenderer={({ cellData }) => displayUser(cellData)}
         />
         <Column
           label="Type"
           dataKey="realmType"
-          width={200}
+          width={100}
           cellRenderer={({ cellData }) => cellData || 'full'}
         />
         <Column
-          label="State Size"
+          label="Data Size"
           dataKey="path"
           /* Don't show the size column if all sizes are unknown */
           width={realmStateSizes ? 100 : 0}
