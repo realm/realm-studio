@@ -16,9 +16,6 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import { remote as electron } from 'electron';
-import * as path from 'path';
-
 import * as realms from './realms';
 import * as users from './users';
 
@@ -96,5 +93,46 @@ export const isAvailable = async (url: string): Promise<Availability> => {
     }
   } else {
     return { available: false };
+  }
+};
+
+export class FetchError extends Error {
+  public response: Response;
+  public constructor(message: string, response: Response) {
+    super(message);
+    this.response = response;
+  }
+}
+
+export const fetchAuthenticated = async (
+  user: Realm.Sync.User,
+  path: string,
+  options: RequestInit,
+  intent: string = 'Failed to fetch',
+) => {
+  const server = user.server;
+  const url = new URL(path, server);
+  if (options.headers && options.headers instanceof Headers) {
+    options.headers.append('Authorization', user.token);
+  } else if (!options.headers) {
+    options.headers = new Headers({
+      Authorization: user.token,
+      Accept: 'application/json, text/plain, */*',
+      'Content-Type': 'application/json',
+    });
+  }
+  const request = new Request(url.toString(), options);
+  const response = await fetch(request);
+  if (response.ok) {
+    return response.json();
+  } else if (response.status === 404) {
+    throw new FetchError(intent, response);
+  } else {
+    const body = await response.json();
+    if (body && body.message) {
+      throw new FetchError(`${intent}: ${body.message}`, response);
+    } else {
+      throw new FetchError(intent, response);
+    }
   }
 };
