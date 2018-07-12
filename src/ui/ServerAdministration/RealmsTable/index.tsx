@@ -69,7 +69,9 @@ class RealmsTableContainer extends React.PureComponent<
       showPartialRealms: boolean,
       showSystemRealms: boolean,
     ) => {
-      let realms = adminRealm.objects<ros.IRealmFile>('RealmFile');
+      let realms = adminRealm
+        .objects<ros.IRealmFile>('RealmFile')
+        .sorted('createdAt');
 
       // Filter if a search string is specified
       if (searchString || searchString !== '') {
