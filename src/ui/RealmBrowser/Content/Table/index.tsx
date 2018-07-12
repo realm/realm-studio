@@ -28,8 +28,8 @@ import {
   ScrollSyncProps,
 } from 'react-virtualized';
 
-import { ISorting, SortingChangeHandler } from '..';
-import { EditMode, IPropertyWithName } from '../..';
+import { EditMode, ISorting, SortingChangeHandler } from '..';
+import { IPropertyWithName } from '../..';
 import { Focus } from '../../focus';
 
 export type CellChangeHandler = (

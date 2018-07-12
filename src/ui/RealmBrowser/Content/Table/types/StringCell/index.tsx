@@ -19,7 +19,8 @@
 import { remote } from 'electron';
 import * as React from 'react';
 
-import { EditMode, IPropertyWithName } from '../../../..';
+import { EditMode } from '../../..';
+import { IPropertyWithName } from '../../../..';
 import { parse } from '../../../../parsers';
 
 import { StringCell } from './StringCell';

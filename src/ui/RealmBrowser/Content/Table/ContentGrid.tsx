@@ -27,7 +27,8 @@ import {
   Index,
 } from 'react-virtualized';
 
-import { EditMode, IPropertyWithName } from '../..';
+import { EditMode } from '..';
+import { IPropertyWithName } from '../..';
 
 import {
   CellChangeHandler,

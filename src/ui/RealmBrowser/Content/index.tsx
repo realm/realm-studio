@@ -22,7 +22,6 @@ import * as React from 'react';
 
 import {
   ClassFocussedHandler,
-  EditMode,
   IPropertyWithName,
   ListFocussedHandler,
 } from '..';
@@ -35,7 +34,10 @@ import { isPrimitive } from '../primitives';
 import { Content, IContentProps } from './Content';
 import { ICreateObjectDialogContainerProps } from './CreateObjectDialog';
 import { IDeleteObjectsDialogProps } from './DeleteObjectsDialog';
-import { IOpenSelectObjectDialogContainerProps } from './SelectObjectDialog';
+import {
+  IOpenSelectMultipleObjectsDialogContainerProps,
+  IOpenSelectSingleObjectDialogContainerProps,
+} from './SelectObjectDialog';
 import {
   CellChangeHandler,
   CellClickHandler,
@@ -46,6 +48,18 @@ import {
   ReorderingEndHandler,
   ReorderingStartHandler,
 } from './Table';
+
+export enum EditMode {
+  Disabled = 'disabled',
+  InputBlur = 'input-blur',
+  KeyPress = 'key-press',
+}
+
+export enum HighlightMode {
+  Disabled = 'disabled',
+  Single = 'single',
+  Multiple = 'multiple',
+}
 
 export type CreateObjectHandler = (className: string, values: {}) => void;
 export type QueryChangeHandler = (query: string) => void;
@@ -60,21 +74,39 @@ export type SelectObjectAction =
   | { type: 'object'; object: Realm.Object; propertyName: string }
   | { type: 'list'; list: Realm.List<any> };
 
-export interface IOpenSelectObjectDialog
-  extends IOpenSelectObjectDialogContainerProps {
-  action: SelectObjectAction;
+export interface ISelectObjectForObjectDialog
+  extends IOpenSelectSingleObjectDialogContainerProps {
+  action: 'object';
   isOpen: true;
+  multiple: false;
+  object: Realm.Object;
+  propertyName: string;
 }
 
-export type ISelectObjectDialog = IOpenSelectObjectDialog | { isOpen: false };
+export interface ISelectObjectsForListDialog
+  extends IOpenSelectMultipleObjectsDialogContainerProps {
+  action: 'list';
+  isOpen: true;
+  list: Realm.List<any>;
+  multiple: true;
+}
+
+export type ISelectObjectDialog =
+  | ISelectObjectForObjectDialog
+  | ISelectObjectsForListDialog
+  | { isOpen: false };
 
 export interface IBaseContentContainerProps {
   dataVersion?: number;
   editMode: EditMode;
+  highlightMode: HighlightMode;
   focus: Focus;
   onCellClick?: CellClickHandler;
+  onCellSingleClick?: CellClickHandler;
+  onCellDoubleClick?: CellClickHandler;
   onClassFocussed?: ClassFocussedHandler;
   onListFocussed?: ListFocussedHandler;
+  onHighlightChange?: (highlight: IHighlight | undefined) => void;
   progress?: ILoadingProgress;
   readOnly: boolean;
 }
@@ -161,6 +193,11 @@ class ContentContainer extends React.Component<
       this.state.sorting !== prevState.sorting
     ) {
       this.onResetHighlight();
+    } else if (
+      this.props.onHighlightChange &&
+      this.state.highlight !== prevState.highlight
+    ) {
+      this.props.onHighlightChange(this.state.highlight);
     }
   }
 
@@ -173,7 +210,7 @@ class ContentContainer extends React.Component<
     return <Content {...props} />;
   }
 
-  public highlightObject(object: Realm.Object) {
+  public highlightObject(object: Realm.Object | null) {
     const highlight = this.generateHighlight(object);
     this.setState({ highlight });
   }
@@ -267,25 +304,29 @@ class ContentContainer extends React.Component<
   };
 
   private generateHighlight(
-    object: Realm.Object,
+    object: Realm.Object | null,
     scrollToObject: boolean = true,
   ): IHighlight {
-    const filteredSortedResults = this.filteredSortedResults(
-      this.props.focus.results,
-      this.state.query,
-      this.state.sorting,
-    );
-    const index = filteredSortedResults.indexOf(object);
-    const result: IHighlight = {
-      rows: new Set(index > -1 ? [index] : []),
-    };
-    if (scrollToObject) {
-      result.scrollTo = {
-        center: true,
-        row: index,
+    if (object) {
+      const filteredSortedResults = this.filteredSortedResults(
+        this.props.focus.results,
+        this.state.query,
+        this.state.sorting,
+      );
+      const index = filteredSortedResults.indexOf(object);
+      const result: IHighlight = {
+        rows: new Set(index > -1 ? [index] : []),
       };
+      if (scrollToObject) {
+        result.scrollTo = {
+          center: true,
+          row: index,
+        };
+      }
+      return result;
+    } else {
+      return { rows: new Set() };
     }
-    return result;
   }
 
   private onCellChange: CellChangeHandler = params => {
@@ -303,16 +344,24 @@ class ContentContainer extends React.Component<
     }
   };
 
-  private onObjectSelect = (object: any) => {
+  private onObjectSelect = (
+    selectedObjects: Realm.Object | Realm.Object[] | null,
+  ) => {
     if (this.state.selectObjectDialog.isOpen) {
-      const { action } = this.state.selectObjectDialog;
+      const { selectObjectDialog } = this.state;
       this.write(() => {
-        if (action.type === 'list') {
-          action.list.push(object);
-        } else if (action.type === 'object') {
+        if (
+          selectObjectDialog.action === 'list' &&
+          Array.isArray(selectedObjects)
+        ) {
+          selectObjectDialog.list.push(...selectedObjects);
+        } else if (
+          selectObjectDialog.action === 'object' &&
+          !Array.isArray(selectedObjects)
+        ) {
           // { [p: string]: any } is needed bacause of a Realm JS type issue
-          const parent: { [p: string]: any } = action.object;
-          parent[action.propertyName] = object;
+          const parent: { [p: string]: any } = selectObjectDialog.object;
+          parent[selectObjectDialog.propertyName] = selectedObjects;
         }
         // Close the dialog
         this.setState({ selectObjectDialog: { isOpen: false } });
@@ -324,7 +373,7 @@ class ContentContainer extends React.Component<
     if (this.props.onCellClick) {
       this.props.onCellClick(params, e);
     } else {
-      const { rowObject, property, cellValue, rowIndex, columnIndex } = params;
+      const { rowIndex, columnIndex } = params;
 
       const shiftClick = e && e.shiftKey;
       const metaClick = e && e.metaKey; // Command key in MacOs
@@ -344,8 +393,16 @@ class ContentContainer extends React.Component<
           ? new Set(this.state.highlight.rows)
           : new Set();
 
-      if (metaClick) {
-        // Unselect the row when It was already selected otherwise select it
+      if (this.props.highlightMode === HighlightMode.Single) {
+        if (nextRowsHighlighted.has(rowIndex)) {
+          nextRowsHighlighted.delete(rowIndex);
+        } else {
+          // Delete all other rows from the highlight before adding this row
+          nextRowsHighlighted.clear();
+          nextRowsHighlighted.add(rowIndex);
+        }
+      } else if (metaClick) {
+        // Unselect the row when it was already selected otherwise select it
         if (nextRowsHighlighted.has(rowIndex)) {
           nextRowsHighlighted.delete(rowIndex);
         } else {
@@ -368,11 +425,11 @@ class ContentContainer extends React.Component<
         // Ensuring that the last cell validation didn't fail
         if (this.clickTimeout) {
           clearTimeout(this.clickTimeout);
-          this.onCellDoubleClick(rowObject, property, cellValue);
+          this.onCellDoubleClick(params, e);
           this.clickTimeout = null;
         } else {
           this.clickTimeout = setTimeout(() => {
-            this.onCellSingleClick(rowObject, property, cellValue);
+            this.onCellSingleClick(params, e);
             this.clickTimeout = null;
           }, 200);
         }
@@ -395,40 +452,46 @@ class ContentContainer extends React.Component<
     }
   };
 
-  private onCellSingleClick = (
-    object: any,
-    property?: IPropertyWithName,
-    value?: any,
-  ) => {
-    if (property && property.type === 'list' && this.props.onListFocussed) {
-      this.props.onListFocussed(object, property);
-    } else if (
-      property &&
-      property.type === 'object' &&
-      property.objectType &&
-      value &&
-      this.props.onClassFocussed
-    ) {
-      this.props.onClassFocussed(property.objectType, value);
+  private onCellSingleClick: CellClickHandler = (params, e) => {
+    if (this.props.onCellSingleClick) {
+      this.props.onCellSingleClick(params, e);
+    } else {
+      const { property, rowObject, cellValue } = params;
+      if (property && property.type === 'list' && this.props.onListFocussed) {
+        this.props.onListFocussed(rowObject, property);
+      } else if (
+        property &&
+        property.type === 'object' &&
+        property.objectType &&
+        cellValue &&
+        this.props.onClassFocussed
+      ) {
+        this.props.onClassFocussed(property.objectType, cellValue);
+      }
     }
   };
 
-  private onCellDoubleClick = (
-    object: any,
-    property?: IPropertyWithName,
-    value?: any,
-  ) => {
-    if (
-      property &&
-      property.type === 'object' &&
-      property.name &&
-      property.objectType
-    ) {
-      this.onShowSelectObjectDialog({
-        action: { type: 'object', object, propertyName: property.name },
-        className: property.objectType,
-        isOptional: property.optional,
-      });
+  private onCellDoubleClick: CellClickHandler = (params, e) => {
+    if (this.props.onCellDoubleClick) {
+      this.props.onCellDoubleClick(params, e);
+    } else {
+      const { property, rowObject } = params;
+      if (
+        property &&
+        property.type === 'object' &&
+        property.name &&
+        property.objectType
+      ) {
+        this.onShowSelectObjectDialog({
+          action: {
+            type: 'object',
+            object: rowObject,
+            propertyName: property.name,
+          },
+          className: property.objectType,
+          isOptional: property.optional,
+        });
+      }
     }
   };
 
@@ -464,7 +527,7 @@ class ContentContainer extends React.Component<
     params,
   ) => {
     e.preventDefault();
-    const { focus } = this.props;
+    const { focus, readOnly } = this.props;
     const { Menu, MenuItem } = electron.remote;
 
     const contextMenu = new Menu();
@@ -483,7 +546,7 @@ class ContentContainer extends React.Component<
       }
 
       // If we clicked a property that refers to an object
-      if (property && property.type === 'object') {
+      if (!readOnly && property && property.type === 'object') {
         contextMenu.append(
           new MenuItem({
             label: 'Update reference',
@@ -505,7 +568,12 @@ class ContentContainer extends React.Component<
       }
 
       // If we have one or more rows highlighted - we can delete those
-      if (focus && this.state.highlight && this.state.highlight.rows.size > 0) {
+      if (
+        !readOnly &&
+        focus &&
+        this.state.highlight &&
+        this.state.highlight.rows.size > 0
+      ) {
         const { label, title, description } = this.generateDeleteTexts(
           focus,
           this.state.highlight.rows.size > 1,
@@ -532,6 +600,7 @@ class ContentContainer extends React.Component<
 
     // If we right-clicking on the content we can add an existing object when we are focusing an object list
     if (
+      !readOnly &&
       focus &&
       focus.kind === 'list' &&
       focus.property.objectType &&
@@ -557,7 +626,7 @@ class ContentContainer extends React.Component<
     }
 
     // If we right-clicking on the content we can always create a new object
-    if (focus) {
+    if (!readOnly && focus) {
       const className = getClassName(focus);
       contextMenu.append(
         new MenuItem({
@@ -715,16 +784,32 @@ class ContentContainer extends React.Component<
   }) {
     if (!this.props.readOnly) {
       const focus: IClassFocus = this.props.getClassFocus(className);
-      this.setState({
-        selectObjectDialog: {
-          action,
+      if (action.type === 'object') {
+        const selectObjectDialog: ISelectObjectForObjectDialog = {
+          action: 'object',
           focus,
           isOpen: true,
           isOptional,
+          multiple: false,
+          object: action.object,
           onCancel: this.onCancelSelectObjectDialog,
           onSelect: this.onObjectSelect,
-        },
-      });
+          propertyName: action.propertyName,
+        };
+        this.setState({ selectObjectDialog });
+      } else {
+        const selectObjectDialog: ISelectObjectsForListDialog = {
+          action: 'list',
+          focus,
+          isOpen: true,
+          isOptional,
+          list: action.list,
+          multiple: true,
+          onCancel: this.onCancelSelectObjectDialog,
+          onSelect: this.onObjectSelect,
+        };
+        this.setState({ selectObjectDialog });
+      }
     }
   }
 
