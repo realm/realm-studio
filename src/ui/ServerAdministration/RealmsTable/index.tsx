@@ -44,11 +44,13 @@ export interface IRealmTableContainerProps {
 }
 
 export interface IRealmTableContainerState {
-  selectedRealmPath: string | null;
+  /** Prevents spamming the server too badly */
+  isFetchRealmSizes: boolean;
+  realmStateSizes?: { [path: string]: number };
   searchString: string;
+  selectedRealmPath: string | null;
   showPartialRealms: boolean;
   showSystemRealms: boolean;
-  realmStateSizes?: { [path: string]: number };
 }
 
 class RealmsTableContainer extends React.PureComponent<
@@ -56,6 +58,7 @@ class RealmsTableContainer extends React.PureComponent<
   IRealmTableContainerState
 > {
   public state: IRealmTableContainerState = {
+    isFetchRealmSizes: false,
     selectedRealmPath: null,
     searchString: '',
     showPartialRealms: store.shouldShowPartialRealms(),
@@ -107,9 +110,6 @@ class RealmsTableContainer extends React.PureComponent<
     },
   );
 
-  /* Prevents spamming the server too badly */
-  private isFetchRealmSizes: boolean = false;
-
   public render() {
     const realms = this.realms(
       this.props.adminRealm,
@@ -119,19 +119,21 @@ class RealmsTableContainer extends React.PureComponent<
     );
     return (
       <RealmsTable
-        realms={realms}
-        realmStateSizes={this.state.realmStateSizes}
-        onRealmCreation={this.onRealmCreation}
         getRealmFromId={this.getRealmFromId}
         getRealmPermissions={this.getRealmPermissions}
         getRealmStateSize={this.getRealmStateSize}
+        isFetchRealmSizes={this.state.isFetchRealmSizes}
+        onRealmCreation={this.onRealmCreation}
         onRealmDeletion={this.onRealmDeletion}
         onRealmOpened={this.onRealmOpened}
-        onRealmTypeUpgrade={this.onRealmTypeUpgrade}
         onRealmSelected={this.onRealmSelected}
+        onRealmStateSizeRefresh={this.onRealmStateSizeRefresh}
+        onRealmTypeUpgrade={this.onRealmTypeUpgrade}
         onSearchStringChange={this.onSearchStringChange}
-        selectedRealmPath={this.state.selectedRealmPath}
+        realms={realms}
+        realmStateSizes={this.state.realmStateSizes}
         searchString={this.state.searchString}
+        selectedRealmPath={this.state.selectedRealmPath}
       />
     );
   }
@@ -156,27 +158,6 @@ class RealmsTableContainer extends React.PureComponent<
     this.fetchRealmSizes().then(undefined, err => {
       showError('Failed to fetch Realm sizes', err);
     });
-  }
-
-  public componentDidUpdate() {
-    // Determine if a realm exists that does not have its stats up to date
-    const { realmStateSizes } = this.state;
-    if (realmStateSizes) {
-      const realmsWithoutSize = this.realms(
-        this.props.adminRealm,
-        this.state.searchString,
-        this.state.showPartialRealms,
-        this.state.showSystemRealms,
-      ).filter(realm => {
-        return !Object.keys(realmStateSizes).includes(realm.path);
-      });
-      if (realmsWithoutSize.length > 0) {
-        // We have realms without size!
-        this.fetchRealmSizes().then(undefined, err => {
-          showError('Failed to fetch Realm sizes', err);
-        });
-      }
-    }
   }
 
   public getRealmFromId = (path: string): ros.IRealmFile | undefined => {
@@ -250,22 +231,32 @@ class RealmsTableContainer extends React.PureComponent<
     });
   };
 
+  public onRealmStateSizeRefresh = () => {
+    // Fetch the realm sizes
+    this.fetchRealmSizes(true).then(undefined, err => {
+      showError('Failed to fetch Realm sizes', err);
+    });
+  };
+
   public onSearchStringChange = (searchString: string) => {
     this.setState({ searchString });
   };
 
-  private async fetchRealmSizes() {
-    if (!this.isFetchRealmSizes) {
+  private async fetchRealmSizes(askServerToReport = false) {
+    if (!this.state.isFetchRealmSizes) {
       try {
-        this.isFetchRealmSizes = true;
-        // Ask the server to recompute the realm sizes
-        await ros.realms.reportRealmStateSize(this.props.user);
+        this.setState({ isFetchRealmSizes: true });
+        if (askServerToReport) {
+          // Ask the server to recompute the realm sizes
+          await ros.realms.reportRealmStateSize(this.props.user);
+          // Wait half 200ms for the server to complete
+          // FIXME: This delay is a best guess - it could easily take longer time for the server to emit and process stats
+          await wait(1000);
+        }
         // Request the realm sizes from the server
         const sizes = await ros.realms.getSizes(this.props.user);
         // Update the state
         this.setState({ realmStateSizes: sizes });
-        // Wait to avoid spamming the server
-        await wait(1000);
       } catch (err) {
         if (err instanceof ros.FetchError && err.response.status === 404) {
           // This is expected from an older server
@@ -274,7 +265,7 @@ class RealmsTableContainer extends React.PureComponent<
           throw err;
         }
       } finally {
-        this.isFetchRealmSizes = false;
+        this.setState({ isFetchRealmSizes: false });
       }
     }
   }

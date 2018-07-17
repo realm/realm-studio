@@ -16,9 +16,16 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
-import { Badge } from 'reactstrap';
+@import "~realm-studio-styles/variables";
 
-export const MissingSizeBadge = () => (
-  <Badge title="Size is unknown. Refresh to update it.">?</Badge>
-);
+.StateSizeHeader {
+  &__RefreshIcon {
+    cursor: pointer;
+    padding: 0 ($spacer / 2);
+
+    &--refreshing {
+      color: $elephant;
+      cursor: progress;
+    }
+  }
+}
