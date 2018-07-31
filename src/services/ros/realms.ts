@@ -161,7 +161,7 @@ export const getStats = async (
 ): Promise<IStatisticsResponse> => {
   return fetchAuthenticated(
     user,
-    `/stats/${metricNames}`,
+    `/stats/instant/${metricNames}`,
     { method: 'GET' },
     'Failed to get statistics',
   );
