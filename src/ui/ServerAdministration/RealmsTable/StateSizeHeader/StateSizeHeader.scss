@@ -16,13 +16,21 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-export * from './countdown';
-export * from './timeout';
-export * from './wait';
-export * from './range';
-export * from './promise-handle';
-export * from './renderer-process-directory';
-export * from './pretty-bytes';
+@import "~realm-studio-styles/variables";
 
-import * as menu from './menu';
-export { menu };
+.StateSizeHeader {
+  &__RefreshIcon {
+    cursor: pointer;
+    padding: 0 ($spacer / 2);
+
+    &--refreshing {
+      color: $elephant;
+      cursor: progress;
+    }
+  }
+
+  &__QuestionIcon {
+    cursor: pointer;
+    padding: 0 ($spacer / 2);
+  }
+}

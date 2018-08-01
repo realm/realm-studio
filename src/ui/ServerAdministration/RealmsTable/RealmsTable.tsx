@@ -26,33 +26,44 @@ import {
   FilterableTableWrapper,
 } from '../shared/FilterableTable';
 import { FloatingControls } from '../shared/FloatingControls';
-import { displayUser } from '../utils';
+import { displayUser, prettyBytes } from '../utils';
+
+import { MissingSizeBadge } from './MissingSizeBadge';
 import { RealmSidebar } from './RealmSidebar';
+import { StateSizeHeader } from './StateSizeHeader';
 
 export const RealmsTable = ({
   getRealmFromId,
   getRealmPermissions,
+  getRealmStateSize,
+  isFetchRealmSizes,
+  onRealmCreation,
   onRealmDeletion,
   onRealmOpened,
   onRealmSelected,
+  onRealmStateSizeRefresh,
   onRealmTypeUpgrade,
-  realms,
-  selectedRealmPath,
-  onRealmCreation,
-  searchString,
   onSearchStringChange,
+  realms,
+  realmStateSizes,
+  searchString,
+  selectedRealmPath,
 }: {
   getRealmFromId: (path: string) => IRealmFile | undefined;
   getRealmPermissions: (path: string) => Realm.Results<IPermission>;
+  getRealmStateSize: (path: string) => number | undefined;
+  isFetchRealmSizes: boolean;
+  onRealmCreation: () => void;
   onRealmDeletion: (path: string) => void;
   onRealmOpened: (path: string) => void;
   onRealmSelected: (path: string | null) => void;
+  onRealmStateSizeRefresh: () => void;
   onRealmTypeUpgrade: (path: string) => void;
-  realms: Realm.Results<IRealmFile>;
-  selectedRealmPath: string | null;
-  onRealmCreation: () => void;
-  searchString: string;
   onSearchStringChange: (query: string) => void;
+  realms: Realm.Results<IRealmFile>;
+  realmStateSizes?: { [path: string]: number };
+  searchString: string;
+  selectedRealmPath: string | null;
 }) => {
   return (
     <FilterableTableWrapper>
@@ -70,14 +81,34 @@ export const RealmsTable = ({
         <Column
           label="Owner"
           dataKey="owner"
-          width={300}
+          width={200}
           cellRenderer={({ cellData }) => displayUser(cellData)}
         />
         <Column
           label="Type"
           dataKey="realmType"
-          width={200}
+          width={100}
           cellRenderer={({ cellData }) => cellData || 'full'}
+        />
+        <Column
+          label="Data Size"
+          dataKey="path"
+          /* Don't show the size column if all sizes are unknown */
+          width={realmStateSizes ? 100 : 0}
+          headerRenderer={props => (
+            <StateSizeHeader
+              {...props}
+              isRefreshing={isFetchRealmSizes}
+              onRefresh={onRealmStateSizeRefresh}
+            />
+          )}
+          cellRenderer={({ cellData }) =>
+            realmStateSizes && typeof realmStateSizes[cellData] === 'number' ? (
+              prettyBytes(realmStateSizes[cellData])
+            ) : (
+              <MissingSizeBadge />
+            )
+          }
         />
       </FilterableTable>
 
@@ -87,6 +118,7 @@ export const RealmsTable = ({
 
       <RealmSidebar
         getRealmPermissions={getRealmPermissions}
+        getRealmStateSize={getRealmStateSize}
         isOpen={selectedRealmPath !== null}
         onRealmDeletion={onRealmDeletion}
         onRealmOpened={onRealmOpened}

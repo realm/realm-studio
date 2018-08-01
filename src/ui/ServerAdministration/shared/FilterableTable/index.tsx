@@ -20,6 +20,7 @@ import * as classnames from 'classnames';
 import * as React from 'react';
 import {
   AutoSizer,
+  ColumnProps,
   Dimensions as IAutoSizerDimensions,
   Table,
 } from 'react-virtualized';
@@ -33,7 +34,7 @@ export const FilterableTableWrapper = ({
 }) => <div className="Table">{children}</div>;
 
 export interface IProps {
-  children: JSX.Element[];
+  children: Array<React.ReactElement<ColumnProps>>;
   elementIdProperty: string;
   elements: Realm.Results<any>;
   onElementDoubleClick?: (elementIdSelected: string) => void;

@@ -17,11 +17,12 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as electron from 'electron';
+import memoize from 'memoize-one';
 import * as React from 'react';
 import * as Realm from 'realm';
-import { store } from '../../../store';
 
 import * as ros from '../../../services/ros';
+import { store } from '../../../store';
 import { showError } from '../../reusable/errors';
 import { querySomeFieldContainsText } from '../utils';
 import { UsersTable } from './UsersTable';
@@ -58,23 +59,32 @@ class UsersTableContainer extends React.Component<
     showSystemUsers: store.shouldShowSystemUsers(),
   };
 
-  protected users?: Realm.Results<ros.IUser>;
+  protected users = memoize(
+    (adminRealm: Realm, searchString: string, showSystemUsers: boolean) => {
+      let users = adminRealm.objects<ros.IUser>('User').sorted('userId');
+      // Filter if a search string is specified
+      if (searchString && searchString !== '') {
+        const filterQuery = querySomeFieldContainsText(
+          ['userId', 'accounts.providerId', 'metadata.key', 'metadata.value'],
+          searchString,
+        );
+        try {
+          users = users.filtered(filterQuery);
+        } catch (err) {
+          // tslint:disable-next-line:no-console
+          console.warn(`Could not filter on "${filterQuery}"`, err);
+        }
+      }
 
-  public componentWillMount() {
-    this.setUsers(this.state.searchString, this.state.showSystemUsers);
-  }
-
-  public componentWillUpdate(
-    nextProps: IUsersTableContainerProps,
-    nextState: IUsersTableContainerState,
-  ) {
-    if (
-      this.state.searchString !== nextState.searchString ||
-      this.state.showSystemUsers !== nextState.showSystemUsers
-    ) {
-      this.setUsers(nextState.searchString, nextState.showSystemUsers);
-    }
-  }
+      // Filter out System users if needed
+      if (showSystemUsers === false) {
+        users = users.filtered(
+          "NOT userId == '__admin' AND NOT userId BEGINSWITH 'system-accessibility'",
+        );
+      }
+      return users;
+    },
+  );
 
   public componentDidMount() {
     store.onDidChange(store.KEY_SHOW_SYSTEM_USERS, (newVal, oldVal) => {
@@ -86,9 +96,33 @@ class UsersTableContainer extends React.Component<
   }
 
   public render() {
-    return this.users ? (
-      <UsersTable users={this.users} {...this.state} {...this} />
-    ) : null;
+    const users = this.users(
+      this.props.adminRealm,
+      this.state.searchString,
+      this.state.showSystemUsers,
+    );
+    return (
+      <UsersTable
+        getUsersRealms={this.getUsersRealms}
+        isChangePasswordOpen={this.state.isChangePasswordOpen}
+        isCreateUserOpen={this.state.isCreateUserOpen}
+        onSearchStringChange={this.onSearchStringChange}
+        onToggleChangePassword={this.onToggleChangePassword}
+        onToggleCreateUser={this.onToggleCreateUser}
+        onUserChangePassword={this.onUserChangePassword}
+        onUserCreated={this.onUserCreated}
+        onUserDeletion={this.onUserDeletion}
+        onUserMetadataAppended={this.onUserMetadataAppended}
+        onUserMetadataChanged={this.onUserMetadataChanged}
+        onUserMetadataDeleted={this.onUserMetadataDeleted}
+        onUserPasswordChanged={this.onUserPasswordChanged}
+        onUserRoleChanged={this.onUserRoleChanged}
+        onUserSelected={this.onUserSelected}
+        searchString={this.state.searchString}
+        selection={this.state.selection}
+        users={users}
+      />
+    );
   }
 
   public onUserSelected = (userId: string | null) => {
@@ -226,33 +260,6 @@ class UsersTableContainer extends React.Component<
   protected onRealmChanged = () => {
     this.forceUpdate();
   };
-
-  protected setUsers(searchString: string, showSystemUsers: boolean) {
-    this.users = this.props.adminRealm
-      .objects<ros.IUser>('User')
-      .sorted('userId');
-
-    // Filter if a search string is specified
-    if (searchString && searchString !== '') {
-      const filterQuery = querySomeFieldContainsText(
-        ['userId', 'accounts.providerId', 'metadata.key', 'metadata.value'],
-        searchString,
-      );
-      try {
-        this.users = this.users.filtered(filterQuery);
-      } catch (err) {
-        // tslint:disable-next-line:no-console
-        console.warn(`Could not filter on "${filterQuery}"`, err);
-      }
-    }
-
-    // Filter out System users if needed
-    if (showSystemUsers === false) {
-      this.users = this.users.filtered(
-        "NOT userId == '__admin' AND NOT userId BEGINSWITH 'system-accessibility'",
-      );
-    }
-  }
 
   private confirmUserDeletion(userId: string): boolean {
     const isCurrentUser = userId === this.props.user.identity;

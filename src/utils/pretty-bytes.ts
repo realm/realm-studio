@@ -16,13 +16,30 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-export * from './countdown';
-export * from './timeout';
-export * from './wait';
-export * from './range';
-export * from './promise-handle';
-export * from './renderer-process-directory';
-export * from './pretty-bytes';
+// Copied here from https://www.npmjs.com/package/pretty-bytes because that lib was not pre-transpiled
+const UNITS = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
-import * as menu from './menu';
-export { menu };
+export const prettyBytes = (num: number) => {
+  if (!Number.isFinite(num)) {
+    throw new TypeError(`Expected a finite number, got ${typeof num}: ${num}`);
+  }
+
+  const neg = num < 0;
+
+  if (neg) {
+    num = -num;
+  }
+
+  if (num < 1) {
+    return (neg ? '-' : '') + num + ' B';
+  }
+
+  const exponent = Math.min(
+    Math.floor(Math.log(num) / Math.log(1000)),
+    UNITS.length - 1,
+  );
+  const numStr = Number((num / Math.pow(1000, exponent)).toPrecision(3));
+  const unit = UNITS[exponent];
+
+  return (neg ? '-' : '') + numStr + ' ' + unit;
+};

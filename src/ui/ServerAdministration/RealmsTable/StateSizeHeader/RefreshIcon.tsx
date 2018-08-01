@@ -16,13 +16,29 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-export * from './countdown';
-export * from './timeout';
-export * from './wait';
-export * from './range';
-export * from './promise-handle';
-export * from './renderer-process-directory';
-export * from './pretty-bytes';
+import * as classNames from 'classnames';
+import * as React from 'react';
 
-import * as menu from './menu';
-export { menu };
+interface IRefreshIconProps {
+  isRefreshing: boolean;
+  onRefresh: () => void;
+}
+
+const showInternalFeatures =
+  process.env.REALM_STUDIO_INTERNAL_FEATURES === 'true';
+
+export const RefreshIcon = ({ isRefreshing, onRefresh }: IRefreshIconProps) =>
+  showInternalFeatures ? (
+    <i
+      className={classNames(
+        'StateSizeHeader__RefreshIcon',
+        'fa',
+        'fa-refresh',
+        {
+          'StateSizeHeader__RefreshIcon--refreshing': isRefreshing,
+          'fa-spin': isRefreshing,
+        },
+      )}
+      onClick={onRefresh}
+    />
+  ) : null;

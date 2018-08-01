@@ -21,25 +21,26 @@ import { Button, Card, CardBody, CardText, CardTitle } from 'reactstrap';
 import * as Realm from 'realm';
 
 import * as ros from '../../../../services/ros';
-import { displayUser, shortenRealmPath } from '../../utils';
+import { displayUser, prettyBytes, shortenRealmPath } from '../../utils';
 import { RealmTypeBadge } from '../RealmTypeBadge';
 
 import { PermissionsTable } from './PermissionsTable';
 
 export const RealmSidebarCard = ({
-  getRealmPermissions,
   onRealmDeletion,
   onRealmOpened,
   onRealmTypeUpgrade,
+  permissions,
   realm,
+  stateSize,
 }: {
-  getRealmPermissions: (path: string) => Realm.Results<ros.IPermission>;
   onRealmDeletion: (path: string) => void;
   onRealmOpened: (path: string) => void;
   onRealmTypeUpgrade: (path: string) => void;
   realm: ros.IRealmFile;
+  permissions: Realm.Results<ros.IPermission>;
+  stateSize?: number;
 }) => {
-  const permissions = realm ? getRealmPermissions(realm.path) : null;
   // Determine if the Realm can be upgraded to a "reference" Realm,
   // It can if its defined and not already "partial" or "reference"
   const canUpgradeType = realm
@@ -60,6 +61,11 @@ export const RealmSidebarCard = ({
         <CardText className="RealmSidebar__SubTitle">
           Owned by {displayUser(realm.owner)}
         </CardText>
+        {typeof stateSize === 'number' ? (
+          <CardText className="RealmSidebar__SubTitle">
+            Data size: {prettyBytes(stateSize)}
+          </CardText>
+        ) : null}
       </CardBody>
       <CardBody className="RealmSidebar__Tables">
         {permissions ? <PermissionsTable permissions={permissions} /> : null}

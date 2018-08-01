@@ -16,13 +16,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-export * from './countdown';
-export * from './timeout';
-export * from './wait';
-export * from './range';
-export * from './promise-handle';
-export * from './renderer-process-directory';
-export * from './pretty-bytes';
+import * as React from 'react';
+import { Badge } from 'reactstrap';
 
-import * as menu from './menu';
-export { menu };
+export const MissingSizeBadge = () => (
+  <Badge title="Size is unknown. Refresh to update it.">?</Badge>
+);

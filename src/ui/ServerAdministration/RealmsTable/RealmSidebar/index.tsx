@@ -24,6 +24,7 @@ import * as ros from '../../../../services/ros';
 
 export interface IRealmSidebarContainerProps {
   getRealmPermissions: (path: string) => Realm.Results<ros.IPermission>;
+  getRealmStateSize: (path: string) => number | undefined;
   isOpen: boolean;
   onRealmDeletion: (path: string) => void;
   onRealmOpened: (path: string) => void;

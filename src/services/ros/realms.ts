@@ -18,7 +18,12 @@
 
 import * as Realm from 'realm';
 
-import { IRealmFile, IServerCredentials, RealmType } from '.';
+import {
+  fetchAuthenticated,
+  IRealmFile,
+  IServerCredentials,
+  RealmType,
+} from '.';
 import { showError } from '../../ui/reusable/errors';
 
 export enum RealmLoadingMode {
@@ -111,26 +116,13 @@ export const create = (
 };
 
 export const remove = async (user: Realm.Sync.User, realmPath: string) => {
-  const server = user.server;
-  const encodedUrl = encodeURIComponent(realmPath);
-  const url = new URL(`/realms/files/${encodedUrl}`, server);
-  const request = new Request(url.toString(), {
-    method: 'DELETE',
-    headers: new Headers({
-      Authorization: user.token,
-      Accept: 'application/json, text/plain, */*',
-      'Content-Type': 'application/json',
-    }),
-  });
-  const response = await fetch(request);
-  const body = await response.json();
-  if (response.ok) {
-    return body;
-  } else if (body && body.message) {
-    throw new Error(`Could not remove Realm: ${body.message}`);
-  } else {
-    throw new Error(`Could not remove Realm`);
-  }
+  const encodedPath = encodeURIComponent(realmPath);
+  return fetchAuthenticated(
+    user,
+    `/realms/files/${encodedPath}`,
+    { method: 'DELETE' },
+    `Could not remove Realm`,
+  );
 };
 
 export const changeType = async (
@@ -138,34 +130,69 @@ export const changeType = async (
   realmPath: string,
   type: RealmType,
 ) => {
-  const server = user.server;
-  const encodedUrl = encodeURIComponent(realmPath);
-  const url = new URL(`/realms/files/${encodedUrl}`, server);
-  const request = new Request(url.toString(), {
-    method: 'PATCH',
-    headers: new Headers({
-      Authorization: user.token,
-      Accept: 'application/json, text/plain, */*',
-      'Content-Type': 'application/json',
-    }),
-    body: JSON.stringify({
-      realmType: type,
-    }),
-  });
-  const response = await fetch(request);
-  if (response.ok) {
-    return response.json();
-  } else {
-    if (response.status === 404) {
-      throw new Error(
-        'Failed to change the type of the Realm: Is the server running the latest version?',
-      );
-    } else {
-      throw new Error('Failed to change type of the Realm');
-    }
-  }
+  const encodedPath = encodeURIComponent(realmPath);
+  return fetchAuthenticated(
+    user,
+    `/realms/files/${encodedPath}`,
+    {
+      method: 'PATCH',
+      body: JSON.stringify({
+        realmType: type,
+      }),
+    },
+    'Failed to change type of the Realm',
+  );
 };
 
 export const update = (realmId: string, values: Partial<IRealmFile>) => {
   throw new Error('Not yet implemented');
+};
+
+interface IStatisticsResponse {
+  [metricName: string]: Array<{
+    labels: { [name: string]: string };
+    value: number;
+  }>;
+}
+
+export const getStats = async (
+  user: Realm.Sync.User,
+  metricNames: string,
+): Promise<IStatisticsResponse> => {
+  return fetchAuthenticated(
+    user,
+    `/stats/instant/${metricNames}`,
+    { method: 'GET' },
+    'Failed to get statistics',
+  );
+};
+
+export const reportRealmStateSize = async (
+  user: Realm.Sync.User,
+  path: string = '',
+) => {
+  return fetchAuthenticated(
+    user,
+    `/stats/report-realm-state-size/${path}`,
+    { method: 'POST' },
+    'Failed to report realm state size',
+  );
+};
+
+export const getSizes = async (user: Realm.Sync.User) => {
+  const metrics = await getStats(user, 'ros_sync_realm_state_size');
+  if (metrics.ros_sync_realm_state_size) {
+    const result: { [path: string]: number } = {};
+    const sizeMetric = metrics.ros_sync_realm_state_size;
+    for (const stat of sizeMetric) {
+      if (stat.labels.path) {
+        // The paths are URI encoded
+        const path = decodeURIComponent(stat.labels.path);
+        result[path] = stat.value;
+      }
+    }
+    return result;
+  } else {
+    throw new Error("Expected 'ros_sync_realm_state_size' in response");
+  }
 };

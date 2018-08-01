@@ -19,6 +19,8 @@
 import * as React from 'react';
 import * as ros from '../../services/ros';
 
+export { wait, prettyBytes } from '../../utils';
+
 export const displayUser = (
   user: ros.IUser | null,
   fallback: string = 'nobody',
