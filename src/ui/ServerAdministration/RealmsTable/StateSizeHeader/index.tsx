@@ -24,11 +24,7 @@ import { StateSizeHeader } from './StateSizeHeader';
 // @see https://github.com/bvaughn/react-virtualized/blob/9.18.5/source/Table/defaultHeaderRenderer.js
 
 interface IStateSizeHeaderContainerProps extends TableHeaderProps {
-  isPopoverOpen: boolean;
   isRefreshing: boolean;
-  labelElement: HTMLElement;
-  onLabelRef: (labelElement: HTMLElement) => void;
-  onOpenPopover: () => void;
   onRefresh: () => void;
 }
 
