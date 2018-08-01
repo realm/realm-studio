@@ -16,37 +16,56 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as classNames from 'classnames';
 import * as React from 'react';
 import { TableHeaderProps } from 'react-virtualized';
 
-import './StateSizeHeader.scss';
+import { StateSizeHeader } from './StateSizeHeader';
 
 // @see https://github.com/bvaughn/react-virtualized/blob/9.18.5/source/Table/defaultHeaderRenderer.js
 
-interface IStateSizeHeaderProps extends TableHeaderProps {
-  onRefresh: () => void;
+interface IStateSizeHeaderContainerProps extends TableHeaderProps {
+  isPopoverOpen: boolean;
   isRefreshing: boolean;
+  labelElement: HTMLElement;
+  onLabelRef: (labelElement: HTMLElement) => void;
+  onOpenPopover: () => void;
+  onRefresh: () => void;
 }
 
-export const StateSizeHeader = ({
-  label,
-  isRefreshing,
-  onRefresh,
-}: IStateSizeHeaderProps) => (
-  <span className="ReactVirtualized__Table__headerTruncatedText">
-    {label}
-    <i
-      className={classNames(
-        'StateSizeHeader__RefreshIcon',
-        'fa',
-        'fa-refresh',
-        {
-          'StateSizeHeader__RefreshIcon--refreshing': isRefreshing,
-          'fa-spin': isRefreshing,
-        },
-      )}
-      onClick={onRefresh}
-    />
-  </span>
-);
+interface IStateSizeHeaderContainerState {
+  isPopoverOpen: boolean;
+  labelElement?: HTMLElement;
+}
+
+class StateSizeHeaderContainer extends React.Component<
+  IStateSizeHeaderContainerProps,
+  IStateSizeHeaderContainerState
+> {
+  public state: IStateSizeHeaderContainerState = {
+    isPopoverOpen: false,
+  };
+
+  public render() {
+    return (
+      <StateSizeHeader
+        isPopoverOpen={this.state.isPopoverOpen}
+        isRefreshing={this.props.isRefreshing}
+        label={this.props.label || '?'}
+        labelElement={this.state.labelElement}
+        onLabelRef={this.onLabelRef}
+        onTogglePopover={this.onTogglePopover}
+        onRefresh={this.props.onRefresh}
+      />
+    );
+  }
+
+  protected onLabelRef = (labelElement: HTMLElement) => {
+    this.setState({ labelElement });
+  };
+
+  protected onTogglePopover = () => {
+    this.setState({ isPopoverOpen: !this.state.isPopoverOpen });
+  };
+}
+
+export { StateSizeHeaderContainer as StateSizeHeader };

@@ -16,21 +16,29 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-@import "~realm-studio-styles/variables";
+import * as classNames from 'classnames';
+import * as React from 'react';
 
-.StateSizeHeader {
-  &__RefreshIcon {
-    cursor: pointer;
-    padding: 0 ($spacer / 2);
-
-    &--refreshing {
-      color: $elephant;
-      cursor: progress;
-    }
-  }
-
-  &__QuestionIcon {
-    cursor: pointer;
-    padding: 0 ($spacer / 2);
-  }
+interface IRefreshIconProps {
+  isRefreshing: boolean;
+  onRefresh: () => void;
 }
+
+const showInternalFeatures =
+  process.env.REALM_STUDIO_INTERNAL_FEATURES === 'true';
+
+export const RefreshIcon = ({ isRefreshing, onRefresh }: IRefreshIconProps) =>
+  showInternalFeatures ? (
+    <i
+      className={classNames(
+        'StateSizeHeader__RefreshIcon',
+        'fa',
+        'fa-refresh',
+        {
+          'StateSizeHeader__RefreshIcon--refreshing': isRefreshing,
+          'fa-spin': isRefreshing,
+        },
+      )}
+      onClick={onRefresh}
+    />
+  ) : null;
