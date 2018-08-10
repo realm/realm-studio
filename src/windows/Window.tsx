@@ -18,10 +18,14 @@
 
 import { IMenuGeneratorProps } from './MenuGenerator';
 import { WindowProps } from './WindowProps';
-import { WindowType, WindowTypedProps } from './WindowTypedProps';
+import { WindowTypedProps } from './WindowTypedProps';
+
+export type InnerWindowComponent = React.ComponentClass<
+  WindowTypedProps & IMenuGeneratorProps
+>;
 
 export interface IWindow {
-  getComponent(): React.ComponentClass<WindowTypedProps & IMenuGeneratorProps>;
+  getComponent(): Promise<InnerWindowComponent>;
   getWindowOptions(
     props: WindowProps,
   ): Partial<Electron.BrowserWindowConstructorOptions>;

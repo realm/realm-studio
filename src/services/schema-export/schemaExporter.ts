@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import fs = require('fs-extra');
+import * as fs from 'fs-extra';
 import * as fsPath from 'path';
 import * as Realm from 'realm';
 

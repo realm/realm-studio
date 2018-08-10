@@ -19,7 +19,7 @@
 // TODO: Replace this with a Realm as soon as we don't need to CWD in the renderer.
 // @see https://github.com/realm/realm-studio/blob/master/src/renderer.tsx#L15-L30
 
-import ElectronStore = require('electron-store');
+import { ElectronStore } from './module-wrappers/electron-store';
 
 class RealmStudioStore {
   public readonly KEY_SHOW_PARTIAL_REALMS = 'realmlist.show-partial-realms';

@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import { IWindow } from './Window';
+import { InnerWindowComponent, IWindow } from './Window';
 
 // tslint:disable-next-line:no-empty-interface
 export interface IGreetingWindowProps {
@@ -30,6 +30,10 @@ export const GreetingWindow: IWindow = {
     height: 400,
     resizable: false,
   }),
-  getComponent: () => require('../ui').Greeting,
+  getComponent: () =>
+    import(/* webpackChunkName: "greeting" */ '../ui/Greeting').then(
+      // TODO: Fix the props for this to include a type
+      m => m.Greeting as any,
+    ),
   getTrackedProperties: () => ({}),
 };

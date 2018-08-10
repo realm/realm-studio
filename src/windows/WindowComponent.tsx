@@ -26,14 +26,14 @@ import { remote } from 'electron';
 import * as querystring from 'querystring';
 import * as React from 'react';
 
-import * as mixpanel from '../services/mixpanel';
+import { mixpanel } from '../services/mixpanel';
 
 import {
   generateMenu,
   IMenuGenerator,
   IMenuGeneratorProps,
 } from './MenuGenerator';
-import { getWindowClass } from './Window';
+import { getWindowClass, InnerWindowComponent } from './Window';
 import { WindowType, WindowTypedProps } from './WindowTypedProps';
 
 // TODO: Consider if we can have the window not show before a connection has been established.
@@ -59,7 +59,7 @@ export abstract class WindowComponent extends React.Component
   protected menuGenerator?: IMenuGenerator;
   protected windowProps = getCurrentWindowProps();
   protected CurrentWindow = getWindowClass(this.windowProps);
-  protected CurrentWindowComponent = this.CurrentWindow.getComponent();
+  protected CurrentWindowComponent?: InnerWindowComponent;
 
   public componentDidMount() {
     const trackedProperties: ITrackedProperties = {
@@ -75,6 +75,11 @@ export abstract class WindowComponent extends React.Component
     // Generate the menu now and whenever the window gets focus
     this.updateMenu();
     window.addEventListener('focus', this.onFocussed);
+
+    this.CurrentWindow.getComponent().then(CurrentWindowComponent => {
+      this.CurrentWindowComponent = CurrentWindowComponent;
+      this.forceUpdate();
+    });
   }
 
   public componentWillUnmount() {
@@ -82,13 +87,13 @@ export abstract class WindowComponent extends React.Component
   }
 
   public render() {
-    return (
+    return this.CurrentWindowComponent ? (
       <this.CurrentWindowComponent
         {...this.windowProps}
         updateMenu={this.updateMenu}
         ref={this.windowComponentRef}
       />
-    );
+    ) : null;
   }
 
   public windowComponentRef = (element: any) => {
