@@ -49,7 +49,11 @@ export const RealmBrowserWindow: IWindow = {
           : props.realm.path,
     };
   },
-  getComponent: () => require('../ui').RealmBrowser,
+  getComponent: () =>
+    import(/* webpackChunkName: "realm-browser" */ '../ui/RealmBrowser').then(
+      // TODO: Fix the props for this to include a type
+      m => m.RealmBrowser as any,
+    ),
   getTrackedProperties: (props: IRealmBrowserWindowProps) => ({
     mode: props.realm.mode,
   }),

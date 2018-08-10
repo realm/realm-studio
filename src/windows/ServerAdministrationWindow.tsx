@@ -40,7 +40,11 @@ export const ServerAdministrationWindow: IWindow = {
       height: 600,
     };
   },
-  getComponent: () => require('../ui').ServerAdministration,
+  getComponent: () =>
+    import(/* webpackChunkName: "server-administration" */ '../ui/ServerAdministration').then(
+      // TODO: Fix the props for this to include a type
+      m => m.ServerAdministration as any,
+    ),
   getTrackedProperties: (props: IServerAdministrationWindowProps) => ({
     url: props.credentials.url,
   }),

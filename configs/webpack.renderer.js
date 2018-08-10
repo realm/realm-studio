@@ -47,7 +47,6 @@ module.exports = (env, argv) => {
     },
     output: {
       filename: '[name].bundle.js',
-      chunkFilename: '[name].bundle.js',
       publicPath: isDevelopment ? 'http://localhost:8080/' : '',
     },
     plugins: [
