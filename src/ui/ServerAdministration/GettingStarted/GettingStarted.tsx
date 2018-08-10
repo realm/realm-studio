@@ -22,7 +22,7 @@ import { Button, Input } from 'reactstrap';
 import './GettingStarted.scss';
 
 interface IGettingStartedProps {
-  onShowTutorial: (name: 'ios' | 'android' | 'cloud') => void;
+  onShowTutorial: (name: 'ios' | 'android') => void;
   serverUrl: string;
 }
 
@@ -70,14 +70,6 @@ export const GettingStarted = ({
           }}
         >
           Start with Android
-        </Button>
-        <Button
-          className="GettingStarted__Button"
-          onClick={() => {
-            onShowTutorial('cloud');
-          }}
-        >
-          Start with Node.js
         </Button>
       </section>
       If you have any issues, questions or comments visit our{' '}

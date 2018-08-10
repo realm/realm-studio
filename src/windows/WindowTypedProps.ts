@@ -22,7 +22,6 @@ import {
   IGreetingWindowProps,
   IRealmBrowserWindowProps,
   IServerAdministrationWindowProps,
-  ITutorialWindowProps,
 } from './WindowProps';
 
 export type WindowType =
@@ -30,8 +29,7 @@ export type WindowType =
   | 'connect-to-server'
   | 'greeting'
   | 'realm-browser'
-  | 'server-administration'
-  | 'tutorial';
+  | 'server-administration';
 
 export interface ICloudAuthenticationWindowTypedProps
   extends ICloudAuthenticationWindowProps {
@@ -57,14 +55,9 @@ export interface IServerAdministrationWindowTypedProps
   type: 'server-administration';
 }
 
-export interface ITutorialWindowTypedProps extends ITutorialWindowProps {
-  type: 'tutorial';
-}
-
 export type WindowTypedProps =
   | ICloudAuthenticationWindowTypedProps
   | IConnectToServerWindowTypedProps
   | IGreetingWindowTypedProps
   | IRealmBrowserWindowTypedProps
-  | IServerAdministrationWindowTypedProps
-  | ITutorialWindowTypedProps;
+  | IServerAdministrationWindowTypedProps;
