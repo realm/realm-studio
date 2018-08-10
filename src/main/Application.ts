@@ -32,7 +32,6 @@ import {
   ICloudAuthenticationWindowProps,
   IRealmBrowserWindowProps,
   IServerAdministrationWindowProps,
-  ITutorialWindowProps,
 } from '../windows/WindowProps';
 
 import { CertificateManager } from './CertificateManager';
@@ -100,9 +99,6 @@ export class Application {
       props: IServerAdministrationWindowProps,
     ) => {
       return this.showServerAdministration(props);
-    },
-    [MainActions.ShowTutorial]: (options: ITutorialWindowProps) => {
-      return this.showTutorial(options);
     },
   };
 
@@ -308,19 +304,6 @@ export class Application {
           this.cloudManager.removeListeningWindow(window);
         });
       }
-    });
-  }
-
-  public showTutorial(props: ITutorialWindowProps) {
-    return new Promise(resolve => {
-      const window = this.windowManager.createWindow({
-        type: 'tutorial',
-        ...props,
-      });
-      window.show();
-      window.webContents.once('did-finish-load', () => {
-        resolve();
-      });
     });
   }
 

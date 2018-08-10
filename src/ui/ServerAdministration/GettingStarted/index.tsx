@@ -51,15 +51,8 @@ class GettingStartedContainer extends React.Component<
     return url;
   };
 
-  public onShowTutorial = (name: 'ios' | 'android' | 'cloud') => {
-    if (name === 'cloud') {
-      main.showTutorial({
-        id: 'cloud-intro',
-        context: {
-          serverUrl: this.props.serverUrl,
-        },
-      });
-    } else if (name === 'ios') {
+  public onShowTutorial = (name: 'ios' | 'android') => {
+    if (name === 'ios') {
       electron.shell.openExternal(
         'https://docs.realm.io/platform/v/3.x/getting-started/ios-quick-start',
       );

@@ -21,7 +21,6 @@ import { IConnectToServerWindowProps } from './ConnectToServerWindow';
 import { IGreetingWindowProps } from './GreetingWindow';
 import { IRealmBrowserWindowProps } from './RealmBrowserWindow';
 import { IServerAdministrationWindowProps } from './ServerAdministrationWindow';
-import { ITutorialWindowProps } from './TutorialWindow';
 
 export {
   ICloudAuthenticationWindowProps,
@@ -29,7 +28,6 @@ export {
   IGreetingWindowProps,
   IRealmBrowserWindowProps,
   IServerAdministrationWindowProps,
-  ITutorialWindowProps,
 };
 
 export type WindowProps =
@@ -37,5 +35,4 @@ export type WindowProps =
   | IConnectToServerWindowProps
   | IGreetingWindowProps
   | IRealmBrowserWindowProps
-  | IServerAdministrationWindowProps
-  | ITutorialWindowProps;
+  | IServerAdministrationWindowProps;

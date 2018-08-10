@@ -33,7 +33,6 @@ import { ConnectToServerWindow } from './ConnectToServerWindow';
 import { GreetingWindow } from './GreetingWindow';
 import { RealmBrowserWindow } from './RealmBrowserWindow';
 import { ServerAdministrationWindow } from './ServerAdministrationWindow';
-import { TutorialWindow } from './TutorialWindow';
 
 export function getWindowClass(props: WindowTypedProps): IWindow {
   // We're using calls to require here, to prevent loading anything that does not
@@ -48,8 +47,6 @@ export function getWindowClass(props: WindowTypedProps): IWindow {
     return RealmBrowserWindow;
   } else if (props.type === 'server-administration') {
     return ServerAdministrationWindow;
-  } else if (props.type === 'tutorial') {
-    return TutorialWindow;
   } else {
     throw new Error(`Unexpected window type: ${(props as any).type}`);
   }

@@ -45,7 +45,6 @@ interface IDashboardProps {
   onMouseEnterPlatform: (platform: Platform) => void;
   onMouseLeavePlatform: () => void;
   onSelectPlatform: (platform: Platform) => void;
-  onShowCloudTutorial: () => void;
   selectedPlatform?: Platform;
 }
 
@@ -56,24 +55,14 @@ export const Dashboard = ({
   onMouseEnterPlatform,
   onMouseLeavePlatform,
   onSelectPlatform,
-  onShowCloudTutorial,
   selectedPlatform,
 }: IDashboardProps) => (
   <section className="Dashboard">
     <h2 className="Dashboard__Heading">
       Welcome to your very own Realm Cloud server
     </h2>
-    <section className="Dashboard__Tutorial">
-      <p>
-        We've prepared a tutorial that will guide you to synchronize objects in
-        just 5 minutes.
-      </p>
-      <Button onClick={onShowCloudTutorial}>
-        Start the Realm Cloud tutorial
-      </Button>
-    </section>
     <div className="Dashboard__Separator">
-      or click a platform below to connect immediately
+      Click a platform below to connect immediately
     </div>
     <section className="Dashboard__Platforms">
       <section className="Dashboard__PlatformIcons">

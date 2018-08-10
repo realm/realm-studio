@@ -48,15 +48,6 @@ class DashboardContainer extends React.Component<
     );
   }
 
-  public onShowCloudTutorial = () => {
-    main.showTutorial({
-      id: 'cloud-intro',
-      context: {
-        serverUrl: this.props.serverUrl,
-      },
-    });
-  };
-
   public onMouseEnterPlatform = (platform: Platform) => {
     this.setState({ hoveringPlatform: platform });
   };
