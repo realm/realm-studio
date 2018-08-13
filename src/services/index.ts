@@ -23,15 +23,5 @@ import * as mixpanel from './mixpanel';
 import * as raas from './raas';
 import * as ros from './ros';
 import * as schemaExport from './schema-export';
-import * as tutorials from './tutorials';
 
-export {
-  dataImporter,
-  github,
-  keytar,
-  mixpanel,
-  raas,
-  ros,
-  schemaExport,
-  tutorials,
-};
+export { dataImporter, github, keytar, mixpanel, raas, ros, schemaExport };
