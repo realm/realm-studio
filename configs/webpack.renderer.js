@@ -46,7 +46,8 @@ module.exports = (env, argv) => {
       ]
     },
     output: {
-      filename: '[name].bundle.js',
+      filename: 'renderer.bundle.js',
+      chunkFilename: '[name].renderer.bundle.js',
       publicPath: isDevelopment ? 'http://localhost:8080/' : '',
     },
     plugins: [

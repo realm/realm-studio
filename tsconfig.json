@@ -9,7 +9,6 @@
     "jsx": "react",
     "downlevelIteration": true,
     "noImplicitAny": true,
-    "removeComments": true,
     "sourceMap": true,
     "strict": true,
     "typeRoots": [
