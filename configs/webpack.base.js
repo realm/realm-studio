@@ -64,7 +64,6 @@ module.exports = (env, argv) => {
       alias: {
         'realm-studio-styles': resolve(__dirname, '../styles'),
         'realm-studio-svgs': resolve(__dirname, '../static/svgs'),
-        'realm-studio-tutorials': resolve(__dirname, '../tutorials'),
       },
       extensions: ['.ts', '.tsx', '.js', '.jsx', '.html', '.scss', '.svg'],
     },
