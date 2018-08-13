@@ -640,7 +640,7 @@ class ContentContainer extends React.Component<
 
     // If we have items to show - popup the menu
     if (contextMenu.items.length > 0) {
-      contextMenu.popup(electron.remote.getCurrentWindow(), {
+      contextMenu.popup({
         x: e.clientX,
         y: e.clientY,
       });
