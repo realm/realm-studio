@@ -29,9 +29,7 @@ export interface IServerAdministrationWindowProps {
 // TODO: Consider if we can have the window not show before a connection has been established.
 
 export const ServerAdministrationWindow: IWindow = {
-  getWindowOptions: (
-    props: IServerAdministrationWindowProps,
-  ): Partial<Electron.BrowserWindowConstructorOptions> => {
+  getWindowOptions: (props: IServerAdministrationWindowProps) => {
     const credentials = props.credentials;
     const url = credentials ? credentials.url : 'http://...';
     return {

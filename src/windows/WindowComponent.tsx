@@ -34,7 +34,7 @@ import {
   IMenuGeneratorProps,
 } from './MenuGenerator';
 import { getWindowClass, InnerWindowComponent } from './Window';
-import { WindowType, WindowTypedProps } from './WindowTypedProps';
+import { WindowOptions, WindowType } from './WindowOptions';
 
 // TODO: Consider if we can have the window not show before a connection has been established.
 
@@ -43,34 +43,34 @@ interface ITrackedProperties {
   [name: string]: string;
 }
 
-const getCurrentWindowProps = (): WindowTypedProps => {
+const getWindowOptions = (): WindowOptions => {
   // Strip away the "?" of the location.search
   const queryString = location.search.substr(1);
-  const query = querystring.parse<{ props: string }>(queryString);
-  if (query && typeof query.props === 'string') {
-    return JSON.parse(query.props);
+  const query = querystring.parse<{ options?: string }>(queryString);
+  if (query && typeof query.options === 'string') {
+    return JSON.parse(query.options);
   } else {
-    throw new Error('Expected "props" in the query parameters');
+    throw new Error('Expected "options" in the query parameters');
   }
 };
 
 export abstract class WindowComponent extends React.Component
   implements IMenuGeneratorProps {
   protected menuGenerator?: IMenuGenerator;
-  protected windowProps = getCurrentWindowProps();
-  protected CurrentWindow = getWindowClass(this.windowProps);
+  protected options = getWindowOptions();
+  protected CurrentWindow = getWindowClass(this.options.type);
   protected CurrentWindowComponent?: InnerWindowComponent;
 
   public componentDidMount() {
     const trackedProperties: ITrackedProperties = {
-      ...this.CurrentWindow.getTrackedProperties(this.windowProps),
-      type: this.windowProps.type,
+      ...this.CurrentWindow.getTrackedProperties(this.options.props),
+      type: this.options.type,
     };
 
     mixpanel.track('Window opened', trackedProperties);
     sentry.addBreadcrumb({
       category: 'ui.window',
-      message: `Opened '${this.windowProps.type}' window`,
+      message: `Opened '${this.options.type}' window`,
     });
     // Generate the menu now and whenever the window gets focus
     this.updateMenu();
@@ -89,7 +89,7 @@ export abstract class WindowComponent extends React.Component
   public render() {
     return this.CurrentWindowComponent ? (
       <this.CurrentWindowComponent
-        {...this.windowProps}
+        {...this.options.props}
         updateMenu={this.updateMenu}
         ref={this.windowComponentRef}
       />
@@ -115,11 +115,11 @@ export abstract class WindowComponent extends React.Component
   private onFocussed = () => {
     this.updateMenu();
     sentry.setTagsContext({
-      'window-type': this.windowProps.type,
+      'window-type': this.options.type,
     });
     sentry.addBreadcrumb({
       category: 'ui.window',
-      message: `Focussed '${this.windowProps.type}' window`,
+      message: `Focussed '${this.options.type}' window`,
     });
   };
 }

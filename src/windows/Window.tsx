@@ -17,11 +17,11 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import { IMenuGeneratorProps } from './MenuGenerator';
+import { WindowOptions, WindowType } from './WindowOptions';
 import { WindowProps } from './WindowProps';
-import { WindowTypedProps } from './WindowTypedProps';
 
 export type InnerWindowComponent = React.ComponentClass<
-  WindowTypedProps & IMenuGeneratorProps
+  WindowProps & IMenuGeneratorProps
 >;
 
 export interface IWindow {
@@ -38,21 +38,21 @@ import { GreetingWindow } from './GreetingWindow';
 import { RealmBrowserWindow } from './RealmBrowserWindow';
 import { ServerAdministrationWindow } from './ServerAdministrationWindow';
 
-export function getWindowClass(props: WindowTypedProps): IWindow {
+export function getWindowClass(type: WindowType): IWindow {
   // We're using calls to require here, to prevent loading anything that does not
   // relate to the specific window being loaded.
-  if (props.type === 'cloud-authentication') {
+  if (type === 'cloud-authentication') {
     return CloudAuthenticationWindow;
-  } else if (props.type === 'connect-to-server') {
+  } else if (type === 'connect-to-server') {
     return ConnectToServerWindow;
-  } else if (props.type === 'greeting') {
+  } else if (type === 'greeting') {
     return GreetingWindow;
-  } else if (props.type === 'realm-browser') {
+  } else if (type === 'realm-browser') {
     return RealmBrowserWindow;
-  } else if (props.type === 'server-administration') {
+  } else if (type === 'server-administration') {
     return ServerAdministrationWindow;
   } else {
-    throw new Error(`Unexpected window type: ${(props as any).type}`);
+    throw new Error(`Unexpected window type: ${type}`);
   }
 }
 
@@ -60,9 +60,10 @@ export function getWindowClass(props: WindowTypedProps): IWindow {
  * Generate options that should get passed to the BrowserWindow constructor,
  * when opening a particular window type.
  */
-export function getWindowOptions(
-  props: WindowTypedProps,
-): Partial<Electron.BrowserWindowConstructorOptions> {
-  const WindowClass = getWindowClass(props);
+export function getWindowOptions({
+  type,
+  props,
+}: WindowOptions): Partial<Electron.BrowserWindowConstructorOptions> {
+  const WindowClass = getWindowClass(type);
   return WindowClass.getWindowOptions(props);
 }

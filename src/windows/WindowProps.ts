@@ -16,6 +16,10 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+/**
+ * A WindowProps object is passed to the UI component when mounted and describes the internal properties for that.
+ */
+
 import { ICloudAuthenticationWindowProps } from './CloudAuthenticationWindow';
 import { IConnectToServerWindowProps } from './ConnectToServerWindow';
 import { IGreetingWindowProps } from './GreetingWindow';

@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import { InnerWindowComponent, IWindow } from './Window';
+import { IWindow } from './Window';
 
 // tslint:disable-next-line:no-empty-interface
 export interface IGreetingWindowProps {
@@ -24,7 +24,7 @@ export interface IGreetingWindowProps {
 }
 
 export const GreetingWindow: IWindow = {
-  getWindowOptions: (): Partial<Electron.BrowserWindowConstructorOptions> => ({
+  getWindowOptions: () => ({
     title: `Realm Studio`,
     width: 600,
     height: 400,

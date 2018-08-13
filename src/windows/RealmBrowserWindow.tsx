@@ -39,9 +39,7 @@ const getRealmUrl = (realm: ros.realms.ISyncedRealmToLoad) => {
 // TODO: Consider if we can have the window not show before a connection has been established.
 
 export const RealmBrowserWindow: IWindow = {
-  getWindowOptions: (
-    props: IRealmBrowserWindowProps,
-  ): Partial<Electron.BrowserWindowConstructorOptions> => {
+  getWindowOptions: (props: IRealmBrowserWindowProps) => {
     return {
       title:
         props.realm.mode === 'synced'

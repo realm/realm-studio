@@ -17,14 +17,13 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import { IWindow } from './Window';
-import { IConnectToServerWindowTypedProps } from './WindowTypedProps';
 
 export interface IConnectToServerWindowProps {
   url?: string;
 }
 
 export const ConnectToServerWindow: IWindow = {
-  getWindowOptions: (): Partial<Electron.BrowserWindowConstructorOptions> => ({
+  getWindowOptions: () => ({
     title: 'Connect to Realm Object Server',
     width: 500,
     height: 300,

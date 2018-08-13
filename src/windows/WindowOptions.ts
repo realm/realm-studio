@@ -22,6 +22,7 @@ import {
   IGreetingWindowProps,
   IRealmBrowserWindowProps,
   IServerAdministrationWindowProps,
+  WindowProps,
 } from './WindowProps';
 
 export type WindowType =
@@ -31,33 +32,42 @@ export type WindowType =
   | 'realm-browser'
   | 'server-administration';
 
-export interface ICloudAuthenticationWindowTypedProps
-  extends ICloudAuthenticationWindowProps {
+/**
+ * A WindowOptions object contains the type of window and the props getting passed to its UI component
+ */
+interface IWindowOptions {
+  type: WindowType;
+  props: WindowProps;
+}
+
+export interface ICloudAuthenticationWindowOptions extends IWindowOptions {
   type: 'cloud-authentication';
+  props: ICloudAuthenticationWindowProps;
 }
 
-export interface IConnectToServerWindowTypedProps
-  extends IConnectToServerWindowProps {
+export interface IConnectToServerWindowOptions extends IWindowOptions {
   type: 'connect-to-server';
+  props: IConnectToServerWindowProps;
 }
 
-export interface IGreetingWindowTypedProps extends IGreetingWindowProps {
+export interface IGreetingWindowOptions extends IWindowOptions {
   type: 'greeting';
+  props: IGreetingWindowProps;
 }
 
-export interface IRealmBrowserWindowTypedProps
-  extends IRealmBrowserWindowProps {
+export interface IRealmBrowserWindowOptions extends IWindowOptions {
   type: 'realm-browser';
+  props: IRealmBrowserWindowProps;
 }
 
-export interface IServerAdministrationWindowTypedProps
-  extends IServerAdministrationWindowProps {
+export interface IServerAdministrationWindowOptions extends IWindowOptions {
   type: 'server-administration';
+  props: IServerAdministrationWindowProps;
 }
 
-export type WindowTypedProps =
-  | ICloudAuthenticationWindowTypedProps
-  | IConnectToServerWindowTypedProps
-  | IGreetingWindowTypedProps
-  | IRealmBrowserWindowTypedProps
-  | IServerAdministrationWindowTypedProps;
+export type WindowOptions =
+  | ICloudAuthenticationWindowOptions
+  | IConnectToServerWindowOptions
+  | IGreetingWindowOptions
+  | IRealmBrowserWindowOptions
+  | IServerAdministrationWindowOptions;

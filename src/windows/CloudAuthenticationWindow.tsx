@@ -23,9 +23,7 @@ export interface ICloudAuthenticationWindowProps {
 }
 
 export const CloudAuthenticationWindow: IWindow = {
-  getWindowOptions: (
-    props: ICloudAuthenticationWindowProps,
-  ): Partial<Electron.BrowserWindowConstructorOptions> => {
+  getWindowOptions: () => {
     return {
       title: `Realm Cloud`,
       width: 400,
