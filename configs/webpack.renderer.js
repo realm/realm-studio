@@ -14,7 +14,9 @@ module.exports = (env, argv) => {
       hot: true,
       inline: true
     } : {},
-    entry: './src/renderer.tsx',
+    entry: {
+      renderer: "./src/renderer.tsx",
+    },
     module: {
       rules: [
         {
@@ -45,6 +47,7 @@ module.exports = (env, argv) => {
     },
     output: {
       filename: 'renderer.bundle.js',
+      chunkFilename: '[name].renderer.bundle.js',
       publicPath: isDevelopment ? 'http://localhost:8080/' : '',
     },
     plugins: [

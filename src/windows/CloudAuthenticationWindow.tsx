@@ -23,15 +23,17 @@ export interface ICloudAuthenticationWindowProps {
 }
 
 export const CloudAuthenticationWindow: IWindow = {
-  getWindowOptions: (
-    props: ICloudAuthenticationWindowProps,
-  ): Partial<Electron.BrowserWindowConstructorOptions> => {
+  getWindowOptions: () => {
     return {
       title: `Realm Cloud`,
       width: 400,
       height: 450,
     };
   },
-  getComponent: () => require('../ui').CloudAuthentication,
+  getComponent: () =>
+    import(/* webpackChunkName: "cloud-authentication" */ '../ui/CloudAuthentication').then(
+      // TODO: Fix the props for this to include a type
+      m => m.CloudAuthentication as any,
+    ),
   getTrackedProperties: () => ({}),
 };

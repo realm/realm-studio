@@ -29,9 +29,7 @@ export interface IServerAdministrationWindowProps {
 // TODO: Consider if we can have the window not show before a connection has been established.
 
 export const ServerAdministrationWindow: IWindow = {
-  getWindowOptions: (
-    props: IServerAdministrationWindowProps,
-  ): Partial<Electron.BrowserWindowConstructorOptions> => {
+  getWindowOptions: (props: IServerAdministrationWindowProps) => {
     const credentials = props.credentials;
     const url = credentials ? credentials.url : 'http://...';
     return {
@@ -40,7 +38,11 @@ export const ServerAdministrationWindow: IWindow = {
       height: 600,
     };
   },
-  getComponent: () => require('../ui').ServerAdministration,
+  getComponent: () =>
+    import(/* webpackChunkName: "server-administration" */ '../ui/ServerAdministration').then(
+      // TODO: Fix the props for this to include a type
+      m => m.ServerAdministration as any,
+    ),
   getTrackedProperties: (props: IServerAdministrationWindowProps) => ({
     url: props.credentials.url,
   }),

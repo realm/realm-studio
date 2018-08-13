@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as assert from 'assert';
-import fs = require('fs-extra');
+import * as fs from 'fs-extra';
 import * as Realm from 'realm';
 import { Language, SchemaExporter } from '../index';
 import * as modelAll from './models/all/AllTypes';

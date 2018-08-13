@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
-import ObjectInspector = require('react-object-inspector');
+import { ReactObjectInspector } from '../../../module-wrappers/react-object-inspector';
 
 interface IContextInspectorProps {
   data: object;
@@ -64,7 +64,9 @@ function didExpandedPathsChange(a: IExpandedPaths, b: IExpandedPaths) {
   return false;
 }
 
-export class ContextInspector extends ObjectInspector<IContextInspectorProps> {
+export class ContextInspector extends ReactObjectInspector<
+  IContextInspectorProps
+> {
   // ObjectInspector mutates the expandedPaths object
   protected previouslyExpandedPaths?: IExpandedPaths;
 

@@ -17,19 +17,22 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import { IWindow } from './Window';
-import { IConnectToServerWindowTypedProps } from './WindowTypedProps';
 
 export interface IConnectToServerWindowProps {
   url?: string;
 }
 
 export const ConnectToServerWindow: IWindow = {
-  getWindowOptions: (): Partial<Electron.BrowserWindowConstructorOptions> => ({
+  getWindowOptions: () => ({
     title: 'Connect to Realm Object Server',
     width: 500,
     height: 300,
     resizable: false,
   }),
-  getComponent: () => require('../ui').ConnectToServer,
+  getComponent: () =>
+    import(/* webpackChunkName: "connect-to-server" */ '../ui/ConnectToServer').then(
+      // TODO: Fix the props for this to include a type
+      m => m.ConnectToServer as any,
+    ),
   getTrackedProperties: () => ({}),
 };

@@ -24,12 +24,16 @@ export interface IGreetingWindowProps {
 }
 
 export const GreetingWindow: IWindow = {
-  getWindowOptions: (): Partial<Electron.BrowserWindowConstructorOptions> => ({
+  getWindowOptions: () => ({
     title: `Realm Studio`,
     width: 600,
     height: 400,
     resizable: false,
   }),
-  getComponent: () => require('../ui').Greeting,
+  getComponent: () =>
+    import(/* webpackChunkName: "greeting" */ '../ui/Greeting').then(
+      // TODO: Fix the props for this to include a type
+      m => m.Greeting as any,
+    ),
   getTrackedProperties: () => ({}),
 };

@@ -30,6 +30,7 @@ import { realms } from '../services/ros';
 import { showError } from '../ui/reusable/errors';
 import {
   ICloudAuthenticationWindowProps,
+  IConnectToServerWindowProps,
   IRealmBrowserWindowProps,
   IServerAdministrationWindowProps,
 } from '../windows/WindowProps';
@@ -81,7 +82,7 @@ export class Application {
       return this.showCloudAuthentication(props, resolveUser);
     },
     [MainActions.ShowConnectToServer]: (url?: string) => {
-      return this.showConnectToServer(url);
+      return this.showConnectToServer({ url });
     },
     [MainActions.ShowGreeting]: () => {
       return this.showGreeting();
@@ -171,11 +172,11 @@ export class Application {
     this.cloudManager.deauthenticate();
   }
 
-  public async showConnectToServer(url?: string) {
+  public async showConnectToServer(props: IConnectToServerWindowProps) {
     return new Promise(resolve => {
       const window = this.windowManager.createWindow({
         type: 'connect-to-server',
-        url,
+        props,
       });
       window.show();
       window.webContents.once('did-finish-load', () => {
@@ -192,6 +193,7 @@ export class Application {
       return new Promise(resolve => {
         const window = this.windowManager.createWindow({
           type: 'greeting',
+          props: {},
         });
         // Save this for later
         this.greetingWindow = window;
@@ -277,7 +279,7 @@ export class Application {
     return new Promise(resolve => {
       const window = this.windowManager.createWindow({
         type: 'realm-browser',
-        ...props,
+        props,
       });
       window.show();
       window.webContents.once('did-finish-load', () => {
@@ -292,7 +294,7 @@ export class Application {
       // @see https://github.com/realm/realm-js/issues/1276
       const window = this.windowManager.createWindow({
         type: 'server-administration',
-        ...props,
+        props,
       });
       window.show();
       window.webContents.once('did-finish-load', () => {
@@ -314,7 +316,7 @@ export class Application {
     return new Promise((resolve, reject) => {
       const window = this.windowManager.createWindow({
         type: 'cloud-authentication',
-        ...props,
+        props,
       });
       const listener = (status: ICloudStatus) => {
         if (status.kind === 'authenticated') {

@@ -43,7 +43,8 @@ module.exports = (env, argv) => {
       libraryTarget: 'commonjs2'
     },
     plugins: [
-      new webpack.IgnorePlugin(/^.*$/, /src\/ui$/),
+      // Prevent the windows from loading the UI components
+      new webpack.IgnorePlugin(/\/ui/, /\/src\/windows$/),
     ].concat(isDevelopment ? [
       new Visualizer({
         filename: './main.statistics.html',

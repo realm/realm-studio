@@ -27,7 +27,7 @@ import {
   getRendererProcessDirectory,
 } from '../utils';
 import { getWindowOptions } from '../windows/Window';
-import { WindowTypedProps } from '../windows/WindowTypedProps';
+import { WindowOptions } from '../windows/WindowOptions';
 
 export interface IEventListenerCallbacks {
   blur?: () => void;
@@ -54,11 +54,11 @@ function getRendererHtmlPath() {
 export class WindowManager {
   public windows: IWindowHandle[] = [];
 
-  public createWindow(props: WindowTypedProps) {
-    const windowOptions = getWindowOptions(props);
+  public createWindow(options: WindowOptions) {
+    const windowOptions = getWindowOptions(options);
     sentry.addBreadcrumb({
       category: 'ui.window',
-      message: `Opening '${props.type}' window`,
+      message: `Opening '${options.type}' window`,
       data: {
         title: windowOptions.title,
       },
@@ -99,14 +99,14 @@ export class WindowManager {
 
     if (
       process.platform === 'darwin' &&
-      props.type === 'realm-browser' &&
-      props.realm.mode === 'local'
+      options.type === 'realm-browser' &&
+      options.props.realm.mode === 'local'
     ) {
-      window.setRepresentedFilename(props.realm.path);
+      window.setRepresentedFilename(options.props.realm.path);
     }
 
     const query: { [key: string]: string } = {
-      props: JSON.stringify(props),
+      options: JSON.stringify(options),
     };
 
     // @see https://reactjs.org/blog/2016/11/16/react-v15.4.0.html#profiling-components-with-chrome-timeline
@@ -157,7 +157,7 @@ export class WindowManager {
       // Loaded
       sentry.addBreadcrumb({
         category: 'ui.window',
-        message: `Closed '${props.type}' window`,
+        message: `Closed '${options.type}' window`,
       });
       // Wait a second for Windows to unlock the directory
       setTimeout(() => {

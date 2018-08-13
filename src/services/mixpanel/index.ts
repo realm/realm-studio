@@ -122,4 +122,4 @@ if (process.type === 'renderer') {
   }
 }
 
-export = mixpanel;
+export { mixpanel };
