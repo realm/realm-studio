@@ -24,12 +24,15 @@ const Empty = () => (
   <div className="Greeting__HistoryPanel__Empty">
     <p>Welcome to Realm Studio!</p>
     <p>
-      We have announced Realm Cloud: Realm Platform as a Service:{' '}
       <a
         href="https://realm.io/blog/realm-cloud-beta-waitlist/"
         target="_blank"
       >
-        Click to read more
+        Realm Cloud
+      </a>{' '}
+      is out of beta:{' '}
+      <a href="https://realm.io/pricing" target="_blank">
+        See options
       </a>.
     </p>
   </div>
