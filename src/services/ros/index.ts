@@ -123,16 +123,21 @@ export const fetchAuthenticated = async (
   }
   const request = new Request(url.toString(), options);
   const response = await fetch(request);
-  if (response.ok) {
+  // Check that the content type is JSON
+  const contentType = response.headers.get('content-type') || '';
+  const isJson = contentType.startsWith('application/json');
+  // Return parsed JSON or throw an error
+  if (response.ok && isJson) {
     return response.json();
-  } else if (response.status === 404) {
-    throw new FetchError(intent, response);
-  } else {
+  } else if (isJson) {
     const body = await response.json();
-    if (body && body.message) {
-      throw new FetchError(`${intent}: ${body.message}`, response);
+    const message = body ? body.message || body.title : null;
+    if (message) {
+      throw new FetchError(`${intent}: ${message}`, response);
     } else {
       throw new FetchError(intent, response);
     }
+  } else {
+    throw new FetchError(intent, response);
   }
 };
