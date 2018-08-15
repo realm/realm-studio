@@ -48,9 +48,9 @@ jobWrapper {
 
       // Upload the build artifacts to S3
       def s3Config = packageJson.build.publish[0]
-      // Move json and yml files to another folder and upload them after other archives.
+      // Move yml files to another folder and upload them after other archives.
       // This is to prevent clients from trying to upgrade before the files are there.
-      sh 'mkdir dist-finally && mv dist/*.json dist/*.yml dist-finally'
+      sh 'mkdir dist-finally && mv dist/*.yml dist-finally'
       dir('dist') {
         rlmS3Put(bucket: s3Config.bucket, path: s3Config.path)
       }
@@ -146,7 +146,7 @@ def packageForMac() {
       nvm(version: nodeVersion) {
         // Using via-nvm.sh wraps ensures the correct version of node and npm.
         sh './scripts/via-nvm.sh npm install --quiet'
-        
+
         withCredentials([
           string(credentialsId: 'realm-studio-sentry-token', variable: 'SENTRY_AUTH_TOKEN')
         ]) {
