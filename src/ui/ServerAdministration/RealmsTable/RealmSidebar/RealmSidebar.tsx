@@ -19,14 +19,17 @@
 import * as React from 'react';
 import * as Realm from 'realm';
 
+import { IDeletionProgress, RealmFile } from '..';
 import * as ros from '../../../../services/ros';
 import { Sidebar } from '../../shared/Sidebar';
 
-import { RealmSidebarCard } from './RealmSidebarCard';
+import { MultipleRealmsSidebarCard } from './MultipleRealmsSidebarCard';
+import { SingleRealmSidebarCard } from './SingleRealmSidebarCard';
 
 import './RealmSidebar.scss';
 
 export const RealmSidebar = ({
+  deletionProgress,
   getRealmPermissions,
   getRealmStateSize,
   isOpen,
@@ -34,34 +37,34 @@ export const RealmSidebar = ({
   onRealmOpened,
   onRealmTypeUpgrade,
   onToggle,
-  realm,
+  realms,
 }: {
-  getRealmPermissions: (path: string) => Realm.Results<ros.IPermission>;
-  getRealmStateSize: (path: string) => number | undefined;
+  deletionProgress?: IDeletionProgress;
+  getRealmPermissions: (realm: RealmFile) => Realm.Results<ros.IPermission>;
+  getRealmStateSize: (realm: RealmFile) => number | undefined;
   isOpen: boolean;
-  onRealmDeletion: (path: string) => void;
-  onRealmOpened: (path: string) => void;
-  onRealmTypeUpgrade: (path: string) => void;
+  onRealmDeletion: (realm: RealmFile) => void;
+  onRealmOpened: (realm: RealmFile) => void;
+  onRealmTypeUpgrade: (realm: RealmFile) => void;
   onToggle: () => void;
-  realm?: ros.IRealmFile;
-}) => {
-  // We need this type-hax because we don't want the IRealmFile to have a isValid method when it gets created
-  const currentRealm = realm
-    ? ((realm as any) as ros.IRealmFile & Realm.Object)
-    : undefined;
-  return (
-    <Sidebar className="RealmSidebar" isOpen={isOpen} onToggle={onToggle}>
-      {currentRealm &&
-        currentRealm.isValid() && (
-          <RealmSidebarCard
-            onRealmDeletion={onRealmDeletion}
-            onRealmOpened={onRealmOpened}
-            onRealmTypeUpgrade={onRealmTypeUpgrade}
-            permissions={getRealmPermissions(currentRealm.path)}
-            realm={currentRealm}
-            stateSize={getRealmStateSize(currentRealm.path)}
-          />
-        )}
-    </Sidebar>
-  );
-};
+  realms: RealmFile[];
+}) => (
+  <Sidebar className="RealmSidebar" isOpen={isOpen} onToggle={onToggle}>
+    {realms.length === 1 ? (
+      <SingleRealmSidebarCard
+        onRealmDeletion={onRealmDeletion}
+        onRealmOpened={onRealmOpened}
+        onRealmTypeUpgrade={onRealmTypeUpgrade}
+        permissions={getRealmPermissions(realms[0])}
+        realm={realms[0]}
+        stateSize={getRealmStateSize(realms[0])}
+      />
+    ) : realms.length > 1 ? (
+      <MultipleRealmsSidebarCard
+        deletionProgress={deletionProgress}
+        onRealmDeletion={onRealmDeletion}
+        realms={realms}
+      />
+    ) : null}
+  </Sidebar>
+);

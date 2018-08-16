@@ -28,8 +28,8 @@ import { querySomeFieldContainsText } from '../utils';
 import { UsersTable } from './UsersTable';
 
 export interface ISelection {
-  user: ros.IUser;
-  realms: Realm.Results<ros.IRealmFile>;
+  user: ros.User;
+  realms: Realm.Results<ros.RealmFile>;
 }
 
 export interface IUsersTableContainerProps {
@@ -61,7 +61,7 @@ class UsersTableContainer extends React.Component<
 
   protected users = memoize(
     (adminRealm: Realm, searchString: string, showSystemUsers: boolean) => {
-      let users = adminRealm.objects<ros.IUser>('User').sorted('userId');
+      let users = adminRealm.objects<ros.User>('User').sorted('userId');
       // Filter if a search string is specified
       if (searchString && searchString !== '') {
         const filterQuery = querySomeFieldContainsText(
@@ -101,6 +101,11 @@ class UsersTableContainer extends React.Component<
       this.state.searchString,
       this.state.showSystemUsers,
     );
+    // Determine if the selection is valid before passing it to the table
+    const selection =
+      this.state.selection && this.state.selection.user.isValid()
+        ? this.state.selection
+        : null;
     return (
       <UsersTable
         getUsersRealms={this.getUsersRealms}
@@ -110,6 +115,7 @@ class UsersTableContainer extends React.Component<
         onToggleChangePassword={this.onToggleChangePassword}
         onToggleCreateUser={this.onToggleCreateUser}
         onUserChangePassword={this.onUserChangePassword}
+        onUserClick={this.onUserClick}
         onUserCreated={this.onUserCreated}
         onUserDeletion={this.onUserDeletion}
         onUserMetadataAppended={this.onUserMetadataAppended}
@@ -117,31 +123,21 @@ class UsersTableContainer extends React.Component<
         onUserMetadataDeleted={this.onUserMetadataDeleted}
         onUserPasswordChanged={this.onUserPasswordChanged}
         onUserRoleChanged={this.onUserRoleChanged}
-        onUserSelected={this.onUserSelected}
+        onUsersDeselection={this.onUsersDeselection}
         searchString={this.state.searchString}
-        selection={this.state.selection}
+        selection={selection}
         users={users}
       />
     );
   }
 
-  public onUserSelected = (userId: string | null) => {
-    const { adminRealm } = this.props;
-    if (userId) {
-      const user = adminRealm.objectForPrimaryKey<ros.IUser>('User', userId);
-      if (!user) {
-        throw new Error(`Couldn't select user with ID ${userId}`);
-      }
-      const realms = this.getUsersRealms(user);
-      this.setState({ selection: { user, realms } });
-    } else {
-      this.setState({ selection: null });
-    }
+  public onUserClick = (e: React.MouseEvent<HTMLElement>, user: ros.User) => {
+    this.selectUser(user);
   };
 
-  public getUsersRealms = (user: ros.IUser): Realm.Results<ros.IRealmFile> => {
+  public getUsersRealms = (user: ros.IUser): Realm.Results<ros.RealmFile> => {
     return this.props.adminRealm
-      .objects<ros.IRealmFile>('RealmFile')
+      .objects<ros.RealmFile>('RealmFile')
       .filtered('owner = $0', user);
   };
 
@@ -159,7 +155,7 @@ class UsersTableContainer extends React.Component<
 
   public onUserChangePassword = (userId: string) => {
     this.setState({ isChangePasswordOpen: true });
-    this.onUserSelected(userId);
+    this.selectUserById(userId);
   };
 
   public onUserCreated = async (username: string, password: string) => {
@@ -168,7 +164,7 @@ class UsersTableContainer extends React.Component<
       username,
       password,
     );
-    this.onUserSelected(userId);
+    this.selectUserById(userId);
   };
 
   public onUserDeletion = async (userId: string) => {
@@ -176,7 +172,7 @@ class UsersTableContainer extends React.Component<
     if (confirmed) {
       // Deselect the user before deleting it
       if (this.state.selection && this.state.selection.user.userId === userId) {
-        this.onUserSelected(null);
+        this.onUsersDeselection();
       }
       // Use the ROS API to delete a user, instead of changing the realm directly
       await ros.users.remove(this.props.user, userId);
@@ -253,6 +249,10 @@ class UsersTableContainer extends React.Component<
     }
   };
 
+  public onUsersDeselection = () => {
+    this.setState({ selection: null });
+  };
+
   public onSearchStringChange = (searchString: string) => {
     this.setState({ searchString });
   };
@@ -278,6 +278,21 @@ class UsersTableContainer extends React.Component<
     );
 
     return result === 1;
+  }
+
+  private selectUser(user: ros.User) {
+    const realms = this.getUsersRealms(user);
+    this.setState({ selection: { user, realms } });
+  }
+
+  private selectUserById(userId: string) {
+    const user = this.props.adminRealm.objectForPrimaryKey<ros.User>(
+      'User',
+      userId,
+    );
+    if (user) {
+      this.selectUser(user);
+    }
   }
 }
 
