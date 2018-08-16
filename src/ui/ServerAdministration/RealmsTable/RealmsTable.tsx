@@ -24,58 +24,67 @@ import { IPermission, IRealmFile } from '../../../services/ros';
 import {
   FilterableTable,
   FilterableTableWrapper,
+  IFilterableTableProps,
 } from '../shared/FilterableTable';
 import { FloatingControls } from '../shared/FloatingControls';
 import { displayUser, prettyBytes } from '../utils';
 
+import { IDeletionProgress, RealmFile } from '.';
 import { MissingSizeBadge } from './MissingSizeBadge';
 import { RealmSidebar } from './RealmSidebar';
 import { StateSizeHeader } from './StateSizeHeader';
 
+const FilterableRealmTable: React.ComponentType<
+  IFilterableTableProps<RealmFile>
+> = FilterableTable;
+
 export const RealmsTable = ({
-  getRealmFromId,
+  deletionProgress,
   getRealmPermissions,
   getRealmStateSize,
   isFetchRealmSizes,
+  onRealmClick,
   onRealmCreation,
   onRealmDeletion,
   onRealmOpened,
-  onRealmSelected,
+  onRealmsDeselection,
   onRealmStateSizeRefresh,
   onRealmTypeUpgrade,
   onSearchStringChange,
   realms,
   realmStateSizes,
   searchString,
-  selectedRealmPath,
+  selectedRealms,
 }: {
-  getRealmFromId: (path: string) => IRealmFile | undefined;
-  getRealmPermissions: (path: string) => Realm.Results<IPermission>;
-  getRealmStateSize: (path: string) => number | undefined;
+  deletionProgress?: IDeletionProgress;
+  getRealmPermissions: (realm: RealmFile) => Realm.Results<IPermission>;
+  getRealmStateSize: (realm: RealmFile) => number | undefined;
   isFetchRealmSizes: boolean;
+  onRealmClick: (e: React.MouseEvent<HTMLElement>, realm: RealmFile) => void;
   onRealmCreation: () => void;
-  onRealmDeletion: (path: string) => void;
-  onRealmOpened: (path: string) => void;
-  onRealmSelected: (path: string | null) => void;
+  onRealmDeletion: (...realms: RealmFile[]) => void;
+  onRealmOpened: (realm: RealmFile) => void;
+  onRealmsDeselection: () => void;
   onRealmStateSizeRefresh: () => void;
-  onRealmTypeUpgrade: (path: string) => void;
+  onRealmTypeUpgrade: (realm: RealmFile) => void;
   onSearchStringChange: (query: string) => void;
-  realms: Realm.Results<IRealmFile>;
+  realms: Realm.Results<RealmFile>;
   realmStateSizes?: { [path: string]: number };
   searchString: string;
-  selectedRealmPath: string | null;
+  selectedRealms: RealmFile[];
 }) => {
   return (
     <FilterableTableWrapper>
-      <FilterableTable
-        elementIdProperty="path"
+      <FilterableRealmTable
         elements={realms}
+        onElementClick={onRealmClick}
         onElementDoubleClick={onRealmOpened}
-        onElementSelected={onRealmSelected}
+        onElementsDeselection={onRealmsDeselection}
         onSearchStringChange={onSearchStringChange}
         searchPlaceholder="Search Realms"
         searchString={searchString}
-        selectedIdPropertyValue={selectedRealmPath}
+        selectedElements={selectedRealms}
+        isElementsEqual={(a, b) => a.path === b.path}
       >
         <Column label="Path" dataKey="path" width={500} />
         <Column
@@ -110,25 +119,22 @@ export const RealmsTable = ({
             )
           }
         />
-      </FilterableTable>
+      </FilterableRealmTable>
 
-      <FloatingControls isOpen={selectedRealmPath === null}>
+      <FloatingControls isOpen={selectedRealms.length === 0}>
         <Button onClick={onRealmCreation}>Create new Realm</Button>
       </FloatingControls>
 
       <RealmSidebar
+        deletionProgress={deletionProgress}
         getRealmPermissions={getRealmPermissions}
         getRealmStateSize={getRealmStateSize}
-        isOpen={selectedRealmPath !== null}
+        isOpen={selectedRealms.length > 0}
         onRealmDeletion={onRealmDeletion}
         onRealmOpened={onRealmOpened}
         onRealmTypeUpgrade={onRealmTypeUpgrade}
-        onToggle={() => onRealmSelected(null)}
-        realm={
-          selectedRealmPath !== null
-            ? getRealmFromId(selectedRealmPath)
-            : undefined
-        }
+        onToggle={() => onRealmsDeselection()}
+        realms={selectedRealms}
       />
     </FilterableTableWrapper>
   );

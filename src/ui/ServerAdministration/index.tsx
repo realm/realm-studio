@@ -81,7 +81,7 @@ class ServerAdministrationContainer
   /* A single promise that resolves when the server is available */
   protected availabilityPromise?: Promise<string | undefined>;
   /* A promise handle that gets returned when a user calls createRealm */
-  protected createRealmPromiseHandle?: IPromiseHandle<ros.IRealmFile>;
+  protected createRealmPromiseHandle?: IPromiseHandle<ros.RealmFile>;
   /* A list of object schemas to use when creating the next Realm */
   protected createRealmSchema?: Realm.ObjectSchema[];
 
@@ -488,7 +488,7 @@ class ServerAdministrationContainer
         // If we are waiting for the realm to be created - hang on to the path
         if (this.createRealmPromiseHandle) {
           // Because we awaited creation - the admin Realm has most probably synced already
-          const newRealmFile = this.realm.objectForPrimaryKey<ros.IRealmFile>(
+          const newRealmFile = this.realm.objectForPrimaryKey<ros.RealmFile>(
             'RealmFile',
             serverPath,
           );

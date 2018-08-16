@@ -20,13 +20,14 @@ import * as React from 'react';
 import { Button, Card, CardBody, CardText, CardTitle } from 'reactstrap';
 import * as Realm from 'realm';
 
+import { RealmFile } from '..';
 import * as ros from '../../../../services/ros';
 import { displayUser, prettyBytes, shortenRealmPath } from '../../utils';
 import { RealmTypeBadge } from '../RealmTypeBadge';
 
 import { PermissionsTable } from './PermissionsTable';
 
-export const RealmSidebarCard = ({
+export const SingleRealmSidebarCard = ({
   onRealmDeletion,
   onRealmOpened,
   onRealmTypeUpgrade,
@@ -34,10 +35,10 @@ export const RealmSidebarCard = ({
   realm,
   stateSize,
 }: {
-  onRealmDeletion: (path: string) => void;
-  onRealmOpened: (path: string) => void;
-  onRealmTypeUpgrade: (path: string) => void;
-  realm: ros.IRealmFile;
+  onRealmDeletion: (realm: RealmFile) => void;
+  onRealmOpened: (realm: RealmFile) => void;
+  onRealmTypeUpgrade: (realm: RealmFile) => void;
+  realm: RealmFile;
   permissions: Realm.Results<ros.IPermission>;
   stateSize?: number;
 }) => {
@@ -89,27 +90,19 @@ export const RealmSidebarCard = ({
         </CardBody>
       ) : null}
       <CardBody className="RealmSidebar__Controls">
-        <Button
-          size="sm"
-          color="primary"
-          onClick={() => onRealmOpened(realm.path)}
-        >
+        <Button size="sm" color="primary" onClick={() => onRealmOpened(realm)}>
           Open
         </Button>
         {canUpgradeType ? (
           <Button
             size="sm"
             color="secondary"
-            onClick={() => onRealmTypeUpgrade(realm.path)}
+            onClick={() => onRealmTypeUpgrade(realm)}
           >
             Upgrade
           </Button>
         ) : null}
-        <Button
-          size="sm"
-          color="danger"
-          onClick={() => onRealmDeletion(realm.path)}
-        >
+        <Button size="sm" color="danger" onClick={() => onRealmDeletion(realm)}>
           Delete
         </Button>
       </CardBody>

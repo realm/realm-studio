@@ -20,42 +20,63 @@ import * as React from 'react';
 
 import { RealmSidebar } from './RealmSidebar';
 
-import * as ros from '../../../../services/ros';
+import { IPermission } from '../../../../services/ros';
+
+import { IDeletionProgress, RealmFile } from '..';
 
 export interface IRealmSidebarContainerProps {
-  getRealmPermissions: (path: string) => Realm.Results<ros.IPermission>;
-  getRealmStateSize: (path: string) => number | undefined;
+  deletionProgress?: IDeletionProgress;
+  getRealmPermissions: (realm: RealmFile) => Realm.Results<IPermission>;
+  getRealmStateSize: (realm: RealmFile) => number | undefined;
   isOpen: boolean;
-  onRealmDeletion: (path: string) => void;
-  onRealmOpened: (path: string) => void;
-  onRealmTypeUpgrade: (path: string) => void;
+  onRealmDeletion: (...realms: RealmFile[]) => void;
+  onRealmOpened: (realm: RealmFile) => void;
+  onRealmTypeUpgrade: (realm: RealmFile) => void;
   onToggle: () => void;
-  realm?: ros.IRealmFile;
+  realms: RealmFile[];
 }
 
 export interface IRealmSidebarContainerState {
   // We store the realm in the state to render the realm while the sidebar is collapsing
-  realm?: ros.IRealmFile;
+  realms: RealmFile[];
 }
 
 export class RealmSidebarContainer extends React.Component<
   IRealmSidebarContainerProps,
   IRealmSidebarContainerState
 > {
-  public state: IRealmSidebarContainerState = {};
+  public state: IRealmSidebarContainerState = {
+    realms: [],
+  };
 
-  public componentDidUpdate(
-    prevProps: IRealmSidebarContainerProps,
-    prevState: IRealmSidebarContainerState,
-  ) {
+  public componentDidUpdate(prevProps: IRealmSidebarContainerProps) {
     // Update the state if a new realm was passed in via the props.
-    if (this.props.realm && prevProps.realm !== this.props.realm) {
-      this.setState({ realm: this.props.realm });
+    if (this.props.realms && prevProps.realms !== this.props.realms) {
+      this.setState({ realms: this.props.realms });
     }
   }
 
   public render() {
-    return <RealmSidebar {...this.props} {...this.state} {...this} />;
+    // Because we copy the list of Realms, they might be invalidated or deleted
+    const realms = this.state.realms || this.props.realms;
+    const validRealms = realms.filter(r => {
+      // Filter out the Realm objects
+      const realm: Realm.Object = r as any;
+      return realm.isValid();
+    });
+    return (
+      <RealmSidebar
+        deletionProgress={this.props.deletionProgress}
+        getRealmPermissions={this.props.getRealmPermissions}
+        getRealmStateSize={this.props.getRealmStateSize}
+        isOpen={this.props.isOpen}
+        onRealmDeletion={this.props.onRealmDeletion}
+        onRealmOpened={this.props.onRealmOpened}
+        onRealmTypeUpgrade={this.props.onRealmTypeUpgrade}
+        onToggle={this.props.onToggle}
+        realms={validRealms}
+      />
+    );
   }
 }
 

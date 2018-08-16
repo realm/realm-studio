@@ -18,7 +18,7 @@
 
 import * as React from 'react';
 
-import { ros } from '../../services';
+import { RealmFile } from '../../services/ros';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/LoadingOverlay';
 
 import { CreateRealmDialog } from './CreateRealmDialog';
@@ -46,7 +46,7 @@ interface IServerAdministrationProps {
   adminRealm?: Realm;
   adminRealmChanges: number;
   adminRealmProgress: ILoadingProgress;
-  createRealm: () => Promise<ros.IRealmFile>;
+  createRealm: () => Promise<RealmFile>;
   isCloudTenant: boolean;
   isCreateRealmOpen: boolean;
   isCreatingRealm: boolean;

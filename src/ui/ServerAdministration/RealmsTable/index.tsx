@@ -28,14 +28,21 @@ import { showError } from '../../reusable/errors';
 import { querySomeFieldContainsText, wait } from '../utils';
 import { RealmsTable } from './RealmsTable';
 
+export type RealmFile = ros.IRealmFile & Realm.Object;
+
 export type ValidateCertificatesChangeHandler = (
   validateCertificates: boolean,
 ) => void;
 
+export interface IDeletionProgress {
+  current: number;
+  total: number;
+}
+
 export interface IRealmTableContainerProps {
   adminRealm: Realm;
   adminRealmChanges: number;
-  createRealm: () => Promise<ros.IRealmFile>;
+  createRealm: () => Promise<RealmFile>;
   onRealmOpened: (path: string) => void;
   onValidateCertificatesChange: ValidateCertificatesChangeHandler;
   user: Realm.Sync.User;
@@ -45,10 +52,12 @@ export interface IRealmTableContainerProps {
 
 export interface IRealmTableContainerState {
   /** Prevents spamming the server too badly */
+  deletionProgress?: IDeletionProgress;
   isFetchRealmSizes: boolean;
   realmStateSizes?: { [path: string]: number };
   searchString: string;
-  selectedRealmPath: string | null;
+  // TODO: Update this once Realm JS has better support for Sets
+  selectedRealms: RealmFile[];
   showPartialRealms: boolean;
   showSystemRealms: boolean;
 }
@@ -59,7 +68,7 @@ class RealmsTableContainer extends React.PureComponent<
 > {
   public state: IRealmTableContainerState = {
     isFetchRealmSizes: false,
-    selectedRealmPath: null,
+    selectedRealms: [],
     searchString: '',
     showPartialRealms: store.shouldShowPartialRealms(),
     showSystemRealms: store.shouldShowSystemRealms(),
@@ -73,7 +82,7 @@ class RealmsTableContainer extends React.PureComponent<
       showSystemRealms: boolean,
     ) => {
       let realms = adminRealm
-        .objects<ros.IRealmFile>('RealmFile')
+        .objects<RealmFile>('RealmFile')
         .sorted('createdAt');
 
       // Filter if a search string is specified
@@ -117,23 +126,29 @@ class RealmsTableContainer extends React.PureComponent<
       this.state.showPartialRealms,
       this.state.showSystemRealms,
     );
+    const validSelectedRealms = this.state.selectedRealms.filter(r => {
+      // Filter out the Realm objects
+      const realm: Realm.Object = r as any;
+      return realm.isValid();
+    });
     return (
       <RealmsTable
-        getRealmFromId={this.getRealmFromId}
         getRealmPermissions={this.getRealmPermissions}
         getRealmStateSize={this.getRealmStateSize}
         isFetchRealmSizes={this.state.isFetchRealmSizes}
         onRealmCreation={this.onRealmCreation}
         onRealmDeletion={this.onRealmDeletion}
         onRealmOpened={this.onRealmOpened}
-        onRealmSelected={this.onRealmSelected}
+        onRealmsDeselection={this.onRealmsDeselection}
+        onRealmClick={this.onRealmClick}
         onRealmStateSizeRefresh={this.onRealmStateSizeRefresh}
         onRealmTypeUpgrade={this.onRealmTypeUpgrade}
         onSearchStringChange={this.onSearchStringChange}
         realms={realms}
         realmStateSizes={this.state.realmStateSizes}
         searchString={this.state.searchString}
-        selectedRealmPath={this.state.selectedRealmPath}
+        selectedRealms={validSelectedRealms}
+        deletionProgress={this.state.deletionProgress}
       />
     );
   }
@@ -160,31 +175,25 @@ class RealmsTableContainer extends React.PureComponent<
     });
   }
 
-  public getRealmFromId = (path: string): ros.IRealmFile | undefined => {
-    const { adminRealm } = this.props;
-    return adminRealm.objectForPrimaryKey<ros.IRealmFile>('RealmFile', path);
-  };
-
   public getRealmPermissions = (
-    path: string,
+    realm: RealmFile,
   ): Realm.Results<ros.IPermission> => {
     const { adminRealm } = this.props;
-    const realmFile = this.getRealmFromId(path);
     return adminRealm
       .objects<ros.IPermission>('Permission')
-      .filtered('realmFile == $0', realmFile);
+      .filtered('realmFile == $0', realm);
   };
 
-  public getRealmStateSize = (path: string) => {
+  public getRealmStateSize = (realm: RealmFile) => {
     if (this.state.realmStateSizes) {
-      return this.state.realmStateSizes[path];
+      return this.state.realmStateSizes[realm.path];
     }
   };
 
   public onRealmCreation = async () => {
     try {
       const realm = await this.props.createRealm();
-      this.onRealmSelected(realm.path);
+      this.setState({ selectedRealms: [realm] });
     } catch (err) {
       if (err.message === 'Realm creation cancelled') {
         // This is an expected expression to be thrown - no need to show it
@@ -194,41 +203,64 @@ class RealmsTableContainer extends React.PureComponent<
     }
   };
 
-  public onRealmDeletion = async (path: string) => {
-    const confirmed = this.confirmRealmDeletion(path);
+  public onRealmDeletion = async (...realms: RealmFile[]) => {
+    const confirmed = this.confirmRealmDeletion(...realms);
     if (confirmed) {
       try {
-        await ros.realms.remove(this.props.user, path);
-        if (path === this.state.selectedRealmPath) {
-          this.onRealmSelected(null);
+        for (let i = 0; i < realms.length; i++) {
+          this.setState({
+            deletionProgress: { current: i, total: realms.length },
+          });
+          const realm = realms[i];
+          await ros.realms.remove(this.props.user, realm.path);
         }
       } catch (err) {
-        showError('Error deleting realm', err);
+        showError('Error deleting realm(s)', err);
       }
+      // No matter what - reset the deletionProgress when done
+      this.setState({ deletionProgress: undefined });
+      this.onRealmsDeselection();
     }
   };
 
-  public onRealmOpened = (path: string) => {
-    this.props.onRealmOpened(path);
-    // Make sure the Realm that just got opened, is selected
-    this.onRealmSelected(path);
+  public onRealmOpened = (realm: RealmFile) => {
+    this.props.onRealmOpened(realm.path);
   };
 
-  public onRealmTypeUpgrade = async (path: string) => {
-    const confirmed = this.confirmRealmTypeUpgrade(path);
+  public onRealmTypeUpgrade = async (realm: RealmFile) => {
+    const confirmed = this.confirmRealmTypeUpgrade(realm.path);
     if (confirmed) {
       try {
-        await ros.realms.changeType(this.props.user, path, 'reference');
+        await ros.realms.changeType(this.props.user, realm.path, 'reference');
       } catch (err) {
         showError('Failed to upgrade the Realm', err);
       }
     }
   };
 
-  public onRealmSelected = (path: string | null) => {
-    this.setState({
-      selectedRealmPath: path,
-    });
+  public onRealmClick = (
+    e: React.MouseEvent<HTMLElement>,
+    realm: RealmFile,
+  ) => {
+    const isCurrentlySelected = !!this.state.selectedRealms.find(
+      r => r.isValid() && r.path === realm.path,
+    );
+    if (e.metaKey) {
+      // The user wants to modify the existing selection
+      if (isCurrentlySelected) {
+        this.deselectRealm(realm);
+      } else {
+        this.selectRealm(realm, true);
+      }
+    } else if (e.shiftKey && this.state.selectedRealms.length > 0) {
+      const lastRealm = this.state.selectedRealms[
+        this.state.selectedRealms.length - 1
+      ];
+      this.selectRealmsBetween(lastRealm, realm);
+    } else {
+      // The user wants to make a new selection
+      this.selectRealm(realm, false);
+    }
   };
 
   public onRealmStateSizeRefresh = () => {
@@ -236,6 +268,10 @@ class RealmsTableContainer extends React.PureComponent<
     this.fetchRealmSizes(true).then(undefined, err => {
       showError('Failed to fetch Realm sizes', err);
     });
+  };
+
+  public onRealmsDeselection = () => {
+    this.setState({ selectedRealms: [] });
   };
 
   public onSearchStringChange = (searchString: string) => {
@@ -270,14 +306,15 @@ class RealmsTableContainer extends React.PureComponent<
     }
   }
 
-  private confirmRealmDeletion(path: string): boolean {
+  private confirmRealmDeletion(...realms: RealmFile[]): boolean {
+    const paths = realms.map(r => r.path);
     const result = electron.remote.dialog.showMessageBox(
       electron.remote.getCurrentWindow(),
       {
         type: 'warning',
         message:
-          'Before deleting the Realm here, make sure that any / all clients (iOS, Android, Js, etc.) has already deleted the app or database locally. If this is not done, they will try to upload their copy of the database - which might have been replaced in the meantime.',
-        title: `Deleting ${path}`,
+          'Before deleting Realms here, make sure that any / all clients (iOS, Android, Js, etc.) has already deleted the app or database locally. If this is not done, they will try to upload their copy of the database - which might have been replaced in the meantime.',
+        title: `Deleting ${paths.join(', ')}`,
         buttons: ['Cancel', 'Delete'],
       },
     );
@@ -298,6 +335,47 @@ class RealmsTableContainer extends React.PureComponent<
     );
 
     return result === 1;
+  }
+
+  private selectRealm(realm: RealmFile, append = false) {
+    if (append) {
+      const { selectedRealms } = this.state;
+      const validSelectedRealms = selectedRealms.filter(r => r.isValid());
+      this.setState({ selectedRealms: [...validSelectedRealms, realm] });
+    } else {
+      this.setState({ selectedRealms: [realm] });
+    }
+  }
+
+  private deselectRealm(realm: RealmFile) {
+    this.setState({
+      selectedRealms: this.state.selectedRealms.filter(
+        r => r.isValid() && r.path !== realm.path,
+      ),
+    });
+  }
+
+  private getRealmsBetween(realmA: RealmFile, realmB: RealmFile) {
+    const realms = this.realms(
+      this.props.adminRealm,
+      this.state.searchString,
+      this.state.showPartialRealms,
+      this.state.showSystemRealms,
+    );
+    const realmAIndex = realms.indexOf(realmA);
+    const realmBIndex = realms.indexOf(realmB);
+    const startIndex = Math.min(realmAIndex, realmBIndex);
+    const endIndex = Math.max(realmAIndex, realmBIndex);
+    const result = [];
+    for (let i = startIndex; i <= endIndex; i++) {
+      result.push(realms[i]);
+    }
+    return result;
+  }
+
+  private selectRealmsBetween(realmA: RealmFile, realmB: RealmFile) {
+    const realmsBetween = this.getRealmsBetween(realmA, realmB);
+    this.setState({ selectedRealms: realmsBetween });
   }
 }
 
