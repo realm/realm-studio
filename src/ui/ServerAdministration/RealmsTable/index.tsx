@@ -135,13 +135,11 @@ class RealmsTableContainer extends React.PureComponent<
       <RealmsTable
         getRealmPermissions={this.getRealmPermissions}
         getRealmStateSize={this.getRealmStateSize}
-        isFetchRealmSizes={this.state.isFetchRealmSizes}
         onRealmCreation={this.onRealmCreation}
         onRealmDeletion={this.onRealmDeletion}
         onRealmOpened={this.onRealmOpened}
         onRealmsDeselection={this.onRealmsDeselection}
         onRealmClick={this.onRealmClick}
-        onRealmStateSizeRefresh={this.onRealmStateSizeRefresh}
         onRealmTypeUpgrade={this.onRealmTypeUpgrade}
         onSearchStringChange={this.onSearchStringChange}
         realms={realms}
@@ -265,13 +263,6 @@ class RealmsTableContainer extends React.PureComponent<
     }
   };
 
-  public onRealmStateSizeRefresh = () => {
-    // Fetch the realm sizes
-    this.fetchRealmSizes(true).then(undefined, err => {
-      showError('Failed to fetch Realm sizes', err);
-    });
-  };
-
   public onRealmsDeselection = () => {
     this.setState({ selectedRealms: [] });
   };
@@ -280,17 +271,10 @@ class RealmsTableContainer extends React.PureComponent<
     this.setState({ searchString });
   };
 
-  private async fetchRealmSizes(askServerToReport = false) {
+  private async fetchRealmSizes() {
     if (!this.state.isFetchRealmSizes) {
       try {
         this.setState({ isFetchRealmSizes: true });
-        if (askServerToReport) {
-          // Ask the server to recompute the realm sizes
-          await ros.realms.reportRealmStateSize(this.props.user);
-          // Wait half 200ms for the server to complete
-          // FIXME: This delay is a best guess - it could easily take longer time for the server to emit and process stats
-          await wait(1000);
-        }
         // Request the realm sizes from the server
         const sizes = await ros.realms.getSizes(this.props.user);
         // Update the state

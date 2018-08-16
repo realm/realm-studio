@@ -19,29 +19,23 @@
 import * as React from 'react';
 import { Popover, PopoverBody } from 'reactstrap';
 
-import { RefreshIcon } from './RefreshIcon';
-
 import './StateSizeHeader.scss';
 
 // @see https://github.com/bvaughn/react-virtualized/blob/9.18.5/source/Table/defaultHeaderRenderer.js
 
 interface IStateSizeHeaderProps {
   isPopoverOpen: boolean;
-  isRefreshing: boolean;
   label: string;
   labelElement?: HTMLElement;
   onLabelRef: (labelElement: HTMLElement) => void;
-  onRefresh: () => void;
   onTogglePopover: () => void;
 }
 
 export const StateSizeHeader = ({
   isPopoverOpen,
-  isRefreshing,
   label,
   labelElement,
   onLabelRef,
-  onRefresh,
   onTogglePopover,
 }: IStateSizeHeaderProps) => (
   <div className="ReactVirtualized__Table__headerTruncatedText">
@@ -57,10 +51,7 @@ export const StateSizeHeader = ({
         toggle={onTogglePopover}
         placement="bottom"
       >
-        <PopoverBody>
-          Recomputed every 30 minutes
-          <RefreshIcon onRefresh={onRefresh} isRefreshing={isRefreshing} />
-        </PopoverBody>
+        <PopoverBody>Recomputed every 30 minutes</PopoverBody>
       </Popover>
     ) : null}
   </div>
