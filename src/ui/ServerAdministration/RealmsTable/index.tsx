@@ -171,7 +171,9 @@ class RealmsTableContainer extends React.PureComponent<
     // Fetch the realm sizes
     // TODO: Check the this.props.serverVersion before fetching using the semver library
     this.fetchRealmSizes().then(undefined, err => {
-      showError('Failed to fetch Realm sizes', err);
+      // Logging errors instead of showing them, because the user made no interaction
+      // tslint:disable-next-line:no-console
+      console.error('Failed to fetch Realm sizes', err);
     });
   }
 
