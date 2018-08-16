@@ -21,6 +21,7 @@
 .Table {
   display: flex;
   flex-grow: 1;
+  user-select: none;
 
   &__content {
     display: flex;

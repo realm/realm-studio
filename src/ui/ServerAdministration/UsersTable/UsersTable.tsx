@@ -20,11 +20,12 @@ import * as React from 'react';
 import { Column } from 'react-virtualized';
 import { Button } from 'reactstrap';
 
-import * as ros from '../../../services/ros';
+import { IAccount, RealmFile, User, UserRole } from '../../../services/ros';
 
 import {
   FilterableTable,
   FilterableTableWrapper,
+  IFilterableTableProps,
 } from '../shared/FilterableTable';
 import { FloatingControls } from '../shared/FloatingControls';
 
@@ -32,6 +33,10 @@ import { ISelection } from '.';
 import { ChangePasswordDialog } from './ChangePasswordDialog';
 import { CreateUserDialog } from './CreateUserDialog';
 import { UserSidebar } from './UserSidebar';
+
+const FilterableUserTable: React.ComponentType<
+  IFilterableTableProps<User>
+> = FilterableTable;
 
 export const UsersTable = ({
   getUsersRealms,
@@ -41,6 +46,7 @@ export const UsersTable = ({
   onToggleChangePassword,
   onToggleCreateUser,
   onUserChangePassword,
+  onUserClick,
   onUserCreated,
   onUserDeletion,
   onUserMetadataAppended,
@@ -48,17 +54,18 @@ export const UsersTable = ({
   onUserMetadataDeleted,
   onUserPasswordChanged,
   onUserRoleChanged,
-  onUserSelected,
+  onUsersDeselection,
   searchString,
   selection,
   users,
 }: {
-  getUsersRealms: (user: ros.IUser) => Realm.Results<ros.IRealmFile>;
+  getUsersRealms: (user: User) => Realm.Results<RealmFile>;
   isChangePasswordOpen: boolean;
   isCreateUserOpen: boolean;
   onToggleChangePassword: () => void;
   onToggleCreateUser: () => void;
   onUserChangePassword: (userId: string) => void;
+  onUserClick: (e: React.MouseEvent<HTMLElement>, user: User) => void;
   onUserCreated: (username: string, password: string) => void;
   onUserDeletion: (userId: string) => void;
   onUserMetadataAppended: (userId: string) => void;
@@ -70,31 +77,31 @@ export const UsersTable = ({
   ) => void;
   onUserMetadataDeleted: (userId: string, index: number) => void;
   onUserPasswordChanged: (userId: string, password: string) => void;
-  onUserRoleChanged: (userId: string, role: ros.UserRole) => void;
-  onUserSelected: (userId: string | null) => void;
+  onUserRoleChanged: (userId: string, role: UserRole) => void;
+  onUsersDeselection: () => void;
   selection: ISelection | null;
-  users: Realm.Results<ros.IUser>;
+  users: Realm.Results<User>;
   searchString: string;
   onSearchStringChange: (query: string) => void;
 }) => {
   return (
     <FilterableTableWrapper>
-      <FilterableTable
-        searchString={searchString}
+      <FilterableUserTable
+        elements={users}
+        isElementsEqual={(a, b) => a.userId === b.userId}
+        onElementClick={onUserClick}
+        onElementsDeselection={onUsersDeselection}
         onSearchStringChange={onSearchStringChange}
         searchPlaceholder="Search users"
-        onElementSelected={onUserSelected}
-        onElementDoubleClick={onUserSelected}
-        elements={users}
-        elementIdProperty="userId"
-        selectedIdPropertyValue={selection ? selection.user.userId : null}
+        searchString={searchString}
+        selectedElements={selection ? [selection.user] : []}
       >
         <Column
           label="Provider Id(s)"
           dataKey="accounts"
           width={200}
           cellRenderer={({ cellData }) => {
-            const accounts = cellData as ros.IAccount[];
+            const accounts = cellData as IAccount[];
             return (
               <span>
                 {accounts.map((account, index) => (
@@ -120,19 +127,19 @@ export const UsersTable = ({
           dataKey="userId"
           width={100}
           cellRenderer={({ rowData }) => {
-            const user = rowData as ros.IUser;
+            const user = rowData as User;
             return getUsersRealms(user).length;
           }}
         />
-      </FilterableTable>
+      </FilterableUserTable>
 
       <FloatingControls isOpen={selection === null}>
         <Button onClick={onToggleCreateUser}>Create new user</Button>
       </FloatingControls>
 
       <UserSidebar
-        isOpen={selection !== null}
-        onToggle={() => onUserSelected(null)}
+        isOpen={!!selection}
+        onToggle={onUsersDeselection}
         onUserChangePassword={onUserChangePassword}
         onUserDeletion={onUserDeletion}
         onUserMetadataAppended={onUserMetadataAppended}
