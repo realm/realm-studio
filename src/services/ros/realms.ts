@@ -167,18 +167,6 @@ export const getStats = async (
   );
 };
 
-export const reportRealmStateSize = async (
-  user: Realm.Sync.User,
-  path: string = '',
-) => {
-  return fetchAuthenticated(
-    user,
-    `/stats/report-realm-state-size/${path}`,
-    { method: 'POST' },
-    'Failed to report realm state size',
-  );
-};
-
 export const getSizes = async (user: Realm.Sync.User) => {
   const metrics = await getStats(user, 'ros_sync_realm_state_size');
   if (metrics.ros_sync_realm_state_size) {

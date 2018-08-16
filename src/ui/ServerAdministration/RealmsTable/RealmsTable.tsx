@@ -42,13 +42,11 @@ export const RealmsTable = ({
   deletionProgress,
   getRealmPermissions,
   getRealmStateSize,
-  isFetchRealmSizes,
   onRealmClick,
   onRealmCreation,
   onRealmDeletion,
   onRealmOpened,
   onRealmsDeselection,
-  onRealmStateSizeRefresh,
   onRealmTypeUpgrade,
   onSearchStringChange,
   realms,
@@ -59,13 +57,11 @@ export const RealmsTable = ({
   deletionProgress?: IDeletionProgress;
   getRealmPermissions: (realm: RealmFile) => Realm.Results<IPermission>;
   getRealmStateSize: (realm: RealmFile) => number | undefined;
-  isFetchRealmSizes: boolean;
   onRealmClick: (e: React.MouseEvent<HTMLElement>, realm: RealmFile) => void;
   onRealmCreation: () => void;
   onRealmDeletion: (...realms: RealmFile[]) => void;
   onRealmOpened: (realm: RealmFile) => void;
   onRealmsDeselection: () => void;
-  onRealmStateSizeRefresh: () => void;
   onRealmTypeUpgrade: (realm: RealmFile) => void;
   onSearchStringChange: (query: string) => void;
   realms: Realm.Results<RealmFile>;
@@ -104,13 +100,7 @@ export const RealmsTable = ({
           dataKey="path"
           /* Don't show the size column if all sizes are unknown */
           width={realmStateSizes ? 100 : 0}
-          headerRenderer={props => (
-            <StateSizeHeader
-              {...props}
-              isRefreshing={isFetchRealmSizes}
-              onRefresh={onRealmStateSizeRefresh}
-            />
-          )}
+          headerRenderer={props => <StateSizeHeader {...props} />}
           cellRenderer={({ cellData }) =>
             realmStateSizes && typeof realmStateSizes[cellData] === 'number' ? (
               prettyBytes(realmStateSizes[cellData])
