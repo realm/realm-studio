@@ -31,17 +31,23 @@ export interface IUser {
   metadata: IUserMetadataRow[];
 }
 
+export type User = IUser & Realm.Object;
+
 export interface IAccount {
   provider: string;
   providerId: string;
   user?: IUser[];
 }
 
+export type Account = IAccount & Realm.Object;
+
 export interface IUserMetadataRow {
   user?: IUser[];
   key: string;
   value?: string;
 }
+
+export type UserMetadataRow = IUserMetadataRow & Realm.Object;
 
 export type RealmType = 'reference' | 'partial' | 'full';
 
@@ -54,12 +60,16 @@ export interface IRealmFile {
   realmType?: RealmType;
 }
 
+export type RealmFile = IRealmFile & Realm.Object;
+
 export interface IPermission {
   user: IUser;
   mayRead: boolean;
   mayWrite: boolean;
   mayManage: boolean;
 }
+
+export type Permission = IPermission & Realm.Object;
 
 export enum AccessLevel {
   none,
