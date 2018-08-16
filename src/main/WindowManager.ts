@@ -150,8 +150,14 @@ export class WindowManager {
 
     window.on('closed', () => {
       const index = this.windows.findIndex(handle => handle.window === window);
-      const { processDir } = this.windows[index];
       if (index > -1) {
+        // Only read out the processDir if the window is still present
+        const { processDir } = this.windows[index];
+        // Wait a second for Windows to unlock the directory before deleting it
+        setTimeout(() => {
+          this.cleanupRendererProcessDirectory(processDir);
+        }, 1000);
+        // Remove the window
         this.windows.splice(index, 1);
       }
       // Loaded
@@ -159,10 +165,6 @@ export class WindowManager {
         category: 'ui.window',
         message: `Closed '${options.type}' window`,
       });
-      // Wait a second for Windows to unlock the directory
-      setTimeout(() => {
-        this.cleanupRendererProcessDirectory(processDir);
-      }, 1000);
     });
 
     return window;
