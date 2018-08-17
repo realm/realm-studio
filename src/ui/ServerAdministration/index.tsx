@@ -36,6 +36,7 @@ import {
   IMenuGenerator,
   IMenuGeneratorProps,
 } from '../../windows/MenuGenerator';
+import { IServerAdministrationWindowOptions } from '../../windows/WindowOptions';
 import { IServerAdministrationWindowProps } from '../../windows/WindowProps';
 import { showError } from '../reusable/errors';
 import {
@@ -458,9 +459,17 @@ class ServerAdministrationContainer
 
   protected onValidateCertificatesChange = (validateCertificates: boolean) => {
     const url = new URL(location.href);
-    const props = { ...this.props };
-    props.validateCertificates = validateCertificates;
-    url.searchParams.set('props', JSON.stringify(props));
+    // Get the options
+    const windowOptions: IServerAdministrationWindowOptions = JSON.parse(
+      url.searchParams.get('options') || '{}',
+    );
+    // Update the options
+    windowOptions.props.validateCertificates = validateCertificates;
+    // Set the options
+    url.searchParams.set('options', JSON.stringify(windowOptions));
+    // Change location to update the props
+    // This is needed because Realm JS cannot reconfigure the sync session
+    // @see https://github.com/realm/realm-js/issues/1469
     location.replace(url.toString());
   };
 
