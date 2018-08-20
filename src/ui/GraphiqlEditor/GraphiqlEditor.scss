@@ -16,15 +16,4 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import GraphiQL, { Fetcher } from 'graphiql';
-import * as React from 'react';
-
-import './GraphiqlEditor.scss';
-
-interface IGraphiqlEditorProps {
-  fetcher: Fetcher;
-}
-
-export const GraphiqlEditor = ({ fetcher }: IGraphiqlEditorProps) => (
-  <GraphiQL fetcher={fetcher} />
-);
+@import "~graphiql/graphiql.css";

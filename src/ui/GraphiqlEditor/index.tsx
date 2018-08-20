@@ -17,20 +17,86 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
+import { Credentials, User } from 'realm-graphql-client';
 
 import { IGraphiqlEditorWindowProps } from '../../windows/WindowProps';
+import { showError } from '../reusable/errors';
 
 import { GraphiqlEditor } from './GraphiqlEditor';
 
 type IGraphiqlEditorContainerProps = IGraphiqlEditorWindowProps;
 
+interface IGraphiqlEditorContainerState {
+  user?: User;
+}
+
 class GraphiqlEditorContainer extends React.Component<
   IGraphiqlEditorContainerProps,
-  {}
+  IGraphiqlEditorContainerState
 > {
-  public render() {
-    return <GraphiqlEditor />;
+  public state: IGraphiqlEditorContainerState = {};
+
+  public componentDidMount() {
+    this.authenticate().then(undefined, err => {
+      showError('Failed to authenticate', err);
+    });
   }
+
+  public render() {
+    return this.state.user ? <GraphiqlEditor fetcher={this.fetcher} /> : null;
+  }
+
+  private async authenticate() {
+    const credentials = this.getCredentials();
+    const user = await User.authenticate(
+      credentials,
+      this.props.credentials.url,
+    );
+    this.setState({
+      user,
+    });
+  }
+
+  private getCredentials() {
+    const credentials = this.props.credentials;
+    if (credentials.kind === 'password') {
+      return Credentials.usernamePassword(
+        credentials.username,
+        credentials.password,
+        false,
+      );
+    } else if (credentials.kind === 'token') {
+      return Credentials.admin(credentials.token);
+    } else if (credentials.kind === 'other') {
+      const c = new Credentials();
+      Object.assign(c, credentials.options);
+      return c;
+    } else {
+      throw new Error(
+        `Unexpected kind of credentials: ${(credentials as any).kind}`,
+      );
+    }
+  }
+
+  private fetcher = (graphQLParams: object) => {
+    if (this.state.user) {
+      const encodedPath = encodeURI(this.props.path);
+      const url = new URL(
+        `/graphql/${encodedPath}`,
+        this.props.credentials.url,
+      );
+      return fetch(url.toString(), {
+        method: 'post',
+        headers: {
+          Authorization: this.state.user.token,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(graphQLParams),
+      }).then(response => response.json());
+    } else {
+      throw new Error('Graphiql was fetching before authenticated');
+    }
+  };
 }
 
 export { GraphiqlEditorContainer as GraphiqlEditor };
