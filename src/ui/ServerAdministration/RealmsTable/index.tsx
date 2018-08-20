@@ -51,7 +51,7 @@ export interface IDeletionProgress {
 export interface IRealmTableContainerProps {
   adminRealm: Realm;
   createRealm: () => Promise<RealmFile>;
-  onRealmOpened: (path: string) => void;
+  onRealmOpened: (path: string, usingGrahpiql?: boolean) => void;
   user: Realm.Sync.User;
   serverVersion?: string;
 }
@@ -234,8 +234,8 @@ class RealmsTableContainer extends React.Component<
     }
   };
 
-  public onRealmOpened = (realm: RealmFile) => {
-    this.props.onRealmOpened(realm.path);
+  public onRealmOpened = (realm: RealmFile, usingGrahpiql = false) => {
+    this.props.onRealmOpened(realm.path, usingGrahpiql);
   };
 
   public onRealmTypeUpgrade = async (realm: RealmFile) => {

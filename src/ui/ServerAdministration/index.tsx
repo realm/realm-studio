@@ -180,29 +180,36 @@ class ServerAdministrationContainer
   }
 
   // TODO: Once the user serializes better, this method should be moved to the ./realms/RealmsTableContainer.tsx
-  private onRealmOpened = async (path: string) => {
+  private onRealmOpened = async (path: string, usingGrahpiql = false) => {
     if (!this.state.isRealmOpening && this.adminRealm) {
       this.setState({ isRealmOpening: true });
       try {
-        const realm: ISyncedRealmToLoad = {
-          user: this.props.user,
-          mode: RealmLoadingMode.Synced,
-          path,
-          validateCertificates: this.props.validateCertificates,
-        };
-        const realmFile = this.adminRealm.objectForPrimaryKey<ros.RealmFile>(
-          'RealmFile',
-          path,
-        );
-        if (realmFile) {
-          if (realmFile.realmType === 'partial') {
-            await this.showPartialRealmWarning();
-            await main.showRealmBrowser({ realm, readOnly: true });
-          } else {
-            await main.showRealmBrowser({ realm });
-          }
+        if (usingGrahpiql) {
+          await main.showGraphiqlEditor({
+            credentials: this.props.credentials,
+            path,
+          });
         } else {
-          throw new Error("Couldn't find the Realm in the /__admin Realm");
+          const realm: ISyncedRealmToLoad = {
+            user: this.props.user,
+            mode: RealmLoadingMode.Synced,
+            path,
+            validateCertificates: this.props.validateCertificates,
+          };
+          const realmFile = this.adminRealm.objectForPrimaryKey<ros.RealmFile>(
+            'RealmFile',
+            path,
+          );
+          if (realmFile) {
+            if (realmFile.realmType === 'partial') {
+              await this.showPartialRealmWarning();
+              await main.showRealmBrowser({ realm, readOnly: true });
+            } else {
+              await main.showRealmBrowser({ realm });
+            }
+          } else {
+            throw new Error("Couldn't find the Realm in the /__admin Realm");
+          }
         }
       } catch (err) {
         showError('Failed to open Realm', err);
