@@ -98,7 +98,7 @@ export const SingleRealmSidebarCard = ({
           color="secondary"
           onClick={() => onRealmOpened(realm, true)}
         >
-          Open with Graphiql
+          Open with Graph<i>i</i>QL
         </Button>
         {canUpgradeType ? (
           <Button
