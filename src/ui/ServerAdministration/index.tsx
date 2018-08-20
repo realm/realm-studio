@@ -150,18 +150,25 @@ class ServerAdministrationContainer
   }
 
   // TODO: Once the user serializes better, this method should be moved to the ./realms/RealmsTableContainer.tsx
-  public onRealmOpened = async (path: string) => {
+  public onRealmOpened = async (path: string, usingGrahpiql = false) => {
     if (!this.state.isRealmOpening) {
       this.setState({ isRealmOpening: true });
       try {
-        // Let the UI update before sync waiting on the window to appear
-        const realm: ros.realms.ISyncedRealmToLoad = {
-          authentication: this.props.credentials,
-          mode: ros.realms.RealmLoadingMode.Synced,
-          path,
-          validateCertificates: this.props.validateCertificates,
-        };
-        await main.showRealmBrowser({ realm });
+        if (usingGrahpiql) {
+          await main.showGraphiqlEditor({
+            credentials: this.props.credentials,
+            path,
+          });
+        } else {
+          // Let the UI update before sync waiting on the window to appear
+          const realm: ros.realms.ISyncedRealmToLoad = {
+            authentication: this.props.credentials,
+            mode: ros.realms.RealmLoadingMode.Synced,
+            path,
+            validateCertificates: this.props.validateCertificates,
+          };
+          await main.showRealmBrowser({ realm });
+        }
       } catch (err) {
         showError('Failed to open Realm', err);
       } finally {

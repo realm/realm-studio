@@ -30,7 +30,7 @@ export interface IRealmSidebarContainerProps {
   getRealmStateSize: (realm: RealmFile) => number | undefined;
   isOpen: boolean;
   onRealmDeletion: (...realms: RealmFile[]) => void;
-  onRealmOpened: (realm: RealmFile) => void;
+  onRealmOpened: (realm: RealmFile, usingGrahpiql?: boolean) => void;
   onRealmTypeUpgrade: (realm: RealmFile) => void;
   onToggle: () => void;
   realms: RealmFile[];

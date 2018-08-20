@@ -43,7 +43,7 @@ export interface IRealmTableContainerProps {
   adminRealm: Realm;
   adminRealmChanges: number;
   createRealm: () => Promise<RealmFile>;
-  onRealmOpened: (path: string) => void;
+  onRealmOpened: (path: string, usingGrahpiql?: boolean) => void;
   onValidateCertificatesChange: ValidateCertificatesChangeHandler;
   user: Realm.Sync.User;
   validateCertificates: boolean;
@@ -223,8 +223,8 @@ class RealmsTableContainer extends React.PureComponent<
     }
   };
 
-  public onRealmOpened = (realm: RealmFile) => {
-    this.props.onRealmOpened(realm.path);
+  public onRealmOpened = (realm: RealmFile, usingGrahpiql = false) => {
+    this.props.onRealmOpened(realm.path, usingGrahpiql);
   };
 
   public onRealmTypeUpgrade = async (realm: RealmFile) => {

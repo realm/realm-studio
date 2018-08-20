@@ -53,7 +53,7 @@ interface IServerAdministrationProps {
   isRealmOpening: boolean;
   onCancelRealmCreation: () => void;
   onRealmCreation: (path: string) => void;
-  onRealmOpened: (path: string) => void;
+  onRealmOpened: (path: string, usingGrahpiql?: boolean) => void;
   onReconnect: () => void;
   onTabChanged: (tab: Tab) => void;
   onValidateCertificatesChange: ValidateCertificatesChangeHandler;

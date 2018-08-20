@@ -19,6 +19,7 @@
 import {
   ICloudAuthenticationWindowProps,
   IConnectToServerWindowProps,
+  IGraphiqlEditorWindowProps,
   IGreetingWindowProps,
   IRealmBrowserWindowProps,
   IServerAdministrationWindowProps,
@@ -28,6 +29,7 @@ import {
 export type WindowType =
   | 'cloud-authentication'
   | 'connect-to-server'
+  | 'graphiql-editor'
   | 'greeting'
   | 'realm-browser'
   | 'server-administration';
@@ -50,6 +52,11 @@ export interface IConnectToServerWindowOptions extends IWindowOptions {
   props: IConnectToServerWindowProps;
 }
 
+export interface IGraphiqlEditorWindowOptions extends IWindowOptions {
+  type: 'graphiql-editor';
+  props: IGraphiqlEditorWindowProps;
+}
+
 export interface IGreetingWindowOptions extends IWindowOptions {
   type: 'greeting';
   props: IGreetingWindowProps;
@@ -68,6 +75,7 @@ export interface IServerAdministrationWindowOptions extends IWindowOptions {
 export type WindowOptions =
   | ICloudAuthenticationWindowOptions
   | IConnectToServerWindowOptions
+  | IGraphiqlEditorWindowOptions
   | IGreetingWindowOptions
   | IRealmBrowserWindowOptions
   | IServerAdministrationWindowOptions;

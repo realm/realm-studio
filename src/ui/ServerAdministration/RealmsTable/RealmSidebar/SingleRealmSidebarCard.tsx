@@ -36,7 +36,7 @@ export const SingleRealmSidebarCard = ({
   stateSize,
 }: {
   onRealmDeletion: (realm: RealmFile) => void;
-  onRealmOpened: (realm: RealmFile) => void;
+  onRealmOpened: (realm: RealmFile, usingGrahpiql?: boolean) => void;
   onRealmTypeUpgrade: (realm: RealmFile) => void;
   realm: RealmFile;
   permissions: Realm.Results<ros.IPermission>;
@@ -92,6 +92,13 @@ export const SingleRealmSidebarCard = ({
       <CardBody className="RealmSidebar__Controls">
         <Button size="sm" color="primary" onClick={() => onRealmOpened(realm)}>
           Open
+        </Button>
+        <Button
+          size="sm"
+          color="secondary"
+          onClick={() => onRealmOpened(realm, true)}
+        >
+          Open with Graphiql
         </Button>
         {canUpgradeType ? (
           <Button

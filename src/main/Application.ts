@@ -31,6 +31,7 @@ import { showError } from '../ui/reusable/errors';
 import {
   ICloudAuthenticationWindowProps,
   IConnectToServerWindowProps,
+  IGraphiqlEditorWindowProps,
   IRealmBrowserWindowProps,
   IServerAdministrationWindowProps,
 } from '../windows/WindowProps';
@@ -83,6 +84,9 @@ export class Application {
     },
     [MainActions.ShowConnectToServer]: (url?: string) => {
       return this.showConnectToServer({ url });
+    },
+    [MainActions.ShowGraphiqlEditor]: (props: IGraphiqlEditorWindowProps) => {
+      return this.showGraphiqlEditor(props);
     },
     [MainActions.ShowGreeting]: () => {
       return this.showGreeting();
@@ -176,6 +180,19 @@ export class Application {
     return new Promise(resolve => {
       const window = this.windowManager.createWindow({
         type: 'connect-to-server',
+        props,
+      });
+      window.show();
+      window.webContents.once('did-finish-load', () => {
+        resolve();
+      });
+    });
+  }
+
+  public showGraphiqlEditor(props: IGraphiqlEditorWindowProps) {
+    return new Promise(resolve => {
+      const window = this.windowManager.createWindow({
+        type: 'graphiql-editor',
         props,
       });
       window.show();

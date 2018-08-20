@@ -20,7 +20,7 @@ import * as React from 'react';
 import { Column } from 'react-virtualized';
 import { Button } from 'reactstrap';
 
-import { IPermission, IRealmFile } from '../../../services/ros';
+import { IPermission } from '../../../services/ros';
 import {
   FilterableTable,
   FilterableTableWrapper,
@@ -60,7 +60,7 @@ export const RealmsTable = ({
   onRealmClick: (e: React.MouseEvent<HTMLElement>, realm: RealmFile) => void;
   onRealmCreation: () => void;
   onRealmDeletion: (...realms: RealmFile[]) => void;
-  onRealmOpened: (realm: RealmFile) => void;
+  onRealmOpened: (realm: RealmFile, usingGrahpiql?: boolean) => void;
   onRealmsDeselection: () => void;
   onRealmTypeUpgrade: (realm: RealmFile) => void;
   onSearchStringChange: (query: string) => void;
