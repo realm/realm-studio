@@ -140,6 +140,8 @@
     "electron-updater": "^3.1.1",
     "font-awesome": "^4.7.0",
     "fs-extra": "^4.0.2",
+    "graphiql": "^0.11.11",
+    "graphql": "^0.13.2",
     "isomorphic-fetch": "^2.2.1",
     "json5": "^1.0.1",
     "keytar": "^4.1.0",
@@ -157,6 +159,7 @@
     "react-virtualized": "^9.18.5",
     "reactstrap": "^6.3.1",
     "realm": "^2.13.0",
+    "realm-graphql-client": "^1.2.0",
     "uuid": "^3.1.0"
   },
   "devDependencies": {
