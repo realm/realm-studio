@@ -140,6 +140,10 @@
     "@contentful/rich-text-html-renderer": "^13.0.0",
     "@contentful/rich-text-types": "^13.0.0",
     "@sentry/electron": "^0.15.0",
+    "@sentry/shim": "^0.5.4",
+    "@types/papaparse": "^4.1.31",
+    "apollo-client-preset": "^1.0.8",
+    "apollo-link-ws": "^1.0.8",
     "classnames": "^2.2.5",
     "contentful": "^7.3.0",
     "electron-store": "^2.0.0",
@@ -147,6 +151,7 @@
     "font-awesome": "^4.7.0",
     "fs-extra": "^7.0.1",
     "graphiql": "^0.11.11",
+    "graphiql-subscriptions-fetcher": "0.0.2",
     "graphql": "^0.13.2",
     "isomorphic-fetch": "^2.2.1",
     "json5": "^2.1.0",
@@ -168,6 +173,7 @@
     "realm": "2.23.0",
     "realm-graphql-client": "^1.2.0",
     "semver": "^5.4.1",
+    "subscriptions-transport-ws": "0.5.4",
     "uuid": "^3.1.0"
   },
   "devDependencies": {

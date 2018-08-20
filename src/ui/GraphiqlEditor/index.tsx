@@ -16,25 +16,38 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import { Fetcher } from 'graphiql';
 import * as React from 'react';
 import { Credentials, User } from 'realm-graphql-client';
+import { SubscriptionClient } from 'subscriptions-transport-ws';
 
 import { IGraphiqlEditorWindowProps } from '../../windows/WindowProps';
 import { showError } from '../reusable/errors';
 
+import { graphQLFetcher } from './graphiql-subscriptions-fetcher';
 import { GraphiqlEditor } from './GraphiqlEditor';
 
 type IGraphiqlEditorContainerProps = IGraphiqlEditorWindowProps;
 
-interface IGraphiqlEditorContainerState {
-  user?: User;
+interface IAutenticatingState {
+  status: 'authenticating';
 }
+
+interface IAuthenticatedState {
+  status: 'authenticated';
+  user: User;
+  fetcher: Fetcher;
+}
+
+type IGraphiqlEditorContainerState = IAutenticatingState | IAuthenticatedState;
 
 class GraphiqlEditorContainer extends React.Component<
   IGraphiqlEditorContainerProps,
   IGraphiqlEditorContainerState
 > {
-  public state: IGraphiqlEditorContainerState = {};
+  public state: IGraphiqlEditorContainerState = {
+    status: 'authenticating',
+  };
 
   public componentDidMount() {
     this.authenticate().then(undefined, err => {
@@ -43,7 +56,9 @@ class GraphiqlEditorContainer extends React.Component<
   }
 
   public render() {
-    return this.state.user ? <GraphiqlEditor fetcher={this.fetcher} /> : null;
+    return this.state.status === 'authenticated' ? (
+      <GraphiqlEditor fetcher={this.state.fetcher} />
+    ) : null;
   }
 
   private async authenticate() {
@@ -52,7 +67,10 @@ class GraphiqlEditorContainer extends React.Component<
       credentials,
       this.props.credentials.url,
     );
+    const fetcher = this.createFetcher(user);
     this.setState({
+      status: 'authenticated',
+      fetcher,
       user,
     });
   }
@@ -78,14 +96,30 @@ class GraphiqlEditorContainer extends React.Component<
     }
   }
 
-  private fetcher = (graphQLParams: object) => {
-    if (this.state.user) {
-      const encodedPath = encodeURI(this.props.path);
-      const url = new URL(
-        `/graphql/${encodedPath}`,
-        this.props.credentials.url,
-      );
-      return fetch(url.toString(), {
+  private getUrl(schema: 'http' | 'ws' = 'http') {
+    const encodedPath = encodeURIComponent(this.props.path);
+    const url = new URL(`/graphql/${encodedPath}`, this.props.credentials.url);
+    if (url.protocol === 'http:' && schema === 'ws') {
+      url.protocol = 'ws:';
+    } else if (url.protocol === 'https:' && schema === 'ws') {
+      url.protocol = 'wss:';
+    }
+    return url.toString();
+  }
+
+  private createFetcher(user: User) {
+    const url = this.getUrl('ws');
+    const subscriptionsClient = new SubscriptionClient(url, {
+      reconnect: true,
+      connectionParams: { token: user.token },
+    });
+    return graphQLFetcher(subscriptionsClient, this.httpFetcher);
+  }
+
+  private httpFetcher = (graphQLParams: object) => {
+    if (this.state.status === 'authenticated') {
+      const url = this.getUrl('http');
+      return fetch(url, {
         method: 'post',
         headers: {
           Authorization: this.state.user.token,
