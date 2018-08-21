@@ -139,7 +139,7 @@ export const ListControl = ({
   } else {
     const itemProperty = getItemProperty(property);
     return (
-      <section className="CreateObjectDialog__ListControl form-control">
+      <section className="CreateObjectDialog__ListControl">
         <List
           generateInitialValue={generateInitialValue}
           getClassFocus={getClassFocus}
