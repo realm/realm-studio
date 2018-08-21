@@ -91,6 +91,9 @@
   &__ListControl {
     $list-control-gutter: $spacer / 2;
     background: $window-background;
+    border: $input-border-width solid $input-border-color;
+    border-radius: $input-border-radius;
+    padding: $input-padding-y $input-padding-x;
 
     &__Item {
       display: inline-block;
