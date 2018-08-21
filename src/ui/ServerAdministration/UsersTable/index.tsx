@@ -79,7 +79,7 @@ class UsersTableContainer extends React.Component<
       // Filter out System users if needed
       if (showSystemUsers === false) {
         users = users.filtered(
-          "NOT userId == '__admin' AND NOT userId BEGINSWITH 'system-accessibility'",
+          "NOT userId == '__admin' AND NOT accounts.provider BEGINSWITH 'jwt/central'",
         );
       }
       return users;
