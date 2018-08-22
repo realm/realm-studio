@@ -16,6 +16,7 @@ module.exports = (env, argv) => {
     } : {},
     entry: {
       renderer: "./src/renderer.tsx",
+      sentry: "./src/sentry.ts"
     },
     module: {
       rules: [
@@ -46,20 +47,15 @@ module.exports = (env, argv) => {
       ]
     },
     output: {
-      filename: 'renderer.bundle.js',
+      filename: '[name].bundle.js',
       chunkFilename: '[name].renderer.bundle.js',
       publicPath: isDevelopment ? 'http://localhost:8080/' : '',
     },
-    plugins: [
-      new CopyWebpackPlugin([
-        // Copy the Sentry initialization to the build folder
-        './src/sentry.js',
-      ]),
-    ].concat(isDevelopment ? [
+    plugins: isDevelopment ? [
       new Visualizer({
         filename: './renderer.statistics.html',
       }),
-    ] : []),
+    ] : [],
     target: 'electron-renderer'
   });
 };

@@ -76,7 +76,7 @@ export class WindowManager {
         // sentry.js is not emitted to the build folder.
         preload: isDevelopment
           ? undefined
-          : path.resolve(__dirname, './sentry.js'),
+          : path.resolve(__dirname, './sentry.bundle.js'),
       },
     });
 
