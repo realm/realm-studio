@@ -33,6 +33,7 @@ import {
   IMenuGenerator,
   IMenuGeneratorProps,
 } from './MenuGenerator';
+import { SentryErrorBoundary } from './SentryErrorBoundary';
 import { getWindowClass, InnerWindowComponent } from './Window';
 import { WindowOptions, WindowType } from './WindowOptions';
 
@@ -97,7 +98,7 @@ export abstract class WindowComponent extends React.Component
   }
 
   public windowComponentRef = (element: any) => {
-    if (typeof element.generateMenu === 'function') {
+    if (element && typeof element.generateMenu === 'function') {
       // The window component has a method to generate a menu
       this.menuGenerator = element;
     }
@@ -114,8 +115,8 @@ export abstract class WindowComponent extends React.Component
 
   private onFocussed = () => {
     this.updateMenu();
-    sentry.setTagsContext({
-      'window-type': this.options.type,
+    sentry.configureScope(scope => {
+      scope.setTag('window-type', this.options.type);
     });
     sentry.addBreadcrumb({
       category: 'ui.window',
@@ -124,4 +125,8 @@ export abstract class WindowComponent extends React.Component
   };
 }
 
-export const renderCurrentWindow = () => <WindowComponent />;
+export const renderCurrentWindow = () => (
+  <SentryErrorBoundary>
+    <WindowComponent />
+  </SentryErrorBoundary>
+);

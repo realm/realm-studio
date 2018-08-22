@@ -385,8 +385,8 @@ export class Application {
     }
   };
 
-  private onOpenFile = (event: Electron.Event, filePath: string) => {
-    event.preventDefault();
+  private onOpenFile = (e: Electron.Event, filePath: string) => {
+    e.preventDefault();
     if (!electron.app.isReady()) {
       this.delayedRealmOpens.push(filePath);
     } else {
@@ -446,10 +446,12 @@ export class Application {
     if (status.kind === 'authenticated') {
       // Add the users account into the context for Raven to consume
       const { id, email, nameFirst, nameLast, ...rest } = status.account;
-      sentry.setUserContext({
-        id,
-        email,
-        extra: { ...rest, name: `${nameFirst} ${nameLast}` },
+      sentry.configureScope(scope => {
+        scope.setUser({
+          id,
+          email,
+          extra: { ...rest, name: `${nameFirst} ${nameLast}` },
+        });
       });
     }
   };

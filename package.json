@@ -132,8 +132,7 @@
     ]
   },
   "dependencies": {
-    "@sentry/electron": "^0.5.5",
-    "@sentry/shim": "^0.5.4",
+    "@sentry/electron": "^0.8.1",
     "@types/papaparse": "^4.1.31",
     "classnames": "^2.2.5",
     "electron-store": "^2.0.0",
