@@ -28,6 +28,8 @@ export const ConnectToServerWindow: IWindow = {
     width: 500,
     height: 300,
     resizable: false,
+    fullscreenable: false,
+    autoHideMenuBar: true,
   }),
   getComponent: () =>
     import(/* webpackChunkName: "connect-to-server" */ '../ui/ConnectToServer').then(
