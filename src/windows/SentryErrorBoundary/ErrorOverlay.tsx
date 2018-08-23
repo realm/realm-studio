@@ -37,7 +37,7 @@ export const ErrorOverlay = ({ error, info, eventId }: IErrorOverlayProps) => {
       {eventId ? <p className="ErrorOverlay__Id">ID: “{eventId}”</p> : null}
       {eventId ? (
         <p className="ErrorOverlay__IdExplanation">
-          Send this id our way to help us fix your issue - or{' '}
+          Send this id our way to help us fix the issue - or{' '}
           <a href={gitHubUrl} target="_blank">
             click here to create an issue on GitHub
           </a>

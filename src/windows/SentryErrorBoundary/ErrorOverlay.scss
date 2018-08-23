@@ -33,8 +33,12 @@
   &__IdExplanation {
     color: $charcoal;
     margin: 0;
-    padding: .5rem;
+    padding: $spacer / 2;
     text-align: center;
+  }
+
+  &__Introduction {
+    margin-top: $spacer;
   }
 
   &__Id {
@@ -51,6 +55,6 @@
     color: $elephant;
     font-size: 8px;
     overflow-y: auto;
-    padding: 1rem;
+    padding: $spacer;
   }
 }
