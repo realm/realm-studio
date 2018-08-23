@@ -55,5 +55,7 @@ $input-placeholder-color: rgba($elephant, .6);
 $window-background: mix(#fff, $dove, 50%);
 $overlay-background: rgba($charcoal, .6);
 
+$body-bg: $window-background;
+
 // Increasig the yiq threshold to get a light text on a $secondary background
 $yiq-contrasted-threshold: 165;

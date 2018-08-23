@@ -65,11 +65,15 @@ export class WindowManager {
     });
     // Construct the window
     const window = new BrowserWindow({
+      // Starting with the default options
       title: 'Realm Studio',
       width: 800,
       height: 600,
       vibrancy: 'light',
       show: false,
+      // This should be the same as the value of the SCSS variable $body-bg
+      backgroundColor: '#f5f5f9',
+      // Allowing windows to override the defaults
       ...windowOptions,
       webPreferences: {
         // Load Sentry as a preload in production - this doesn't work in development because the
