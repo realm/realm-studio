@@ -16,31 +16,45 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-@import "./variables";
-@import "./bootstrap";
-@import "./react-virtualized";
-@import "~font-awesome/css/font-awesome.css";
+@import "~realm-studio-styles/variables";
 
-@import "./fonts/realm";
-
-// Applying https://www.mobomo.com/2014/05/better-font-smoothing-in-chrome-on-mac-os-x/
-html {
-  -webkit-font-smoothing: antialiased;
-  // Adding "overflow: hidden;" to prevent scrollbar flickering on Windows
-  // fixing https://github.com/realm/realm-studio/issues/599
-  overflow: hidden;
-}
-
-html,
-body,
-#app {
+.ErrorOverlay {
+  background: $window-background;
+  display: flex;
+  flex-direction: column;
   height: 100%;
-}
 
-.Link {
-  color: $primary;
-  cursor: pointer;
-  text-decoration: underline;
-}
+  a {
+    text-decoration: underline;
+  }
 
-@import "./form-controls";
+  &__Introduction,
+  &__Id,
+  &__IdExplanation {
+    color: $charcoal;
+    margin: 0;
+    padding: $spacer / 2;
+    text-align: center;
+  }
+
+  &__Introduction {
+    margin-top: $spacer;
+  }
+
+  &__Id {
+    font-family: $font-family-monospace;
+    padding-bottom: 0;
+  }
+
+  &__IdExplanation {
+    font-size: 10px;
+    padding-top: 0;
+  }
+
+  &__Stack {
+    color: $elephant;
+    font-size: 8px;
+    overflow-y: auto;
+    padding: $spacer;
+  }
+}

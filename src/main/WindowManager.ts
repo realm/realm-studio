@@ -65,18 +65,25 @@ export class WindowManager {
     });
     // Construct the window
     const window = new BrowserWindow({
+      // Starting with the default options
       title: 'Realm Studio',
       width: 800,
       height: 600,
       vibrancy: 'light',
       show: false,
+      // This should be the same as the value of the SCSS variable $body-bg
+      backgroundColor: '#f5f5f9',
+      // Accepting the first mouse event, so users dont have to focus windows before clicking them.
+      // This improves the UX by minimizing the clicks needed to complete a task.
+      acceptFirstMouse: true,
+      // Allowing windows to override the defaults
       ...windowOptions,
       webPreferences: {
         // Load Sentry as a preload in production - this doesn't work in development because the
         // sentry.js is not emitted to the build folder.
         preload: isDevelopment
           ? undefined
-          : path.resolve(__dirname, './sentry.js'),
+          : path.resolve(__dirname, './sentry.bundle.js'),
       },
     });
 

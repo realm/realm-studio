@@ -55,6 +55,7 @@ class GreetingContainer extends React.Component<
   public componentDidMount() {
     electron.ipcRenderer.on('cloud-status', this.cloudStatusChanged);
     electron.ipcRenderer.on('update-status', this.updateStatusChanged);
+
     // Require realm and check update state with the sync support
     // Using nextTick to prevent blocking when loading realm
     process.nextTick(() => {

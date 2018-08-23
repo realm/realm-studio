@@ -29,6 +29,7 @@ export const GreetingWindow: IWindow = {
     width: 600,
     height: 400,
     resizable: false,
+    fullscreenable: false,
   }),
   getComponent: () =>
     import(/* webpackChunkName: "greeting" */ '../ui/Greeting').then(

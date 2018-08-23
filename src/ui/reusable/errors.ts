@@ -17,7 +17,6 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as sentry from '@sentry/electron';
-import { Severity } from '@sentry/shim';
 
 import * as electron from 'electron';
 
@@ -45,7 +44,7 @@ export const showError = (
   };
   // Tell Sentry about this error
   sentry.captureEvent({
-    level: Severity.Debug,
+    level: sentry.Severity.Debug,
     // We don't want the message to wrap to the next line when reporting this to Sentry
     message: message.length > 0 ? `${failedIntent}: ${message}` : failedIntent,
     tags: { type: 'user-error' },
