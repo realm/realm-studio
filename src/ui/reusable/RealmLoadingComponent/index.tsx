@@ -19,18 +19,8 @@
 import * as electron from 'electron';
 import * as React from 'react';
 
-import {
-  IAdminTokenCredentials,
-  IRealmFile,
-  IServerCredentials,
-  IUser,
-  IUserMetadataRow,
-  IUsernamePasswordCredentials,
-  realms,
-  users,
-} from '../../../services/ros';
+import { realms, users } from '../../../services/ros';
 
-import { showError } from '../errors';
 import { ILoadingProgress } from '../LoadingOverlay';
 
 export interface IRealmLoadingComponentState {
@@ -232,39 +222,6 @@ export abstract class RealmLoadingComponent<
     } else {
       throw new Error('Unexpected mode');
     }
-  }
-
-  private async getRealmLoadingUser(
-    credentials: IServerCredentials,
-  ): Promise<Realm.Sync.User> {
-    return new Promise<Realm.Sync.User>(async (resolve, reject) => {
-      if (!credentials) {
-        reject(new Error('Missing credentials'));
-      }
-      if ('token' in credentials) {
-        const tokenCredentials = credentials as IAdminTokenCredentials;
-        const user = Realm.Sync.User.adminUser(
-          tokenCredentials.token,
-          tokenCredentials.url,
-        );
-        resolve(user);
-      } else if ('username' in credentials && 'password' in credentials) {
-        const passwordCredentials = credentials as IUsernamePasswordCredentials;
-        try {
-          const user = await Realm.Sync.User.login(
-            passwordCredentials.url,
-            passwordCredentials.username,
-            passwordCredentials.password,
-          );
-          resolve(user);
-        } catch (err) {
-          showError(`Couldn't connect to Realm Object Server`, err, {
-            'Failed to fetch': 'Could not reach the server',
-          });
-          reject(err);
-        }
-      }
-    });
   }
 
   private progressChanged = (transferred: number, transferable: number) => {

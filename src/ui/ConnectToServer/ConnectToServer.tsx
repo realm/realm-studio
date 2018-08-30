@@ -34,12 +34,14 @@ export const ConnectToServer = ({
   onPasswordChanged,
   onTokenChanged,
   onOtherOptionsChanged,
+  onProviderNameChanged,
   onSaveCredentialsChanged,
   url,
   username,
   password,
   token,
   otherOptions,
+  providerName,
   saveCredentials,
   isConnecting,
 }: {
@@ -52,12 +54,14 @@ export const ConnectToServer = ({
   onPasswordChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onTokenChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onOtherOptionsChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onProviderNameChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSaveCredentialsChanged: (saveCredentials: boolean) => void;
   url: string;
   username: string;
   password: string;
   token: string;
   otherOptions: string;
+  providerName: string;
   saveCredentials: boolean;
   isConnecting: boolean;
 }) => {
@@ -89,10 +93,12 @@ export const ConnectToServer = ({
         password={password}
         token={token}
         otherOptions={otherOptions}
+        providerName={providerName}
         onUsernameChanged={onUsernameChanged}
         onPasswordChanged={onPasswordChanged}
         onOtherOptionsChanged={onOtherOptionsChanged}
         onTokenChanged={onTokenChanged}
+        onProviderNameChanged={onProviderNameChanged}
       />
       <div className="ConnectToServer__Controls">
         <FormGroup check className="ConnectToServer__SaveCredentials">

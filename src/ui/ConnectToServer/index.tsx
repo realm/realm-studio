@@ -46,6 +46,7 @@ interface IConnectToServerContainerState {
   url: string;
   username: string;
   password: string;
+  providerName: string;
   token: string;
   otherOptions: string;
   saveCredentials: boolean;
@@ -63,6 +64,7 @@ class ConnectToServerContainer extends React.Component<
     password: '',
     token: '',
     otherOptions: '',
+    providerName: '',
     saveCredentials: false,
   };
 
@@ -102,6 +104,7 @@ class ConnectToServerContainer extends React.Component<
       if (!user.isAdmin) {
         throw new Error('You must be an administrator');
       }
+
       if (this.state.saveCredentials) {
         await setCredentials(credentials);
       } else {
@@ -152,6 +155,12 @@ class ConnectToServerContainer extends React.Component<
   public onUsernameChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({
       username: e.target.value,
+    });
+  };
+
+  public onProviderNameChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({
+      providerName: e.target.value,
     });
   };
 
@@ -207,65 +216,65 @@ class ConnectToServerContainer extends React.Component<
     }
   }
 
-  private prepareUsername(username: string) {
-    if (username === '') {
-      return 'realm-admin';
-    } else {
-      return username;
-    }
-  }
-
   private prepareCredentials(): ros.IServerCredentials {
     const { url, method } = this.state;
     const preparedUrl = this.prepareUrl(url);
     if (!preparedUrl) {
       throw new Error(`Couldn't prepare credentials, the URL is malformed.`);
     }
-    if (method === AuthenticationMethod.usernamePassword) {
-      const username = this.prepareUsername(this.state.username);
-      const password = this.state.password;
-      return {
-        kind: 'password',
-        url: preparedUrl,
-        username,
-        password,
-      };
-    } else if (method === AuthenticationMethod.adminToken) {
-      const token = this.state.token;
-      return {
-        kind: 'token',
-        url: preparedUrl,
-        token,
-      };
-    } else if (method === AuthenticationMethod.other) {
-      try {
-        const options = json5.parse(this.state.otherOptions);
+    switch (method) {
+      case AuthenticationMethod.usernamePassword:
         return {
-          kind: 'other',
+          kind: 'password',
           url: preparedUrl,
-          options,
+          username: this.state.username || 'realm-admin',
+          password: this.state.password,
         };
-      } catch (err) {
-        if (err instanceof SyntaxError) {
-          throw new SyntaxError(`Please provide valid JSON: ${err.message}`);
-        } else {
-          throw err;
+      case AuthenticationMethod.adminToken:
+        return {
+          kind: 'token',
+          url: preparedUrl,
+          token: this.state.token,
+        };
+      case AuthenticationMethod.jwt:
+        return {
+          kind: 'jwt',
+          url: preparedUrl,
+          providerName: this.state.providerName || 'jwt',
+          token: this.state.token,
+        };
+      case AuthenticationMethod.other:
+        try {
+          const options = json5.parse(this.state.otherOptions);
+          return {
+            kind: 'other',
+            url: preparedUrl,
+            options,
+          };
+        } catch (err) {
+          if (err instanceof SyntaxError) {
+            throw new SyntaxError(`Please provide valid JSON: ${err.message}`);
+          } else {
+            throw err;
+          }
         }
-      }
-    } else {
-      throw new Error(`The method is not supported: ${method}`);
+      default:
+        throw new Error(`The method is not supported: ${method}`);
     }
   }
 
   private getMethodFromCredentials(credentials: ros.IServerCredentials) {
-    if (credentials.kind === 'password') {
-      return AuthenticationMethod.usernamePassword;
-    } else if (credentials.kind === 'token') {
-      return AuthenticationMethod.adminToken;
-    } else if (credentials.kind === 'other') {
-      return AuthenticationMethod.other;
-    } else {
-      throw new Error('Unexpected authentication method');
+    switch (credentials.kind) {
+      case 'password':
+        return AuthenticationMethod.usernamePassword;
+      case 'token':
+        return AuthenticationMethod.adminToken;
+      case 'other':
+        return AuthenticationMethod.other;
+      case 'jwt':
+        return AuthenticationMethod.jwt;
+      default:
+        throw new Error('Unexpected authentication method');
     }
   }
 
@@ -275,14 +284,16 @@ class ConnectToServerContainer extends React.Component<
     if (credentials) {
       const method = this.getMethodFromCredentials(credentials);
       // The default state is to reset everything
-      const state: any = {
+      const state = {
         method,
         username: '',
         password: '',
         token: '',
         otherOptions: '',
         saveCredentials: true,
+        providerName: '',
       };
+
       if (credentials.kind === 'password') {
         state.username = credentials.username;
         state.password = credentials.password;
@@ -290,7 +301,11 @@ class ConnectToServerContainer extends React.Component<
         state.token = credentials.token;
       } else if (credentials.kind === 'other') {
         state.otherOptions = JSON.stringify(credentials.options, undefined, 2);
+      } else if (credentials.kind === 'jwt') {
+        state.token = credentials.token;
+        state.providerName = credentials.providerName;
       }
+
       this.setState(state);
     } else {
       this.setState({

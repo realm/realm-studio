@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-export type ServerCredentialsKind = 'password' | 'token' | 'other';
+export type ServerCredentialsKind = 'password' | 'token' | 'other' | 'jwt';
 
 interface ICredentials {
   kind: ServerCredentialsKind;
@@ -34,6 +34,12 @@ export interface IAdminTokenCredentials extends ICredentials {
   token: string;
 }
 
+export interface IJwtCredentials extends ICredentials {
+  kind: 'jwt';
+  providerName: string;
+  token: string;
+}
+
 export interface IOtherCredentials extends ICredentials {
   kind: 'other';
   options: object;
@@ -42,4 +48,5 @@ export interface IOtherCredentials extends ICredentials {
 export type IServerCredentials =
   | IUsernamePasswordCredentials
   | IAdminTokenCredentials
-  | IOtherCredentials;
+  | IOtherCredentials
+  | IJwtCredentials;

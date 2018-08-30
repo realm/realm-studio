@@ -20,6 +20,7 @@ import * as React from 'react';
 
 import { AdminTokenForm } from './AdminTokenForm';
 import { AuthenticationMethodSelector } from './AuthenticationMethodSelector';
+import { JwtForm } from './JwtForm';
 import { OtherForm } from './OtherForm';
 import { UsernamePasswordForm } from './UsernamePasswordForm';
 
@@ -27,6 +28,7 @@ export enum AuthenticationMethod {
   usernamePassword,
   adminToken,
   other,
+  jwt,
 }
 
 export const AuthenticationForm = ({
@@ -35,49 +37,68 @@ export const AuthenticationForm = ({
   password,
   token,
   otherOptions,
+  providerName,
   onMethodChanged,
   onUsernameChanged,
   onPasswordChanged,
   onTokenChanged,
   onOtherOptionsChanged,
+  onProviderNameChanged,
 }: {
   method: AuthenticationMethod;
   username: string;
   password: string;
   token: string;
   otherOptions: string;
+  providerName: string;
   onMethodChanged: (method: AuthenticationMethod) => void;
   onUsernameChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onPasswordChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onTokenChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onOtherOptionsChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onProviderNameChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
   let form;
-  if (method === AuthenticationMethod.usernamePassword) {
-    form = (
-      <UsernamePasswordForm
-        username={username}
-        password={password}
-        isRequired={!token}
-        onUsernameChanged={onUsernameChanged}
-        onPasswordChanged={onPasswordChanged}
-      />
-    );
-  } else if (method === AuthenticationMethod.adminToken) {
-    form = (
-      <AdminTokenForm
-        token={token}
-        onTokenChanged={onTokenChanged}
-        isRequired={!username}
-      />
-    );
-  } else if (method === AuthenticationMethod.other) {
-    form = (
-      <OtherForm
-        options={otherOptions}
-        onOptionsChanged={onOtherOptionsChanged}
-      />
-    );
+  switch (method) {
+    case AuthenticationMethod.usernamePassword:
+      form = (
+        <UsernamePasswordForm
+          username={username}
+          password={password}
+          isRequired={!token}
+          onUsernameChanged={onUsernameChanged}
+          onPasswordChanged={onPasswordChanged}
+        />
+      );
+      break;
+    case AuthenticationMethod.adminToken:
+      form = (
+        <AdminTokenForm
+          token={token}
+          onTokenChanged={onTokenChanged}
+          isRequired={!username}
+        />
+      );
+      break;
+    case AuthenticationMethod.jwt:
+      form = (
+        <JwtForm
+          token={token}
+          onTokenChanged={onTokenChanged}
+          isRequired={!username}
+          providerName={providerName}
+          onProviderNameChanged={onProviderNameChanged}
+        />
+      );
+      break;
+    case AuthenticationMethod.other:
+      form = (
+        <OtherForm
+          options={otherOptions}
+          onOptionsChanged={onOtherOptionsChanged}
+        />
+      );
+      break;
   }
   return (
     <div className="ConnectToServer__AuthenticationForm">
