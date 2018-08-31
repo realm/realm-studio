@@ -71,6 +71,7 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   isAddClassOpen: boolean;
   isAddPropertyOpen: boolean;
   isEncryptionDialogVisible: boolean;
+  isLeftSidebarOpen: boolean;
   // The schemas are only supposed to be used to produce a list of schemas in the sidebar
   schemas: Realm.ObjectSchema[];
 }
@@ -82,16 +83,17 @@ class RealmBrowserContainer
   >
   implements IMenuGenerator {
   public state: IRealmBrowserState = {
+    dataVersion: 0,
     editMode:
       (localStorage.getItem(EDIT_MODE_STORAGE_KEY) as EditMode) ||
       EditMode.InputBlur,
-    dataVersion: 0,
     focus: null,
-    isEncryptionDialogVisible: false,
-    progress: { status: 'idle' },
-    schemas: [],
     isAddClassOpen: false,
     isAddPropertyOpen: false,
+    isEncryptionDialogVisible: false,
+    isLeftSidebarOpen: true,
+    progress: { status: 'idle' },
+    schemas: [],
   };
 
   private contentInstance: Content | null = null;
@@ -125,6 +127,7 @@ class RealmBrowserContainer
         isAddPropertyOpen={this.state.isAddPropertyOpen}
         isClassNameAvailable={this.isClassNameAvailable}
         isEncryptionDialogVisible={this.state.isEncryptionDialogVisible}
+        isLeftSidebarOpen={this.state.isLeftSidebarOpen}
         isPropertyNameAvailable={this.isPropertyNameAvailable}
         onAddClass={this.onAddClass}
         onAddProperty={this.onAddProperty}
@@ -132,6 +135,7 @@ class RealmBrowserContainer
         onClassFocussed={this.onClassFocussed}
         onCommitTransaction={this.onCommitTransaction}
         onHideEncryptionDialog={this.onHideEncryptionDialog}
+        onLeftSidebarToggle={this.onLeftSidebarToggle}
         onListFocussed={this.onListFocussed}
         onOpenWithEncryption={this.onOpenWithEncryption}
         onRealmChanged={this.onRealmChanged}
@@ -506,6 +510,10 @@ class RealmBrowserContainer
 
   private onHideEncryptionDialog = () => {
     this.setState({ isEncryptionDialogVisible: false });
+  };
+
+  private onLeftSidebarToggle = () => {
+    this.setState({ isLeftSidebarOpen: !this.state.isLeftSidebarOpen });
   };
 
   private onOpenWithEncryption = (key: string) => {

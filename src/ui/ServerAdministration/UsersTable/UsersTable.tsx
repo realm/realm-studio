@@ -24,7 +24,6 @@ import { IAccount, RealmFile, User, UserRole } from '../../../services/ros';
 
 import {
   FilterableTable,
-  FilterableTableWrapper,
   IFilterableTableProps,
 } from '../shared/FilterableTable';
 import { FloatingControls } from '../shared/FloatingControls';
@@ -33,6 +32,8 @@ import { ISelection } from '.';
 import { ChangePasswordDialog } from './ChangePasswordDialog';
 import { CreateUserDialog } from './CreateUserDialog';
 import { UserSidebar } from './UserSidebar';
+
+import './UsersTable.scss';
 
 const FilterableUserTable: React.ComponentType<
   IFilterableTableProps<User>
@@ -85,8 +86,9 @@ export const UsersTable = ({
   onSearchStringChange: (query: string) => void;
 }) => {
   return (
-    <FilterableTableWrapper>
+    <div className="UsersTable">
       <FilterableUserTable
+        className="UsersTable__Table"
         elements={users}
         isElementsEqual={(a, b) => a.userId === b.userId}
         onElementClick={onUserClick}
@@ -139,7 +141,7 @@ export const UsersTable = ({
 
       <UserSidebar
         isOpen={!!selection}
-        onToggle={onUsersDeselection}
+        onClose={onUsersDeselection}
         onUserChangePassword={onUserChangePassword}
         onUserDeletion={onUserDeletion}
         onUserMetadataAppended={onUserMetadataAppended}
@@ -161,6 +163,6 @@ export const UsersTable = ({
         onToggle={onToggleCreateUser}
         onUserCreated={onUserCreated}
       />
-    </FilterableTableWrapper>
+    </div>
   );
 };

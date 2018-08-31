@@ -21,12 +21,12 @@ import * as React from 'react';
 import { Badge, Button } from 'reactstrap';
 
 import { ClassFocussedHandler } from '..';
-import { ILoadingProgress } from '../../reusable/LoadingOverlay';
+import { ILoadingProgress, Sidebar } from '../../reusable';
 import { Focus, IListFocus } from '../focus';
 
 import { ListFocus } from './ListFocus';
 
-import './Sidebar.scss';
+import './LeftSidebar.scss';
 
 export const isSelected = (focus: Focus | null, schemaName: string) => {
   if (focus && focus.kind === 'class') {
@@ -38,50 +38,61 @@ export const isSelected = (focus: Focus | null, schemaName: string) => {
   }
 };
 
-export interface ISidebarProps {
+export interface ILeftSidebarProps {
   className?: string;
   focus: Focus | null;
   getSchemaLength: (className: string) => number;
+  isOpen: boolean;
   onClassFocussed: ClassFocussedHandler;
+  onToggle: () => void;
   progress: ILoadingProgress;
   schemas: Realm.ObjectSchema[];
   toggleAddSchema: () => void;
 }
 
-export const Sidebar = ({
+export const LeftSidebar = ({
   className,
   focus,
   getSchemaLength,
+  isOpen,
   onClassFocussed,
+  onToggle,
   progress,
   schemas,
   toggleAddSchema,
-}: ISidebarProps) => (
-  <div className={classNames('Sidebar', className)}>
-    <div className="Sidebar__Header">
+}: ILeftSidebarProps) => (
+  <Sidebar
+    className={className}
+    contentClassName="LeftSidebar"
+    isOpen={isOpen}
+    onToggle={onToggle}
+    position="left"
+    minimumWidth={120}
+  >
+    <div className="LeftSidebar__Header">
       <span>Classes</span>
       <Button size="sm" onClick={toggleAddSchema}>
         <i className="fa fa-plus" />
       </Button>
     </div>
     {schemas && schemas.length > 0 ? (
-      <ul className="Sidebar__SchemaList">
+      <ul className="LeftSidebar__SchemaList">
         {schemas.map(schema => {
           const selected = isSelected(focus, schema.name);
-          const schemaClass = classNames('Sidebar__Schema__Info', {
-            'Sidebar__Schema__Info--selected': selected,
+          const schemaClass = classNames('LeftSidebar__Schema__Info', {
+            'LeftSidebar__Schema__Info--selected': selected,
           });
           return (
             <li
               key={schema.name}
-              className="Sidebar__Schema"
+              className="LeftSidebar__Schema"
               title={schema.name}
             >
               <div
                 className={schemaClass}
                 onClick={() => onClassFocussed(schema.name)}
               >
-                <span className="Sidebar__Schema__Name">{schema.name}</span>
+                <span className="LeftSidebar__Schema__Name">{schema.name}</span>
                 <Badge color="primary">{getSchemaLength(schema.name)}</Badge>
               </div>
               {selected && focus && focus.kind === 'list' ? (
@@ -95,7 +106,7 @@ export const Sidebar = ({
         })}
       </ul>
     ) : progress.status === 'done' ? (
-      <div className="Sidebar__SchemaList--empty" />
+      <div className="LeftSidebar__SchemaList--empty" />
     ) : null}
-  </div>
+  </Sidebar>
 );

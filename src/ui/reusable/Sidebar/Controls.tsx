@@ -16,14 +16,14 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-@import "~realm-studio-styles/variables";
+import * as classNames from 'classnames';
+import * as React from 'react';
 
-.PermissionsTable {
-  &__PermissionsCell {
-    width: 80px;
-
-    &__Badge {
-      margin: 0 ($spacer / 8);
-    }
-  }
+interface IControlsProps {
+  children: React.ReactNode;
+  className?: string;
 }
+
+export const Controls = ({ children, className }: IControlsProps) => (
+  <div className={classNames('Sidebar__Controls', className)}>{children}</div>
+);

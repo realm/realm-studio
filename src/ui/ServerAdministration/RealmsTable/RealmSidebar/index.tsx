@@ -32,7 +32,7 @@ export interface IRealmSidebarContainerProps {
   onRealmDeletion: (...realms: RealmFile[]) => void;
   onRealmOpened: (realm: RealmFile) => void;
   onRealmTypeUpgrade: (realm: RealmFile) => void;
-  onToggle: () => void;
+  onClose: () => void;
   realms: RealmFile[];
 }
 
@@ -73,7 +73,7 @@ export class RealmSidebarContainer extends React.Component<
         onRealmDeletion={this.props.onRealmDeletion}
         onRealmOpened={this.props.onRealmOpened}
         onRealmTypeUpgrade={this.props.onRealmTypeUpgrade}
-        onToggle={this.props.onToggle}
+        onClose={this.props.onClose}
         realms={validRealms}
       />
     );

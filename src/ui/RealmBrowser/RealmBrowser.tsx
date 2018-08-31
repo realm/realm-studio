@@ -27,8 +27,8 @@ import { AddPropertyModal } from './AddPropertyModal';
 import { Content, EditMode, HighlightMode } from './Content';
 import { EncryptionDialog } from './EncryptionDialog';
 import { Focus, IClassFocus } from './focus';
+import { LeftSidebar } from './LeftSidebar';
 import { NoFocusPlaceholder } from './NoFocusPlaceholder';
-import { Sidebar } from './Sidebar';
 
 import './RealmBrowser.scss';
 
@@ -46,6 +46,7 @@ export interface IRealmBrowserProps {
   isAddPropertyOpen: boolean;
   isClassNameAvailable: (name: string) => boolean;
   isEncryptionDialogVisible: boolean;
+  isLeftSidebarOpen: boolean;
   isPropertyNameAvailable: (name: string) => boolean;
   onAddClass: (schema: Realm.ObjectSchema) => void;
   onAddProperty: (name: string, type: Realm.PropertyType) => void;
@@ -53,6 +54,7 @@ export interface IRealmBrowserProps {
   onClassFocussed: ClassFocussedHandler;
   onCommitTransaction: () => void;
   onHideEncryptionDialog: () => void;
+  onLeftSidebarToggle: () => void;
   onListFocussed: ListFocussedHandler;
   onOpenWithEncryption: (key: string) => void;
   onRealmChanged: () => void;
@@ -76,6 +78,7 @@ export const RealmBrowser = ({
   isAddPropertyOpen,
   isClassNameAvailable,
   isEncryptionDialogVisible,
+  isLeftSidebarOpen,
   isPropertyNameAvailable,
   onAddClass,
   onAddProperty,
@@ -83,6 +86,7 @@ export const RealmBrowser = ({
   onClassFocussed,
   onCommitTransaction,
   onHideEncryptionDialog,
+  onLeftSidebarToggle,
   onListFocussed,
   onOpenWithEncryption,
   onRealmChanged,
@@ -94,11 +98,13 @@ export const RealmBrowser = ({
 }: IRealmBrowserProps) => {
   return (
     <div className="RealmBrowser">
-      <Sidebar
-        className="RealmBrowser__Sidebar"
+      <LeftSidebar
+        className="RealmBrowser__LeftSidebar"
         focus={focus}
         getSchemaLength={getSchemaLength}
+        isOpen={isLeftSidebarOpen}
         onClassFocussed={onClassFocussed}
+        onToggle={onLeftSidebarToggle}
         progress={progress}
         schemas={schemas}
         toggleAddSchema={toggleAddSchema}

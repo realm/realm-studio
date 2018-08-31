@@ -38,20 +38,16 @@ $highlight-row-color: $black;
   display: flex;
   height: 100%;
 
-  &__Sidebar,
   &__Table__HeaderGrid,
-  &__Content__Actions {
+  &__Topbar {
     z-index: 1; // Overlay when drag-reordering elements in lists
-  }
-
-  &__Sidebar {
-    width: 200px;
   }
 
   &__Wrapper {
     display: flex;
     flex: 1 1 0;
     flex-direction: column;
+    overflow: hidden;
   }
 
   &__SelectObject {
@@ -87,6 +83,7 @@ $highlight-row-color: $black;
 
     &__Filter {
       flex-grow: 1;
+      min-width: 100px;
     }
 
     &__Button {

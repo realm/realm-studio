@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as classnames from 'classnames';
+import * as classNames from 'classnames';
 import * as React from 'react';
 import {
   AutoSizer,
@@ -27,13 +27,8 @@ import {
 import { QuerySearch } from '../../../reusable/QuerySearch';
 import './FilterableTable.scss';
 
-export const FilterableTableWrapper = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => <div className="Table">{children}</div>;
-
 export interface IFilterableTableProps<E extends any> {
+  className?: string;
   children: Array<React.ReactElement<ColumnProps>>;
   elements: Realm.Results<E>;
   isElementsEqual: (a: E, b: E) => boolean;
@@ -47,6 +42,7 @@ export interface IFilterableTableProps<E extends any> {
 }
 
 export const FilterableTable = <E extends any>({
+  className,
   children,
   elements,
   isElementsEqual,
@@ -58,15 +54,15 @@ export const FilterableTable = <E extends any>({
   searchString,
   selectedElements,
 }: IFilterableTableProps<E>) => (
-  <div className="Table__content">
-    <div className="Table__topbar">
+  <div className={classNames('Table', className)}>
+    <div className="Table__Topbar">
       <QuerySearch
         query={searchString}
         onQueryChange={onSearchStringChange}
         placeholder={searchPlaceholder}
       />
     </div>
-    <div className="Table__table" onClick={() => onElementsDeselection()}>
+    <div className="Table__Table" onClick={() => onElementsDeselection()}>
       <AutoSizer>
         {({ width, height }: IAutoSizerDimensions) => (
           <Table
@@ -81,11 +77,11 @@ export const FilterableTable = <E extends any>({
                 const isSelected = !!selectedElements.find(e =>
                   isElementsEqual(e, element),
                 );
-                return classnames('Table__row', {
-                  'Table__row--selected': isSelected,
+                return classNames('Table__Row', {
+                  'Table__Row--selected': isSelected,
                 });
               } else {
-                return 'Table__row';
+                return 'Table__Row';
               }
             }}
             rowCount={elements.length}

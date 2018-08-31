@@ -17,19 +17,17 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
-import { Table } from 'reactstrap';
 
 import * as ros from '../../../../services/ros';
+import { SidebarTable } from '../../../reusable';
 import { shortenRealmPath } from '../../utils';
 
-import './RealmsTable.scss';
-
-export const RealmsTable = ({
+export const UsersRealmsTable = ({
   realms,
 }: {
   realms: Realm.Results<ros.IRealmFile>;
 }) => (
-  <Table size="sm" className="RealmsTable">
+  <SidebarTable size="sm" className="UsersRealmsTable">
     <thead>
       <tr>
         {/* We mention "Realm" in this header, so we don't need a separate header */}
@@ -39,7 +37,7 @@ export const RealmsTable = ({
     <tbody>
       {realms.length === 0 ? (
         <tr>
-          <td colSpan={1} className="RealmsTable__EmptyExplanation">
+          <td colSpan={1} className="UsersRealmsTable__EmptyExplanation">
             This user has no realms
           </td>
         </tr>
@@ -53,5 +51,5 @@ export const RealmsTable = ({
         })
       )}
     </tbody>
-  </Table>
+  </SidebarTable>
 );

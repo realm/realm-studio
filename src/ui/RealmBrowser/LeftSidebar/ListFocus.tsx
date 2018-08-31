@@ -31,14 +31,14 @@ interface IListFocusProps {
 
 export const ListFocus = ({ focus, onClassFocussed }: IListFocusProps) => {
   return (
-    <div className={classNames('Sidebar__List')}>
-      <div className="Sidebar__List__Name">
-        <span className="Sidebar__List__Name__Text">
+    <div className={classNames('LeftSidebar__List')}>
+      <div className="LeftSidebar__List__Name">
+        <span className="LeftSidebar__List__Name__Text">
           List of {focus.property.objectType}
         </span>
         <Badge color="primary">{focus.results.length}</Badge>
       </div>
-      <div className="Sidebar__List__Parent">
+      <div className="LeftSidebar__List__Parent">
         <div>
           <strong>{focus.property.name}</strong> on
         </div>
@@ -48,7 +48,7 @@ export const ListFocus = ({ focus, onClassFocussed }: IListFocusProps) => {
             onClick={() =>
               onClassFocussed(focus.parent.objectSchema().name, focus.parent)
             }
-            className="Sidebar__List__ParentObject"
+            className="LeftSidebar__List__ParentObject"
             title={displayObject(focus.parent, true)}
           >
             {displayObject(focus.parent, false)}

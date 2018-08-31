@@ -16,27 +16,13 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as classNames from 'classnames';
-import * as React from 'react';
+.RealmsTable {
+  display: flex;
+  height: 100%;
+  position: absolute;
+  width: 100%;
 
-import './Sidebar.scss';
-
-export interface IProps {
-  className: string;
-  isOpen: boolean;
-  children: React.ReactNode;
-  onToggle?: () => void;
+  &__Table {
+    height: 100%;
+  }
 }
-
-export const Sidebar = ({ className, isOpen, children, onToggle }: IProps) => (
-  <div
-    className={classNames(className, isOpen ? `${className}--open` : undefined)}
-  >
-    {children}
-    {onToggle ? (
-      <div onClick={onToggle} className={`${className}__CloseToggle`}>
-        <i className="fa fa-angle-right" />
-      </div>
-    ) : null}
-  </div>
-);

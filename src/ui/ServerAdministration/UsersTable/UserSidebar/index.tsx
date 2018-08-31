@@ -25,7 +25,7 @@ import { UserSidebar } from './UserSidebar';
 
 export interface IUserSidebarContainerProps {
   isOpen: boolean;
-  onToggle: () => void;
+  onClose: () => void;
   onUserChangePassword: (userId: string) => void;
   onUserDeletion: (userId: string) => void;
   onUserMetadataAppended: (userId: string) => void;
