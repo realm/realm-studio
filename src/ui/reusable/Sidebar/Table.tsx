@@ -16,8 +16,15 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-@import "../../shared/Sidebar/SidebarTable";
+import * as classNames from 'classnames';
+import * as React from 'react';
+import * as Reactstrap from 'reactstrap';
 
-.RealmsTable {
-  @include sidebar-table;
-}
+export const Table = (props: Reactstrap.TableProps) => (
+  <Reactstrap.Table
+    {...props}
+    className={classNames('Sidebar__Table', props.className)}
+  >
+    {props.children}
+  </Reactstrap.Table>
+);

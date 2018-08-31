@@ -40,25 +40,28 @@ export const TopBar = ({
   onQueryHelp,
   query,
   readOnly,
-}: ITopBarProps) => (
-  <div className="RealmBrowser__Topbar">
-    <QuerySearch
-      className="RealmBrowser__Topbar__Filter"
-      onQueryChange={onQueryChange}
-      onQueryHelp={onQueryHelp}
-      query={query}
-      placeholder="Enter a query to filter the list"
-    />
-    {!readOnly ? (
-      <Button
-        size="sm"
-        color="primary"
-        className="RealmBrowser__Topbar__Button"
-        onClick={onNewObjectClick}
-        title={`Create new ${getClassName(focus)}`}
-      >
-        Create new {getClassName(focus)}
-      </Button>
-    ) : null}
-  </div>
-);
+}: ITopBarProps) => {
+  const className = getClassName(focus);
+  return (
+    <div className="RealmBrowser__Topbar">
+      <QuerySearch
+        className="RealmBrowser__Topbar__Filter"
+        onQueryChange={onQueryChange}
+        onQueryHelp={onQueryHelp}
+        query={query}
+        placeholder="Enter a query to filter the list"
+      />
+      {!readOnly ? (
+        <Button
+          size="sm"
+          color="primary"
+          className="RealmBrowser__Topbar__Button"
+          onClick={onNewObjectClick}
+          title={`Create ${className}`}
+        >
+          Create {className}
+        </Button>
+      ) : null}
+    </div>
+  );
+};

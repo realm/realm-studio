@@ -18,9 +18,7 @@
 
 @import "~realm-studio-styles/variables";
 
-.Sidebar {
-  background: $window-background;
-  border-right: 1px solid $dove;
+.LeftSidebar {
   display: flex;
   flex-direction: column;
   padding: $spacer / 2;
@@ -31,9 +29,10 @@
     border-bottom: 1px solid $dove;
     color: $elephant;
     display: flex;
+    flex-basis: 2rem;
+    flex-shrink: 0;
     font-size: .9rem;
     font-weight: bold;
-    height: 2rem;
     justify-content: space-between;
     line-height: 2em;
     margin-bottom: $spacer / 2;

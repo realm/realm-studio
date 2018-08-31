@@ -17,14 +17,12 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
-import { Table } from 'reactstrap';
 
 import * as ros from '../../../../services/ros';
-
-import './AccountsTable.scss';
+import { SidebarTable } from '../../../reusable';
 
 export const AccountsTable = ({ accounts }: { accounts: ros.IAccount[] }) => (
-  <Table size="sm" className="AccountsTable">
+  <SidebarTable size="sm">
     <thead>
       <tr>
         <th>ID</th>
@@ -49,5 +47,5 @@ export const AccountsTable = ({ accounts }: { accounts: ros.IAccount[] }) => (
         })
       )}
     </tbody>
-  </Table>
+  </SidebarTable>
 );

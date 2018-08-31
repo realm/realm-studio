@@ -17,62 +17,65 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
-import { Button, Card, CardBody, CardText, CardTitle } from 'reactstrap';
+import { Button } from 'reactstrap';
 import * as Realm from 'realm';
 
 import { RealmFile } from '..';
 import * as ros from '../../../../services/ros';
+import { SidebarBody, SidebarControls, SidebarTitle } from '../../../reusable';
 import { displayUser, prettyBytes, shortenRealmPath } from '../../utils';
 import { RealmTypeBadge } from '../RealmTypeBadge';
 
 import { PermissionsTable } from './PermissionsTable';
 
-export const SingleRealmSidebarCard = ({
-  onRealmDeletion,
-  onRealmOpened,
-  onRealmTypeUpgrade,
-  permissions,
-  realm,
-  stateSize,
-}: {
+interface ISingleRealmContentProps {
   onRealmDeletion: (realm: RealmFile) => void;
   onRealmOpened: (realm: RealmFile) => void;
   onRealmTypeUpgrade: (realm: RealmFile) => void;
   realm: RealmFile;
   permissions: Realm.Results<ros.IPermission>;
   stateSize?: number;
-}) => {
+}
+
+export const SingleRealmContent = ({
+  onRealmDeletion,
+  onRealmOpened,
+  onRealmTypeUpgrade,
+  permissions,
+  realm,
+  stateSize,
+}: ISingleRealmContentProps) => {
   // Determine if the Realm can be upgraded to a "reference" Realm,
   // It can if its defined and not already "partial" or "reference"
   const canUpgradeType = realm
     ? ['partial', 'reference'].indexOf(realm.realmType || '') === -1
     : false;
   return (
-    <Card className="RealmSidebar__Card">
-      <CardBody className="RealmSidebar__Top">
-        <CardTitle className="RealmSidebar__Title">
-          <RealmTypeBadge
-            className="RealmSidebar__TypeBadge"
-            type={realm.realmType}
-          />
-          <span className="RealmSidebar__TitleText" title={realm.path}>
-            {shortenRealmPath(realm.path)}
-          </span>
-        </CardTitle>
-        <CardText className="RealmSidebar__SubTitle">
+    <React.Fragment>
+      <SidebarTitle>
+        <RealmTypeBadge
+          className="RealmSidebar__TypeBadge"
+          type={realm.realmType}
+        />
+        <span className="RealmSidebar__TitleText" title={realm.path}>
+          {shortenRealmPath(realm.path)}
+        </span>
+      </SidebarTitle>
+      <SidebarBody grow={0}>
+        <p className="RealmSidebar__SubTitle">
           Owned by {displayUser(realm.owner)}
-        </CardText>
+        </p>
         {typeof stateSize === 'number' ? (
-          <CardText className="RealmSidebar__SubTitle">
+          <p className="RealmSidebar__SubTitle">
             Data size: {prettyBytes(stateSize)}
-          </CardText>
+          </p>
         ) : null}
-      </CardBody>
-      <CardBody className="RealmSidebar__Tables">
+      </SidebarBody>
+      <SidebarBody className="RealmSidebar__Tables">
         {permissions ? <PermissionsTable permissions={permissions} /> : null}
-      </CardBody>
+      </SidebarBody>
       {canUpgradeType ? (
-        <CardBody className="RealmSidebar__UpgradeTypeBlock">
+        <SidebarBody grow={0} className="RealmSidebar__UpgradeTypeBlock">
           This Realm can be upgraded to a Reference Realm which will enable{' '}
           <a
             target="_blank"
@@ -87,9 +90,9 @@ export const SingleRealmSidebarCard = ({
           >
             Fine-Grained Permissions
           </a>. Note: Doing so will remove any existing permissions.
-        </CardBody>
+        </SidebarBody>
       ) : null}
-      <CardBody className="RealmSidebar__Controls">
+      <SidebarControls>
         <Button size="sm" color="primary" onClick={() => onRealmOpened(realm)}>
           Open
         </Button>
@@ -105,7 +108,7 @@ export const SingleRealmSidebarCard = ({
         <Button size="sm" color="danger" onClick={() => onRealmDeletion(realm)}>
           Delete
         </Button>
-      </CardBody>
-    </Card>
+      </SidebarControls>
+    </React.Fragment>
   );
 };

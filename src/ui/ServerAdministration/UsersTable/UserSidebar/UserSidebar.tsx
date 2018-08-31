@@ -21,21 +21,21 @@ import * as React from 'react';
 import * as ros from '../../../../services/ros';
 
 import { ISelection } from '..';
-import { Sidebar } from '../../shared/Sidebar';
+import { Sidebar } from '../../../reusable';
 
 import { IUserSidebarContainerProps } from '.';
-import { UserSidebarCard } from './UserSidebarCard';
+import { UserSidebarContent } from './UserSidebarContent';
 
 import './UserSidebar.scss';
 
 export interface IUserSidebarProps extends IUserSidebarContainerProps {
   onChangePassword: () => void;
+  onClose: () => void;
   onDeletion: () => void;
   onMetadataAppended: () => void;
   onMetadataChanged: (index: number, key: string, value: string) => void;
   onMetadataDeleted: (index: number) => void;
   onRoleChanged: (role: ros.UserRole) => void;
-  onToggle: () => void;
   roleDropdownOpen: boolean;
   selection: ISelection | null;
   toggleRoleDropdown: () => void;
@@ -44,12 +44,12 @@ export interface IUserSidebarProps extends IUserSidebarContainerProps {
 export const UserSidebar = ({
   isOpen,
   onChangePassword,
+  onClose,
   onDeletion,
   onMetadataAppended,
   onMetadataChanged,
   onMetadataDeleted,
   onRoleChanged,
-  onToggle,
   roleDropdownOpen,
   selection,
   toggleRoleDropdown,
@@ -59,11 +59,17 @@ export const UserSidebar = ({
     ? ((selection.user as any) as ros.IUser & Realm.Object)
     : null;
   return (
-    <Sidebar className="UserSidebar" isOpen={isOpen} onToggle={onToggle}>
+    <Sidebar
+      className="UserSidebar"
+      isOpen={isOpen}
+      onClose={onClose}
+      position="right"
+      initialWidth={300}
+    >
       {selection &&
         currentUser &&
         currentUser.isValid() && (
-          <UserSidebarCard
+          <UserSidebarContent
             onChangePassword={onChangePassword}
             onDeletion={onDeletion}
             onMetadataAppended={onMetadataAppended}

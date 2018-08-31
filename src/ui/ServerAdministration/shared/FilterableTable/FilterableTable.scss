@@ -20,27 +20,22 @@
 
 .Table {
   display: flex;
+  flex-direction: column;
   flex-grow: 1;
   user-select: none;
 
-  &__content {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-  }
-
-  &__topbar {
+  &__Topbar {
     background-color: $dove;
     padding: $spacer / 2;
   }
 
-  &__row {
+  &__Row {
     &--selected {
       background: $dove;
     }
   }
 
-  &__table {
+  &__Table {
     flex: 1 0;
   }
 

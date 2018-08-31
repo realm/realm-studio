@@ -17,16 +17,24 @@
 ////////////////////////////////////////////////////////////////////////////
 
 @import "~realm-studio-styles/variables";
-@import "../../shared/Sidebar/Sidebar";
 
 .RealmSidebar {
-  @include sidebar;
+  &__Content {
+    min-width: 200px;
+  }
+
+  &__SubTitle {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
   &__UpgradeTypeBlock {
     background: $dove;
     flex-grow: 0;
     font-size: .8rem;
-    margin-bottom: - $spacer / 2;
+    margin-bottom: 0;
+    padding: $spacer / 2;
     text-align: center;
   }
 

@@ -23,7 +23,6 @@ import { Button } from 'reactstrap';
 import { IPermission, IRealmFile } from '../../../services/ros';
 import {
   FilterableTable,
-  FilterableTableWrapper,
   IFilterableTableProps,
 } from '../shared/FilterableTable';
 import { FloatingControls } from '../shared/FloatingControls';
@@ -33,6 +32,8 @@ import { IDeletionProgress, RealmFile } from '.';
 import { MissingSizeBadge } from './MissingSizeBadge';
 import { RealmSidebar } from './RealmSidebar';
 import { StateSizeHeader } from './StateSizeHeader';
+
+import './RealmsTable.scss';
 
 const FilterableRealmTable: React.ComponentType<
   IFilterableTableProps<RealmFile>
@@ -70,8 +71,9 @@ export const RealmsTable = ({
   selectedRealms: RealmFile[];
 }) => {
   return (
-    <FilterableTableWrapper>
+    <div className="RealmsTable">
       <FilterableRealmTable
+        className="RealmsTable__Table"
         elements={realms}
         onElementClick={onRealmClick}
         onElementDoubleClick={onRealmOpened}
@@ -123,9 +125,9 @@ export const RealmsTable = ({
         onRealmDeletion={onRealmDeletion}
         onRealmOpened={onRealmOpened}
         onRealmTypeUpgrade={onRealmTypeUpgrade}
-        onToggle={() => onRealmsDeselection()}
+        onClose={onRealmsDeselection}
         realms={selectedRealms}
       />
-    </FilterableTableWrapper>
+    </div>
   );
 };

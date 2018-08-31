@@ -1,0 +1,233 @@
+////////////////////////////////////////////////////////////////////////////
+//
+// Copyright 2018 Realm Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+////////////////////////////////////////////////////////////////////////////
+
+@import "~realm-studio-styles/variables";
+
+.Sidebar {
+  $resize-handle-width: 10px;
+  // $resize-handle-background: rgba(255, 0, 0, .2);
+  $resize-handle-background: transparent;
+
+  $toggle-button-width: 1.75rem;
+  $toggle-button-height: 2.5rem;
+  $toggle-button-overhang: $toggle-button-width / 2;
+
+  $sidebar-shadow: $raised-shadow-color;
+  $sidebar-shadow-hover: rgba($sidebar-shadow, .2);
+  $sidebar-transition-duration: .3s;
+  $sidebar-background: $window-background;
+  $sidebar-border-color: mix($elephant, $dove, 25%);
+  $sidebar-closed-width: $toggle-button-width / 2;
+
+  background: $sidebar-background;
+  position: relative;
+  transition: flex-basis $sidebar-transition-duration;
+  z-index: 6;
+
+  &--left {
+    border-right: 1px solid $sidebar-border-color;
+  }
+
+  &--right {
+    border-left: 1px solid $sidebar-border-color;
+  }
+
+  &--closed {
+    flex-basis: 0;
+  }
+
+  &--toggleable-closed {
+    flex-basis: $sidebar-closed-width;
+  }
+
+  &--resizing {
+    transition: none;
+  }
+
+  // We need a content wrapper so we can hide overflow of just the content and keep the width of the __Content constant.
+  &__ContentWrapper {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: relative;
+    width: 100%;
+  }
+
+  &__Content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: absolute;
+
+    &--left {
+      right: 0;
+    }
+
+    &--right {
+      left: 0;
+    }
+  }
+
+  &__ResizeHandle {
+    background: $resize-handle-background;
+    bottom: 0;
+    cursor: ew-resize;
+    position: absolute;
+    top: 0;
+    width: $resize-handle-width;
+
+    &--left {
+      left: - $resize-handle-width / 2;
+    }
+
+    &--right {
+      right: - $resize-handle-width / 2;
+    }
+
+    &--closed {
+      display: none;
+    }
+  }
+
+  &__ToggleButton {
+    align-items: center;
+    border-radius: $border-radius-lg;
+    bottom: 1rem;
+    color: $elephant;
+    cursor: pointer;
+    // Default is not to display the toggle button, unless it's --visible
+    display: none;
+    font-size: 1.5rem;
+    height: $toggle-button-height;
+    justify-content: center;
+    // left: $spacer; // Hiding before sidebar gets opened
+    position: absolute;
+    transition-duration: $sidebar-transition-duration;
+    transition-property: left;
+    width: $toggle-button-width;
+
+    > * {
+      // This is needed to lift the icon above the ::before
+      position: relative;
+    }
+
+    &::before {
+      background-color: $sidebar-background;
+      border: 1px solid $sidebar-border-color;
+      border-radius: $border-radius-lg;
+      box-sizing: content-box;
+      content: "";
+      height: $toggle-button-height;
+      position: absolute;
+      width: $toggle-button-overhang;
+    }
+
+    &--visible {
+      display: flex;
+    }
+
+    &--left {
+      border-bottom-right-radius: 0;
+      border-top-right-radius: 0;
+      left: -$toggle-button-overhang;
+
+      &::before {
+        border-bottom-right-radius: 0;
+        border-right: 0;
+        border-top-right-radius: 0;
+        box-shadow: -3px 0 3px $sidebar-shadow;
+        left: -1px;
+      }
+
+      &:hover {
+        &::after {
+          box-shadow: -3px 0 3px $sidebar-shadow-hover;
+        }
+      }
+    }
+
+    &--right {
+      border-bottom-left-radius: 0;
+      border-top-left-radius: 0;
+      right: -$toggle-button-overhang;
+
+      &::before {
+        border-bottom-left-radius: 0;
+        border-left: 0;
+        border-top-left-radius: 0;
+        box-shadow: 3px 0 3px $sidebar-shadow;
+        right: -1px;
+      }
+
+      &:hover {
+        &::after {
+          box-shadow: 3px 0 3px $sidebar-shadow-hover;
+        }
+      }
+    }
+
+    &:hover {
+      color: $charcoal;
+    }
+  }
+
+  &__Body {
+    margin: 0;
+    margin-bottom: $spacer;
+    padding: 0 $spacer;
+  }
+
+  &__Controls {
+    align-items: center;
+    display: flex;
+    flex-shrink: 0;
+    justify-content: center;
+    padding: 3 * $spacer / 4;
+
+    & > * {
+      margin: $spacer / 4;
+    }
+  }
+
+  &__Table {
+    table-layout: fixed;
+
+    th {
+      border-top: 0;
+    }
+
+    td {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    &__EmptyExplanation {
+      color: $elephant;
+      font-size: .9rem;
+      text-align: center;
+    }
+  }
+
+  &__Title {
+    font-size: 1.5rem;
+    margin: $spacer 0;
+    padding: 0 $spacer;
+    word-break: break-all;
+  }
+}

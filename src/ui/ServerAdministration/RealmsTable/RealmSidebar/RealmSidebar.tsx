@@ -21,10 +21,10 @@ import * as Realm from 'realm';
 
 import { IDeletionProgress, RealmFile } from '..';
 import * as ros from '../../../../services/ros';
-import { Sidebar } from '../../shared/Sidebar';
+import { Sidebar } from '../../../reusable';
 
-import { MultipleRealmsSidebarCard } from './MultipleRealmsSidebarCard';
-import { SingleRealmSidebarCard } from './SingleRealmSidebarCard';
+import { MultipleRealmsContent } from './MultipleRealmsContent';
+import { SingleRealmContent } from './SingleRealmContent';
 
 import './RealmSidebar.scss';
 
@@ -36,7 +36,7 @@ export const RealmSidebar = ({
   onRealmDeletion,
   onRealmOpened,
   onRealmTypeUpgrade,
-  onToggle,
+  onClose,
   realms,
 }: {
   deletionProgress?: IDeletionProgress;
@@ -46,12 +46,19 @@ export const RealmSidebar = ({
   onRealmDeletion: (realm: RealmFile) => void;
   onRealmOpened: (realm: RealmFile) => void;
   onRealmTypeUpgrade: (realm: RealmFile) => void;
-  onToggle: () => void;
+  onClose: () => void;
   realms: RealmFile[];
 }) => (
-  <Sidebar className="RealmSidebar" isOpen={isOpen} onToggle={onToggle}>
+  <Sidebar
+    className="RealmSidebar"
+    contentClassName="RealmSidebar__Content"
+    isOpen={isOpen}
+    onClose={onClose}
+    position="right"
+    initialWidth={300}
+  >
     {realms.length === 1 ? (
-      <SingleRealmSidebarCard
+      <SingleRealmContent
         onRealmDeletion={onRealmDeletion}
         onRealmOpened={onRealmOpened}
         onRealmTypeUpgrade={onRealmTypeUpgrade}
@@ -60,7 +67,7 @@ export const RealmSidebar = ({
         stateSize={getRealmStateSize(realms[0])}
       />
     ) : realms.length > 1 ? (
-      <MultipleRealmsSidebarCard
+      <MultipleRealmsContent
         deletionProgress={deletionProgress}
         onRealmDeletion={onRealmDeletion}
         realms={realms}
