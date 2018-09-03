@@ -71,6 +71,13 @@ export const AuthenticationMethodSelector = ({
     </AuthenticationMethodButton>
     <AuthenticationMethodButton
       activeMethod={method}
+      method={AuthenticationMethod.jwt}
+      onMethodChanged={onMethodChanged}
+    >
+      JWT
+    </AuthenticationMethodButton>
+    <AuthenticationMethodButton
+      activeMethod={method}
       method={AuthenticationMethod.other}
       onMethodChanged={onMethodChanged}
     >

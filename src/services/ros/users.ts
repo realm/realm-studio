@@ -29,6 +29,12 @@ export const authenticate = async (
     );
   } else if (credentials.kind === 'token') {
     return Realm.Sync.User.adminUser(credentials.token, credentials.url);
+  } else if (credentials.kind === 'jwt') {
+    return Realm.Sync.User.registerWithProvider(credentials.url, {
+      provider: credentials.providerName,
+      providerToken: credentials.token,
+      userInfo: undefined,
+    });
   } else if (credentials.kind === 'other') {
     // TODO: Remove this when the registerWithProvider has a simpler interface
     // @see https://github.com/realm/realm-js/issues/1451
