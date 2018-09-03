@@ -32,6 +32,7 @@ interface ISidebarProps {
   onToggle: () => void;
   position: 'left' | 'right';
   width: number;
+  outerRef: (element: HTMLElement | null) => void;
 }
 
 export const Sidebar = ({
@@ -43,6 +44,7 @@ export const Sidebar = ({
   isResizing,
   onResizeStart,
   onToggle,
+  outerRef,
   position,
   width,
 }: ISidebarProps) => {
@@ -50,6 +52,7 @@ export const Sidebar = ({
   return (
     <div
       style={{ flexBasis: isOpen ? `${width}px` : undefined }}
+      ref={outerRef}
       className={classNames(
         'Sidebar',
         `Sidebar--${position}`,
