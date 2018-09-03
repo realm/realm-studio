@@ -202,6 +202,10 @@ class ContentContainer extends React.Component<
   }
 
   public componentDidCatch(error: Error) {
+    // Add some more explanation to some error messages
+    if (error.message === 'Access to invalidated List object') {
+      error.message = 'The parent object with the list got deleted';
+    }
     this.setState({ error });
   }
 
