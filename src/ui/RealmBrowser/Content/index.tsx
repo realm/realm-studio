@@ -140,6 +140,7 @@ export interface IContentContainerState {
   deleteObjectsDialog: IDeleteObjectsDialogProps;
   error?: Error;
   highlight?: IHighlight;
+  isPermissionSidebarOpen: boolean;
   query: string;
   selectObjectDialog: ISelectObjectDialog;
   sorting?: ISorting;
@@ -154,6 +155,7 @@ class ContentContainer extends React.Component<
   public state: IContentContainerState = {
     createObjectDialog: { isOpen: false },
     deleteObjectsDialog: { isOpen: false },
+    isPermissionSidebarOpen: true,
     query: '',
     selectObjectDialog: { isOpen: false },
   };
@@ -245,6 +247,7 @@ class ContentContainer extends React.Component<
       filteredSortedResults,
       focus: this.props.focus,
       highlight: this.state.highlight,
+      isPermissionSidebarOpen: this.state.isPermissionSidebarOpen,
       onCellChange: this.onCellChange,
       onCellClick: this.onCellClick,
       onCellHighlighted: this.onCellHighlighted,
@@ -252,6 +255,7 @@ class ContentContainer extends React.Component<
       onContextMenu: this.onContextMenu,
       onRowMouseDown: this.onRowMouseDown,
       onNewObjectClick: this.onNewObjectClick,
+      onPermissionSidebarToggle: this.onPermissionSidebarToggle,
       onQueryChange: this.onQueryChange,
       onQueryHelp: this.onQueryHelp,
       onResetHighlight: this.onResetHighlight,
@@ -762,6 +766,12 @@ class ContentContainer extends React.Component<
   private onNewObjectClick = () => {
     const className = getClassName(this.props.focus);
     this.onShowCreateObjectDialog(className);
+  };
+
+  private onPermissionSidebarToggle = () => {
+    this.setState({
+      isPermissionSidebarOpen: !this.state.isPermissionSidebarOpen,
+    });
   };
 
   private onReorderingStart: ReorderingStartHandler = () => {

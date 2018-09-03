@@ -18,14 +18,25 @@
 
 import * as React from 'react';
 
-import { Sidebar } from '../../reusable';
+import { Sidebar, SidebarTitle } from '../../../reusable';
 
-interface IRightSidebarProps {
+interface IPermissionSidebarProps {
+  className?: string;
   isOpen: boolean;
+  onToggle: () => void;
 }
 
-export const RightSidebar = ({ isOpen }: IRightSidebarProps) => (
-  <Sidebar isOpen={isOpen} position="right">
-    ...
+export const PermissionSidebar = ({
+  className,
+  isOpen,
+  onToggle,
+}: IPermissionSidebarProps) => (
+  <Sidebar
+    className={className}
+    isOpen={isOpen}
+    onToggle={onToggle}
+    position="right"
+  >
+    <SidebarTitle size="md">Permissions</SidebarTitle>
   </Sidebar>
 );

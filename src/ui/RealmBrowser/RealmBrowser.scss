@@ -96,6 +96,11 @@ $cell-border-color: mix($black, $white, 10%);
     }
   }
 
+  &__TableContainer {
+    display: flex;
+    flex: 1 0 0;
+  }
+
   &__Table {
     background: $white;
     flex: 1 0 0;
@@ -429,6 +434,10 @@ $cell-border-color: mix($black, $white, 10%);
       color: $elephant;
       content: "No schema selected";
     }
+  }
+
+  &__PermissionSidebar {
+    border-top: 1px solid $dove;
   }
 
   &__Bottombar {

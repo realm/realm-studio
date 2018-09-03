@@ -226,9 +226,16 @@
   }
 
   &__Title {
-    font-size: 1.5rem;
     margin: $spacer 0;
     padding: 0 $spacer;
     word-break: break-all;
+
+    &--lg {
+      font-size: 1.5rem;
+    }
+
+    &--md {
+      font-size: 1.2rem;
+    }
   }
 }

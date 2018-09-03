@@ -16,12 +16,16 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import * as classNames from 'classnames';
 import * as React from 'react';
 
 interface ITitleProps {
   children: React.ReactNode;
+  size?: 'lg' | 'md';
 }
 
-export const Title = ({ children }: ITitleProps) => (
-  <h1 className="Sidebar__Title">{children}</h1>
+export const Title = ({ children, size = 'lg' }: ITitleProps) => (
+  <h1 className={classNames('Sidebar__Title', `Sidebar__Title--${size}`)}>
+    {children}
+  </h1>
 );

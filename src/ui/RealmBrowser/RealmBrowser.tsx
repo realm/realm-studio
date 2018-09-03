@@ -29,7 +29,6 @@ import { EncryptionDialog } from './EncryptionDialog';
 import { Focus, IClassFocus } from './focus';
 import { LeftSidebar } from './LeftSidebar';
 import { NoFocusPlaceholder } from './NoFocusPlaceholder';
-import { RightSidebar } from './RightSidebar';
 
 import './RealmBrowser.scss';
 
@@ -139,11 +138,6 @@ export const RealmBrowser = ({
           <NoFocusPlaceholder />
         )}
       </div>
-
-      <RightSidebar
-        className="RealmBrowser__RightSidebar"
-        isOpen={isRightSidebarOpen}
-      />
 
       <AddClassModal
         isOpen={isAddClassOpen}
