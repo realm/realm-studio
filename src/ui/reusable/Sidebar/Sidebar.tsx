@@ -21,6 +21,18 @@ import * as React from 'react';
 
 import './Sidebar.scss';
 
+function getToggleDirection(position: 'left' | 'right', isOpen: boolean) {
+  if (isOpen) {
+    return position;
+  } else {
+    if (position === 'left') {
+      return 'right';
+    } else {
+      return 'left';
+    }
+  }
+}
+
 interface ISidebarProps {
   children: React.ReactNode;
   className?: string;
@@ -32,6 +44,7 @@ interface ISidebarProps {
   onToggle: () => void;
   position: 'left' | 'right';
   width: number;
+  outerRef: (element: HTMLElement | null) => void;
 }
 
 export const Sidebar = ({
@@ -39,17 +52,19 @@ export const Sidebar = ({
   className,
   contentClassName,
   isOpen,
-  isToggleable,
   isResizing,
+  isToggleable,
   onResizeStart,
   onToggle,
+  outerRef,
   position,
   width,
 }: ISidebarProps) => {
-  const toggleDirection = position === 'left' && isOpen ? 'left' : 'right';
+  const toggleDirection = getToggleDirection(position, isOpen);
   return (
     <div
       style={{ flexBasis: isOpen ? `${width}px` : undefined }}
+      ref={outerRef}
       className={classNames(
         'Sidebar',
         `Sidebar--${position}`,

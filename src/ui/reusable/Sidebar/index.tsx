@@ -54,6 +54,8 @@ class SidebarContainer extends React.Component<
     resizing: null,
   };
 
+  private outerElement: HTMLElement | null = null;
+
   public render() {
     const isToggleable = !!(
       this.props.onToggle ||
@@ -67,19 +69,25 @@ class SidebarContainer extends React.Component<
         contentClassName={this.props.contentClassName}
         isOpen={this.props.isOpen}
         isResizing={this.state.resizing !== null}
+        isToggleable={isToggleable}
         onResizeStart={this.onResizeStart}
         onToggle={this.onToggle}
-        isToggleable={isToggleable}
+        outerRef={this.outerRef}
         position={this.props.position}
         width={this.state.width}
       />
     );
   }
 
+  public componentDidMount() {
+    window.addEventListener('resize', this.onWindowResize);
+  }
+
   public componentWillUnmount() {
     // Remove any mousemove listener
     document.body.removeEventListener('mousemove', this.onResizeMove);
     document.body.removeEventListener('mouseup', this.onResizeEnd);
+    window.removeEventListener('resize', this.onWindowResize);
   }
 
   private onResizeStart = (e: React.MouseEvent<HTMLElement>) => {
@@ -107,14 +115,24 @@ class SidebarContainer extends React.Component<
       const { startX, startWidth } = this.state.resizing;
       const deltaX = e.clientX - startX;
       const deltaWidth = this.props.position === 'left' ? deltaX : -deltaX;
-      const width = startWidth + deltaWidth;
-      // Clip the width
-      const maximumWidth = this.props.maximumWidth || Number.MAX_SAFE_INTEGER;
-      const minimumWidth = this.props.minimumWidth || 10;
+      const width = this.getBoundedWidth(startWidth + deltaWidth);
       // Set the width
       this.setState({
-        width: Math.max(Math.min(width, maximumWidth), minimumWidth),
+        width,
       });
+    }
+  };
+
+  private onWindowResize = (e: Event) => {
+    // When a window got resized, the width of the sidebar might have been reduced
+    if (this.outerElement) {
+      const rect = this.outerElement.getBoundingClientRect();
+      // The window was resized to a point where the Sidebar could no longer maintain its width
+      if (rect.width < this.state.width) {
+        // Try setting the width to the actual width of the sidebar after the resize - within bounds
+        const width = this.getBoundedWidth(rect.width);
+        this.setState({ width });
+      }
     }
   };
 
@@ -127,6 +145,18 @@ class SidebarContainer extends React.Component<
       this.props.onToggle();
     }
   };
+
+  private outerRef = (element: HTMLElement | null) => {
+    this.outerElement = element;
+  };
+
+  private getBoundedWidth(width: number) {
+    // Determine the maximum and minumum widths
+    const maximumWidth = this.props.maximumWidth || Number.MAX_SAFE_INTEGER;
+    const minimumWidth = this.props.minimumWidth || 10;
+    // Return a width within the bounds
+    return Math.max(Math.min(width, maximumWidth), minimumWidth);
+  }
 }
 
 export { SidebarContainer as Sidebar };
