@@ -487,8 +487,9 @@ class RealmBrowserContainer
         [key: string]: any;
       } = this.state.focus.parent;
       const schema = parent.objectSchema();
-      const id = schema.primaryKey ? parent[schema.primaryKey] : '?';
       const propertyName = this.state.focus.property.name;
+      const id =
+        parent.isValid() && schema.primaryKey ? parent[schema.primaryKey] : '?';
       return `list:${schema.name}[${id}]:${propertyName}`;
     } else {
       return 'null';

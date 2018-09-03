@@ -29,19 +29,21 @@ interface IListFocusProps {
   onClassFocussed: ClassFocussedHandler;
 }
 
-export const ListFocus = ({ focus, onClassFocussed }: IListFocusProps) => {
-  return (
-    <div className={classNames('LeftSidebar__List')}>
-      <div className="LeftSidebar__List__Name">
-        <span className="LeftSidebar__List__Name__Text">
-          List of {focus.property.objectType}
-        </span>
-        <Badge color="primary">{focus.results.length}</Badge>
+export const ListFocus = ({ focus, onClassFocussed }: IListFocusProps) => (
+  <div className="LeftSidebar__List">
+    <div className="LeftSidebar__List__Name">
+      <span className="LeftSidebar__List__Name__Text">
+        List of {focus.property.objectType}
+      </span>
+      <Badge color="primary">
+        {focus.parent.isValid() ? focus.results.length : '?'}
+      </Badge>
+    </div>
+    <div className="LeftSidebar__List__Parent">
+      <div>
+        <strong>{focus.property.name}</strong> on
       </div>
-      <div className="LeftSidebar__List__Parent">
-        <div>
-          <strong>{focus.property.name}</strong> on
-        </div>
+      {focus.parent.isValid() ? (
         <div>
           {!focus.parent.objectSchema().primaryKey ? 'a ' : null}
           <span
@@ -54,7 +56,9 @@ export const ListFocus = ({ focus, onClassFocussed }: IListFocusProps) => {
             {displayObject(focus.parent, false)}
           </span>
         </div>
-      </div>
+      ) : (
+        <div>a deleted object</div>
+      )}
     </div>
-  );
-};
+  </div>
+);
