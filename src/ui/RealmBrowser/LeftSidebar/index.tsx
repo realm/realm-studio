@@ -16,29 +16,21 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as classNames from 'classnames';
 import * as React from 'react';
-import { Badge, Button } from 'reactstrap';
 
 import { ClassFocussedHandler } from '..';
-import { ILoadingProgress, Sidebar } from '../../reusable';
-import { Focus, IListFocus } from '../focus';
+import { store } from '../../../store';
+import { ILoadingProgress } from '../../reusable';
+import { Focus } from '../focus';
 
-import { ListFocus } from './ListFocus';
+import { LeftSidebar } from './LeftSidebar';
 
-import './LeftSidebar.scss';
+function isSystemClassName(className: string) {
+  return className.indexOf('__') === 0;
+}
 
-export const isSelected = (focus: Focus | null, schemaName: string) => {
-  if (focus && focus.kind === 'class') {
-    return focus.className === schemaName;
-  } else if (focus && focus.kind === 'list') {
-    return focus.parent.objectSchema().name === schemaName;
-  } else {
-    return false;
-  }
-};
-
-export interface ILeftSidebarProps {
+interface ILeftSidebarContainerProps {
+  classes: Realm.ObjectSchema[];
   className?: string;
   focus: Focus | null;
   getSchemaLength: (className: string) => number;
@@ -46,67 +38,91 @@ export interface ILeftSidebarProps {
   onClassFocussed: ClassFocussedHandler;
   onToggle: () => void;
   progress: ILoadingProgress;
-  schemas: Realm.ObjectSchema[];
-  toggleAddSchema: () => void;
+  toggleAddClass: () => void;
 }
 
-export const LeftSidebar = ({
-  className,
-  focus,
-  getSchemaLength,
-  isOpen,
-  onClassFocussed,
-  onToggle,
-  progress,
-  schemas,
-  toggleAddSchema,
-}: ILeftSidebarProps) => (
-  <Sidebar
-    className={className}
-    contentClassName="LeftSidebar"
-    isOpen={isOpen}
-    onToggle={onToggle}
-    position="left"
-    minimumWidth={120}
-  >
-    <div className="LeftSidebar__Header">
-      <span>Classes</span>
-      <Button size="sm" onClick={toggleAddSchema}>
-        <i className="fa fa-plus" />
-      </Button>
-    </div>
-    {schemas && schemas.length > 0 ? (
-      <ul className="LeftSidebar__SchemaList">
-        {schemas.map(schema => {
-          const selected = isSelected(focus, schema.name);
-          const schemaClass = classNames('LeftSidebar__Schema__Info', {
-            'LeftSidebar__Schema__Info--selected': selected,
-          });
-          return (
-            <li
-              key={schema.name}
-              className="LeftSidebar__Schema"
-              title={schema.name}
-            >
-              <div
-                className={schemaClass}
-                onClick={() => onClassFocussed(schema.name)}
-              >
-                <span className="LeftSidebar__Schema__Name">{schema.name}</span>
-                <Badge color="primary">{getSchemaLength(schema.name)}</Badge>
-              </div>
-              {selected && focus && focus.kind === 'list' ? (
-                <ListFocus
-                  focus={focus as IListFocus}
-                  onClassFocussed={onClassFocussed}
-                />
-              ) : null}
-            </li>
-          );
-        })}
-      </ul>
-    ) : progress.status === 'done' ? (
-      <div className="LeftSidebar__SchemaList--empty" />
-    ) : null}
-  </Sidebar>
-);
+interface ILeftSidebarContainerState {
+  showSystemClasses: boolean;
+}
+
+class LeftSidebarContainer extends React.Component<
+  ILeftSidebarContainerProps,
+  ILeftSidebarContainerState
+> {
+  public state: ILeftSidebarContainerState = {
+    showSystemClasses: store.shouldShowSystemClasses(),
+  };
+
+  private removeShowSystemClassesListener: (() => void) | null = null;
+
+  public componentDidMount() {
+    this.removeShowSystemClassesListener = store.onDidChange(
+      store.KEY_SHOW_SYSTEM_CLASSES,
+      this.onShowSystemClassesChange,
+    );
+  }
+
+  public componentWillUnmount() {
+    if (typeof this.removeShowSystemClassesListener === 'function') {
+      this.removeShowSystemClassesListener();
+    }
+  }
+
+  public render() {
+    const classes = this.filterClasses(this.props.classes);
+    const hiddenClassCount = Math.max(
+      this.props.classes.length - classes.length,
+      0,
+    );
+    return (
+      <LeftSidebar
+        classes={classes}
+        className={this.props.className}
+        focus={this.props.focus}
+        getSchemaLength={this.props.getSchemaLength}
+        hiddenClassCount={hiddenClassCount}
+        isOpen={this.props.isOpen}
+        onClassFocussed={this.props.onClassFocussed}
+        onToggle={this.props.onToggle}
+        progress={this.props.progress}
+        toggleAddClass={this.props.toggleAddClass}
+      />
+    );
+  }
+
+  private filterClasses(classes: Realm.ObjectSchema[]) {
+    if (!this.state.showSystemClasses) {
+      return classes.filter(c => !isSystemClassName(c.name));
+    } else {
+      return classes;
+    }
+  }
+
+  private onShowSystemClassesChange = (showSystemClasses: boolean) => {
+    this.setState({ showSystemClasses }, () => {
+      const shouldSelectAnotherClass = this.isFocussedOnSystemClass();
+      if (showSystemClasses === false && shouldSelectAnotherClass) {
+        // Focus on another class
+        const firstClass = this.props.classes.find(
+          c => !isSystemClassName(c.name),
+        );
+        if (firstClass) {
+          this.props.onClassFocussed(firstClass.name);
+        }
+      }
+    });
+  };
+
+  private isFocussedOnSystemClass() {
+    const { focus } = this.props;
+    if (focus && focus.kind === 'class') {
+      return isSystemClassName(focus.className);
+    } else if (focus && focus.kind === 'list') {
+      return isSystemClassName(focus.parent.objectSchema().name);
+    } else {
+      return false;
+    }
+  }
+}
+
+export { LeftSidebarContainer as LeftSidebar };

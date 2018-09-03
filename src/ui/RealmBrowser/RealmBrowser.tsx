@@ -33,6 +33,7 @@ import { NoFocusPlaceholder } from './NoFocusPlaceholder';
 import './RealmBrowser.scss';
 
 export interface IRealmBrowserProps {
+  classes: Realm.ObjectSchema[];
   contentKey: string;
   contentRef: (instance: Content | null) => void;
   createObjectSchema?: Realm.ObjectSchema;
@@ -60,9 +61,8 @@ export interface IRealmBrowserProps {
   onRealmChanged: () => void;
   progress: ILoadingProgress;
   realm?: Realm;
-  schemas: Realm.ObjectSchema[];
-  toggleAddSchema: () => void;
-  toggleAddSchemaProperty: () => void;
+  toggleAddClass: () => void;
+  toggleAddClassProperty: () => void;
 }
 
 export const RealmBrowser = ({
@@ -92,13 +92,14 @@ export const RealmBrowser = ({
   onRealmChanged,
   progress,
   realm,
-  schemas,
-  toggleAddSchema,
-  toggleAddSchemaProperty,
+  classes,
+  toggleAddClass,
+  toggleAddClassProperty,
 }: IRealmBrowserProps) => {
   return (
     <div className="RealmBrowser">
       <LeftSidebar
+        classes={classes}
         className="RealmBrowser__LeftSidebar"
         focus={focus}
         getSchemaLength={getSchemaLength}
@@ -106,8 +107,7 @@ export const RealmBrowser = ({
         onClassFocussed={onClassFocussed}
         onToggle={onLeftSidebarToggle}
         progress={progress}
-        schemas={schemas}
-        toggleAddSchema={toggleAddSchema}
+        toggleAddClass={toggleAddClass}
       />
       <div className="RealmBrowser__Wrapper">
         {focus && realm ? (
@@ -119,7 +119,7 @@ export const RealmBrowser = ({
             focus={focus}
             getClassFocus={getClassFocus}
             key={contentKey}
-            onAddColumnClick={toggleAddSchemaProperty}
+            onAddColumnClick={toggleAddClassProperty}
             onCancelTransaction={onCancelTransaction}
             onClassFocussed={onClassFocussed}
             onCommitTransaction={onCommitTransaction}
@@ -140,7 +140,7 @@ export const RealmBrowser = ({
         isOpen={isAddClassOpen}
         isClassNameAvailable={isClassNameAvailable}
         onAddClass={onAddClass}
-        toggle={toggleAddSchema}
+        toggle={toggleAddClass}
       />
 
       {focus && focus.kind === 'class' ? (
@@ -149,8 +149,8 @@ export const RealmBrowser = ({
           isOpen={isAddPropertyOpen}
           isPropertyNameAvailable={isPropertyNameAvailable}
           onAddProperty={onAddProperty}
-          schemas={schemas}
-          toggle={toggleAddSchemaProperty}
+          classes={classes}
+          toggle={toggleAddClassProperty}
         />
       ) : null}
 

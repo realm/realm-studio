@@ -21,10 +21,13 @@
 
 import { ElectronStore } from './module-wrappers/electron-store';
 
+type RemovalCallback = () => void;
+
 class RealmStudioStore {
   public readonly KEY_SHOW_PARTIAL_REALMS = 'realmlist.show-partial-realms';
   public readonly KEY_SHOW_SYSTEM_REALMS = 'realmlist.show-system-realms';
   public readonly KEY_SHOW_SYSTEM_USERS = 'userlist.show-system-users';
+  public readonly KEY_SHOW_SYSTEM_CLASSES = 'browser.show-system-classes';
 
   private store = new ElectronStore();
 
@@ -43,6 +46,11 @@ class RealmStudioStore {
     this.store.set(this.KEY_SHOW_SYSTEM_USERS, !currentValue);
   }
 
+  public toggleShowSystemClasses() {
+    const currentValue = this.store.get(this.KEY_SHOW_SYSTEM_CLASSES, false);
+    this.store.set(this.KEY_SHOW_SYSTEM_CLASSES, !currentValue);
+  }
+
   public shouldShowPartialRealms(): boolean {
     return this.store.get(this.KEY_SHOW_PARTIAL_REALMS, false);
   }
@@ -53,6 +61,10 @@ class RealmStudioStore {
 
   public shouldShowSystemUsers(): boolean {
     return this.store.get(this.KEY_SHOW_SYSTEM_USERS, false);
+  }
+
+  public shouldShowSystemClasses(): boolean {
+    return this.store.get(this.KEY_SHOW_SYSTEM_CLASSES, false);
   }
 
   // Subclassing ElectronStore results in
@@ -68,8 +80,10 @@ class RealmStudioStore {
   public onDidChange(
     key: string,
     callback: (newValue: any, oldValue: any) => void,
-  ): void {
-    this.store.onDidChange(key, callback);
+  ) {
+    const removalCallback = this.store.onDidChange(key, callback);
+    // The store actually returns a function that can be called to remove the listener
+    return (removalCallback as any) as RemovalCallback;
   }
 
   public delete(key: string) {

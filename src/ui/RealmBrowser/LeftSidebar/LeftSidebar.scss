@@ -39,11 +39,14 @@
     text-transform: uppercase;
   }
 
-  &__SchemaList {
+  &__Classes {
     flex-grow: 1;
     margin: 0 (-$spacer / 2);
     overflow-x: hidden;
     overflow-y: auto;
+  }
+
+  &__ClassList {
     padding: 0;
 
     &--empty {
@@ -53,13 +56,13 @@
 
       &::before {
         color: $elephant;
-        content: "This Realm has no schemas defined";
+        content: "This Realm has no classes defined";
         text-align: center;
       }
     }
   }
 
-  &__Schema {
+  &__Class {
     flex-direction: column;
     list-style: none;
 
@@ -125,5 +128,15 @@
       cursor: pointer;
       text-decoration: underline;
     }
+  }
+
+  &__HiddenClassesHint {
+    color: $elephant;
+    font-size: .75rem;
+    margin: 0 ($spacer / 2);
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
