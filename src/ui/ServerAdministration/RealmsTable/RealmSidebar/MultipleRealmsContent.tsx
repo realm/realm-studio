@@ -17,28 +17,27 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
-import { Button, Card, CardBody, CardTitle, Progress } from 'reactstrap';
+import { Button, Progress } from 'reactstrap';
 
 import { IDeletionProgress, RealmFile } from '..';
+import { SidebarBody, SidebarControls, SidebarTitle } from '../../../reusable';
 
-export const MultipleRealmsSidebarCard = ({
-  deletionProgress,
-  onRealmDeletion,
-  realms,
-}: {
+interface IMultipleRealmsContentProps {
   deletionProgress?: IDeletionProgress;
   onRealmDeletion: (...realms: RealmFile[]) => void;
   realms: RealmFile[];
-}) => {
+}
+
+export const MultipleRealmsContent = ({
+  deletionProgress,
+  onRealmDeletion,
+  realms,
+}: IMultipleRealmsContentProps) => {
   return (
-    <Card className="RealmSidebar__Card">
-      <CardBody className="RealmSidebar__Top">
-        <CardTitle className="RealmSidebar__Title">
-          {realms.length} Realms selected
-        </CardTitle>
-      </CardBody>
-      <CardBody className="RealmSidebar__Tables" />
-      <CardBody className="RealmSidebar__Progress">
+    <React.Fragment>
+      <SidebarTitle>{realms.length} Realms selected</SidebarTitle>
+      <SidebarBody />
+      <SidebarBody grow={0}>
         {deletionProgress ? (
           <Progress
             animated={true}
@@ -46,8 +45,8 @@ export const MultipleRealmsSidebarCard = ({
             value={deletionProgress.current}
           />
         ) : null}
-      </CardBody>
-      <CardBody className="RealmSidebar__Controls">
+      </SidebarBody>
+      <SidebarControls>
         <Button
           size="sm"
           color="danger"
@@ -56,7 +55,7 @@ export const MultipleRealmsSidebarCard = ({
         >
           Delete {realms.length} Realms
         </Button>
-      </CardBody>
-    </Card>
+      </SidebarControls>
+    </React.Fragment>
   );
 };

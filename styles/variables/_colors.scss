@@ -59,3 +59,6 @@ $body-bg: $window-background;
 
 // Increasig the yiq threshold to get a light text on a $secondary background
 $yiq-contrasted-threshold: 165;
+
+// When an element uses box-shadow to show that its raised above another element, use this color for the box-shadow
+$raised-shadow-color: rgba(0, 0, 0, .1);

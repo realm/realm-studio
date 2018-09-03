@@ -17,10 +17,10 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
-import { Table } from 'reactstrap';
 import * as Realm from 'realm';
 
 import * as ros from '../../../../../services/ros';
+import { SidebarTable } from '../../../../reusable';
 import { displayUser } from '../../../utils';
 
 import { PermissionsBadge } from './PermissionsBadge';
@@ -31,7 +31,7 @@ export const PermissionsTable = ({
 }: {
   permissions: Realm.Results<ros.IPermission>;
 }) => (
-  <Table size="sm" className="PermissionsTable">
+  <SidebarTable size="sm" className="PermissionsTable">
     <thead>
       <tr>
         <th>User permissions</th>
@@ -70,5 +70,5 @@ export const PermissionsTable = ({
         ))
       )}
     </tbody>
-  </Table>
+  </SidebarTable>
 );

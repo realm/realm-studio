@@ -16,6 +16,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-$sidebar-shadow: rgba($dove, .66);
-$sidebar-transition-duration: .3s;
-$sidebar-width: 33vw;
+import * as React from 'react';
+
+interface ITitleProps {
+  children: React.ReactNode;
+}
+
+export const Title = ({ children }: ITitleProps) => (
+  <h1 className="Sidebar__Title">{children}</h1>
+);

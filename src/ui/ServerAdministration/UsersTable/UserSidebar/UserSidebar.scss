@@ -16,8 +16,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-@import "../../shared/Sidebar/Sidebar";
-
 .UserSidebar {
-  @include sidebar;
+  // Tumbleweed
+  &__Tables {
+    overflow-y: auto;
+  }
 }

@@ -20,12 +20,14 @@
 
 .TopBar {
   background: $window-background;
+  border-bottom: 1px solid $dove;
+  box-shadow: 0 5px 5px $raised-shadow-color;
   cursor: default;
   flex-wrap: nowrap;
   justify-content: flex-start;
   overflow-x: auto;
   user-select: none;
-  z-index: 2;
+  z-index: 10;
 
   &__Logo {
     flex-shrink: 0;

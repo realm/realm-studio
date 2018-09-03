@@ -16,8 +16,13 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-@import "../../shared/Sidebar/SidebarTable";
-
 .MetadataTable {
-  @include sidebar-table;
+  &__ControlCell {
+    text-align: right;
+    width: 35px;
+
+    * {
+      width: 100%;
+    }
+  }
 }

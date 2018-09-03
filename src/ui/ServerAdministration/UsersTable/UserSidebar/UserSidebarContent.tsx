@@ -20,9 +20,6 @@ import * as React from 'react';
 import {
   Button,
   ButtonDropdown,
-  Card,
-  CardBody,
-  CardTitle,
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
@@ -31,16 +28,15 @@ import {
 import * as ros from '../../../../services/ros';
 
 import { ISelection } from '..';
-import { Sidebar } from '../../shared/Sidebar';
+import { SidebarBody, SidebarControls, SidebarTitle } from '../../../reusable';
 
-import { IUserSidebarContainerProps } from '.';
 import { AccountsTable } from './AccountsTable';
 import { MetadataTable } from './MetadataTable';
-import { RealmsTable } from './RealmsTable';
+import { UsersRealmsTable } from './UsersRealmsTable';
 
 import './UserSidebar.scss';
 
-export interface IUserSidebarCardProps {
+export interface IUserSidebarContentProps {
   onChangePassword: () => void;
   onDeletion: () => void;
   onMetadataAppended: () => void;
@@ -52,7 +48,7 @@ export interface IUserSidebarCardProps {
   toggleRoleDropdown: () => void;
 }
 
-export const UserSidebarCard = ({
+export const UserSidebarContent = ({
   onChangePassword,
   onDeletion,
   onMetadataAppended,
@@ -62,18 +58,11 @@ export const UserSidebarCard = ({
   roleDropdownOpen,
   selection,
   toggleRoleDropdown,
-}: IUserSidebarCardProps) => {
+}: IUserSidebarContentProps) => {
   return (
-    <Card className="UserSidebar__Card">
-      <CardBody className="UserSidebar__Top">
-        <CardTitle className="UserSidebar__Title">
-          <span
-            className="UserSidebar__TitleText"
-            title={selection.user.userId}
-          >
-            {selection.user.userId}
-          </span>
-        </CardTitle>
+    <React.Fragment>
+      <SidebarTitle>{selection.user.userId}</SidebarTitle>
+      <SidebarBody grow={0}>
         <ButtonDropdown isOpen={roleDropdownOpen} toggle={toggleRoleDropdown}>
           <DropdownToggle caret={true}>
             {selection.user.isAdmin ? 'Administrator' : 'Regular user'}
@@ -89,8 +78,8 @@ export const UserSidebarCard = ({
             </DropdownItem>
           </DropdownMenu>
         </ButtonDropdown>
-      </CardBody>
-      <CardBody className="UserSidebar__Tables">
+      </SidebarBody>
+      <SidebarBody className="UserSidebar__Tables">
         <AccountsTable accounts={selection.user.accounts} />
         <MetadataTable
           metadatas={selection.user.metadata}
@@ -98,16 +87,16 @@ export const UserSidebarCard = ({
           onMetadataChanged={onMetadataChanged}
           onMetadataDeleted={onMetadataDeleted}
         />
-        <RealmsTable realms={selection.realms} />
-      </CardBody>
-      <CardBody className="UserSidebar__Controls">
+        <UsersRealmsTable realms={selection.realms} />
+      </SidebarBody>
+      <SidebarControls>
         <Button size="sm" onClick={() => onChangePassword()}>
           Change password
         </Button>
         <Button size="sm" color="danger" onClick={() => onDeletion()}>
           Delete
         </Button>
-      </CardBody>
-    </Card>
+      </SidebarControls>
+    </React.Fragment>
   );
 };

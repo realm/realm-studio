@@ -16,14 +16,20 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-@import "~realm-studio-styles/variables";
+import * as classNames from 'classnames';
+import * as React from 'react';
 
-.PermissionsTable {
-  &__PermissionsCell {
-    width: 80px;
-
-    &__Badge {
-      margin: 0 ($spacer / 8);
-    }
-  }
+interface IBodyProps {
+  children?: React.ReactNode;
+  className?: string;
+  grow?: number;
 }
+
+export const Body = ({ children, className, grow }: IBodyProps) => (
+  <div
+    className={classNames('Sidebar__Body', className)}
+    style={{ flexGrow: typeof grow === 'number' ? grow : 1 }}
+  >
+    {children}
+  </div>
+);
