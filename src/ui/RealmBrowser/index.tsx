@@ -72,8 +72,8 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   isAddPropertyOpen: boolean;
   isEncryptionDialogVisible: boolean;
   isLeftSidebarOpen: boolean;
-  // The schemas are only supposed to be used to produce a list of schemas in the sidebar
-  schemas: Realm.ObjectSchema[];
+  // The classes are only supposed to be used to produce a list of classes in the sidebar
+  classes: Realm.ObjectSchema[];
 }
 
 class RealmBrowserContainer
@@ -93,7 +93,7 @@ class RealmBrowserContainer
     isEncryptionDialogVisible: false,
     isLeftSidebarOpen: true,
     progress: { status: 'idle' },
-    schemas: [],
+    classes: [],
   };
 
   private contentInstance: Content | null = null;
@@ -115,6 +115,7 @@ class RealmBrowserContainer
     const contentKey = this.generateContentKey();
     return (
       <RealmBrowser
+        classes={this.state.classes}
         contentKey={contentKey}
         contentRef={this.contentRef}
         dataVersion={this.state.dataVersion}
@@ -141,9 +142,8 @@ class RealmBrowserContainer
         onRealmChanged={this.onRealmChanged}
         progress={this.state.progress}
         realm={this.realm}
-        schemas={this.state.schemas}
-        toggleAddSchema={this.toggleAddSchema}
-        toggleAddSchemaProperty={this.toggleAddSchemaProperty}
+        toggleAddClass={this.toggleAddClass}
+        toggleAddClassProperty={this.toggleAddClassProperty}
       />
     );
   }
@@ -280,7 +280,7 @@ class RealmBrowserContainer
     const firstSchemaName =
       this.realm.schema.length > 0 ? this.realm.schema[0].name : undefined;
     this.setState({
-      schemas: this.realm.schema,
+      classes: this.realm.schema,
     });
     if (firstSchemaName) {
       this.onClassFocussed(firstSchemaName);
@@ -322,10 +322,10 @@ class RealmBrowserContainer
   };
 
   private isClassNameAvailable = (name: string): boolean => {
-    return !this.state.schemas.find(schema => schema.name === name);
+    return !this.state.classes.find(schema => schema.name === name);
   };
 
-  private toggleAddSchema = () => {
+  private toggleAddClass = () => {
     this.setState({
       isAddClassOpen: !this.state.isAddClassOpen,
     });
@@ -338,7 +338,7 @@ class RealmBrowserContainer
     );
   };
 
-  private toggleAddSchemaProperty = () => {
+  private toggleAddClassProperty = () => {
     this.setState({
       isAddPropertyOpen: !this.state.isAddPropertyOpen,
     });
@@ -349,7 +349,7 @@ class RealmBrowserContainer
       try {
         // The schema version needs to be bumped for local realms
         const nextSchemaVersion = this.realm.schemaVersion + 1;
-        const cleanedSchema = schemaUtils.cleanUpSchema(this.state.schemas);
+        const cleanedSchema = schemaUtils.cleanUpSchema(this.state.classes);
         const modifiedSchema = [...cleanedSchema, schema];
         // Close the current Realm
         this.realm.close();
@@ -376,7 +376,7 @@ class RealmBrowserContainer
       try {
         const focusedClassName = this.state.focus.className;
         const nextSchemaVersion = this.realm.schemaVersion + 1;
-        const cleanedSchema = schemaUtils.cleanUpSchema(this.state.schemas);
+        const cleanedSchema = schemaUtils.cleanUpSchema(this.state.classes);
         const modifiedSchema = schemaUtils.addProperty(
           cleanedSchema,
           this.state.focus.className,
@@ -657,7 +657,7 @@ class RealmBrowserContainer
     const basename = path.basename(this.props.realm.path, '.realm');
     remote.dialog.showSaveDialog(
       {
-        defaultPath: `${basename}-schemas`,
+        defaultPath: `${basename}-classes`,
         message: `Select a directory to store the ${language} schema files`,
       },
       selectedPath => {

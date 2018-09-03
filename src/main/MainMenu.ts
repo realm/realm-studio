@@ -128,6 +128,15 @@ export const getDefaultMenuTemplate = (
             updateMenu();
           },
         },
+        {
+          label: `Show system classes`,
+          type: 'checkbox',
+          checked: store.shouldShowSystemClasses(),
+          click: async () => {
+            await store.toggleShowSystemClasses();
+            updateMenu();
+          },
+        },
         { type: 'separator' },
         { role: 'resetzoom' },
         { role: 'zoomin' },

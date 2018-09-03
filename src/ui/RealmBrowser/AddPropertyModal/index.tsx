@@ -27,7 +27,7 @@ export interface IAddPropertyModalProps {
   isOpen: boolean;
   isPropertyNameAvailable: (name: string) => boolean;
   onAddProperty: (name: string, type: Realm.PropertyType) => void;
-  schemas: Realm.ObjectSchema[];
+  classes: Realm.ObjectSchema[];
   toggle: () => void;
 }
 
@@ -67,7 +67,7 @@ class AddPropertyModalContainer extends React.Component<
     };
   }
 
-  public componentWillReceiveProps(props: IAddPropertyModalProps) {
+  public componentWillReceiveProps() {
     this.generateTypeOptions();
   }
 
@@ -122,7 +122,7 @@ class AddPropertyModalContainer extends React.Component<
       disabled: false,
       show: true,
     }));
-    const classes = this.getClassesTypes(this.props.schemas);
+    const classes = this.getClassesTypes(this.props.classes);
     const classTypeHeader = {
       value: 'Link Types',
       disabled: true,
@@ -156,8 +156,8 @@ class AddPropertyModalContainer extends React.Component<
     return `${propertyType}${optionalMarker}${listMarker}`;
   };
 
-  private getClassesTypes = (schemas: Realm.ObjectSchema[]): string[] =>
-    schemas.map(schema => schema.name);
+  private getClassesTypes = (classes: Realm.ObjectSchema[]): string[] =>
+    classes.map(c => c.name);
 }
 
 export { AddPropertyModalContainer as AddPropertyModal };
