@@ -72,6 +72,7 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   isAddPropertyOpen: boolean;
   isEncryptionDialogVisible: boolean;
   isLeftSidebarOpen: boolean;
+  isRightSidebarOpen: boolean;
   // The classes are only supposed to be used to produce a list of classes in the sidebar
   classes: Realm.ObjectSchema[];
 }
@@ -92,6 +93,7 @@ class RealmBrowserContainer
     isAddPropertyOpen: false,
     isEncryptionDialogVisible: false,
     isLeftSidebarOpen: true,
+    isRightSidebarOpen: true,
     progress: { status: 'idle' },
     classes: [],
   };
@@ -130,6 +132,7 @@ class RealmBrowserContainer
         isEncryptionDialogVisible={this.state.isEncryptionDialogVisible}
         isLeftSidebarOpen={this.state.isLeftSidebarOpen}
         isPropertyNameAvailable={this.isPropertyNameAvailable}
+        isRightSidebarOpen={this.state.isRightSidebarOpen}
         onAddClass={this.onAddClass}
         onAddProperty={this.onAddProperty}
         onCancelTransaction={this.onCancelTransaction}

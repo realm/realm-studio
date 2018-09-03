@@ -41,6 +41,8 @@ export const RealmBrowserWindow: IWindow = {
         props.realm.mode === 'synced'
           ? getRealmUrl(props.realm)
           : props.realm.path,
+      width: 900,
+      height: 600,
     };
   },
   getComponent: () =>

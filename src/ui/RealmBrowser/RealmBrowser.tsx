@@ -29,6 +29,7 @@ import { EncryptionDialog } from './EncryptionDialog';
 import { Focus, IClassFocus } from './focus';
 import { LeftSidebar } from './LeftSidebar';
 import { NoFocusPlaceholder } from './NoFocusPlaceholder';
+import { RightSidebar } from './RightSidebar';
 
 import './RealmBrowser.scss';
 
@@ -49,6 +50,7 @@ export interface IRealmBrowserProps {
   isEncryptionDialogVisible: boolean;
   isLeftSidebarOpen: boolean;
   isPropertyNameAvailable: (name: string) => boolean;
+  isRightSidebarOpen: boolean;
   onAddClass: (schema: Realm.ObjectSchema) => void;
   onAddProperty: (name: string, type: Realm.PropertyType) => void;
   onCancelTransaction: () => void;
@@ -80,6 +82,7 @@ export const RealmBrowser = ({
   isEncryptionDialogVisible,
   isLeftSidebarOpen,
   isPropertyNameAvailable,
+  isRightSidebarOpen,
   onAddClass,
   onAddProperty,
   onCancelTransaction,
@@ -109,6 +112,7 @@ export const RealmBrowser = ({
         progress={progress}
         toggleAddClass={toggleAddClass}
       />
+
       <div className="RealmBrowser__Wrapper">
         {focus && realm ? (
           <Content
@@ -135,6 +139,11 @@ export const RealmBrowser = ({
           <NoFocusPlaceholder />
         )}
       </div>
+
+      <RightSidebar
+        className="RealmBrowser__RightSidebar"
+        isOpen={isRightSidebarOpen}
+      />
 
       <AddClassModal
         isOpen={isAddClassOpen}
