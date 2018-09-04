@@ -279,6 +279,10 @@ export class Application {
         type: 'realm-browser',
         props,
       });
+      // Set the represented filename
+      if (process.platform === 'darwin' && props.realm.mode === 'local') {
+        window.setRepresentedFilename(props.realm.path);
+      }
       window.show();
       window.webContents.once('did-finish-load', () => {
         resolve();

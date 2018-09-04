@@ -22,12 +22,13 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as url from 'url';
 
+import { store } from '../store';
 import {
   getRendererProcessDirectories,
   getRendererProcessDirectory,
 } from '../utils';
-import { getWindowOptions } from '../windows/Window';
-import { WindowOptions } from '../windows/WindowOptions';
+import { getWindowOptions, IWindowConstructorOptions } from '../windows/Window';
+import { WindowOptions, WindowType } from '../windows/WindowOptions';
 
 export interface IEventListenerCallbacks {
   blur?: () => void;
@@ -55,16 +56,12 @@ export class WindowManager {
   public windows: IWindowHandle[] = [];
 
   public createWindow(options: WindowOptions) {
-    const windowOptions = getWindowOptions(options);
-    sentry.addBreadcrumb({
-      category: 'ui.window',
-      message: `Opening '${options.type}' window`,
-      data: {
-        title: windowOptions.title,
-      },
-    });
-    // Construct the window
-    const window = new BrowserWindow({
+    // Get the window options that are default for this type of window
+    const defaultWindowOptions = getWindowOptions(options);
+    // Get the window options that are saved for this type of window
+    const savedWindowOptions = this.getWindowOptions(options.type);
+    // Combine these with general default options
+    const combinedWindowOptions: IWindowConstructorOptions = {
       // Starting with the default options
       title: 'Realm Studio',
       width: 800,
@@ -77,7 +74,8 @@ export class WindowManager {
       // This improves the UX by minimizing the clicks needed to complete a task.
       acceptFirstMouse: true,
       // Allowing windows to override the defaults
-      ...windowOptions,
+      ...defaultWindowOptions,
+      ...savedWindowOptions,
       webPreferences: {
         // Load Sentry as a preload in production - this doesn't work in development because the
         // sentry.js is not emitted to the build folder.
@@ -85,7 +83,29 @@ export class WindowManager {
           ? undefined
           : path.resolve(__dirname, './sentry.bundle.js'),
       },
+    };
+
+    // Spread out the options that Studio extends Electron with
+    const { maximize, ...windowOptions } = combinedWindowOptions;
+
+    // Leave a breadcrumb for Sentry
+    sentry.addBreadcrumb({
+      category: 'ui.window',
+      message: `Opening '${options.type}' window`,
+      data: {
+        title: windowOptions.title,
+      },
     });
+
+    // Construct the window
+    const window = new BrowserWindow(windowOptions);
+
+    // If the window should maximize - let's maximize it when it gets shown
+    if (maximize) {
+      window.once('show', () => {
+        window.maximize();
+      });
+    }
 
     // Open up the dev tools, if not in production mode
     if (process.env.REALM_STUDIO_DEV_TOOLS) {
@@ -102,14 +122,8 @@ export class WindowManager {
 
     // Center the new window in the desired display
     const display = this.getDesiredDisplay();
-    this.positionWindowOnDisplay(window, display);
-
-    if (
-      process.platform === 'darwin' &&
-      options.type === 'realm-browser' &&
-      options.props.realm.mode === 'local'
-    ) {
-      window.setRepresentedFilename(options.props.realm.path);
+    if (display) {
+      this.positionWindowOnDisplay(window, display);
     }
 
     const query: { [key: string]: string } = {
@@ -155,6 +169,22 @@ export class WindowManager {
       });
     });
 
+    // When the window is about to close, save its size, position and maximized state for the next of its type
+    window.once('close', () => {
+      const [width, height] = window.getSize();
+      const [x, y] = window.getPosition();
+      const isMaximized = window.isMaximized();
+      const fullscreen = window.isFullScreen();
+      this.setWindowOptions(options.type, {
+        width,
+        height,
+        x,
+        y,
+        maximize: isMaximized,
+        fullscreen,
+      });
+    });
+
     window.on('closed', () => {
       const index = this.windows.findIndex(handle => handle.window === window);
       if (index > -1) {
@@ -194,6 +224,24 @@ export class WindowManager {
     }
   }
 
+  /**
+   * Saves options that should be passed to windows of this type when created in the future.
+   * Use this to remember the position or other state of the windows between instances.
+   */
+  public setWindowOptions(
+    type: WindowType,
+    options: IWindowConstructorOptions,
+  ) {
+    store.setWindowOptions(type, options);
+  }
+
+  /**
+   * Gets the window options from the Electron store
+   */
+  public getWindowOptions(type: WindowType) {
+    return store.getWindowOptions(type);
+  }
+
   private cleanupRendererProcessDirectory(rendererPath: string) {
     try {
       fs.removeSync(rendererPath);
@@ -207,7 +255,7 @@ export class WindowManager {
     }
   }
 
-  private getDesiredDisplay(): Electron.Display {
+  private getDesiredDisplay() {
     const desiredDisplayString = process.env.DISPLAY;
     if (typeof desiredDisplayString === 'string') {
       const desiredDisplayIndex = parseInt(desiredDisplayString, 10);
@@ -219,8 +267,6 @@ export class WindowManager {
         }
       }
     }
-    // If we cannot find a display from the environment variable, return the primary
-    return screen.getPrimaryDisplay();
   }
 
   private positionWindowOnDisplay(

@@ -38,6 +38,11 @@ import { GreetingWindow } from './GreetingWindow';
 import { RealmBrowserWindow } from './RealmBrowserWindow';
 import { ServerAdministrationWindow } from './ServerAdministrationWindow';
 
+export interface IWindowConstructorOptions
+  extends Partial<Electron.BrowserWindowConstructorOptions> {
+  maximize?: boolean;
+}
+
 export function getWindowClass(type: WindowType): IWindow {
   // We're using calls to require here, to prevent loading anything that does not
   // relate to the specific window being loaded.
@@ -63,7 +68,7 @@ export function getWindowClass(type: WindowType): IWindow {
 export function getWindowOptions({
   type,
   props,
-}: WindowOptions): Partial<Electron.BrowserWindowConstructorOptions> {
+}: WindowOptions): IWindowConstructorOptions {
   const WindowClass = getWindowClass(type);
   return WindowClass.getWindowOptions(props);
 }
