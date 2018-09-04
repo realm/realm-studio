@@ -16,7 +16,6 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as classNames from 'classnames';
 import * as React from 'react';
 import { Badge } from 'reactstrap';
 
@@ -42,22 +41,20 @@ export const ListFocus = ({ focus, onClassFocussed }: IListFocusProps) => (
     <div className="LeftSidebar__List__Parent">
       <div>
         <strong>{focus.property.name}</strong> on
+        {!focus.parent.objectSchema().primaryKey ? ' a' : null}
       </div>
       {focus.parent.isValid() ? (
-        <div>
-          {!focus.parent.objectSchema().primaryKey ? 'a ' : null}
-          <span
-            onClick={() =>
-              onClassFocussed(focus.parent.objectSchema().name, focus.parent)
-            }
-            className="LeftSidebar__List__ParentObject"
-            title={displayObject(focus.parent, true)}
-          >
-            {displayObject(focus.parent, false)}
-          </span>
+        <div
+          className="LeftSidebar__List__ParentObject"
+          onClick={() =>
+            onClassFocussed(focus.parent.objectSchema().name, focus.parent)
+          }
+          title={displayObject(focus.parent, true)}
+        >
+          {displayObject(focus.parent, false)}
         </div>
       ) : (
-        <div>a deleted object</div>
+        <div>deleted object</div>
       )}
     </div>
   </div>

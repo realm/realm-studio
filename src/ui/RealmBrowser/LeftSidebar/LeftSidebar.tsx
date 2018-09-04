@@ -82,8 +82,10 @@ export const LeftSidebar = ({
         <ul className="LeftSidebar__ClassList">
           {classes.map(schema => {
             const selected = isSelected(focus, schema.name);
+            const highlighted = selected && focus && focus.kind === 'class';
             const schemaClass = classNames('LeftSidebar__Class__Info', {
               'LeftSidebar__Class__Info--selected': selected,
+              'LeftSidebar__Class__Info--highlighted': highlighted,
             });
             return (
               <li
@@ -98,7 +100,7 @@ export const LeftSidebar = ({
                   <span className="LeftSidebar__Class__Name">
                     {schema.name}
                   </span>
-                  <Badge color="secondary">
+                  <Badge color={highlighted ? 'primary' : 'secondary'}>
                     {getSchemaLength(schema.name)}
                   </Badge>
                 </div>
