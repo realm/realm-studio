@@ -181,25 +181,20 @@ export class Updater {
     const currentVersion = electron.app.getVersion();
     const lastestVersion = info.version;
 
-    electron.dialog.showMessageBox(
-      {
-        type: 'info',
-        message: `A new version of ${appName} is available!`,
-        detail: `${appName} ${lastestVersion} is available – you have ${currentVersion}. Would you like to update it now?`,
-        buttons: ['Yes', 'No'],
-        defaultId: 0,
-        cancelId: 1,
-      },
-      response => {
-        if (response === 0) {
-          this.install();
-        }
-      },
-    );
-  }
+    // Show a dialog synchronously
+    const response = electron.dialog.showMessageBox({
+      type: 'info',
+      message: `A new version of ${appName} is available!`,
+      detail: `${appName} ${lastestVersion} is available – you have ${currentVersion}. Would you like to update it now?`,
+      buttons: ['Yes', 'No'],
+      defaultId: 0,
+      cancelId: 1,
+    });
 
-  private install() {
-    autoUpdater.quitAndInstall();
+    // Quit and install
+    if (response === 0) {
+      autoUpdater.quitAndInstall();
+    }
   }
 
   private showError(message: string, detail: string = '') {
