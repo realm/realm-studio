@@ -21,6 +21,9 @@
 
 import { ElectronStore } from './module-wrappers/electron-store';
 
+import { IWindowConstructorOptions } from './windows/Window';
+import { WindowType } from './windows/WindowOptions';
+
 type RemovalCallback = () => void;
 
 class RealmStudioStore {
@@ -28,6 +31,7 @@ class RealmStudioStore {
   public readonly KEY_SHOW_SYSTEM_REALMS = 'realmlist.show-system-realms';
   public readonly KEY_SHOW_SYSTEM_USERS = 'userlist.show-system-users';
   public readonly KEY_SHOW_SYSTEM_CLASSES = 'browser.show-system-classes';
+  public readonly KEY_WINDOW_OPTIONS = 'window-options';
 
   private store = new ElectronStore();
 
@@ -65,6 +69,21 @@ class RealmStudioStore {
 
   public shouldShowSystemClasses(): boolean {
     return this.store.get(this.KEY_SHOW_SYSTEM_CLASSES, false);
+  }
+
+  // Window option related methods
+  public setWindowOptions(
+    type: WindowType,
+    options: IWindowConstructorOptions,
+  ) {
+    const key = `${this.KEY_WINDOW_OPTIONS}.${type}`;
+    this.store.set(key, options);
+  }
+
+  // Window option related methods
+  public getWindowOptions(type: WindowType): IWindowConstructorOptions {
+    const key = `${this.KEY_WINDOW_OPTIONS}.${type}`;
+    return this.store.get(key, {});
   }
 
   // Subclassing ElectronStore results in
