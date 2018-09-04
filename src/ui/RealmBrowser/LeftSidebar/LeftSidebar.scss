@@ -29,13 +29,13 @@
     border-bottom: 1px solid $dove;
     color: $elephant;
     display: flex;
-    flex-basis: 2rem;
     flex-shrink: 0;
     font-size: .9rem;
     font-weight: bold;
     justify-content: space-between;
-    line-height: 2em;
     margin-bottom: $spacer / 2;
+    padding-bottom: $spacer / 2;
+    padding-left: $spacer;
     text-transform: uppercase;
   }
 
@@ -76,33 +76,46 @@
 
     &__Info {
       align-items: center;
-      background: $window-background;
       cursor: pointer;
       display: flex;
       justify-content: space-between;
-      padding: $spacer / 2;
+      padding: .75 * $spacer;
+      padding-left: 1.5 * $spacer;
+      position: relative;
 
       &:hover,
       &:focus {
-        background: $dove;
+        background: $secondary;
       }
 
       &--selected {
-        background: $primary;
-        color: $dove;
+        background: $secondary;
+      }
 
-        &:hover,
-        &:focus {
+      &--highlighted {
+        cursor: inherit;
+
+        &::before {
           background: $primary;
+          border-radius: 2px;
+          bottom: 5px;
+          content: "";
+          left: $spacer / 2;
+          position: absolute;
+          top: 5px;
+          width: 4px;
         }
       }
     }
   }
 
   &__List {
-    background: $dove;
+    background: $secondary;
     // box-shadow: inset 0 0 .4rem $realm-browser-list-box-shadow-color;
-    padding: $spacer / 2;
+    padding: .75 * $spacer;
+    padding-left: 1.5 * $spacer;
+    padding-top: 0;
+    position: relative;
 
     &__Name {
       align-items: center;
@@ -116,6 +129,7 @@
         font-size: .8rem;
         margin-right: $spacer / 2;
         overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
 
@@ -126,7 +140,21 @@
     &__ParentObject {
       color: $primary;
       cursor: pointer;
+      overflow: hidden;
       text-decoration: underline;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    &::before {
+      background: $primary;
+      border-radius: 2px;
+      bottom: 5px;
+      content: "";
+      left: $spacer / 2;
+      position: absolute;
+      top: 0;
+      width: 4px;
     }
   }
 
