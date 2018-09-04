@@ -46,7 +46,7 @@ $colors: (
 
 // Override bootstrap colors
 $primary: $ultramarine;
-$secondary: $dove;
+$secondary: mix($dove, $elephant, 90%);
 $danger: $sexy-salmon;
 $info: $ultramarine;
 

@@ -18,7 +18,7 @@
 
 import * as classNames from 'classnames';
 import * as React from 'react';
-import { Badge, Button, FormGroup, Input, Label } from 'reactstrap';
+import { Badge, Button } from 'reactstrap';
 
 import { ClassFocussedHandler } from '..';
 import { ILoadingProgress, Sidebar } from '../../reusable';
@@ -98,7 +98,9 @@ export const LeftSidebar = ({
                   <span className="LeftSidebar__Class__Name">
                     {schema.name}
                   </span>
-                  <Badge color="primary">{getSchemaLength(schema.name)}</Badge>
+                  <Badge color="secondary">
+                    {getSchemaLength(schema.name)}
+                  </Badge>
                 </div>
                 {selected && focus && focus.kind === 'list' ? (
                   <ListFocus

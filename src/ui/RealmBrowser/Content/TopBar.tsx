@@ -54,7 +54,7 @@ export const TopBar = ({
       {!readOnly ? (
         <Button
           size="sm"
-          color="primary"
+          color="secondary"
           className="RealmBrowser__Topbar__Button"
           onClick={onNewObjectClick}
           title={`Create ${className}`}
