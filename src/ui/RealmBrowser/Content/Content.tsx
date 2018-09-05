@@ -174,6 +174,8 @@ export const Content = ({
           className="RealmBrowser__PermissionSidebar"
           isOpen={isPermissionSidebarOpen}
           onToggle={onPermissionSidebarToggle}
+          focus={focus}
+          highlight={highlight}
         />
       </div>
 

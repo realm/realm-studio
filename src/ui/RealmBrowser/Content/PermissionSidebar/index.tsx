@@ -18,18 +18,24 @@
 
 import * as React from 'react';
 
-import { Sidebar, SidebarTitle } from '../../../reusable';
+import { Sidebar, SidebarBody, SidebarTitle } from '../../../reusable';
+import { Focus } from '../../focus';
+import { IHighlight } from '../Table';
 
 interface IPermissionSidebarProps {
   className?: string;
   isOpen: boolean;
   onToggle: () => void;
+  highlight?: IHighlight;
+  focus: Focus;
 }
 
 export const PermissionSidebar = ({
   className,
   isOpen,
   onToggle,
+  focus,
+  highlight,
 }: IPermissionSidebarProps) => (
   <Sidebar
     className={className}
@@ -38,5 +44,11 @@ export const PermissionSidebar = ({
     position="right"
   >
     <SidebarTitle size="md">Permissions</SidebarTitle>
+    <SidebarBody>{highlight ? highlight.rows.size : null}</SidebarBody>
+    <SidebarBody>
+      {highlight
+        ? Array.from(highlight.rows.values()).map(index => index)
+        : null}
+    </SidebarBody>
   </Sidebar>
 );
