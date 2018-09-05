@@ -131,6 +131,7 @@ class TableContainer extends React.PureComponent<
   // A reference to the grid inside the content container is needed to resize collumns
   private gridContent: Grid | null = null;
   private gridHeader: Grid | null = null;
+  private tableElement: HTMLElement | null = null;
 
   public render() {
     return (
@@ -157,11 +158,18 @@ class TableContainer extends React.PureComponent<
         onSortClick={this.onSortClick}
         onTableBackgroundClick={this.props.onTableBackgroundClick}
         readOnly={this.props.readOnly}
+        tableRef={this.tableRef}
         scrollProps={this.props.scrollProps}
         sizeProps={this.props.sizeProps}
         sorting={this.props.sorting}
       />
     );
+  }
+
+  public componentWillUnmount() {
+    if (this.tableElement) {
+      this.tableElement.removeEventListener('keydown', this.onKeyDown);
+    }
   }
 
   public componentWillMount() {
@@ -232,6 +240,29 @@ class TableContainer extends React.PureComponent<
     });
   };
 
+  private onKeyDown = (e: KeyboardEvent) => {
+    const { highlight, onCellHighlighted, focus } = this.props;
+    // If a single row is highlighted
+    if (highlight && highlight.rows.size === 1 && onCellHighlighted) {
+      const rowIndex = highlight.rows.values().next().value;
+      const columnIndex = highlight.scrollTo
+        ? highlight.scrollTo.column || 0
+        : 0;
+      const rowCount = focus.results.length;
+      const columnCount = focus.properties.length;
+      // Change the highlighted cell if applicable
+      if (e.key === 'ArrowUp' && rowIndex > 0) {
+        onCellHighlighted({ rowIndex: rowIndex - 1, columnIndex });
+      } else if (e.key === 'ArrowDown' && rowIndex < rowCount - 1) {
+        onCellHighlighted({ rowIndex: rowIndex + 1, columnIndex });
+      } else if (e.key === 'ArrowLeft' && columnIndex > 0) {
+        onCellHighlighted({ rowIndex, columnIndex: columnIndex - 1 });
+      } else if (e.key === 'ArrowRight' && columnIndex < columnCount - 1) {
+        onCellHighlighted({ rowIndex, columnIndex: columnIndex + 1 });
+      }
+    }
+  };
+
   private onSortClick = (property: IPropertyWithName) => {
     const { sorting } = this.props;
     if (!sorting || sorting.property.name !== property.name) {
@@ -280,6 +311,14 @@ class TableContainer extends React.PureComponent<
     });
     this.setState({ columnWidths });
   }
+
+  private tableRef = (element: HTMLElement | null) => {
+    // Add a keypress listener on the table element
+    if (element) {
+      element.addEventListener('keydown', this.onKeyDown);
+    }
+    this.tableElement = element;
+  };
 }
 
 export { TableContainer as Table };

@@ -93,13 +93,7 @@ export const ListCell = ({
   property: Realm.ObjectSchemaProperty;
   value: any;
 }) => (
-  <div
-    className={classnames(
-      'form-control',
-      'form-control-sm',
-      'RealmBrowser__Table__ListCell',
-    )}
-  >
+  <div className="RealmBrowser__Table__ListCell">
     <span className="RealmBrowser__Table__ListCell__Value">
       {displayValue(property, value)}
     </span>

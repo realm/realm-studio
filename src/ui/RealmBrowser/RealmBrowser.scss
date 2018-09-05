@@ -21,18 +21,23 @@
 // This constant should match the HANDLE_WIDTH in HeaderCell.tsx
 $realm-browser-header-handle-width: 5px;
 // This constant should match the rowHeights.header constant in Table.tsx
-$realm-browser-header-height: 40px;
+$realm-browser-header-height: 50px;
 $realm-browser-header-icon-space: 24px;
 $realm-browser-header-handle-hover-bg: rgba(0, 0, 0, .1);
 $realm-browser-header-handle-dragging-bg: rgba($ultramarine, .5);
 
 $realm-browser-more-indicator-size: $spacer;
-$realm-browser-more-indicator-dark-color: rgba(0, 0, 0, .2);
+$realm-browser-more-indicator-dark-color: rgba(0, 0, 0, .1);
 $realm-browser-more-indicator-light-color: rgba(0, 0, 0, 0);
 
-$row-stripe: mix($white, $dove, 50%);
-$highlight-row-bg: mix($white, $indigo, 75%);
+$row-stripe: rgba($black, 0);
+$highlight-row-bg: rgba($black, .05);
 $highlight-row-color: $black;
+$highlight-cell-bg: rgba($black, .05);
+
+$cell-header-border-size: 2px;
+$cell-padding-x: $spacer;
+$cell-padding-y: .5 * $spacer;
 
 .RealmBrowser {
   display: flex;
@@ -92,6 +97,7 @@ $highlight-row-color: $black;
   }
 
   &__Table {
+    background: $white;
     flex: 1 0 0;
 
     &__HeaderGrid {
@@ -100,7 +106,6 @@ $highlight-row-color: $black;
     }
 
     &__Row {
-      background: $white;
       position: relative;
       transition: background-color 200ms;
 
@@ -133,6 +138,7 @@ $highlight-row-color: $black;
       border-bottom: 1px solid $dove;
       border-right: 1px solid $dove;
       position: relative;
+      padding: 0;
 
       // We need to do this, because reactstrap adds the form-control class
       // after the classNames that we provide.
@@ -146,9 +152,23 @@ $highlight-row-color: $black;
     }
 
     &__HeaderCell {
+      align-items: center;
+      border-top: $cell-header-border-size solid transparent;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      padding: $cell-padding-y $cell-padding-x;
+
+      &--sorting {
+        border-top: $cell-header-border-size solid $primary;
+      }
+    }
+
+    &__HeaderProperty {
       display: flex;
       flex-direction: column;
-      padding: 0 $realm-browser-header-icon-space 0 ($spacer / 4);
+      justify-content: center;
+      line-height: 1rem;
     }
 
     &__HeaderCellControl {
@@ -179,12 +199,10 @@ $highlight-row-color: $black;
     }
 
     &__HeaderType {
-      bottom: 0;
       color: $primary;
       font-size: $font-size-sm;
-      font-weight: bold;
+      font-weight: normal;
       overflow: hidden;
-      position: absolute;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
@@ -193,9 +211,6 @@ $highlight-row-color: $black;
       color: $elephant;
       cursor: pointer;
       font-size: 12px;
-      position: absolute;
-      right: 10px;
-      top: 14px;
 
       &--active {
         color: $charcoal;
@@ -232,8 +247,10 @@ $highlight-row-color: $black;
       background: transparent;
       border: 0;
       color: inherit;
+      font-size: $font-size-sm;
       height: 100%;
       line-height: 1.1rem;
+      padding: $cell-padding-y $cell-padding-x;
       white-space: nowrap;
 
       &--null {
@@ -255,14 +272,9 @@ $highlight-row-color: $black;
     }
 
     &__StringCell {
-      &--int {
-        overflow: hidden;
-        position: absolute;
-        right: $spacer / 2;
-        text-align: right;
-        text-overflow: ellipsis;
-        width: 100%;
-      }
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     &__ListCell,
@@ -270,12 +282,15 @@ $highlight-row-color: $black;
       border: 0;
       color: $primary;
       cursor: pointer;
+      font-size: $font-size-sm;
+      padding: $cell-padding-y $cell-padding-x;
     }
 
     &__ObjectCell,
     &__StringCell {
       &--null {
         color: $elephant;
+        cursor: inherit;
         font-style: italic;
       }
     }

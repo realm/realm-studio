@@ -139,7 +139,9 @@ export const Cell = ({
   });
   return (
     <div
-      className={classNames('RealmBrowser__Table__Cell')}
+      className={classNames('RealmBrowser__Table__Cell', {
+        'RealmBrowser__Table__Cell--highlighted': isHighlighted,
+      })}
       onClick={onCellClick}
       onContextMenu={onContextMenu}
       style={style}

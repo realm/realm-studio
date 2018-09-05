@@ -507,8 +507,10 @@ class ContentContainer extends React.Component<
       this.setState({
         highlight: {
           rows: new Set([rowIndex]),
-          column: columnIndex,
-          lastRowIndexClicked: rowIndex,
+          scrollTo: {
+            column: columnIndex,
+            row: rowIndex,
+          },
         },
       });
     }

@@ -31,14 +31,9 @@ export const ObjectCell = ({
 }) => {
   return (
     <div
-      className={classnames(
-        'form-control',
-        'form-control-sm',
-        'RealmBrowser__Table__ObjectCell',
-        {
-          'RealmBrowser__Table__ObjectCell--null': value === null,
-        },
-      )}
+      className={classnames('RealmBrowser__Table__ObjectCell', {
+        'RealmBrowser__Table__ObjectCell--null': value === null,
+      })}
     >
       {displayObject(value)}
     </div>

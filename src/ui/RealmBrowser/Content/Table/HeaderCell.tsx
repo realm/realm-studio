@@ -28,7 +28,6 @@ import { SortClickHandler } from '.';
 
 // This constant should match the $realm-browser-header-handle-width in scss
 const HANDLE_WIDTH = 5;
-const HANDLE_OFFSET = Math.ceil(HANDLE_WIDTH / 2);
 
 const getPropertyType = (property: Realm.ObjectSchemaProperty) => {
   switch (property.type) {
@@ -116,30 +115,35 @@ export class HeaderCell extends React.Component<
     const { property, style, sorting } = this.props;
 
     const isSortable = isPropertySortable(property);
-    const sortClass = classNames('RealmBrowser__Table__HeaderSort', {
-      'RealmBrowser__Table__HeaderSort--active':
-        sorting && sorting.property.name === property.name,
-    });
-
+    const isSorting = sorting && sorting.property.name === property.name;
     return (
       <div
         style={style}
-        className="RealmBrowser__Table__HeaderCell"
+        className={classNames('RealmBrowser__Table__HeaderCell', {
+          'RealmBrowser__Table__HeaderCell--sorting': isSorting,
+        })}
         title={property.name || ''}
       >
-        <div
-          className={classNames('RealmBrowser__Table__HeaderName', {
-            'RealmBrowser__Table__HeaderName--primitive':
-              property.name === null,
-          })}
-        >
-          {property.name}
-        </div>
-        <div className="RealmBrowser__Table__HeaderType">
-          {getPropertyDisplayed(property)}
+        <div className="RealmBrowser__Table__HeaderProperty">
+          <div
+            className={classNames('RealmBrowser__Table__HeaderName', {
+              'RealmBrowser__Table__HeaderName--primitive':
+                property.name === null,
+            })}
+          >
+            {property.name}
+          </div>
+          <div className="RealmBrowser__Table__HeaderType">
+            {getPropertyDisplayed(property)}
+          </div>
         </div>
         {isSortable ? (
-          <div className={sortClass} onClick={this.onSortClick}>
+          <div
+            className={classNames('RealmBrowser__Table__HeaderSort', {
+              'RealmBrowser__Table__HeaderSort--active': isSorting,
+            })}
+            onClick={this.onSortClick}
+          >
             <i
               className={classNames('fa', {
                 'fa-sort': !sorting || sorting.property.name !== property.name,

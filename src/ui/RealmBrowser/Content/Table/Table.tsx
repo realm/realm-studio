@@ -43,8 +43,8 @@ import { HeaderGrid } from './HeaderGrid';
 import { MoreIndicator } from './MoreIndicator';
 
 const rowHeights = {
-  header: 40,
-  content: 26,
+  header: 50,
+  content: 8 + 8 + 17,
 };
 
 export interface ITableProps {
@@ -70,6 +70,7 @@ export interface ITableProps {
   onReorderingStart?: ReorderingStartHandler;
   onTableBackgroundClick: () => void;
   readOnly: boolean;
+  tableRef: (element: HTMLElement | null) => void;
   scrollProps: ScrollSyncProps;
   sizeProps: AutoSizerProps;
   sorting?: ISorting;
@@ -98,6 +99,7 @@ export const Table = ({
   onReorderingStart,
   onTableBackgroundClick,
   readOnly,
+  tableRef,
   scrollProps,
   sizeProps,
   sorting,
@@ -123,6 +125,7 @@ export const Table = ({
       onClick={e => {
         onTableBackgroundClick();
       }}
+      ref={tableRef}
     >
       <MoreIndicator position="bottom" visible={scrollBottom > 0} />
       <MoreIndicator position="left" visible={scrollLeft > 0} />

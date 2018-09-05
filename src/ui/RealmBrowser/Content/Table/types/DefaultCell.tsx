@@ -30,8 +30,6 @@ export const DefaultCell = ({
 }) => (
   <div
     className={classnames(
-      'form-control',
-      'form-control-sm',
       'RealmBrowser__Table__Input',
       'RealmBrowser__Table__Input--disabled',
     )}

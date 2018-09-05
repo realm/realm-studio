@@ -35,8 +35,6 @@ export const DataCell = ({
 }) => (
   <div
     className={classnames(
-      'form-control',
-      'form-control-sm',
       'RealmBrowser__Table__Input',
       'RealmBrowser__Table__Input--disabled',
     )}
