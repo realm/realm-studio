@@ -18,10 +18,10 @@
 
 import * as React from 'react';
 import {
-  AutoSizerProps,
+  Dimensions,
   Grid,
   GridCellProps,
-  ScrollSyncProps,
+  ScrollSyncChildProps,
 } from 'react-virtualized';
 
 import { EditMode, ISorting } from '..';
@@ -34,22 +34,20 @@ import {
   CellContextMenuHandler,
   CellHighlightedHandler,
   CellValidatedHandler,
+  DragHighlightStartHandler,
   IHighlight,
   ReorderingEndHandler,
   ReorderingStartHandler,
+  rowHeights,
 } from '.';
 import { ContentGrid } from './ContentGrid';
 import { HeaderGrid } from './HeaderGrid';
 import { MoreIndicator } from './MoreIndicator';
 
-const rowHeights = {
-  header: 50,
-  content: 8 + 8 + 17,
-};
-
 export interface ITableProps {
   columnWidths: number[];
   dataVersion?: number;
+  dimensions: Dimensions;
   editMode: EditMode;
   filteredSortedResults: Realm.Collection<any>;
   focus: Focus;
@@ -65,20 +63,21 @@ export interface ITableProps {
   onCellValidated?: CellValidatedHandler;
   onColumnWidthChanged: (index: number, width: number) => void;
   onContextMenu?: CellContextMenuHandler;
-  onSortClick: (property: IPropertyWithName) => void;
+  onDragHighlightStart?: DragHighlightStartHandler;
   onReorderingEnd?: ReorderingEndHandler;
   onReorderingStart?: ReorderingStartHandler;
-  onTableBackgroundClick: () => void;
+  onResetHighlight: () => void;
+  onSortClick: (property: IPropertyWithName) => void;
   readOnly: boolean;
-  tableRef: (element: HTMLElement | null) => void;
-  scrollProps: ScrollSyncProps;
-  sizeProps: AutoSizerProps;
+  scroll: ScrollSyncChildProps;
   sorting?: ISorting;
+  tableRef: (element: HTMLElement | null) => void;
 }
 
 export const Table = ({
   columnWidths,
   dataVersion,
+  dimensions,
   editMode,
   filteredSortedResults,
   focus,
@@ -94,24 +93,18 @@ export const Table = ({
   onCellValidated,
   onColumnWidthChanged,
   onContextMenu,
-  onSortClick,
+  onDragHighlightStart,
   onReorderingEnd,
   onReorderingStart,
-  onTableBackgroundClick,
+  onResetHighlight,
+  onSortClick,
   readOnly,
-  tableRef,
-  scrollProps,
-  sizeProps,
+  scroll,
   sorting,
+  tableRef,
 }: ITableProps) => {
-  const {
-    onScroll,
-    scrollHeight,
-    scrollLeft,
-    scrollTop,
-    scrollWidth,
-  } = scrollProps;
-  const { height, width } = sizeProps;
+  const { onScroll, scrollHeight, scrollLeft, scrollTop, scrollWidth } = scroll;
+  const { height, width } = dimensions;
   const scrollBottom = rowHeights.header + scrollHeight - height - scrollTop;
   const scrollRight = scrollWidth - width - scrollLeft;
 
@@ -121,9 +114,6 @@ export const Table = ({
         if (onContextMenu) {
           onContextMenu(e);
         }
-      }}
-      onClick={e => {
-        onTableBackgroundClick();
       }}
       ref={tableRef}
     >
@@ -145,7 +135,6 @@ export const Table = ({
         width={width}
       />
       <ContentGrid
-        onAddColumnEnabled={!!onAddColumnClick}
         className="RealmBrowser__Table__ValueGrid"
         columnWidths={columnWidths}
         dataVersion={dataVersion}
@@ -157,14 +146,17 @@ export const Table = ({
         highlight={highlight}
         isSortable={focus.kind === 'list' && !sorting}
         isSorting={isSorting}
+        onAddColumnEnabled={!!onAddColumnClick}
         onCellChange={onCellChange}
         onCellClick={onCellClick}
         onCellHighlighted={onCellHighlighted}
         onCellValidated={onCellValidated}
         onContextMenu={onContextMenu}
-        onScroll={onScroll}
+        onDragHighlightStart={onDragHighlightStart}
         onReorderingEnd={onReorderingEnd}
         onReorderingStart={onReorderingStart}
+        onResetHighlight={onResetHighlight}
+        onScroll={onScroll}
         overscanRowCount={30}
         properties={focus.properties}
         rowHeight={rowHeights.content}

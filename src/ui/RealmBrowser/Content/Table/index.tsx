@@ -22,15 +22,20 @@ import {
   SortStartHandler as ReorderingStartHandler,
 } from 'react-sortable-hoc';
 import {
-  AutoSizerProps,
+  Dimensions,
   Grid,
   GridCellProps,
-  ScrollSyncProps,
+  ScrollSyncChildProps,
 } from 'react-virtualized';
 
 import { EditMode, ISorting, SortingChangeHandler } from '..';
 import { IPropertyWithName } from '../..';
 import { Focus } from '../../focus';
+
+export const rowHeights = {
+  header: 50,
+  content: 8 + 8 + 17,
+};
 
 export type CellChangeHandler = (
   params: {
@@ -73,6 +78,11 @@ export type CellValidatedHandler = (
   valid: boolean,
 ) => void;
 
+export type DragHighlightStartHandler = (
+  e: React.MouseEvent<HTMLElement>,
+  rowIndex: number,
+) => void;
+
 export interface IHighlight {
   rows: Set<number>;
   scrollTo?: {
@@ -104,15 +114,15 @@ export interface IBaseTableContainerProps {
   onReorderingStart?: ReorderingStartHandler;
   onResetHighlight: () => void;
   onSortingChange: SortingChangeHandler;
-  onTableBackgroundClick: () => void;
+  onDragHighlightStart?: DragHighlightStartHandler;
   query: string;
   readOnly: boolean;
   sorting?: ISorting;
 }
 
 export interface ITableContainerProps extends IBaseTableContainerProps {
-  scrollProps: ScrollSyncProps;
-  sizeProps: AutoSizerProps;
+  scroll: ScrollSyncChildProps;
+  dimensions: Dimensions;
 }
 
 export interface ITableContainerState {
@@ -131,6 +141,7 @@ class TableContainer extends React.PureComponent<
   // A reference to the grid inside the content container is needed to resize collumns
   private gridContent: Grid | null = null;
   private gridHeader: Grid | null = null;
+  // A reference to the root table div
   private tableElement: HTMLElement | null = null;
 
   public render() {
@@ -153,15 +164,16 @@ class TableContainer extends React.PureComponent<
         onCellValidated={this.props.onCellValidated}
         onColumnWidthChanged={this.onColumnWidthChanged}
         onContextMenu={this.props.onContextMenu}
+        onDragHighlightStart={this.props.onDragHighlightStart}
         onReorderingEnd={this.onReorderingEnd}
         onReorderingStart={this.onReorderingStart}
+        onResetHighlight={this.props.onResetHighlight}
         onSortClick={this.onSortClick}
-        onTableBackgroundClick={this.props.onTableBackgroundClick}
         readOnly={this.props.readOnly}
-        tableRef={this.tableRef}
-        scrollProps={this.props.scrollProps}
-        sizeProps={this.props.sizeProps}
+        scroll={this.props.scroll}
+        dimensions={this.props.dimensions}
         sorting={this.props.sorting}
+        tableRef={this.tableRef}
       />
     );
   }

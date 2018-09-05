@@ -19,11 +19,13 @@
 import * as classnames from 'classnames';
 import * as React from 'react';
 
+import { DragHighlightStartHandler } from '.';
 import { IGridRowProps } from './rowCellRangeRenderer';
 
 export interface IRowProps extends IGridRowProps {
   isHighlighted?: boolean;
   isSorting?: boolean;
+  onDragHighlightStart?: DragHighlightStartHandler;
 }
 
 export const Row = ({
@@ -32,6 +34,7 @@ export const Row = ({
   isSorting,
   rowIndex,
   style,
+  onDragHighlightStart,
 }: IRowProps) => {
   return (
     <div
@@ -41,6 +44,11 @@ export const Row = ({
         'RealmBrowser__Table__Row--sorting': isSorting,
       })}
       style={style}
+      onMouseDown={
+        onDragHighlightStart
+          ? e => onDragHighlightStart(e, rowIndex)
+          : undefined
+      }
     >
       {children}
     </div>

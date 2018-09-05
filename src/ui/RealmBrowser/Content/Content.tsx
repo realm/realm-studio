@@ -46,6 +46,7 @@ import {
   CellContextMenuHandler,
   CellHighlightedHandler,
   CellValidatedHandler,
+  DragHighlightStartHandler,
   IHighlight,
   ReorderingEndHandler,
   ReorderingStartHandler,
@@ -53,6 +54,7 @@ import {
 import { TopBar } from './TopBar';
 
 interface IBaseContentProps {
+  contentRef: (element: HTMLElement | null) => void;
   dataVersion?: number;
   editMode: EditMode;
   error?: Error;
@@ -65,12 +67,12 @@ interface IBaseContentProps {
   onCellHighlighted: CellHighlightedHandler;
   onCellValidated: CellValidatedHandler;
   onContextMenu: CellContextMenuHandler;
+  onDragHighlightStart: DragHighlightStartHandler;
   onNewObjectClick?: () => void;
   onQueryChange: QueryChangeHandler;
   onQueryHelp: () => void;
   onResetHighlight: () => void;
   onSortingChange: SortingChangeHandler;
-  onTableBackgroundClick: () => void;
   query: string;
   sorting?: ISorting;
 }
@@ -98,6 +100,7 @@ interface IReadWriteContentProps extends IBaseContentProps {
 export type IContentProps = IReadOnlyContentProps | IReadWriteContentProps;
 
 export const Content = ({
+  contentRef,
   dataVersion,
   editMode,
   error,
@@ -110,12 +113,12 @@ export const Content = ({
   onCellHighlighted,
   onCellValidated,
   onContextMenu,
+  onDragHighlightStart,
   onNewObjectClick,
   onQueryChange,
   onQueryHelp,
   onResetHighlight,
   onSortingChange,
-  onTableBackgroundClick,
   query,
   sorting,
   ...props
@@ -125,7 +128,7 @@ export const Content = ({
       <span className="RealmBrowser__Content__Error">{error.message}</span>
     </div>
   ) : (
-    <div className="RealmBrowser__Content">
+    <div className="RealmBrowser__Content" ref={contentRef}>
       <TopBar
         focus={focus}
         onNewObjectClick={onNewObjectClick}
@@ -146,11 +149,11 @@ export const Content = ({
         onCellHighlighted={onCellHighlighted}
         onCellValidated={onCellValidated}
         onContextMenu={onContextMenu}
+        onDragHighlightStart={onDragHighlightStart}
         onReorderingEnd={props.readOnly ? undefined : props.onReorderingEnd}
         onReorderingStart={props.readOnly ? undefined : props.onReorderingStart}
         onResetHighlight={onResetHighlight}
         onSortingChange={onSortingChange}
-        onTableBackgroundClick={onTableBackgroundClick}
         query={query}
         readOnly={props.readOnly}
         sorting={sorting}

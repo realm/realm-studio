@@ -30,10 +30,9 @@ $realm-browser-more-indicator-size: $spacer;
 $realm-browser-more-indicator-dark-color: rgba(0, 0, 0, .1);
 $realm-browser-more-indicator-light-color: rgba(0, 0, 0, 0);
 
-$row-stripe: rgba($black, 0);
-$highlight-row-bg: rgba($black, .05);
+$row-stripe: transparent;
+$highlight-row-bg: mix($black, $white, 5%);
 $highlight-row-color: $black;
-$highlight-cell-bg: rgba($black, .05);
 
 $cell-header-border-size: 2px;
 $cell-padding-x: $spacer;

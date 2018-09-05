@@ -44,9 +44,11 @@ import {
   CellContextMenuHandler,
   CellHighlightedHandler,
   CellValidatedHandler,
+  DragHighlightStartHandler,
   IHighlight,
   ReorderingEndHandler,
   ReorderingStartHandler,
+  rowHeights,
 } from './Table';
 
 export enum EditMode {
@@ -183,6 +185,9 @@ class ContentContainer extends React.Component<
     },
   );
   private lastRowIndexClicked?: number;
+  private contentElement: HTMLElement | null = null;
+  // Used to save the initial vertical coordinate when the user starts dragging to select rows
+  private dragSelectStart: { offset: number; rowIndex: number } | undefined;
 
   public componentDidUpdate(
     prevProps: IContentContainerProps,
@@ -209,6 +214,10 @@ class ContentContainer extends React.Component<
     this.setState({ error });
   }
 
+  public componentWillUnmount() {
+    document.removeEventListener('mouseup', this.onDragHighlightEnd);
+  }
+
   public render() {
     const props = this.getProps();
     return <Content {...props} />;
@@ -219,6 +228,10 @@ class ContentContainer extends React.Component<
     this.setState({ highlight });
   }
 
+  private contentRef = (element: HTMLElement | null) => {
+    this.contentElement = element;
+  };
+
   private getProps(): IContentProps {
     const filteredSortedResults = this.filteredSortedResults(
       this.props.focus.results,
@@ -226,6 +239,7 @@ class ContentContainer extends React.Component<
       this.state.sorting,
     );
     const common = {
+      contentRef: this.contentRef,
       dataVersion: this.props.dataVersion,
       error: this.state.error,
       filteredSortedResults,
@@ -236,12 +250,12 @@ class ContentContainer extends React.Component<
       onCellHighlighted: this.onCellHighlighted,
       onCellValidated: this.onCellValidated,
       onContextMenu: this.onContextMenu,
+      onDragHighlightStart: this.onDragHighlightStart,
       onNewObjectClick: this.onNewObjectClick,
       onQueryChange: this.onQueryChange,
       onQueryHelp: this.onQueryHelp,
       onResetHighlight: this.onResetHighlight,
       onSortingChange: this.onSortingChange,
-      onTableBackgroundClick: this.onTableBackgroundClick,
       query: this.state.query,
       sorting: this.state.sorting,
     };
@@ -300,11 +314,6 @@ class ContentContainer extends React.Component<
 
   private onSortingChange: SortingChangeHandler = sorting => {
     this.setState({ sorting });
-  };
-
-  private onTableBackgroundClick = () => {
-    // When clicking outside a cell. Reset the highlight.
-    this.onResetHighlight();
   };
 
   private generateHighlight(
@@ -750,6 +759,55 @@ class ContentContainer extends React.Component<
           throw new Error('onCreateObject called before realm was loaded');
         }
       });
+    }
+  };
+
+  private onDragHighlightStart: DragHighlightStartHandler = (e, rowIndex) => {
+    // Prevent the content grid from being clicked
+    e.stopPropagation();
+    if (this.contentElement) {
+      this.contentElement.addEventListener(
+        'mousemove',
+        this.onDragHighlightMove,
+      );
+      document.addEventListener('mouseup', this.onDragHighlightEnd);
+      const rect = e.currentTarget.getBoundingClientRect();
+      this.dragSelectStart = {
+        offset: rect.top,
+        rowIndex,
+      };
+      // Highlight the row
+      this.setState({ highlight: { rows: new Set([rowIndex]) } });
+    }
+    return false;
+  };
+
+  private onDragHighlightEnd = () => {
+    // If the table element is known, remove the move listener from it
+    if (this.contentElement) {
+      this.contentElement.removeEventListener(
+        'mousemove',
+        this.onDragHighlightMove,
+      );
+    }
+    delete this.dragSelectStart;
+  };
+
+  private onDragHighlightMove = (e: MouseEvent) => {
+    if (this.dragSelectStart) {
+      const { offset, rowIndex } = this.dragSelectStart;
+      const offsetRelative = e.clientY - offset;
+      const offsetIndex = Math.floor(offsetRelative / rowHeights.content);
+      const hoveredIndex = rowIndex + offsetIndex;
+      // Compute the set of highlighted row indexcies
+      const minIndex = Math.min(rowIndex, hoveredIndex);
+      const maxIndex = Math.max(rowIndex, hoveredIndex);
+      const rows = new Set<number>();
+      for (let i = minIndex; i <= maxIndex; i++) {
+        rows.add(i);
+      }
+      // Highlight the rows
+      this.setState({ highlight: { rows } });
     }
   };
 

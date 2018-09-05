@@ -25,7 +25,7 @@ import './StateSizeHeader.scss';
 
 interface IStateSizeHeaderProps {
   isPopoverOpen: boolean;
-  label: string;
+  label: React.ReactNode;
   labelElement?: HTMLElement;
   onLabelRef: (labelElement: HTMLElement) => void;
   onTogglePopover: () => void;

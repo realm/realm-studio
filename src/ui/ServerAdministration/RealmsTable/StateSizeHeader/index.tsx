@@ -40,7 +40,7 @@ class StateSizeHeaderContainer extends React.Component<
     return (
       <StateSizeHeader
         isPopoverOpen={this.state.isPopoverOpen}
-        label={this.props.label || '?'}
+        label={this.props.label}
         labelElement={this.state.labelElement}
         onLabelRef={this.onLabelRef}
         onTogglePopover={this.onTogglePopover}

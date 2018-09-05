@@ -36,6 +36,7 @@ import {
   CellContextMenuHandler,
   CellHighlightedHandler,
   CellValidatedHandler,
+  DragHighlightStartHandler,
   IHighlight,
   ReorderingEndHandler,
   ReorderingStartHandler,
@@ -54,7 +55,6 @@ const SortableGrid = SortableContainer<GridProps>(Grid as any, {
 });
 
 export interface IContentGridProps extends Partial<GridProps> {
-  onAddColumnEnabled: boolean;
   columnWidths: number[];
   dataVersion?: number;
   editMode: EditMode;
@@ -65,13 +65,16 @@ export interface IContentGridProps extends Partial<GridProps> {
   highlight?: IHighlight;
   isSortable?: boolean;
   isSorting?: boolean;
+  onAddColumnEnabled: boolean;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
   onCellHighlighted?: CellHighlightedHandler;
   onCellValidated?: CellValidatedHandler;
   onContextMenu?: CellContextMenuHandler;
+  onDragHighlightStart?: DragHighlightStartHandler;
   onReorderingEnd?: ReorderingEndHandler;
   onReorderingStart?: ReorderingStartHandler;
+  onResetHighlight?: () => void;
   properties: IPropertyWithName[];
   rowHeight: number;
   width: number;
@@ -113,6 +116,12 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
       ? properties.length + 1
       : properties.length;
 
+    // Create an object of props that will be passed to the container wrapping the grid
+    const containerProps = {
+      // Using mouse down as the rows can prevent clicks on these
+      onMouseDown: this.onContainerMouseDown,
+    };
+
     return (
       <SortableGrid
         {...this.props}
@@ -123,6 +132,7 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
         className="RealmBrowser__Table__ContentGrid"
         columnWidth={this.getColumnWidth}
         columnCount={columnCount}
+        containerProps={containerProps}
         distance={5}
         onSortEnd={onReorderingEnd}
         onSortStart={onReorderingStart}
@@ -146,13 +156,14 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
     const { properties } = props;
 
     const rowRenderer: GridRowRenderer = (rowProps: IGridRowProps) => {
-      const { highlight, isSorting } = this.props;
+      const { highlight, isSorting, onDragHighlightStart } = this.props;
 
       return (
         <Row
           isHighlighted={isRowHighlighted(highlight, rowProps.rowIndex)}
           key={rowProps.key}
           isSorting={isSorting}
+          onDragHighlightStart={onDragHighlightStart}
           {...rowProps}
         />
       );
@@ -199,8 +210,6 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
             isHighlighted={isCellHighlighted}
             key={cellProps.key}
             onCellClick={e => {
-              // Prevent a click through to the table
-              e.stopPropagation();
               if (onCellClick) {
                 onCellClick(
                   {
@@ -295,7 +304,6 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
         style={style}
         // Prevent a click through to the table
         onClick={e => {
-          e.stopPropagation();
           if (this.props.onCellClick) {
             this.props.onCellClick(clickParams, e);
           }
@@ -320,5 +328,14 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
         }}
       />
     );
+  };
+
+  private onContainerMouseDown: React.EventHandler<
+    React.MouseEvent<HTMLElement>
+  > = e => {
+    const { onResetHighlight } = this.props;
+    if (onResetHighlight) {
+      onResetHighlight();
+    }
   };
 }
