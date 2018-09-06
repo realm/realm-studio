@@ -16,30 +16,20 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as classnames from 'classnames';
 import * as React from 'react';
-import * as Realm from 'realm';
-import * as util from 'util';
 
 export const display = (value: ArrayBuffer | null) =>
   value ? `[${value.byteLength} bytes of data]` : 'null';
 
-export const DataCell = ({
-  isScrolling,
-  property,
-  value,
-}: {
-  isScrolling?: boolean;
-  property: Realm.ObjectSchemaProperty;
+interface IDataCellProps {
   value: ArrayBuffer | null;
-}) => (
+  isEditable: boolean;
+}
+
+export const DataCell = ({ value, isEditable }: IDataCellProps) => (
   <div
-    className={classnames(
-      'form-control',
-      'form-control-sm',
-      'RealmBrowser__Table__Input',
-      'RealmBrowser__Table__Input--disabled',
-    )}
+    tabIndex={isEditable ? 0 : undefined}
+    className="RealmBrowser__Table__DataCell"
   >
     {display(value)}
   </div>

@@ -22,15 +22,20 @@ import {
   SortStartHandler as ReorderingStartHandler,
 } from 'react-sortable-hoc';
 import {
-  AutoSizerProps,
+  Dimensions,
   Grid,
   GridCellProps,
-  ScrollSyncProps,
+  ScrollSyncChildProps,
 } from 'react-virtualized';
 
 import { EditMode, ISorting, SortingChangeHandler } from '..';
 import { IPropertyWithName } from '../..';
 import { Focus } from '../../focus';
+
+export const rowHeights = {
+  header: 50,
+  content: 2 * (1 + 8) + 17,
+};
 
 export type CellChangeHandler = (
   params: {
@@ -73,6 +78,11 @@ export type CellValidatedHandler = (
   valid: boolean,
 ) => void;
 
+export type RowMouseDownHandler = (
+  e: React.MouseEvent<HTMLElement>,
+  rowIndex: number,
+) => void;
+
 export interface IHighlight {
   rows: Set<number>;
   scrollTo?: {
@@ -104,15 +114,15 @@ export interface IBaseTableContainerProps {
   onReorderingStart?: ReorderingStartHandler;
   onResetHighlight: () => void;
   onSortingChange: SortingChangeHandler;
-  onTableBackgroundClick: () => void;
+  onRowMouseDown?: RowMouseDownHandler;
   query: string;
   readOnly: boolean;
   sorting?: ISorting;
 }
 
 export interface ITableContainerProps extends IBaseTableContainerProps {
-  scrollProps: ScrollSyncProps;
-  sizeProps: AutoSizerProps;
+  scroll: ScrollSyncChildProps;
+  dimensions: Dimensions;
 }
 
 export interface ITableContainerState {
@@ -131,6 +141,8 @@ class TableContainer extends React.PureComponent<
   // A reference to the grid inside the content container is needed to resize collumns
   private gridContent: Grid | null = null;
   private gridHeader: Grid | null = null;
+  // A reference to the root table div
+  private tableElement: HTMLElement | null = null;
 
   public render() {
     return (
@@ -152,16 +164,24 @@ class TableContainer extends React.PureComponent<
         onCellValidated={this.props.onCellValidated}
         onColumnWidthChanged={this.onColumnWidthChanged}
         onContextMenu={this.props.onContextMenu}
+        onRowMouseDown={this.props.onRowMouseDown}
         onReorderingEnd={this.onReorderingEnd}
         onReorderingStart={this.onReorderingStart}
+        onResetHighlight={this.props.onResetHighlight}
         onSortClick={this.onSortClick}
-        onTableBackgroundClick={this.props.onTableBackgroundClick}
         readOnly={this.props.readOnly}
-        scrollProps={this.props.scrollProps}
-        sizeProps={this.props.sizeProps}
+        scroll={this.props.scroll}
+        dimensions={this.props.dimensions}
         sorting={this.props.sorting}
+        tableRef={this.tableRef}
       />
     );
+  }
+
+  public componentWillUnmount() {
+    if (this.tableElement) {
+      this.tableElement.removeEventListener('keydown', this.onKeyDown);
+    }
   }
 
   public componentWillMount() {
@@ -232,6 +252,29 @@ class TableContainer extends React.PureComponent<
     });
   };
 
+  private onKeyDown = (e: KeyboardEvent) => {
+    const { highlight, onCellHighlighted, focus } = this.props;
+    // If a single row is highlighted
+    if (highlight && highlight.rows.size === 1 && onCellHighlighted) {
+      const rowIndex = highlight.rows.values().next().value;
+      const columnIndex = highlight.scrollTo
+        ? highlight.scrollTo.column || 0
+        : 0;
+      const rowCount = focus.results.length;
+      const columnCount = focus.properties.length;
+      // Change the highlighted cell if applicable
+      if (e.key === 'ArrowUp' && rowIndex > 0) {
+        onCellHighlighted({ rowIndex: rowIndex - 1, columnIndex });
+      } else if (e.key === 'ArrowDown' && rowIndex < rowCount - 1) {
+        onCellHighlighted({ rowIndex: rowIndex + 1, columnIndex });
+      } else if (e.key === 'ArrowLeft' && columnIndex > 0) {
+        onCellHighlighted({ rowIndex, columnIndex: columnIndex - 1 });
+      } else if (e.key === 'ArrowRight' && columnIndex < columnCount - 1) {
+        onCellHighlighted({ rowIndex, columnIndex: columnIndex + 1 });
+      }
+    }
+  };
+
   private onSortClick = (property: IPropertyWithName) => {
     const { sorting } = this.props;
     if (!sorting || sorting.property.name !== property.name) {
@@ -280,6 +323,14 @@ class TableContainer extends React.PureComponent<
     });
     this.setState({ columnWidths });
   }
+
+  private tableRef = (element: HTMLElement | null) => {
+    // Add a keypress listener on the table element
+    if (element) {
+      element.addEventListener('keydown', this.onKeyDown);
+    }
+    this.tableElement = element;
+  };
 }
 
 export { TableContainer as Table };

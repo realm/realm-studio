@@ -20,61 +20,46 @@ import * as classnames from 'classnames';
 import * as React from 'react';
 import { Input } from 'reactstrap';
 
-export const StringCell = ({
-  getRef,
-  isEditing,
-  isHighlighted,
-  onBlur,
-  onChange,
-  onClick,
-  property,
-  value,
-}: {
+interface IStringCellProps {
   getRef: (instance: HTMLInputElement) => any;
-  isEditing: boolean;
+  isDisabled: boolean;
   isHighlighted: boolean;
   onBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
   onChange: (value: string) => void;
   onClick: (e: React.MouseEvent<any>) => void;
+  onFocus: (e: React.FocusEvent<HTMLInputElement>) => void;
   property: Realm.ObjectSchemaProperty;
-  value: string;
-}) => {
-  return isEditing ? (
+  value: string | null;
+}
+
+export const StringCell = ({
+  getRef,
+  isDisabled,
+  onBlur,
+  onChange,
+  onClick,
+  onFocus,
+  property,
+  value,
+}: IStringCellProps) => {
+  return (
     <Input
-      contentEditable={isEditing}
       className={classnames(
-        'RealmBrowser__Table__Input',
-        `RealmBrowser__Table__Input--${property.type}`,
+        'RealmBrowser__Table__StringCell',
+        `RealmBrowser__Table__StringCell--${property.type}`,
+        {
+          'RealmBrowser__Table__StringCell--null': value === null,
+        },
       )}
+      bsSize="sm"
+      disabled={isDisabled}
       innerRef={getRef}
       onBlur={onBlur}
-      onClick={onClick}
       onChange={e => onChange(e.target.value)}
+      onClick={onClick}
+      onFocus={onFocus}
       onKeyPress={e => e.key === 'Enter' && e.currentTarget.blur()}
-      bsSize="sm"
-      value={value}
+      value={value === null ? 'null' : value}
     />
-  ) : (
-    <div
-      className={classnames(
-        'form-control',
-        'form-control-sm',
-        'RealmBrowser__Table__Input',
-        `RealmBrowser__Table__Input--${property.type}`,
-      )}
-      onDoubleClick={onClick}
-    >
-      <span
-        className={classnames(
-          'RealmBrowser__Table__StringCell',
-          `RealmBrowser__Table__StringCell--${property.type}`,
-          {
-            'RealmBrowser__Table__StringCell--null': value === null,
-          },
-        )}
-      >
-        {value === null ? 'null' : value.toString()}
-      </span>
-    </div>
   );
 };

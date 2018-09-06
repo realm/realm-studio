@@ -55,13 +55,12 @@
   &__BooleanControl,
   &__ListControl {
     &__Buttons {
+      align-items: center;
       display: flex;
-      // Overriding the bootstrap default as this produces columns
-      flex-direction: row !important; // sass-lint:disable-line no-important
       justify-content: center;
 
       & > * {
-        margin: 0 ($spacer / 2);
+        margin: $spacer / 4;
       }
     }
   }

@@ -21,18 +21,23 @@
 // This constant should match the HANDLE_WIDTH in HeaderCell.tsx
 $realm-browser-header-handle-width: 5px;
 // This constant should match the rowHeights.header constant in Table.tsx
-$realm-browser-header-height: 40px;
+$realm-browser-header-height: 50px;
 $realm-browser-header-icon-space: 24px;
 $realm-browser-header-handle-hover-bg: rgba(0, 0, 0, .1);
 $realm-browser-header-handle-dragging-bg: rgba($ultramarine, .5);
 
 $realm-browser-more-indicator-size: $spacer;
-$realm-browser-more-indicator-dark-color: rgba(0, 0, 0, .2);
+$realm-browser-more-indicator-dark-color: rgba(0, 0, 0, .1);
 $realm-browser-more-indicator-light-color: rgba(0, 0, 0, 0);
 
-$row-stripe: mix($white, $dove, 50%);
-$highlight-row-bg: mix($white, $indigo, 75%);
+$row-stripe: transparent;
+$highlight-row-bg: mix($black, $white, 4%);
 $highlight-row-color: $black;
+
+$cell-header-border-size: 2px;
+$cell-padding-x: $spacer;
+$cell-padding-y: .5 * $spacer;
+$cell-border-color: mix($black, $white, 10%);
 
 .RealmBrowser {
   display: flex;
@@ -92,6 +97,7 @@ $highlight-row-color: $black;
   }
 
   &__Table {
+    background: $white;
     flex: 1 0 0;
 
     &__HeaderGrid {
@@ -100,7 +106,6 @@ $highlight-row-color: $black;
     }
 
     &__Row {
-      background: $white;
       position: relative;
       transition: background-color 200ms;
 
@@ -125,13 +130,18 @@ $highlight-row-color: $black;
       &--sorting-selected {
         box-shadow: 0 0 10px $highlight-row-bg;
       }
+
+      &--right-padded {
+        margin-right: $spacer;
+      }
     }
 
     &__HeaderCell,
     &__HeaderCellControl,
     &__Cell {
-      border-bottom: 1px solid $dove;
-      border-right: 1px solid $dove;
+      border-bottom: 1px solid $cell-border-color;
+      border-right: 1px solid $cell-border-color;
+      padding: 0;
       position: relative;
 
       // We need to do this, because reactstrap adds the form-control class
@@ -141,14 +151,26 @@ $highlight-row-color: $black;
       }
     }
 
-    &__Cell {
-      user-select: none;
+    &__HeaderCell {
+      align-items: center;
+      border-top: $cell-header-border-size solid transparent;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      padding: $cell-padding-y $cell-padding-x;
+
+      &--sorting {
+        border-top: $cell-header-border-size solid $primary;
+      }
     }
 
-    &__HeaderCell {
+    &__HeaderProperty {
       display: flex;
       flex-direction: column;
-      padding: 0 $realm-browser-header-icon-space 0 ($spacer / 4);
+      justify-content: center;
+      line-height: 1rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     &__HeaderCellControl {
@@ -179,12 +201,10 @@ $highlight-row-color: $black;
     }
 
     &__HeaderType {
-      bottom: 0;
       color: $primary;
       font-size: $font-size-sm;
-      font-weight: bold;
+      font-weight: normal;
       overflow: hidden;
-      position: absolute;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
@@ -192,10 +212,8 @@ $highlight-row-color: $black;
     &__HeaderSort {
       color: $elephant;
       cursor: pointer;
+      flex-shrink: 0;
       font-size: 12px;
-      position: absolute;
-      right: 10px;
-      top: 14px;
 
       &--active {
         color: $charcoal;
@@ -222,19 +240,56 @@ $highlight-row-color: $black;
       }
     }
 
-    &__Cell,
-    &__PropertyName {
+    &__Cell {
+      font-size: $font-size-sm;
+      line-height: 1rem;
       overflow: hidden;
+      user-select: none;
       white-space: nowrap;
     }
 
-    &__Input {
+    &__ListCell,
+    &__ObjectCell,
+    &__StringCell,
+    &__DataCell,
+    &__ListIndexCell {
+      border: 1px solid transparent;
+      box-shadow: border-box;
+      height: 100%;
+      overflow: hidden;
+      padding: $cell-padding-y $cell-padding-x;
+      width: 100%;
+
+      &:focus {
+        border: 1px solid $primary;
+        outline: none;
+      }
+    }
+
+    &__ListCell,
+    &__ObjectCell {
+      // Make these look like clickable elements
+      color: $primary;
+      cursor: pointer;
+    }
+
+    &__ObjectCell,
+    &__StringCell {
+      &--null {
+        color: $elephant;
+        cursor: inherit;
+        display: block;
+        font-style: italic;
+      }
+    }
+
+    &__StringCell {
       background: transparent;
-      border: 0;
+      border-radius: 0;
       color: inherit;
       height: 100%;
-      line-height: 1.1rem;
-      white-space: nowrap;
+      line-height: 1rem;
+      padding: $cell-padding-y $cell-padding-x;
 
       &--null {
         color: $elephant;
@@ -252,37 +307,14 @@ $highlight-row-color: $black;
         box-shadow: none;
         color: inherit;
       }
-    }
 
-    &__StringCell {
-      &--int {
-        overflow: hidden;
-        position: absolute;
-        right: $spacer / 2;
-        text-align: right;
-        text-overflow: ellipsis;
-        width: 100%;
-      }
-    }
-
-    &__ListCell,
-    &__ObjectCell {
-      border: 0;
-      color: $primary;
-      cursor: pointer;
-    }
-
-    &__ObjectCell,
-    &__StringCell {
-      &--null {
-        color: $elephant;
-        font-style: italic;
+      &:invalid &:focus {
+        border: 1px solid $danger;
       }
     }
 
     &__ListCell {
       display: flex;
-      width: 100%;
 
       &:hover {
         text-decoration: underline;

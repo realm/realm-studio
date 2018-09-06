@@ -22,6 +22,14 @@ import * as Realm from 'realm';
 
 import { displayObject } from '../../../display';
 
+// Simulate a doubleclick if the cell has focus and the user presses enter
+const doubleClickIfEnter = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  if (e.key === 'Enter') {
+    e.currentTarget.click();
+    e.currentTarget.click();
+  }
+};
+
 export const ObjectCell = ({
   property,
   value,
@@ -31,14 +39,11 @@ export const ObjectCell = ({
 }) => {
   return (
     <div
-      className={classnames(
-        'form-control',
-        'form-control-sm',
-        'RealmBrowser__Table__ObjectCell',
-        {
-          'RealmBrowser__Table__ObjectCell--null': value === null,
-        },
-      )}
+      tabIndex={0}
+      className={classnames('RealmBrowser__Table__ObjectCell', {
+        'RealmBrowser__Table__ObjectCell--null': value === null,
+      })}
+      onKeyPress={doubleClickIfEnter}
     >
       {displayObject(value)}
     </div>

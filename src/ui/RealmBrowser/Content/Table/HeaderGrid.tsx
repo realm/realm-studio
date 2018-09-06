@@ -103,7 +103,7 @@ export class HeaderGrid extends React.PureComponent<IHeaderGridProps, {}> {
     <div
       key={cellProps.key}
       style={cellProps.style}
-      className="RealmBrowser__Table__HeaderCellControl"
+      className="RealmBrowser__Table__HeaderCellControl RealmBrowser__Table__HeaderCellControl--borderless"
       onClick={this.props.onAddColumnClick}
       title="Click for add a new column"
     >

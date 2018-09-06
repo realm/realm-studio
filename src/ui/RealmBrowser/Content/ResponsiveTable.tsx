@@ -34,8 +34,8 @@ export class ResponsiveTable extends React.PureComponent<
               {scrollProps => (
                 <Table
                   {...this.props}
-                  scrollProps={scrollProps}
-                  sizeProps={sizeProps}
+                  scroll={scrollProps}
+                  dimensions={sizeProps}
                 />
               )}
             </ScrollSync>

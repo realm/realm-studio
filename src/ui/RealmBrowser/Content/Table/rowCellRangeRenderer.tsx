@@ -21,9 +21,7 @@ import {
   Grid,
   GridCellProps,
   GridCellRangeProps,
-  List,
   SizeAndPositionData,
-  Table,
 } from 'react-virtualized';
 
 /**
@@ -36,7 +34,7 @@ export interface IGridRowProps {
   isScrolling: boolean;
   isVisible: boolean;
   key: string;
-  parent: Grid | List | Table;
+  parent: any;
   rowIndex: number;
   style: React.CSSProperties;
 }
