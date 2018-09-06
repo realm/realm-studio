@@ -35,23 +35,30 @@ export const parseNumber = (
   }
 };
 
-export const parseBoolean = (value: string) => {
+export const parseBoolean = (
+  value: string,
+  property: Realm.ObjectSchemaProperty,
+) => {
   const normalizedValue = value
     .toString()
     .trim()
     .toLowerCase();
 
-  switch (normalizedValue) {
-    case 'true':
-    case '1':
-      return true;
-    case 'false':
-    case '0':
-      return false;
-    default:
-      throw new Error(
-        `"${value}" is not a boolean: Use "true", "false", "0" or "1"`,
-      );
+  if (property.optional && normalizedValue === '') {
+    return null;
+  } else {
+    switch (normalizedValue) {
+      case 'true':
+      case '1':
+        return true;
+      case 'false':
+      case '0':
+        return false;
+      default:
+        throw new Error(
+          `"${value}" is not a boolean: Use "true", "false", "0" or "1"`,
+        );
+    }
   }
 };
 
@@ -84,7 +91,7 @@ export const parse = (value: string, property: Realm.ObjectSchemaProperty) => {
       return parseNumber(value, property);
     }
     case 'bool': {
-      return parseBoolean(value);
+      return parseBoolean(value, property);
     }
     case 'date':
       return parseDate(value, property);

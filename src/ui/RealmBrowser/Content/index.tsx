@@ -44,11 +44,11 @@ import {
   CellContextMenuHandler,
   CellHighlightedHandler,
   CellValidatedHandler,
-  DragHighlightStartHandler,
   IHighlight,
   ReorderingEndHandler,
   ReorderingStartHandler,
   rowHeights,
+  RowMouseDownHandler,
 } from './Table';
 
 export enum EditMode {
@@ -187,7 +187,7 @@ class ContentContainer extends React.Component<
   private lastRowIndexClicked?: number;
   private contentElement: HTMLElement | null = null;
   // Used to save the initial vertical coordinate when the user starts dragging to select rows
-  private dragSelectStart: { offset: number; rowIndex: number } | undefined;
+  private rowDragStart: { offset: number; rowIndex: number } | undefined;
 
   public componentDidUpdate(
     prevProps: IContentContainerProps,
@@ -215,7 +215,7 @@ class ContentContainer extends React.Component<
   }
 
   public componentWillUnmount() {
-    document.removeEventListener('mouseup', this.onDragHighlightEnd);
+    document.removeEventListener('mouseup', this.onRowMouseUp);
   }
 
   public render() {
@@ -250,7 +250,7 @@ class ContentContainer extends React.Component<
       onCellHighlighted: this.onCellHighlighted,
       onCellValidated: this.onCellValidated,
       onContextMenu: this.onContextMenu,
-      onDragHighlightStart: this.onDragHighlightStart,
+      onRowMouseDown: this.onRowMouseDown,
       onNewObjectClick: this.onNewObjectClick,
       onQueryChange: this.onQueryChange,
       onQueryHelp: this.onQueryHelp,
@@ -386,54 +386,6 @@ class ContentContainer extends React.Component<
     if (this.props.onCellClick) {
       this.props.onCellClick(params, e);
     } else {
-      const { rowIndex, columnIndex } = params;
-
-      const shiftClick = e && e.shiftKey;
-      const metaClick = e && e.metaKey; // Command key in MacOs
-
-      const currentRowReferenceShiftClick =
-        this.state.highlight && this.lastRowIndexClicked;
-      const clickWhenNoRowHighlighted =
-        currentRowReferenceShiftClick === undefined;
-      const normalClick = !shiftClick && !metaClick;
-      const nextRowReferenceShiftClick =
-        clickWhenNoRowHighlighted || normalClick || metaClick
-          ? rowIndex
-          : currentRowReferenceShiftClick;
-
-      const nextRowsHighlighted =
-        this.state.highlight && this.state.highlight.rows
-          ? new Set(this.state.highlight.rows)
-          : new Set();
-
-      if (this.props.highlightMode === HighlightMode.Single) {
-        if (nextRowsHighlighted.has(rowIndex)) {
-          nextRowsHighlighted.delete(rowIndex);
-        } else {
-          // Delete all other rows from the highlight before adding this row
-          nextRowsHighlighted.clear();
-          nextRowsHighlighted.add(rowIndex);
-        }
-      } else if (metaClick) {
-        // Unselect the row when it was already selected otherwise select it
-        if (nextRowsHighlighted.has(rowIndex)) {
-          nextRowsHighlighted.delete(rowIndex);
-        } else {
-          nextRowsHighlighted.add(rowIndex);
-        }
-      } else if (shiftClick) {
-        // Select all the rows from the row previously referenced to the last row clicked
-        if (nextRowReferenceShiftClick !== undefined) {
-          const rowIndexRange = getRange(nextRowReferenceShiftClick, rowIndex);
-          for (const i of rowIndexRange) {
-            nextRowsHighlighted.add(i);
-          }
-        }
-      } else {
-        nextRowsHighlighted.clear();
-        nextRowsHighlighted.add(rowIndex);
-      }
-
       if (!this.latestCellValidation || this.latestCellValidation.valid) {
         // Ensuring that the last cell validation didn't fail
         if (this.clickTimeout) {
@@ -446,21 +398,6 @@ class ContentContainer extends React.Component<
             this.clickTimeout = null;
           }, 200);
         }
-
-        this.setState(
-          {
-            highlight: {
-              rows: nextRowsHighlighted,
-              scrollTo: {
-                column: columnIndex,
-                row: rowIndex,
-              },
-            },
-          },
-          () => {
-            this.lastRowIndexClicked = rowIndex;
-          },
-        );
       }
     }
   };
@@ -512,17 +449,15 @@ class ContentContainer extends React.Component<
     rowIndex,
     columnIndex,
   }) => {
-    if (!this.latestCellValidation || this.latestCellValidation.valid) {
-      this.setState({
-        highlight: {
-          rows: new Set([rowIndex]),
-          scrollTo: {
-            column: columnIndex,
-            row: rowIndex,
-          },
+    this.setState({
+      highlight: {
+        rows: new Set([rowIndex]),
+        scrollTo: {
+          column: columnIndex,
+          row: rowIndex,
         },
-      });
-    }
+      },
+    });
   };
 
   private onCellValidated: CellValidatedHandler = (
@@ -548,18 +483,7 @@ class ContentContainer extends React.Component<
     const contextMenu = new Menu();
 
     if (params) {
-      const { property, rowObject, rowIndex, columnIndex } = params;
-
-      // If the clicked row was not highlighted - highlight only that
-      if (!this.state.highlight || !this.state.highlight.rows.has(rowIndex)) {
-        this.onCellHighlighted({ rowIndex, columnIndex });
-        // Wait 200ms to allow the state to update and call recursively
-        window.setTimeout(() => {
-          return this.onContextMenu(e, params);
-        }, 200);
-        return;
-      }
-
+      const { property, rowObject } = params;
       // If we clicked a property that refers to an object
       if (!readOnly && property && property.type === 'object') {
         contextMenu.append(
@@ -762,40 +686,64 @@ class ContentContainer extends React.Component<
     }
   };
 
-  private onDragHighlightStart: DragHighlightStartHandler = (e, rowIndex) => {
+  private onRowMouseDown: RowMouseDownHandler = (e, rowIndex) => {
     // Prevent the content grid from being clicked
     e.stopPropagation();
-    if (this.contentElement) {
-      this.contentElement.addEventListener(
-        'mousemove',
-        this.onDragHighlightMove,
-      );
-      document.addEventListener('mouseup', this.onDragHighlightEnd);
-      const rect = e.currentTarget.getBoundingClientRect();
-      this.dragSelectStart = {
-        offset: rect.top,
-        rowIndex,
-      };
-      // Highlight the row
+    const { highlightMode, focus } = this.props;
+    const { highlight } = this.state;
+    if (this.contentElement && highlightMode === HighlightMode.Multiple) {
+      // Create a mutation friendly version of the set of row indecies currently highlighted
+      const rows = highlight ? new Set(highlight.rows) : new Set();
+      // This is a left click with the meta-key (command on Mac) pressed
+      if (e.button === 0 && e.metaKey) {
+        // The user wants to add or remove a row to the current selection
+        if (rows.has(rowIndex)) {
+          rows.delete(rowIndex);
+        } else {
+          rows.add(rowIndex);
+        }
+        this.setState({
+          highlight: { rows },
+        });
+      } else if (e.button === 0 && e.shiftKey) {
+        // The user wants to select since the previous selection
+        if (this.rowDragStart !== undefined) {
+          const rowIndexRange = getRange(this.rowDragStart.rowIndex, rowIndex);
+          for (const i of rowIndexRange) {
+            rows.add(i);
+          }
+        }
+        this.setState({ highlight: { rows } });
+      } else if (e.button === 0 && focus.kind !== 'list') {
+        this.contentElement.addEventListener('mousemove', this.onRowMouseMove);
+        document.addEventListener('mouseup', this.onRowMouseUp);
+        const rect = e.currentTarget.getBoundingClientRect();
+        this.rowDragStart = {
+          offset: rect.top,
+          rowIndex,
+        };
+        // Highlight the row
+        this.setState({ highlight: { rows: new Set([rowIndex]) } });
+      } else if (e.button === 2 && rows.size === 0) {
+        // Right clicked when nothing was highlighted:
+        // Select the row but don't start a drag
+        this.setState({ highlight: { rows: new Set([rowIndex]) } });
+      }
+    } else if (highlightMode === HighlightMode.Single) {
       this.setState({ highlight: { rows: new Set([rowIndex]) } });
     }
-    return false;
   };
 
-  private onDragHighlightEnd = () => {
+  private onRowMouseUp = () => {
     // If the table element is known, remove the move listener from it
     if (this.contentElement) {
-      this.contentElement.removeEventListener(
-        'mousemove',
-        this.onDragHighlightMove,
-      );
+      this.contentElement.removeEventListener('mousemove', this.onRowMouseMove);
     }
-    delete this.dragSelectStart;
   };
 
-  private onDragHighlightMove = (e: MouseEvent) => {
-    if (this.dragSelectStart) {
-      const { offset, rowIndex } = this.dragSelectStart;
+  private onRowMouseMove = (e: MouseEvent) => {
+    if (this.rowDragStart) {
+      const { offset, rowIndex } = this.rowDragStart;
       const offsetRelative = e.clientY - offset;
       const offsetIndex = Math.floor(offsetRelative / rowHeights.content);
       const hoveredIndex = rowIndex + offsetIndex;

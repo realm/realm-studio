@@ -37,45 +37,14 @@ export interface IStringCellContainerProps {
 }
 
 interface IStringCellContainerState {
-  temporalValue: any;
-  isEditing: boolean;
+  temporalValue?: string;
 }
 
 export class StringCellContainer extends React.Component<
   IStringCellContainerProps,
   IStringCellContainerState
 > {
-  public static getDerivedStateFromProps(
-    nextProps: IStringCellContainerProps,
-    prevState: IStringCellContainerState,
-  ) {
-    const { value, isHighlighted } = nextProps;
-    const isEditing = !isHighlighted ? false : prevState.isEditing;
-
-    const state = {
-      temporalValue: !isEditing
-        ? StringCellContainer.getValueString(nextProps, value)
-        : prevState.temporalValue,
-      isEditing: !isHighlighted ? false : isEditing,
-    };
-    return state;
-  }
-
-  private static getValueString(
-    props: IStringCellContainerProps,
-    value: string,
-  ) {
-    if (props.valueToString) {
-      return props.valueToString(value);
-    } else {
-      return value;
-    }
-  }
-
-  public state: IStringCellContainerState = {
-    temporalValue: '',
-    isEditing: false,
-  };
+  public state: IStringCellContainerState = {};
 
   private inputElement?: HTMLInputElement;
 
@@ -87,23 +56,8 @@ export class StringCellContainer extends React.Component<
       this.props.editMode !== nextProps.editMode ||
       this.props.value !== nextProps.value ||
       this.props.isHighlighted !== nextProps.isHighlighted ||
-      this.state.isEditing !== nextState.isEditing ||
       this.state.temporalValue !== nextState.temporalValue
     );
-  }
-
-  public componentDidUpdate(
-    prevProps: IStringCellContainerProps,
-    prevState: IStringCellContainerState,
-  ) {
-    // Change the focus of the element, according to the value of isEditing
-    if (this.inputElement) {
-      if (this.state.isEditing) {
-        this.inputElement.focus();
-      } else if (this.inputElement === document.activeElement) {
-        this.inputElement.blur();
-      }
-    }
   }
 
   public render() {
@@ -111,70 +65,78 @@ export class StringCellContainer extends React.Component<
     return (
       <StringCell
         getRef={this.getInputRef}
-        isEditing={this.state.isEditing}
+        isDisabled={this.props.editMode === EditMode.Disabled}
         isHighlighted={isHighlighted || false}
         property={property}
-        value={this.state.temporalValue}
-        {...this}
+        value={this.getDisplayValue()}
+        onBlur={this.onBlur}
+        onClick={this.onClick}
+        onChange={this.onChange}
+        onFocus={this.onFocus}
       />
     );
   }
 
+  public onFocus = () => {
+    if (typeof this.state.temporalValue !== 'string') {
+      // The input field was just focussed - and we don't have a temporalValue
+      const value = this.getDisplayValue();
+      // Transform null and undefined into empty strings
+      this.setState({ temporalValue: value === null ? '' : value });
+    }
+  };
+
   public onBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
-    if (this.state.isEditing) {
-      try {
-        const value = parse(this.state.temporalValue, this.props.property);
-        if (value !== this.props.value) {
-          this.props.onValidated(true);
-          this.props.onUpdateValue(value);
-          this.setState({ temporalValue: value, isEditing: false });
+    try {
+      // Validate and propagate the change in value
+      this.propagateChange();
+      this.setState({ temporalValue: undefined });
+    } catch (err) {
+      const inputElement = this.inputElement;
+      // The validation failed and the user is leaving the field - ask if they want to reset and leave
+      const leave = this.showInvalidValueError(err.message);
+      if (leave) {
+        // Reset the temporalValue and signal a valid value
+        this.setState({ temporalValue: undefined });
+        this.props.onValidated(true);
+        // Remove any existing custom validation errors
+        if (inputElement) {
+          inputElement.setCustomValidity('');
         }
-      } catch (err) {
-        const leave = this.showInvalidValueError(err.message);
-        if (leave) {
-          this.setState({ temporalValue: this.props.value, isEditing: false });
-          this.props.onValidated(true);
-        } else {
-          this.props.onValidated(false);
-          // Prevent getting blurred:
-          // This doesn't work as the another input might be getting focussed.
-          e.preventDefault();
-          // Re-focus
-          const inputElement = this.inputElement;
-          if (inputElement) {
-            setTimeout(() => {
-              inputElement.focus();
-            }, 100);
-          }
+      } else {
+        // Indicate a validation error
+        this.props.onValidated(false);
+        // Make this cell highlighted (again)
+        this.props.onHighlighted();
+
+        // Focus the input element again
+        if (inputElement) {
+          setTimeout(() => {
+            inputElement.focus();
+          }, 100);
         }
       }
     }
   };
 
   public onChange = (value: string): void => {
-    this.setState({ temporalValue: value });
-    if (this.props.editMode === EditMode.KeyPress) {
+    this.setState({ temporalValue: value }, () => {
       try {
-        const parsedValue = parse(value, this.props.property);
-        this.props.onValidated(true);
-        this.props.onUpdateValue(parsedValue);
+        this.parseAndValidate();
+        if (this.props.editMode === EditMode.KeyPress) {
+          // TODO: Handle that this might throw
+          this.propagateChange();
+        }
       } catch (err) {
-        // Probably a parsing error
         // tslint:disable-next-line:no-console
-        console.warn(`Error parsing the input: ${err.message}`);
-        this.props.onValidated(false);
+        console.warn(`StringCell validation failed: ${err.message}`);
       }
-    }
-  };
-
-  public onFocus = (): void => {
-    if (!this.props.isHighlighted) {
-      this.props.onHighlighted();
-    }
+    });
   };
 
   public onClick = (e: React.MouseEvent<any>): void => {
     // We can only edit cells that are not readOnly and highlighted
+    /*
     if (
       this.props.isHighlighted &&
       !this.props.property.readOnly &&
@@ -185,11 +147,68 @@ export class StringCellContainer extends React.Component<
         this.setState({ isEditing: true });
       }
     }
+    */
   };
+
+  private getDisplayValue() {
+    const { temporalValue } = this.state;
+    const { valueToString, value } = this.props;
+    if (typeof temporalValue === 'string') {
+      return temporalValue;
+    } else if (valueToString) {
+      return valueToString(value);
+    } else {
+      return value === null ? null : String(value);
+    }
+  }
 
   private getInputRef = (inputElement: HTMLInputElement) => {
     this.inputElement = inputElement;
   };
+
+  /**
+   * This will validate the temporalValue, `onValidated` will be called with the result and if the value is valid
+   * `onUpdateValue` props will be called too.
+   */
+  private propagateChange() {
+    // Try to parse, if the temporalValue is invalid an error will be thrown
+    const parsedValue = this.parseAndValidate();
+    // Prevent changes that override with the same value
+    if (parsedValue !== this.props.value) {
+      this.props.onUpdateValue(parsedValue);
+    }
+  }
+
+  /**
+   * Try parsing the temporalValue, set validation and call onValidated accordingly
+   */
+  private parseAndValidate() {
+    const { temporalValue } = this.state;
+    const { property } = this.props;
+    if (typeof temporalValue === 'string') {
+      try {
+        const parsedValue = parse(temporalValue, property);
+        this.props.onValidated(true);
+        // Update the `inputElement` validation state
+        if (this.inputElement) {
+          this.inputElement.setCustomValidity('');
+        }
+        return parsedValue;
+      } catch (err) {
+        this.props.onValidated(false);
+        // Update the `inputElement` validation state
+        if (this.inputElement) {
+          this.inputElement.setCustomValidity(err.message);
+        }
+        // Rethrow to allow the caller to use the message
+        throw err;
+      }
+    } else {
+      throw new Error(
+        `parseAndValidate was called before temporalValue was sat: ${temporalValue}`,
+      );
+    }
+  }
 
   private showInvalidValueError(message: string): boolean {
     const answer = remote.dialog.showMessageBox(remote.getCurrentWindow(), {

@@ -31,12 +31,13 @@ $realm-browser-more-indicator-dark-color: rgba(0, 0, 0, .1);
 $realm-browser-more-indicator-light-color: rgba(0, 0, 0, 0);
 
 $row-stripe: transparent;
-$highlight-row-bg: mix($black, $white, 5%);
+$highlight-row-bg: mix($black, $white, 4%);
 $highlight-row-color: $black;
 
 $cell-header-border-size: 2px;
 $cell-padding-x: $spacer;
 $cell-padding-y: .5 * $spacer;
+$cell-border-color: mix($black, $white, 10%);
 
 .RealmBrowser {
   display: flex;
@@ -129,25 +130,25 @@ $cell-padding-y: .5 * $spacer;
       &--sorting-selected {
         box-shadow: 0 0 10px $highlight-row-bg;
       }
+
+      &--right-padded {
+        margin-right: $spacer;
+      }
     }
 
     &__HeaderCell,
     &__HeaderCellControl,
     &__Cell {
-      border-bottom: 1px solid $dove;
-      border-right: 1px solid $dove;
-      position: relative;
+      border-bottom: 1px solid $cell-border-color;
+      border-right: 1px solid $cell-border-color;
       padding: 0;
+      position: relative;
 
       // We need to do this, because reactstrap adds the form-control class
       // after the classNames that we provide.
       .form-control { // sass-lint:disable-line class-name-format
         background: transparent;
       }
-    }
-
-    &__Cell {
-      user-select: none;
     }
 
     &__HeaderCell {
@@ -168,6 +169,8 @@ $cell-padding-y: .5 * $spacer;
       flex-direction: column;
       justify-content: center;
       line-height: 1rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     &__HeaderCellControl {
@@ -209,6 +212,7 @@ $cell-padding-y: .5 * $spacer;
     &__HeaderSort {
       color: $elephant;
       cursor: pointer;
+      flex-shrink: 0;
       font-size: 12px;
 
       &--active {
@@ -236,21 +240,56 @@ $cell-padding-y: .5 * $spacer;
       }
     }
 
-    &__Cell,
-    &__PropertyName {
+    &__Cell {
+      font-size: $font-size-sm;
+      line-height: 1rem;
       overflow: hidden;
+      user-select: none;
       white-space: nowrap;
     }
 
-    &__Input {
-      background: transparent;
-      border: 0;
-      color: inherit;
-      font-size: $font-size-sm;
+    &__ListCell,
+    &__ObjectCell,
+    &__StringCell,
+    &__DataCell,
+    &__ListIndexCell {
+      border: 1px solid transparent;
+      box-shadow: border-box;
       height: 100%;
-      line-height: 1.1rem;
+      overflow: hidden;
       padding: $cell-padding-y $cell-padding-x;
-      white-space: nowrap;
+      width: 100%;
+
+      &:focus {
+        border: 1px solid $primary;
+        outline: none;
+      }
+    }
+
+    &__ListCell,
+    &__ObjectCell {
+      // Make these look like clickable elements
+      color: $primary;
+      cursor: pointer;
+    }
+
+    &__ObjectCell,
+    &__StringCell {
+      &--null {
+        color: $elephant;
+        cursor: inherit;
+        display: block;
+        font-style: italic;
+      }
+    }
+
+    &__StringCell {
+      background: transparent;
+      border-radius: 0;
+      color: inherit;
+      height: 100%;
+      line-height: 1rem;
+      padding: $cell-padding-y $cell-padding-x;
 
       &--null {
         color: $elephant;
@@ -268,35 +307,14 @@ $cell-padding-y: .5 * $spacer;
         box-shadow: none;
         color: inherit;
       }
-    }
 
-    &__StringCell {
-      display: block;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    &__ListCell,
-    &__ObjectCell {
-      border: 0;
-      color: $primary;
-      cursor: pointer;
-      font-size: $font-size-sm;
-      padding: $cell-padding-y $cell-padding-x;
-    }
-
-    &__ObjectCell,
-    &__StringCell {
-      &--null {
-        color: $elephant;
-        cursor: inherit;
-        font-style: italic;
+      &:invalid &:focus {
+        border: 1px solid $danger;
       }
     }
 
     &__ListCell {
       display: flex;
-      width: 100%;
 
       &:hover {
         text-decoration: underline;

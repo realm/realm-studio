@@ -34,11 +34,11 @@ import {
   CellContextMenuHandler,
   CellHighlightedHandler,
   CellValidatedHandler,
-  DragHighlightStartHandler,
   IHighlight,
   ReorderingEndHandler,
   ReorderingStartHandler,
   rowHeights,
+  RowMouseDownHandler,
 } from '.';
 import { ContentGrid } from './ContentGrid';
 import { HeaderGrid } from './HeaderGrid';
@@ -63,7 +63,7 @@ export interface ITableProps {
   onCellValidated?: CellValidatedHandler;
   onColumnWidthChanged: (index: number, width: number) => void;
   onContextMenu?: CellContextMenuHandler;
-  onDragHighlightStart?: DragHighlightStartHandler;
+  onRowMouseDown?: RowMouseDownHandler;
   onReorderingEnd?: ReorderingEndHandler;
   onReorderingStart?: ReorderingStartHandler;
   onResetHighlight: () => void;
@@ -93,7 +93,7 @@ export const Table = ({
   onCellValidated,
   onColumnWidthChanged,
   onContextMenu,
-  onDragHighlightStart,
+  onRowMouseDown,
   onReorderingEnd,
   onReorderingStart,
   onResetHighlight,
@@ -152,7 +152,7 @@ export const Table = ({
         onCellHighlighted={onCellHighlighted}
         onCellValidated={onCellValidated}
         onContextMenu={onContextMenu}
-        onDragHighlightStart={onDragHighlightStart}
+        onRowMouseDown={onRowMouseDown}
         onReorderingEnd={onReorderingEnd}
         onReorderingStart={onReorderingStart}
         onResetHighlight={onResetHighlight}

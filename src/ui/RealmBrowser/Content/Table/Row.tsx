@@ -19,13 +19,13 @@
 import * as classnames from 'classnames';
 import * as React from 'react';
 
-import { DragHighlightStartHandler } from '.';
+import { RowMouseDownHandler } from '.';
 import { IGridRowProps } from './rowCellRangeRenderer';
 
 export interface IRowProps extends IGridRowProps {
   isHighlighted?: boolean;
   isSorting?: boolean;
-  onDragHighlightStart?: DragHighlightStartHandler;
+  onRowMouseDown?: RowMouseDownHandler;
 }
 
 export const Row = ({
@@ -34,7 +34,7 @@ export const Row = ({
   isSorting,
   rowIndex,
   style,
-  onDragHighlightStart,
+  onRowMouseDown,
 }: IRowProps) => {
   return (
     <div
@@ -45,9 +45,7 @@ export const Row = ({
       })}
       style={style}
       onMouseDown={
-        onDragHighlightStart
-          ? e => onDragHighlightStart(e, rowIndex)
-          : undefined
+        onRowMouseDown ? e => onRowMouseDown(e, rowIndex) : undefined
       }
     >
       {children}

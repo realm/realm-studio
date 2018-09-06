@@ -36,10 +36,10 @@ import {
   CellContextMenuHandler,
   CellHighlightedHandler,
   CellValidatedHandler,
-  DragHighlightStartHandler,
   IHighlight,
   ReorderingEndHandler,
   ReorderingStartHandler,
+  RowMouseDownHandler,
 } from '.';
 import { Cell } from './Cell';
 import { Row } from './Row';
@@ -71,7 +71,7 @@ export interface IContentGridProps extends Partial<GridProps> {
   onCellHighlighted?: CellHighlightedHandler;
   onCellValidated?: CellValidatedHandler;
   onContextMenu?: CellContextMenuHandler;
-  onDragHighlightStart?: DragHighlightStartHandler;
+  onRowMouseDown?: RowMouseDownHandler;
   onReorderingEnd?: ReorderingEndHandler;
   onReorderingStart?: ReorderingStartHandler;
   onResetHighlight?: () => void;
@@ -156,14 +156,14 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
     const { properties } = props;
 
     const rowRenderer: GridRowRenderer = (rowProps: IGridRowProps) => {
-      const { highlight, isSorting, onDragHighlightStart } = this.props;
+      const { highlight, isSorting, onRowMouseDown } = this.props;
 
       return (
         <Row
           isHighlighted={isRowHighlighted(highlight, rowProps.rowIndex)}
           key={rowProps.key}
           isSorting={isSorting}
-          onDragHighlightStart={onDragHighlightStart}
+          onRowMouseDown={onRowMouseDown}
           {...rowProps}
         />
       );
@@ -186,7 +186,6 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
     this.cellRenderers = properties.map(property => {
       return (cellProps: GridCellProps) => {
         const {
-          columnWidths,
           editMode,
           filteredSortedResults,
           getCellValue,
@@ -262,7 +261,6 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
             property={property}
             style={cellProps.style}
             value={cellValue}
-            width={columnWidths[cellProps.columnIndex]}
           />
         );
       };

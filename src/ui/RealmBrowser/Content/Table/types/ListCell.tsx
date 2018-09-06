@@ -16,7 +16,6 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as classnames from 'classnames';
 import * as React from 'react';
 import { Badge } from 'reactstrap';
 import * as Realm from 'realm';
@@ -93,7 +92,7 @@ export const ListCell = ({
   property: Realm.ObjectSchemaProperty;
   value: any;
 }) => (
-  <div className="RealmBrowser__Table__ListCell">
+  <div tabIndex={0} className="RealmBrowser__Table__ListCell">
     <span className="RealmBrowser__Table__ListCell__Value">
       {displayValue(property, value)}
     </span>

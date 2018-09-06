@@ -46,10 +46,10 @@ import {
   CellContextMenuHandler,
   CellHighlightedHandler,
   CellValidatedHandler,
-  DragHighlightStartHandler,
   IHighlight,
   ReorderingEndHandler,
   ReorderingStartHandler,
+  RowMouseDownHandler,
 } from './Table';
 import { TopBar } from './TopBar';
 
@@ -67,7 +67,7 @@ interface IBaseContentProps {
   onCellHighlighted: CellHighlightedHandler;
   onCellValidated: CellValidatedHandler;
   onContextMenu: CellContextMenuHandler;
-  onDragHighlightStart: DragHighlightStartHandler;
+  onRowMouseDown: RowMouseDownHandler;
   onNewObjectClick?: () => void;
   onQueryChange: QueryChangeHandler;
   onQueryHelp: () => void;
@@ -113,11 +113,11 @@ export const Content = ({
   onCellHighlighted,
   onCellValidated,
   onContextMenu,
-  onDragHighlightStart,
   onNewObjectClick,
   onQueryChange,
   onQueryHelp,
   onResetHighlight,
+  onRowMouseDown,
   onSortingChange,
   query,
   sorting,
@@ -149,7 +149,7 @@ export const Content = ({
         onCellHighlighted={onCellHighlighted}
         onCellValidated={onCellValidated}
         onContextMenu={onContextMenu}
-        onDragHighlightStart={onDragHighlightStart}
+        onRowMouseDown={onRowMouseDown}
         onReorderingEnd={props.readOnly ? undefined : props.onReorderingEnd}
         onReorderingStart={props.readOnly ? undefined : props.onReorderingStart}
         onResetHighlight={onResetHighlight}

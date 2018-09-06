@@ -34,7 +34,7 @@ import { Focus } from '../../focus';
 
 export const rowHeights = {
   header: 50,
-  content: 8 + 8 + 17,
+  content: 2 * (1 + 8) + 17,
 };
 
 export type CellChangeHandler = (
@@ -78,7 +78,7 @@ export type CellValidatedHandler = (
   valid: boolean,
 ) => void;
 
-export type DragHighlightStartHandler = (
+export type RowMouseDownHandler = (
   e: React.MouseEvent<HTMLElement>,
   rowIndex: number,
 ) => void;
@@ -114,7 +114,7 @@ export interface IBaseTableContainerProps {
   onReorderingStart?: ReorderingStartHandler;
   onResetHighlight: () => void;
   onSortingChange: SortingChangeHandler;
-  onDragHighlightStart?: DragHighlightStartHandler;
+  onRowMouseDown?: RowMouseDownHandler;
   query: string;
   readOnly: boolean;
   sorting?: ISorting;
@@ -164,7 +164,7 @@ class TableContainer extends React.PureComponent<
         onCellValidated={this.props.onCellValidated}
         onColumnWidthChanged={this.onColumnWidthChanged}
         onContextMenu={this.props.onContextMenu}
-        onDragHighlightStart={this.props.onDragHighlightStart}
+        onRowMouseDown={this.props.onRowMouseDown}
         onReorderingEnd={this.onReorderingEnd}
         onReorderingStart={this.onReorderingStart}
         onResetHighlight={this.props.onResetHighlight}

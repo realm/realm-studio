@@ -60,19 +60,7 @@ const getCellContent = ({
     case 'float':
     case 'double':
     case 'bool':
-    case 'string': {
-      return (
-        <StringCell
-          editMode={editMode}
-          isHighlighted={isHighlighted}
-          onHighlighted={onHighlighted}
-          onUpdateValue={onUpdateValue}
-          onValidated={onValidated}
-          property={property}
-          value={value}
-        />
-      );
-    }
+    case 'string':
     case 'date': {
       return (
         <StringCell
@@ -83,13 +71,17 @@ const getCellContent = ({
           onValidated={onValidated}
           property={property}
           value={value}
-          valueToString={v => (v ? v.toISOString() : v)}
+          valueToString={
+            property.type === 'date'
+              ? v => (v ? v.toISOString() : v)
+              : undefined
+          }
         />
       );
     }
     case 'data':
       return (
-        <DataCell isScrolling={isScrolling} property={property} value={value} />
+        <DataCell isEditable={editMode !== EditMode.Disabled} value={value} />
       );
     case 'list':
       return <ListCell property={property} value={value} />;
@@ -112,7 +104,6 @@ export const Cell = ({
   property,
   style,
   value,
-  width,
 }: {
   editMode: EditMode;
   isHighlighted?: boolean;
@@ -125,7 +116,6 @@ export const Cell = ({
   property: IPropertyWithName;
   style: React.CSSProperties;
   value: any;
-  width: number;
 }) => {
   const content = getCellContent({
     editMode,
