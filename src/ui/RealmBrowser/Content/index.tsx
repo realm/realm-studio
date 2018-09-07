@@ -101,14 +101,15 @@ export type ISelectObjectDialog =
 export interface IBaseContentContainerProps {
   dataVersion?: number;
   editMode: EditMode;
-  highlightMode: HighlightMode;
   focus: Focus;
+  highlightMode: HighlightMode;
   onCellClick?: CellClickHandler;
-  onCellSingleClick?: CellClickHandler;
   onCellDoubleClick?: CellClickHandler;
+  onCellSingleClick?: CellClickHandler;
   onClassFocussed?: ClassFocussedHandler;
-  onListFocussed?: ListFocussedHandler;
   onHighlightChange?: (highlight: IHighlight | undefined) => void;
+  onListFocussed?: ListFocussedHandler;
+  permissionSidebar?: boolean;
   progress?: ILoadingProgress;
   readOnly: boolean;
 }
@@ -155,7 +156,7 @@ class ContentContainer extends React.Component<
   public state: IContentContainerState = {
     createObjectDialog: { isOpen: false },
     deleteObjectsDialog: { isOpen: false },
-    isPermissionSidebarOpen: true,
+    isPermissionSidebarOpen: this.props.permissionSidebar || false,
     query: '',
     selectObjectDialog: { isOpen: false },
   };
@@ -255,7 +256,9 @@ class ContentContainer extends React.Component<
       onContextMenu: this.onContextMenu,
       onRowMouseDown: this.onRowMouseDown,
       onNewObjectClick: this.onNewObjectClick,
-      onPermissionSidebarToggle: this.onPermissionSidebarToggle,
+      onPermissionSidebarToggle: this.props.permissionSidebar
+        ? this.onPermissionSidebarToggle
+        : undefined,
       onQueryChange: this.onQueryChange,
       onQueryHelp: this.onQueryHelp,
       onResetHighlight: this.onResetHighlight,

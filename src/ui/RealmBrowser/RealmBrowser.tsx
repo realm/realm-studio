@@ -128,6 +128,7 @@ export const RealmBrowser = ({
             onCommitTransaction={onCommitTransaction}
             onListFocussed={onListFocussed}
             onRealmChanged={onRealmChanged}
+            permissionSidebar={true}
             progress={progress}
             readOnly={false}
             realm={realm}

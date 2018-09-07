@@ -25,7 +25,7 @@ import { IHighlight } from '../Table';
 interface IPermissionSidebarProps {
   className?: string;
   isOpen: boolean;
-  onToggle: () => void;
+  onToggle?: () => void;
   highlight?: IHighlight;
   focus: Focus;
 }

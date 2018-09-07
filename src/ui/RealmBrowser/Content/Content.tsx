@@ -71,7 +71,7 @@ interface IBaseContentProps {
   onContextMenu: CellContextMenuHandler;
   onRowMouseDown: RowMouseDownHandler;
   onNewObjectClick?: () => void;
-  onPermissionSidebarToggle: () => void;
+  onPermissionSidebarToggle?: () => void;
   onQueryChange: QueryChangeHandler;
   onQueryHelp: () => void;
   onResetHighlight: () => void;
