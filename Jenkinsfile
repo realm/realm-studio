@@ -9,7 +9,7 @@ jobWrapper {
     }
 
     if (env.CHANGE_TARGET) {
-      stage('Build') {
+      stage('Installing') {
         // Computing a packageHash from the package-lock.json
         def packageHash = sh(
           script: "git ls-files -s package-lock.json | cut -d ' ' -f 2",
@@ -19,7 +19,7 @@ jobWrapper {
         image = buildDockerEnv("ci/realm-studio:pr-${packageHash}", extra_args: '-f Dockerfile.testing')
       }
 
-      stage('Test') {
+      stage('Build & test') {
         image.inside("-e HOME=${env.WORKSPACE} -v /etc/passwd:/etc/passwd:ro") {
           // Remove any node_modules that might already be here
           sh 'rm -rf node_modules'
