@@ -3,6 +3,7 @@ const path = require('path');
 const webpack = require('webpack');
 const Visualizer = require('webpack-visualizer-plugin');
 const merge = require('webpack-merge');
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 module.exports = (env, argv) => {
   const isDevelopment = argv.mode === 'development';
@@ -52,6 +53,7 @@ module.exports = (env, argv) => {
       publicPath: isDevelopment ? 'http://localhost:8080/' : '',
     },
     plugins: isDevelopment ? [
+      new HardSourceWebpackPlugin(),
       new Visualizer({
         filename: './renderer.statistics.html',
       }),
