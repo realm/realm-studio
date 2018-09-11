@@ -18,6 +18,8 @@
 
 import * as assert from 'assert';
 import * as Electron from 'electron';
+import * as fs from 'fs';
+import { ITest } from 'mocha';
 import { resolve } from 'path';
 import { Application } from 'spectron';
 import * as fakeDialog from 'spectron-fake-dialog';
@@ -33,8 +35,8 @@ const appPath = resolve(__dirname, '../../..');
 
 // We need to use a non-arrow functions to adjust the suite timeout
 // tslint:disable-next-line:only-arrow-functions
-describe('RealmBrowser', function() {
-  this.timeout(60000);
+describe('<RealmBrowser /> via Spectron', function() {
+  this.timeout(10000);
 
   let app: Application;
   let realm: ITestRealm;
@@ -43,12 +45,10 @@ describe('RealmBrowser', function() {
     realm = createAllTypeRealm();
     app = new Application({
       path: electronPath,
-      args: [
-        // The app directory path
-        appPath,
-        // The path of the Realm to open
-        realm.path,
-      ],
+      args: [appPath],
+      env: {
+        REALM_STUDIO_SKIP_SIGNUP: 'true',
+      },
     });
     // Apply the modifications that will allow us to mock dialogs
     fakeDialog.apply(app);
@@ -66,8 +66,22 @@ describe('RealmBrowser', function() {
     }
   });
 
+  afterEach(async function() {
+    if (this.currentTest.state === 'failed') {
+      // When a test fails and the app is running, take a screenshot
+      const imageBuffer = await app.browserWindow.capturePage();
+      fs.writeFileSync('./failure-screenshot.png', imageBuffer);
+    }
+  });
+
   describe('opening a Realm file', () => {
     before(async () => {
+      // Await the Greeting window
+      assert.equal(await app.client.getWindowCount(), 1);
+      assert.equal(await app.client.getTitle(), 'Realm Studio');
+    });
+
+    it('opens the Realm Browser', async () => {
       // Mock the open dialog to return the Realm path
       fakeDialog.mock([
         {
@@ -75,17 +89,13 @@ describe('RealmBrowser', function() {
           value: [realm.path],
         },
       ]);
-      // Await the Greeting window
-      assert.equal(await app.client.getWindowCount(), 1);
-      assert.equal(await app.client.getTitle(), 'Realm Studio');
       // Click on the button to open a Realm file
       await app.client.click('button=Open Realm file');
-      await app.client.windowByIndex(1);
-    });
-
-    it('opens the Realm Browser', async () => {
       // Wait for the browser window to open and change focus to that
       assert.equal(await app.client.getWindowCount(), 2);
+      // Select the browser window
+      await app.client.windowByIndex(1);
+      // Wait for the left sidebar to exist
       await app.client.waitForExist('span=Classes');
     });
 
@@ -145,8 +155,7 @@ describe('RealmBrowser', function() {
           );
         });
 
-        /*
-        it('can focus and blur each cell', async () => {
+        it.skip('can focus and blur each cell', async () => {
           const cells = await app.client.elements('.RealmBrowser__Table__Cell');
           const propertyNames = Object.keys(schema.properties);
           for (const cell of cells.value) {
@@ -154,7 +163,6 @@ describe('RealmBrowser', function() {
             await app.client.elementIdClick(cell.ELEMENT);
           }
         });
-        */
       });
     }
   });
