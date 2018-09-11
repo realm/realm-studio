@@ -37,7 +37,7 @@ jobWrapper {
           // Trying to test - but that might fail
           try {
             // Run the tests with xvfb to allow opening windows virtually, and report using the junit reporter
-            sh './node_modules/.bin/xvfb-maybe npm run test:ci'
+            sh 'npm run test:ci'
           } catch (err) {
             error "Tests failed - see results on CI"
           } finally {
