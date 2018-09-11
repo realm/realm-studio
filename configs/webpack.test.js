@@ -1,6 +1,8 @@
 const merge = require('webpack-merge');
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
+console.log(process.env);
+
 module.exports = (env) => {
   const baseConfig = require('./webpack.base.js')(env, {
     // We need to manually pass-in the mode due to
@@ -28,7 +30,9 @@ module.exports = (env) => {
       // This will make __dirname equal the actual file
       __dirname: true,
     },
-    plugins: [
+    plugins: process.env.CI ? [
+      // None ...
+    ] : [
       new HardSourceWebpackPlugin(),
     ]
   });

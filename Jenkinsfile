@@ -42,7 +42,6 @@ jobWrapper {
             error "Tests failed - see results on CI"
           } finally {
             junit(
-              allowEmptyResults: true,
               keepLongStdio: true,
               testResults: 'test-results.xml'
             )
