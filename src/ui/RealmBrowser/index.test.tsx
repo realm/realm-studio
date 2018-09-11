@@ -34,7 +34,7 @@ const appPath = resolve(__dirname, '../../..');
 // We need to use a non-arrow functions to adjust the suite timeout
 // tslint:disable-next-line:only-arrow-functions
 describe('RealmBrowser', function() {
-  this.timeout(10000);
+  this.timeout(60000);
 
   let app: Application;
   let realm: ITestRealm;
