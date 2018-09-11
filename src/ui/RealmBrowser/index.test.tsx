@@ -72,14 +72,14 @@ describe('<RealmBrowser /> via Spectron', function() {
     }
   });
 
-  describe('opening a Realm file', () => {
+  describe('opening Realm file', () => {
     before(async () => {
       // Await the Greeting window
       assert.equal(await app.client.getWindowCount(), 1);
       assert.equal(await app.client.getTitle(), 'Realm Studio');
     });
 
-    it('opens the Realm Browser', async () => {
+    it('shows the Realm Browser', async () => {
       // Mock the open dialog to return the Realm path
       fakeDialog.mock([
         {
@@ -120,7 +120,7 @@ describe('<RealmBrowser /> via Spectron', function() {
           schema = objectSchema as Realm.ObjectSchema;
         });
 
-        it('has the expected number of header cells', async () => {
+        it('has header cells', async () => {
           // Assert something about the header
           const headerCells = await app.client.elements(
             '.RealmBrowser__Table__HeaderCell',
@@ -133,7 +133,7 @@ describe('<RealmBrowser /> via Spectron', function() {
           );
         });
 
-        it('has can create a row of defaults', async () => {
+        it('can create a row of defaults', async () => {
           // Create a row
           await app.client.click(`button=Create ${className}`);
           await app.client.waitForVisible('button=Create');
@@ -144,7 +144,7 @@ describe('<RealmBrowser /> via Spectron', function() {
 
         // Assert something about the row that was just created
 
-        it('created a row with the expected number of cells', async () => {
+        it('creates a row with of cells', async () => {
           // +1 for the cell below the one that adds a property
           const cells = await app.client.elements('.RealmBrowser__Table__Cell');
           assert.equal(
