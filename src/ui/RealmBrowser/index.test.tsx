@@ -46,9 +46,7 @@ describe('<RealmBrowser /> via Spectron', function() {
     app = new Application({
       path: electronPath,
       args: [appPath],
-      env: {
-        REALM_STUDIO_SKIP_SIGNUP: 'true',
-      },
+      env: { REALM_STUDIO_SKIP_SIGNUP: 'true' },
     });
     // Apply the modifications that will allow us to mock dialogs
     fakeDialog.apply(app);

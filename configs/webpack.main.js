@@ -2,7 +2,6 @@ const path = require('path');
 const webpack = require('webpack');
 const Visualizer = require('webpack-visualizer-plugin');
 const merge = require('webpack-merge');
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 module.exports = (env, argv) => {
   const isDevelopment = argv.mode === 'development';
@@ -43,7 +42,6 @@ module.exports = (env, argv) => {
       libraryTarget: 'commonjs2'
     },
     plugins: [
-      new HardSourceWebpackPlugin(),
       // Prevent the windows from loading the UI components
       new webpack.IgnorePlugin(/\/ui/, /\/src\/windows$/),
     ].concat(isDevelopment ? [

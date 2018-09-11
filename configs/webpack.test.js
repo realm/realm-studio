@@ -1,11 +1,10 @@
 const merge = require('webpack-merge');
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 module.exports = (env) => {
   const baseConfig = require('./webpack.base.js')(env, {
     // We need to manually pass-in the mode due to
     // https://github.com/zinserjan/mocha-webpack/pull/225
-    mode: 'testing',
+    mode: process.env.JENKINS_HOME ? 'production' : 'development',
   });
 
   const config = merge(baseConfig, {
@@ -28,11 +27,6 @@ module.exports = (env) => {
       // This will make __dirname equal the actual file
       __dirname: true,
     },
-    plugins: process.env.JENKINS_HOME ? [
-      // Don't use the hard source webpack plugin on CI
-    ] : [
-      new HardSourceWebpackPlugin(),
-    ]
   });
 
   return config;
