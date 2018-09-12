@@ -25,6 +25,7 @@ import { ClassFocussedHandler, ListFocussedHandler } from '.';
 import { AddClassModal } from './AddClassModal';
 import { AddPropertyModal } from './AddPropertyModal';
 import { Content, EditMode, HighlightMode } from './Content';
+import { Permissions } from './Content/PermissionSidebar';
 import { EncryptionDialog } from './EncryptionDialog';
 import { Focus, IClassFocus } from './focus';
 import { LeftSidebar } from './LeftSidebar';
@@ -43,13 +44,14 @@ export interface IRealmBrowserProps {
   focus: Focus | null;
   getClassFocus: (className: string) => IClassFocus;
   getSchemaLength: (name: string) => number;
+  getClassPermissions: (className: string) => Permissions;
+  getRealmPermissions: () => Permissions;
   isAddClassOpen: boolean;
   isAddPropertyOpen: boolean;
   isClassNameAvailable: (name: string) => boolean;
   isEncryptionDialogVisible: boolean;
   isLeftSidebarOpen: boolean;
   isPropertyNameAvailable: (name: string) => boolean;
-  isRightSidebarOpen: boolean;
   onAddClass: (schema: Realm.ObjectSchema) => void;
   onAddProperty: (name: string, type: Realm.PropertyType) => void;
   onCancelTransaction: () => void;
@@ -73,6 +75,8 @@ export const RealmBrowser = ({
   dataVersionAtBeginning,
   editMode,
   focus,
+  getClassPermissions,
+  getRealmPermissions,
   getClassFocus,
   getSchemaLength,
   isAddClassOpen,
@@ -81,7 +85,6 @@ export const RealmBrowser = ({
   isEncryptionDialogVisible,
   isLeftSidebarOpen,
   isPropertyNameAvailable,
-  isRightSidebarOpen,
   onAddClass,
   onAddProperty,
   onCancelTransaction,
@@ -120,6 +123,8 @@ export const RealmBrowser = ({
             editMode={editMode}
             highlightMode={HighlightMode.Multiple}
             focus={focus}
+            getClassPermissions={getClassPermissions}
+            getRealmPermissions={getRealmPermissions}
             getClassFocus={getClassFocus}
             key={contentKey}
             onAddColumnClick={toggleAddClassProperty}

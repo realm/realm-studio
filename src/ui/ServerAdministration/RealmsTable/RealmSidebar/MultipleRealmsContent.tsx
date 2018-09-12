@@ -36,8 +36,8 @@ export const MultipleRealmsContent = ({
   return (
     <React.Fragment>
       <SidebarTitle>{realms.length} Realms selected</SidebarTitle>
-      <SidebarBody />
-      <SidebarBody grow={0}>
+      <SidebarBody grow={1} />
+      <SidebarBody>
         {deletionProgress ? (
           <Progress
             animated={true}

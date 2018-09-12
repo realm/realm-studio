@@ -34,6 +34,7 @@ import { isPrimitive } from '../primitives';
 import { Content, IContentProps } from './Content';
 import { ICreateObjectDialogContainerProps } from './CreateObjectDialog';
 import { IDeleteObjectsDialogProps } from './DeleteObjectsDialog';
+import { Permissions } from './PermissionSidebar';
 import {
   IOpenSelectMultipleObjectsDialogContainerProps,
   IOpenSelectSingleObjectDialogContainerProps,
@@ -102,6 +103,8 @@ export interface IBaseContentContainerProps {
   dataVersion?: number;
   editMode: EditMode;
   focus: Focus;
+  getClassPermissions?: (className: string) => Permissions;
+  getRealmPermissions?: () => Permissions;
   highlightMode: HighlightMode;
   onCellClick?: CellClickHandler;
   onCellDoubleClick?: CellClickHandler;
@@ -247,6 +250,8 @@ class ContentContainer extends React.Component<
       error: this.state.error,
       filteredSortedResults,
       focus: this.props.focus,
+      getClassPermissions: this.props.getClassPermissions,
+      getRealmPermissions: this.props.getRealmPermissions,
       highlight: this.state.highlight,
       isPermissionSidebarOpen: this.state.isPermissionSidebarOpen,
       onCellChange: this.onCellChange,

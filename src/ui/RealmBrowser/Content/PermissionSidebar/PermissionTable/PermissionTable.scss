@@ -16,16 +16,16 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as classNames from 'classnames';
-import * as React from 'react';
+.PermissionTable {
+  &__Row {
+    display: flex;
+  }
 
-interface ITitleProps {
-  children: React.ReactNode;
-  size?: 'lg' | 'md' | 'sm';
+  &__Role {
+    flex-grow: 1;
+  }
+
+  &__Actions {
+    flex-shrink: 0;
+  }
 }
-
-export const Title = ({ children, size = 'lg' }: ITitleProps) => (
-  <h1 className={classNames('Sidebar__Title', `Sidebar__Title--${size}`)}>
-    {children}
-  </h1>
-);

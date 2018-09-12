@@ -35,7 +35,7 @@ import {
   DeleteObjectsDialog,
   IDeleteObjectsDialogProps,
 } from './DeleteObjectsDialog';
-import { PermissionSidebar } from './PermissionSidebar';
+import { Permissions, PermissionSidebar } from './PermissionSidebar';
 import { ResponsiveTable } from './ResponsiveTable';
 import {
   ISelectObjectDialogContainerProps,
@@ -61,6 +61,8 @@ interface IBaseContentProps {
   error?: Error;
   filteredSortedResults: Realm.Collection<any>;
   focus: Focus;
+  getClassPermissions?: (className: string) => Permissions;
+  getRealmPermissions?: () => Permissions;
   highlight?: IHighlight;
   isPermissionSidebarOpen: boolean;
   onAddColumnClick?: () => void;
@@ -109,6 +111,8 @@ export const Content = ({
   error,
   filteredSortedResults,
   focus,
+  getClassPermissions,
+  getRealmPermissions,
   highlight,
   isPermissionSidebarOpen,
   onAddColumnClick,
@@ -170,13 +174,17 @@ export const Content = ({
           sorting={sorting}
         />
 
-        <PermissionSidebar
-          className="RealmBrowser__PermissionSidebar"
-          isOpen={isPermissionSidebarOpen}
-          onToggle={onPermissionSidebarToggle}
-          focus={focus}
-          highlight={highlight}
-        />
+        {getClassPermissions && getRealmPermissions ? (
+          <PermissionSidebar
+            className="RealmBrowser__PermissionSidebar"
+            isOpen={isPermissionSidebarOpen}
+            onToggle={onPermissionSidebarToggle}
+            focus={focus}
+            highlight={highlight}
+            getClassPermissions={getClassPermissions}
+            getRealmPermissions={getRealmPermissions}
+          />
+        ) : null}
       </div>
 
       {!props.readOnly ? (

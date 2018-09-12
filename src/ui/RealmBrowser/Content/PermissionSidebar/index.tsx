@@ -18,9 +18,35 @@
 
 import * as React from 'react';
 
-import { Sidebar, SidebarBody, SidebarTitle } from '../../../reusable';
+import { IPropertyWithName } from '../..';
+import { Sidebar } from '../../../reusable';
 import { Focus } from '../../focus';
 import { IHighlight } from '../Table';
+
+import { ClassSection } from './ClassSection';
+import { ObjectSection } from './ObjectSection';
+import { RealmSection } from './RealmSection';
+
+import { Permissions } from './models';
+export * from './models';
+
+function getPermissionsProperty(properties: IPropertyWithName[]) {
+  return properties.find(property => {
+    return property.type === 'list' && property.objectType === '__Permission';
+  });
+}
+
+function getObjectPermissions(
+  object: any & Realm.Object,
+  properties: IPropertyWithName[],
+) {
+  const property = getPermissionsProperty(properties);
+  if (property && property.name && property.name in object) {
+    return object[property.name];
+  } else {
+    return null;
+  }
+}
 
 interface IPermissionSidebarProps {
   className?: string;
@@ -28,6 +54,9 @@ interface IPermissionSidebarProps {
   onToggle?: () => void;
   highlight?: IHighlight;
   focus: Focus;
+  // TODO: Internalize these methods once Studio uses the Realm react context
+  getClassPermissions: (className: string) => Permissions;
+  getRealmPermissions: () => Permissions;
 }
 
 export const PermissionSidebar = ({
@@ -36,19 +65,33 @@ export const PermissionSidebar = ({
   onToggle,
   focus,
   highlight,
+  getClassPermissions,
+  getRealmPermissions,
 }: IPermissionSidebarProps) => (
   <Sidebar
     className={className}
     isOpen={isOpen}
     onToggle={onToggle}
     position="right"
+    initialWidth={300}
   >
-    <SidebarTitle size="md">Permissions</SidebarTitle>
-    <SidebarBody>{highlight ? highlight.rows.size : null}</SidebarBody>
-    <SidebarBody>
-      {highlight
-        ? Array.from(highlight.rows.values()).map(index => index)
-        : null}
-    </SidebarBody>
+    {highlight ? (
+      <ObjectSection
+        getPermissions={(object: any & Realm.Object) =>
+          getObjectPermissions(object, focus.properties)
+        }
+        hasPermissionColumn={!!getPermissionsProperty(focus.properties)}
+        objects={Array.from(highlight.rows.values()).map(
+          index => focus.results[index],
+        )}
+      />
+    ) : (
+      <React.Fragment>
+        {focus.kind === 'class' ? (
+          <ClassSection permissions={getClassPermissions(focus.className)} />
+        ) : null}
+        <RealmSection permissions={getRealmPermissions()} />
+      </React.Fragment>
+    )}
   </Sidebar>
 );
