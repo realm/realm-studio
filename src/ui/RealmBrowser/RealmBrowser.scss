@@ -281,7 +281,8 @@ $cell-border-color: mix($black, $white, 10%);
     }
 
     &__ObjectCell,
-    &__StringCell {
+    &__StringCell,
+    &__DataCell {
       &--null {
         color: $elephant;
         cursor: inherit;
