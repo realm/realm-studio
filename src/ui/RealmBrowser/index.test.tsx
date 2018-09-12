@@ -33,6 +33,11 @@ import {
 const electronPath: string = Electron as any;
 const appPath = resolve(__dirname, '../../..');
 
+const selectors = {
+  cell: '.RealmBrowser__Table__Cell',
+  headerCell: '.RealmBrowser__Table__HeaderCell',
+};
+
 // We need to use a non-arrow functions to adjust the suite timeout
 // tslint:disable-next-line:only-arrow-functions
 describe('<RealmBrowser /> via Spectron', function() {
@@ -77,9 +82,6 @@ describe('<RealmBrowser /> via Spectron', function() {
       // Await the Greeting window
       assert.equal(await app.client.getWindowCount(), 1);
       assert.equal(await app.client.getTitle(), 'Realm Studio');
-    });
-
-    it('shows the Realm Browser', async () => {
       // Mock the open dialog to return the Realm path
       fakeDialog.mock([
         {
@@ -89,10 +91,13 @@ describe('<RealmBrowser /> via Spectron', function() {
       ]);
       // Click on the button to open a Realm file
       await app.client.click('button=Open Realm file');
-      // Wait for the browser window to open and change focus to that
-      assert.equal(await app.client.getWindowCount(), 2);
       // Select the browser window
       await app.client.windowByIndex(1);
+    });
+
+    it('shows the Realm Browser', async () => {
+      // Wait for the browser window to open and change focus to that
+      assert.equal(await app.client.getWindowCount(), 2);
       // Wait for the left sidebar to exist
       await app.client.waitForExist('span=Classes');
     });
@@ -122,9 +127,7 @@ describe('<RealmBrowser /> via Spectron', function() {
 
         it('has header cells', async () => {
           // Assert something about the header
-          const headerCells = await app.client.elements(
-            '.RealmBrowser__Table__HeaderCell',
-          );
+          const headerCells = await app.client.elements(selectors.headerCell);
           // Assert that is has the same number of header cells as it has properties
           // The cell to add a property only has class __HeaderCellControl
           assert.equal(
@@ -133,33 +136,37 @@ describe('<RealmBrowser /> via Spectron', function() {
           );
         });
 
-        it('can create a row of defaults', async () => {
-          // Create a row
-          await app.client.click(`button=Create ${className}`);
-          await app.client.waitForVisible('button=Create');
-          await app.client.click('button=Create');
-          // Wait for the dialog is no longer open
-          await app.client.waitForExist('body:not(.modal-open)');
-        });
+        describe(`creating ${className} of defaults`, () => {
+          before(async () => {
+            // Expect no cells
+            const cells = await app.client.elements(selectors.cell);
+            assert.equal(cells.value.length, 0);
+            // Create a row
+            await app.client.click(`button=Create ${className}`);
+            await app.client.waitForVisible('button=Create');
+            await app.client.click('button=Create');
+            // Wait for the dialog is no longer open
+            await app.client.waitForExist('body:not(.modal-open)');
+          });
 
-        // Assert something about the row that was just created
+          // Assert something about the row that was just created
+          it('creates a row in the table', async () => {
+            // +1 for the cell below the one that adds a property
+            const cells = await app.client.elements(selectors.cell);
+            assert.equal(
+              cells.value.length,
+              Object.keys(schema.properties).length + 1,
+            );
+          });
 
-        it('creates a row with of cells', async () => {
-          // +1 for the cell below the one that adds a property
-          const cells = await app.client.elements('.RealmBrowser__Table__Cell');
-          assert.equal(
-            cells.value.length,
-            Object.keys(schema.properties).length + 1,
-          );
-        });
-
-        it.skip('can focus and blur each cell', async () => {
-          const cells = await app.client.elements('.RealmBrowser__Table__Cell');
-          const propertyNames = Object.keys(schema.properties);
-          for (const cell of cells.value) {
-            // Click the cell
-            await app.client.elementIdClick(cell.ELEMENT);
-          }
+          it.skip('can focus and blur each cell', async () => {
+            const cells = await app.client.elements(selectors.cell);
+            const propertyNames = Object.keys(schema.properties);
+            for (const cell of cells.value) {
+              // Click the cell
+              await app.client.elementIdClick(cell.ELEMENT);
+            }
+          });
         });
       });
     }
