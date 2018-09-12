@@ -214,7 +214,7 @@ export class StringCellContainer extends React.Component<
     const answer = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
       type: 'warning',
       // tslint:disable-next-line:max-line-length
-      message: `${message}\n\nIf you leave the cell with an invalid value, the changes to the content will not be saved.`,
+      message,
       title: `Updating cell`,
       buttons: ['Leave without saving', 'Keep editing'],
       defaultId: 1,

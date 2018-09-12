@@ -44,7 +44,7 @@ export const parseBoolean = (
     .trim()
     .toLowerCase();
 
-  if (property.optional && normalizedValue === '') {
+  if (normalizedValue === '' && property.optional) {
     return null;
   } else {
     switch (normalizedValue) {
@@ -56,7 +56,7 @@ export const parseBoolean = (
         return false;
       default:
         throw new Error(
-          `"${value}" is not a boolean: Use "true", "false", "0" or "1"`,
+          `"${value}" is not a boolean:\nUse "true", "false", "0" or "1"`,
         );
     }
   }
@@ -78,11 +78,11 @@ export const parseDate = (
   }
 };
 
+/**
+ * Parses a string representation entered by the user into a native representation of a field which can be saved to
+ * the Realm.
+ */
 export const parse = (value: string, property: Realm.ObjectSchemaProperty) => {
-  // If optional
-  if (!property.optional && value === '') {
-    throw new Error('This field is not optional');
-  }
   // For every type
   switch (property.type) {
     case 'int':
