@@ -77,3 +77,13 @@ declare module 'memoize-one' {
     type EqualityFn = (a: any, b: any) => boolean;
   }
 }
+
+declare module 'spectron-fake-dialog' {
+  import { Application } from 'spectron';
+  export function apply(application: Application): void;
+  interface IDialog {
+    method: 'showOpenDialog' | 'showSaveDialog';
+    value: object;
+  }
+  export function mock(dialogs: IDialog[]): void;
+}

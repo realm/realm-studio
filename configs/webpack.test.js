@@ -4,7 +4,7 @@ module.exports = (env) => {
   const baseConfig = require('./webpack.base.js')(env, {
     // We need to manually pass-in the mode due to
     // https://github.com/zinserjan/mocha-webpack/pull/225
-    mode: 'testing',
+    mode: process.env.JENKINS_HOME ? 'production' : 'development',
   });
 
   const config = merge(baseConfig, {

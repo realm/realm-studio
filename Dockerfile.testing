@@ -11,6 +11,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends software-proper
   wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
   echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google.list && \
   apt-get update -y && apt-get install -y --no-install-recommends xvfb google-chrome-stable && \
+  # Install display server dependencies (see https://github.com/electron/spectron/issues/144#issuecomment-270778659)
+  apt-get install -y xvfb libxtst6 libxss1 libgtk2.0-0 && \
+  # Install core libraries for chromium driver (see https://github.com/electron/spectron/issues/144#issuecomment-270778659)
+  apt-get install -y libnss3 libasound2 libgconf-2-4 && \
   # Install a dependency used by keytar
   apt-get -qq install -y libsecret-1-dev && \
   # clean

@@ -1,6 +1,7 @@
 const { CheckerPlugin } = require('awesome-typescript-loader');
 const { resolve } = require('path');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 const webpack = require('webpack');
 const SentryPlugin = require('@sentry/webpack-plugin');
@@ -43,6 +44,8 @@ module.exports = (env, argv) => {
         ),
       }),
     ].concat(isDevelopment ? [
+      // Cache chunks
+      new HardSourceWebpackPlugin(),
       // Plugins for development
       new webpack.NamedModulesPlugin(),
       new webpack.HotModuleReplacementPlugin(),
