@@ -244,8 +244,15 @@ $cell-border-color: mix($black, $white, 10%);
       font-size: $font-size-sm;
       line-height: 1rem;
       overflow: hidden;
+      // The next line ensures that cells don't respond to clicks before their row is highlighted
+      pointer-events: none;
       user-select: none;
       white-space: nowrap;
+
+      &--highlighted {
+        // Once the cell's row is highlighted, allow pointer events
+        pointer-events: all;
+      }
     }
 
     &__ListCell,

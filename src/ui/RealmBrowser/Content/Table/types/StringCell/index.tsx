@@ -60,6 +60,15 @@ export class StringCellContainer extends React.Component<
     );
   }
 
+  public componentDidUpdate(prevProps: IStringCellContainerProps) {
+    if (prevProps.isHighlighted && !this.props.isHighlighted) {
+      // Cell lost its highlight - ensure it gets blurred
+      if (this.inputElement) {
+        this.inputElement.blur();
+      }
+    }
+  }
+
   public render() {
     const { isHighlighted, property } = this.props;
     return (
