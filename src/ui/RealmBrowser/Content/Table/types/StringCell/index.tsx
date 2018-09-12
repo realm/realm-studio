@@ -60,6 +60,15 @@ export class StringCellContainer extends React.Component<
     );
   }
 
+  public componentDidUpdate(prevProps: IStringCellContainerProps) {
+    if (prevProps.isHighlighted && !this.props.isHighlighted) {
+      // Cell lost its highlight - ensure it gets blurred
+      if (this.inputElement) {
+        this.inputElement.blur();
+      }
+    }
+  }
+
   public render() {
     const { isHighlighted, property } = this.props;
     return (
@@ -214,7 +223,7 @@ export class StringCellContainer extends React.Component<
     const answer = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
       type: 'warning',
       // tslint:disable-next-line:max-line-length
-      message: `${message}\n\nIf you leave the cell with an invalid value, the changes to the content will not be saved.`,
+      message,
       title: `Updating cell`,
       buttons: ['Leave without saving', 'Keep editing'],
       defaultId: 1,

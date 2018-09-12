@@ -16,6 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import * as classNames from 'classnames';
 import * as React from 'react';
 
 export const display = (value: ArrayBuffer | null) =>
@@ -29,7 +30,9 @@ interface IDataCellProps {
 export const DataCell = ({ value, isEditable }: IDataCellProps) => (
   <div
     tabIndex={isEditable ? 0 : undefined}
-    className="RealmBrowser__Table__DataCell"
+    className={classNames('RealmBrowser__Table__DataCell', {
+      'RealmBrowser__Table__DataCell--null': value === null,
+    })}
   >
     {display(value)}
   </div>

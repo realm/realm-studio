@@ -134,6 +134,11 @@ export const Cell = ({
       })}
       onClick={onCellClick}
       onContextMenu={onContextMenu}
+      onFocus={() => {
+        // When the cell gets focussed (could happen by clicking or tabbing)
+        // - ensure it also gets highlighted
+        onHighlighted();
+      }}
       style={style}
     >
       {content}
