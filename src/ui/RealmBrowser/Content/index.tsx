@@ -158,9 +158,8 @@ class ContentContainer extends React.Component<
   public state: IContentContainerState = {
     createObjectDialog: { isOpen: false },
     deleteObjectsDialog: { isOpen: false },
-    isPermissionSidebarOpen: !this.props.readOnly
-      ? this.props.permissionSidebar
-      : false,
+    isPermissionSidebarOpen:
+      !this.props.readOnly && this.props.permissionSidebar,
     query: '',
     selectObjectDialog: { isOpen: false },
   };

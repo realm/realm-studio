@@ -57,7 +57,8 @@ class PermissionSidebarContainer extends React.Component<
   };
 
   public render() {
-    return (
+    const isPermissionsEnabled = this.isPermissionsEnabled();
+    return isPermissionsEnabled ? (
       <React.Fragment>
         <RoleDialog
           {...this.state.roleDialog}
@@ -65,7 +66,7 @@ class PermissionSidebarContainer extends React.Component<
         />
         {this.renderSidebar()}
       </React.Fragment>
-    );
+    ) : null;
   }
 
   public renderSidebar() {
@@ -151,6 +152,21 @@ class PermissionSidebarContainer extends React.Component<
     } else {
       throw new Error(`Permissions for Realm is missing`);
     }
+  }
+
+  private isPermissionsEnabled() {
+    const { schema } = this.props.realm;
+    const classNames = schema.map(c => c.name);
+    // Does the Realm schema contain all permission classes?
+    const hasPermissionClasses = [
+      '__Class',
+      '__Permission',
+      '__Realm',
+      '__Role',
+      '__User',
+    ].every(name => classNames.includes(name));
+    // Permissions are enabled if the permission classes exists
+    return hasPermissionClasses;
   }
 
   private onCloseRoleDialog = () => {
