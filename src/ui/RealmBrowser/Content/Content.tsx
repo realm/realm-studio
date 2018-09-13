@@ -17,6 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
+import * as Realm from 'realm';
 
 import { Bottombar } from '../Bottombar';
 import { Focus, IClassFocus } from '../focus';
@@ -61,8 +62,6 @@ interface IBaseContentProps {
   error?: Error;
   filteredSortedResults: Realm.Collection<any>;
   focus: Focus;
-  getClassPermissions?: (className: string) => Permissions;
-  getRealmPermissions?: () => Permissions;
   highlight?: IHighlight;
   isPermissionSidebarOpen: boolean;
   onAddColumnClick?: () => void;
@@ -99,6 +98,7 @@ interface IReadWriteContentProps extends IBaseContentProps {
   onReorderingEnd: ReorderingEndHandler;
   onReorderingStart: ReorderingStartHandler;
   readOnly: false;
+  realm: Realm;
   selectObjectDialog: ISelectObjectDialogContainerProps;
 }
 
@@ -111,8 +111,6 @@ export const Content = ({
   error,
   filteredSortedResults,
   focus,
-  getClassPermissions,
-  getRealmPermissions,
   highlight,
   isPermissionSidebarOpen,
   onAddColumnClick,
@@ -174,15 +172,14 @@ export const Content = ({
           sorting={sorting}
         />
 
-        {getClassPermissions && getRealmPermissions ? (
+        {!props.readOnly ? (
           <PermissionSidebar
             className="RealmBrowser__PermissionSidebar"
             isOpen={isPermissionSidebarOpen}
             onToggle={onPermissionSidebarToggle}
             focus={focus}
             highlight={highlight}
-            getClassPermissions={getClassPermissions}
-            getRealmPermissions={getRealmPermissions}
+            realm={props.realm}
           />
         ) : null}
       </div>

@@ -123,8 +123,6 @@ class RealmBrowserContainer
         editMode={this.state.editMode}
         focus={this.state.focus}
         getClassFocus={this.getClassFocus}
-        getClassPermissions={this.getClassPermissions}
-        getRealmPermissions={this.getRealmPermissions}
         getSchemaLength={this.getSchemaLength}
         isAddClassOpen={this.state.isAddClassOpen}
         isAddPropertyOpen={this.state.isAddPropertyOpen}
@@ -500,37 +498,6 @@ class RealmBrowserContainer
       return 'null';
     }
   }
-
-  /**
-   * Returns the collection of __Permissions for a particular class.
-   * This will throw if the Realm is not opened, if it has no class named "__Class" or if that doesn't contain a value
-   * for the particular class passed as argument.
-   */
-  private getClassPermissions = (className: string) => {
-    if (this.realm) {
-      const row = this.realm.objectForPrimaryKey<any>('__Class', className);
-      if (row && row.permissions) {
-        return row.permissions;
-      } else {
-        throw new Error(`Permissions for ${className} class is missing`);
-      }
-    } else {
-      throw new Error('Realm must be opened first');
-    }
-  };
-
-  private getRealmPermissions = () => {
-    if (this.realm) {
-      const row = this.realm.objectForPrimaryKey<any>('__Realm', 0);
-      if (row && row.permissions) {
-        return row.permissions;
-      } else {
-        throw new Error(`Permissions for Realm is missing`);
-      }
-    } else {
-      throw new Error('Realm must be opened first');
-    }
-  };
 
   private getSchemaLength = (name: string) => {
     if (this.realm) {

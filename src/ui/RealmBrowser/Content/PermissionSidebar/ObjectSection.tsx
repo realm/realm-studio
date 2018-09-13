@@ -21,58 +21,58 @@ import * as Realm from 'realm';
 
 import { SidebarBody, SidebarTitle } from '../../../reusable';
 
-import { IPermission } from '.';
-import { ActionBadge } from './ActionBadge';
+import { Action, IPermission, IRole } from '.';
 import { PermissionTable } from './PermissionTable';
 
 interface IObjectSectionProps {
   getPermissions: (object: any) => Realm.Collection<IPermission & Realm.Object>;
-  hasPermissionColumn: boolean;
+  hasPermissionProperty: boolean;
   objects: Array<any & Realm.Object>;
+  onPermissionChange: (
+    permission: IPermission,
+    action: Action,
+    enabled: boolean,
+  ) => void;
+  onRoleClick: (role: IRole) => void;
 }
 
 export const ObjectSection = ({
   objects,
   getPermissions,
-  hasPermissionColumn,
+  hasPermissionProperty,
+  onPermissionChange,
+  onRoleClick,
 }: IObjectSectionProps) => (
   <React.Fragment>
     <SidebarTitle size="md">Object permissions</SidebarTitle>
-    {hasPermissionColumn ? (
+    {hasPermissionProperty ? (
       objects.length === 0 ? (
         <SidebarBody>No object selected</SidebarBody>
       ) : objects.length === 1 ? (
-        <PermissionTable permissions={getPermissions(objects[0])}>
-          {permission => (
-            <React.Fragment>
-              <ActionBadge
-                permission={permission}
-                action="canRead"
-                description="This indicates that the object is visible to the user. If the user does not have this privilege, the object will not appear in query results."
-              />
-              <ActionBadge
-                permission={permission}
-                action="canUpdate"
-                description="This indicates that the object is writable by the user. The user may change any property of the object, except the ACL property if one exists."
-              />
-              <ActionBadge
-                permission={permission}
-                action="canDelete"
-                description="The user may delete the object."
-              />
-              <ActionBadge
-                permission={permission}
-                action="canSetPermissions"
-                description="The user is allowed to modify the ACL property of the object, if one exists."
-              />
-            </React.Fragment>
-          )}
-        </PermissionTable>
+        <PermissionTable
+          permissions={getPermissions(objects[0])}
+          actions={['canRead', 'canUpdate', 'canDelete', 'canSetPermissions']}
+          descriptions={{
+            canRead:
+              'This indicates that the object is visible to the user. If the user does not have this privilege, the object will not appear in query results.',
+            canUpdate:
+              'This indicates that the object is writable by the user. The user may change any property of the object, except the ACL property if one exists.',
+            canDelete: 'The user may delete the object.',
+            canSetPermissions:
+              'The user is allowed to modify the ACL property of the object, if one exists.',
+          }}
+          onPermissionChange={onPermissionChange}
+          onRoleClick={onRoleClick}
+        />
       ) : (
         <SidebarBody>{objects.length} objects selected</SidebarBody>
       )
     ) : (
-      <SidebarBody>This class has no object level permissions</SidebarBody>
+      <SidebarBody>
+        This class has no object level permission property: Every user with read
+        access to the class as a whole can read these objects and every user
+        with update access can update all these objects.
+      </SidebarBody>
     )}
   </React.Fragment>
 );

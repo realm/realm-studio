@@ -19,37 +19,72 @@
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import { Action, IPermission } from '..';
+import { Action, IPermission, IRole } from '..';
 import { SidebarBody, SidebarTable } from '../../../../reusable';
+
+import { Header } from './Header';
 
 import './PermissionTable.scss';
 
 interface IPermissionTableProps {
   actions: Action[];
-  children: (permission: IPermission & Realm.Object) => React.ReactNode;
+  descriptions: { [action: string]: string };
   permissions: Realm.Collection<IPermission & Realm.Object>;
+  onPermissionChange: (
+    permission: IPermission,
+    action: Action,
+    enabled: boolean,
+  ) => void;
+  onRoleClick: (role: IRole) => void;
 }
 
 export const PermissionTable = ({
   actions,
-  children,
+  descriptions,
   permissions,
+  onPermissionChange,
+  onRoleClick,
 }: IPermissionTableProps) => (
   <SidebarBody>
-    <SidebarTable className="PermissionTable">
+    <SidebarTable className="PermissionTable" size="sm">
+      <Header actions={actions} descriptions={descriptions} />
       <tbody>
-        {permissions.map((permission, index) => (
-          <tr key={index}>
-            <td className="PermissionTable__Row">
-              <div className="PermissionTable__Role">
-                {permission.role ? permission.role.name : '?'}
-              </div>
-              <div className="PermissionTable__Actions">
-                {children(permission)}
-              </div>
+        {permissions.length === 0 ? (
+          <tr>
+            <td
+              className="PermissionTable__EmptyCell"
+              colSpan={actions.length + 1}
+            >
+              Nobody can access this
             </td>
           </tr>
-        ))}
+        ) : (
+          permissions.map((permission, index) => (
+            <tr key={index}>
+              <td className="PermissionTable__RoleCell">
+                <span
+                  className="PermissionTable__RoleName"
+                  onClick={() =>
+                    permission.role ? onRoleClick(permission.role) : undefined
+                  }
+                >
+                  {permission.role ? permission.role.name : '?'}
+                </span>
+              </td>
+              {actions.map(action => (
+                <td className="PermissionTable__ActionCell" key={action}>
+                  <input
+                    type="checkbox"
+                    checked={permission[action]}
+                    onChange={e => {
+                      onPermissionChange(permission, action, e.target.checked);
+                    }}
+                  />
+                </td>
+              ))}
+            </tr>
+          ))
+        )}
       </tbody>
     </SidebarTable>
   </SidebarBody>

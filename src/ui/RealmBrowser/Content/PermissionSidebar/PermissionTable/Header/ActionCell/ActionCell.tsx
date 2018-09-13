@@ -17,10 +17,28 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
-import { Badge } from 'reactstrap';
+import { Tooltip } from 'reactstrap';
 
-import { IPermission } from '.';
-import { Action } from './models';
+import { Action } from '../../..';
+
+function getActionLetter(action: Action) {
+  switch (action) {
+    case 'canRead':
+      return 'R';
+    case 'canUpdate':
+      return 'U';
+    case 'canDelete':
+      return 'D';
+    case 'canSetPermissions':
+      return 'P';
+    case 'canQuery':
+      return 'Q';
+    case 'canCreate':
+      return 'C';
+    case 'canModifySchema':
+      return 'S';
+  }
+}
 
 function getActionLabel(action: Action) {
   switch (action) {
@@ -41,17 +59,36 @@ function getActionLabel(action: Action) {
   }
 }
 
-interface IActionBadgeProps {
+interface IActionCellProps {
   action: Action;
-  description?: string;
-  permission: IPermission;
+  description: string;
+  element: HTMLElement | null;
+  onRef: (element: HTMLElement | null) => void;
+  onToggleTooltip: () => void;
+  isTooltipOpen: boolean;
 }
 
-export const ActionBadge = ({
+export const ActionCell = ({
   action,
   description,
-  permission,
-}: IActionBadgeProps) =>
-  permission[action] ? (
-    <Badge title={description}>{getActionLabel(action)}</Badge>
-  ) : null;
+  element,
+  isTooltipOpen,
+  onToggleTooltip,
+  onRef,
+}: IActionCellProps) => (
+  <th className="PermissionTable__ActionHeaderCell" key={action} ref={onRef}>
+    {getActionLetter(action)}
+    {element ? (
+      <Tooltip
+        isOpen={isTooltipOpen}
+        toggle={onToggleTooltip}
+        target={element}
+        placement="bottom"
+      >
+        <strong>{getActionLabel(action)}</strong>
+        <br />
+        {description}
+      </Tooltip>
+    ) : null}
+  </th>
+);

@@ -16,43 +16,37 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-@import "~realm-studio-styles/variables";
+import * as React from 'react';
 
-.PermissionTable {
-  width: 100%;
+import { Action } from '../..';
 
-  &__ActionHeaderCell {
-    text-align: center;
-    width: 1.5 * $spacer;
-  }
+import { ActionCell } from './ActionCell';
 
-  &__RoleCell {
-    height: 2rem;
-    position: relative;
-  }
-
-  &__RoleName {
-    color: $primary;
-    cursor: pointer;
-    left: $table-cell-padding-sm;
-    overflow: hidden;
-    position: absolute;
-    right: $table-cell-padding-sm;
-    text-overflow: ellipsis;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
-  // "tr" is used to increase specificity to override bootstrap styling
-  tr &__ActionCell {
-    padding: 0;
-    text-align: center;
-  }
-
-  &__EmptyCell {
-    font-style: italic;
-    text-align: center;
-  }
+interface IHeaderProps {
+  actions: Action[];
+  descriptions: { [action: string]: string };
+  onToggleTooltip: (action: Action) => void;
+  openTooltip: Action | null;
 }
+
+export const Header = ({
+  actions,
+  descriptions,
+  onToggleTooltip,
+  openTooltip,
+}: IHeaderProps) => (
+  <thead>
+    <tr>
+      <th>Role</th>
+      {actions.map(action => (
+        <ActionCell
+          action={action}
+          key={action}
+          description={descriptions[action]}
+          isTooltipOpen={openTooltip === action}
+          onToggleTooltip={() => onToggleTooltip(action)}
+        />
+      ))}
+    </tr>
+  </thead>
+);

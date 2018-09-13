@@ -19,6 +19,7 @@
 import * as electron from 'electron';
 import memoize from 'memoize-one';
 import * as React from 'react';
+import * as Realm from 'realm';
 
 import {
   ClassFocussedHandler,
@@ -103,8 +104,6 @@ export interface IBaseContentContainerProps {
   dataVersion?: number;
   editMode: EditMode;
   focus: Focus;
-  getClassPermissions?: (className: string) => Permissions;
-  getRealmPermissions?: () => Permissions;
   highlightMode: HighlightMode;
   onCellClick?: CellClickHandler;
   onCellDoubleClick?: CellClickHandler;
@@ -112,7 +111,6 @@ export interface IBaseContentContainerProps {
   onClassFocussed?: ClassFocussedHandler;
   onHighlightChange?: (highlight: IHighlight | undefined) => void;
   onListFocussed?: ListFocussedHandler;
-  permissionSidebar?: boolean;
   progress?: ILoadingProgress;
   readOnly: boolean;
 }
@@ -131,6 +129,7 @@ export interface IReadWriteContentContainerProps
   onCancelTransaction: () => void;
   onCommitTransaction: () => void;
   onRealmChanged: () => void;
+  permissionSidebar: boolean;
   readOnly: false;
   realm: Realm;
 }
@@ -159,7 +158,9 @@ class ContentContainer extends React.Component<
   public state: IContentContainerState = {
     createObjectDialog: { isOpen: false },
     deleteObjectsDialog: { isOpen: false },
-    isPermissionSidebarOpen: this.props.permissionSidebar || false,
+    isPermissionSidebarOpen: !this.props.readOnly
+      ? this.props.permissionSidebar
+      : false,
     query: '',
     selectObjectDialog: { isOpen: false },
   };
@@ -250,8 +251,6 @@ class ContentContainer extends React.Component<
       error: this.state.error,
       filteredSortedResults,
       focus: this.props.focus,
-      getClassPermissions: this.props.getClassPermissions,
-      getRealmPermissions: this.props.getRealmPermissions,
       highlight: this.state.highlight,
       isPermissionSidebarOpen: this.state.isPermissionSidebarOpen,
       onCellChange: this.onCellChange,
@@ -261,9 +260,6 @@ class ContentContainer extends React.Component<
       onContextMenu: this.onContextMenu,
       onRowMouseDown: this.onRowMouseDown,
       onNewObjectClick: this.onNewObjectClick,
-      onPermissionSidebarToggle: this.props.permissionSidebar
-        ? this.onPermissionSidebarToggle
-        : undefined,
       onQueryChange: this.onQueryChange,
       onQueryHelp: this.onQueryHelp,
       onResetHighlight: this.onResetHighlight,
@@ -290,8 +286,12 @@ class ContentContainer extends React.Component<
         onAddColumnClick: this.props.onAddColumnClick,
         onCancelTransaction: this.props.onCancelTransaction,
         onCommitTransaction: this.props.onCommitTransaction,
+        onPermissionSidebarToggle: this.props.permissionSidebar
+          ? this.onPermissionSidebarToggle
+          : undefined,
         onReorderingEnd: this.onReorderingEnd,
         onReorderingStart: this.onReorderingStart,
+        realm: this.props.realm,
         readOnly: false,
         selectObjectDialog: this.state.selectObjectDialog,
       };

@@ -20,9 +20,6 @@
     "src/main.ts",
     "src/renderer.tsx"
   ],
-  "include": [
-    "src/**/*"
-  ],
   "exclude": [
     "node_modules",
     "build",

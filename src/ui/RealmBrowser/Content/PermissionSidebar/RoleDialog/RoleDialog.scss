@@ -18,41 +18,14 @@
 
 @import "~realm-studio-styles/variables";
 
-.PermissionTable {
-  width: 100%;
-
-  &__ActionHeaderCell {
-    text-align: center;
-    width: 1.5 * $spacer;
-  }
-
-  &__RoleCell {
-    height: 2rem;
+.RoleDialog {
+  &__Header {
     position: relative;
   }
 
-  &__RoleName {
-    color: $primary;
-    cursor: pointer;
-    left: $table-cell-padding-sm;
-    overflow: hidden;
+  &__TypeBadge {
     position: absolute;
-    right: $table-cell-padding-sm;
-    text-overflow: ellipsis;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
-  // "tr" is used to increase specificity to override bootstrap styling
-  tr &__ActionCell {
-    padding: 0;
-    text-align: center;
-  }
-
-  &__EmptyCell {
-    font-style: italic;
-    text-align: center;
+    right: 1.2 * $spacer;
+    top: 1.2 * $spacer;
   }
 }

@@ -16,43 +16,18 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-@import "~realm-studio-styles/variables";
+import * as React from 'react';
 
-.PermissionTable {
-  width: 100%;
+import { IUser } from '..';
 
-  &__ActionHeaderCell {
-    text-align: center;
-    width: 1.5 * $spacer;
-  }
-
-  &__RoleCell {
-    height: 2rem;
-    position: relative;
-  }
-
-  &__RoleName {
-    color: $primary;
-    cursor: pointer;
-    left: $table-cell-padding-sm;
-    overflow: hidden;
-    position: absolute;
-    right: $table-cell-padding-sm;
-    text-overflow: ellipsis;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
-  // "tr" is used to increase specificity to override bootstrap styling
-  tr &__ActionCell {
-    padding: 0;
-    text-align: center;
-  }
-
-  &__EmptyCell {
-    font-style: italic;
-    text-align: center;
-  }
+interface IMembersListProps {
+  members: IUser[];
+  editable?: boolean;
 }
+
+export const MembersList = ({
+  members,
+  editable = true,
+}: IMembersListProps) => (
+  <ul>{members.map(member => <li key={member.id}>{member.id}</li>)}</ul>
+);

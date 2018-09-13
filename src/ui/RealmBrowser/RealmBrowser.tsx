@@ -44,8 +44,6 @@ export interface IRealmBrowserProps {
   focus: Focus | null;
   getClassFocus: (className: string) => IClassFocus;
   getSchemaLength: (name: string) => number;
-  getClassPermissions: (className: string) => Permissions;
-  getRealmPermissions: () => Permissions;
   isAddClassOpen: boolean;
   isAddPropertyOpen: boolean;
   isClassNameAvailable: (name: string) => boolean;
@@ -75,8 +73,6 @@ export const RealmBrowser = ({
   dataVersionAtBeginning,
   editMode,
   focus,
-  getClassPermissions,
-  getRealmPermissions,
   getClassFocus,
   getSchemaLength,
   isAddClassOpen,
@@ -123,8 +119,6 @@ export const RealmBrowser = ({
             editMode={editMode}
             highlightMode={HighlightMode.Multiple}
             focus={focus}
-            getClassPermissions={getClassPermissions}
-            getRealmPermissions={getRealmPermissions}
             getClassFocus={getClassFocus}
             key={contentKey}
             onAddColumnClick={toggleAddClassProperty}
