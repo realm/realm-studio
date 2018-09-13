@@ -13,8 +13,9 @@ data/
 # Secrets
 secrets.sh
 
-# Test results from JUnit
+# Test results from JUnit and screenshots from failures
 test-results.xml
+failure-*.png
 
 # Realm locks and management files
 *.realm.lock
