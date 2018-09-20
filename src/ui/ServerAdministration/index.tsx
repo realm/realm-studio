@@ -91,7 +91,7 @@ class ServerAdministrationContainer
     rosVersion: string;
     studioVersion: string;
   }> = [
-    { rosVersion: '2.0.0', studioVersion: '1.19.2-ros2' },
+    { rosVersion: '3.0.0', studioVersion: '1.19.2-ros2' },
     { rosVersion: '3.11.0', studioVersion: '2.8.2-ros3.10.7' },
   ];
 
