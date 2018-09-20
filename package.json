@@ -1,7 +1,7 @@
 {
   "name": "realm-studio",
   "productName": "Realm Studio",
-  "version": "2.8.1-ros3.11",
+  "version": "2.8.2-ros3.10",
   "description": "A tool for everything Realm!",
   "author": {
     "name": "Realm Inc.",
