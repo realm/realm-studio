@@ -16,6 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import * as compareVersions from 'compare-versions';
 import * as electron from 'electron';
 import * as os from 'os';
 import * as React from 'react';
@@ -85,6 +86,14 @@ class ServerAdministrationContainer
   protected createRealmPromiseHandle?: IPromiseHandle<ros.RealmFile>;
   /* A list of object schemas to use when creating the next Realm */
   protected createRealmSchema?: Realm.ObjectSchema[];
+
+  private readonly compatibilityVersions: Array<{
+    rosVersion: string;
+    studioVersion: string;
+  }> = [
+    { rosVersion: '2.0.0', studioVersion: '1.19.2-ros2' },
+    { rosVersion: '3.11.0', studioVersion: '2.8.2-ros3.10.7' },
+  ];
 
   public async componentDidMount() {
     // Start listening on changes to the cloud-status
@@ -321,7 +330,11 @@ class ServerAdministrationContainer
   }
 
   protected isCompatibleVersion(version?: string) {
-    return typeof version === 'string' && version.charAt(0) === '3';
+    // Check that version is at least the newest one in the compatibility versions
+    const minimumVersion = this.compatibilityVersions[
+      this.compatibilityVersions.length - 1
+    ].rosVersion;
+    return compareVersions(version || '0.0.0', minimumVersion) > -1;
   }
 
   protected failWithIncompatibleVersion(version?: string) {
@@ -335,23 +348,35 @@ class ServerAdministrationContainer
           which won't receive updates.`,
         retry: {
           label: 'Downgrade Realm Studio',
-          onRetry: this.onDowngradeStudio,
+          onRetry: () => this.onDowngradeStudio(version),
         },
       },
     });
   }
 
-  protected downgradedStudioUrl() {
-    const baseUrl = 'https://studio-releases.realm.io/v1.19.2-ros2';
-    const platform = os.platform();
-    if (platform === 'darwin') {
-      return `${baseUrl}/download/mac-dmg`;
-    } else if (platform === 'linux') {
-      return `${baseUrl}/download/linux-appimage`;
-    } else if (platform === 'win32') {
-      return `${baseUrl}/download/win-setup`;
-    } else {
-      return baseUrl;
+  protected downgradedStudioUrl(version: string | undefined) {
+    if (!version) {
+      version = '0.0.0';
+    }
+
+    let compatibleVersion: string | undefined;
+    for (const compatibilityVersion of this.compatibilityVersions) {
+      if (compareVersions(version, compatibilityVersion.rosVersion) === -1) {
+        compatibleVersion = compatibilityVersion.studioVersion;
+        break;
+      }
+    }
+
+    const baseUrl = `https://studio-releases.realm.io/v${compatibleVersion}`;
+    switch (os.platform()) {
+      case 'darwin':
+        return `${baseUrl}/download/mac-dmg`;
+      case 'linux':
+        return `${baseUrl}/download/linux-appimage`;
+      case 'win32':
+        return `${baseUrl}/download/win-setup`;
+      default:
+        return baseUrl;
     }
   }
 
@@ -451,8 +476,8 @@ class ServerAdministrationContainer
     }
   };
 
-  protected onDowngradeStudio = () => {
-    const url = this.downgradedStudioUrl();
+  protected onDowngradeStudio = (version: string | undefined) => {
+    const url = this.downgradedStudioUrl(version);
     electron.remote.shell.openExternal(url);
     window.close();
   };
