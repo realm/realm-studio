@@ -139,11 +139,12 @@ def packageForLinuxAndWindows() {
 
 def packageForMac() {
   return {
-    node('macos') {
+    node('macos-cph-02.cph.realm') {
       checkoutAtVersion()
 
       def nodeVersion = readFile('.nvmrc').trim()
-      nvm(version: nodeVersion) {
+      def installDir = sh(returnStdout: true, script: 'brew --prefix nvm').trim()
+      nvm('version': nodeVersion, 'nvmInstallDir': installDir) {
         // Using via-nvm.sh wraps ensures the correct version of node and npm.
         sh './scripts/via-nvm.sh npm install --quiet'
 
