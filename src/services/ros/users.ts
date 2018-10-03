@@ -21,36 +21,32 @@ import { IServerCredentials } from '.';
 export const authenticate = async (
   credentials: IServerCredentials,
 ): Promise<Realm.Sync.User> => {
+  let realmCredentials: Realm.Sync.Credentials;
   if (credentials.kind === 'password') {
-    return Realm.Sync.User.login(
-      credentials.url,
+    realmCredentials = Realm.Sync.Credentials.usernamePassword(
       credentials.username,
       credentials.password,
+      /* createUser*/ false,
     );
   } else if (credentials.kind === 'token') {
-    return Realm.Sync.User.adminUser(credentials.token, credentials.url);
+    realmCredentials = Realm.Sync.Credentials.adminToken(credentials.token);
   } else if (credentials.kind === 'jwt') {
-    return Realm.Sync.User.registerWithProvider(credentials.url, {
-      provider: credentials.providerName,
-      providerToken: credentials.token,
-      userInfo: undefined,
-    });
+    realmCredentials = Realm.Sync.Credentials.jwt(
+      credentials.token,
+      credentials.providerName,
+    );
   } else if (credentials.kind === 'other') {
-    // TODO: Remove this when the registerWithProvider has a simpler interface
-    // @see https://github.com/realm/realm-js/issues/1451
-    const options: any = {
-      ...credentials.options,
-    };
-    if (!options.providerToken && options.data) {
-      options.providerToken = options.data;
-    }
-    if (!options.userInfo && options.user_info) {
-      options.userInfo = options.user_info;
-    }
-    return Realm.Sync.User.registerWithProvider(credentials.url, options);
+    const options = credentials.options as any;
+    realmCredentials = Realm.Sync.Credentials.custom(
+      options.provider,
+      options.providerToken || options.data,
+      options.userInfo || options.user_info || {},
+    );
   } else {
     throw new Error(`Unexpected kind of credentials`);
   }
+
+  return Realm.Sync.User.login(credentials.url, realmCredentials);
 };
 
 export const create = async (
@@ -59,7 +55,12 @@ export const create = async (
   password: string,
 ): Promise<string> => {
   // We could create the object in the synced realm, but that wont create the desired username and password
-  const newUser = await Realm.Sync.User.register(server, username, password);
+  const credentials = Realm.Sync.Credentials.usernamePassword(
+    username,
+    password,
+    /* createUser */ true,
+  );
+  const newUser = await Realm.Sync.User.login(server, credentials);
   newUser.logout();
   return newUser.identity;
 };
