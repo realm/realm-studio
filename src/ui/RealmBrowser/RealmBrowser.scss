@@ -17,27 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 @import "~realm-studio-styles/variables";
-
-// This constant should match the HANDLE_WIDTH in HeaderCell.tsx
-$realm-browser-header-handle-width: 5px;
-// This constant should match the rowHeights.header constant in Table.tsx
-$realm-browser-header-height: 50px;
-$realm-browser-header-icon-space: 24px;
-$realm-browser-header-handle-hover-bg: rgba(0, 0, 0, .1);
-$realm-browser-header-handle-dragging-bg: rgba($ultramarine, .5);
-
-$realm-browser-more-indicator-size: $spacer;
-$realm-browser-more-indicator-dark-color: rgba(0, 0, 0, .1);
-$realm-browser-more-indicator-light-color: rgba(0, 0, 0, 0);
-
-$row-stripe: transparent;
-$highlight-row-bg: mix($black, $white, 4%);
-$highlight-row-color: $black;
-
-$cell-header-border-size: 2px;
-$cell-padding-x: $spacer;
-$cell-padding-y: .5 * $spacer;
-$cell-border-color: mix($black, $white, 10%);
+@import "./variables";
 
 .RealmBrowser {
   display: flex;

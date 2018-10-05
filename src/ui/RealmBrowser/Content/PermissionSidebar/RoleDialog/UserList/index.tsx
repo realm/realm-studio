@@ -16,36 +16,39 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-@import "~realm-studio-styles/variables";
-@import "../../../variables";
+import * as React from 'react';
 
-.RoleDialog {
-  &__Header {
-    position: relative;
+import { IUser } from '../..';
+
+import { UserList } from './UserList';
+
+interface IUserListContainerProps {
+  members: IUser[];
+  editable?: boolean;
+}
+
+interface IUserListContainerState {
+  searchString: string;
+}
+
+class UserListContainer extends React.Component<
+  IUserListContainerProps,
+  IUserListContainerState
+> {
+  public state = {
+    searchString: '',
+  };
+
+  public render() {
+    const members = this.filteredMembers();
+    return <UserList editable={this.props.editable} members={members} />;
   }
 
-  &__TypeBadge {
-    position: absolute;
-    right: 1.2 * $spacer;
-    top: 1.2 * $spacer;
-  }
-
-  &__UserList {
-    &:focus {
-      outline: none;
-    }
-  }
-
-  &__UserRow {
-    align-items: center;
-    border: 1px solid $cell-border-color;
-    border-bottom-width: 0;
-    display: flex;
-    font-size: $font-size-sm;
-    padding: $cell-padding-y $cell-padding-x;
-
-    &:last-child {
-      border-bottom-width: 1px;
-    }
+  private filteredMembers() {
+    return this.props.members.filter(user =>
+      user.id.includes(this.state.searchString),
+    );
   }
 }
+
+export { UserListContainer as UserList };

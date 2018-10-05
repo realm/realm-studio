@@ -18,16 +18,15 @@
 
 import * as React from 'react';
 
-import { IUser } from '..';
+import { IUser } from '../..';
 
-interface IMembersListProps {
-  members: IUser[];
-  editable?: boolean;
+interface IUserRowProps {
+  member: IUser;
+  style: React.CSSProperties;
 }
 
-export const MembersList = ({
-  members,
-  editable = true,
-}: IMembersListProps) => (
-  <ul>{members.map(member => <li key={member.id}>{member.id}</li>)}</ul>
+export const UserRow = ({ member, style }: IUserRowProps) => (
+  <div className="RoleDialog__UserRow" style={style}>
+    {member.id}
+  </div>
 );

@@ -17,12 +17,12 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
-import { Badge, Modal, ModalBody, ModalHeader } from 'reactstrap';
+import { Alert, Badge, Modal, ModalBody, ModalHeader } from 'reactstrap';
 
 import { IRole, IUser } from '..';
 
-import { MembersList } from './MembersList';
 import './RoleDialog.scss';
+import { UserList } from './UserList';
 
 function determineIsUserRole(role: IRole, members: IUser[]) {
   if (members.length === 1) {
@@ -85,28 +85,20 @@ export const RoleDialog = (props: IRoleDialogProps) => {
           {isSpecial ? 'Special role' : 'Role'}
         </Badge>
       </ModalHeader>
-      {type === 'everyone' ? (
-        <ModalBody>
-          <p>
+      <ModalBody>
+        {type === 'everyone' ? (
+          <Alert color="info">
             This role is a special role, which contains all users that has
             synced with the Realm.
-          </p>
-          <p>Users</p>
-          <MembersList members={members} editable={false} />
-        </ModalBody>
-      ) : type === 'user' ? (
-        <ModalBody>
-          <p>
+          </Alert>
+        ) : type === 'user' ? (
+          <Alert color="info">
             This role is a special role, which contains a single user.
-            <MembersList members={members} editable={false} />
-          </p>
-        </ModalBody>
-      ) : (
-        <ModalBody>
-          <p>Users</p>
-          <MembersList members={members} />
-        </ModalBody>
-      )}
+          </Alert>
+        ) : null}
+        <p>Users assigned this role:</p>
+        <UserList members={members} editable={!isSpecial} />
+      </ModalBody>
     </Modal>
   );
 };
