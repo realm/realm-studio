@@ -137,7 +137,9 @@ export const Cell = ({
       onFocus={() => {
         // When the cell gets focussed (could happen by clicking or tabbing)
         // - ensure it also gets highlighted
-        onHighlighted();
+        if (!isHighlighted) {
+          onHighlighted();
+        }
       }}
       style={style}
     >
