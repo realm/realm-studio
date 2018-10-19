@@ -54,7 +54,7 @@ export interface IRealmTableContainerState {
   /** Prevents spamming the server too badly */
   deletionProgress?: IDeletionProgress;
   isFetchRealmSizes: boolean;
-  realmSizes?: { [path: string]: ros.IRealmSize };
+  realmSizes?: { [path: string]: ros.IRealmSizeInfo };
   searchString: string;
   // TODO: Update this once Realm JS has better support for Sets
   selectedRealms: RealmFile[];
@@ -147,6 +147,7 @@ class RealmsTableContainer extends React.PureComponent<
         searchString={this.state.searchString}
         selectedRealms={validSelectedRealms}
         deletionProgress={this.state.deletionProgress}
+        onRealmSizeRecalculate={this.onRealmSizeRecalculate}
       />
     );
   }
@@ -201,6 +202,11 @@ class RealmsTableContainer extends React.PureComponent<
       }
       showError('Failed to create Realm', err);
     }
+  };
+
+  public onRealmSizeRecalculate = async (realm: RealmFile) => {
+    await ros.realms.requestSizeRecalculation(this.props.user, realm.path);
+    // TODO: periodically call fetchSizes until a newer datapoint is available
   };
 
   public onRealmDeletion = async (...realms: RealmFile[]) => {
@@ -271,14 +277,20 @@ class RealmsTableContainer extends React.PureComponent<
     this.setState({ searchString });
   };
 
-  private async fetchRealmSizes() {
+  private async fetchRealmSizes(
+    updateState = true,
+  ): Promise<{ [path: string]: ros.IRealmSizeInfo } | undefined> {
     if (!this.state.isFetchRealmSizes) {
       try {
         this.setState({ isFetchRealmSizes: true });
         // Request the realm sizes from the server
         const sizes = await ros.realms.getSizes(this.props.user);
-        // Update the state
-        this.setState({ realmSizes: sizes });
+        if (updateState) {
+          // Update the state
+          this.setState({ realmSizes: sizes });
+        }
+
+        return sizes;
       } catch (err) {
         if (err instanceof ros.FetchError && err.response.status === 404) {
           // This is expected from an older server

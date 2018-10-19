@@ -20,7 +20,7 @@ import * as React from 'react';
 import { Column } from 'react-virtualized';
 import { Button } from 'reactstrap';
 
-import { IPermission, IRealmSize } from '../../../services/ros';
+import { IPermission, IRealmSizeInfo } from '../../../services/ros';
 import {
   FilterableTable,
   IFilterableTableProps,
@@ -54,10 +54,11 @@ export const RealmsTable = ({
   realmSizes,
   searchString,
   selectedRealms,
+  onRealmSizeRecalculate,
 }: {
   deletionProgress?: IDeletionProgress;
   getRealmPermissions: (realm: RealmFile) => Realm.Results<IPermission>;
-  getRealmSize: (realm: RealmFile) => IRealmSize | undefined;
+  getRealmSize: (realm: RealmFile) => IRealmSizeInfo | undefined;
   onRealmClick: (e: React.MouseEvent<HTMLElement>, realm: RealmFile) => void;
   onRealmCreation: () => void;
   onRealmDeletion: (...realms: RealmFile[]) => void;
@@ -66,9 +67,10 @@ export const RealmsTable = ({
   onRealmTypeUpgrade: (realm: RealmFile) => void;
   onSearchStringChange: (query: string) => void;
   realms: Realm.Results<RealmFile>;
-  realmSizes?: { [path: string]: IRealmSize };
+  realmSizes?: { [path: string]: IRealmSizeInfo };
   searchString: string;
   selectedRealms: RealmFile[];
+  onRealmSizeRecalculate: (realm: RealmFile) => void;
 }) => {
   return (
     <div className="RealmsTable">
@@ -131,6 +133,7 @@ export const RealmsTable = ({
         onRealmTypeUpgrade={onRealmTypeUpgrade}
         onClose={onRealmsDeselection}
         realms={selectedRealms}
+        onRealmSizeRecalculate={onRealmSizeRecalculate}
       />
     </div>
   );
@@ -138,8 +141,8 @@ export const RealmsTable = ({
 
 const renderRealmSize = (
   path: string,
-  valueName: keyof IRealmSize,
-  realmSizes?: { [path: string]: IRealmSize },
+  valueName: keyof IRealmSizeInfo,
+  realmSizes?: { [path: string]: IRealmSizeInfo },
 ) => {
   if (realmSizes) {
     const realmSize = realmSizes[path];
