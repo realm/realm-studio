@@ -34,7 +34,7 @@ interface ISingleRealmContentProps {
   onRealmTypeUpgrade: (realm: RealmFile) => void;
   realm: RealmFile;
   permissions: Realm.Results<ros.IPermission>;
-  stateSize?: number;
+  realmSize?: ros.IRealmSize;
 }
 
 export const SingleRealmContent = ({
@@ -43,7 +43,7 @@ export const SingleRealmContent = ({
   onRealmTypeUpgrade,
   permissions,
   realm,
-  stateSize,
+  realmSize,
 }: ISingleRealmContentProps) => {
   const isSystemRealm = realm && realm.path.startsWith('/__');
   // Determine if the Realm can be upgraded to a "reference" Realm,
@@ -67,9 +67,14 @@ export const SingleRealmContent = ({
         <p className="RealmSidebar__SubTitle">
           Owned by {displayUser(realm.owner)}
         </p>
-        {typeof stateSize === 'number' ? (
+        {realmSize && typeof realmSize.stateSize === 'number' ? (
           <p className="RealmSidebar__SubTitle">
-            Data size: {prettyBytes(stateSize)}
+            Data size: {prettyBytes(realmSize.stateSize)}
+          </p>
+        ) : null}
+        {realmSize && typeof realmSize.fileSize === 'number' ? (
+          <p className="RealmSidebar__SubTitle">
+            File size: {prettyBytes(realmSize.fileSize)}
           </p>
         ) : null}
       </SidebarBody>

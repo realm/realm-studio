@@ -54,7 +54,7 @@ export interface IRealmTableContainerState {
   /** Prevents spamming the server too badly */
   deletionProgress?: IDeletionProgress;
   isFetchRealmSizes: boolean;
-  realmStateSizes?: { [path: string]: number };
+  realmSizes?: { [path: string]: ros.IRealmSize };
   searchString: string;
   // TODO: Update this once Realm JS has better support for Sets
   selectedRealms: RealmFile[];
@@ -134,7 +134,7 @@ class RealmsTableContainer extends React.PureComponent<
     return (
       <RealmsTable
         getRealmPermissions={this.getRealmPermissions}
-        getRealmStateSize={this.getRealmStateSize}
+        getRealmSize={this.getRealmSize}
         onRealmCreation={this.onRealmCreation}
         onRealmDeletion={this.onRealmDeletion}
         onRealmOpened={this.onRealmOpened}
@@ -143,7 +143,7 @@ class RealmsTableContainer extends React.PureComponent<
         onRealmTypeUpgrade={this.onRealmTypeUpgrade}
         onSearchStringChange={this.onSearchStringChange}
         realms={realms}
-        realmStateSizes={this.state.realmStateSizes}
+        realmSizes={this.state.realmSizes}
         searchString={this.state.searchString}
         selectedRealms={validSelectedRealms}
         deletionProgress={this.state.deletionProgress}
@@ -184,9 +184,9 @@ class RealmsTableContainer extends React.PureComponent<
       .filtered('realmFile == $0', realm);
   };
 
-  public getRealmStateSize = (realm: RealmFile) => {
-    if (this.state.realmStateSizes) {
-      return this.state.realmStateSizes[realm.path];
+  public getRealmSize = (realm: RealmFile) => {
+    if (this.state.realmSizes) {
+      return this.state.realmSizes[realm.path];
     }
   };
 
@@ -278,7 +278,7 @@ class RealmsTableContainer extends React.PureComponent<
         // Request the realm sizes from the server
         const sizes = await ros.realms.getSizes(this.props.user);
         // Update the state
-        this.setState({ realmStateSizes: sizes });
+        this.setState({ realmSizes: sizes });
       } catch (err) {
         if (err instanceof ros.FetchError && err.response.status === 404) {
           // This is expected from an older server

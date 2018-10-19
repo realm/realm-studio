@@ -20,7 +20,7 @@ import * as React from 'react';
 import { Column } from 'react-virtualized';
 import { Button } from 'reactstrap';
 
-import { IPermission, IRealmFile } from '../../../services/ros';
+import { IPermission, IRealmSize } from '../../../services/ros';
 import {
   FilterableTable,
   IFilterableTableProps,
@@ -42,7 +42,7 @@ const FilterableRealmTable: React.ComponentType<
 export const RealmsTable = ({
   deletionProgress,
   getRealmPermissions,
-  getRealmStateSize,
+  getRealmSize,
   onRealmClick,
   onRealmCreation,
   onRealmDeletion,
@@ -51,13 +51,13 @@ export const RealmsTable = ({
   onRealmTypeUpgrade,
   onSearchStringChange,
   realms,
-  realmStateSizes,
+  realmSizes,
   searchString,
   selectedRealms,
 }: {
   deletionProgress?: IDeletionProgress;
   getRealmPermissions: (realm: RealmFile) => Realm.Results<IPermission>;
-  getRealmStateSize: (realm: RealmFile) => number | undefined;
+  getRealmSize: (realm: RealmFile) => IRealmSize | undefined;
   onRealmClick: (e: React.MouseEvent<HTMLElement>, realm: RealmFile) => void;
   onRealmCreation: () => void;
   onRealmDeletion: (...realms: RealmFile[]) => void;
@@ -66,7 +66,7 @@ export const RealmsTable = ({
   onRealmTypeUpgrade: (realm: RealmFile) => void;
   onSearchStringChange: (query: string) => void;
   realms: Realm.Results<RealmFile>;
-  realmStateSizes?: { [path: string]: number };
+  realmSizes?: { [path: string]: IRealmSize };
   searchString: string;
   selectedRealms: RealmFile[];
 }) => {
@@ -100,15 +100,19 @@ export const RealmsTable = ({
         <Column
           label="Data Size"
           dataKey="path"
-          /* Don't show the size column if all sizes are unknown */
-          width={realmStateSizes ? 100 : 0}
+          width={100}
           headerRenderer={props => <StateSizeHeader {...props} />}
           cellRenderer={({ cellData }) =>
-            realmStateSizes && typeof realmStateSizes[cellData] === 'number' ? (
-              prettyBytes(realmStateSizes[cellData])
-            ) : (
-              <MissingSizeBadge />
-            )
+            renderRealmSize(cellData, 'stateSize', realmSizes)
+          }
+        />
+        <Column
+          label="File Size"
+          dataKey="path"
+          width={100}
+          headerRenderer={props => <StateSizeHeader {...props} />}
+          cellRenderer={({ cellData }) =>
+            renderRealmSize(cellData, 'fileSize', realmSizes)
           }
         />
       </FilterableRealmTable>
@@ -120,7 +124,7 @@ export const RealmsTable = ({
       <RealmSidebar
         deletionProgress={deletionProgress}
         getRealmPermissions={getRealmPermissions}
-        getRealmStateSize={getRealmStateSize}
+        getRealmSize={getRealmSize}
         isOpen={selectedRealms.length > 0}
         onRealmDeletion={onRealmDeletion}
         onRealmOpened={onRealmOpened}
@@ -130,4 +134,22 @@ export const RealmsTable = ({
       />
     </div>
   );
+};
+
+const renderRealmSize = (
+  path: string,
+  valueName: keyof IRealmSize,
+  realmSizes?: { [path: string]: IRealmSize },
+) => {
+  if (realmSizes) {
+    const realmSize = realmSizes[path];
+    if (realmSize) {
+      const value = realmSize[valueName];
+      if (typeof value === 'number') {
+        return prettyBytes(value);
+      }
+    }
+  }
+
+  return <MissingSizeBadge />;
 };
