@@ -90,6 +90,10 @@ export abstract class RealmLoadingComponent<
           schema,
           schemaVersion,
         );
+
+        // tslint:disable-next-line:no-console
+        console.log(`Realm opened: ${realm.path}`);
+
         // Register change listeners
         this.realm.addListener('change', this.onRealmChanged);
         this.onRealmLoaded();

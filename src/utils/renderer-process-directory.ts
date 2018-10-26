@@ -28,7 +28,7 @@ const rendererPattern = /^renderer-\d+$/;
 // Call this with `process.pid.toString()`
 export const getRendererProcessDirectory = (pid: number) => {
   const pidString = pid.toString();
-  return resolve(userDataPath, `renderer-${pidString}`);
+  return resolve(userDataPath, 'renderer');
 };
 
 export const getRendererProcessDirectories = () => {
@@ -47,11 +47,14 @@ export const changeRendererProcessDirectory = () => {
   // Get the process dir
   const processDir = getRendererProcessDirectory(process.pid);
   // Remove the directory if it already exists
-  if (fs.existsSync(processDir)) {
-    fs.removeSync(processDir);
+  if (!fs.existsSync(processDir)) {
+    // Create the directory
+    fs.mkdirSync(processDir);
   }
-  // Create the directory
-  fs.mkdirSync(processDir);
+
   // Change to it
   process.chdir(processDir);
+
+  // tslint:disable-next-line:no-console
+  console.log(`Process dir: ${processDir}`);
 };

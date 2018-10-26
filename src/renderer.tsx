@@ -29,7 +29,7 @@ const isDevelopment = process.env.NODE_ENV === 'development';
 // @see https://github.com/realm/realm-js/blob/master/lib/submit-analytics.js#L28
 process.env.REALM_DISABLE_ANALYTICS = 'true';
 
-// Create and change working directory to aviod conflicts of opening two realms twice
+// Create and change working directory to avoid conflicts of opening two realms twice
 // FIXME: see https://github.com/realm/realm-js/issues/818
 // This needs to happen before realm is loaded
 changeRendererProcessDirectory();

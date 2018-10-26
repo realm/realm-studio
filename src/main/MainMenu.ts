@@ -24,7 +24,7 @@ import * as raas from '../services/raas';
 import { store } from '../store';
 import { showError } from '../ui/reusable/errors';
 
-const isDevelopment = process.env.NODE_ENV === 'development';
+const isDevelopment = process.env.NODE_ENV === 'development' || true;
 const showInternalFeatures =
   process.env.REALM_STUDIO_INTERNAL_FEATURES === 'true'; // Show features only relevant for Realm employees
 

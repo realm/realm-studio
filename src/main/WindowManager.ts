@@ -220,7 +220,7 @@ export class WindowManager {
       // Deleting these folders are not obvious side-effects, so let's log that
       // tslint:disable-next-line:no-console
       console.log(`Removing abandoned renderer directory ${rendererPath}`);
-      fs.removeSync(rendererPath);
+      // fs.removeSync(rendererPath);
     }
   }
 
@@ -244,7 +244,7 @@ export class WindowManager {
 
   private cleanupRendererProcessDirectory(rendererPath: string) {
     try {
-      fs.removeSync(rendererPath);
+      // fs.removeSync(rendererPath);
     } catch (err) {
       // Deleting these folders are not obvious side-effects, so let's log if it fails
       // tslint:disable-next-line:no-console
