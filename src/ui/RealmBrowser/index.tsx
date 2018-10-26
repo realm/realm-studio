@@ -46,6 +46,7 @@ import * as schemaUtils from './schema-utils';
 export interface IPropertyWithName extends Realm.ObjectSchemaProperty {
   name: string | null;
   readOnly: boolean;
+  isPrimaryKey: boolean;
 }
 
 export type EditModeChangeHandler = (editMode: EditMode) => void;
@@ -581,7 +582,7 @@ class RealmBrowserContainer
     // Determine the properties
     if (property.type === 'list' && property.objectType) {
       const properties: IPropertyWithName[] = [
-        { name: '#', type: 'int', readOnly: true },
+        { name: '#', type: 'int', readOnly: true, isPrimaryKey: false },
       ];
       if (isPrimitive(property.objectType)) {
         return properties.concat([
@@ -589,6 +590,7 @@ class RealmBrowserContainer
             name: null,
             type: property.objectType,
             readOnly: false,
+            isPrimaryKey: false,
           },
         ]);
       } else {
@@ -623,6 +625,7 @@ class RealmBrowserContainer
         return {
           name: propertyName,
           readOnly: false,
+          isPrimaryKey: objectSchema.primaryKey === propertyName,
           ...property,
         };
       } else {
