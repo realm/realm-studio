@@ -46,6 +46,7 @@ export const getPropertyDisplayed = (property: Realm.ObjectSchemaProperty) => {
     getPropertyType(property),
     property.optional ? '?' : '',
     property.type === 'list' ? '[]' : '',
+    property.isPrimaryKey ? ' (Primary Key)' : '',
   ].join('');
 };
 

@@ -623,6 +623,7 @@ class RealmBrowserContainer
         return {
           name: propertyName,
           readOnly: false,
+          isPrimaryKey: objectSchema.primaryKey === propertyName,
           ...property,
         };
       } else {
