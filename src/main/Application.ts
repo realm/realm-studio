@@ -35,7 +35,7 @@ import {
   IServerAdministrationWindowProps,
 } from '../windows/WindowProps';
 
-import { cleanupRendererDirectories } from '../utils';
+import { removeRendererDirectories } from '../utils';
 import { CertificateManager } from './CertificateManager';
 import { CloudManager, ICloudStatus } from './CloudManager';
 import { MainActions } from './MainActions';
@@ -101,7 +101,7 @@ export class Application {
     },
     [MainActions.ClearRendererCache]: async () => {
       await this.windowManager.closeAllWindows();
-      await cleanupRendererDirectories();
+      await removeRendererDirectories();
       await this.showGreeting();
     },
   };

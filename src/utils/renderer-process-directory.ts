@@ -43,7 +43,7 @@ export const changeRendererProcessDirectory = (type: string) => {
   process.chdir(processDir);
 };
 
-export const cleanupRendererDirectories = () => {
+export const removeRendererDirectories = () => {
   const directories = fs
     .readdirSync(userDataPath)
     .filter(name => rendererPattern.test(name))

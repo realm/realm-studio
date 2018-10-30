@@ -154,9 +154,7 @@ export const cellRangeRenderer = (
       continue;
     }
 
-    if (process.env.NODE_ENV !== 'production') {
-      warnAboutMissingStyle(parent, renderedCell);
-    }
+    warnAboutMissingStyle(parent, renderedCell);
 
     renderedCells.push(renderedCell);
   }
@@ -274,9 +272,7 @@ export const rowCellRangeRenderer = (rowRenderer: GridRowRenderer) => (
       continue;
     }
 
-    if (process.env.NODE_ENV !== 'production') {
-      warnAboutMissingStyle(parent, renderedRow);
-    }
+    warnAboutMissingStyle(parent, renderedRow);
 
     renderedRows.push(renderedRow);
   }
@@ -285,26 +281,26 @@ export const rowCellRangeRenderer = (rowRenderer: GridRowRenderer) => (
 };
 
 function warnAboutMissingStyle(parent: any, renderedCell: any) {
-  if (process.env.NODE_ENV !== 'production') {
-    if (renderedCell) {
-      // If the direct child is a CellMeasurer, then we should check its child
-      // See issue #611
-      if (renderedCell.type && renderedCell.type.__internalCellMeasurerFlag) {
-        renderedCell = renderedCell.props.children;
-      }
+  if (process.env.NODE_ENV === 'production' || !renderedCell) {
+    return;
+  }
 
-      if (
-        renderedCell &&
-        renderedCell.props &&
-        renderedCell.props.style === undefined &&
-        parent.__warnedAboutMissingStyle !== true
-      ) {
-        parent.__warnedAboutMissingStyle = true;
-        // tslint:disable-next-line:no-console
-        console.warn(
-          'Rendered cell should include style property for positioning.',
-        );
-      }
-    }
+  // If the direct child is a CellMeasurer, then we should check its child
+  // See issue #611
+  if (renderedCell.type && renderedCell.type.__internalCellMeasurerFlag) {
+    renderedCell = renderedCell.props.children;
+  }
+
+  if (
+    renderedCell &&
+    renderedCell.props &&
+    renderedCell.props.style === undefined &&
+    parent.__warnedAboutMissingStyle !== true
+  ) {
+    parent.__warnedAboutMissingStyle = true;
+    // tslint:disable-next-line:no-console
+    console.warn(
+      'Rendered cell should include style property for positioning.',
+    );
   }
 }
