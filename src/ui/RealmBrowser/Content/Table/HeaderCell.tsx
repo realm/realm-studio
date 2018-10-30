@@ -41,11 +41,12 @@ const getPropertyType = (property: Realm.ObjectSchemaProperty) => {
   }
 };
 
-export const getPropertyDisplayed = (property: Realm.ObjectSchemaProperty) => {
+export const getPropertyDisplayed = (property: IPropertyWithName) => {
   return [
     getPropertyType(property),
     property.optional ? '?' : '',
     property.type === 'list' ? '[]' : '',
+    property.isPrimaryKey ? ' (Primary Key)' : '',
   ].join('');
 };
 
