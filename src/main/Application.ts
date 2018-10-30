@@ -99,7 +99,7 @@ export class Application {
     ) => {
       return this.showServerAdministration(props);
     },
-    [MainActions.CleanRendererCache]: async () => {
+    [MainActions.ClearRendererCache]: async () => {
       await this.windowManager.closeAllWindows();
       await cleanupRendererDirectories();
       await this.showGreeting();

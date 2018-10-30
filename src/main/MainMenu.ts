@@ -185,7 +185,7 @@ export const getDefaultMenuTemplate = (
         {
           label: 'Clear Cache',
           click: () => {
-            main.cleanRendererCache();
+            main.clearRendererCache();
           },
         },
       ],
