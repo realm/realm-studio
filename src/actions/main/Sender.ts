@@ -98,4 +98,8 @@ export class Sender extends ActionSender {
   public showServerAdministration(props: IServerAdministrationWindowProps) {
     return this.send(MainActions.ShowServerAdministration, props);
   }
+
+  public clearRendererCache() {
+    return this.send(MainActions.ClearRendererCache);
+  }
 }
