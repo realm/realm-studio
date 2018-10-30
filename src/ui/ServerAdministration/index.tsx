@@ -397,12 +397,11 @@ class ServerAdministrationContainer
       if (!this.state.user) {
         throw new Error('Cannot open realm without a user');
       }
-      const newRealm = await ros.realms.open(
-        this.state.user,
-        newRealmFile.path,
-        undefined,
-        { validateCertificates: this.props.validateCertificates },
-      );
+      const newRealm = await ros.realms.open({
+        user: this.state.user,
+        realmPath: newRealmFile.path,
+        ssl: { validateCertificates: this.props.validateCertificates },
+      });
       // Import the data
       importer.importInto(newRealm);
       // Open the Realm browser in "import mode"

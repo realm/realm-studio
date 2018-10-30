@@ -182,6 +182,12 @@ export const getDefaultMenuTemplate = (
             electronOrRemote.shell.openExternal('https://realm.io/docs');
           },
         },
+        {
+          label: 'Clear Cache',
+          click: () => {
+            main.cleanRendererCache();
+          },
+        },
       ],
     },
   ];

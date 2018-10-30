@@ -18,6 +18,7 @@
 
 import './services/mixpanel';
 
+import * as electron from 'electron';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
@@ -25,14 +26,26 @@ import { changeRendererProcessDirectory } from './utils/renderer-process-directo
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
+let windowType = 'unknown';
+try {
+  if (document.location !== null) {
+    const params = new URL(document.location.href).searchParams.get('options');
+    if (params !== null) {
+      const deserialized = JSON.parse(params) as { type: string };
+      if (deserialized.type) {
+        windowType = deserialized.type;
+      }
+    }
+  }
+} catch {
+  // Just ignore
+}
+
+changeRendererProcessDirectory(windowType);
+
 // Don't report Realm JS analytics data
 // @see https://github.com/realm/realm-js/blob/master/lib/submit-analytics.js#L28
 process.env.REALM_DISABLE_ANALYTICS = 'true';
-
-// Create and change working directory to avoid conflicts of opening two realms twice
-// FIXME: see https://github.com/realm/realm-js/issues/818
-// This needs to happen before realm is loaded
-changeRendererProcessDirectory();
 
 import '../styles/index.scss';
 

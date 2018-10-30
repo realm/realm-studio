@@ -64,31 +64,46 @@ export const getUrl = (user: Realm.Sync.User, realmPath: string) => {
   return url.toString();
 };
 
-export const open = async (
-  user: Realm.Sync.User,
-  realmPath: string,
-  encryptionKey?: Uint8Array,
-  ssl: ISslConfiguration = { validateCertificates: true },
-  progressCallback?: Realm.Sync.ProgressNotificationCallback,
-  schema?: Realm.ObjectSchema[],
-): Promise<Realm> => {
-  const url = getUrl(user, realmPath);
+export const open = async (params: {
+  user: Realm.Sync.User;
+  realmPath: string;
+  encryptionKey?: Uint8Array;
+  ssl: ISslConfiguration;
+  progressCallback?: Realm.Sync.ProgressNotificationCallback;
+  schema?: Realm.ObjectSchema[];
+}): Promise<Realm> => {
+  const ssl = params.ssl || { validateCertificates: true };
+  const url = getUrl(params.user, params.realmPath);
 
-  const realm = Realm.open({
-    encryptionKey,
-    schema,
+  let clientResetOcurred = false;
+  const realmPromise = Realm.open({
+    encryptionKey: params.encryptionKey,
+    schema: params.schema,
     sync: {
       url,
-      user,
-      error: ssl.errorCallback || defaultSyncErrorCallback,
+      user: params.user,
+      error: (session, error) => {
+        if (error.name === 'ClientReset') {
+          clientResetOcurred = true;
+        } else {
+          (ssl.errorCallback || defaultSyncErrorCallback)(session, error);
+        }
+      },
       validate_ssl: ssl.validateCertificates,
       ssl_trust_certificate_path: ssl.certificatePath,
       _disableQueryBasedSyncUrlChecks: true,
     },
   });
 
-  if (progressCallback) {
-    realm.progress(progressCallback);
+  if (params.progressCallback) {
+    realmPromise.progress(params.progressCallback);
+  }
+
+  const realm = await realmPromise;
+  if (clientResetOcurred) {
+    realm.close();
+    Realm.Sync.initiateClientReset(realm.path);
+    return open(params);
   }
 
   return realm;

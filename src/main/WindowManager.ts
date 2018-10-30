@@ -23,10 +23,6 @@ import * as path from 'path';
 import * as url from 'url';
 
 import { store } from '../store';
-import {
-  getRendererProcessDirectories,
-  getRendererProcessDirectory,
-} from '../utils';
 import { getWindowOptions, IWindowConstructorOptions } from '../windows/Window';
 import { WindowOptions, WindowType } from '../windows/WindowOptions';
 
@@ -38,8 +34,8 @@ export interface IEventListenerCallbacks {
 
 interface IWindowHandle {
   window: Electron.BrowserWindow;
-  pid: number;
-  processDir: string;
+  type: string;
+  uniqueId: string | undefined;
 }
 
 const isDevelopment = process.env.NODE_ENV === 'development';
@@ -55,7 +51,30 @@ function getRendererHtmlPath() {
 export class WindowManager {
   public windows: IWindowHandle[] = [];
 
-  public createWindow(options: WindowOptions) {
+  public createWindow(
+    options: WindowOptions,
+  ): { window: BrowserWindow; existing: boolean } {
+    let uniqueId = '';
+    switch (options.type) {
+      case 'realm-browser':
+        uniqueId = options.props.realm.path;
+        break;
+      case 'server-administration':
+        uniqueId = options.props.credentials.url;
+        break;
+    }
+
+    const existing = this.windows.find(
+      w => w.type === options.type && w.uniqueId === uniqueId,
+    );
+
+    if (existing) {
+      return {
+        window: existing.window,
+        existing: true,
+      };
+    }
+
     // Get the window options that are default for this type of window
     const defaultWindowOptions = getWindowOptions(options);
     // Get the window options that are saved for this type of window
@@ -99,6 +118,11 @@ export class WindowManager {
 
     // Construct the window
     const window = new BrowserWindow(windowOptions);
+    this.windows.push({
+      window,
+      type: options.type,
+      uniqueId,
+    });
 
     // If the window should maximize - let's maximize it when it gets shown
     if (maximize) {
@@ -158,17 +182,6 @@ export class WindowManager {
       }
     });
 
-    window.webContents.once('did-finish-load', () => {
-      const pid = window.webContents.getOSProcessId();
-      // The current working directory should be changed from within the renderer process
-      const processDir = getRendererProcessDirectory(pid);
-      this.windows.push({
-        window,
-        pid,
-        processDir,
-      });
-    });
-
     // When the window is about to close, save its size, position and maximized state for the next of its type
     window.once('close', () => {
       const [width, height] = window.getSize();
@@ -185,15 +198,9 @@ export class WindowManager {
       });
     });
 
-    window.on('closed', () => {
+    window.once('closed', () => {
       const index = this.windows.findIndex(handle => handle.window === window);
       if (index > -1) {
-        // Only read out the processDir if the window is still present
-        const { processDir } = this.windows[index];
-        // Wait a second for Windows to unlock the directory before deleting it
-        setTimeout(() => {
-          this.cleanupRendererProcessDirectory(processDir);
-        }, 1000);
         // Remove the window
         this.windows.splice(index, 1);
       }
@@ -204,24 +211,23 @@ export class WindowManager {
       });
     });
 
-    return window;
+    return {
+      window,
+      existing: false,
+    };
   }
 
-  public closeAllWindows() {
-    this.windows.forEach(({ window }) => {
-      window.close();
-    });
-  }
-
-  /** This will clean up any existing renderer directories */
-  public cleanupRendererProcessDirectories() {
-    const rendererPaths = getRendererProcessDirectories();
-    for (const rendererPath of rendererPaths) {
-      // Deleting these folders are not obvious side-effects, so let's log that
-      // tslint:disable-next-line:no-console
-      console.log(`Removing abandoned renderer directory ${rendererPath}`);
-      // fs.removeSync(rendererPath);
-    }
+  public async closeAllWindows(): Promise<{}> {
+    return Promise.all(
+      // Create a new array as closing the windows will remove them from the
+      // this.windows collection
+      this.windows.map(handle => handle.window).map(window => {
+        return new Promise(resolve => {
+          window.once('closed', resolve);
+          window.close();
+        });
+      }),
+    );
   }
 
   /**
@@ -240,19 +246,6 @@ export class WindowManager {
    */
   public getWindowOptions(type: WindowType) {
     return store.getWindowOptions(type);
-  }
-
-  private cleanupRendererProcessDirectory(rendererPath: string) {
-    try {
-      // fs.removeSync(rendererPath);
-    } catch (err) {
-      // Deleting these folders are not obvious side-effects, so let's log if it fails
-      // tslint:disable-next-line:no-console
-      console.error(
-        `Failed while cleaning up renderer directory ${rendererPath}`,
-        err,
-      );
-    }
   }
 
   private getDesiredDisplay() {
