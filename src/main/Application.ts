@@ -35,6 +35,7 @@ import {
   IServerAdministrationWindowProps,
 } from '../windows/WindowProps';
 
+import { authenticate } from '../services/ros/users';
 import { removeRendererDirectories } from '../utils';
 import { CertificateManager } from './CertificateManager';
 import { CloudManager, ICloudStatus } from './CloudManager';
@@ -591,8 +592,10 @@ export class Application {
       }
     }
 
+    const credentials = raas.user.getTenantCredentials(serverUrl.toString());
+    const user = await authenticate(credentials);
     await this.showServerAdministration({
-      credentials: raas.user.getTenantCredentials(serverUrl.toString()),
+      user: user.serialize(),
       isCloudTenant: true,
       validateCertificates: true,
     });

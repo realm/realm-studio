@@ -165,7 +165,7 @@ class ServerAdministrationContainer
       try {
         // Let the UI update before sync waiting on the window to appear
         const realm: ros.realms.ISyncedRealmToLoad = {
-          authentication: this.props.credentials,
+          user: this.props.user,
           mode: ros.realms.RealmLoadingMode.Synced,
           path,
           validateCertificates: this.props.validateCertificates,
@@ -185,7 +185,7 @@ class ServerAdministrationContainer
     this.setState({ syncError: undefined });
     this.authenticate();
     */
-    await this.ensureServerIsAvailable(this.props.credentials.url);
+    await this.ensureServerIsAvailable(this.props.user.server);
     location.reload();
   };
 
@@ -199,7 +199,7 @@ class ServerAdministrationContainer
     try {
       // Ensure the server is available before authenticating ..
       const version = await this.ensureServerIsAvailable(
-        this.props.credentials.url,
+        this.props.user.server,
       );
 
       const compatible = this.isCompatibleVersion(version);
@@ -216,7 +216,7 @@ class ServerAdministrationContainer
         },
       });
       // Authenticate towards the server
-      const user = await ros.users.authenticate(this.props.credentials);
+      const user = Realm.Sync.User.deserialize(this.props.user);
       this.setState({
         progress: {
           status: 'in-progress',
@@ -298,7 +298,7 @@ class ServerAdministrationContainer
         },
       });
       await this.loadRealm({
-        authentication: user,
+        user: user.serialize(),
         mode: ros.realms.RealmLoadingMode.Synced,
         path: '__admin',
         validateCertificates: this.props.validateCertificates,
@@ -406,7 +406,7 @@ class ServerAdministrationContainer
       importer.importInto(newRealm);
       // Open the Realm browser in "import mode"
       const realm: ros.realms.ISyncedRealmToLoad = {
-        authentication: this.props.credentials,
+        user: this.props.user,
         mode: ros.realms.RealmLoadingMode.Synced,
         path: newRealmFile.path,
         validateCertificates: this.props.validateCertificates,

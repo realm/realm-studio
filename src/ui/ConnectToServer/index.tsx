@@ -112,7 +112,7 @@ class ConnectToServerContainer extends React.Component<
       }
       this.setLatestUrl(credentials.url);
       await main.showServerAdministration({
-        credentials,
+        user: user.serialize(),
         validateCertificates: true,
       });
       electron.remote.getCurrentWindow().close();

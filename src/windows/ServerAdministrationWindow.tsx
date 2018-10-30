@@ -16,12 +16,10 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as ros from '../services/ros';
-
 import { IWindow } from './Window';
 
 export interface IServerAdministrationWindowProps {
-  credentials: ros.IServerCredentials;
+  user: Realm.Sync.SerializedUser;
   isCloudTenant?: boolean;
   validateCertificates: boolean;
 }
@@ -30,8 +28,7 @@ export interface IServerAdministrationWindowProps {
 
 export const ServerAdministrationWindow: IWindow = {
   getWindowOptions: (props: IServerAdministrationWindowProps) => {
-    const credentials = props.credentials;
-    const url = credentials ? credentials.url : 'http://...';
+    const url = props.user ? props.user.server : 'http://...';
     return {
       title: `Realm Object Server: ${url}`,
       width: 1024,
@@ -44,6 +41,6 @@ export const ServerAdministrationWindow: IWindow = {
       m => m.ServerAdministration as any,
     ),
   getTrackedProperties: (props: IServerAdministrationWindowProps) => ({
-    url: props.credentials.url,
+    url: props.user.server,
   }),
 };

@@ -91,9 +91,6 @@ export abstract class RealmLoadingComponent<
           schemaVersion,
         );
 
-        // tslint:disable-next-line:no-console
-        console.log(`Realm opened: ${this.realm.path}`);
-
         // Register change listeners
         this.realm.addListener('change', this.onRealmChanged);
         this.onRealmLoaded();
@@ -205,12 +202,8 @@ export abstract class RealmLoadingComponent<
     }
 
     if (realm && realm.mode === realms.RealmLoadingMode.Synced) {
-      const user =
-        realm.authentication instanceof Realm.Sync.User
-          ? realm.authentication
-          : await users.authenticate(realm.authentication);
       const realmPromise = realms.open({
-        user,
+        user: Realm.Sync.User.deserialize(realm.user),
         realmPath: realm.path,
         encryptionKey: realm.encryptionKey,
         ssl,
