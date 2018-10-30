@@ -304,8 +304,6 @@ export class Application {
   }
 
   public showServerAdministration(props: IServerAdministrationWindowProps) {
-    // TODO: Change this once the realm-js Realm.Sync.User serializes correctly
-    // @see https://github.com/realm/realm-js/issues/1276
     const { window, existing } = this.windowManager.createWindow({
       type: 'server-administration',
       props,
