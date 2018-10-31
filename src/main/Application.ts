@@ -35,6 +35,7 @@ import {
   IServerAdministrationWindowProps,
 } from '../windows/WindowProps';
 
+import { authenticate } from '../services/ros/users';
 import { removeRendererDirectories } from '../utils';
 import { CertificateManager } from './CertificateManager';
 import { CloudManager, ICloudStatus } from './CloudManager';
@@ -303,8 +304,6 @@ export class Application {
   }
 
   public showServerAdministration(props: IServerAdministrationWindowProps) {
-    // TODO: Change this once the realm-js Realm.Sync.User serializes correctly
-    // @see https://github.com/realm/realm-js/issues/1276
     const { window, existing } = this.windowManager.createWindow({
       type: 'server-administration',
       props,
@@ -591,8 +590,10 @@ export class Application {
       }
     }
 
+    const credentials = raas.user.getTenantCredentials(serverUrl.toString());
+    const user = await authenticate(credentials);
     await this.showServerAdministration({
-      credentials: raas.user.getTenantCredentials(serverUrl.toString()),
+      user: user.serialize(),
       isCloudTenant: true,
       validateCertificates: true,
     });

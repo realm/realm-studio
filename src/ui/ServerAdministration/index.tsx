@@ -165,7 +165,7 @@ class ServerAdministrationContainer
       try {
         // Let the UI update before sync waiting on the window to appear
         const realm: ros.realms.ISyncedRealmToLoad = {
-          authentication: this.props.credentials,
+          user: this.props.user,
           mode: ros.realms.RealmLoadingMode.Synced,
           path,
           validateCertificates: this.props.validateCertificates,
@@ -185,7 +185,7 @@ class ServerAdministrationContainer
     this.setState({ syncError: undefined });
     this.authenticate();
     */
-    await this.ensureServerIsAvailable(this.props.credentials.url);
+    await this.ensureServerIsAvailable(this.props.user.server);
     location.reload();
   };
 
@@ -196,45 +196,20 @@ class ServerAdministrationContainer
   };
 
   protected async authenticate() {
-    try {
-      // Ensure the server is available before authenticating ..
-      const version = await this.ensureServerIsAvailable(
-        this.props.credentials.url,
-      );
+    // Ensure the server is available and its version is compatible ..
+    const version = await this.ensureServerIsAvailable(this.props.user.server);
 
-      const compatible = this.isCompatibleVersion(version);
-      if (!compatible) {
-        this.failWithIncompatibleVersion(version);
-        return;
-      }
-
-      this.setState({
-        serverVersion: version,
-        progress: {
-          status: 'in-progress',
-          message: 'Authenticating',
-        },
-      });
-      // Authenticate towards the server
-      const user = await ros.users.authenticate(this.props.credentials);
+    const compatible = this.isCompatibleVersion(version);
+    if (!compatible) {
+      this.failWithIncompatibleVersion(version);
+    } else {
+      const user = Realm.Sync.User.deserialize(this.props.user);
       this.setState({
         progress: {
           status: 'in-progress',
           message: 'Authenticated',
         },
         user,
-      });
-    } catch (err) {
-      const message = this.getAuthenticationErrorMessage(err);
-      this.setState({
-        progress: {
-          status: 'failed',
-          message,
-          retry: {
-            label: 'Retry',
-            onRetry: this.onReconnect,
-          },
-        },
       });
     }
   }
@@ -245,24 +220,16 @@ class ServerAdministrationContainer
     // Return a previous promise if that's available
     if (!this.availabilityPromise) {
       this.availabilityPromise = new Promise(async resolve => {
-        while (true) {
-          try {
-            this.setState({
-              progress: {
-                status: 'in-progress',
-                message: `Checking availability`,
-              },
-            });
-            const availability = await ros.isAvailable(url);
-            if (availability.available) {
-              // Let's resolve the promise, delete it and break the endless loop
-              resolve(availability.version);
-              delete this.availabilityPromise;
-              return;
-            } else {
-              throw new Error('Not available ...');
-            }
-          } catch (err) {
+        let availability: ros.Availability | undefined;
+        while (!availability || !availability.available) {
+          this.setState({
+            progress: {
+              status: 'in-progress',
+              message: `Checking availability`,
+            },
+          });
+          availability = await ros.isAvailable(url);
+          if (!availability.available) {
             await wait(500); // Wait to show we're checking ...
             // Errors probably means it's unavailable - let's retry
             await countdown(1000, 3, n => {
@@ -276,6 +243,10 @@ class ServerAdministrationContainer
             });
           }
         }
+
+        // Let's resolve the promise, delete it and break the endless loop
+        resolve(availability.version);
+        delete this.availabilityPromise;
       });
     }
     return this.availabilityPromise;
@@ -298,7 +269,7 @@ class ServerAdministrationContainer
         },
       });
       await this.loadRealm({
-        authentication: user,
+        user: user.serialize(),
         mode: ros.realms.RealmLoadingMode.Synced,
         path: '__admin',
         validateCertificates: this.props.validateCertificates,
@@ -406,7 +377,7 @@ class ServerAdministrationContainer
       importer.importInto(newRealm);
       // Open the Realm browser in "import mode"
       const realm: ros.realms.ISyncedRealmToLoad = {
-        authentication: this.props.credentials,
+        user: this.props.user,
         mode: ros.realms.RealmLoadingMode.Synced,
         path: newRealmFile.path,
         validateCertificates: this.props.validateCertificates,

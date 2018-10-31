@@ -18,12 +18,7 @@
 
 import * as Realm from 'realm';
 
-import {
-  fetchAuthenticated,
-  IRealmFile,
-  IServerCredentials,
-  RealmType,
-} from '.';
+import { fetchAuthenticated, IRealmFile, RealmType } from '.';
 import { showError } from '../../ui/reusable/errors';
 
 export enum RealmLoadingMode {
@@ -39,7 +34,7 @@ export interface IRealmToLoad {
 
 export interface ISyncedRealmToLoad extends IRealmToLoad {
   mode: RealmLoadingMode.Synced;
-  authentication: IServerCredentials | Realm.Sync.User;
+  user: Realm.Sync.SerializedUser;
   validateCertificates: boolean;
 }
 

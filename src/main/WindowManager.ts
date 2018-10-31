@@ -60,7 +60,7 @@ export class WindowManager {
         uniqueId = options.props.realm.path;
         break;
       case 'server-administration':
-        uniqueId = options.props.credentials.url;
+        uniqueId = options.props.user.server;
         break;
     }
 

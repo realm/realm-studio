@@ -27,11 +27,7 @@ export interface IRealmBrowserWindowProps {
 }
 
 const getRealmUrl = (realm: ros.realms.ISyncedRealmToLoad) => {
-  const url = new URL(
-    realm.authentication instanceof Realm.Sync.User
-      ? realm.authentication.server
-      : realm.authentication.url,
-  );
+  const url = new URL(realm.user.server);
   url.pathname = realm.path;
   return url.toString();
 };
