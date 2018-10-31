@@ -45,11 +45,13 @@ export const SingleRealmContent = ({
   realm,
   stateSize,
 }: ISingleRealmContentProps) => {
+  const isSystemRealm = realm && realm.path.startsWith('/__');
   // Determine if the Realm can be upgraded to a "reference" Realm,
   // It can if its defined and not already "partial" or "reference"
-  const canUpgradeType = realm
-    ? ['partial', 'reference'].indexOf(realm.realmType || '') === -1
-    : false;
+  const canUpgradeType =
+    realm &&
+    !isSystemRealm &&
+    ['partial', 'reference'].indexOf(realm.realmType || '') === -1;
   return (
     <React.Fragment>
       <SidebarTitle>
@@ -105,9 +107,15 @@ export const SingleRealmContent = ({
             Upgrade
           </Button>
         ) : null}
-        <Button size="sm" color="danger" onClick={() => onRealmDeletion(realm)}>
-          Delete
-        </Button>
+        {isSystemRealm ? null : (
+          <Button
+            size="sm"
+            color="danger"
+            onClick={() => onRealmDeletion(realm)}
+          >
+            Delete
+          </Button>
+        )}
       </SidebarControls>
     </React.Fragment>
   );
