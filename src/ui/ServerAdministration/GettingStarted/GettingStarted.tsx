@@ -22,7 +22,7 @@ import { Button, Input } from 'reactstrap';
 import './GettingStarted.scss';
 
 interface IGettingStartedProps {
-  onShowTutorial: (name: 'ios' | 'android') => void;
+  onShowTutorial: (name: 'ios' | 'android' | 'react-native') => void;
   serverUrl: string;
 }
 
