@@ -31,4 +31,5 @@ export enum MainActions {
   ShowOpenLocalRealm = 'show-open-local-realm',
   ShowRealmBrowser = 'show-realm-browser',
   ShowServerAdministration = 'show-server-administration',
+  ClearRendererCache = 'clear-renderer-cache',
 }

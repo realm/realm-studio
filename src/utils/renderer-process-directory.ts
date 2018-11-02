@@ -19,39 +19,36 @@
 import * as assert from 'assert';
 import * as electron from 'electron';
 import * as fs from 'fs-extra';
-import { resolve } from 'path';
+import * as path from 'path';
 
 const app = electron.app || electron.remote.app;
 const userDataPath = app.getPath('userData');
-const rendererPattern = /^renderer-\d+$/;
+const rendererPattern = /^renderer-.+$/;
 
-// Call this with `process.pid.toString()`
-export const getRendererProcessDirectory = (pid: number) => {
-  const pidString = pid.toString();
-  return resolve(userDataPath, `renderer-${pidString}`);
-};
-
-export const getRendererProcessDirectories = () => {
-  const directories = fs.readdirSync(userDataPath);
-  return directories
-    .filter(name => rendererPattern.test(name))
-    .map(name => resolve(userDataPath, name));
-};
-
-export const changeRendererProcessDirectory = () => {
+export const changeRendererProcessDirectory = (type: string) => {
   assert.equal(
     process.type,
     'renderer',
     'This should only be called from a renderer process',
   );
   // Get the process dir
-  const processDir = getRendererProcessDirectory(process.pid);
+  const processDir = path.resolve(userDataPath, `renderer-${type}`);
   // Remove the directory if it already exists
-  if (fs.existsSync(processDir)) {
-    fs.removeSync(processDir);
+  if (!fs.existsSync(processDir)) {
+    // Create the directory
+    fs.mkdirSync(processDir);
   }
-  // Create the directory
-  fs.mkdirSync(processDir);
+
   // Change to it
   process.chdir(processDir);
+};
+
+export const removeRendererDirectories = () => {
+  const directories = fs
+    .readdirSync(userDataPath)
+    .filter(name => rendererPattern.test(name))
+    .map(name => path.resolve(userDataPath, name))
+    .map(directory => fs.remove(directory));
+
+  return Promise.all(directories);
 };

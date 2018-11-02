@@ -90,6 +90,7 @@ export abstract class RealmLoadingComponent<
           schema,
           schemaVersion,
         );
+
         // Register change listeners
         this.realm.addListener('change', this.onRealmChanged);
         this.onRealmLoaded();
@@ -198,30 +199,29 @@ export abstract class RealmLoadingComponent<
         // Other errors, propagate it.
         throw error;
       }
-    } else if (realm && realm.mode === realms.RealmLoadingMode.Synced) {
-      const props = (realm as any) as realms.ISyncedRealmToLoad;
-      const user =
-        props.authentication instanceof Realm.Sync.User
-          ? props.authentication
-          : await users.authenticate(props.authentication);
-      const realmPromise = realms.open(
-        user,
-        realm.path,
-        realm.encryptionKey,
+    }
+
+    if (realm && realm.mode === realms.RealmLoadingMode.Synced) {
+      const realmPromise = realms.open({
+        user: Realm.Sync.User.deserialize(realm.user),
+        realmPath: realm.path,
+        encryptionKey: realm.encryptionKey,
         ssl,
-        this.progressChanged,
+        progressCallback: this.progressChanged,
         schema,
-      );
+      });
       // Save a wrapping promise so this can be cancelled
       return new Promise<Realm>((resolve, reject) => {
         this.cancellations.push(() => reject({ wasCancelled: true }));
         realmPromise.then(resolve, reject);
       });
-    } else if (!realm) {
-      throw new Error(`Called without a realm to load`);
-    } else {
-      throw new Error('Unexpected mode');
     }
+
+    if (!realm) {
+      throw new Error(`Called without a realm to load`);
+    }
+
+    throw new Error('Unexpected mode');
   }
 
   private progressChanged = (transferred: number, transferable: number) => {

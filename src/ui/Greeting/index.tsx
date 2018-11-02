@@ -27,6 +27,7 @@ import * as raas from '../../services/raas';
 import { IMenuGeneratorProps } from '../../windows/MenuGenerator';
 import { showError } from '../reusable/errors';
 
+import { authenticate } from '../../services/ros/users';
 import { Greeting } from './Greeting';
 
 export type SocialNetwork = 'twitter' | 'facebook' | 'reddit' | 'hacker-news';
@@ -97,8 +98,9 @@ class GreetingContainer extends React.Component<
       const tenantUrl = instance.tenantUrl;
       if (tenantUrl) {
         const credentials = raas.user.getTenantCredentials(tenantUrl);
+        const user = await authenticate(credentials);
         return main.showServerAdministration({
-          credentials,
+          user: user.serialize(),
           validateCertificates: true,
           isCloudTenant: true,
         });

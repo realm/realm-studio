@@ -24,8 +24,8 @@ import * as raas from '../services/raas';
 import { store } from '../store';
 import { showError } from '../ui/reusable/errors';
 
-const isDevelopment = process.env.NODE_ENV === 'development';
 const showInternalFeatures =
+  process.env.NODE_ENV === 'development' ||
   process.env.REALM_STUDIO_INTERNAL_FEATURES === 'true'; // Show features only relevant for Realm employees
 
 function generateCloudEndpointItems(
@@ -98,9 +98,9 @@ export const getDefaultMenuTemplate = (
     {
       label: 'View',
       submenu: [
-        { role: 'reload', visible: isDevelopment },
-        { role: 'toggledevtools', visible: isDevelopment },
-        { type: 'separator', visible: isDevelopment },
+        { role: 'reload', visible: showInternalFeatures },
+        { role: 'toggledevtools', visible: showInternalFeatures },
+        { type: 'separator', visible: showInternalFeatures },
         {
           label: `Show partial Realms`,
           type: 'checkbox',
@@ -180,6 +180,12 @@ export const getDefaultMenuTemplate = (
           label: 'Learn More...',
           click: () => {
             electronOrRemote.shell.openExternal('https://realm.io/docs');
+          },
+        },
+        {
+          label: 'Clear Cache',
+          click: () => {
+            main.clearRendererCache();
           },
         },
       ],

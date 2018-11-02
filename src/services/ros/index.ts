@@ -90,20 +90,25 @@ export type Availability =
   | { available: false };
 
 export const isAvailable = async (url: string): Promise<Availability> => {
-  const parsedUrl = new URL(url);
-  parsedUrl.pathname = 'health';
-  const response = await fetch(parsedUrl.toString());
-  if (response.status === 200) {
-    const contentType = response.headers.get('content-type') || '';
-    if (contentType.indexOf('application/json') !== -1) {
-      const body = await response.json();
-      return { available: true, version: body.version };
-    } else {
-      return { available: true };
+  try {
+    const parsedUrl = new URL(url);
+    parsedUrl.pathname = 'health';
+    const response = await fetch(parsedUrl.toString());
+    if (response.status === 200) {
+      const contentType = response.headers.get('content-type') || '';
+      let version: string | undefined;
+      if (contentType.indexOf('application/json') !== -1) {
+        const body = await response.json();
+        version = body.version;
+      }
+
+      return { available: true, version };
     }
-  } else {
-    return { available: false };
+  } catch {
+    // Ignore errors - we'll return unavailable anyway
   }
+
+  return { available: false };
 };
 
 export class FetchError extends Error {
