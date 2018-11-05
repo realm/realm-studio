@@ -81,8 +81,6 @@ export enum AccessLevel {
 export interface IRealmSizeInfo {
   stateSize?: number;
   fileSize?: number;
-  stateSizeTimestamp?: number;
-  fileSizeTimestamp?: number;
 }
 
 // An enum to describe a users role

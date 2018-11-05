@@ -18,13 +18,7 @@
 
 import * as Realm from 'realm';
 
-import {
-  fetchAuthenticated,
-  IRealmFile,
-  IRealmSizeInfo,
-  IServerCredentials,
-  RealmType,
-} from '.';
+import { fetchAuthenticated, IRealmFile, IRealmSizeInfo, RealmType } from '.';
 import { showError } from '../../ui/reusable/errors';
 
 export enum RealmLoadingMode {
@@ -168,7 +162,6 @@ interface IStatisticsResponse {
   [metricName: string]: Array<{
     labels: { [name: string]: string };
     value: number;
-    timestamp: number;
   }>;
 }
 
@@ -211,7 +204,6 @@ const populateSizes = (
   metrics: Array<{
     labels: { [name: string]: string };
     value: number;
-    timestamp: number;
   }>,
   result: { [path: string]: IRealmSizeInfo },
   propertyName: 'stateSize' | 'fileSize',
@@ -225,10 +217,7 @@ const populateSizes = (
         result[path] = sizeElement = {};
       }
 
-      const timestampPropertyName = `${propertyName}Timestamp`;
-
       sizeElement[propertyName] = stat.value;
-      (sizeElement as any)[timestampPropertyName] = stat.timestamp;
     }
   }
 };

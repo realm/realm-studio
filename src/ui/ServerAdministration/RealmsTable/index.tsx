@@ -18,6 +18,7 @@
 
 import * as compareVersions from 'compare-versions';
 import * as electron from 'electron';
+import * as _ from 'lodash';
 import memoize from 'memoize-one';
 import * as React from 'react';
 import * as Realm from 'realm';
@@ -54,7 +55,6 @@ export interface IRealmTableContainerProps {
 export interface IRealmTableContainerState {
   /** Prevents spamming the server too badly */
   deletionProgress?: IDeletionProgress;
-  isFetchRealmSizes: boolean;
   realmSizes?: { [path: string]: ros.IRealmSizeInfo };
   searchString: string;
   // TODO: Update this once Realm JS has better support for Sets
@@ -68,7 +68,6 @@ class RealmsTableContainer extends React.PureComponent<
   IRealmTableContainerState
 > {
   public state: IRealmTableContainerState = {
-    isFetchRealmSizes: false,
     selectedRealms: [],
     searchString: '',
     showPartialRealms: store.shouldShowPartialRealms(),
@@ -118,6 +117,29 @@ class RealmsTableContainer extends React.PureComponent<
       }
       return realms;
     },
+  );
+
+  private realmFileSizeThrottleDuration = 15000;
+  private fetchRealmSizes = _.throttle(
+    async () => {
+      try {
+        // Request the realm sizes from the server
+        const sizes = await ros.realms.getSizes(this.props.user);
+        // Update the state
+        this.setState({ realmSizes: sizes });
+      } catch (err) {
+        if (err instanceof ros.FetchError && err.response.status === 404) {
+          // This is expected from an older server
+          // - but we should really check the version before fetching instead ...
+        } else {
+          // Logging errors instead of showing them, because the user made no interaction
+          // tslint:disable-next-line:no-console
+          console.error('Failed to fetch Realm sizes', err);
+        }
+      }
+    },
+    realmFileSizeThrottleDuration,
+    { leading: true },
   );
 
   public render() {
@@ -171,11 +193,7 @@ class RealmsTableContainer extends React.PureComponent<
 
     // Fetch the realm sizes
     // TODO: Check the this.props.serverVersion before fetching using the semver library
-    this.fetchRealmSizes().then(undefined, err => {
-      // Logging errors instead of showing them, because the user made no interaction
-      // tslint:disable-next-line:no-console
-      console.error('Failed to fetch Realm sizes', err);
-    });
+    this.fetchRealmSizes();
   }
 
   public getRealmPermissions = (
@@ -212,7 +230,10 @@ class RealmsTableContainer extends React.PureComponent<
 
   public onRealmSizeRecalculate = async (realm: RealmFile) => {
     await ros.realms.requestSizeRecalculation(this.props.user, realm.path);
-    // TODO: periodically call fetchSizes until a newer datapoint is available
+
+    // Start polling for updated values - there's no guarantee when we'll get them,
+    // so just poll every 15 seconds for the next 2 minutes.
+    this.pollRealmSizes();
   };
 
   public onRealmDeletion = async (...realms: RealmFile[]) => {
@@ -283,30 +304,10 @@ class RealmsTableContainer extends React.PureComponent<
     this.setState({ searchString });
   };
 
-  private async fetchRealmSizes(
-    updateState = true,
-  ): Promise<{ [path: string]: ros.IRealmSizeInfo } | undefined> {
-    if (!this.state.isFetchRealmSizes) {
-      try {
-        this.setState({ isFetchRealmSizes: true });
-        // Request the realm sizes from the server
-        const sizes = await ros.realms.getSizes(this.props.user);
-        if (updateState) {
-          // Update the state
-          this.setState({ realmSizes: sizes });
-        }
-
-        return sizes;
-      } catch (err) {
-        if (err instanceof ros.FetchError && err.response.status === 404) {
-          // This is expected from an older server
-          // - but we should really check the version before fetching instead ...
-        } else {
-          throw err;
-        }
-      } finally {
-        this.setState({ isFetchRealmSizes: false });
-      }
+  private async pollRealmSizes(duration = 120000) {
+    for (let i = 0; i < duration / this.realmFileSizeThrottleDuration; i++) {
+      await wait(this.realmFileSizeThrottleDuration);
+      await this.fetchRealmSizes();
     }
   }
 
