@@ -138,7 +138,7 @@ class RealmsTableContainer extends React.PureComponent<
         }
       }
     },
-    realmFileSizeThrottleDuration,
+    this.realmFileSizeThrottleDuration,
     { leading: true },
   );
 
