@@ -62,7 +62,6 @@ export const ChangePasswordDialog = ({
               name="password"
               id="password"
               type="password"
-              required
               value={password}
               onChange={onPasswordChanged}
             />
@@ -73,7 +72,6 @@ export const ChangePasswordDialog = ({
               name="password-repeated"
               id="password-repeated"
               type="password"
-              required
               valid={passwordRepeated !== '' && password === passwordRepeated}
               invalid={password !== passwordRepeated}
               value={passwordRepeated}
