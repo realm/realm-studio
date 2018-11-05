@@ -39,6 +39,7 @@ export const RealmSidebar = ({
   onClose,
   realms,
   onRealmSizeRecalculate,
+  shouldShowRealmSize,
 }: {
   deletionProgress?: IDeletionProgress;
   getRealmPermissions: (realm: RealmFile) => Realm.Results<ros.IPermission>;
@@ -50,6 +51,7 @@ export const RealmSidebar = ({
   onRealmSizeRecalculate: (realm: RealmFile) => void;
   onClose: () => void;
   realms: RealmFile[];
+  shouldShowRealmSize: boolean;
 }) => (
   <Sidebar
     className="RealmSidebar"
@@ -68,6 +70,7 @@ export const RealmSidebar = ({
         realm={realms[0]}
         realmSize={getRealmSize(realms[0])}
         onRealmSizeRecalculate={onRealmSizeRecalculate}
+        shouldShowRealmSize={shouldShowRealmSize}
       />
     ) : realms.length > 1 ? (
       <MultipleRealmsContent

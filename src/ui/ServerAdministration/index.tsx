@@ -201,12 +201,26 @@ class ServerAdministrationContainer
 
     const compatible = this.isCompatibleVersion(version);
     if (!compatible) {
-      this.failWithIncompatibleVersion(version);
+      this.setState({
+        serverVersion: version,
+        progress: {
+          status: 'failed',
+          message: `You are connecting to an old Realm Object Server,
+            no longer supported by Realm Studio.\n
+            You can download an older compatible version of Realm Studio,
+            which won't receive updates.`,
+          retry: {
+            label: 'Downgrade Realm Studio',
+            onRetry: () => this.onDowngradeStudio(version),
+          },
+        },
+      });
     } else {
       const user = Realm.Sync.User.deserialize(this.props.user);
       this.setState({
+        serverVersion: version,
         progress: {
-          status: 'in-progress',
+          status: 'done',
           message: 'Authenticated',
         },
         user,
@@ -244,7 +258,6 @@ class ServerAdministrationContainer
           }
         }
 
-        // Let's resolve the promise, delete it and break the endless loop
         resolve(availability.version);
         delete this.availabilityPromise;
       });
@@ -306,23 +319,6 @@ class ServerAdministrationContainer
       this.compatibilityVersions.length - 1
     ].rosVersion;
     return compareVersions(version || '0.0.0', minimumVersion) > -1;
-  }
-
-  protected failWithIncompatibleVersion(version?: string) {
-    this.setState({
-      serverVersion: version,
-      progress: {
-        status: 'failed',
-        message: `You are connecting to an old Realm Object Server,
-          no longer supported by Realm Studio.\n
-          You can download an older compatible version of Realm Studio,
-          which won't receive updates.`,
-        retry: {
-          label: 'Downgrade Realm Studio',
-          onRetry: () => this.onDowngradeStudio(version),
-        },
-      },
-    });
   }
 
   protected downgradedStudioUrl(version: string | undefined) {

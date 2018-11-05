@@ -55,6 +55,7 @@ export const RealmsTable = ({
   searchString,
   selectedRealms,
   onRealmSizeRecalculate,
+  shouldShowRealmSize,
 }: {
   deletionProgress?: IDeletionProgress;
   getRealmPermissions: (realm: RealmFile) => Realm.Results<IPermission>;
@@ -71,6 +72,7 @@ export const RealmsTable = ({
   searchString: string;
   selectedRealms: RealmFile[];
   onRealmSizeRecalculate: (realm: RealmFile) => void;
+  shouldShowRealmSize: boolean;
 }) => {
   return (
     <div className="RealmsTable">
@@ -111,7 +113,7 @@ export const RealmsTable = ({
         <Column
           label="File Size"
           dataKey="path"
-          width={100}
+          width={shouldShowRealmSize ? 100 : 0}
           headerRenderer={props => <StateSizeHeader {...props} />}
           cellRenderer={({ cellData }) =>
             renderRealmSize(cellData, 'fileSize', realmSizes)
@@ -134,6 +136,7 @@ export const RealmsTable = ({
         onClose={onRealmsDeselection}
         realms={selectedRealms}
         onRealmSizeRecalculate={onRealmSizeRecalculate}
+        shouldShowRealmSize={shouldShowRealmSize}
       />
     </div>
   );

@@ -35,6 +35,7 @@ export interface IRealmSidebarContainerProps {
   onClose: () => void;
   realms: RealmFile[];
   onRealmSizeRecalculate: (realm: RealmFile) => void;
+  shouldShowRealmSize: boolean;
 }
 
 export interface IRealmSidebarContainerState {
@@ -77,6 +78,7 @@ export class RealmSidebarContainer extends React.Component<
         onClose={this.props.onClose}
         realms={validRealms}
         onRealmSizeRecalculate={this.props.onRealmSizeRecalculate}
+        shouldShowRealmSize={this.props.shouldShowRealmSize}
       />
     );
   }

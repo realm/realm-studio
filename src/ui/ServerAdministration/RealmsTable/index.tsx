@@ -16,6 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import * as compareVersions from 'compare-versions';
 import * as electron from 'electron';
 import memoize from 'memoize-one';
 import * as React from 'react';
@@ -148,6 +149,7 @@ class RealmsTableContainer extends React.PureComponent<
         selectedRealms={validSelectedRealms}
         deletionProgress={this.state.deletionProgress}
         onRealmSizeRecalculate={this.onRealmSizeRecalculate}
+        shouldShowRealmSize={this.shouldShowRealmSize(this.props.serverVersion)}
       />
     );
   }
@@ -189,6 +191,10 @@ class RealmsTableContainer extends React.PureComponent<
     if (this.state.realmSizes) {
       return this.state.realmSizes[realm.path];
     }
+  };
+
+  public shouldShowRealmSize = (serverVersion?: string): boolean => {
+    return compareVersions(serverVersion || '0.0.0', '3.12.5') > -1;
   };
 
   public onRealmCreation = async () => {

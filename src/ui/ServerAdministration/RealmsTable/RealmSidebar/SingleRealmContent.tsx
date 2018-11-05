@@ -37,6 +37,7 @@ interface ISingleRealmContentProps {
   permissions: Realm.Results<ros.IPermission>;
   realmSize?: ros.IRealmSizeInfo;
   onRealmSizeRecalculate: (realm: RealmFile) => void;
+  shouldShowRealmSize: boolean;
 }
 
 export const SingleRealmContent = ({
@@ -47,6 +48,7 @@ export const SingleRealmContent = ({
   realm,
   realmSize,
   onRealmSizeRecalculate,
+  shouldShowRealmSize,
 }: ISingleRealmContentProps) => {
   const isSystemRealm = realm && realm.path.startsWith('/__');
   // Determine if the Realm can be upgraded to a "reference" Realm,
@@ -78,14 +80,16 @@ export const SingleRealmContent = ({
             <MissingSizeBadge />
           )}
         </p>
-        <p className="RealmSidebar__SubTitle">
-          File size:{' '}
-          {realmSize && typeof realmSize.fileSize === 'number' ? (
-            prettyBytes(realmSize.fileSize)
-          ) : (
-            <MissingSizeBadge />
-          )}
-        </p>
+        {shouldShowRealmSize ? (
+          <p className="RealmSidebar__SubTitle">
+            File size:{' '}
+            {realmSize && typeof realmSize.fileSize === 'number' ? (
+              prettyBytes(realmSize.fileSize)
+            ) : (
+              <MissingSizeBadge />
+            )}
+          </p>
+        ) : null}
         <Button
           size="sm"
           color="secondary"
