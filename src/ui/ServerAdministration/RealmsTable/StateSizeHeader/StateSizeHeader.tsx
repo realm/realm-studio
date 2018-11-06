@@ -51,7 +51,7 @@ export const StateSizeHeader = ({
         toggle={onTogglePopover}
         placement="bottom"
       >
-        <PopoverBody>Recomputed every 30 minutes</PopoverBody>
+        <PopoverBody>Recomputed once a day</PopoverBody>
       </Popover>
     ) : null}
   </div>

@@ -18,7 +18,7 @@
 
 import * as Realm from 'realm';
 
-import { fetchAuthenticated, IRealmFile, RealmType } from '.';
+import { fetchAuthenticated, IRealmFile, IRealmSizeInfo, RealmType } from '.';
 import { showError } from '../../ui/reusable/errors';
 
 export enum RealmLoadingMode {
@@ -177,20 +177,60 @@ export const getStats = async (
   );
 };
 
-export const getSizes = async (user: Realm.Sync.User) => {
-  const metrics = await getStats(user, 'ros_sync_realm_state_size');
-  if (metrics.ros_sync_realm_state_size) {
-    const result: { [path: string]: number } = {};
-    const sizeMetric = metrics.ros_sync_realm_state_size;
-    for (const stat of sizeMetric) {
-      if (stat.labels.path) {
-        // The paths are URI encoded
-        const path = decodeURIComponent(stat.labels.path);
-        result[path] = stat.value;
-      }
-    }
-    return result;
-  } else {
-    throw new Error("Expected 'ros_sync_realm_state_size' in response");
+const stateSizeMetricName = 'ros_sync_realm_state_size';
+const fileSizeMetricName = 'ros_sync_realm_file_size';
+export const getSizes = async (
+  user: Realm.Sync.User,
+): Promise<{ [path: string]: IRealmSizeInfo }> => {
+  const metrics = await getStats(
+    user,
+    `${stateSizeMetricName},${fileSizeMetricName}`,
+  );
+  if (!metrics[stateSizeMetricName] || !metrics[fileSizeMetricName]) {
+    throw new Error(
+      `Expected '${stateSizeMetricName}' and '${fileSizeMetricName}' in response`,
+    );
   }
+
+  const result: { [path: string]: IRealmSizeInfo } = {};
+
+  populateSizes(metrics[stateSizeMetricName], result, 'stateSize');
+  populateSizes(metrics[fileSizeMetricName], result, 'fileSize');
+
+  return result;
+};
+
+const populateSizes = (
+  metrics: Array<{
+    labels: { [name: string]: string };
+    value: number;
+  }>,
+  result: { [path: string]: IRealmSizeInfo },
+  propertyName: 'stateSize' | 'fileSize',
+) => {
+  for (const stat of metrics) {
+    if (stat.labels.path) {
+      // The paths are URI encoded
+      const path = decodeURIComponent(stat.labels.path);
+      let sizeElement = result[path];
+      if (!sizeElement) {
+        result[path] = sizeElement = {};
+      }
+
+      sizeElement[propertyName] = stat.value;
+    }
+  }
+};
+
+export const requestSizeRecalculation = (
+  user: Realm.Sync.User,
+  realmPath: string,
+): Promise<void> => {
+  const encodedPath = encodeURIComponent(realmPath);
+  return fetchAuthenticated(
+    user,
+    `/realms/calculate-size/${encodedPath}`,
+    { method: 'POST' },
+    'Failed to request size recalculation',
+  );
 };
