@@ -257,7 +257,9 @@ class RealmBrowserContainer
 
   protected loadingRealmFailed(err: Error) {
     const message = err.message || '';
-    const mightBeEncrypted = message.indexOf('Not a Realm file.') >= 0;
+    const mightBeEncrypted =
+      message.indexOf('Not a Realm file.') >= 0 ||
+      message.indexOf('Invalid mnemonic') >= 0;
     if (mightBeEncrypted) {
       this.setState({
         isEncryptionDialogVisible: true,
