@@ -212,7 +212,7 @@ class RealmsTableContainer extends React.PureComponent<
   };
 
   public shouldShowRealmSize = (serverVersion?: string): boolean => {
-    return compareVersions(serverVersion || '0.0.0', '3.12.5') > -1;
+    return compareVersions(serverVersion || '0.0.0', '3.13.0') > -1;
   };
 
   public onRealmCreation = async () => {
