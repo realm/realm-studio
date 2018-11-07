@@ -39,7 +39,7 @@ export const authenticate = async (
     const options = credentials.options as any;
     realmCredentials = Realm.Sync.Credentials.custom(
       options.provider,
-      options.providerToken || options.data,
+      options.providerToken || options.data || '',
       options.userInfo || options.user_info || {},
     );
   } else {
