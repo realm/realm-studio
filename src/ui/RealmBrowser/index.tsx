@@ -67,7 +67,6 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   dataVersion: number;
   dataVersionAtBeginning?: number;
   editMode: EditMode;
-  encryptionKey?: string;
   focus: Focus | null;
   isAddClassOpen: boolean;
   isAddPropertyOpen: boolean;
@@ -268,6 +267,7 @@ class RealmBrowserContainer
         },
       });
     } else {
+      this.props.realm.encryptionKey = undefined;
       super.loadingRealmFailed(err);
     }
   }
@@ -521,12 +521,8 @@ class RealmBrowserContainer
   };
 
   private onOpenWithEncryption = (key: string) => {
-    this.setState({ encryptionKey: key });
-    const encryptionKey = Buffer.from(key, 'hex');
-    this.loadRealm({
-      ...this.props.realm,
-      encryptionKey,
-    });
+    this.props.realm.encryptionKey = Buffer.from(key, 'hex');
+    this.loadRealm(this.props.realm);
   };
 
   private onBeforeUnload = (e: BeforeUnloadEvent) => {
