@@ -77,7 +77,7 @@ export const AddClassModal = ({
             />
             {!nameIsValid && (
               <FormFeedback>
-                Already exists a class with that name.
+                A class with that name already exists.
               </FormFeedback>
             )}
           </FormGroup>
