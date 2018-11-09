@@ -26,6 +26,7 @@ import { SidebarBody, SidebarControls, SidebarTitle } from '../../../reusable';
 import { displayUser, prettyBytes, shortenRealmPath } from '../../utils';
 import { RealmTypeBadge } from '../RealmTypeBadge';
 
+import { MissingSizeBadge } from '../MissingSizeBadge';
 import { PermissionsTable } from './PermissionsTable';
 
 interface ISingleRealmContentProps {
@@ -34,7 +35,9 @@ interface ISingleRealmContentProps {
   onRealmTypeUpgrade: (realm: RealmFile) => void;
   realm: RealmFile;
   permissions: Realm.Results<ros.IPermission>;
-  stateSize?: number;
+  realmSize?: ros.IRealmSizeInfo;
+  onRealmSizeRecalculate: (realm: RealmFile) => void;
+  shouldShowRealmSize: boolean;
 }
 
 export const SingleRealmContent = ({
@@ -43,7 +46,9 @@ export const SingleRealmContent = ({
   onRealmTypeUpgrade,
   permissions,
   realm,
-  stateSize,
+  realmSize,
+  onRealmSizeRecalculate,
+  shouldShowRealmSize,
 }: ISingleRealmContentProps) => {
   const isSystemRealm = realm && realm.path.startsWith('/__');
   // Determine if the Realm can be upgraded to a "reference" Realm,
@@ -67,11 +72,31 @@ export const SingleRealmContent = ({
         <p className="RealmSidebar__SubTitle">
           Owned by {displayUser(realm.owner)}
         </p>
-        {typeof stateSize === 'number' ? (
+        <p className="RealmSidebar__SubTitle">
+          Data size:{' '}
+          {realmSize && typeof realmSize.stateSize === 'number' ? (
+            prettyBytes(realmSize.stateSize)
+          ) : (
+            <MissingSizeBadge />
+          )}
+        </p>
+        {shouldShowRealmSize ? (
           <p className="RealmSidebar__SubTitle">
-            Data size: {prettyBytes(stateSize)}
+            File size:{' '}
+            {realmSize && typeof realmSize.fileSize === 'number' ? (
+              prettyBytes(realmSize.fileSize)
+            ) : (
+              <MissingSizeBadge />
+            )}
           </p>
         ) : null}
+        <Button
+          size="sm"
+          color="secondary"
+          onClick={() => onRealmSizeRecalculate(realm)}
+        >
+          Recalculate Sizes
+        </Button>
       </SidebarBody>
       <SidebarBody className="RealmSidebar__Tables">
         {permissions ? <PermissionsTable permissions={permissions} /> : null}

@@ -31,23 +31,27 @@ import './RealmSidebar.scss';
 export const RealmSidebar = ({
   deletionProgress,
   getRealmPermissions,
-  getRealmStateSize,
+  getRealmSize,
   isOpen,
   onRealmDeletion,
   onRealmOpened,
   onRealmTypeUpgrade,
   onClose,
   realms,
+  onRealmSizeRecalculate,
+  shouldShowRealmSize,
 }: {
   deletionProgress?: IDeletionProgress;
   getRealmPermissions: (realm: RealmFile) => Realm.Results<ros.IPermission>;
-  getRealmStateSize: (realm: RealmFile) => number | undefined;
+  getRealmSize: (realm: RealmFile) => ros.IRealmSizeInfo | undefined;
   isOpen: boolean;
   onRealmDeletion: (realm: RealmFile) => void;
   onRealmOpened: (realm: RealmFile) => void;
   onRealmTypeUpgrade: (realm: RealmFile) => void;
+  onRealmSizeRecalculate: (realm: RealmFile) => void;
   onClose: () => void;
   realms: RealmFile[];
+  shouldShowRealmSize: boolean;
 }) => (
   <Sidebar
     className="RealmSidebar"
@@ -64,7 +68,9 @@ export const RealmSidebar = ({
         onRealmTypeUpgrade={onRealmTypeUpgrade}
         permissions={getRealmPermissions(realms[0])}
         realm={realms[0]}
-        stateSize={getRealmStateSize(realms[0])}
+        realmSize={getRealmSize(realms[0])}
+        onRealmSizeRecalculate={onRealmSizeRecalculate}
+        shouldShowRealmSize={shouldShowRealmSize}
       />
     ) : realms.length > 1 ? (
       <MultipleRealmsContent

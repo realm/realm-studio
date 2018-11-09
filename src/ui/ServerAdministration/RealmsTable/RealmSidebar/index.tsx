@@ -20,20 +20,22 @@ import * as React from 'react';
 
 import { RealmSidebar } from './RealmSidebar';
 
-import { IPermission } from '../../../../services/ros';
+import { IPermission, IRealmSizeInfo } from '../../../../services/ros';
 
 import { IDeletionProgress, RealmFile } from '..';
 
 export interface IRealmSidebarContainerProps {
   deletionProgress?: IDeletionProgress;
   getRealmPermissions: (realm: RealmFile) => Realm.Results<IPermission>;
-  getRealmStateSize: (realm: RealmFile) => number | undefined;
+  getRealmSize: (realm: RealmFile) => IRealmSizeInfo | undefined;
   isOpen: boolean;
   onRealmDeletion: (...realms: RealmFile[]) => void;
   onRealmOpened: (realm: RealmFile) => void;
   onRealmTypeUpgrade: (realm: RealmFile) => void;
   onClose: () => void;
   realms: RealmFile[];
+  onRealmSizeRecalculate: (realm: RealmFile) => void;
+  shouldShowRealmSize: boolean;
 }
 
 export interface IRealmSidebarContainerState {
@@ -68,13 +70,15 @@ export class RealmSidebarContainer extends React.Component<
       <RealmSidebar
         deletionProgress={this.props.deletionProgress}
         getRealmPermissions={this.props.getRealmPermissions}
-        getRealmStateSize={this.props.getRealmStateSize}
+        getRealmSize={this.props.getRealmSize}
         isOpen={this.props.isOpen}
         onRealmDeletion={this.props.onRealmDeletion}
         onRealmOpened={this.props.onRealmOpened}
         onRealmTypeUpgrade={this.props.onRealmTypeUpgrade}
         onClose={this.props.onClose}
         realms={validRealms}
+        onRealmSizeRecalculate={this.props.onRealmSizeRecalculate}
+        shouldShowRealmSize={this.props.shouldShowRealmSize}
       />
     );
   }
