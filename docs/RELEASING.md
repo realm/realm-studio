@@ -24,14 +24,15 @@ what it's basically doing:
 1. Checkout the branch
 2. Run `npm version` with the next version specified
 3. Save that new version from the `package.json` into the `package-lock.json`
-4. Commit in the two files changed
-5. Tag the commit with the new version
-6. Waiting for you to confirm the change - see
+4. Append the contents of RELEASENOTES.md into the CHANGELOG.md and restores the RELEASENOTES.md from a template.
+5. Commit in the four files changed
+6. Tag the commit with the new version
+7. Waiting for you to confirm the change - see
    [the console output](https://ci.realm.io/blue/organizations/jenkins/realm-studio%2Fprepare/activity)
    if you're wondering why the build is taking so long
-7. Push the changes and tag to GitHub
-8. Create a drafted GitHub release
-8. Start a release job
+8. Push the changes and tag to GitHub
+9. Create a drafted GitHub release from the RELEASENOTES.md
+10. Start a release job
 
 ## Release a prepared release
 
