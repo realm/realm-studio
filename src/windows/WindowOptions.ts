@@ -77,7 +77,7 @@ export type WindowOptions =
 export function getWindowOptions(): WindowOptions {
   // Strip away the "?" of the location.search
   const queryString = location.search.substr(1);
-  const query = qs.parse<{ options?: string }>(queryString);
+  const query = qs.parse(queryString);
   if (query && typeof query.options === 'string') {
     return JSON.parse(query.options);
   } else {
