@@ -51,12 +51,12 @@ export const SingleRealmContent = ({
   shouldShowRealmSize,
 }: ISingleRealmContentProps) => {
   const isSystemRealm = realm && realm.path.startsWith('/__');
+  const isFullRealm =
+    ['partial', 'reference'].indexOf(realm.realmType || '') === -1;
   // Determine if the Realm can be upgraded to a "reference" Realm,
   // It can if its defined and not already "partial" or "reference"
-  const canUpgradeType =
-    realm &&
-    !isSystemRealm &&
-    ['partial', 'reference'].indexOf(realm.realmType || '') === -1;
+  const canUpgradeType = realm && !isSystemRealm && isFullRealm;
+
   return (
     <React.Fragment>
       <SidebarTitle>
@@ -98,9 +98,11 @@ export const SingleRealmContent = ({
           Recalculate Sizes
         </Button>
       </SidebarBody>
-      <SidebarBody className="RealmSidebar__Tables">
-        {permissions ? <PermissionsTable permissions={permissions} /> : null}
-      </SidebarBody>
+      {isFullRealm ? (
+        <SidebarBody className="RealmSidebar__Tables">
+          {permissions ? <PermissionsTable permissions={permissions} /> : null}
+        </SidebarBody>
+      ) : null}
       {canUpgradeType ? (
         <SidebarBody grow={0} className="RealmSidebar__UpgradeTypeBlock">
           This Realm can be upgraded to a Reference Realm which will enable{' '}

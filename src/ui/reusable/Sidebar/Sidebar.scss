@@ -198,6 +198,7 @@
     flex-shrink: 0;
     justify-content: center;
     padding: 3 * $spacer / 4;
+    margin-top: auto;
 
     & > * {
       margin: $spacer / 4;
