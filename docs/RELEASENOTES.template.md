@@ -1,10 +1,10 @@
 [Changes since {PREVIOUS_VERSION}](https://github.com/realm/realm-studio/compare/{PREVIOUS_VERSION}...{CURRENT_VERSION})
 
-# Enhancements
+## Enhancements
 - None
 
-# Bugfixes
+## Bugfixes
 - None
 
-# Internal
+## Internal
 - None

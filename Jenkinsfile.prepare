@@ -34,7 +34,7 @@ jobWrapper {
       today = new Date().format('yyyy-MM-dd')
       // Append the release notes to the change log
       changeLog = readFile 'CHANGELOG.md'
-      changeLog = "Release ${nextVersion.substring(1)} (${today})\n\n${releaseNotes}\n\n${changeLog}"
+      changeLog = "# Release ${nextVersion.substring(1)} (${today})\n\n${releaseNotes}\n\n${changeLog}"
       writeFile file: 'CHANGELOG.md', text: changeLog
 
       // Restore the release notes from the template
