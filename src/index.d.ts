@@ -31,11 +31,6 @@ declare module 'mixpanel-browser' {
   export = mixpanel;
 }
 
-declare module 'keytar-prebuild' {
-  import * as keytar from 'keytar';
-  export = keytar;
-}
-
 declare module 'react-object-inspector' {
   interface IObjectInpectorProps {
     name?: string;
