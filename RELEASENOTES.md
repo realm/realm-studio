@@ -8,4 +8,4 @@
 
 # Internal
 - Moved sentry id to the title and using the bug template for the body (#983)
-- Building up release notes in this file as PRs are merged.
+- Building up release notes in this file as PRs are merged (#987)
