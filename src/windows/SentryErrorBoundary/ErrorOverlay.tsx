@@ -27,8 +27,8 @@ interface IErrorOverlayProps {
 }
 
 export const ErrorOverlay = ({ error, info, eventId }: IErrorOverlayProps) => {
-  const body = encodeURIComponent(`Sentry ID: ${eventId}`);
-  const gitHubUrl = `https://github.com/realm/realm-studio/issues/new?body=${body}`;
+  const title = encodeURIComponent(`[add title here] (Sentry ID: ${eventId})`);
+  const gitHubUrl = `https://github.com/realm/realm-studio/issues/new?template=bug_report.md&title=${title}`;
   return (
     <div className="ErrorOverlay">
       <p className="ErrorOverlay__Introduction">
