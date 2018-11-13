@@ -37,13 +37,14 @@ if (process.type === 'renderer') {
   Sentry.init({
     dsn,
     environment,
-    afterSend: event => {
+    beforeSend: event => {
       // Iterate through the windows waiting for an event id
       for (const webContents of listeners) {
         webContents.send(IPC_EVENT_ID, { id: event.event_id });
       }
       // Reset the list of listeners
       listeners = [];
+      return event;
     },
   });
   // Register a listener for renderer processes asking for the event id

@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as sentry from '@sentry/electron';
-import * as electron from 'electron';
+import { app, dialog, Menu } from 'electron';
 import * as path from 'path';
 import { URL } from 'url';
 
@@ -117,13 +117,11 @@ export class Application {
 
   public run() {
     // Check to see if this is the first instance or not
-    const hasAnotherInstance = electron.app.makeSingleInstance(
-      this.onInstanceStarted,
-    );
+    const hasAnotherInstance = app.requestSingleInstanceLock() === false;
 
     if (hasAnotherInstance) {
       // Quit the app if started multiple times
-      electron.app.quit();
+      app.quit();
     } else {
       // Register as a listener for specific URLs
       this.registerProtocols();
@@ -135,9 +133,11 @@ export class Application {
       this.addAppListeners();
       this.cloudManager.addListener(this.onCloudStatusChange);
       // If its already ready - the handler won't be called
-      if (electron.app.isReady()) {
+      if (app.isReady()) {
         this.onReady();
       }
+      // Handle any second instances of the Application
+      app.on('second-instance', this.onInstanceStarted);
     }
   }
 
@@ -152,7 +152,7 @@ export class Application {
   }
 
   public userDataPath(): string {
-    return electron.app.getPath('userData');
+    return app.getPath('userData');
   }
 
   // Implementation of action handlers below
@@ -227,7 +227,7 @@ export class Application {
 
   public showOpenLocalRealm() {
     return new Promise((resolve, reject) => {
-      electron.dialog.showOpenDialog(
+      dialog.showOpenDialog(
         {
           properties: ['openFile', 'multiSelections'],
           filters: [{ name: 'Realm Files', extensions: ['realm'] }],
@@ -264,7 +264,7 @@ export class Application {
     const importer = dataImporter.getDataImporter(format, paths, schema);
     // Start the import
     const defaultPath = path.dirname(paths[0]) + '/default.realm';
-    const destinationPath = electron.dialog.showSaveDialog({
+    const destinationPath = dialog.showSaveDialog({
       defaultPath,
       title: 'Choose where to store the imported data',
       filters: [{ name: 'Realm file', extensions: ['realm'] }],
@@ -385,24 +385,21 @@ export class Application {
   }
 
   private addAppListeners() {
-    electron.app.addListener('ready', this.onReady);
-    electron.app.addListener('activate', this.onActivate);
-    electron.app.addListener('open-file', this.onOpenFile);
-    electron.app.addListener('open-url', this.onOpenUrl);
-    electron.app.addListener('window-all-closed', this.onWindowAllClosed);
-    electron.app.addListener('web-contents-created', this.onWebContentsCreated);
+    app.addListener('ready', this.onReady);
+    app.addListener('activate', this.onActivate);
+    app.addListener('open-file', this.onOpenFile);
+    app.addListener('open-url', this.onOpenUrl);
+    app.addListener('window-all-closed', this.onWindowAllClosed);
+    app.addListener('web-contents-created', this.onWebContentsCreated);
   }
 
   private removeAppListeners() {
-    electron.app.removeListener('ready', this.onReady);
-    electron.app.removeListener('activate', this.onActivate);
-    electron.app.removeListener('open-file', this.onOpenFile);
-    electron.app.removeListener('open-url', this.onOpenUrl);
-    electron.app.removeListener('window-all-closed', this.onWindowAllClosed);
-    electron.app.removeListener(
-      'web-contents-created',
-      this.onWebContentsCreated,
-    );
+    app.removeListener('ready', this.onReady);
+    app.removeListener('activate', this.onActivate);
+    app.removeListener('open-file', this.onOpenFile);
+    app.removeListener('open-url', this.onOpenUrl);
+    app.removeListener('window-all-closed', this.onWindowAllClosed);
+    app.removeListener('web-contents-created', this.onWebContentsCreated);
   }
 
   private onReady = async () => {
@@ -422,7 +419,7 @@ export class Application {
 
   private onOpenFile = (e: Electron.Event, filePath: string) => {
     e.preventDefault();
-    if (!electron.app.isReady()) {
+    if (!app.isReady()) {
       this.delayedRealmOpens.push(filePath);
     } else {
       this.openLocalRealmAtPath(filePath).catch(err =>
@@ -432,7 +429,7 @@ export class Application {
   };
 
   private onOpenUrl = (event: Event | undefined, urlString: string) => {
-    if (electron.app.isReady()) {
+    if (app.isReady()) {
       const url = new URL(urlString);
       if (url.protocol === `${STUDIO_PROTOCOL}:`) {
         // The protocol stores the action as the URL hostname
@@ -458,7 +455,7 @@ export class Application {
 
   private onWindowAllClosed = () => {
     if (process.platform !== 'darwin') {
-      electron.app.quit();
+      app.quit();
     } else {
       this.setDefaultMenu();
     }
@@ -500,10 +497,10 @@ export class Application {
    * If not already - register this as the default protocol client for a protocol
    */
   private registerProtocol(protocol: string) {
-    if (!electron.app.isDefaultProtocolClient(protocol)) {
-      const success = electron.app.setAsDefaultProtocolClient(protocol);
+    if (!app.isDefaultProtocolClient(protocol)) {
+      const success = app.setAsDefaultProtocolClient(protocol);
       if (!success) {
-        electron.dialog.showErrorBox(
+        dialog.showErrorBox(
           'Failed when registering protocols',
           `Studio could not register the ${protocol}:// protocol.`,
         );
@@ -515,6 +512,7 @@ export class Application {
    * This is called when another instance of the app is started on Windows or Linux
    */
   private onInstanceStarted = async (
+    event: Event,
     argv: string[],
     workingDirectory: string,
   ) => {
@@ -525,8 +523,8 @@ export class Application {
 
   private setDefaultMenu = () => {
     const menuTemplate = getDefaultMenuTemplate(this.setDefaultMenu);
-    const menu = electron.Menu.buildFromTemplate(menuTemplate);
-    electron.Menu.setApplicationMenu(menu);
+    const menu = Menu.buildFromTemplate(menuTemplate);
+    Menu.setApplicationMenu(menu);
   };
 
   private async openCloudUrl(url: URL): Promise<void> {
@@ -540,7 +538,7 @@ export class Application {
           // Retry
           return this.openCloudUrl(url);
         } else if (url.username !== currentUser.id) {
-          const answer = electron.dialog.showMessageBox({
+          const answer = dialog.showMessageBox({
             type: 'warning',
             message: `You're trying to connect to a cloud instance that is not owned by you.\n\nDo you want to login as another user?`,
             buttons: ['Yes, login with another user!', 'No, abort!'],
@@ -577,7 +575,7 @@ export class Application {
     const serverUrl = new URL(`https://${url.host}`);
 
     if (!trusted) {
-      const answer = electron.dialog.showMessageBox({
+      const answer = dialog.showMessageBox({
         type: 'warning',
         message: `You're about to connect to ${serverUrl.toString()}.\n\nThis will reveal your cloud token to the server. Do you wish to proceed?`,
         buttons: ['Yes, connect!', 'No, abort!'],
