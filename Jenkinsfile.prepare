@@ -37,9 +37,6 @@ jobWrapper {
       changeLog = "# Release ${nextVersion.substring(1)} (${today})\n\n${releaseNotes}\n\n${changeLog}"
       writeFile file: 'CHANGELOG.md', text: changeLog
 
-      // Restore the release notes from the template
-      sh 'cp docs/RELEASENOTES.template.md RELEASENOTES.md'
-
       // Push the change to GitHub
       input(message: "Push ${nextVersion} and start a release?", id: 'push')
 
@@ -67,9 +64,14 @@ jobWrapper {
       sh 'git config --global user.name "Jenkins CI"'
 
       // Stage the updates to the files, commit and tag the commit
-      sh 'git add package.json package-lock.json CHANGELOG.md RELEASENOTES.md'
+      sh 'git add package.json package-lock.json CHANGELOG.md'
       sh "git commit -m 'Prepare version ${nextVersion}'"
       sh "git tag ${nextVersion}"
+
+      // Restore the release notes from the template
+      sh 'cp docs/RELEASENOTES.template.md RELEASENOTES.md'
+      sh 'git add RELEASENOTES.md'
+      sh "git commit -m 'Restoring RELEASENOTES.md'"
 
       sshagent(['realm-ci-ssh']) {
         // Push with tags
