@@ -54,11 +54,11 @@ class GettingStartedContainer extends React.Component<
   public onShowTutorial = (name: 'ios' | 'android' | 'react-native') => {
     if (name === 'ios') {
       electron.shell.openExternal(
-        'https://docs.realm.io/platform/v/3.x/getting-started/ios-quick-start',
+        'https://docs.realm.io/platform/getting-started-1/ios-quick-start',
       );
     } else if (name === 'android') {
       electron.shell.openExternal(
-        'https://docs.realm.io/platform/v/3.x/getting-started/android-quick-start',
+        'https://docs.realm.io/platform/getting-started-1/android-quick-start',
       );
     } else if (name === 'react-native') {
       electron.shell.openExternal(
