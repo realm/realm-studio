@@ -6,7 +6,7 @@
 - None
 
 # Bugfixes
-- None
+- Windows was getting smaller on the Windows OS each time the window was opened. This was fixed by enforcing a lower bound on the window height when restoring it from the previous state. (#991)
 
 # Internal
 - None
