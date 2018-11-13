@@ -22,7 +22,7 @@ import { Button, Input } from 'reactstrap';
 import './GettingStarted.scss';
 
 interface IGettingStartedProps {
-  onShowTutorial: (name: 'ios' | 'android') => void;
+  onShowTutorial: (name: 'ios' | 'android' | 'react-native') => void;
   serverUrl: string;
 }
 
@@ -50,7 +50,7 @@ export const GettingStarted = ({
       </p>
       <h3 className="GettingStarted__Heading">Build a demo project</h3>
       <p>
-        Our Tasks demo app is the best way to try Realm Cloud. You can quickly
+        Our ToDo demo app is the best way to try Realm Cloud. You can quickly
         try it out with our step-by-step instructions — just copy your app link
         from above, and choose an OS:
       </p>
@@ -71,10 +71,18 @@ export const GettingStarted = ({
         >
           Start with Android
         </Button>
+        <Button
+          className="GettingStarted__Button"
+          onClick={() => {
+            onShowTutorial('react-native');
+          }}
+        >
+          Start with React Native
+        </Button>
       </section>
       If you have any issues, questions or comments visit our{' '}
       <a target="__blank" href="https://forums.realm.io/c/realm-cloud">
-        Beta Forums
+        Forums
       </a>.
     </div>
     <div className="GettingStarted__Image" />
