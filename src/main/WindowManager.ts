@@ -79,6 +79,12 @@ export class WindowManager {
     const defaultWindowOptions = getWindowOptions(options);
     // Get the window options that are saved for this type of window
     const savedWindowOptions = this.getWindowOptions(options.type);
+    // Ensure the saved window options don't get out of control
+    // @see https://github.com/realm/realm-studio/issues/962
+    savedWindowOptions.height = Math.max(
+      defaultWindowOptions.height || 600,
+      savedWindowOptions.height || 0,
+    );
     // Combine these with general default options
     const combinedWindowOptions: IWindowConstructorOptions = {
       // Starting with the default options
