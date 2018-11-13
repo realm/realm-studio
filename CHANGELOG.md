@@ -1,3 +1,17 @@
+# Release 3.0.5 (2018-11-13)
+
+[Changes since v3.0.4](https://github.com/realm/realm-studio/compare/v3.0.4...v3.0.5)
+
+# Enhancements
+- None
+
+# Bugfixes
+- None
+
+# Internal
+- None
+
+
 # Release 3.0.4 (2018-11-12)
 
 [Changes since v3.0.3](https://github.com/realm/realm-studio/compare/v3.0.3...v3.0.4)
