@@ -62,7 +62,7 @@ class GettingStartedContainer extends React.Component<
       );
     } else if (name === 'react-native') {
       electron.shell.openExternal(
-        'https://docs.realm.io/platform/v/3.x/getting-started/react-native-quick-start',
+        'https://docs.realm.io/platform/getting-started-1/react-native-quick-start',
       );
     }
   };
