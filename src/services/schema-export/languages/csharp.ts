@@ -16,8 +16,6 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as fsPath from 'path';
-import { ClassificationTypeNames } from 'typescript';
 import { ISchemaFile, SchemaExporter } from '../schemaExporter';
 
 interface ICSharpProperty {
@@ -33,7 +31,8 @@ interface ICSharpProperty {
 }
 
 export default class CSharpSchemaExporter extends SchemaExporter {
-  private static readonly BacklinkWarning = '// Please note : [Backlink] properties and default values are not represented\n// in the schema and thus will not be part of the generated models';
+  private static readonly BacklinkWarning =
+    '// Please note : [Backlink] properties and default values are not represented\n// in the schema and thus will not be part of the generated models';
   private static readonly RealmsNamespace = 'Realms';
 
   private ClassPadding = '    ';

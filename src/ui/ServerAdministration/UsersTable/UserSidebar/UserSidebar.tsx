@@ -66,21 +66,19 @@ export const UserSidebar = ({
       position="right"
       initialWidth={300}
     >
-      {selection &&
-        currentUser &&
-        currentUser.isValid() && (
-          <UserSidebarContent
-            onChangePassword={onChangePassword}
-            onDeletion={onDeletion}
-            onMetadataAppended={onMetadataAppended}
-            onMetadataChanged={onMetadataChanged}
-            onMetadataDeleted={onMetadataDeleted}
-            onRoleChanged={onRoleChanged}
-            roleDropdownOpen={roleDropdownOpen}
-            selection={selection}
-            toggleRoleDropdown={toggleRoleDropdown}
-          />
-        )}
+      {selection && currentUser && currentUser.isValid() && (
+        <UserSidebarContent
+          onChangePassword={onChangePassword}
+          onDeletion={onDeletion}
+          onMetadataAppended={onMetadataAppended}
+          onMetadataChanged={onMetadataChanged}
+          onMetadataDeleted={onMetadataDeleted}
+          onRoleChanged={onRoleChanged}
+          roleDropdownOpen={roleDropdownOpen}
+          selection={selection}
+          toggleRoleDropdown={toggleRoleDropdown}
+        />
+      )}
     </Sidebar>
   );
 };

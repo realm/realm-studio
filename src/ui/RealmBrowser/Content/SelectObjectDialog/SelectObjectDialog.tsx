@@ -77,13 +77,11 @@ export const SelectObjectDialog = ({
       ) : null}
     </ModalBody>
     <ModalFooter>
-      {props.isOpen &&
-        props.highlight.rows.size > 0 &&
-        props.isOptional && (
-          <Button color="primary" onClick={props.onDeselect}>
-            Remove selection
-          </Button>
-        )}
+      {props.isOpen && props.highlight.rows.size > 0 && props.isOptional && (
+        <Button color="primary" onClick={props.onDeselect}>
+          Remove selection
+        </Button>
+      )}
       <Button color="primary" onClick={onSelect}>
         {props.isOpen && props.highlight.rows.size > 0
           ? 'Select'

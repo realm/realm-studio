@@ -70,14 +70,13 @@ export const LoadingOverlay = ({
             {progress.message}
           </section>
         ) : null}
-        {progress &&
-          showProgress && (
-            <Progress
-              className="LoadingOverlay__Progress"
-              value={progress.transferred}
-              max={progress.transferable}
-            />
-          )}
+        {progress && showProgress && (
+          <Progress
+            className="LoadingOverlay__Progress"
+            value={progress.transferred}
+            max={progress.transferable}
+          />
+        )}
         {showDots ? <LoadingDots /> : null}
         {progress && progress.retry ? (
           <Button

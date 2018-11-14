@@ -33,9 +33,8 @@ export const Status = ({ onReconnect, progress, user }: IStatusProps) => {
       return (
         <p className="TopBar__Status">
           <i className="fa fa-exclamation-circle" /> Disconnected: "
-          <span className="TopBar__Status__error">
-            {progress.message}
-          </span>"&nbsp;
+          <span className="TopBar__Status__error">{progress.message}</span>
+          "&nbsp;
           {/* progress.retry ? (
             <Button size="sm" onClick={progress.retry.onRetry}>
               Reconnect now
