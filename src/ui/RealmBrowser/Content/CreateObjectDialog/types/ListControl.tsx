@@ -27,13 +27,9 @@ import { ITypeControlProps, TypeControl } from './TypeControl';
 
 interface IItemProps
   extends Pick<
-      ITypeControlProps,
-      | 'generateInitialValue'
-      | 'getClassFocus'
-      | 'onChange'
-      | 'value'
-      | 'property'
-    > {
+    ITypeControlProps,
+    'generateInitialValue' | 'getClassFocus' | 'onChange' | 'value' | 'property'
+  > {
   onDelete: () => void;
 }
 
@@ -66,9 +62,9 @@ const Item = ({
 
 interface IListProps
   extends Pick<
-      ITypeControlProps,
-      'generateInitialValue' | 'getClassFocus' | 'onChange' | 'value'
-    > {
+    ITypeControlProps,
+    'generateInitialValue' | 'getClassFocus' | 'onChange' | 'value'
+  > {
   itemProperty: Realm.ObjectSchemaProperty;
 }
 

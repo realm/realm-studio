@@ -18,7 +18,6 @@
 
 import * as sentry from '@sentry/electron';
 import { BrowserWindow, screen, shell } from 'electron';
-import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as url from 'url';
 
@@ -227,12 +226,14 @@ export class WindowManager {
     return Promise.all(
       // Create a new array as closing the windows will remove them from the
       // this.windows collection
-      this.windows.map(handle => handle.window).map(window => {
-        return new Promise(resolve => {
-          window.once('closed', resolve);
-          window.close();
-        });
-      }),
+      this.windows
+        .map(handle => handle.window)
+        .map(window => {
+          return new Promise(resolve => {
+            window.once('closed', resolve);
+            window.close();
+          });
+        }),
     );
   }
 

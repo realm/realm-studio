@@ -143,7 +143,7 @@ export class Updater {
       const duration = 10000;
       let downloaded = 0;
       const timer = setInterval(() => {
-        downloaded += total / duration * PROGRESS_POLL_DELAY;
+        downloaded += (total / duration) * PROGRESS_POLL_DELAY;
         downloaded = Math.min(total, downloaded); // Enforcing the upper bound
         this.sendUpdateStatus({
           state: 'downloading',

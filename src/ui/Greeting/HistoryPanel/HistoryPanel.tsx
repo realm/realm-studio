@@ -33,14 +33,17 @@ const Empty = () => (
       is out of beta:{' '}
       <a href="https://realm.io/pricing" target="_blank">
         See options
-      </a>.
+      </a>
+      .
     </p>
   </div>
 );
 
 export const HistoryPanel = ({ entries }: { entries: IHistoryEntry[] }) => (
   <div className="Greeting__HistoryPanel">
-    {entries.map((entry, index) => <HistoryEntry entry={entry} key={index} />)}
+    {entries.map((entry, index) => (
+      <HistoryEntry entry={entry} key={index} />
+    ))}
     {entries.length === 0 ? <Empty /> : null}
   </div>
 );

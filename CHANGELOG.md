@@ -10,6 +10,7 @@
 
 ## Internal
 - Updated Webpack and dependant modules. ([#999](https://github.com/realm/realm-studio/pull/999))
+- Updated TS-lint, Prettier and fixed linting errors. ([#1000](https://github.com/realm/realm-studio/pull/1000))
 
 
 # Release 3.0.5 (2018-11-13)

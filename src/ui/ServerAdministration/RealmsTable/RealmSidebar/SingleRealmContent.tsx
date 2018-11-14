@@ -118,7 +118,8 @@ export const SingleRealmContent = ({
             href="https://docs.realm.io/platform/using-synced-realms/access-control#overview"
           >
             Fine-Grained Permissions
-          </a>. Note: Doing so will remove any existing permissions.
+          </a>
+          . Note: Doing so will remove any existing permissions.
         </SidebarBody>
       ) : null}
       <SidebarControls>

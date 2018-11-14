@@ -83,7 +83,8 @@ export const GettingStarted = ({
       If you have any issues, questions or comments visit our{' '}
       <a target="__blank" href="https://forums.realm.io/c/realm-cloud">
         Forums
-      </a>.
+      </a>
+      .
     </div>
     <div className="GettingStarted__Image" />
   </div>
