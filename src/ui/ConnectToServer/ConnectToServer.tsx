@@ -118,7 +118,7 @@ export const ConnectToServer = ({
             color="secondary"
             size="sm"
             className="ConnectToServer__ControlBtn"
-            onClick={e => {
+            onClick={(e: React.MouseEvent) => {
               e.preventDefault();
               onCancel();
             }}

@@ -37,7 +37,7 @@ export const IntroductionOverlay = ({ onModeChange }: IIntroductionOverlay) => (
       <Button
         className="IntroductionOverlay__Button"
         color="primary"
-        onClick={e => {
+        onClick={(e: React.MouseEvent) => {
           e.preventDefault();
           onModeChange('sign-up');
         }}
@@ -47,7 +47,7 @@ export const IntroductionOverlay = ({ onModeChange }: IIntroductionOverlay) => (
       <Button
         className="IntroductionOverlay__Button"
         color="secondary"
-        onClick={e => {
+        onClick={(e: React.MouseEvent) => {
           e.preventDefault();
           onModeChange('log-in');
         }}

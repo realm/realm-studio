@@ -38,7 +38,7 @@ const AuthenticationMethodButton = ({
     className="ConnectToServer__AuthenticationMethodSelector__Btn"
     size="sm"
     color={method === activeMethod ? 'primary' : 'secondary'}
-    onClick={e => {
+    onClick={(e: React.MouseEvent) => {
       e.preventDefault();
       onMethodChanged(method);
     }}

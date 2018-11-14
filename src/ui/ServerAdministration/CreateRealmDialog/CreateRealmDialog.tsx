@@ -71,7 +71,7 @@ export const CreateRealmDialog = ({
           <Button
             color="secondary"
             disabled={isBusy}
-            onClick={e => {
+            onClick={(e: React.MouseEvent) => {
               e.preventDefault();
               if (toggle) {
                 toggle();

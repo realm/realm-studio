@@ -36,7 +36,7 @@ export const TimestampBadge = ({
 }: ITimestampBadgeProps) => {
   return (
     <Badge color="secondary" className={className}>
-      <span unselectable={true} title={timestamp}>
+      <span unselectable="on" title={timestamp}>
         {moment(timestamp).calendar(undefined, calendarFormats)}
       </span>
     </Badge>
