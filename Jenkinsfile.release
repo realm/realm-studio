@@ -5,86 +5,109 @@
 setBuildName(env.VERSION_TAG);
 
 jobWrapper {
-  stage('Checkout') {
-    node('docker') {
+  node('macos-cph-02.cph.realm') {
+    stage('Checkout') {
       checkoutAtVersion()
-      // TODO: Check that the tag matches the package.json version
-      def packageJson = readJSON(file: 'package.json')
-      assert "v${packageJson.version}" == env.VERSION_TAG : "Tag doesn't match package.json version"
     }
-  }
 
-  stage('Build, test and package') {
-    parallel (
-      // Retrying to mitigate https://github.com/realm/realm-studio/issues/316
-      'Build for MacOS': retry(3) {
-        packageForMac()
-      },
-      'Build for Linux and Windows': packageForLinuxAndWindows()
-    )
-  }
+    def packageJson = readJSON(file: 'package.json')
+    def nodeVersion = readFile('.nvmrc').trim()
+    def nvmInstallDir = sh(returnStdout: true, script: 'brew --prefix nvm').trim()
 
-  stage('Publish & notify') {
-    node('docker') {
-      git = checkoutAtVersion()
-
-      // Unstash the artifacts from the builds
-      unstash name: 'macos-artifacts'
-      unstash name: 'other-artifacts'
-
-      // Ask the user to confirm that we're publishing
-      def packageJson = readJSON file: 'package.json'
-      def inputUrl = "${env.BUILD_URL}/input"
-      postToSlack('slack-studio-team-url', [[
-        'title': "Realm Studio ${env.VERSION_TAG} is ready to be released!",
-        'title_link': inputUrl,
-        'text': "Proceed with the release by clicking <${inputUrl}|here>",
-        'color': 'warning',
-        'unfurl_links': false
-      ]])
-
-      // Wait for input
-      input(message: "Ready to publish v${packageJson.version}?", id: 'publish')
-
-      // Upload the build artifacts to S3
-      def s3Config = packageJson.build.publish[0]
-      // Move yml files to another folder and upload them after other archives.
-      // This is to prevent clients from trying to upgrade before the files are there.
-      sh 'mkdir dist-finally && mv dist/*.yml dist-finally'
-      dir('dist') {
-        rlmS3Put(bucket: s3Config.bucket, path: s3Config.path)
-      }
-      // Upload the json and yml files
-      dir('dist-finally') {
-        rlmS3Put(bucket: s3Config.bucket, path: s3Config.path)
+    nvm('version': nodeVersion, 'nvmInstallDir': nvmInstallDir) {
+      stage('Prechecks') {
+        assert "v${packageJson.version}" == env.VERSION_TAG : "Tag doesn't match package.json version"
+        // Test that we're actually using the right node version, this has been a problem before
+        def actualNodeVersion = sh(returnStdout: true, script: 'node --version').trim()
+        assert nodeVersion == actualNodeVersion : "Node version doesn't match"
       }
 
-      // Publish GitHub release
-      if (env.GITHUB_RELEASE_ID) {
-        withCredentials([string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')]) {
-          // Update to publish the release
-          sh """
-            curl \
-              -H "Content-Type: application/json" \
-              -H "Authorization: token ${GITHUB_TOKEN}" \
-              -X PATCH \
-              -d '{"draft": false}' \
-              https://api.github.com/repos/realm/realm-studio/releases/${env.GITHUB_RELEASE_ID}
-          """
+      // Start installing, building, testing and packaging the app
+      stage('Install') {
+        sh 'npm install'
+      }
+
+      stage('Build') {
+        withCredentials([
+          string(credentialsId: 'realm-studio-sentry-token', variable: 'SENTRY_AUTH_TOKEN')
+        ]) {
+          sh 'npm run build'
         }
       }
 
-      // Notify by posting to Slack
-      def url = "https://studio-releases.realm.io/${env.VERSION_TAG}"
-      def slackPost = [[
-        'title': "Realm Studio ${env.VERSION_TAG} has been released!",
-        'title_link': url,
-        'text': "Release notes and artifacts are available <${url}|here>",
-        'color': 'good',
-        'unfurl_links': false
-      ]]
-      postToSlack('slack-studio-team-url', slackPost)
-      postToSlack('slack-releases-webhook', slackPost)
+      stage('Test') {
+        try {
+          // Runs the tests with reporting using the junit reporter
+          sh 'npm run test:ci'
+        } catch (err) {
+          error "Tests failed - see results on CI"
+        } finally {
+          junit(
+            keepLongStdio: true,
+            testResults: 'test-results.xml'
+          )
+        }
+      }
+
+      stage('Package') {
+        withCredentials([
+          file(credentialsId: 'cose-sign-certificate-windows', variable: 'WIN_CSC_LINK'),
+          string(credentialsId: 'cose-sign-password-windows', variable: 'WIN_CSC_KEY_PASSWORD')
+        ]) {
+          sh 'npx build -mlw -c.forceCodeSigning  --publish never'
+        }
+        // Archive the packaged artifacts
+        archiveArtifacts 'dist/*'
+      }
+
+      stage('Post-package test') {
+        sh 'npm run check:auto-update-files'
+      }
+
+      stage('Publish & notify') {
+        // Wait for input
+        input(message: "Ready to publish v${packageJson.version}?", id: 'publish')
+
+        // Upload the build artifacts to S3
+        def s3Config = packageJson.build.publish[0]
+        // Move yml files to another folder and upload them after other archives.
+        // This is to prevent clients from trying to upgrade before the files are there.
+        sh 'mkdir dist-finally && mv dist/*.yml dist-finally'
+        dir('dist') {
+          rlmS3Put(bucket: s3Config.bucket, path: s3Config.path)
+        }
+        // Upload the json and yml files
+        dir('dist-finally') {
+          rlmS3Put(bucket: s3Config.bucket, path: s3Config.path)
+        }
+
+        // Publish GitHub release
+        if (env.GITHUB_RELEASE_ID) {
+          withCredentials([string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')]) {
+            // Update to publish the release
+            sh """
+              curl \
+                -H "Content-Type: application/json" \
+                -H "Authorization: token ${GITHUB_TOKEN}" \
+                -X PATCH \
+                -d '{"draft": false}' \
+                https://api.github.com/repos/realm/realm-studio/releases/${env.GITHUB_RELEASE_ID}
+            """
+          }
+        }
+
+        // Notify by posting to Slack
+        def url = "https://studio-releases.realm.io/${env.VERSION_TAG}"
+        def slackPost = [[
+          'title': "Realm Studio ${env.VERSION_TAG} has been released!",
+          'title_link': url,
+          'text': "Release notes and artifacts are available <${url}|here>",
+          'color': 'good',
+          'unfurl_links': false
+        ]]
+        postToSlack('slack-studio-team-url', slackPost)
+        postToSlack('slack-releases-webhook', slackPost)
+      }
     }
   }
 }
@@ -103,71 +126,4 @@ def checkoutAtVersion() {
       url: 'git@github.com:realm/realm-studio.git'
     ]]
   ])
-}
-
-def packageForLinuxAndWindows() {
-  return {
-    node('docker') {
-      checkoutAtVersion()
-
-      def workarea = pwd()
-
-      buildDockerEnv(
-        "ci/realm-studio:releasing",
-        extra_args: '-f Dockerfile.releasing'
-      ).inside("-e HOME=${workarea}") {
-        sh 'npm install'
-        sh 'npm run build'
-
-        withCredentials([
-          file(credentialsId: 'cose-sign-certificate-windows', variable: 'CSC_LINK'),
-          string(credentialsId: 'cose-sign-password-windows', variable: 'CSC_KEY_PASSWORD')
-        ]) {
-          // Build the package: Never publishing and failing if missing code signing
-          sh 'node_modules/.bin/electron-builder -c.forceCodeSigning --linux --windows --publish never'
-        }
-
-        // Check the auto-updating for versions and referenced files
-        sh 'npm run check:auto-update-files'
-
-        archiveArtifacts 'dist/*'
-        stash includes: 'dist/*', name: 'other-artifacts'
-      }
-    }
-  }
-}
-
-def packageForMac() {
-  return {
-    node('macos-cph-02.cph.realm') {
-      checkoutAtVersion()
-
-      def nodeVersion = readFile('.nvmrc').trim()
-      def installDir = sh(returnStdout: true, script: 'brew --prefix nvm').trim()
-      nvm('version': nodeVersion, 'nvmInstallDir': installDir) {
-        // Using via-nvm.sh wraps ensures the correct version of node and npm.
-        sh './scripts/via-nvm.sh npm install --quiet'
-
-        withCredentials([
-          string(credentialsId: 'realm-studio-sentry-token', variable: 'SENTRY_AUTH_TOKEN')
-        ]) {
-          sh './scripts/via-nvm.sh npm run build'
-        }
-
-        // Run the tests
-        sh './scripts/via-nvm.sh node_modules/.bin/xvfb-maybe npm test'
-
-        // Build the package: Never publishing and failing if missing code signing
-        sh 'node_modules/.bin/electron-builder -c.forceCodeSigning --publish never'
-
-        // Check the auto-updating for versions and referenced files
-        sh './scripts/via-nvm.sh npm run check:auto-update-files'
-
-        // TODO: Run a post-package test, to see if the packaged app boots
-
-        archiveArtifacts 'dist/*'
-        stash includes: 'dist/*', name: 'macos-artifacts'
-      }
-    }
-  }
 }
