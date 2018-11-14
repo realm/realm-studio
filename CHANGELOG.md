@@ -9,7 +9,7 @@
 - Windows are no longer rendering blank when connecting to a server on the Windows OS. ([#998](https://github.com/realm/realm-studio/pull/998))
 
 ## Internal
-- None
+- Updated Webpack and dependant modules. ([#999](https://github.com/realm/realm-studio/pull/999))
 
 
 # Release 3.0.5 (2018-11-13)
