@@ -117,7 +117,7 @@ export class Application {
 
   public run() {
     // Check to see if this is the first instance or not
-    const hasAnotherInstance = app.requestSingleInstanceLock() === false;
+    const hasAnotherInstance = app.makeSingleInstance(this.onInstanceStarted);
 
     if (hasAnotherInstance) {
       // Quit the app if started multiple times
@@ -136,8 +136,6 @@ export class Application {
       if (app.isReady()) {
         this.onReady();
       }
-      // Handle any second instances of the Application
-      app.on('second-instance', this.onInstanceStarted);
     }
   }
 
@@ -512,7 +510,6 @@ export class Application {
    * This is called when another instance of the app is started on Windows or Linux
    */
   private onInstanceStarted = async (
-    event: Event,
     argv: string[],
     workingDirectory: string,
   ) => {
