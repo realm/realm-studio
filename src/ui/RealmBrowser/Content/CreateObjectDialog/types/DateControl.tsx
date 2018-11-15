@@ -24,7 +24,7 @@ import { parseDate } from '../../../parsers';
 
 import { IBaseControlProps } from './TypeControl';
 
-const DATETIME_LOCAL_FORMAT = 'YYYY-MM-DDThh:mm:ss.SSS';
+const DATETIME_LOCAL_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSS';
 
 export const DateControl = ({
   children,
