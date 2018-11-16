@@ -62,6 +62,7 @@ jobWrapper {
 
       stage('Post-package test') {
         sh 'npm run check:auto-update-files'
+        // TODO: Perform post-package tests on each of all platforms
       }
 
       stage('Publish & notify') {
@@ -70,15 +71,21 @@ jobWrapper {
 
         // Upload the build artifacts to S3
         def s3Config = packageJson.build.publish[0]
-        // Move yml files to another folder and upload them after other archives.
-        // This is to prevent clients from trying to upgrade before the files are there.
-        sh 'mkdir dist-finally && mv dist/*.yml dist-finally'
-        dir('dist') {
-          rlmS3Put(bucket: s3Config.bucket, path: s3Config.path)
-        }
-        // Upload the json and yml files
-        dir('dist-finally') {
-          rlmS3Put(bucket: s3Config.bucket, path: s3Config.path)
+        withAWS(credentials: 'aws-credentials', region: 'us-east-1') {
+          // Upload all the packaged build artifacts
+          s3Upload(
+            bucket: s3Config.bucket,
+            path: s3Config.path,
+            workingDir: 'dist',
+            excludePathPattern: '**/*,*.yml' // Exclude directories and *.yml files
+          )
+          // Upload the auto-updating *.yml files afterwards
+          s3Upload(
+            bucket: s3Config.bucket,
+            path: s3Config.path,
+            workingDir: 'dist',
+            includePathPattern: '*.yml' // *.yml files only
+          )
         }
 
         // Publish GitHub release
