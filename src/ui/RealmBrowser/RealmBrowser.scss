@@ -99,10 +99,29 @@ $cell-border-color: mix($black, $white, 10%);
   &__Table {
     background: $white;
     flex: 1 0 0;
+    position: relative;
 
     &__HeaderGrid {
       background: $white;
-      overflow-x: hidden;
+    }
+
+    &__AddColumnControl {
+      align-items: center;
+      display: flex;
+      height: $realm-browser-header-height;
+      justify-content: flex-start;
+      padding: $spacer;
+      position: absolute;
+      right: 0;
+      top: 0;
+      transition: opacity $fast, margin-left $fast;
+      z-index: 1;
+
+      &--hidden {
+        margin-left: $spacer;
+        opacity: 0;
+        pointer-events: none;
+      }
     }
 
     &__Row {
@@ -137,7 +156,6 @@ $cell-border-color: mix($black, $white, 10%);
     }
 
     &__HeaderCell,
-    &__HeaderCellControl,
     &__Cell {
       border-bottom: 1px solid $cell-border-color;
       border-right: 1px solid $cell-border-color;
@@ -159,6 +177,10 @@ $cell-border-color: mix($black, $white, 10%);
       justify-content: space-between;
       padding: $cell-padding-y $cell-padding-x;
 
+      &--sortable {
+        cursor: pointer;
+      }
+
       &--sorting {
         border-top: $cell-header-border-size solid $primary;
       }
@@ -171,18 +193,6 @@ $cell-border-color: mix($black, $white, 10%);
       line-height: 1rem;
       overflow: hidden;
       text-overflow: ellipsis;
-    }
-
-    &__HeaderCellControl {
-      align-items: center;
-      color: $highlight-row-color;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-
-      &:hover {
-        background: $highlight-row-bg;
-      }
     }
 
     &__HeaderName {
@@ -211,7 +221,6 @@ $cell-border-color: mix($black, $white, 10%);
 
     &__HeaderSort {
       color: $elephant;
-      cursor: pointer;
       flex-shrink: 0;
       font-size: 12px;
 

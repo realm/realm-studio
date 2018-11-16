@@ -65,7 +65,6 @@ export interface IContentGridProps extends Partial<GridProps> {
   highlight?: IHighlight;
   isSortable?: boolean;
   isSorting?: boolean;
-  onAddColumnEnabled: boolean;
   onCellChange?: CellChangeHandler;
   onCellClick?: CellClickHandler;
   onCellHighlighted?: CellHighlightedHandler;
@@ -108,13 +107,8 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
       highlight,
       onReorderingEnd,
       onReorderingStart,
-      onAddColumnEnabled,
       properties,
     } = this.props;
-
-    const columnCount = onAddColumnEnabled
-      ? properties.length + 1
-      : properties.length;
 
     // Create an object of props that will be passed to the container wrapping the grid
     const containerProps = {
@@ -131,7 +125,7 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
         cellRenderer={this.getCellRenderer}
         className="RealmBrowser__Table__ContentGrid"
         columnWidth={this.getColumnWidth}
-        columnCount={columnCount}
+        columnCount={properties.length}
         containerProps={containerProps}
         distance={5}
         onSortEnd={onReorderingEnd}
@@ -268,23 +262,11 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
   }
 
   private getColumnWidth = ({ index }: Index) => {
-    const { columnWidths, onAddColumnEnabled } = this.props;
-    if (onAddColumnEnabled && index === columnWidths.length) {
-      return 50;
-    } else {
-      return this.props.columnWidths[index];
-    }
+    return this.props.columnWidths[index];
   };
 
   private getCellRenderer = (cellProps: GridCellProps) => {
-    if (
-      this.props.onAddColumnEnabled &&
-      cellProps.columnIndex >= this.cellRenderers.length
-    ) {
-      return this.renderAddColumnCell(cellProps);
-    } else {
-      return this.cellRenderers[cellProps.columnIndex](cellProps);
-    }
+    return this.cellRenderers[cellProps.columnIndex](cellProps);
   };
 
   private renderAddColumnCell = ({

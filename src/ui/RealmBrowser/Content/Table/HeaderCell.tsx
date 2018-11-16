@@ -124,7 +124,9 @@ export class HeaderCell extends React.Component<
         style={style}
         className={classNames('RealmBrowser__Table__HeaderCell', {
           'RealmBrowser__Table__HeaderCell--sorting': isSorting,
+          'RealmBrowser__Table__HeaderCell--sortable': isSortable,
         })}
+        onClick={isSortable ? this.onSortClick : undefined}
         title={property.name || ''}
       >
         <div className="RealmBrowser__Table__HeaderProperty">
@@ -145,7 +147,6 @@ export class HeaderCell extends React.Component<
             className={classNames('RealmBrowser__Table__HeaderSort', {
               'RealmBrowser__Table__HeaderSort--active': isSorting,
             })}
-            onClick={this.onSortClick}
           >
             <i
               className={classNames('fa', {

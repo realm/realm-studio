@@ -16,12 +16,29 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-@import "variables/colors";
-@import "variables/fonts";
-@import "variables/sizes";
-@import "variables/timing";
+import * as classNames from 'classnames';
+import * as React from 'react';
+import { Button } from 'reactstrap';
 
-// Core bootstrap (v4.0.0) functions, variables and mixins
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
-@import "~bootstrap/scss/mixins";
+interface IAddColumnControlProps {
+  isHidden: boolean;
+  left: number;
+  onClick: () => void;
+}
+
+export const AddColumnControl = ({
+  isHidden,
+  left,
+  onClick,
+}: IAddColumnControlProps) => (
+  <div
+    className={classNames('RealmBrowser__Table__AddColumnControl', {
+      'RealmBrowser__Table__AddColumnControl--hidden': isHidden,
+    })}
+    style={{ left }}
+  >
+    <Button onClick={onClick} size="sm">
+      <i className="fa fa-plus" />
+    </Button>
+  </div>
+);

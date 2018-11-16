@@ -39,7 +39,6 @@ export interface IHeaderGridProps extends Partial<GridProps> {
   properties: IPropertyWithName[];
   sorting?: ISorting;
   width: number;
-  onAddColumnClick?: () => void;
 }
 
 export class HeaderGrid extends React.PureComponent<IHeaderGridProps, {}> {
@@ -56,23 +55,21 @@ export class HeaderGrid extends React.PureComponent<IHeaderGridProps, {}> {
   }
 
   public render() {
-    const { gridRef, height, onAddColumnClick, properties } = this.props;
-    const columnCount = onAddColumnClick
-      ? properties.length + 1
-      : properties.length;
+    const { gridRef, height, properties } = this.props;
     return (
       <Grid
         /* TODO: Omit the props that are irrellevant for the grid */
         {...this.props}
         className="RealmBrowser__Table__HeaderGrid"
         rowCount={1}
-        columnCount={columnCount}
+        columnCount={properties.length}
         columnWidth={this.getColumnWidth}
         cellRenderer={this.getCellRenderer}
         ref={gridRef}
         rowHeight={height}
         style={{
-          // TODO: Consider if this could be moved to the CSS
+          // This could be moved to the CSS,
+          // but it would require the use of the !important keyword
           overflowX: 'hidden',
         }}
       />
@@ -80,36 +77,12 @@ export class HeaderGrid extends React.PureComponent<IHeaderGridProps, {}> {
   }
 
   private getColumnWidth = ({ index }: Index) => {
-    const { columnWidths, onAddColumnClick } = this.props;
-    if (onAddColumnClick && index === columnWidths.length) {
-      return 50;
-    } else {
-      return this.props.columnWidths[index];
-    }
+    return this.props.columnWidths[index];
   };
 
   private getCellRenderer = (cellProps: GridCellProps) => {
-    if (
-      this.props.onAddColumnClick &&
-      cellProps.columnIndex >= this.cellRenderers.length
-    ) {
-      return this.renderAddColumnCell(cellProps);
-    } else {
-      return this.cellRenderers[cellProps.columnIndex](cellProps);
-    }
+    return this.cellRenderers[cellProps.columnIndex](cellProps);
   };
-
-  private renderAddColumnCell = (cellProps: GridCellProps) => (
-    <div
-      key={cellProps.key}
-      style={cellProps.style}
-      className="RealmBrowser__Table__HeaderCellControl RealmBrowser__Table__HeaderCellControl--borderless"
-      onClick={this.props.onAddColumnClick}
-      title="Click for add a new column"
-    >
-      <i className="fa fa-plus" />
-    </div>
-  );
 
   private generateRenderers(props: IHeaderGridProps) {
     const { properties } = props;
