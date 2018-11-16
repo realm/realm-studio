@@ -73,8 +73,7 @@ export abstract class WindowComponent extends React.Component
       category: 'ui.window',
       message: `Opened '${this.options.type}' window`,
     });
-    // Generate the menu now and whenever the window gets focus
-    this.updateMenu();
+    // Generate the menu whenever the window gets focus
     window.addEventListener('focus', this.onFocussed);
 
     this.CurrentWindow.getComponent().then(CurrentWindowComponent => {
@@ -101,6 +100,8 @@ export abstract class WindowComponent extends React.Component
     if (element && typeof element.generateMenu === 'function') {
       // The window component has a method to generate a menu
       this.menuGenerator = element;
+      // With the menuGenerator present - we can ask for the menu to be updated initially
+      this.updateMenu();
     }
   };
 
