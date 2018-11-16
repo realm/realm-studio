@@ -19,7 +19,6 @@
 import * as assert from 'assert';
 import * as Electron from 'electron';
 import * as fs from 'fs';
-import { ITest } from 'mocha';
 import { resolve } from 'path';
 import { Application } from 'spectron';
 import * as fakeDialog from 'spectron-fake-dialog';
@@ -129,7 +128,6 @@ describe('<RealmBrowser /> via Spectron', function() {
           // Assert something about the header
           const headerCells = await app.client.elements(selectors.headerCell);
           // Assert that is has the same number of header cells as it has properties
-          // The cell to add a property only has class __HeaderCellControl
           assert.equal(
             headerCells.value.length,
             Object.keys(schema.properties).length,
@@ -151,11 +149,10 @@ describe('<RealmBrowser /> via Spectron', function() {
 
           // Assert something about the row that was just created
           it('creates a row in the table', async () => {
-            // +1 for the cell below the one that adds a property
             const cells = await app.client.elements(selectors.cell);
             assert.equal(
               cells.value.length,
-              Object.keys(schema.properties).length + 1,
+              Object.keys(schema.properties).length,
             );
           });
 

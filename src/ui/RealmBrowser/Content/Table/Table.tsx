@@ -40,6 +40,7 @@ import {
   rowHeights,
   RowMouseDownHandler,
 } from '.';
+import { AddColumnControl } from './AddColumnControl';
 import { ContentGrid } from './ContentGrid';
 import { HeaderGrid } from './HeaderGrid';
 import { MoreIndicator } from './MoreIndicator';
@@ -107,6 +108,7 @@ export const Table = ({
   const { height, width } = dimensions;
   const scrollBottom = rowHeights.header + scrollHeight - height - scrollTop;
   const scrollRight = scrollWidth - width - scrollLeft;
+  const totalColumnWidth = columnWidths.reduce((sum, w) => sum + w, 0);
 
   return (
     <div
@@ -125,7 +127,6 @@ export const Table = ({
         columnWidths={columnWidths}
         gridRef={gridHeaderRef}
         height={rowHeights.header}
-        onAddColumnClick={onAddColumnClick}
         onColumnWidthChanged={onColumnWidthChanged}
         onSortClick={onSortClick}
         overscanColumnCount={2}
@@ -135,7 +136,6 @@ export const Table = ({
         width={width}
       />
       <ContentGrid
-        className="RealmBrowser__Table__ValueGrid"
         columnWidths={columnWidths}
         dataVersion={dataVersion}
         editMode={editMode}
@@ -146,7 +146,6 @@ export const Table = ({
         highlight={highlight}
         isSortable={focus.kind === 'list' && !sorting}
         isSorting={isSorting}
-        onAddColumnEnabled={!!onAddColumnClick}
         onCellChange={onCellChange}
         onCellClick={onCellClick}
         onCellHighlighted={onCellHighlighted}
@@ -162,6 +161,16 @@ export const Table = ({
         rowHeight={rowHeights.content}
         width={width}
       />
+      {onAddColumnClick ? (
+        <AddColumnControl
+          isHidden={scrollLeft > 0 && scrollRight === 0}
+          onClick={onAddColumnClick}
+          left={Math.min(
+            totalColumnWidth - scrollLeft,
+            width - (29 + 2 * 16) /* button width + 2*padding */,
+          )}
+        />
+      ) : null}
     </div>
   );
 };
