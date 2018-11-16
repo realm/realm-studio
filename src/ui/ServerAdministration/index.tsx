@@ -16,11 +16,11 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as compareVersions from 'compare-versions';
 import * as electron from 'electron';
 import * as os from 'os';
 import * as React from 'react';
 import * as Realm from 'realm';
+import * as semver from 'semver';
 import { URL } from 'url';
 
 import { main } from '../../actions/main';
@@ -87,12 +87,18 @@ class ServerAdministrationContainer
   /* A list of object schemas to use when creating the next Realm */
   protected createRealmSchema?: Realm.ObjectSchema[];
 
+  /**
+   * An array of pairs of ROS + Studio versions which are compatible,
+   * for every element, the rosVersion is the first version which is incompatible with a particular version of Studio,
+   * in which case the studioVersion is the latest version compatible with the server in question.
+   * The array is ordered, such that newer incompatibilities must be added to the end.
+   */
   private readonly compatibilityVersions: Array<{
     rosVersion: string;
     studioVersion: string;
   }> = [
     { rosVersion: '3.0.0', studioVersion: '1.19.2-ros2' },
-    { rosVersion: '3.11.0', studioVersion: '2.8.2-ros3.10.7' },
+    { rosVersion: '3.11.0', studioVersion: '2.9.1-ros3.10.7' },
   ];
 
   public async componentDidMount() {
@@ -318,17 +324,14 @@ class ServerAdministrationContainer
     const minimumVersion = this.compatibilityVersions[
       this.compatibilityVersions.length - 1
     ].rosVersion;
-    return compareVersions(version || '0.0.0', minimumVersion) > -1;
+    return semver.gte(version || '0.0.0', minimumVersion);
   }
 
-  protected downgradedStudioUrl(version: string | undefined) {
-    if (!version) {
-      version = '0.0.0';
-    }
-
+  protected downgradedStudioUrl(version: string = '0.0.0') {
     let compatibleVersion: string | undefined;
+    // Find the Studio version compatible with the first incompatibility with the servers version.
     for (const compatibilityVersion of this.compatibilityVersions) {
-      if (compareVersions(version, compatibilityVersion.rosVersion) === -1) {
+      if (semver.lt(version, compatibilityVersion.rosVersion)) {
         compatibleVersion = compatibilityVersion.studioVersion;
         break;
       }

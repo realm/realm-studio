@@ -16,12 +16,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as compareVersions from 'compare-versions';
 import * as electron from 'electron';
 import * as _ from 'lodash';
 import memoize from 'memoize-one';
 import * as React from 'react';
 import * as Realm from 'realm';
+import * as semver from 'semver';
 
 import * as ros from '../../../services/ros';
 import { store } from '../../../store';
@@ -212,7 +212,7 @@ class RealmsTableContainer extends React.PureComponent<
   };
 
   public shouldShowRealmSize = (serverVersion?: string): boolean => {
-    return compareVersions(serverVersion || '0.0.0', '3.13.0') > -1;
+    return semver.gte(serverVersion || '0.0.0', '3.13.0');
   };
 
   public onRealmCreation = async () => {
