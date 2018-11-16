@@ -133,10 +133,8 @@
   },
   "dependencies": {
     "@sentry/electron": "^0.13.0",
-    "@types/compare-versions": "^3.0.0",
     "@types/papaparse": "^4.1.31",
     "classnames": "^2.2.5",
-    "compare-versions": "^3.4.0",
     "electron-store": "^2.0.0",
     "electron-updater": "3.2.3",
     "font-awesome": "^4.7.0",
@@ -158,6 +156,7 @@
     "react-virtualized": "^9.20.1",
     "reactstrap": "^6.3.1",
     "realm": "2.19.0",
+    "semver": "^5.4.1",
     "uuid": "^3.1.0"
   },
   "devDependencies": {
@@ -214,7 +213,6 @@
     "resolve-url-loader": "^2.3.0",
     "sass-lint": "^1.12.1",
     "sass-loader": "^6.0.7",
-    "semver": "^5.4.1",
     "simple-git": "^1.80.1",
     "source-map-support": "^0.5.0",
     "spectron": "^5.0.0",

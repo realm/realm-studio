@@ -104,7 +104,7 @@ export const RealmsTable = ({
         <Column
           label="Data Size"
           dataKey="path"
-          width={100}
+          width={shouldShowRealmSize ? 100 : 0}
           headerRenderer={props => <StateSizeHeader {...props} />}
           cellRenderer={({ cellData }) =>
             renderRealmSize(cellData, 'stateSize', realmSizes)
