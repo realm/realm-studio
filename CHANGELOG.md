@@ -46,7 +46,7 @@
 - Windows was getting smaller on the Windows OS each time the window was opened. This was fixed by enforcing a lower bound on the window height when restoring it from the previous state. (#991)
 
 # Internal
-- Updates to the changelog and releasenotes. (#988)
+- Updates the changelog and releasenotes. (#988)
 - Upgrading to Electron 3.0 + dependencies (#935)
 
 
