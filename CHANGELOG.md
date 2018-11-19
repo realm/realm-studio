@@ -46,8 +46,8 @@
 - Fixed Windows getting smaller on the Windows OS each time the window was opened. ([#991](https://github.com/realm/realm-studio/pull/991))
 
 # Internal
-- Updated to the changelog and releasenotes. (#988)
-- Upgraded to Electron 3.0 + dependencies (#935)
+- Updated to the changelog and releasenotes. ([#988](https://github.com/realm/realm-studio/pull/988))
+- Upgraded to Electron 3.0 + dependencies ([#935](https://github.com/realm/realm-studio/pull/935))
 
 
 # Release 3.0.4 (2018-11-12)
