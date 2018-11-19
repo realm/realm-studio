@@ -3,8 +3,8 @@
 ## Enhancements
 - None
 
-## Bugfixes
+## Fixed
 - None
 
-## Internal
+## Internals
 - Excluding the unpackaged directories when uploading to S3 (again). ([#1013](https://github.com/realm/realm-studio/pull/1013))

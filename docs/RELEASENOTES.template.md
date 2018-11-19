@@ -3,8 +3,8 @@
 ## Enhancements
 - None
 
-## Bugfixes
+## Fixed
 - None
 
-## Internal
+## Internals
 - None
