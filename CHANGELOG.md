@@ -5,12 +5,12 @@
 ## Enhancements
 - None
 
-## Bugfixes
-- The automatic updating was broken on Windows, to solve this the updater, builder and electron was downgraded to the latest stable versions. ([#1004](https://github.com/realm/realm-studio/pull/1004))
-- When creating an object with a datetime value users were unable to choose an AM time, this got fixed by providing the correct format string to the date to string formatting method used. ([#1005](https://github.com/realm/realm-studio/pull/1005))
-- It was difficult to add property when class had many properties and no objects, this was fixed by transforming the AddColumn column into a button floating on-top-of the table header. ([#1008](https://github.com/realm/realm-studio/pull/1008))
-- Users were unable to scroll the modal dialog after adding an object to list when creating objects, this was fixed in the Reactstrap dependency which got updated. ([#1009](https://github.com/realm/realm-studio/pull/1009))
-- The top application menu was not updated until the user refocussed the window, this was fixed by rearranging when the menu got updated initially. ([#1011](https://github.com/realm/realm-studio/pull/1011))
+## Fixed
+- Fixed the automatic updating, which was was broken on Windows. ([#1004](https://github.com/realm/realm-studio/pull/1004))
+- Fixed choosing a PM timestamp when creating an object with a datetime value. ([#1005](https://github.com/realm/realm-studio/pull/1005))
+- Fixed adding a property when class had many properties and no objects. ([#1008](https://github.com/realm/realm-studio/pull/1008))
+- Fixed scrolling the modal dialog after adding an object to list when creating objects. ([#1009](https://github.com/realm/realm-studio/pull/1009))
+- Fixed the application menu, which was not updated until the user refocussed the window. ([#1011](https://github.com/realm/realm-studio/pull/1011))
 
 ## Internal
 - Cleaned up the package.json by using semver instead of compare-versions and moved types to devDependencies. ([#1010](https://github.com/realm/realm-studio/pull/1010))
@@ -25,7 +25,7 @@
 ## Enhancements
 - None
 
-## Bugfixes
+## Fixed
 - Windows are no longer rendering blank when connecting to a server on the Windows OS. ([#998](https://github.com/realm/realm-studio/pull/998))
 
 ## Internal
@@ -40,14 +40,14 @@
 # Enhancements
 - None
 
-# Bugfixes
-- The getting started scene of the server administration window was missing a button for the React Native quick start guide and the iOS and Android URLs was rendering 404 errors. This was fixed by adding the button and updating the URLs. (#963)
-- On the server administrations Realm tab, a query-based partial or reference Realm had a path-level permissions block, which was confusing because path-level permissions are not enforced by the server for these Realms. This was fixed by removing the list of path-level permissions for these types of Realms. (#989)
-- Windows was getting smaller on the Windows OS each time the window was opened. This was fixed by enforcing a lower bound on the window height when restoring it from the previous state. (#991)
+# Fixed
+- Fixed the getting started scene of the server administration window, which was missing a button for the React Native quick start guide and the iOS and Android URLs was rendering 404 errors. ([#963](https://github.com/realm/realm-studio/pull/963))
+- Fixed not showing the path-level permissions of a reference or partial Realm. ([#989](https://github.com/realm/realm-studio/pull/989))
+- Fixed Windows getting smaller on the Windows OS each time the window was opened. ([#991](https://github.com/realm/realm-studio/pull/991))
 
 # Internal
-- Updates the changelog and releasenotes. (#988)
-- Upgrading to Electron 3.0 + dependencies (#935)
+- Updated the changelog and releasenotes. ([#988](https://github.com/realm/realm-studio/pull/988))
+- Upgraded to Electron 3.0 + dependencies ([#935](https://github.com/realm/realm-studio/pull/935))
 
 
 # Release 3.0.4 (2018-11-12)
@@ -57,12 +57,12 @@
 ## Enhancements
 - None
 
-## Bugfixes
-- Addressed a crash happening when sorting the browsers table on a column with type list. This was fixed by disabling sorting on list properties. (#984)
+## Fixed
+- Fixed a crash when sorting a column with type list. ([#984](https://github.com/realm/realm-studio/pull/984))
 
 ## Internal
-- Moved sentry id to the title and using the bug template for the body. (#983)
-- Building up release notes in this file as PRs are merged. (#987)
+- Moved sentry id to the title and using the bug template for the body. ([#983](https://github.com/realm/realm-studio/pull/983))
+- Automated building up release notes in this file as PRs are merged. ([#987](https://github.com/realm/realm-studio/pull/987))
 
 ---
 
