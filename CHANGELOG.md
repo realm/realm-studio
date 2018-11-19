@@ -5,7 +5,7 @@
 ## Enhancements
 - None
 
-## Bugfixes
+## Fixed
 - Fixed the automatic updating, which was was broken on Windows. ([#1004](https://github.com/realm/realm-studio/pull/1004))
 - Fixed choosing a PM timestamp when creating an object with a datetime value. ([#1005](https://github.com/realm/realm-studio/pull/1005))
 - Fixed adding a property when class had many properties and no objects. ([#1008](https://github.com/realm/realm-studio/pull/1008))
@@ -25,7 +25,7 @@
 ## Enhancements
 - None
 
-## Bugfixes
+## Fixed
 - Windows are no longer rendering blank when connecting to a server on the Windows OS. ([#998](https://github.com/realm/realm-studio/pull/998))
 
 ## Internal
@@ -40,7 +40,7 @@
 # Enhancements
 - None
 
-# Bugfixes
+# Fixed
 - Fixed the getting started scene of the server administration window, which was missing a button for the React Native quick start guide and the iOS and Android URLs was rendering 404 errors. ([#963](https://github.com/realm/realm-studio/pull/963))
 - Fixed not showing the path-level permissions of a reference or partial Realm. ([#989](https://github.com/realm/realm-studio/pull/989))
 - Fixed Windows getting smaller on the Windows OS each time the window was opened. ([#991](https://github.com/realm/realm-studio/pull/991))
@@ -57,7 +57,7 @@
 ## Enhancements
 - None
 
-## Bugfixes
+## Fixed
 - Fixed a crash when sorting a column with type list. ([#984](https://github.com/realm/realm-studio/pull/984))
 
 ## Internal
