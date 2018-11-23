@@ -123,6 +123,7 @@ class UsersTableContainer extends React.Component<
         onUserMetadataDeleted={this.onUserMetadataDeleted}
         onUserPasswordChanged={this.onUserPasswordChanged}
         onUserRoleChanged={this.onUserRoleChanged}
+        onUserStatusChanged={this.onUserStatusChanged}
         onUsersDeselection={this.onUsersDeselection}
         searchString={this.state.searchString}
         selection={selection}
@@ -247,6 +248,13 @@ class UsersTableContainer extends React.Component<
     } else {
       throw new Error(`Found no user with the id ${userId}`);
     }
+  };
+
+  public onUserStatusChanged = async (
+    userId: string,
+    status: ros.UserStatus,
+  ) => {
+    await ros.realms.updateUserStatus(this.props.user, userId, status);
   };
 
   public onUsersDeselection = () => {

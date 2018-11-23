@@ -37,11 +37,13 @@ export interface IUserSidebarContainerProps {
   ) => void;
   onUserMetadataDeleted: (userId: string, index: number) => void;
   onUserRoleChanged: (userId: string, role: ros.UserRole) => void;
+  onUserStatusChanged: (userId: string, status: ros.UserStatus) => void;
   selection: ISelection | null;
 }
 
 export interface IUserSidebarContainerState {
   roleDropdownOpen: boolean;
+  statusDropdownOpen: boolean;
   selection: ISelection | null;
 }
 
@@ -51,6 +53,7 @@ class UserSidebarContainer extends React.Component<
 > {
   public state: IUserSidebarContainerState = {
     roleDropdownOpen: false,
+    statusDropdownOpen: false,
     selection: null,
   };
 
@@ -77,6 +80,18 @@ class UserSidebarContainer extends React.Component<
   public onRoleChanged = (role: ros.UserRole) => {
     if (this.props.selection) {
       this.props.onUserRoleChanged(this.props.selection.user.userId, role);
+    }
+  };
+
+  public toggleStatusDropdown = () => {
+    this.setState({
+      statusDropdownOpen: !this.state.statusDropdownOpen,
+    });
+  };
+
+  public onStatusChanged = (status: ros.UserStatus) => {
+    if (this.props.selection) {
+      this.props.onUserStatusChanged(this.props.selection.user.userId, status);
     }
   };
 

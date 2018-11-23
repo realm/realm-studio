@@ -18,7 +18,13 @@
 
 import * as Realm from 'realm';
 
-import { fetchAuthenticated, IRealmFile, IRealmSizeInfo, RealmType } from '.';
+import {
+  fetchAuthenticated,
+  IRealmFile,
+  IRealmSizeInfo,
+  RealmType,
+  UserStatus,
+} from '.';
 import { showError } from '../../ui/reusable/errors';
 
 export enum RealmLoadingMode {
@@ -156,6 +162,24 @@ export const changeType = async (
 
 export const update = (realmId: string, values: Partial<IRealmFile>) => {
   throw new Error('Not yet implemented');
+};
+
+export const updateUserStatus = async (
+  user: Realm.Sync.User,
+  userId: string,
+  status: UserStatus,
+) => {
+  return fetchAuthenticated(
+    user,
+    `/auth/users/${userId}`,
+    {
+      method: 'PATCH',
+      body: JSON.stringify({
+        status,
+      }),
+    },
+    'Failed to update the user status',
+  );
 };
 
 interface IStatisticsResponse {

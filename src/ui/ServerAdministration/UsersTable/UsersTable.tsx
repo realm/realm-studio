@@ -20,7 +20,13 @@ import * as React from 'react';
 import { Column } from 'react-virtualized';
 import { Button } from 'reactstrap';
 
-import { IAccount, RealmFile, User, UserRole } from '../../../services/ros';
+import {
+  IAccount,
+  RealmFile,
+  User,
+  UserRole,
+  UserStatus,
+} from '../../../services/ros';
 
 import {
   FilterableTable,
@@ -55,6 +61,7 @@ export const UsersTable = ({
   onUserMetadataDeleted,
   onUserPasswordChanged,
   onUserRoleChanged,
+  onUserStatusChanged,
   onUsersDeselection,
   searchString,
   selection,
@@ -79,6 +86,7 @@ export const UsersTable = ({
   onUserMetadataDeleted: (userId: string, index: number) => void;
   onUserPasswordChanged: (userId: string, password: string) => void;
   onUserRoleChanged: (userId: string, role: UserRole) => void;
+  onUserStatusChanged: (userId: string, status: UserStatus) => void;
   onUsersDeselection: () => void;
   selection: ISelection | null;
   users: Realm.Results<User>;
@@ -133,6 +141,20 @@ export const UsersTable = ({
             return getUsersRealms(user).length;
           }}
         />
+        <Column
+          label="Status"
+          dataKey="status"
+          width={100}
+          cellRenderer={({ cellData }) => {
+            switch (cellData) {
+              case UserStatus.blacklisted:
+                return 'Blacklisted';
+              case UserStatus.active:
+              default:
+                return 'Active';
+            }
+          }}
+        />
       </FilterableUserTable>
 
       <FloatingControls isOpen={selection === null}>
@@ -148,6 +170,7 @@ export const UsersTable = ({
         onUserMetadataChanged={onUserMetadataChanged}
         onUserMetadataDeleted={onUserMetadataDeleted}
         onUserRoleChanged={onUserRoleChanged}
+        onUserStatusChanged={onUserStatusChanged}
         selection={selection}
       />
 

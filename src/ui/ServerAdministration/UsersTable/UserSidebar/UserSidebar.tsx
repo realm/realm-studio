@@ -39,6 +39,9 @@ export interface IUserSidebarProps extends IUserSidebarContainerProps {
   roleDropdownOpen: boolean;
   selection: ISelection | null;
   toggleRoleDropdown: () => void;
+  onStatusChanged: (status: ros.UserStatus) => void;
+  statusDropdownOpen: boolean;
+  toggleStatusDropdown: () => void;
 }
 
 export const UserSidebar = ({
@@ -53,6 +56,9 @@ export const UserSidebar = ({
   roleDropdownOpen,
   selection,
   toggleRoleDropdown,
+  onStatusChanged,
+  statusDropdownOpen,
+  toggleStatusDropdown,
 }: IUserSidebarProps) => {
   // We need this type-hax because we don't want the IRealmFile to have a isValid method when it gets created
   const currentUser = selection
@@ -77,6 +83,9 @@ export const UserSidebar = ({
           roleDropdownOpen={roleDropdownOpen}
           selection={selection}
           toggleRoleDropdown={toggleRoleDropdown}
+          onStatusChanged={onStatusChanged}
+          statusDropdownOpen={statusDropdownOpen}
+          toggleStatusDropdown={toggleStatusDropdown}
         />
       )}
     </Sidebar>

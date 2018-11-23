@@ -29,9 +29,25 @@ export interface IUser {
   isAdmin: boolean;
   accounts: IAccount[];
   metadata: IUserMetadataRow[];
+  status: UserStatus;
 }
 
 export type User = IUser & Realm.Object;
+
+export enum UserStatus {
+  active = 'active',
+  blacklisted = 'blacklisted',
+}
+
+export function humanizeUserStatus(userStatus: UserStatus) {
+  switch (userStatus) {
+    case UserStatus.blacklisted:
+      return 'Blacklisted';
+    case UserStatus.active:
+    default:
+      return 'Active';
+  }
+}
 
 export interface IAccount {
   provider: string;
