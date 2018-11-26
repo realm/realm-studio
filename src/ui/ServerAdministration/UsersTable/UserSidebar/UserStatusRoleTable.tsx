@@ -76,7 +76,7 @@ export const UserStatusRoleTable = ({
             toggle={toggleStatusDropdown}
           >
             <DropdownToggle caret={true}>
-              {ros.humanizeUserStatus(selection.user.status)}
+              {humanizeUserStatus(selection.user.status)}
             </DropdownToggle>
             <DropdownMenu>
               {[ros.UserStatus.active, ros.UserStatus.blacklisted].map(
@@ -86,7 +86,7 @@ export const UserStatusRoleTable = ({
                       key={status}
                       onClick={() => onStatusChanged(status)}
                     >
-                      {ros.humanizeUserStatus(status)}
+                      {humanizeUserStatus(status)}
                     </DropdownItem>
                   );
                 },
@@ -98,3 +98,18 @@ export const UserStatusRoleTable = ({
     </tbody>
   </table>
 );
+
+function humanizeUserStatus(userStatus: ros.UserStatus | string) {
+  switch (userStatus) {
+    case ros.UserStatus.blacklisted:
+      return 'Blacklisted';
+    case ros.UserStatus.active:
+    case '':
+    case null:
+    case undefined:
+      // We don't have a migration, so assume that every User that doesn't have a status set is Active
+      return 'Active';
+    default:
+      return userStatus;
+  }
+}

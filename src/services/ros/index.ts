@@ -39,16 +39,6 @@ export enum UserStatus {
   blacklisted = 'blacklisted',
 }
 
-export function humanizeUserStatus(userStatus: UserStatus) {
-  switch (userStatus) {
-    case UserStatus.blacklisted:
-      return 'Blacklisted';
-    case UserStatus.active:
-    default:
-      return 'Active';
-  }
-}
-
 export interface IAccount {
   provider: string;
   providerId: string;
