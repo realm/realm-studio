@@ -17,15 +17,17 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
-
 import {
   ButtonDropdown,
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
 } from 'reactstrap';
+
 import { ISelection } from '..';
 import * as ros from '../../../../services/ros';
+
+import './UserStatusRoleTable.scss';
 
 export interface IUserStatusRoleTableProps {
   selection: ISelection;
@@ -46,16 +48,20 @@ export const UserStatusRoleTable = ({
   statusDropdownOpen,
   toggleStatusDropdown,
 }: IUserStatusRoleTableProps) => (
-  <table>
+  <table className="UserStatusRoleTable">
     <tbody>
       <tr>
         <td>Role</td>
-        <td>
-          <ButtonDropdown isOpen={roleDropdownOpen} toggle={toggleRoleDropdown}>
+        <td className="UserStatusRoleTable__ControlsCell">
+          <ButtonDropdown
+            size="sm"
+            isOpen={roleDropdownOpen}
+            toggle={toggleRoleDropdown}
+          >
             <DropdownToggle caret={true}>
               {selection.user.isAdmin ? 'Administrator' : 'Regular user'}
             </DropdownToggle>
-            <DropdownMenu>
+            <DropdownMenu right={true}>
               <DropdownItem
                 onClick={() => onRoleChanged(ros.UserRole.Administrator)}
               >
@@ -69,16 +75,22 @@ export const UserStatusRoleTable = ({
         </td>
       </tr>
       <tr>
-        <td>Status</td>
         <td>
+          Status{' '}
+          {/*<a href="https://docs.realm.io/platform/" target="_blank">
+            <i className="fa fa-question-circle" />
+          </a>*/}
+        </td>
+        <td className="UserStatusRoleTable__ControlsCell">
           <ButtonDropdown
+            size="sm"
             isOpen={statusDropdownOpen}
             toggle={toggleStatusDropdown}
           >
             <DropdownToggle caret={true}>
               {humanizeUserStatus(selection.user.status)}
             </DropdownToggle>
-            <DropdownMenu>
+            <DropdownMenu right={true}>
               {[ros.UserStatus.active, ros.UserStatus.blacklisted].map(
                 status => {
                   return (
