@@ -35,6 +35,7 @@ import { MetadataTable } from './MetadataTable';
 import { UsersRealmsTable } from './UsersRealmsTable';
 
 import './UserSidebar.scss';
+import { UserStatusRoleTable } from './UserStatusRoleTable';
 
 export interface IUserSidebarContentProps {
   onChangePassword: () => void;
@@ -46,6 +47,9 @@ export interface IUserSidebarContentProps {
   roleDropdownOpen: boolean;
   selection: ISelection;
   toggleRoleDropdown: () => void;
+  onStatusChanged: (status: ros.UserStatus) => void;
+  statusDropdownOpen: boolean;
+  toggleStatusDropdown: () => void;
 }
 
 export const UserSidebarContent = ({
@@ -58,26 +62,23 @@ export const UserSidebarContent = ({
   roleDropdownOpen,
   selection,
   toggleRoleDropdown,
+  onStatusChanged,
+  statusDropdownOpen,
+  toggleStatusDropdown,
 }: IUserSidebarContentProps) => {
   return (
     <React.Fragment>
       <SidebarTitle>{selection.user.userId}</SidebarTitle>
       <SidebarBody grow={0}>
-        <ButtonDropdown isOpen={roleDropdownOpen} toggle={toggleRoleDropdown}>
-          <DropdownToggle caret={true}>
-            {selection.user.isAdmin ? 'Administrator' : 'Regular user'}
-          </DropdownToggle>
-          <DropdownMenu>
-            <DropdownItem
-              onClick={() => onRoleChanged(ros.UserRole.Administrator)}
-            >
-              Administrator
-            </DropdownItem>
-            <DropdownItem onClick={() => onRoleChanged(ros.UserRole.Regular)}>
-              Regular user
-            </DropdownItem>
-          </DropdownMenu>
-        </ButtonDropdown>
+        <UserStatusRoleTable
+          selection={selection}
+          roleDropdownOpen={roleDropdownOpen}
+          toggleRoleDropdown={toggleRoleDropdown}
+          onRoleChanged={onRoleChanged}
+          onStatusChanged={onStatusChanged}
+          statusDropdownOpen={statusDropdownOpen}
+          toggleStatusDropdown={toggleStatusDropdown}
+        />
       </SidebarBody>
       <SidebarBody className="UserSidebar__Tables">
         <AccountsTable accounts={selection.user.accounts} />
