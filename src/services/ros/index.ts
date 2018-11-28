@@ -36,7 +36,22 @@ export type User = IUser & Realm.Object;
 
 export enum UserStatus {
   active = 'active',
-  blacklisted = 'blacklisted',
+  suspended = 'suspended',
+}
+
+export function humanizeUserStatus(userStatus: UserStatus | string) {
+  switch (userStatus) {
+    case UserStatus.suspended:
+      return 'Suspended';
+    case UserStatus.active:
+    case '':
+    case null:
+    case undefined:
+      // We don't have a migration, so assume that every User that doesn't have a status set is Active
+      return 'Active';
+    default:
+      return userStatus;
+  }
 }
 
 export interface IAccount {

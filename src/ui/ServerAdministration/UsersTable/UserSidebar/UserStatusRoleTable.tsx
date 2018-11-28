@@ -88,21 +88,19 @@ export const UserStatusRoleTable = ({
             toggle={toggleStatusDropdown}
           >
             <DropdownToggle caret={true}>
-              {humanizeUserStatus(selection.user.status)}
+              {ros.humanizeUserStatus(selection.user.status)}
             </DropdownToggle>
             <DropdownMenu right={true}>
-              {[ros.UserStatus.active, ros.UserStatus.blacklisted].map(
-                status => {
-                  return (
-                    <DropdownItem
-                      key={status}
-                      onClick={() => onStatusChanged(status)}
-                    >
-                      {humanizeUserStatus(status)}
-                    </DropdownItem>
-                  );
-                },
-              )}
+              {[ros.UserStatus.active, ros.UserStatus.suspended].map(status => {
+                return (
+                  <DropdownItem
+                    key={status}
+                    onClick={() => onStatusChanged(status)}
+                  >
+                    {ros.humanizeUserStatus(status)}
+                  </DropdownItem>
+                );
+              })}
             </DropdownMenu>
           </ButtonDropdown>
         </td>
@@ -110,18 +108,3 @@ export const UserStatusRoleTable = ({
     </tbody>
   </table>
 );
-
-function humanizeUserStatus(userStatus: ros.UserStatus | string) {
-  switch (userStatus) {
-    case ros.UserStatus.blacklisted:
-      return 'Blacklisted';
-    case ros.UserStatus.active:
-    case '':
-    case null:
-    case undefined:
-      // We don't have a migration, so assume that every User that doesn't have a status set is Active
-      return 'Active';
-    default:
-      return userStatus;
-  }
-}

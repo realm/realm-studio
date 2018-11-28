@@ -21,6 +21,7 @@ import { Column } from 'react-virtualized';
 import { Button } from 'reactstrap';
 
 import {
+  humanizeUserStatus,
   IAccount,
   RealmFile,
   User,
@@ -145,15 +146,7 @@ export const UsersTable = ({
           label="Status"
           dataKey="status"
           width={100}
-          cellRenderer={({ cellData }) => {
-            switch (cellData) {
-              case UserStatus.blacklisted:
-                return 'Blacklisted';
-              case UserStatus.active:
-              default:
-                return 'Active';
-            }
-          }}
+          cellRenderer={({ cellData }) => humanizeUserStatus(cellData)}
         />
       </FilterableUserTable>
 
