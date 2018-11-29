@@ -48,9 +48,12 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 
-    &__error,
-    &__server {
+    &__selectable {
       user-select: text;
+    }
+
+    &__Icon {
+      margin-left: .5rem;
     }
   }
 

@@ -25,16 +25,13 @@ import * as semver from 'semver';
 
 import * as ros from '../../../services/ros';
 import { store } from '../../../store';
-
 import { showError } from '../../reusable/errors';
+import { withAdminRealm } from '../AdminRealm';
 import { querySomeFieldContainsText, wait } from '../utils';
+
 import { RealmsTable } from './RealmsTable';
 
 export type RealmFile = ros.IRealmFile & Realm.Object;
-
-export type ValidateCertificatesChangeHandler = (
-  validateCertificates: boolean,
-) => void;
 
 export interface IDeletionProgress {
   current: number;
@@ -46,9 +43,7 @@ export interface IRealmTableContainerProps {
   adminRealmChanges: number;
   createRealm: () => Promise<RealmFile>;
   onRealmOpened: (path: string) => void;
-  onValidateCertificatesChange: ValidateCertificatesChangeHandler;
   user: Realm.Sync.User;
-  validateCertificates: boolean;
   serverVersion?: string;
 }
 
@@ -143,6 +138,10 @@ class RealmsTableContainer extends React.PureComponent<
   );
 
   public render() {
+    if (this.props.adminRealm.empty) {
+      return null;
+    }
+
     const realms = this.realms(
       this.props.adminRealm,
       this.state.searchString,
@@ -191,9 +190,19 @@ class RealmsTableContainer extends React.PureComponent<
       }
     });
 
+    // Register a listener to update the component once a schema is available
+    this.props.adminRealm.addListener('schema', this.onRealmChange);
+    this.props.adminRealm.addListener('change', this.onRealmChange);
+
     // Fetch the realm sizes
     // TODO: Check the this.props.serverVersion before fetching using the semver library
     this.fetchRealmSizes();
+  }
+
+  public componentWillUnmount() {
+    // Remove the listener that was added when mounting
+    this.props.adminRealm.removeListener('schema', this.onRealmChange);
+    this.props.adminRealm.removeListener('change', this.onRealmChange);
   }
 
   public getRealmPermissions = (
@@ -304,6 +313,10 @@ class RealmsTableContainer extends React.PureComponent<
     this.setState({ searchString });
   };
 
+  private onRealmChange = () => {
+    this.forceUpdate();
+  };
+
   private async pollRealmSizes(duration = 120000) {
     for (let i = 0; i < duration / this.realmFileSizeThrottleDuration; i++) {
       await wait(this.realmFileSizeThrottleDuration);
@@ -384,4 +397,6 @@ class RealmsTableContainer extends React.PureComponent<
   }
 }
 
-export { RealmsTableContainer as RealmsTable };
+const RealmTableWithRealm = withAdminRealm(RealmsTableContainer, 'adminRealm');
+
+export { RealmTableWithRealm as RealmsTable };

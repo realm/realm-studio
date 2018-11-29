@@ -25,7 +25,7 @@ import { CreateRealmDialog } from './CreateRealmDialog';
 import { Dashboard } from './Dashboard';
 import { GettingStarted } from './GettingStarted';
 import { Log } from './Log';
-import { RealmsTable, ValidateCertificatesChangeHandler } from './RealmsTable';
+import { RealmsTable } from './RealmsTable';
 import { ToolsContainer } from './Tools';
 import { TopBar } from './TopBar';
 import { UsersTable } from './UsersTable';
@@ -43,9 +43,7 @@ export enum Tab {
 
 interface IServerAdministrationProps {
   activeTab: Tab | null;
-  adminRealm?: Realm;
   adminRealmChanges: number;
-  adminRealmProgress: ILoadingProgress;
   createRealm: () => Promise<RealmFile>;
   isCloudTenant: boolean;
   isCreateRealmOpen: boolean;
@@ -56,51 +54,37 @@ interface IServerAdministrationProps {
   onRealmOpened: (path: string) => void;
   onReconnect: () => void;
   onTabChanged: (tab: Tab) => void;
-  onValidateCertificatesChange: ValidateCertificatesChangeHandler;
+  progress: ILoadingProgress;
   serverVersion?: string;
   syncError?: Realm.Sync.SyncError;
   user: Realm.Sync.User | null;
-  validateCertificates: boolean;
 }
 
 const renderContent = ({
   activeTab,
-  adminRealm,
   adminRealmChanges,
   createRealm,
   isCloudTenant,
   onRealmOpened,
-  onValidateCertificatesChange,
   user,
-  validateCertificates,
   serverVersion,
 }: IServerAdministrationProps) => {
   if (user && activeTab === Tab.GettingStarted) {
     return <GettingStarted serverUrl={user.server} />;
   } else if (user && activeTab === Tab.Dashboard) {
     return <Dashboard isCloudTenant={isCloudTenant} serverUrl={user.server} />;
-  } else if (user && adminRealm && activeTab === Tab.Realms) {
+  } else if (user && activeTab === Tab.Realms) {
     return (
       <RealmsTable
-        adminRealm={adminRealm}
         adminRealmChanges={adminRealmChanges}
         createRealm={createRealm}
         onRealmOpened={onRealmOpened}
-        onValidateCertificatesChange={onValidateCertificatesChange}
         user={user}
-        validateCertificates={validateCertificates}
         serverVersion={serverVersion}
       />
     );
-  } else if (user && adminRealm && activeTab === Tab.Users) {
-    return (
-      <UsersTable
-        adminRealm={adminRealm}
-        adminRealmChanges={adminRealmChanges}
-        user={user}
-        validateCertificates={validateCertificates}
-      />
-    );
+  } else if (user && activeTab === Tab.Users) {
+    return <UsersTable adminRealmChanges={adminRealmChanges} user={user} />;
   } else if (user && activeTab === Tab.Logs) {
     return <Log serverUrl={user.server} token={user.token} />;
   } else if (user && activeTab === Tab.Tools) {
@@ -113,7 +97,6 @@ const renderContent = ({
 export const ServerAdministration = (props: IServerAdministrationProps) => {
   const {
     activeTab,
-    adminRealmProgress,
     isCloudTenant,
     isCreateRealmOpen,
     isCreatingRealm,
@@ -122,6 +105,7 @@ export const ServerAdministration = (props: IServerAdministrationProps) => {
     onRealmCreation,
     onReconnect,
     onTabChanged,
+    progress,
     serverVersion,
     user,
   } = props;
@@ -130,7 +114,7 @@ export const ServerAdministration = (props: IServerAdministrationProps) => {
     <div className="ServerAdministration">
       <TopBar
         activeTab={activeTab}
-        adminRealmProgress={adminRealmProgress}
+        progress={progress}
         className="ServerAdministration__TopBar"
         isCloudTenant={isCloudTenant}
         onReconnect={onReconnect}
@@ -139,7 +123,7 @@ export const ServerAdministration = (props: IServerAdministrationProps) => {
         user={user}
       />
       <div className="ServerAdministration__content">
-        {adminRealmProgress.status === 'done' ? renderContent(props) : null}
+        {progress.status === 'done' ? renderContent(props) : null}
       </div>
 
       <CreateRealmDialog
@@ -150,8 +134,8 @@ export const ServerAdministration = (props: IServerAdministrationProps) => {
       />
 
       <LoadingOverlay
-        loading={!user || isRealmOpening}
-        progress={adminRealmProgress}
+        loading={isRealmOpening}
+        progress={progress}
         fade={true}
       />
     </div>
