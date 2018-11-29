@@ -92,6 +92,7 @@ export const create = (
   user: Realm.Sync.User,
   realmPath: string,
   schema: Realm.ObjectSchema[] = [],
+  validateCertificates = true,
 ): Promise<Realm> => {
   return new Promise((resolve, reject) => {
     const url = getUrl(user, realmPath);
@@ -103,6 +104,7 @@ export const create = (
         error: (session, err) => {
           reject(err);
         },
+        ssl: { validate: validateCertificates },
       },
       schema,
     }).then(resolve, reject);
