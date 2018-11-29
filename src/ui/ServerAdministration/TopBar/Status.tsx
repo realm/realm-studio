@@ -22,6 +22,8 @@ import * as Realm from 'realm';
 import { ILoadingProgress, LoadingStatus } from '../../reusable/LoadingOverlay';
 import { RealmAdminConnection } from '../AdminRealm';
 
+import { ConnectionStateIndicator } from './ConnectionStateIndicator';
+
 export interface IStatusProps {
   onReconnect: () => void;
   progress: ILoadingProgress;
@@ -71,6 +73,10 @@ function renderConnectionState(
       {message
         ? renderText(message)
         : renderConnectionStateMessage(connectionState, serverUrl)}
+      <ConnectionStateIndicator
+        className="TopBar__Status__Icon"
+        connectionState={connectionState}
+      />
     </React.Fragment>
   );
 }
