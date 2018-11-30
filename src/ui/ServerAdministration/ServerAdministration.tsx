@@ -56,7 +56,6 @@ interface IServerAdministrationProps {
   onTabChanged: (tab: Tab) => void;
   progress: ILoadingProgress;
   serverVersion?: string;
-  syncError?: Realm.Sync.SyncError;
   user: Realm.Sync.User | null;
 }
 

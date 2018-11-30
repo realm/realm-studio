@@ -24,6 +24,7 @@
   box-shadow: 0 5px 5px $raised-shadow-color;
   cursor: default;
   flex-wrap: nowrap;
+  flex-shrink: 0;
   justify-content: flex-start;
   overflow-x: auto;
   user-select: none;
@@ -42,6 +43,7 @@
   &__Status {
     flex-grow: 1;
     font-size: .9rem;
+    line-height: 2rem;
     margin: 0;
     overflow: hidden;
     text-align: right;

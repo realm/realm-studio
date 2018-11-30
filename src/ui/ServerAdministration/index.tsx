@@ -170,18 +170,18 @@ class ServerAdministrationContainer
   private renderServerAdministration() {
     return (
       <ServerAdministration
+        activeTab={this.state.activeTab}
         adminRealmChanges={this.state.adminRealmChanges}
         createRealm={this.createRealm}
         isCloudTenant={this.props.isCloudTenant || false}
         isCreateRealmOpen={this.state.isCreateRealmOpen}
         isCreatingRealm={this.state.isCreatingRealm}
+        isRealmOpening={this.state.isRealmOpening}
         onCancelRealmCreation={this.onCancelRealmCreation}
         onRealmCreation={this.onRealmCreation}
         onRealmOpened={this.onRealmOpened}
         onReconnect={this.onReconnect}
         onTabChanged={this.onTabChanged}
-        activeTab={this.state.activeTab}
-        isRealmOpening={this.state.isRealmOpening}
         progress={this.state.progress}
         serverVersion={this.state.serverVersion}
         user={this.state.user}
@@ -213,7 +213,6 @@ class ServerAdministrationContainer
   private onReconnect = async () => {
     // TODO: Use reopen the Realm instead of reloading
     /*
-    this.setState({ syncError: undefined });
     this.authenticate();
     */
     await this.ensureServerIsAvailable(this.props.user.server);
