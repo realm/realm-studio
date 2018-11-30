@@ -19,11 +19,11 @@
 import * as React from 'react';
 import { Popover, PopoverBody } from 'reactstrap';
 
-import './StateSizeHeader.scss';
+import './RealmSizeHeader.scss';
 
 // @see https://github.com/bvaughn/react-virtualized/blob/9.18.5/source/Table/defaultHeaderRenderer.js
 
-interface IStateSizeHeaderProps {
+interface IRealmSizeHeaderProps {
   isPopoverOpen: boolean;
   label: React.ReactNode;
   labelElement?: HTMLElement;
@@ -31,17 +31,17 @@ interface IStateSizeHeaderProps {
   onTogglePopover: () => void;
 }
 
-export const StateSizeHeader = ({
+export const RealmSizeHeader = ({
   isPopoverOpen,
   label,
   labelElement,
   onLabelRef,
   onTogglePopover,
-}: IStateSizeHeaderProps) => (
+}: IRealmSizeHeaderProps) => (
   <div className="ReactVirtualized__Table__headerTruncatedText">
     <span ref={onLabelRef}>{label}</span>
     <i
-      className="StateSizeHeader__QuestionIcon fa fa-question"
+      className="RealmSizeHeader__QuestionIcon fa fa-question"
       onClick={onTogglePopover}
     />
     {labelElement ? (

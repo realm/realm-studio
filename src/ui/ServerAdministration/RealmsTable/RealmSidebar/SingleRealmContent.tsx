@@ -24,9 +24,9 @@ import { RealmFile } from '..';
 import * as ros from '../../../../services/ros';
 import { SidebarBody, SidebarControls, SidebarTitle } from '../../../reusable';
 import { displayUser, prettyBytes, shortenRealmPath } from '../../utils';
+import { RealmSize } from '../RealmSize';
 import { RealmTypeBadge } from '../RealmTypeBadge';
 
-import { MissingSizeBadge } from '../MissingSizeBadge';
 import { PermissionsTable } from './PermissionsTable';
 
 interface ISingleRealmContentProps {
@@ -56,6 +56,16 @@ export const SingleRealmContent = ({
   // Determine if the Realm can be upgraded to a "reference" Realm,
   // It can if its defined and not already "partial" or "reference"
   const canUpgradeType = realm && !isSystemRealm && isFullRealm;
+  // Generate a list of known size labels
+  const sizeLabels = [];
+  if (shouldShowRealmSize && realmSize) {
+    sizeLabels.push(
+      realmSize.state ? prettyBytes(realmSize.state) + ' (data)' : null,
+    );
+    sizeLabels.push(
+      realmSize.file ? prettyBytes(realmSize.file) + ' (file)' : null,
+    );
+  }
 
   return (
     <React.Fragment>
@@ -72,31 +82,14 @@ export const SingleRealmContent = ({
         <p className="RealmSidebar__SubTitle">
           Owned by {displayUser(realm.owner)}
         </p>
-        <p className="RealmSidebar__SubTitle">
-          Data size:{' '}
-          {realmSize && typeof realmSize.stateSize === 'number' ? (
-            prettyBytes(realmSize.stateSize)
-          ) : (
-            <MissingSizeBadge />
-          )}
-        </p>
-        {shouldShowRealmSize ? (
-          <p className="RealmSidebar__SubTitle">
-            File size:{' '}
-            {realmSize && typeof realmSize.fileSize === 'number' ? (
-              prettyBytes(realmSize.fileSize)
-            ) : (
-              <MissingSizeBadge />
-            )}
+        {shouldShowRealmSize && realmSize ? (
+          <p>
+            {'Size: '}
+            <RealmSize size={realmSize.state} title="Data" />
+            {' (data) / '}
+            <RealmSize size={realmSize.file} title="File" /> (file)
           </p>
         ) : null}
-        <Button
-          size="sm"
-          color="secondary"
-          onClick={() => onRealmSizeRecalculate(realm)}
-        >
-          Recalculate Sizes
-        </Button>
       </SidebarBody>
       {isFullRealm ? (
         <SidebarBody className="RealmSidebar__Tables" grow={1}>
@@ -144,6 +137,13 @@ export const SingleRealmContent = ({
             Delete
           </Button>
         )}
+        <Button
+          size="sm"
+          color="secondary"
+          onClick={() => onRealmSizeRecalculate(realm)}
+        >
+          Recalculate size
+        </Button>
       </SidebarControls>
     </React.Fragment>
   );

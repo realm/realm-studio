@@ -26,12 +26,12 @@ import {
   IFilterableTableProps,
 } from '../shared/FilterableTable';
 import { FloatingControls } from '../shared/FloatingControls';
-import { displayUser, prettyBytes } from '../utils';
+import { displayUser } from '../utils';
 
 import { IDeletionProgress, RealmFile } from '.';
-import { MissingSizeBadge } from './MissingSizeBadge';
 import { RealmSidebar } from './RealmSidebar';
-import { StateSizeHeader } from './StateSizeHeader';
+import { RealmSize } from './RealmSize';
+import { RealmSizeHeader } from './RealmSizeHeader';
 
 import './RealmsTable.scss';
 
@@ -100,22 +100,20 @@ export const RealmsTable = ({
           cellRenderer={({ cellData }) => cellData || 'full'}
         />
         <Column
-          label="Data Size"
+          label="Size"
           dataKey="path"
-          width={shouldShowRealmSize ? 100 : 0}
-          headerRenderer={props => <StateSizeHeader {...props} />}
-          cellRenderer={({ rowData }) =>
-            renderRealmSize('stateSize', getRealmSize(rowData as RealmFile))
-          }
-        />
-        <Column
-          label="File Size"
-          dataKey="path"
-          width={shouldShowRealmSize ? 100 : 0}
-          headerRenderer={props => <StateSizeHeader {...props} />}
-          cellRenderer={({ rowData }) =>
-            renderRealmSize('fileSize', getRealmSize(rowData as RealmFile))
-          }
+          width={shouldShowRealmSize ? 150 : 0}
+          headerRenderer={props => <RealmSizeHeader {...props} />}
+          cellRenderer={({ rowData }) => {
+            const size = getRealmSize(rowData as RealmFile);
+            return (
+              <div>
+                <RealmSize size={size.state} title="State size" />
+                {' / '}
+                <RealmSize size={size.file} title="File size" />
+              </div>
+            );
+          }}
         />
       </FilterableRealmTable>
 
@@ -138,18 +136,4 @@ export const RealmsTable = ({
       />
     </div>
   );
-};
-
-const renderRealmSize = (
-  valueName: keyof IRealmSizeInfo,
-  size: IRealmSizeInfo,
-) => {
-  if (size) {
-    const value = size[valueName];
-    if (typeof value === 'number') {
-      return prettyBytes(value);
-    }
-  }
-
-  return <MissingSizeBadge />;
 };

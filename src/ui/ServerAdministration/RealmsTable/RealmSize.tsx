@@ -16,21 +16,17 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-@import "~realm-studio-styles/variables";
+import * as React from 'react';
 
-.StateSizeHeader {
-  &__RefreshIcon {
-    cursor: pointer;
-    padding: 0 ($spacer / 2);
+import { prettyBytes } from '../utils';
 
-    &--refreshing {
-      color: $elephant;
-      cursor: progress;
-    }
-  }
+import { MissingSizeBadge } from './MissingSizeBadge';
 
-  &__QuestionIcon {
-    cursor: pointer;
-    padding: 0 ($spacer / 2);
-  }
+interface IRealmSizeProps {
+  size?: number;
+  title: string;
 }
+
+export const RealmSize = ({ size, title }: IRealmSizeProps) => (
+  <span title={title}>{size ? prettyBytes(size) : <MissingSizeBadge />}</span>
+);

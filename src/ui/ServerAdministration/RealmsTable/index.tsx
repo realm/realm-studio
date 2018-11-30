@@ -30,10 +30,9 @@ import {
   getMetricsRealmConfig,
   IRealmFileSize,
   IRealmStateSize,
-  MetricsRealmConsumer,
   MetricsRealmProvider,
 } from '../MetricsRealm';
-import { querySomeFieldContainsText, wait } from '../utils';
+import { querySomeFieldContainsText } from '../utils';
 
 import { RealmsTable } from './RealmsTable';
 
@@ -144,8 +143,8 @@ class RealmsTableContainer extends React.PureComponent<
     );
     return (
       <MetricsRealmProvider {...metricsRealmConfig} updateOnChange={true}>
-        {({ realm }) => {
-          this.metricsRealm = realm;
+        {({ realm: metricsRealm }) => {
+          this.metricsRealm = metricsRealm;
           return (
             <RealmsTable
               getRealmPermissions={this.getRealmPermissions}
@@ -162,9 +161,7 @@ class RealmsTableContainer extends React.PureComponent<
               selectedRealms={validSelectedRealms}
               deletionProgress={this.state.deletionProgress}
               onRealmSizeRecalculate={this.onRealmSizeRecalculate}
-              shouldShowRealmSize={this.shouldShowRealmSize(
-                this.props.serverVersion,
-              )}
+              shouldShowRealmSize={!metricsRealm.empty}
             />
           );
         }}
@@ -224,8 +221,8 @@ class RealmsTableContainer extends React.PureComponent<
       const fileSizeMetric = this.metricsRealm.objectForPrimaryKey<
         IRealmFileSize
       >('RealmFileSize', realm.path);
-      result.stateSize = stateSizeMetric ? stateSizeMetric.value : undefined;
-      result.fileSize = fileSizeMetric ? fileSizeMetric.value : undefined;
+      result.state = stateSizeMetric ? stateSizeMetric.value : undefined;
+      result.file = fileSizeMetric ? fileSizeMetric.value : undefined;
     }
     return result;
   };
