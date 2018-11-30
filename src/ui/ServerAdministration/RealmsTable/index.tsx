@@ -17,7 +17,6 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as electron from 'electron';
-import * as _ from 'lodash';
 import memoize from 'memoize-one';
 import * as React from 'react';
 import * as Realm from 'realm';
@@ -27,6 +26,13 @@ import * as ros from '../../../services/ros';
 import { store } from '../../../store';
 import { showError } from '../../reusable/errors';
 import { withAdminRealm } from '../AdminRealm';
+import {
+  getMetricsRealmConfig,
+  IRealmFileSize,
+  IRealmStateSize,
+  MetricsRealmConsumer,
+  MetricsRealmProvider,
+} from '../MetricsRealm';
 import { querySomeFieldContainsText, wait } from '../utils';
 
 import { RealmsTable } from './RealmsTable';
@@ -50,7 +56,6 @@ export interface IRealmTableContainerProps {
 export interface IRealmTableContainerState {
   /** Prevents spamming the server too badly */
   deletionProgress?: IDeletionProgress;
-  realmSizes?: { [path: string]: ros.IRealmSizeInfo };
   searchString: string;
   // TODO: Update this once Realm JS has better support for Sets
   selectedRealms: RealmFile[];
@@ -69,7 +74,7 @@ class RealmsTableContainer extends React.PureComponent<
     showSystemRealms: store.shouldShowSystemRealms(),
   };
 
-  protected realms = memoize(
+  private realms = memoize(
     (
       adminRealm: Realm,
       searchString: string,
@@ -114,31 +119,11 @@ class RealmsTableContainer extends React.PureComponent<
     },
   );
 
-  private realmFileSizeThrottleDuration = 15000;
-  private fetchRealmSizes = _.throttle(
-    async () => {
-      try {
-        // Request the realm sizes from the server
-        const sizes = await ros.realms.getSizes(this.props.user);
-        // Update the state
-        this.setState({ realmSizes: sizes });
-      } catch (err) {
-        if (err instanceof ros.FetchError && err.response.status === 404) {
-          // This is expected from an older server
-          // - but we should really check the version before fetching instead ...
-        } else {
-          // Logging errors instead of showing them, because the user made no interaction
-          // tslint:disable-next-line:no-console
-          console.error('Failed to fetch Realm sizes', err);
-        }
-      }
-    },
-    this.realmFileSizeThrottleDuration,
-    { leading: true },
-  );
+  private metricsRealm: Realm | null = null;
 
   public render() {
-    if (this.props.adminRealm.empty) {
+    const { adminRealm } = this.props;
+    if (adminRealm.empty || !adminRealm.syncSession) {
       return null;
     }
 
@@ -153,25 +138,37 @@ class RealmsTableContainer extends React.PureComponent<
       const realm: Realm.Object = r as any;
       return realm.isValid();
     });
+
+    const metricsRealmConfig = getMetricsRealmConfig(
+      adminRealm.syncSession.user,
+    );
     return (
-      <RealmsTable
-        getRealmPermissions={this.getRealmPermissions}
-        getRealmSize={this.getRealmSize}
-        onRealmCreation={this.onRealmCreation}
-        onRealmDeletion={this.onRealmDeletion}
-        onRealmOpened={this.onRealmOpened}
-        onRealmsDeselection={this.onRealmsDeselection}
-        onRealmClick={this.onRealmClick}
-        onRealmTypeUpgrade={this.onRealmTypeUpgrade}
-        onSearchStringChange={this.onSearchStringChange}
-        realms={realms}
-        realmSizes={this.state.realmSizes}
-        searchString={this.state.searchString}
-        selectedRealms={validSelectedRealms}
-        deletionProgress={this.state.deletionProgress}
-        onRealmSizeRecalculate={this.onRealmSizeRecalculate}
-        shouldShowRealmSize={this.shouldShowRealmSize(this.props.serverVersion)}
-      />
+      <MetricsRealmProvider {...metricsRealmConfig} updateOnChange={true}>
+        {({ realm }) => {
+          this.metricsRealm = realm;
+          return (
+            <RealmsTable
+              getRealmPermissions={this.getRealmPermissions}
+              getRealmSize={this.getRealmSize}
+              onRealmCreation={this.onRealmCreation}
+              onRealmDeletion={this.onRealmDeletion}
+              onRealmOpened={this.onRealmOpened}
+              onRealmsDeselection={this.onRealmsDeselection}
+              onRealmClick={this.onRealmClick}
+              onRealmTypeUpgrade={this.onRealmTypeUpgrade}
+              onSearchStringChange={this.onSearchStringChange}
+              realms={realms}
+              searchString={this.state.searchString}
+              selectedRealms={validSelectedRealms}
+              deletionProgress={this.state.deletionProgress}
+              onRealmSizeRecalculate={this.onRealmSizeRecalculate}
+              shouldShowRealmSize={this.shouldShowRealmSize(
+                this.props.serverVersion,
+              )}
+            />
+          );
+        }}
+      </MetricsRealmProvider>
     );
   }
 
@@ -191,18 +188,18 @@ class RealmsTableContainer extends React.PureComponent<
     });
 
     // Register a listener to update the component once a schema is available
-    this.props.adminRealm.addListener('schema', this.onRealmChange);
-    this.props.adminRealm.addListener('change', this.onRealmChange);
-
-    // Fetch the realm sizes
-    // TODO: Check the this.props.serverVersion before fetching using the semver library
-    this.fetchRealmSizes();
+    if (!this.props.adminRealm.isClosed) {
+      this.props.adminRealm.addListener('schema', this.onRealmChange);
+      this.props.adminRealm.addListener('change', this.onRealmChange);
+    }
   }
 
   public componentWillUnmount() {
     // Remove the listener that was added when mounting
-    this.props.adminRealm.removeListener('schema', this.onRealmChange);
-    this.props.adminRealm.removeListener('change', this.onRealmChange);
+    if (!this.props.adminRealm.isClosed) {
+      this.props.adminRealm.removeListener('schema', this.onRealmChange);
+      this.props.adminRealm.removeListener('change', this.onRealmChange);
+    }
   }
 
   public getRealmPermissions = (
@@ -214,10 +211,23 @@ class RealmsTableContainer extends React.PureComponent<
       .filtered('realmFile == $0', realm);
   };
 
-  public getRealmSize = (realm: RealmFile) => {
-    if (this.state.realmSizes) {
-      return this.state.realmSizes[realm.path];
+  public getRealmSize = (realm: RealmFile): ros.IRealmSizeInfo => {
+    const result: ros.IRealmSizeInfo = {};
+    if (
+      this.metricsRealm &&
+      !this.metricsRealm.isClosed &&
+      !this.metricsRealm.empty
+    ) {
+      const stateSizeMetric = this.metricsRealm.objectForPrimaryKey<
+        IRealmStateSize
+      >('RealmStateSize', realm.path);
+      const fileSizeMetric = this.metricsRealm.objectForPrimaryKey<
+        IRealmFileSize
+      >('RealmFileSize', realm.path);
+      result.stateSize = stateSizeMetric ? stateSizeMetric.value : undefined;
+      result.fileSize = fileSizeMetric ? fileSizeMetric.value : undefined;
     }
+    return result;
   };
 
   public shouldShowRealmSize = (serverVersion?: string): boolean => {
@@ -239,10 +249,6 @@ class RealmsTableContainer extends React.PureComponent<
 
   public onRealmSizeRecalculate = async (realm: RealmFile) => {
     await ros.realms.requestSizeRecalculation(this.props.user, realm.path);
-
-    // Start polling for updated values - there's no guarantee when we'll get them,
-    // so just poll every 15 seconds for the next 2 minutes.
-    this.pollRealmSizes();
   };
 
   public onRealmDeletion = async (...realms: RealmFile[]) => {
@@ -316,13 +322,6 @@ class RealmsTableContainer extends React.PureComponent<
   private onRealmChange = () => {
     this.forceUpdate();
   };
-
-  private async pollRealmSizes(duration = 120000) {
-    for (let i = 0; i < duration / this.realmFileSizeThrottleDuration; i++) {
-      await wait(this.realmFileSizeThrottleDuration);
-      await this.fetchRealmSizes();
-    }
-  }
 
   private confirmRealmDeletion(...realms: RealmFile[]): boolean {
     const paths = realms.map(r => r.path);

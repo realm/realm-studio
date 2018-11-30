@@ -51,7 +51,6 @@ export const RealmsTable = ({
   onRealmTypeUpgrade,
   onSearchStringChange,
   realms,
-  realmSizes,
   searchString,
   selectedRealms,
   onRealmSizeRecalculate,
@@ -59,7 +58,7 @@ export const RealmsTable = ({
 }: {
   deletionProgress?: IDeletionProgress;
   getRealmPermissions: (realm: RealmFile) => Realm.Results<IPermission>;
-  getRealmSize: (realm: RealmFile) => IRealmSizeInfo | undefined;
+  getRealmSize: (realm: RealmFile) => IRealmSizeInfo;
   onRealmClick: (e: React.MouseEvent<HTMLElement>, realm: RealmFile) => void;
   onRealmCreation: () => void;
   onRealmDeletion: (...realms: RealmFile[]) => void;
@@ -68,7 +67,6 @@ export const RealmsTable = ({
   onRealmTypeUpgrade: (realm: RealmFile) => void;
   onSearchStringChange: (query: string) => void;
   realms: Realm.Results<RealmFile>;
-  realmSizes?: { [path: string]: IRealmSizeInfo };
   searchString: string;
   selectedRealms: RealmFile[];
   onRealmSizeRecalculate: (realm: RealmFile) => void;
@@ -106,8 +104,8 @@ export const RealmsTable = ({
           dataKey="path"
           width={shouldShowRealmSize ? 100 : 0}
           headerRenderer={props => <StateSizeHeader {...props} />}
-          cellRenderer={({ cellData }) =>
-            renderRealmSize(cellData, 'stateSize', realmSizes)
+          cellRenderer={({ rowData }) =>
+            renderRealmSize('stateSize', getRealmSize(rowData as RealmFile))
           }
         />
         <Column
@@ -115,8 +113,8 @@ export const RealmsTable = ({
           dataKey="path"
           width={shouldShowRealmSize ? 100 : 0}
           headerRenderer={props => <StateSizeHeader {...props} />}
-          cellRenderer={({ cellData }) =>
-            renderRealmSize(cellData, 'fileSize', realmSizes)
+          cellRenderer={({ rowData }) =>
+            renderRealmSize('fileSize', getRealmSize(rowData as RealmFile))
           }
         />
       </FilterableRealmTable>
@@ -143,17 +141,13 @@ export const RealmsTable = ({
 };
 
 const renderRealmSize = (
-  path: string,
   valueName: keyof IRealmSizeInfo,
-  realmSizes?: { [path: string]: IRealmSizeInfo },
+  size: IRealmSizeInfo,
 ) => {
-  if (realmSizes) {
-    const realmSize = realmSizes[path];
-    if (realmSize) {
-      const value = realmSize[valueName];
-      if (typeof value === 'number') {
-        return prettyBytes(value);
-      }
+  if (size) {
+    const value = size[valueName];
+    if (typeof value === 'number') {
+      return prettyBytes(value);
     }
   }
 

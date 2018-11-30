@@ -17,33 +17,70 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import { createRealmContext } from 'react-realm-context';
-import * as Realm from 'realm';
 
 const {
-  RealmProvider: AdminRealmProvider,
-  RealmConsumer: AdminRealmConsumer,
-  RealmQuery: AdminRealmQuery,
-  RealmConnection: RealmAdminConnection,
-  withRealm: withAdminRealm,
+  RealmProvider: MetricsRealmProvider,
+  RealmConsumer: MetricsRealmConsumer,
+  RealmQuery: MetricsRealmQuery,
+  RealmConnection: RealmMetricsConnection,
+  withRealm: withMetricsRealm,
 } = createRealmContext();
 
-export function getAdminRealmConfig(
+export function getMetricsRealmConfig(
   user: Realm.Sync.User,
   partialConfig: Realm.PartialConfiguration = {},
 ) {
   const config = user.createConfiguration(partialConfig);
   // TODO: Simplify this once https://github.com/realm/realm-js/issues/1981 is fixed
   if (config.sync && config.sync.url) {
-    config.sync.url = config.sync.url.replace('/default', '/__admin');
+    config.sync.url = config.sync.url.replace('/default', '/__metrics');
     config.sync.fullSynchronization = true;
   }
   return config;
 }
 
+export interface IRealmStateSize {
+  /**
+   * The path of the Realm this metric is capturing the state size of.
+   */
+  path: string;
+
+  /**
+   * The size of the Realms current state.
+   */
+  value: number;
+
+  /**
+   * When this metric was emitted.
+   */
+  emitted: Date;
+}
+
+/**
+ * Represents a realm_file_size being emitted from the server
+ * @hidden
+ */
+export interface IRealmFileSize {
+  /**
+   * The path of the Realm this metric is capturing the file size of.
+   */
+  path: string;
+
+  /**
+   * The size of the Realm on disk.
+   */
+  value: number;
+
+  /**
+   * When this metric was emitted.
+   */
+  emitted: Date;
+}
+
 export {
-  AdminRealmProvider,
-  AdminRealmConsumer,
-  AdminRealmQuery,
-  RealmAdminConnection,
-  withAdminRealm,
+  MetricsRealmProvider,
+  MetricsRealmConsumer,
+  MetricsRealmQuery,
+  RealmMetricsConnection,
+  withMetricsRealm,
 };

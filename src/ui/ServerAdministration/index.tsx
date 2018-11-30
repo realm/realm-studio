@@ -47,7 +47,11 @@ import { IServerAdministrationWindowProps } from '../../windows/WindowProps';
 import { ILoadingProgress } from '../reusable';
 import { showError } from '../reusable/errors';
 
-import { AdminRealmConsumer, AdminRealmProvider } from './AdminRealm';
+import {
+  AdminRealmConsumer,
+  AdminRealmProvider,
+  getAdminRealmConfig,
+} from './AdminRealm';
 import { ServerAdministration, Tab } from './ServerAdministration';
 
 export type IServerAdministrationContainerProps = IServerAdministrationWindowProps;
@@ -133,18 +137,12 @@ class ServerAdministrationContainer
     const { user } = this.state;
     const { validateCertificates } = this.props;
     if (user) {
-      const config = user.createConfiguration({
+      const config = getAdminRealmConfig(user, {
         sync: {
-          fullSynchronization: true,
-          // url: '/__admin',
           error: this.onSyncError,
           ssl: { validate: validateCertificates },
         },
       });
-      // TODO: Simplify this once https://github.com/realm/realm-js/issues/1981 is fixed
-      if (config.sync && config.sync.url) {
-        config.sync.url = config.sync.url.replace('/default', '/__admin');
-      }
       return (
         <AdminRealmProvider {...config}>
           {this.renderServerAdministration()}
