@@ -183,6 +183,7 @@ class ServerAdministrationContainer
         activeTab={this.state.activeTab}
         isRealmOpening={this.state.isRealmOpening}
         progress={this.state.progress}
+        serverVersion={this.state.serverVersion}
         user={this.state.user}
       />
     );

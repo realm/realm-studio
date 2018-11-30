@@ -26,7 +26,6 @@ import { Tab } from '../ServerAdministration';
 import { Logo } from './Logo';
 import { Status } from './Status';
 import { TabButton } from './TabButton';
-import { VersionBadge } from './VersionBadge';
 
 import './TopBar.scss';
 
@@ -79,7 +78,11 @@ export const TopBar = ({
       onTabChanged={onTabChanged}
       tab={Tab.Logs}
     />
-    <Status onReconnect={onReconnect} progress={progress} user={user} />
-    <VersionBadge serverVersion={serverVersion} />
+    <Status
+      onReconnect={onReconnect}
+      progress={progress}
+      user={user}
+      serverVersion={serverVersion}
+    />
   </Navbar>
 );

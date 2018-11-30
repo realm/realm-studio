@@ -23,102 +23,78 @@ import { ILoadingProgress, LoadingStatus } from '../../reusable/LoadingOverlay';
 import { RealmAdminConnection } from '../AdminRealm';
 
 import { ConnectionStateIndicator } from './ConnectionStateIndicator';
+import { VersionBadge } from './VersionBadge';
 
 export interface IStatusProps {
   onReconnect: () => void;
   progress: ILoadingProgress;
   user: Realm.Sync.User | null;
+  serverVersion?: string;
 }
 
-function renderText(
-  prefix: string,
-  selectable: string = '',
-  suffix: string = '',
-  icon?: string,
-) {
+function renderText(prefix: string, selectable: string = '') {
   return (
     <React.Fragment>
       {prefix}
       <span className="TopBar__Status__selectable">{selectable}</span>
-      {suffix}
-      {icon ? <i className={`TopBar__Status__Icon fa fa-${icon}`} /> : null}
     </React.Fragment>
   );
 }
 
-function renderConnectionStateMessage(
+function renderStatus(
   connectionState: Realm.Sync.ConnectionState,
+  status: LoadingStatus,
+  message?: string,
   serverUrl?: string,
 ) {
   if (connectionState === Realm.Sync.ConnectionState.Connected) {
     return renderText(serverUrl ? 'Connected to ' : 'Connected', serverUrl);
   } else if (connectionState === Realm.Sync.ConnectionState.Connecting) {
     return renderText(serverUrl ? 'Connecting to ' : 'Connecting', serverUrl);
-  } else if (connectionState === Realm.Sync.ConnectionState.Disconnected) {
+  } else if (
+    connectionState === Realm.Sync.ConnectionState.Disconnected &&
+    status === 'done'
+  ) {
     return renderText(
       serverUrl ? 'Disconnected from ' : 'Disconnected',
       serverUrl,
     );
-  } else {
-    return 'Unexpected connection state';
-  }
-}
-function renderConnectionState(
-  connectionState: Realm.Sync.ConnectionState,
-  serverUrl?: string,
-  message?: string,
-) {
-  return (
-    <React.Fragment>
-      {message
-        ? renderText(message)
-        : renderConnectionStateMessage(connectionState, serverUrl)}
-      <ConnectionStateIndicator
-        className="TopBar__Status__Icon"
-        connectionState={connectionState}
-      />
-    </React.Fragment>
-  );
-}
-
-function renderStatus(
-  status: LoadingStatus,
-  message?: string,
-  serverUrl?: string,
-) {
-  if (status === 'failed') {
-    return renderConnectionState(
-      Realm.Sync.ConnectionState.Disconnected,
-      serverUrl,
-    );
+  } else if (status === 'failed') {
+    // We could include the message, but that is usually very long and its shown on the LoadingOverlay anyway
+    return 'Failed';
   } else if (status === 'in-progress') {
-    return renderConnectionState(
-      Realm.Sync.ConnectionState.Connecting,
-      serverUrl,
-      message || 'Loading',
-    );
+    return message || 'Loading';
   } else if (status === 'done') {
-    return (
-      <RealmAdminConnection>
-        {connectionState => renderConnectionState(connectionState, serverUrl)}
-      </RealmAdminConnection>
-    );
+    return message || 'Authenticated';
   } else {
-    return renderConnectionState(
-      Realm.Sync.ConnectionState.Connecting,
-      serverUrl,
-      message || 'Waiting',
-    );
+    return message || 'Waiting';
   }
 }
 
 export const Status = ({
   progress: { status, message },
   user,
+  serverVersion,
 }: IStatusProps) => {
   return (
-    <p className="TopBar__Status">
-      {renderStatus(status, message, user ? user.server : undefined)}
-    </p>
+    <RealmAdminConnection>
+      {connectionState => (
+        <React.Fragment>
+          <p className="TopBar__Status">
+            {renderStatus(
+              connectionState,
+              status,
+              message,
+              user ? user.server : undefined,
+            )}
+          </p>
+          <VersionBadge serverVersion={serverVersion} />
+          <ConnectionStateIndicator
+            className="TopBar__Status__Icon"
+            connectionState={connectionState}
+          />
+        </React.Fragment>
+      )}
+    </RealmAdminConnection>
   );
 };
