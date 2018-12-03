@@ -27,8 +27,8 @@ ENV WINEDLLOVERRIDES winemenubuilder.exe=d
 
 # The next few lines are the only commands special to our Dockerfile
 
-ADD package.json /tmp/package.json
-ADD package-lock.json /tmp/package-lock.json
-ADD react-realm-context-0.1.0.tgz /tmp/react-realm-context-0.1.0.tgz
+ADD package.json /tmp/
+ADD package-lock.json /tmp/
+ADD react-realm-context-0.1.0.tgz /tmp/
 RUN cd /tmp && npm install --quiet
 RUN cp -a /tmp/node_modules /project/
