@@ -25,8 +25,12 @@ import { MissingSizeBadge } from './MissingSizeBadge';
 interface IRealmSizeProps {
   size?: number;
   title: string;
+  suffix?: string;
 }
 
-export const RealmSize = ({ size, title }: IRealmSizeProps) => (
-  <span title={title}>{size ? prettyBytes(size) : <MissingSizeBadge />}</span>
+export const RealmSize = ({ size, title, suffix }: IRealmSizeProps) => (
+  <span title={title}>
+    {size ? prettyBytes(size) : <MissingSizeBadge />}
+    {suffix ? ` ${suffix}` : null}
+  </span>
 );

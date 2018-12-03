@@ -20,5 +20,5 @@ import * as React from 'react';
 import { Badge } from 'reactstrap';
 
 export const MissingSizeBadge = () => (
-  <Badge title="Size is unknown. Refresh to update it.">?</Badge>
+  <Badge title="Size is unknown: Recalculate to update">?</Badge>
 );

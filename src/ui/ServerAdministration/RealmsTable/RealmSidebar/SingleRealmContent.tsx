@@ -85,9 +85,9 @@ export const SingleRealmContent = ({
         {shouldShowRealmSize && realmSize ? (
           <p>
             {'Size: '}
-            <RealmSize size={realmSize.state} title="Data" />
-            {' (data) / '}
-            <RealmSize size={realmSize.file} title="File" /> (file)
+            <RealmSize size={realmSize.state} title="Data" suffix="(data)" />
+            {' / '}
+            <RealmSize size={realmSize.file} title="File" suffix="(file)" />
           </p>
         ) : null}
       </SidebarBody>
