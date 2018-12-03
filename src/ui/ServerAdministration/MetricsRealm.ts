@@ -39,6 +39,9 @@ export function getMetricsRealmConfig(
   return config;
 }
 
+/**
+ * Represents a realm_state_size being emitted from the server
+ */
 export interface IRealmStateSize {
   /**
    * The path of the Realm this metric is capturing the state size of.
@@ -58,7 +61,6 @@ export interface IRealmStateSize {
 
 /**
  * Represents a realm_file_size being emitted from the server
- * @hidden
  */
 export interface IRealmFileSize {
   /**
