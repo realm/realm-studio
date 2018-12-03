@@ -138,13 +138,17 @@ class RealmsTableContainer extends React.PureComponent<
       return realm.isValid();
     });
 
+    // Generate a configuration to open the /__metrics Realm in read-only mode
     const metricsRealmConfig = getMetricsRealmConfig(
       adminRealm.syncSession.user,
+      { readOnly: true },
     );
     return (
       <MetricsRealmProvider {...metricsRealmConfig} updateOnChange={true}>
         {({ realm: metricsRealm }) => {
+          // Hang onto the metrics Realm when it gets opened
           this.metricsRealm = metricsRealm;
+          // Render the presentational component
           return (
             <RealmsTable
               getRealmPermissions={this.getRealmPermissions}
