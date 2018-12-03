@@ -57,6 +57,7 @@
       &::before {
         color: $elephant;
         content: "This Realm has no classes defined";
+        padding: $spacer;
         text-align: center;
       }
     }
