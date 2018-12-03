@@ -29,5 +29,6 @@ ENV WINEDLLOVERRIDES winemenubuilder.exe=d
 
 ADD package.json /tmp/package.json
 ADD package-lock.json /tmp/package-lock.json
+ADD react-realm-context-0.1.0.tgz /tmp/react-realm-context-0.1.0.tgz
 RUN cd /tmp && npm install --quiet
 RUN cp -a /tmp/node_modules /project/
