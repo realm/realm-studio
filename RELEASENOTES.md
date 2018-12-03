@@ -4,7 +4,7 @@
 - None
 
 ## Fixed
-- None
+- Fixed displaying Realm state and file size in the server administration window. ([#1027](https://github.com/realm/realm-studio/pull/1027))
 
 ## Internals
 - None
