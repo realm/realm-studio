@@ -3,7 +3,8 @@
 This version of Studio changes how Realm state and file size metrics (displayed in the server administration window) are fetched from the server. The server must be at least version 3.16.0 to fetch these correctly.
 
 ## Enhancements
-- None
+- Showing connection state (disconnected, connecting or connected) in the server administration window. ([#1027](https://github.com/realm/realm-studio/pull/1027))
+- No longer waiting for the entire admin Realm to download before showing realms and users in the server administration window. ([#1027](https://github.com/realm/realm-studio/pull/1027))
 
 ## Fixed
 - Fixed displaying Realm state and file size in the server administration window. ([#1027](https://github.com/realm/realm-studio/pull/1027))
