@@ -62,7 +62,7 @@ export interface IRealmTableContainerState {
   showSystemRealms: boolean;
 }
 
-class RealmsTableContainer extends React.PureComponent<
+class RealmsTableContainer extends React.Component<
   IRealmTableContainerProps,
   IRealmTableContainerState
 > {
@@ -126,49 +126,25 @@ class RealmsTableContainer extends React.PureComponent<
       return null;
     }
 
-    const realms = this.realms(
-      this.props.adminRealm,
-      this.state.searchString,
-      this.state.showPartialRealms,
-      this.state.showSystemRealms,
-    );
-    const validSelectedRealms = this.state.selectedRealms.filter(r => {
-      // Filter out the Realm objects
-      const realm: Realm.Object = r as any;
-      return realm.isValid();
-    });
+    const hasMetricsRealm =
+      adminRealm.objectForPrimaryKey('RealmFile', '/__metrics') !== undefined;
 
     // Generate a configuration to open the /__metrics Realm
     const metricsRealmConfig = getMetricsRealmConfig(
       adminRealm.syncSession.user,
     );
-    return (
+    // Render with the /__metrics Realm only if it was already created by the Server
+    return hasMetricsRealm ? (
       <MetricsRealmProvider {...metricsRealmConfig} updateOnChange={true}>
         {({ realm: metricsRealm }) => {
           // Hang onto the metrics Realm when it gets opened
           this.metricsRealm = metricsRealm;
           // Render the presentational component
-          return (
-            <RealmsTable
-              getRealmPermissions={this.getRealmPermissions}
-              getRealmSize={this.getRealmSize}
-              onRealmCreation={this.onRealmCreation}
-              onRealmDeletion={this.onRealmDeletion}
-              onRealmOpened={this.onRealmOpened}
-              onRealmsDeselection={this.onRealmsDeselection}
-              onRealmClick={this.onRealmClick}
-              onRealmTypeUpgrade={this.onRealmTypeUpgrade}
-              onSearchStringChange={this.onSearchStringChange}
-              realms={realms}
-              searchString={this.state.searchString}
-              selectedRealms={validSelectedRealms}
-              deletionProgress={this.state.deletionProgress}
-              onRealmSizeRecalculate={this.onRealmSizeRecalculate}
-              shouldShowRealmSize={!metricsRealm.empty}
-            />
-          );
+          return this.renderTable();
         }}
       </MetricsRealmProvider>
+    ) : (
+      this.renderTable()
     );
   }
 
@@ -305,6 +281,42 @@ class RealmsTableContainer extends React.PureComponent<
     this.setState({ searchString });
   };
 
+  private renderTable() {
+    const realms = this.realms(
+      this.props.adminRealm,
+      this.state.searchString,
+      this.state.showPartialRealms,
+      this.state.showSystemRealms,
+    );
+    const validSelectedRealms = this.state.selectedRealms.filter(r => {
+      // Filter out the Realm objects
+      const realm: Realm.Object = r as any;
+      return realm.isValid();
+    });
+    // Only display the realm sizes if the metrics Realm is opened and not empty
+    const shouldShowRealmSize = !!(
+      this.metricsRealm && !this.metricsRealm.empty
+    );
+    return (
+      <RealmsTable
+        getRealmPermissions={this.getRealmPermissions}
+        getRealmSize={this.getRealmSize}
+        onRealmCreation={this.onRealmCreation}
+        onRealmDeletion={this.onRealmDeletion}
+        onRealmOpened={this.onRealmOpened}
+        onRealmsDeselection={this.onRealmsDeselection}
+        onRealmClick={this.onRealmClick}
+        onRealmTypeUpgrade={this.onRealmTypeUpgrade}
+        onSearchStringChange={this.onSearchStringChange}
+        realms={realms}
+        searchString={this.state.searchString}
+        selectedRealms={validSelectedRealms}
+        deletionProgress={this.state.deletionProgress}
+        onRealmSizeRecalculate={this.onRealmSizeRecalculate}
+        shouldShowRealmSize={shouldShowRealmSize}
+      />
+    );
+  }
 
   private confirmRealmDeletion(...realms: RealmFile[]): boolean {
     const paths = realms.map(r => r.path);
