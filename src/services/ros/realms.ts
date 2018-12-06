@@ -18,13 +18,7 @@
 
 import * as Realm from 'realm';
 
-import {
-  fetchAuthenticated,
-  IRealmFile,
-  IRealmSizeInfo,
-  RealmType,
-  UserStatus,
-} from '.';
+import { fetchAuthenticated, IRealmFile, RealmType, UserStatus } from '.';
 import { showError } from '../../ui/reusable/errors';
 
 export interface ISslConfiguration {

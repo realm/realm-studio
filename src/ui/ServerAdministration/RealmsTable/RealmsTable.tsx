@@ -20,7 +20,7 @@ import * as React from 'react';
 import { Column } from 'react-virtualized';
 import { Button } from 'reactstrap';
 
-import { IPermission, IRealmSizeInfo } from '../../../services/ros';
+import { IPermission } from '../../../services/ros';
 import {
   FilterableTable,
   IFilterableTableProps,
@@ -28,9 +28,9 @@ import {
 import { FloatingControls } from '../shared/FloatingControls';
 import { displayUser } from '../utils';
 
-import { IDeletionProgress, RealmFile } from '.';
+import { IDeletionProgress, MetricGetter, RealmFile } from '.';
 import { RealmSidebar } from './RealmSidebar';
-import { RealmSize } from './RealmSize';
+import { RealmSizeCell } from './RealmSizeCell';
 import { RealmSizeHeader } from './RealmSizeHeader';
 
 import './RealmsTable.scss';
@@ -42,7 +42,7 @@ const FilterableRealmTable: React.ComponentType<
 export const RealmsTable = ({
   deletionProgress,
   getRealmPermissions,
-  getRealmSize,
+  getMetric,
   onRealmClick,
   onRealmCreation,
   onRealmDeletion,
@@ -58,7 +58,7 @@ export const RealmsTable = ({
 }: {
   deletionProgress?: IDeletionProgress;
   getRealmPermissions: (realm: RealmFile) => Realm.Results<IPermission>;
-  getRealmSize: (realm: RealmFile) => IRealmSizeInfo;
+  getMetric: MetricGetter;
   onRealmClick: (e: React.MouseEvent<HTMLElement>, realm: RealmFile) => void;
   onRealmCreation: () => void;
   onRealmDeletion: (...realms: RealmFile[]) => void;
@@ -102,16 +102,14 @@ export const RealmsTable = ({
         <Column
           label="Size"
           dataKey="path"
-          width={shouldShowRealmSize ? 150 : 0}
+          width={shouldShowRealmSize ? 170 : 0}
           headerRenderer={props => <RealmSizeHeader {...props} />}
           cellRenderer={({ rowData }) => {
-            const size = getRealmSize(rowData as RealmFile);
             return (
-              <div>
-                <RealmSize size={size.state} title="State size" />
-                {' / '}
-                <RealmSize size={size.file} title="File size" />
-              </div>
+              <RealmSizeCell
+                realm={rowData as RealmFile}
+                getMetric={getMetric}
+              />
             );
           }}
         />
@@ -124,7 +122,7 @@ export const RealmsTable = ({
       <RealmSidebar
         deletionProgress={deletionProgress}
         getRealmPermissions={getRealmPermissions}
-        getRealmSize={getRealmSize}
+        getMetric={getMetric}
         isOpen={selectedRealms.length > 0}
         onRealmDeletion={onRealmDeletion}
         onRealmOpened={onRealmOpened}

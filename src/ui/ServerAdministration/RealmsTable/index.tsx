@@ -36,6 +36,11 @@ import { querySomeFieldContainsText } from '../utils';
 
 import { RealmsTable } from './RealmsTable';
 
+export type MetricGetter = (
+  realm: RealmFile,
+  name: 'RealmStateSize' | 'RealmFileSize',
+) => IRealmStateSize | IRealmFileSize | undefined;
+
 export type RealmFile = ros.IRealmFile & Realm.Object;
 
 export interface IDeletionProgress {
@@ -173,23 +178,20 @@ class RealmsTableContainer extends React.Component<
       .filtered('realmFile == $0', realm);
   };
 
-  public getRealmSize = (realm: RealmFile): ros.IRealmSizeInfo => {
-    const result: ros.IRealmSizeInfo = {};
+  public getMetric: MetricGetter = (
+    realm: RealmFile,
+    name: 'RealmStateSize' | 'RealmFileSize',
+  ) => {
     if (
       this.metricsRealm &&
       !this.metricsRealm.isClosed &&
       !this.metricsRealm.empty
     ) {
-      const stateSizeMetric = this.metricsRealm.objectForPrimaryKey<
-        IRealmStateSize
-      >('RealmStateSize', realm.path);
-      const fileSizeMetric = this.metricsRealm.objectForPrimaryKey<
-        IRealmFileSize
-      >('RealmFileSize', realm.path);
-      result.state = stateSizeMetric ? stateSizeMetric.value : undefined;
-      result.file = fileSizeMetric ? fileSizeMetric.value : undefined;
+      return this.metricsRealm.objectForPrimaryKey<IRealmStateSize>(
+        name,
+        realm.path,
+      );
     }
-    return result;
   };
 
   public shouldShowRealmSize = (serverVersion?: string): boolean => {
@@ -300,7 +302,7 @@ class RealmsTableContainer extends React.Component<
     return (
       <RealmsTable
         getRealmPermissions={this.getRealmPermissions}
-        getRealmSize={this.getRealmSize}
+        getMetric={this.getMetric}
         onRealmCreation={this.onRealmCreation}
         onRealmDeletion={this.onRealmDeletion}
         onRealmOpened={this.onRealmOpened}

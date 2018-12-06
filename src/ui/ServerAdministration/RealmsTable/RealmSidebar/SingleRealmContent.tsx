@@ -23,6 +23,7 @@ import * as Realm from 'realm';
 import { RealmFile } from '..';
 import * as ros from '../../../../services/ros';
 import { SidebarBody, SidebarControls, SidebarTitle } from '../../../reusable';
+import { IRealmFileSize, IRealmStateSize } from '../../MetricsRealm';
 import { displayUser, prettyBytes, shortenRealmPath } from '../../utils';
 import { RealmSize } from '../RealmSize';
 import { RealmTypeBadge } from '../RealmTypeBadge';
@@ -35,7 +36,8 @@ interface ISingleRealmContentProps {
   onRealmTypeUpgrade: (realm: RealmFile) => void;
   realm: RealmFile;
   permissions: Realm.Results<ros.IPermission>;
-  realmSize?: ros.IRealmSizeInfo;
+  realmStateSize: IRealmStateSize | undefined;
+  realmFileSize: IRealmFileSize | undefined;
   onRealmSizeRecalculate: (realm: RealmFile) => void;
   shouldShowRealmSize: boolean;
 }
@@ -46,7 +48,8 @@ export const SingleRealmContent = ({
   onRealmTypeUpgrade,
   permissions,
   realm,
-  realmSize,
+  realmStateSize,
+  realmFileSize,
   onRealmSizeRecalculate,
   shouldShowRealmSize,
 }: ISingleRealmContentProps) => {
@@ -58,12 +61,12 @@ export const SingleRealmContent = ({
   const canUpgradeType = realm && !isSystemRealm && isFullRealm;
   // Generate a list of known size labels
   const sizeLabels = [];
-  if (shouldShowRealmSize && realmSize) {
+  if (shouldShowRealmSize) {
     sizeLabels.push(
-      realmSize.state ? prettyBytes(realmSize.state) + ' (data)' : null,
+      realmStateSize ? prettyBytes(realmStateSize.value) + ' (data)' : null,
     );
     sizeLabels.push(
-      realmSize.file ? prettyBytes(realmSize.file) + ' (file)' : null,
+      realmFileSize ? prettyBytes(realmFileSize.value) + ' (file)' : null,
     );
   }
 
@@ -82,12 +85,12 @@ export const SingleRealmContent = ({
         <p className="RealmSidebar__SubTitle">
           Owned by {displayUser(realm.owner)}
         </p>
-        {shouldShowRealmSize && realmSize ? (
+        {shouldShowRealmSize ? (
           <p>
             {'Size: '}
-            <RealmSize size={realmSize.state} title="Data" suffix="(data)" />
+            <RealmSize metric={realmStateSize} title="Data" suffix="(data)" />
             {' / '}
-            <RealmSize size={realmSize.file} title="File" suffix="(file)" />
+            <RealmSize metric={realmFileSize} title="File" suffix="(file)" />
           </p>
         ) : null}
       </SidebarBody>

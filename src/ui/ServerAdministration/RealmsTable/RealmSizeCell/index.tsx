@@ -16,27 +16,29 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as moment from 'moment';
 import * as React from 'react';
 
-import { IRealmFileSize, IRealmStateSize } from '../MetricsRealm';
-import { prettyBytes } from '../utils';
+import { MetricGetter, RealmFile } from '..';
+import { RealmSize } from '../RealmSize';
 
-import { MissingSizeBadge } from './MissingSizeBadge';
+import './RealmSizeCell.scss';
 
-interface IRealmSizeProps {
-  metric?: IRealmStateSize | IRealmFileSize;
-  title: string;
-  suffix?: string;
+interface IRealmSizeCellProps {
+  getMetric: MetricGetter;
+  realm: RealmFile;
 }
 
-export const RealmSize = ({ metric, title, suffix }: IRealmSizeProps) => (
-  <span
-    title={
-      metric ? `${title}, updated ${moment(metric.emitted).fromNow()}` : title
-    }
-  >
-    {metric ? prettyBytes(metric.value) : <MissingSizeBadge />}
-    {suffix ? ` ${suffix}` : null}
-  </span>
-);
+export const RealmSizeCell = ({ realm, getMetric }: IRealmSizeCellProps) => {
+  const stateSize = getMetric(realm, 'RealmStateSize');
+  const fileSize = getMetric(realm, 'RealmFileSize');
+  return (
+    <div className="RealmSizeCell">
+      <span className="RealmSizeCell__FileSize">
+        <RealmSize metric={fileSize} title="File size" />
+      </span>
+      <span className="RealmSizeCell__StateSize">
+        (<RealmSize metric={stateSize} title="State size" /> data)
+      </span>
+    </div>
+  );
+};

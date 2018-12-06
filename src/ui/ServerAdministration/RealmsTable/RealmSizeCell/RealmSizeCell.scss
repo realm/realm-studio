@@ -16,27 +16,17 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as moment from 'moment';
-import * as React from 'react';
+@import "~realm-studio-styles/variables";
 
-import { IRealmFileSize, IRealmStateSize } from '../MetricsRealm';
-import { prettyBytes } from '../utils';
+.RealmSizeCell {
+  display: flex;
 
-import { MissingSizeBadge } from './MissingSizeBadge';
+  &__FileSize {
+    flex-basis: 40%;
+    padding-right: $spacer / 4;
+  }
 
-interface IRealmSizeProps {
-  metric?: IRealmStateSize | IRealmFileSize;
-  title: string;
-  suffix?: string;
+  &__StateSize {
+    flex-basis: 60%;
+  }
 }
-
-export const RealmSize = ({ metric, title, suffix }: IRealmSizeProps) => (
-  <span
-    title={
-      metric ? `${title}, updated ${moment(metric.emitted).fromNow()}` : title
-    }
-  >
-    {metric ? prettyBytes(metric.value) : <MissingSizeBadge />}
-    {suffix ? ` ${suffix}` : null}
-  </span>
-);

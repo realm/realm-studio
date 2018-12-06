@@ -19,7 +19,7 @@
 import * as React from 'react';
 import * as Realm from 'realm';
 
-import { IDeletionProgress, RealmFile } from '..';
+import { IDeletionProgress, MetricGetter, RealmFile } from '..';
 import * as ros from '../../../../services/ros';
 import { Sidebar } from '../../../reusable';
 
@@ -31,7 +31,7 @@ import './RealmSidebar.scss';
 export const RealmSidebar = ({
   deletionProgress,
   getRealmPermissions,
-  getRealmSize,
+  getMetric,
   isOpen,
   onRealmDeletion,
   onRealmOpened,
@@ -43,7 +43,7 @@ export const RealmSidebar = ({
 }: {
   deletionProgress?: IDeletionProgress;
   getRealmPermissions: (realm: RealmFile) => Realm.Results<ros.IPermission>;
-  getRealmSize: (realm: RealmFile) => ros.IRealmSizeInfo | undefined;
+  getMetric: MetricGetter;
   isOpen: boolean;
   onRealmDeletion: (realm: RealmFile) => void;
   onRealmOpened: (realm: RealmFile) => void;
@@ -68,7 +68,8 @@ export const RealmSidebar = ({
         onRealmTypeUpgrade={onRealmTypeUpgrade}
         permissions={getRealmPermissions(realms[0])}
         realm={realms[0]}
-        realmSize={getRealmSize(realms[0])}
+        realmFileSize={getMetric(realms[0], 'RealmFileSize')}
+        realmStateSize={getMetric(realms[0], 'RealmStateSize')}
         onRealmSizeRecalculate={onRealmSizeRecalculate}
         shouldShowRealmSize={shouldShowRealmSize}
       />
