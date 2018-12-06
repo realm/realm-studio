@@ -128,6 +128,13 @@ export const SingleRealmContent = ({
             Upgrade
           </Button>
         ) : null}
+        <Button
+          size="sm"
+          color="secondary"
+          onClick={() => onRealmSizeRecalculate(realm)}
+        >
+          Recalculate size
+        </Button>
         {isSystemRealm ? null : (
           <Button
             size="sm"
@@ -137,13 +144,6 @@ export const SingleRealmContent = ({
             Delete
           </Button>
         )}
-        <Button
-          size="sm"
-          color="secondary"
-          onClick={() => onRealmSizeRecalculate(realm)}
-        >
-          Recalculate size
-        </Button>
       </SidebarControls>
     </React.Fragment>
   );
