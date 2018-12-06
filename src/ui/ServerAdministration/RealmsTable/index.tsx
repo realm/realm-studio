@@ -186,20 +186,6 @@ class RealmsTableContainer extends React.PureComponent<
         this.setState({ showSystemRealms: val });
       }
     });
-
-    // Register a listener to update the component once a schema is available
-    if (!this.props.adminRealm.isClosed) {
-      this.props.adminRealm.addListener('schema', this.onRealmChange);
-      this.props.adminRealm.addListener('change', this.onRealmChange);
-    }
-  }
-
-  public componentWillUnmount() {
-    // Remove the listener that was added when mounting
-    if (!this.props.adminRealm.isClosed) {
-      this.props.adminRealm.removeListener('schema', this.onRealmChange);
-      this.props.adminRealm.removeListener('change', this.onRealmChange);
-    }
   }
 
   public getRealmPermissions = (
@@ -319,9 +305,6 @@ class RealmsTableContainer extends React.PureComponent<
     this.setState({ searchString });
   };
 
-  private onRealmChange = () => {
-    this.forceUpdate();
-  };
 
   private confirmRealmDeletion(...realms: RealmFile[]): boolean {
     const paths = realms.map(r => r.path);
@@ -396,6 +379,8 @@ class RealmsTableContainer extends React.PureComponent<
   }
 }
 
-const RealmTableWithRealm = withAdminRealm(RealmsTableContainer, 'adminRealm');
+const RealmTableWithRealm = withAdminRealm(RealmsTableContainer, 'adminRealm', {
+  updateOnChange: true,
+});
 
 export { RealmTableWithRealm as RealmsTable };
