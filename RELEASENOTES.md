@@ -7,4 +7,4 @@
 - None
 
 ## Internals
-- None
+- Updated the message in the greeting window to include a direct link for signing up via Studios own form. ([#1035](https://github.com/realm/realm-studio/pull/1035))
