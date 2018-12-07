@@ -20,6 +20,7 @@ import { IWindow } from './Window';
 
 export interface ICloudAuthenticationWindowProps {
   message?: string;
+  mode?: 'introduction' | 'log-in' | 'sign-up';
 }
 
 export const CloudAuthenticationWindow: IWindow = {

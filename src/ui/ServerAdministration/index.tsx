@@ -47,10 +47,7 @@ import {
 
 import { ServerAdministration, Tab } from './ServerAdministration';
 
-export interface IServerAdministrationContainerProps
-  extends IServerAdministrationWindowProps {
-  isCloudTenant?: boolean;
-}
+export type IServerAdministrationContainerProps = IServerAdministrationWindowProps;
 
 export interface IServerAdministrationContainerState
   extends IRealmLoadingComponentState {
