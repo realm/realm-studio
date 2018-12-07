@@ -17,22 +17,28 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
+import { Button } from 'reactstrap';
 
+import { main } from '../../../actions/main';
 import { HistoryEntry, IHistoryEntry } from './HistoryEntry';
 
 const Empty = () => (
   <div className="Greeting__HistoryPanel__Empty">
     <p>Welcome to Realm Studio!</p>
+    <p>Sync your data and objects in real-time via Realm Cloud:</p>
     <p>
-      Sync your data and objects in real-time via Realm Cloud:{' '}
-      <a href="https://cloud.realm.io/login/sign-up" target="_blank">
+      <Button
+        size="sm"
+        color="primary"
+        onClick={() => main.showCloudAuthentication({ mode: 'sign-up' })}
+      >
         Sign up (free trial)
-      </a>
+      </Button>
+      <br />
       {' or '}
       <a href="https://realm.io/pricing" target="_blank">
         view plans
       </a>
-      .
     </p>
   </div>
 );

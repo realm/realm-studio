@@ -21,6 +21,7 @@ import * as React from 'react';
 
 import { main } from '../../actions/main';
 import * as raas from '../../services/raas';
+import { ICloudAuthenticationWindowProps } from '../../windows/WindowProps';
 import { showError } from '../reusable/errors';
 
 import { CloudAuthentication } from './CloudAuthentication';
@@ -34,9 +35,7 @@ export type Status =
   | 'signing-up'
   | 'awaiting-github';
 
-interface ICloudAuthenticationContainerProps {
-  message?: string;
-}
+type ICloudAuthenticationContainerProps = ICloudAuthenticationWindowProps;
 
 interface ICloudAuthenticationContainerState {
   status: Status;
@@ -49,11 +48,20 @@ class CloudAuthenticationContainer extends React.Component<
 > {
   public state: ICloudAuthenticationContainerState = {
     status: 'idle',
-    mode:
-      localStorage.getItem(INTRODUCED_STORAGE_KEY) !== null
-        ? 'log-in'
-        : 'introduction',
+    mode: 'introduction',
   };
+
+  public constructor(props: ICloudAuthenticationContainerProps) {
+    super(props);
+    if (props.mode) {
+      this.state.mode = props.mode;
+    } else {
+      this.state.mode =
+        localStorage.getItem(INTRODUCED_STORAGE_KEY) !== null
+          ? 'log-in'
+          : 'introduction';
+    }
+  }
 
   public render() {
     return (
