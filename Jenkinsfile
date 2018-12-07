@@ -51,6 +51,11 @@ jobWrapper {
               keepLongStdio: true,
               testResults: 'test-results.xml'
             )
+            // Archive any screenshots emitted by failing tests
+            archiveArtifacts(
+              artifacts: 'failure-*.png',
+              allowEmptyArchive: true,
+            )
           }
         }
       }

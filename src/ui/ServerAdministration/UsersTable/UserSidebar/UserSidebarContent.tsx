@@ -69,7 +69,7 @@ export const UserSidebarContent = ({
   return (
     <React.Fragment>
       <SidebarTitle>{selection.user.userId}</SidebarTitle>
-      <SidebarBody grow={0}>
+      <SidebarBody>
         <UserStatusRoleTable
           selection={selection}
           roleDropdownOpen={roleDropdownOpen}
@@ -80,7 +80,7 @@ export const UserSidebarContent = ({
           toggleStatusDropdown={toggleStatusDropdown}
         />
       </SidebarBody>
-      <SidebarBody className="UserSidebar__Tables">
+      <SidebarBody className="UserSidebar__Tables" grow={1}>
         <AccountsTable accounts={selection.user.accounts} />
         <MetadataTable
           metadatas={selection.user.metadata}

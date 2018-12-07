@@ -19,12 +19,14 @@
 import * as electron from 'electron';
 import memoize from 'memoize-one';
 import * as React from 'react';
+import * as Realm from 'realm';
 
 import {
   ClassFocussedHandler,
   IPropertyWithName,
   ListFocussedHandler,
 } from '..';
+import { store } from '../../../store';
 import { getRange } from '../../../utils';
 import { showError } from '../../reusable/errors';
 import { ILoadingProgress } from '../../reusable/LoadingOverlay';
@@ -34,6 +36,7 @@ import { isPrimitive } from '../primitives';
 import { Content, IContentProps } from './Content';
 import { ICreateObjectDialogContainerProps } from './CreateObjectDialog';
 import { IDeleteObjectsDialogProps } from './DeleteObjectsDialog';
+import { Permissions } from './PermissionSidebar';
 import {
   IOpenSelectMultipleObjectsDialogContainerProps,
   IOpenSelectSingleObjectDialogContainerProps,
@@ -101,14 +104,14 @@ export type ISelectObjectDialog =
 export interface IBaseContentContainerProps {
   dataVersion?: number;
   editMode: EditMode;
-  highlightMode: HighlightMode;
   focus: Focus;
+  highlightMode: HighlightMode;
   onCellClick?: CellClickHandler;
-  onCellSingleClick?: CellClickHandler;
   onCellDoubleClick?: CellClickHandler;
+  onCellSingleClick?: CellClickHandler;
   onClassFocussed?: ClassFocussedHandler;
-  onListFocussed?: ListFocussedHandler;
   onHighlightChange?: (highlight: IHighlight | undefined) => void;
+  onListFocussed?: ListFocussedHandler;
   progress?: ILoadingProgress;
   readOnly: boolean;
 }
@@ -127,6 +130,7 @@ export interface IReadWriteContentContainerProps
   onCancelTransaction: () => void;
   onCommitTransaction: () => void;
   onRealmChanged: () => void;
+  permissionSidebar: boolean;
   readOnly: false;
   realm: Realm;
 }
@@ -139,7 +143,9 @@ export interface IContentContainerState {
   createObjectDialog: ICreateObjectDialogContainerProps;
   deleteObjectsDialog: IDeleteObjectsDialogProps;
   error?: Error;
+  hideSystemClasses: boolean;
   highlight?: IHighlight;
+  isPermissionSidebarOpen: boolean;
   query: string;
   selectObjectDialog: ISelectObjectDialog;
   sorting?: ISorting;
@@ -154,6 +160,9 @@ class ContentContainer extends React.Component<
   public state: IContentContainerState = {
     createObjectDialog: { isOpen: false },
     deleteObjectsDialog: { isOpen: false },
+    hideSystemClasses: !store.shouldShowSystemClasses(),
+    isPermissionSidebarOpen:
+      !this.props.readOnly && this.props.permissionSidebar,
     query: '',
     selectObjectDialog: { isOpen: false },
   };
@@ -163,6 +172,8 @@ class ContentContainer extends React.Component<
     rowIndex: number;
     valid: boolean;
   };
+
+  private removeStoreListener: (() => void) | null = null;
 
   private clickTimeout?: any;
   private filteredSortedResults = memoize(
@@ -184,6 +195,19 @@ class ContentContainer extends React.Component<
       return results;
     },
   );
+
+  private filteredProperties = memoize(
+    (properties: IPropertyWithName[], hideSystemClasses: boolean) => {
+      if (hideSystemClasses) {
+        return properties.filter(
+          p => !(p.objectType && p.objectType.startsWith('__')),
+        );
+      } else {
+        return properties;
+      }
+    },
+  );
+
   private lastRowIndexClicked?: number;
   private contentElement: HTMLElement | null = null;
   // Used to save the initial vertical coordinate when the user starts dragging to select rows
@@ -214,8 +238,19 @@ class ContentContainer extends React.Component<
     this.setState({ error });
   }
 
+  public componentWillMount() {
+    this.removeStoreListener = store.onDidChange(
+      store.KEY_SHOW_SYSTEM_CLASSES,
+      showSystemClasses =>
+        this.setState({ hideSystemClasses: !showSystemClasses }),
+    );
+  }
+
   public componentWillUnmount() {
     document.removeEventListener('mouseup', this.onRowMouseUp);
+    if (this.removeStoreListener) {
+      this.removeStoreListener();
+    }
   }
 
   public render() {
@@ -238,13 +273,21 @@ class ContentContainer extends React.Component<
       this.state.query,
       this.state.sorting,
     );
+    const focus: Focus = {
+      ...this.props.focus,
+      properties: this.filteredProperties(
+        this.props.focus.properties,
+        this.state.hideSystemClasses,
+      ),
+    };
     const common = {
       contentRef: this.contentRef,
       dataVersion: this.props.dataVersion,
       error: this.state.error,
       filteredSortedResults,
-      focus: this.props.focus,
+      focus,
       highlight: this.state.highlight,
+      isPermissionSidebarOpen: this.state.isPermissionSidebarOpen,
       onCellChange: this.onCellChange,
       onCellClick: this.onCellClick,
       onCellHighlighted: this.onCellHighlighted,
@@ -278,8 +321,12 @@ class ContentContainer extends React.Component<
         onAddColumnClick: this.props.onAddColumnClick,
         onCancelTransaction: this.props.onCancelTransaction,
         onCommitTransaction: this.props.onCommitTransaction,
+        onPermissionSidebarToggle: this.props.permissionSidebar
+          ? this.onPermissionSidebarToggle
+          : undefined,
         onReorderingEnd: this.onReorderingEnd,
         onReorderingStart: this.onReorderingStart,
+        realm: this.props.realm,
         readOnly: false,
         selectObjectDialog: this.state.selectObjectDialog,
       };
@@ -762,6 +809,12 @@ class ContentContainer extends React.Component<
   private onNewObjectClick = () => {
     const className = getClassName(this.props.focus);
     this.onShowCreateObjectDialog(className);
+  };
+
+  private onPermissionSidebarToggle = () => {
+    this.setState({
+      isPermissionSidebarOpen: !this.state.isPermissionSidebarOpen,
+    });
   };
 
   private onReorderingStart: ReorderingStartHandler = () => {

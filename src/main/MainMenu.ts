@@ -129,7 +129,7 @@ export const getDefaultMenuTemplate = (
           },
         },
         {
-          label: `Show system classes`,
+          label: `Show system classes and properties`,
           type: 'checkbox',
           checked: store.shouldShowSystemClasses(),
           click: async () => {

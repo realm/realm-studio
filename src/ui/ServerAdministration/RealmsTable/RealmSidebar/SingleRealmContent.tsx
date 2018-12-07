@@ -68,7 +68,7 @@ export const SingleRealmContent = ({
           {shortenRealmPath(realm.path)}
         </span>
       </SidebarTitle>
-      <SidebarBody grow={0}>
+      <SidebarBody>
         <p className="RealmSidebar__SubTitle">
           Owned by {displayUser(realm.owner)}
         </p>
@@ -99,12 +99,12 @@ export const SingleRealmContent = ({
         </Button>
       </SidebarBody>
       {isFullRealm ? (
-        <SidebarBody className="RealmSidebar__Tables">
+        <SidebarBody className="RealmSidebar__Tables" grow={1}>
           {permissions ? <PermissionsTable permissions={permissions} /> : null}
         </SidebarBody>
       ) : null}
       {canUpgradeType ? (
-        <SidebarBody grow={0} className="RealmSidebar__UpgradeTypeBlock">
+        <SidebarBody className="RealmSidebar__UpgradeTypeBlock">
           This Realm can be upgraded to a Reference Realm which will enable{' '}
           <a
             target="_blank"

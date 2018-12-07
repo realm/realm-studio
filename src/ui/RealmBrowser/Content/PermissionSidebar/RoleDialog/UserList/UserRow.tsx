@@ -16,16 +16,17 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as classNames from 'classnames';
 import * as React from 'react';
 
-interface ITitleProps {
-  children: React.ReactNode;
-  size?: 'lg' | 'md' | 'sm';
+import { IUser } from '../..';
+
+interface IUserRowProps {
+  member: IUser;
+  style: React.CSSProperties;
 }
 
-export const Title = ({ children, size = 'lg' }: ITitleProps) => (
-  <h1 className={classNames('Sidebar__Title', `Sidebar__Title--${size}`)}>
-    {children}
-  </h1>
+export const UserRow = ({ member, style }: IUserRowProps) => (
+  <div className="RoleDialog__UserRow" style={style}>
+    {member.id}
+  </div>
 );
