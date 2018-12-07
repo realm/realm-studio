@@ -20,11 +20,15 @@ import * as React from 'react';
 
 import { Action } from '../..';
 
-import { ActionCell } from './ActionCell';
+import { ActionCell, IDescription } from './ActionCell';
+
+export interface IDescriptions {
+  [action: string]: string | IDescription;
+}
 
 interface IHeaderProps {
   actions: Action[];
-  descriptions: { [action: string]: string };
+  descriptions: IDescriptions;
   onToggleTooltip: (action: Action) => void;
   openTooltip: Action | null;
 }

@@ -20,11 +20,11 @@ import * as React from 'react';
 
 import { Action } from '../..';
 
-import { Header } from './Header';
+import { Header, IDescriptions } from './Header';
 
 interface IHeaderContainerProps {
   actions: Action[];
-  descriptions: { [action: string]: string };
+  descriptions: IDescriptions;
 }
 
 interface IHeaderContainerState {
@@ -59,4 +59,4 @@ class HeaderContainer extends React.Component<
   };
 }
 
-export { HeaderContainer as Header };
+export { HeaderContainer as Header, IDescriptions };

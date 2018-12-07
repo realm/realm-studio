@@ -20,11 +20,11 @@ import * as React from 'react';
 
 import { Action } from '../../..';
 
-import { ActionCell } from './ActionCell';
+import { ActionCell, IDescription } from './ActionCell';
 
 interface IActionCellContainerProps {
   action: Action;
-  description: string;
+  description: string | IDescription;
   isTooltipOpen: boolean;
   onToggleTooltip: () => void;
 }
@@ -59,4 +59,4 @@ class ActionCellContainer extends React.Component<
   };
 }
 
-export { ActionCellContainer as ActionCell };
+export { ActionCellContainer as ActionCell, IDescription };

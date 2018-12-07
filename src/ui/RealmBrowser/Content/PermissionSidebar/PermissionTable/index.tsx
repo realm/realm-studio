@@ -22,13 +22,13 @@ import * as Realm from 'realm';
 import { Action, IPermission, IRole } from '..';
 import { SidebarBody, SidebarTable } from '../../../../reusable';
 
-import { Header } from './Header';
+import { Header, IDescriptions } from './Header';
 
 import './PermissionTable.scss';
 
 interface IPermissionTableProps {
   actions: Action[];
-  descriptions: { [action: string]: string };
+  descriptions: IDescriptions;
   permissions: Realm.Collection<IPermission & Realm.Object>;
   onPermissionChange: (
     permission: IPermission,

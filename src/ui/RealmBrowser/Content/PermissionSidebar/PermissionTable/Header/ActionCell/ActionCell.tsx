@@ -21,6 +21,11 @@ import { Tooltip } from 'reactstrap';
 
 import { Action } from '../../..';
 
+export interface IDescription {
+  enabled: string;
+  disabled: string;
+}
+
 function getActionLetter(action: Action) {
   switch (action) {
     case 'canRead':
@@ -61,7 +66,7 @@ function getActionLabel(action: Action) {
 
 interface IActionCellProps {
   action: Action;
-  description: string;
+  description: string | IDescription;
   element: HTMLElement | null;
   onRef: (element: HTMLElement | null) => void;
   onToggleTooltip: () => void;
@@ -87,7 +92,15 @@ export const ActionCell = ({
       >
         <strong>{getActionLabel(action)}</strong>
         <br />
-        {description}
+        {typeof description === 'string' ? (
+          description
+        ) : (
+          <React.Fragment>
+            <em>Enabled:</em> {description.enabled}
+            <br />
+            <em>Disabled:</em> {description.disabled}
+          </React.Fragment>
+        )}
       </Tooltip>
     ) : null}
   </th>
