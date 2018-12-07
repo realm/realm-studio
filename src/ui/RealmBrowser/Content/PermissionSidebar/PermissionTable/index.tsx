@@ -17,9 +17,8 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
-import * as Realm from 'realm';
 
-import { Action, IPermission, IRole } from '..';
+import { Action, IPermission, IRole, Permissions } from '..';
 import { SidebarBody, SidebarTable } from '../../../../reusable';
 
 import { Header, IDescriptions } from './Header';
@@ -29,7 +28,7 @@ import './PermissionTable.scss';
 interface IPermissionTableProps {
   actions: Action[];
   descriptions: IDescriptions;
-  permissions: Realm.Collection<IPermission & Realm.Object>;
+  permissions: Permissions | null;
   onPermissionChange: (
     permission: IPermission,
     action: Action,
@@ -49,7 +48,7 @@ export const PermissionTable = ({
     <SidebarTable className="PermissionTable" size="sm">
       <Header actions={actions} descriptions={descriptions} />
       <tbody>
-        {permissions.length === 0 ? (
+        {!permissions || permissions.length === 0 ? (
           <tr>
             <td
               className="PermissionTable__EmptyCell"

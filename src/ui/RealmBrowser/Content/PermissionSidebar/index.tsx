@@ -27,7 +27,7 @@ import { ClassPermissionSidebar } from './ClassPermissionSidebar';
 import { ObjectPermissionSidebar } from './ObjectPermissionSidebar';
 import { RoleDialog } from './RoleDialog';
 
-import { Action, IPermission, IRole } from './models';
+import { Action, IPermission, IRole, Permissions } from './models';
 export * from './models';
 
 interface IRoleDialog {
@@ -71,40 +71,40 @@ class PermissionSidebarContainer extends React.Component<
   }
 
   public renderSidebar() {
-    if (this.props.highlight) {
-      const hasPermissionProperty = !!this.getPermissionsProperty();
+    if (this.props.focus && this.props.focus.kind === 'class') {
       const classPermissions = this.getClassPermissions();
       const realmPermissions = this.getRealmPermissions();
-      return (
-        <ObjectPermissionSidebar
-          className={this.props.className}
-          classPermissions={classPermissions}
-          focus={this.props.focus}
-          getObjectPermissions={this.getObjectPermissions}
-          hasPermissionProperty={hasPermissionProperty}
-          highlight={this.props.highlight}
-          isOpen={this.props.isOpen}
-          onPermissionChange={this.onPermissionChange}
-          onRoleClick={this.onRoleClick}
-          onToggle={this.props.onToggle}
-          realmPermissions={realmPermissions}
-        />
-      );
-    } else if (this.props.focus && this.props.focus.kind === 'class') {
-      const permissions = this.getClassPermissions();
-      const realmPermissions = this.getRealmPermissions();
-      return (
-        <ClassPermissionSidebar
-          className={this.props.className}
-          isOpen={this.props.isOpen}
-          name={this.props.focus.className}
-          onPermissionChange={this.onPermissionChange}
-          onToggle={this.props.onToggle}
-          permissions={permissions}
-          realmPermissions={realmPermissions}
-          onRoleClick={this.onRoleClick}
-        />
-      );
+      if (this.props.highlight) {
+        const hasPermissionProperty = !!this.getPermissionsProperty();
+        return (
+          <ObjectPermissionSidebar
+            className={this.props.className}
+            classPermissions={classPermissions}
+            focus={this.props.focus}
+            getObjectPermissions={this.getObjectPermissions}
+            hasPermissionProperty={hasPermissionProperty}
+            highlight={this.props.highlight}
+            isOpen={this.props.isOpen}
+            onPermissionChange={this.onPermissionChange}
+            onRoleClick={this.onRoleClick}
+            onToggle={this.props.onToggle}
+            realmPermissions={realmPermissions}
+          />
+        );
+      } else {
+        return (
+          <ClassPermissionSidebar
+            className={this.props.className}
+            classPermissions={classPermissions}
+            isOpen={this.props.isOpen}
+            name={this.props.focus.className}
+            onPermissionChange={this.onPermissionChange}
+            onRoleClick={this.onRoleClick}
+            onToggle={this.props.onToggle}
+            realmPermissions={realmPermissions}
+          />
+        );
+      }
     }
   }
 
@@ -125,7 +125,9 @@ class PermissionSidebarContainer extends React.Component<
     }
   }
 
-  private getObjectPermissions = (object: any & Realm.Object) => {
+  private getObjectPermissions = (
+    object: any & Realm.Object,
+  ): Permissions | null => {
     const property = this.getPermissionsProperty();
     if (property && property.name && property.name in object) {
       return object[property.name];
@@ -139,7 +141,7 @@ class PermissionSidebarContainer extends React.Component<
    * This will throw if the Realm is not opened, if it has no class named "__Class" or if that doesn't contain a value
    * for the particular class passed as argument.
    */
-  private getClassPermissions() {
+  private getClassPermissions(): Permissions | null {
     const { focus } = this.props;
     if (focus && focus.kind === 'class') {
       const row = this.props.realm.objectForPrimaryKey<any>(
@@ -149,19 +151,19 @@ class PermissionSidebarContainer extends React.Component<
       if (row && row.permissions) {
         return row.permissions;
       } else {
-        throw new Error(`Permissions for ${focus.className} class is missing`);
+        return null;
       }
     } else {
-      throw new Error('Must focus on a class');
+      return null;
     }
   }
 
-  private getRealmPermissions() {
+  private getRealmPermissions(): Permissions | null {
     const row = this.props.realm.objectForPrimaryKey<any>('__Realm', 0);
     if (row && row.permissions) {
       return row.permissions;
     } else {
-      throw new Error(`Permissions for Realm is missing`);
+      return null;
     }
   }
 

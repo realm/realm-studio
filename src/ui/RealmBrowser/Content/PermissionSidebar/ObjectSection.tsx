@@ -21,11 +21,11 @@ import * as Realm from 'realm';
 
 import { SidebarBody, SidebarTitle } from '../../../reusable';
 
-import { Action, IPermission, IRole } from '.';
+import { Action, IPermission, IRole, Permissions } from '.';
 import { PermissionTable } from './PermissionTable';
 
 interface IObjectSectionProps {
-  getPermissions: (object: any) => Realm.Collection<IPermission & Realm.Object>;
+  getPermissions: (object: any) => Permissions | null;
   hasPermissionProperty: boolean;
   objects: Array<any & Realm.Object>;
   onPermissionChange: (

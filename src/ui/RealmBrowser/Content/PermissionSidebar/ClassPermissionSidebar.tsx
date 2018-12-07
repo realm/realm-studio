@@ -29,8 +29,8 @@ interface IClassPermissionSidebarBaseProps {
   isOpen: boolean;
   name: string;
   onToggle?: () => void;
-  permissions: Permissions;
-  realmPermissions: Permissions;
+  classPermissions: Permissions | null;
+  realmPermissions: Permissions | null;
   onPermissionChange: (
     permission: IPermission,
     action: Action,
@@ -44,7 +44,7 @@ export const ClassPermissionSidebar = ({
   isOpen,
   name,
   onToggle,
-  permissions,
+  classPermissions,
   realmPermissions,
   onPermissionChange,
   onRoleClick,
@@ -58,7 +58,7 @@ export const ClassPermissionSidebar = ({
   >
     <ClassSection
       name={name}
-      permissions={permissions}
+      permissions={classPermissions}
       onPermissionChange={onPermissionChange}
       onRoleClick={onRoleClick}
     />
