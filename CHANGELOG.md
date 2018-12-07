@@ -1,3 +1,17 @@
+# Release 3.1.1 (2018-12-07)
+
+[Changes since v3.1.0](https://github.com/realm/realm-studio/compare/v3.1.0...v3.1.1)
+
+## Enhancements
+- None
+
+## Fixed
+- Fixed focussing classes with a missing object in the `__Class` table. It would show "Permissions for [name] class is missing". ([#1037](https://github.com/realm/realm-studio/pull/1037), since 3.1.0)
+
+## Internals
+- None
+
+
 # Release 3.1.0 (2018-12-07)
 
 [Changes since v3.0.7](https://github.com/realm/realm-studio/compare/v3.0.7...v3.1.0)
