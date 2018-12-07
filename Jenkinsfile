@@ -52,7 +52,10 @@ jobWrapper {
               testResults: 'test-results.xml'
             )
             // Archive any screenshots emitted by failing tests
-            archiveArtifacts 'failure-*.png'
+            archiveArtifacts(
+              artifacts: 'failure-*.png',
+              allowEmptyArchive: true,
+            )
           }
         }
       }
