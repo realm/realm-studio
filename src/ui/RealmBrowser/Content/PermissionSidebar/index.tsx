@@ -105,8 +105,14 @@ class PermissionSidebarContainer extends React.Component<
 
   private getPermissionsProperty() {
     const { focus } = this.props;
-    if (focus) {
-      return focus.properties.find(property => {
+    if (focus && focus.results.length > 0) {
+      // Accessing the property from the schema on the first selected
+      const firstObject: Realm.Object = focus.results[0];
+      const schema = firstObject.objectSchema();
+      const properties = schema.properties as {
+        [key: string]: IPropertyWithName;
+      };
+      return Object.values(properties).find(property => {
         return (
           property.type === 'list' && property.objectType === '__Permission'
         );
