@@ -40,7 +40,7 @@ export interface IRealmToLoad {
 
 export interface ISyncedRealmToLoad extends IRealmToLoad {
   mode: RealmLoadingMode.Synced;
-  user: Realm.Sync.SerializedUser;
+  user: Realm.Sync.SerializedUser | Realm.Sync.SerializedTokenUser;
   validateCertificates: boolean;
 }
 
