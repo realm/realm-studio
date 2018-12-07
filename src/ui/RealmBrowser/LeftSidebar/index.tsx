@@ -42,7 +42,7 @@ interface ILeftSidebarContainerProps {
 }
 
 interface ILeftSidebarContainerState {
-  showSystemClasses: boolean;
+  hideSystemClasses: boolean;
 }
 
 class LeftSidebarContainer extends React.Component<
@@ -50,7 +50,7 @@ class LeftSidebarContainer extends React.Component<
   ILeftSidebarContainerState
 > {
   public state: ILeftSidebarContainerState = {
-    showSystemClasses: store.shouldShowSystemClasses(),
+    hideSystemClasses: !store.shouldShowSystemClasses(),
   };
 
   private removeShowSystemClassesListener: (() => void) | null = null;
@@ -91,7 +91,7 @@ class LeftSidebarContainer extends React.Component<
   }
 
   private filterClasses(classes: Realm.ObjectSchema[]) {
-    if (!this.state.showSystemClasses) {
+    if (this.state.hideSystemClasses) {
       return classes.filter(c => !isSystemClassName(c.name));
     } else {
       return classes;
@@ -99,7 +99,7 @@ class LeftSidebarContainer extends React.Component<
   }
 
   private onShowSystemClassesChange = (showSystemClasses: boolean) => {
-    this.setState({ showSystemClasses }, () => {
+    this.setState({ hideSystemClasses: !showSystemClasses }, () => {
       const shouldSelectAnotherClass = this.isFocussedOnSystemClass();
       if (showSystemClasses === false && shouldSelectAnotherClass) {
         // Focus on another class

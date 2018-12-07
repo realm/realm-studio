@@ -66,6 +66,7 @@ export interface IRealmBrowserProps {
 }
 
 export const RealmBrowser = ({
+  classes,
   contentKey,
   contentRef,
   dataVersion,
@@ -92,7 +93,6 @@ export const RealmBrowser = ({
   onRealmChanged,
   progress,
   realm,
-  classes,
   toggleAddClass,
   toggleAddClassProperty,
 }: IRealmBrowserProps) => {
@@ -109,15 +109,16 @@ export const RealmBrowser = ({
         progress={progress}
         toggleAddClass={toggleAddClass}
       />
+
       <div className="RealmBrowser__Wrapper">
         {focus && realm ? (
           <Content
             dataVersion={dataVersion}
             dataVersionAtBeginning={dataVersionAtBeginning}
             editMode={editMode}
-            highlightMode={HighlightMode.Multiple}
             focus={focus}
             getClassFocus={getClassFocus}
+            highlightMode={HighlightMode.Multiple}
             key={contentKey}
             onAddColumnClick={toggleAddClassProperty}
             onCancelTransaction={onCancelTransaction}
@@ -125,6 +126,7 @@ export const RealmBrowser = ({
             onCommitTransaction={onCommitTransaction}
             onListFocussed={onListFocussed}
             onRealmChanged={onRealmChanged}
+            permissionSidebar={true}
             progress={progress}
             readOnly={false}
             realm={realm}

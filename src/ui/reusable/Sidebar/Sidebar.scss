@@ -17,23 +17,9 @@
 ////////////////////////////////////////////////////////////////////////////
 
 @import "~realm-studio-styles/variables";
+@import "./variables";
 
 .Sidebar {
-  $resize-handle-width: 10px;
-  // $resize-handle-background: rgba(255, 0, 0, .2);
-  $resize-handle-background: transparent;
-
-  $toggle-button-width: 1.75rem;
-  $toggle-button-height: 2.5rem;
-  $toggle-button-overhang: $toggle-button-width / 2;
-
-  $sidebar-shadow: $raised-shadow-color;
-  $sidebar-shadow-hover: rgba($sidebar-shadow, .2);
-  $sidebar-transition-duration: .3s;
-  $sidebar-background: $window-background;
-  $sidebar-border-color: mix($elephant, $dove, 25%);
-  $sidebar-closed-width: $toggle-button-width / 2;
-
   background: $sidebar-background;
   position: relative;
   transition: flex-basis $sidebar-transition-duration;
@@ -226,9 +212,20 @@
   }
 
   &__Title {
-    font-size: 1.5rem;
     margin: $spacer 0;
     padding: 0 $spacer;
     word-break: break-all;
+
+    &--lg {
+      font-size: 1.5rem;
+    }
+
+    &--md {
+      font-size: 1.2rem;
+    }
+
+    &--sm {
+      font-size: 1rem;
+    }
   }
 }

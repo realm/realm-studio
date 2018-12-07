@@ -44,6 +44,7 @@ describe('<RealmBrowser /> via Spectron', function() {
 
   let app: Application;
   let realm: ITestRealm;
+  let failureCount = 0;
 
   before(async () => {
     realm = createAllTypeRealm();
@@ -72,7 +73,8 @@ describe('<RealmBrowser /> via Spectron', function() {
     if (this.currentTest.state === 'failed') {
       // When a test fails and the app is running, take a screenshot
       const imageBuffer = await app.browserWindow.capturePage();
-      fs.writeFileSync('./failure-screenshot.png', imageBuffer);
+      fs.writeFileSync(`./failure-${failureCount}.png`, imageBuffer);
+      failureCount++;
     }
   });
 

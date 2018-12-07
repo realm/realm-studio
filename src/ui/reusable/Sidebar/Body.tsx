@@ -25,10 +25,10 @@ interface IBodyProps {
   grow?: number;
 }
 
-export const Body = ({ children, className, grow }: IBodyProps) => (
+export const Body = ({ children, className, grow = 0 }: IBodyProps) => (
   <div
     className={classNames('Sidebar__Body', className)}
-    style={{ flexGrow: typeof grow === 'number' ? grow : 1 }}
+    style={{ flexGrow: grow }}
   >
     {children}
   </div>

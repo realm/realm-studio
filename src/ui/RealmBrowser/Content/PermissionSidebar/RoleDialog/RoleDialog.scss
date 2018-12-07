@@ -16,16 +16,36 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as classNames from 'classnames';
-import * as React from 'react';
+@import "~realm-studio-styles/variables";
+@import "../../../variables";
 
-interface ITitleProps {
-  children: React.ReactNode;
-  size?: 'lg' | 'md' | 'sm';
+.RoleDialog {
+  &__Header {
+    position: relative;
+  }
+
+  &__TypeBadge {
+    position: absolute;
+    right: 1.2 * $spacer;
+    top: 1.2 * $spacer;
+  }
+
+  &__UserList {
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &__UserRow {
+    align-items: center;
+    border: 1px solid $cell-border-color;
+    border-bottom-width: 0;
+    display: flex;
+    font-size: $font-size-sm;
+    padding: $cell-padding-y $cell-padding-x;
+
+    &:last-child {
+      border-bottom-width: 1px;
+    }
+  }
 }
-
-export const Title = ({ children, size = 'lg' }: ITitleProps) => (
-  <h1 className={classNames('Sidebar__Title', `Sidebar__Title--${size}`)}>
-    {children}
-  </h1>
-);

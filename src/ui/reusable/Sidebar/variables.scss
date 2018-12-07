@@ -16,16 +16,17 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as classNames from 'classnames';
-import * as React from 'react';
+$resize-handle-width: 10px;
+// $resize-handle-background: rgba(255, 0, 0, .2);
+$resize-handle-background: transparent;
 
-interface ITitleProps {
-  children: React.ReactNode;
-  size?: 'lg' | 'md' | 'sm';
-}
+$toggle-button-width: 1.75rem;
+$toggle-button-height: 2.5rem;
+$toggle-button-overhang: $toggle-button-width / 2;
 
-export const Title = ({ children, size = 'lg' }: ITitleProps) => (
-  <h1 className={classNames('Sidebar__Title', `Sidebar__Title--${size}`)}>
-    {children}
-  </h1>
-);
+$sidebar-shadow: $raised-shadow-color;
+$sidebar-shadow-hover: rgba($sidebar-shadow, .2);
+$sidebar-transition-duration: .3s;
+$sidebar-background: $window-background;
+$sidebar-border-color: mix($elephant, $dove, 25%);
+$sidebar-closed-width: $toggle-button-width / 2;

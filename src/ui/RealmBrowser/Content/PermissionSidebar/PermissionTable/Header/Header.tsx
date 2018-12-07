@@ -16,16 +16,41 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as classNames from 'classnames';
 import * as React from 'react';
 
-interface ITitleProps {
-  children: React.ReactNode;
-  size?: 'lg' | 'md' | 'sm';
+import { Action } from '../..';
+
+import { ActionCell, IDescription } from './ActionCell';
+
+export interface IDescriptions {
+  [action: string]: string | IDescription;
 }
 
-export const Title = ({ children, size = 'lg' }: ITitleProps) => (
-  <h1 className={classNames('Sidebar__Title', `Sidebar__Title--${size}`)}>
-    {children}
-  </h1>
+interface IHeaderProps {
+  actions: Action[];
+  descriptions: IDescriptions;
+  onToggleTooltip: (action: Action) => void;
+  openTooltip: Action | null;
+}
+
+export const Header = ({
+  actions,
+  descriptions,
+  onToggleTooltip,
+  openTooltip,
+}: IHeaderProps) => (
+  <thead>
+    <tr>
+      <th>Role</th>
+      {actions.map(action => (
+        <ActionCell
+          action={action}
+          key={action}
+          description={descriptions[action]}
+          isTooltipOpen={openTooltip === action}
+          onToggleTooltip={() => onToggleTooltip(action)}
+        />
+      ))}
+    </tr>
+  </thead>
 );

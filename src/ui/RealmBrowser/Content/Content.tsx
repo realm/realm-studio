@@ -17,6 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
+import * as Realm from 'realm';
 
 import { Bottombar } from '../Bottombar';
 import { Focus, IClassFocus } from '../focus';
@@ -35,6 +36,7 @@ import {
   DeleteObjectsDialog,
   IDeleteObjectsDialogProps,
 } from './DeleteObjectsDialog';
+import { Permissions, PermissionSidebar } from './PermissionSidebar';
 import { ResponsiveTable } from './ResponsiveTable';
 import {
   ISelectObjectDialogContainerProps,
@@ -61,6 +63,7 @@ interface IBaseContentProps {
   filteredSortedResults: Realm.Collection<any>;
   focus: Focus;
   highlight?: IHighlight;
+  isPermissionSidebarOpen: boolean;
   onAddColumnClick?: () => void;
   onCellChange: CellChangeHandler;
   onCellClick: CellClickHandler;
@@ -69,6 +72,7 @@ interface IBaseContentProps {
   onContextMenu: CellContextMenuHandler;
   onRowMouseDown: RowMouseDownHandler;
   onNewObjectClick?: () => void;
+  onPermissionSidebarToggle?: () => void;
   onQueryChange: QueryChangeHandler;
   onQueryHelp: () => void;
   onResetHighlight: () => void;
@@ -94,6 +98,7 @@ interface IReadWriteContentProps extends IBaseContentProps {
   onReorderingEnd: ReorderingEndHandler;
   onReorderingStart: ReorderingStartHandler;
   readOnly: false;
+  realm: Realm;
   selectObjectDialog: ISelectObjectDialogContainerProps;
 }
 
@@ -107,6 +112,7 @@ export const Content = ({
   filteredSortedResults,
   focus,
   highlight,
+  isPermissionSidebarOpen,
   onAddColumnClick,
   onCellChange,
   onCellClick,
@@ -114,6 +120,7 @@ export const Content = ({
   onCellValidated,
   onContextMenu,
   onNewObjectClick,
+  onPermissionSidebarToggle,
   onQueryChange,
   onQueryHelp,
   onResetHighlight,
@@ -137,27 +144,45 @@ export const Content = ({
         query={query}
         readOnly={props.readOnly}
       />
-      <ResponsiveTable
-        dataVersion={dataVersion}
-        editMode={editMode}
-        filteredSortedResults={filteredSortedResults}
-        focus={focus}
-        highlight={highlight}
-        onAddColumnClick={focus.kind === 'class' ? onAddColumnClick : undefined}
-        onCellChange={onCellChange}
-        onCellClick={onCellClick}
-        onCellHighlighted={onCellHighlighted}
-        onCellValidated={onCellValidated}
-        onContextMenu={onContextMenu}
-        onRowMouseDown={onRowMouseDown}
-        onReorderingEnd={props.readOnly ? undefined : props.onReorderingEnd}
-        onReorderingStart={props.readOnly ? undefined : props.onReorderingStart}
-        onResetHighlight={onResetHighlight}
-        onSortingChange={onSortingChange}
-        query={query}
-        readOnly={props.readOnly}
-        sorting={sorting}
-      />
+
+      <div className="RealmBrowser__TableContainer">
+        <ResponsiveTable
+          dataVersion={dataVersion}
+          editMode={editMode}
+          filteredSortedResults={filteredSortedResults}
+          focus={focus}
+          highlight={highlight}
+          onAddColumnClick={
+            focus.kind === 'class' ? onAddColumnClick : undefined
+          }
+          onCellChange={onCellChange}
+          onCellClick={onCellClick}
+          onCellHighlighted={onCellHighlighted}
+          onCellValidated={onCellValidated}
+          onContextMenu={onContextMenu}
+          onRowMouseDown={onRowMouseDown}
+          onReorderingEnd={props.readOnly ? undefined : props.onReorderingEnd}
+          onReorderingStart={
+            props.readOnly ? undefined : props.onReorderingStart
+          }
+          onResetHighlight={onResetHighlight}
+          onSortingChange={onSortingChange}
+          query={query}
+          readOnly={props.readOnly}
+          sorting={sorting}
+        />
+
+        {!props.readOnly ? (
+          <PermissionSidebar
+            className="RealmBrowser__PermissionSidebar"
+            isOpen={isPermissionSidebarOpen}
+            onToggle={onPermissionSidebarToggle}
+            focus={focus}
+            highlight={highlight}
+            realm={props.realm}
+          />
+        ) : null}
+      </div>
 
       {!props.readOnly ? (
         <React.Fragment>

@@ -16,16 +16,39 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as classNames from 'classnames';
 import * as React from 'react';
 
-interface ITitleProps {
-  children: React.ReactNode;
-  size?: 'lg' | 'md' | 'sm';
+import { IUser } from '../..';
+
+import { UserList } from './UserList';
+
+interface IUserListContainerProps {
+  members: IUser[];
+  editable?: boolean;
 }
 
-export const Title = ({ children, size = 'lg' }: ITitleProps) => (
-  <h1 className={classNames('Sidebar__Title', `Sidebar__Title--${size}`)}>
-    {children}
-  </h1>
-);
+interface IUserListContainerState {
+  searchString: string;
+}
+
+class UserListContainer extends React.Component<
+  IUserListContainerProps,
+  IUserListContainerState
+> {
+  public state = {
+    searchString: '',
+  };
+
+  public render() {
+    const members = this.filteredMembers();
+    return <UserList editable={this.props.editable} members={members} />;
+  }
+
+  private filteredMembers() {
+    return this.props.members.filter(user =>
+      user.id.includes(this.state.searchString),
+    );
+  }
+}
+
+export { UserListContainer as UserList };
