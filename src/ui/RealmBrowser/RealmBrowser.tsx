@@ -25,7 +25,6 @@ import { ClassFocussedHandler, ListFocussedHandler } from '.';
 import { AddClassModal } from './AddClassModal';
 import { AddPropertyModal } from './AddPropertyModal';
 import { Content, EditMode, HighlightMode } from './Content';
-import { Permissions } from './Content/PermissionSidebar';
 import { EncryptionDialog } from './EncryptionDialog';
 import { Focus, IClassFocus } from './focus';
 import { LeftSidebar } from './LeftSidebar';
@@ -67,6 +66,7 @@ export interface IRealmBrowserProps {
 }
 
 export const RealmBrowser = ({
+  classes,
   contentKey,
   contentRef,
   dataVersion,
@@ -93,7 +93,6 @@ export const RealmBrowser = ({
   onRealmChanged,
   progress,
   realm,
-  classes,
   toggleAddClass,
   toggleAddClassProperty,
 }: IRealmBrowserProps) => {
@@ -117,9 +116,9 @@ export const RealmBrowser = ({
             dataVersion={dataVersion}
             dataVersionAtBeginning={dataVersionAtBeginning}
             editMode={editMode}
-            highlightMode={HighlightMode.Multiple}
             focus={focus}
             getClassFocus={getClassFocus}
+            highlightMode={HighlightMode.Multiple}
             key={contentKey}
             onAddColumnClick={toggleAddClassProperty}
             onCancelTransaction={onCancelTransaction}

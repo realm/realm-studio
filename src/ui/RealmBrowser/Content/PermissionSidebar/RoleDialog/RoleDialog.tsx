@@ -44,6 +44,18 @@ function determineType(role: IRole, members: IUser[]): RoleType {
   }
 }
 
+function getDescription(type: RoleType | undefined) {
+  if (type === 'everyone') {
+    return 'All users are assigned this role.';
+  } else if (type === 'user') {
+    return 'Only a single user is assigned to this role.';
+  } else if (type === 'regular') {
+    return 'Users assigned this role:';
+  } else {
+    return null;
+  }
+}
+
 interface IRoleDialogBaseProps {
   isOpen: boolean;
   onClose: () => void;
@@ -73,31 +85,21 @@ export const RoleDialog = (props: IRoleDialogProps) => {
   }
   // Is this one of the special automatically created user roles?
   const type = props.isOpen ? determineType(props.role, members) : undefined;
-  const isSpecial = type === 'everyone' || type === 'user';
+  const isSystem = type === 'everyone' || type === 'user';
   return (
     <Modal className="RoleDialog" isOpen={props.isOpen} toggle={props.onClose}>
       <ModalHeader className="RoleDialog__Header" tag="h6">
         <code>{props.isOpen ? props.role.name : null}</code>
         <Badge
           className="RoleDialog__TypeBadge"
-          color={isSpecial ? 'primary' : 'secondary'}
+          color={isSystem ? 'primary' : 'secondary'}
         >
-          {isSpecial ? 'Special role' : 'Role'}
+          {isSystem ? 'System role' : 'Role'}
         </Badge>
       </ModalHeader>
       <ModalBody>
-        {type === 'everyone' ? (
-          <Alert color="info">
-            This role is a special role, which contains all users that has
-            synced with the Realm.
-          </Alert>
-        ) : type === 'user' ? (
-          <Alert color="info">
-            This role is a special role, which contains a single user.
-          </Alert>
-        ) : null}
-        <p>Users assigned this role:</p>
-        <UserList members={members} editable={!isSpecial} />
+        <p>{getDescription(type)}</p>
+        {isSystem ? null : <UserList members={members} />}
       </ModalBody>
     </Modal>
   );

@@ -223,11 +223,12 @@ class TableContainer extends React.PureComponent<
   }
 
   private getCellValue = (object: any, props: GridCellProps) => {
-    const property = this.props.focus.properties[props.columnIndex];
-    if (this.props.focus.kind === 'list' && property.name === '#') {
+    const { focus } = this.props;
+    const property = focus.properties[props.columnIndex];
+    if (focus.kind === 'list' && property.name === '#') {
       if (typeof object === 'object') {
         // Lookup the index in the list
-        return this.props.focus.results.indexOf(object);
+        return focus.results.indexOf(object);
       } else {
         return props.rowIndex;
       }
