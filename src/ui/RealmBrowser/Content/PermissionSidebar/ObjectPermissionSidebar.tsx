@@ -24,10 +24,13 @@ import { Focus } from '../../focus';
 import { IHighlight } from '../Table';
 
 import { Action, IPermission, IRole, Permissions } from '.';
+import { ClassSection } from './ClassSection';
 import { ObjectSection } from './ObjectSection';
+import { RealmSection } from './RealmSection';
 
 interface IObjectPermissionSidebarProps {
   className?: string;
+  classPermissions: Permissions;
   focus: Focus;
   getObjectPermissions: (object: any & Realm.Object) => Permissions;
   hasPermissionProperty: boolean;
@@ -40,10 +43,12 @@ interface IObjectPermissionSidebarProps {
     enabled: boolean,
   ) => void;
   onRoleClick: (role: IRole) => void;
+  realmPermissions: Permissions;
 }
 
 export const ObjectPermissionSidebar = ({
   className,
+  classPermissions,
   focus,
   getObjectPermissions,
   hasPermissionProperty,
@@ -52,6 +57,7 @@ export const ObjectPermissionSidebar = ({
   onPermissionChange,
   onRoleClick,
   onToggle,
+  realmPermissions,
 }: IObjectPermissionSidebarProps) => (
   <Sidebar
     className={className}
@@ -68,6 +74,19 @@ export const ObjectPermissionSidebar = ({
       objects={Array.from(highlight.rows.values()).map(
         index => focus.results[index],
       )}
+      onPermissionChange={onPermissionChange}
+      onRoleClick={onRoleClick}
+    />
+    {focus.kind === 'class' ? (
+      <ClassSection
+        name={focus.className}
+        permissions={classPermissions}
+        onPermissionChange={onPermissionChange}
+        onRoleClick={onRoleClick}
+      />
+    ) : null}
+    <RealmSection
+      permissions={realmPermissions}
       onPermissionChange={onPermissionChange}
       onRoleClick={onRoleClick}
     />

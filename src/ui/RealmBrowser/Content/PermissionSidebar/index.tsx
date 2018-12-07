@@ -19,6 +19,7 @@
 import * as React from 'react';
 import * as Realm from 'realm';
 
+import { IPropertyWithName } from '../..';
 import { Focus } from '../../focus';
 import { IHighlight } from '../Table';
 
@@ -72,17 +73,21 @@ class PermissionSidebarContainer extends React.Component<
   public renderSidebar() {
     if (this.props.highlight) {
       const hasPermissionProperty = !!this.getPermissionsProperty();
+      const classPermissions = this.getClassPermissions();
+      const realmPermissions = this.getRealmPermissions();
       return (
         <ObjectPermissionSidebar
           className={this.props.className}
-          isOpen={this.props.isOpen}
-          onToggle={this.props.onToggle}
-          highlight={this.props.highlight}
+          classPermissions={classPermissions}
           focus={this.props.focus}
           getObjectPermissions={this.getObjectPermissions}
           hasPermissionProperty={hasPermissionProperty}
+          highlight={this.props.highlight}
+          isOpen={this.props.isOpen}
           onPermissionChange={this.onPermissionChange}
           onRoleClick={this.onRoleClick}
+          onToggle={this.props.onToggle}
+          realmPermissions={realmPermissions}
         />
       );
     } else if (this.props.focus && this.props.focus.kind === 'class') {
