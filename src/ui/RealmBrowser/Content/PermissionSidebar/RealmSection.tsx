@@ -42,12 +42,26 @@ export const RealmSection = ({
     <SidebarTitle size="md">Realm permissions</SidebarTitle>
     <PermissionTable
       permissions={permissions}
-      actions={['canRead', 'canUpdate', 'canModifySchema', 'canSetPermissions']}
+      actions={[
+        'canCreate',
+        'canRead',
+        'canUpdate',
+        'canDelete',
+        'canQuery',
+        'canSetPermissions',
+        'canModifySchema',
+      ]}
       descriptions={{
+        canCreate:
+          'The user can create objects if this is also granted on the class level.',
         canRead:
           'This indicates that a user can see anything in the Realm at all (though not necessarily everything). If the user does not have this privilege, the Realm file will appear empty.',
         canUpdate:
           'This indicates that the user can make updates in the Realm (though not necessarily to any object in the file). If the user does not have this privilege, all changes they attempt to make in the Realm file will be rejected by the server.',
+        canDelete:
+          'The user can delete objects if this is also granted on the class level.',
+        canQuery:
+          'The user can create queries for objects if this is also granted on the class level.',
         canModifySchema:
           'The user is allowed to add classes and properties in the Realm file.',
         canSetPermissions:

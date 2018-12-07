@@ -45,22 +45,28 @@ export const ClassSection = ({
     <PermissionTable
       permissions={permissions}
       actions={[
+        'canCreate',
         'canRead',
         'canUpdate',
-        'canCreate',
+        'canDelete',
         'canQuery',
         'canSetPermissions',
+        'canModifySchema',
       ]}
       descriptions={{
+        canCreate: 'The user may create new objects of this class.',
         canRead:
           'This indicates that a user can see objects of this class, though not necessarily all objects of this class. If the user does not have this privilege, they will not be able to see any objects of this class.',
         canUpdate:
           'This indicates that the user can make updates to objects of this class, though not necessarily all objects of this class.',
-        canCreate: 'The user may create new objects of this class.',
+        canDelete:
+          'The user may delete objects of this class, if granted on the object level.',
         canQuery:
           'This indicates that the user is allowed to make server-side global queries on objects of this class. Note that local (client-side) queries are always allowed.',
         canSetPermissions:
           'The user is allowed to change class-level permissions on this class.',
+        canModifySchema:
+          'The user can add properties to this class. Deleting and renaming fields is currently not supported by the Realm Object Server.',
       }}
       onPermissionChange={onPermissionChange}
       onRoleClick={onRoleClick}
