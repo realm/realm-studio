@@ -20,7 +20,7 @@ import * as React from 'react';
 
 import { SidebarTitle } from '../../../reusable';
 
-import { Action, IPermission, IRole } from '.';
+import { Action, IPermission, IRole, Permissions } from '.';
 import { PermissionTable } from './PermissionTable';
 
 interface IClassSectionProps {
@@ -31,7 +31,7 @@ interface IClassSectionProps {
     enabled: boolean,
   ) => void;
   onRoleClick: (role: IRole) => void;
-  permissions: Realm.Collection<IPermission & Realm.Object>;
+  permissions: Permissions | null;
 }
 
 export const ClassSection = ({

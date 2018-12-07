@@ -20,11 +20,11 @@ import * as React from 'react';
 
 import { SidebarTitle } from '../../../reusable';
 
-import { Action, IPermission, IRole } from '.';
+import { Action, IPermission, IRole, Permissions } from '.';
 import { PermissionTable } from './PermissionTable';
 
 interface IRealmSectionProps {
-  permissions: Realm.Collection<IPermission & Realm.Object>;
+  permissions: Permissions | null;
   onPermissionChange: (
     permission: IPermission,
     action: Action,

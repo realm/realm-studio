@@ -30,9 +30,9 @@ import { RealmSection } from './RealmSection';
 
 interface IObjectPermissionSidebarProps {
   className?: string;
-  classPermissions: Permissions;
+  classPermissions: Permissions | null;
   focus: Focus;
-  getObjectPermissions: (object: any & Realm.Object) => Permissions;
+  getObjectPermissions: (object: any & Realm.Object) => Permissions | null;
   hasPermissionProperty: boolean;
   highlight: IHighlight;
   isOpen: boolean;
@@ -43,7 +43,7 @@ interface IObjectPermissionSidebarProps {
     enabled: boolean,
   ) => void;
   onRoleClick: (role: IRole) => void;
-  realmPermissions: Permissions;
+  realmPermissions: Permissions | null;
 }
 
 export const ObjectPermissionSidebar = ({
