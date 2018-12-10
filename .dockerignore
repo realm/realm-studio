@@ -1,2 +1,5 @@
 node_modules/
 build/
+
+# Allow the react-realm-context to be included in the dockerfile
+!react-realm-context-0.1.0.tgz
