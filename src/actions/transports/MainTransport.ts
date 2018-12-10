@@ -43,7 +43,7 @@ export class MainTransport extends Transport {
   }
 
   public sendResponse(requestId: string, result: any, success: boolean) {
-    if (this.webContents.isDestroyed) {
+    if (this.webContents.isDestroyed()) {
       // tslint:disable-next-line:no-console
       console.info(`Skipped responding to a distroyed window (${requestId})`);
     } else {
