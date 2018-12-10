@@ -23,7 +23,6 @@ if (process.type === 'browser') {
 
 import * as sentry from '@sentry/electron';
 import { remote } from 'electron';
-import * as querystring from 'querystring';
 import * as React from 'react';
 
 import { mixpanel } from '../services/mixpanel';
@@ -35,7 +34,7 @@ import {
 } from './MenuGenerator';
 import { SentryErrorBoundary } from './SentryErrorBoundary';
 import { getWindowClass, InnerWindowComponent } from './Window';
-import { WindowOptions, WindowType } from './WindowOptions';
+import { getWindowOptions, WindowType } from './WindowOptions';
 
 // TODO: Consider if we can have the window not show before a connection has been established.
 
@@ -43,17 +42,6 @@ interface ITrackedProperties {
   type: WindowType;
   [name: string]: string;
 }
-
-const getWindowOptions = (): WindowOptions => {
-  // Strip away the "?" of the location.search
-  const queryString = location.search.substr(1);
-  const query = querystring.parse<{ options?: string }>(queryString);
-  if (query && typeof query.options === 'string') {
-    return JSON.parse(query.options);
-  } else {
-    throw new Error('Expected "options" in the query parameters');
-  }
-};
 
 export abstract class WindowComponent extends React.Component
   implements IMenuGeneratorProps {

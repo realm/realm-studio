@@ -19,7 +19,7 @@
 import { IWindow } from './Window';
 
 export interface IServerAdministrationWindowProps {
-  user: Realm.Sync.SerializedUser;
+  user: Realm.Sync.SerializedUser | Realm.Sync.SerializedTokenUser;
   isCloudTenant?: boolean;
   validateCertificates: boolean;
 }

@@ -19,36 +19,58 @@
 import * as assert from 'assert';
 import * as electron from 'electron';
 import * as fs from 'fs-extra';
-import * as path from 'path';
+import { resolve } from 'path';
+
+import { getWindowOptions } from '../windows/WindowOptions';
 
 const app = electron.app || electron.remote.app;
 const userDataPath = app.getPath('userData');
 const rendererPattern = /^renderer-.+$/;
 
-export const changeRendererProcessDirectory = (type: string) => {
+function changeProcessDirectory(relativePath: string) {
+  const path = resolve(userDataPath, relativePath);
+  // Remove the directory if it already exists
+  if (!fs.existsSync(path)) {
+    // Create the directory
+    fs.mkdirSync(path);
+  }
+  // Change to it
+  process.chdir(path);
+}
+
+export function changeRendererProcessDirectory() {
   assert.equal(
     process.type,
     'renderer',
     'This should only be called from a renderer process',
   );
-  // Get the process dir
-  const processDir = path.resolve(userDataPath, `renderer-${type}`);
-  // Remove the directory if it already exists
-  if (!fs.existsSync(processDir)) {
-    // Create the directory
-    fs.mkdirSync(processDir);
-  }
+  // Determine the window type from the options passed in through the window.location
+  const options = getWindowOptions();
+  const type = options.type || 'unknown';
+  return changeProcessDirectory(`renderer-${type}`);
+}
 
-  // Change to it
-  process.chdir(processDir);
-};
+export function changeMainProcessDirectory() {
+  assert.equal(
+    process.type,
+    'browser',
+    'This should only be called from a main process',
+  );
+  return changeProcessDirectory(`main`);
+}
 
-export const removeRendererDirectories = () => {
+export function removeRendererDirectories() {
   const directories = fs
     .readdirSync(userDataPath)
     .filter(name => rendererPattern.test(name))
-    .map(name => path.resolve(userDataPath, name))
+    .map(name => resolve(userDataPath, name))
     .map(directory => fs.remove(directory));
-
   return Promise.all(directories);
-};
+}
+
+// The first time this is imported, it should change directory
+if (process.type === 'renderer') {
+  changeRendererProcessDirectory();
+} else {
+  changeMainProcessDirectory();
+}

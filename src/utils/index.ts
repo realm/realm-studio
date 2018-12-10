@@ -21,7 +21,7 @@ export * from './timeout';
 export * from './wait';
 export * from './range';
 export * from './promise-handle';
-export * from './renderer-process-directory';
+export * from './process-directories';
 export * from './pretty-bytes';
 
 import * as menu from './menu';

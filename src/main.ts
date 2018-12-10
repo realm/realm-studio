@@ -21,6 +21,8 @@
 process.env.REALM_DISABLE_ANALYTICS = 'true';
 
 import './sentry';
+// This is needed to prevent Realm JS from writing to directories it doesn't have access to
+import './utils/process-directories';
 
 import { app } from 'electron';
 
