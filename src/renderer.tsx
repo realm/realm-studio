@@ -18,11 +18,10 @@
 
 import './services/mixpanel';
 
-import * as electron from 'electron';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { changeRendererProcessDirectory } from './utils/renderer-process-directory';
+import { changeRendererProcessDirectory } from './utils/process-directories';
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 

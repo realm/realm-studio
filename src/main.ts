@@ -21,6 +21,8 @@
 process.env.REALM_DISABLE_ANALYTICS = 'true';
 
 import './sentry';
+import { changeMainProcessDirectory } from './utils/process-directories';
+changeMainProcessDirectory();
 
 import { app } from 'electron';
 
