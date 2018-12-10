@@ -43,12 +43,17 @@ export class MainTransport extends Transport {
   }
 
   public sendResponse(requestId: string, result: any, success: boolean) {
-    this.webContents.send(
-      Transport.RESPONSE_EVENT_NAME,
-      requestId,
-      result,
-      success,
-    );
+    if (this.webContents.isDestroyed) {
+      // tslint:disable-next-line:no-console
+      console.info(`Skipped responding to a distroyed window (${requestId})`);
+    } else {
+      this.webContents.send(
+        Transport.RESPONSE_EVENT_NAME,
+        requestId,
+        result,
+        success,
+      );
+    }
   }
 
   private onRequestMessage = (
