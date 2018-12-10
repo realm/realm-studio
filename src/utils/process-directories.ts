@@ -21,6 +21,8 @@ import * as electron from 'electron';
 import * as fs from 'fs-extra';
 import { resolve } from 'path';
 
+import { getWindowOptions } from '../windows/WindowOptions';
+
 const app = electron.app || electron.remote.app;
 const userDataPath = app.getPath('userData');
 const rendererPattern = /^renderer-.+$/;
@@ -36,12 +38,15 @@ function changeProcessDirectory(relativePath: string) {
   process.chdir(path);
 }
 
-export function changeRendererProcessDirectory(type: string) {
+export function changeRendererProcessDirectory() {
   assert.equal(
     process.type,
     'renderer',
     'This should only be called from a renderer process',
   );
+  // Determine the window type from the options passed in through the window.location
+  const options = getWindowOptions();
+  const type = options.type || 'unknown';
   return changeProcessDirectory(`renderer-${type}`);
 }
 
@@ -61,4 +66,11 @@ export function removeRendererDirectories() {
     .map(name => resolve(userDataPath, name))
     .map(directory => fs.remove(directory));
   return Promise.all(directories);
+}
+
+// The first time this is imported, it should change directory
+if (process.type === 'renderer') {
+  changeRendererProcessDirectory();
+} else {
+  changeMainProcessDirectory();
 }

@@ -16,6 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import * as qs from 'querystring';
+
 import {
   ICloudAuthenticationWindowProps,
   IConnectToServerWindowProps,
@@ -71,3 +73,14 @@ export type WindowOptions =
   | IGreetingWindowOptions
   | IRealmBrowserWindowOptions
   | IServerAdministrationWindowOptions;
+
+export function getWindowOptions(): WindowOptions {
+  // Strip away the "?" of the location.search
+  const queryString = location.search.substr(1);
+  const query = qs.parse<{ options?: string }>(queryString);
+  if (query && typeof query.options === 'string') {
+    return JSON.parse(query.options);
+  } else {
+    throw new Error('Expected "options" in the query parameters');
+  }
+}

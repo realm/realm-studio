@@ -21,26 +21,10 @@ import './services/mixpanel';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { changeRendererProcessDirectory } from './utils/process-directories';
+// This is needed to prevent Realm JS from writing to directories it doesn't have access to
+import './utils/process-directories';
 
 const isDevelopment = process.env.NODE_ENV === 'development';
-
-let windowType = 'unknown';
-try {
-  if (document.location !== null) {
-    const params = new URL(document.location.href).searchParams.get('options');
-    if (params !== null) {
-      const deserialized = JSON.parse(params) as { type: string };
-      if (deserialized.type) {
-        windowType = deserialized.type;
-      }
-    }
-  }
-} catch {
-  // Just ignore
-}
-
-changeRendererProcessDirectory(windowType);
 
 // Don't report Realm JS analytics data
 // @see https://github.com/realm/realm-js/blob/master/lib/submit-analytics.js#L28
