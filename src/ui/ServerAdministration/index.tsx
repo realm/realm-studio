@@ -34,6 +34,11 @@ import {
   wait,
 } from '../../utils';
 import {
+  ISyncedRealmToLoad,
+  RealmLoadingMode,
+  RealmToLoad,
+} from '../../utils/realms';
+import {
   IMenuGenerator,
   IMenuGeneratorProps,
 } from '../../windows/MenuGenerator';
@@ -167,9 +172,9 @@ class ServerAdministrationContainer
       this.setState({ isRealmOpening: true });
       try {
         // Let the UI update before sync waiting on the window to appear
-        const realm: ros.realms.ISyncedRealmToLoad = {
+        const realm: ISyncedRealmToLoad = {
           user: this.props.user,
-          mode: ros.realms.RealmLoadingMode.Synced,
+          mode: RealmLoadingMode.Synced,
           path,
           validateCertificates: this.props.validateCertificates,
         };
@@ -286,7 +291,7 @@ class ServerAdministrationContainer
       });
       await this.loadRealm({
         user: user.serialize(),
-        mode: ros.realms.RealmLoadingMode.Synced,
+        mode: RealmLoadingMode.Synced,
         path: '__admin',
         validateCertificates: this.props.validateCertificates,
       });
@@ -300,9 +305,7 @@ class ServerAdministrationContainer
     }
   }
 
-  protected async loadRealm(
-    realm: ros.realms.ISyncedRealmToLoad | ros.realms.ILocalRealmToLoad,
-  ) {
+  protected async loadRealm(realm: RealmToLoad) {
     if (
       this.certificateWasRejected &&
       realm.mode === 'synced' &&
@@ -370,11 +373,11 @@ class ServerAdministrationContainer
         ssl: { validateCertificates: this.props.validateCertificates },
       });
       // Import the data
-      importer.importInto(newRealm);
+      importer.import(newRealm);
       // Open the Realm browser in "import mode"
-      const realm: ros.realms.ISyncedRealmToLoad = {
+      const realm: ISyncedRealmToLoad = {
         user: this.props.user,
-        mode: ros.realms.RealmLoadingMode.Synced,
+        mode: RealmLoadingMode.Synced,
         path: newRealmFile.path,
         validateCertificates: this.props.validateCertificates,
       };

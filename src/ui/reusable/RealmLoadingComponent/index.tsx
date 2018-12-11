@@ -19,13 +19,12 @@
 import * as electron from 'electron';
 import * as React from 'react';
 
-import { realms, users } from '../../../services/ros';
-
+import { realms } from '../../../services/ros';
+import { RealmLoadingMode, RealmToLoad } from '../../../utils/realms';
 import { ILoadingProgress } from '../LoadingOverlay';
 
 export interface IRealmLoadingComponentState {
   progress: ILoadingProgress;
-  realm?: realms.ISyncedRealmToLoad | realms.ILocalRealmToLoad;
 }
 
 const TRUST_DIALOG_MESSAGE =
@@ -60,7 +59,7 @@ export abstract class RealmLoadingComponent<
   }
 
   protected async loadRealm(
-    realm: realms.ISyncedRealmToLoad | realms.ILocalRealmToLoad,
+    realm: RealmToLoad,
     schema?: Realm.ObjectSchema[],
     schemaVersion?: number,
   ) {
@@ -103,7 +102,7 @@ export abstract class RealmLoadingComponent<
           if (
             validateCertificates &&
             this.certificateWasRejected &&
-            realm.mode === realms.RealmLoadingMode.Synced
+            realm.mode === RealmLoadingMode.Synced
           ) {
             // Ask the user if they want to trust the certificate
             const result = electron.remote.dialog.showMessageBox(
@@ -168,12 +167,12 @@ export abstract class RealmLoadingComponent<
   };
 
   private async openRealm(
-    realm: realms.ISyncedRealmToLoad | realms.ILocalRealmToLoad | undefined,
+    realm: RealmToLoad | undefined,
     ssl: realms.ISslConfiguration = { validateCertificates: true },
     schema?: Realm.ObjectSchema[],
     schemaVersion?: number,
   ): Promise<Realm> {
-    if (realm && realm.mode === realms.RealmLoadingMode.Local) {
+    if (realm && realm.mode === RealmLoadingMode.Local) {
       try {
         return new Realm({
           path: realm.path,
@@ -201,7 +200,7 @@ export abstract class RealmLoadingComponent<
       }
     }
 
-    if (realm && realm.mode === realms.RealmLoadingMode.Synced) {
+    if (realm && realm.mode === RealmLoadingMode.Synced) {
       const realmPromise = realms.open({
         user: Realm.Sync.User.deserialize(realm.user),
         realmPath: realm.path,

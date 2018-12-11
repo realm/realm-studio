@@ -27,28 +27,6 @@ import {
 } from '.';
 import { showError } from '../../ui/reusable/errors';
 
-export enum RealmLoadingMode {
-  Synced = 'synced',
-  Local = 'local',
-}
-
-export interface IRealmToLoad {
-  mode: RealmLoadingMode;
-  path: string;
-  encryptionKey?: Uint8Array;
-}
-
-export interface ISyncedRealmToLoad extends IRealmToLoad {
-  mode: RealmLoadingMode.Synced;
-  user: Realm.Sync.SerializedUser | Realm.Sync.SerializedTokenUser;
-  validateCertificates: boolean;
-}
-
-export interface ILocalRealmToLoad extends IRealmToLoad {
-  mode: RealmLoadingMode.Local;
-  sync?: boolean;
-}
-
 export interface ISslConfiguration {
   validateCertificates: boolean;
   errorCallback?: Realm.Sync.ErrorCallback;

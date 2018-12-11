@@ -1,6 +1,5 @@
 const { CheckerPlugin } = require('awesome-typescript-loader');
 const { resolve } = require('path');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 const webpack = require('webpack');
@@ -50,9 +49,6 @@ module.exports = (env, argv) => {
       new webpack.NamedModulesPlugin(),
       new webpack.HotModuleReplacementPlugin(),
     ] : [
-      new UglifyJsPlugin({
-        sourceMap: true,
-      }),
       new SentryPlugin({
         release: `${package.name}@${package.version}`,
         include: './build',

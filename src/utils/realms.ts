@@ -16,14 +16,26 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-export * from './countdown';
-export * from './pretty-bytes';
-export * from './process-directories';
-export * from './promise-handle';
-export * from './range';
-export * from './timeout';
-export * from './wait';
+export enum RealmLoadingMode {
+  Synced = 'synced',
+  Local = 'local',
+}
 
-import * as menu from './menu';
-import * as realms from './realms';
-export { menu, realms };
+export interface IRealmToLoad {
+  mode: RealmLoadingMode;
+  path: string;
+  encryptionKey?: Uint8Array;
+}
+
+export interface ISyncedRealmToLoad extends IRealmToLoad {
+  mode: RealmLoadingMode.Synced;
+  user: Realm.Sync.SerializedUser | Realm.Sync.SerializedTokenUser;
+  validateCertificates: boolean;
+}
+
+export interface ILocalRealmToLoad extends IRealmToLoad {
+  mode: RealmLoadingMode.Local;
+  sync?: boolean;
+}
+
+export type RealmToLoad = ILocalRealmToLoad | ISyncedRealmToLoad;
