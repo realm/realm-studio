@@ -1,3 +1,17 @@
+# Release 3.1.2 (2018-12-11)
+
+[Changes since v3.1.1](https://github.com/realm/realm-studio/compare/v3.1.1...v3.1.2)
+
+## Enhancements
+- None
+
+## Fixed
+- Fixed connecting to a server using an admin token (again). ([#1038](https://github.com/realm/realm-studio/pull/1038), since v3.0.0)
+
+## Internals
+- None
+
+
 # Release 3.1.1 (2018-12-07)
 
 [Changes since v3.1.0](https://github.com/realm/realm-studio/compare/v3.1.0...v3.1.1)
