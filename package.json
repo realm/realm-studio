@@ -150,7 +150,7 @@
     "react-dom": "^16.4.0",
     "react-draggable": "^3.0.3",
     "react-object-inspector": "^0.2.1",
-    "react-realm-context": "file:react-realm-context-0.1.0.tgz",
+    "react-realm-context": "^0.1.0",
     "react-sortable-hoc": "^0.6.8",
     "react-virtualized": "^9.20.1",
     "reactstrap": "^6.5.0",
