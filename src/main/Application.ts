@@ -26,8 +26,9 @@ import { CLOUD_PROTOCOL, STUDIO_PROTOCOL } from '../constants';
 import * as dataImporter from '../services/data-importer';
 import * as github from '../services/github';
 import * as raas from '../services/raas';
-import { realms } from '../services/ros';
+import { authenticate } from '../services/ros/users';
 import { showError } from '../ui/reusable/errors';
+import { RealmLoadingMode } from '../utils/realms';
 import {
   ICloudAuthenticationWindowProps,
   IConnectToServerWindowProps,
@@ -35,7 +36,6 @@ import {
   IServerAdministrationWindowProps,
 } from '../windows/WindowProps';
 
-import { authenticate } from '../services/ros/users';
 import { removeRendererDirectories } from '../utils';
 import { CertificateManager } from './CertificateManager';
 import { CloudManager, ICloudStatus } from './CloudManager';
@@ -258,8 +258,6 @@ export class Application {
       dataImporter.ImportFormat.CSV,
       paths,
     );
-    // Get the importer
-    const importer = dataImporter.getDataImporter(format, paths, schema);
     // Start the import
     const defaultPath = path.dirname(paths[0]) + '/default.realm';
     const destinationPath = dialog.showSaveDialog({
@@ -271,11 +269,14 @@ export class Application {
       // Don't do anything if the user cancelled or selected no files
       return;
     }
-    const generatedRealm = importer.import(destinationPath);
-    // Close Realm in main process (to be opened in Renderer process)
-    generatedRealm.close();
-    // Open a RealmBrowser using the generated Realm file.
-    return this.openLocalRealmAtPath(generatedRealm.path);
+    // Open the Realm Browser, which will perform the import
+    return this.showRealmBrowser({
+      realm: {
+        mode: RealmLoadingMode.Local,
+        path: destinationPath,
+      },
+      import: { format, paths, schema },
+    });
   }
 
   public showRealmBrowser(props: IRealmBrowserWindowProps) {
@@ -597,7 +598,7 @@ export class Application {
   private openLocalRealmAtPath = (filePath: string) => {
     return this.showRealmBrowser({
       realm: {
-        mode: realms.RealmLoadingMode.Local,
+        mode: RealmLoadingMode.Local,
         path: filePath,
       },
     });

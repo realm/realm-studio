@@ -99,7 +99,10 @@ class RealmBrowserContainer
   private contentInstance: Content | null = null;
 
   public componentDidMount() {
-    this.loadRealm(this.props.realm);
+    this.loadRealm(
+      this.props.realm,
+      this.props.import ? this.props.import.schema : undefined,
+    );
     this.addListeners();
   }
 
@@ -288,6 +291,8 @@ class RealmBrowserContainer
     if (firstSchemaName) {
       this.onClassFocussed(firstSchemaName);
     }
+    // Start importing data if needed
+    this.performImport();
   };
 
   private onBeginTransaction = () => {
@@ -680,7 +685,7 @@ class RealmBrowserContainer
         const schema = dataImporter.generateSchema(format, paths);
         try {
           const importer = dataImporter.getDataImporter(format, paths, schema);
-          importer.importInto(this.realm);
+          importer.import(this.realm);
         } catch (err) {
           showError('Faild to import data', err);
         }
@@ -689,6 +694,22 @@ class RealmBrowserContainer
       }
     }
   };
+
+  private performImport() {
+    if (this.props.import && this.realm) {
+      const { format, paths, schema } = this.props.import;
+      this.setState({ progress: { status: 'in-progress' } });
+      // Get the importer
+      try {
+        const importer = dataImporter.getDataImporter(format, paths, schema);
+        importer.import(this.realm);
+      } catch (err) {
+        showError('Faild to import data', err);
+      } finally {
+        this.setState({ progress: { status: 'done' } });
+      }
+    }
+  }
 }
 
 export { RealmBrowserContainer as RealmBrowser };

@@ -24,7 +24,7 @@ import { DataImporter } from '../DataImporter';
 export class CSVDataImporter extends DataImporter {
   private static readonly NUMBER_OF_INSERTS_BEFORE_COMMIT = 10000;
 
-  public importInto(realm: Realm) {
+  public import(realm: Realm) {
     this.files.map((file, index) => {
       const schema = this.importSchema[index];
 
@@ -104,18 +104,5 @@ export class CSVDataImporter extends DataImporter {
 
       realm.commitTransaction();
     });
-  }
-
-  public import(path: string): Realm {
-    const realm = this.createNewRealmFile(path);
-    try {
-      this.importInto(realm);
-    } catch (e) {
-      realm.close();
-      // in case of an error remove the created Realm
-      fs.removeSync(realm.path);
-      throw e;
-    }
-    return realm;
   }
 }

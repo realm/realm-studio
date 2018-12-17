@@ -44,6 +44,8 @@ module.exports = (env, argv) => {
     plugins: [
       // Prevent the windows from loading the UI components
       new webpack.IgnorePlugin(/\/ui/, /\/src\/windows$/),
+      // Prevent the main bundle from requiring Realm JS, as this does not 
+      new webpack.IgnorePlugin(/realm$/),
     ].concat(isDevelopment ? [
       new Visualizer({
         filename: './main.statistics.html',

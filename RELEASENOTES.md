@@ -7,4 +7,4 @@
 - None
 
 ## Internals
-- None
+- Removed all use of Realm JS from the main process.

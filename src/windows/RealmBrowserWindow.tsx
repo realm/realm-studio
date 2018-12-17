@@ -18,15 +18,21 @@
 
 import { URL } from 'url';
 
-import { ros } from '../services';
+import { ImportFormat } from '../services/data-importer';
+import { ISyncedRealmToLoad, RealmToLoad } from '../utils/realms';
 
 import { IWindow } from './Window';
 
 export interface IRealmBrowserWindowProps {
-  realm: ros.realms.ISyncedRealmToLoad | ros.realms.ILocalRealmToLoad;
+  realm: RealmToLoad;
+  import?: {
+    format: ImportFormat;
+    paths: string[];
+    schema: Realm.ObjectSchema[];
+  };
 }
 
-const getRealmUrl = (realm: ros.realms.ISyncedRealmToLoad) => {
+const getRealmUrl = (realm: ISyncedRealmToLoad) => {
   const url = new URL(realm.user.server);
   url.pathname = realm.path;
   return url.toString();
