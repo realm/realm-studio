@@ -362,27 +362,23 @@ class ServerAdministrationContainer
       const schema = dataImporter.generateSchema(format, paths);
       // Passing the generated schema to createRealm
       const newRealmFile = await this.createRealm(schema);
-      // Import the data into the Realm
-      const importer = dataImporter.getDataImporter(format, paths, schema);
       if (!this.state.user) {
         throw new Error('Cannot open realm without a user');
       }
-      const newRealm = await ros.realms.open({
-        user: this.state.user,
-        realmPath: newRealmFile.path,
-        ssl: { validateCertificates: this.props.validateCertificates },
-      });
-      // Import the data
-      importer.import(newRealm);
       // Open the Realm browser in "import mode"
-      const realm: ISyncedRealmToLoad = {
-        user: this.props.user,
-        mode: RealmLoadingMode.Synced,
-        path: newRealmFile.path,
-        validateCertificates: this.props.validateCertificates,
-      };
-      // Open the newly created realm
-      await main.showRealmBrowser({ realm });
+      await main.showRealmBrowser({
+        realm: {
+          user: this.props.user,
+          mode: RealmLoadingMode.Synced,
+          path: newRealmFile.path,
+          validateCertificates: this.props.validateCertificates,
+        },
+        import: {
+          format,
+          paths,
+          schema,
+        },
+      });
     } catch (err) {
       if (err.message === 'Realm creation cancelled') {
         // This is an expected expression to be thrown - no need to show it
