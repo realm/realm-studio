@@ -1,3 +1,18 @@
+# Release 3.1.3 (2018-12-17)
+
+[Changes since v3.1.2](https://github.com/realm/realm-studio/compare/v3.1.2...v3.1.3)
+
+## Enhancements
+- None
+
+## Fixed
+- Fixed connecting to a server using an admin token (again²). ([#1050](https://github.com/realm/realm-studio/pull/1050), since v3.0.0)
+
+## Internals
+- Removed all use of Realm JS from the main process. ([#1049](https://github.com/realm/realm-studio/pull/1049))
+- Upgraded Realm JS to v2.21.1. ([#1050](https://github.com/realm/realm-studio/pull/1050))
+
+
 # Release 3.1.2 (2018-12-11)
 
 [Changes since v3.1.1](https://github.com/realm/realm-studio/compare/v3.1.1...v3.1.2)
