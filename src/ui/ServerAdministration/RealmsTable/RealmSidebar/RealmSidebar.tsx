@@ -72,6 +72,7 @@ export const RealmSidebar = ({
         realmStateSize={getMetric(realms[0], 'RealmStateSize')}
         onRealmSizeRecalculate={onRealmSizeRecalculate}
         shouldShowRealmSize={shouldShowRealmSize}
+        key={realms[0].path}
       />
     ) : realms.length > 1 ? (
       <MultipleRealmsContent
