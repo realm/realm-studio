@@ -15,6 +15,8 @@
 
 # Release 3.1.2 (2018-12-11)
 
+This version had a regression running on Windows and was therefore never released.
+
 [Changes since v3.1.1](https://github.com/realm/realm-studio/compare/v3.1.1...v3.1.2)
 
 ## Enhancements
