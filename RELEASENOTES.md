@@ -4,7 +4,8 @@
 - None
 
 ## Fixed
-- None
+- Fixed connecting to a server using an admin token (again²). ([#1050](https://github.com/realm/realm-studio/pull/1050), since v3.0.0)
 
 ## Internals
-- Removed all use of Realm JS from the main process.
+- Removed all use of Realm JS from the main process. ([#1049](https://github.com/realm/realm-studio/pull/1049))
+- Upgraded Realm JS to v2.21.1. ([#1050](https://github.com/realm/realm-studio/pull/1050))
