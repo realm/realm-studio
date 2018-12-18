@@ -44,18 +44,19 @@ import {
 } from '../../windows/MenuGenerator';
 import { IServerAdministrationWindowOptions } from '../../windows/WindowOptions';
 import { IServerAdministrationWindowProps } from '../../windows/WindowProps';
+import { ILoadingProgress } from '../reusable';
 import { showError } from '../reusable/errors';
-import {
-  IRealmLoadingComponentState,
-  RealmLoadingComponent,
-} from '../reusable/RealmLoadingComponent';
 
+import {
+  AdminRealmConsumer,
+  AdminRealmProvider,
+  getAdminRealmConfig,
+} from './AdminRealm';
 import { ServerAdministration, Tab } from './ServerAdministration';
 
 export type IServerAdministrationContainerProps = IServerAdministrationWindowProps;
 
-export interface IServerAdministrationContainerState
-  extends IRealmLoadingComponentState {
+export interface IServerAdministrationContainerState {
   activeTab: Tab | null;
   // This will increment when the realm changes to trigger updates to the UI.
   adminRealmChanges: number;
@@ -64,10 +65,11 @@ export interface IServerAdministrationContainerState
   isRealmOpening: boolean;
   serverVersion?: string;
   user: Realm.Sync.User | null;
+  progress: ILoadingProgress;
 }
 
 class ServerAdministrationContainer
-  extends RealmLoadingComponent<
+  extends React.Component<
     IServerAdministrationContainerProps & IMenuGeneratorProps,
     IServerAdministrationContainerState
   >
@@ -78,16 +80,21 @@ class ServerAdministrationContainer
     isCreateRealmOpen: false,
     isCreatingRealm: false,
     isRealmOpening: false,
-    progress: { status: 'idle' },
+    progress: {
+      status: 'in-progress',
+      message: 'Loading',
+    },
     user: null,
   };
 
   /* A single promise that resolves when the server is available */
-  protected availabilityPromise?: Promise<string | undefined>;
+  private availabilityPromise?: Promise<string | undefined>;
   /* A promise handle that gets returned when a user calls createRealm */
-  protected createRealmPromiseHandle?: IPromiseHandle<ros.RealmFile>;
+  private createRealmPromiseHandle?: IPromiseHandle<ros.RealmFile>;
   /* A list of object schemas to use when creating the next Realm */
-  protected createRealmSchema?: Realm.ObjectSchema[];
+  private createRealmSchema?: Realm.ObjectSchema[];
+  /* The admin Realm */
+  private adminRealm?: Realm;
 
   /**
    * An array of pairs of ROS + Studio versions which are compatible,
@@ -119,15 +126,6 @@ class ServerAdministrationContainer
     }
   }
 
-  public async componentWillUpdate(
-    nextProps: IServerAdministrationContainerProps,
-    nextState: IServerAdministrationContainerState,
-  ) {
-    if (nextState.user && this.state.user !== nextState.user) {
-      this.gotUser(nextState.user);
-    }
-  }
-
   public componentWillUnmount() {
     electron.ipcRenderer.removeListener(
       'cloud-status',
@@ -136,23 +134,24 @@ class ServerAdministrationContainer
   }
 
   public render() {
-    return (
-      <ServerAdministration
-        {...this.state}
-        {...this}
-        adminRealm={this.realm}
-        adminRealmChanges={this.state.adminRealmChanges}
-        adminRealmProgress={this.state.progress}
-        createRealm={this.createRealm}
-        isCloudTenant={this.props.isCloudTenant || false}
-        isCreateRealmOpen={this.state.isCreateRealmOpen}
-        isCreatingRealm={this.state.isCreatingRealm}
-        onCancelRealmCreation={this.onCancelRealmCreation}
-        onRealmCreation={this.onRealmCreation}
-        onValidateCertificatesChange={this.onValidateCertificatesChange}
-        validateCertificates={this.props.validateCertificates}
-      />
-    );
+    const { user } = this.state;
+    const { validateCertificates } = this.props;
+    if (user) {
+      const config = getAdminRealmConfig(user, {
+        sync: {
+          error: this.onSyncError,
+          ssl: { validate: validateCertificates },
+        },
+      });
+      return (
+        <AdminRealmProvider {...config}>
+          {this.renderServerAdministration()}
+          <AdminRealmConsumer>{this.onAdminRealm}</AdminRealmConsumer>
+        </AdminRealmProvider>
+      );
+    } else {
+      return this.renderServerAdministration();
+    }
   }
 
   public generateMenu(template: electron.MenuItemConstructorOptions[]) {
@@ -166,8 +165,30 @@ class ServerAdministrationContainer
     ]);
   }
 
+  private renderServerAdministration() {
+    return (
+      <ServerAdministration
+        activeTab={this.state.activeTab}
+        adminRealmChanges={this.state.adminRealmChanges}
+        createRealm={this.createRealm}
+        isCloudTenant={this.props.isCloudTenant || false}
+        isCreateRealmOpen={this.state.isCreateRealmOpen}
+        isCreatingRealm={this.state.isCreatingRealm}
+        isRealmOpening={this.state.isRealmOpening}
+        onCancelRealmCreation={this.onCancelRealmCreation}
+        onRealmCreation={this.onRealmCreation}
+        onRealmOpened={this.onRealmOpened}
+        onReconnect={this.onReconnect}
+        onTabChanged={this.onTabChanged}
+        progress={this.state.progress}
+        serverVersion={this.state.serverVersion}
+        user={this.state.user}
+      />
+    );
+  }
+
   // TODO: Once the user serializes better, this method should be moved to the ./realms/RealmsTableContainer.tsx
-  public onRealmOpened = async (path: string) => {
+  private onRealmOpened = async (path: string) => {
     if (!this.state.isRealmOpening) {
       this.setState({ isRealmOpening: true });
       try {
@@ -187,56 +208,22 @@ class ServerAdministrationContainer
     }
   };
 
-  public onReconnect = async () => {
+  private onReconnect = async () => {
     // TODO: Use reopen the Realm instead of reloading
     /*
-    this.setState({ syncError: undefined });
     this.authenticate();
     */
     await this.ensureServerIsAvailable(this.props.user.server);
     location.reload();
   };
 
-  public onTabChanged = (tab: Tab) => {
+  private onTabChanged = (tab: Tab) => {
     this.setState({
       activeTab: tab,
     });
   };
 
-  protected async authenticate() {
-    // Ensure the server is available and its version is compatible ..
-    const version = await this.ensureServerIsAvailable(this.props.user.server);
-
-    const compatible = this.isCompatibleVersion(version);
-    if (!compatible) {
-      this.setState({
-        serverVersion: version,
-        progress: {
-          status: 'failed',
-          message: `You are connecting to an old Realm Object Server,
-            no longer supported by Realm Studio.\n
-            You can download an older compatible version of Realm Studio,
-            which won't receive updates.`,
-          retry: {
-            label: 'Downgrade Realm Studio',
-            onRetry: () => this.onDowngradeStudio(version),
-          },
-        },
-      });
-    } else {
-      const user = Realm.Sync.User.deserialize(this.props.user);
-      this.setState({
-        serverVersion: version,
-        progress: {
-          status: 'done',
-          message: 'Authenticated',
-        },
-        user,
-      });
-    }
-  }
-
-  protected async ensureServerIsAvailable(
+  private async ensureServerIsAvailable(
     url: string,
   ): Promise<string | undefined> {
     // Return a previous promise if that's available
@@ -273,53 +260,7 @@ class ServerAdministrationContainer
     return this.availabilityPromise;
   }
 
-  protected getAuthenticationErrorMessage(err: Error) {
-    if (err.message === 'Failed to fetch') {
-      return 'Failed to fetch:\nIs the server started?';
-    } else {
-      return err.message || 'Failed to authenticate';
-    }
-  }
-
-  protected async gotUser(user: Realm.Sync.User) {
-    try {
-      this.setState({
-        progress: {
-          status: 'in-progress',
-          message: 'Opening __admin Realm',
-        },
-      });
-      await this.loadRealm({
-        user: user.serialize(),
-        mode: RealmLoadingMode.Synced,
-        path: '__admin',
-        validateCertificates: this.props.validateCertificates,
-      });
-    } catch (err) {
-      this.setState({
-        progress: {
-          status: 'failed',
-          message: `Failed to open the __admin Realm: ${err.message}`,
-        },
-      });
-    }
-  }
-
-  protected async loadRealm(realm: RealmToLoad) {
-    if (
-      this.certificateWasRejected &&
-      realm.mode === 'synced' &&
-      !realm.validateCertificates
-    ) {
-      // TODO: Remove this hack once this Realm JS issue has resolved:
-      // https://github.com/realm/realm-js/issues/1469
-      this.onValidateCertificatesChange(realm.validateCertificates);
-    } else {
-      return super.loadRealm(realm);
-    }
-  }
-
-  protected isCompatibleVersion(version?: string) {
+  private isCompatibleVersion(version?: string) {
     // Check that version is at least the newest one in the compatibility versions
     const minimumVersion = this.compatibilityVersions[
       this.compatibilityVersions.length - 1
@@ -327,7 +268,7 @@ class ServerAdministrationContainer
     return semver.gte(version || '0.0.0', minimumVersion);
   }
 
-  protected downgradedStudioUrl(version: string = '0.0.0') {
+  private downgradedStudioUrl(version: string = '0.0.0') {
     let compatibleVersion: string | undefined;
     // Find the Studio version compatible with the first incompatibility with the servers version.
     for (const compatibilityVersion of this.compatibilityVersions) {
@@ -350,7 +291,7 @@ class ServerAdministrationContainer
     }
   }
 
-  protected async showImportData(format: dataImporter.ImportFormat) {
+  private async showImportData(format: dataImporter.ImportFormat) {
     try {
       // First create the Realm for the data
       const paths = dataImporter.showOpenDialog(format);
@@ -388,20 +329,21 @@ class ServerAdministrationContainer
     }
   }
 
-  protected onRealmChanged = () => {
+  private onRealmChanged = () => {
     this.setState({ adminRealmChanges: this.state.adminRealmChanges + 1 });
   };
 
-  protected onRealmLoaded = () => {
-    // The child components will be updated from the change of progress state
+  private onAdminRealm = ({ realm }: { realm: Realm }) => {
+    this.adminRealm = realm;
+    return null;
   };
 
-  protected onSyncError = async (
+  private onSyncError = async (
     session: Realm.Sync.Session,
     error: Realm.Sync.SyncError,
   ) => {
     if (error.message === 'SSL server certificate rejected') {
-      this.certificateWasRejected = true;
+      // this.certificateWasRejected = true;
       this.setState({
         progress: {
           status: 'failed',
@@ -415,7 +357,7 @@ class ServerAdministrationContainer
         },
       });
     } else if (error.isFatal === false) {
-      /* tslint:disable-next-line:no-console */
+      // tslint:disable-next-line:no-console
       console.warn(`A non-fatal sync error happened: ${error.message}`, error);
     } else {
       this.setState({
@@ -431,7 +373,7 @@ class ServerAdministrationContainer
     }
   };
 
-  protected cloudStatusChanged = (
+  private cloudStatusChanged = (
     e: Electron.IpcMessageEvent,
     status: ICloudStatus,
   ) => {
@@ -441,13 +383,13 @@ class ServerAdministrationContainer
     }
   };
 
-  protected onDowngradeStudio = (version: string | undefined) => {
+  private onDowngradeStudio = (version: string | undefined) => {
     const url = this.downgradedStudioUrl(version);
     electron.remote.shell.openExternal(url);
     window.close();
   };
 
-  protected onValidateCertificatesChange = (validateCertificates: boolean) => {
+  private onValidateCertificatesChange = (validateCertificates: boolean) => {
     const url = new URL(location.href);
     // Get the options
     const windowOptions: IServerAdministrationWindowOptions = JSON.parse(
@@ -463,13 +405,14 @@ class ServerAdministrationContainer
     location.replace(url.toString());
   };
 
-  protected onRealmCreation = async (path: string) => {
+  private onRealmCreation = async (path: string) => {
     try {
       this.setState({ isCreatingRealm: true });
-      if (this.realm && this.state.user) {
+      const { user } = this.state;
+      if (this.adminRealm && user) {
         const serverPath = this.guessServerPath(path);
         // Check if the Realm already exists
-        const existingRealmFile = this.realm.objectForPrimaryKey(
+        const existingRealmFile = this.adminRealm.objectForPrimaryKey(
           'RealmFile',
           serverPath,
         );
@@ -478,19 +421,19 @@ class ServerAdministrationContainer
         }
         // Create a new Realm at the path specificed by the user
         const newRealm = await ros.realms.create(
-          this.state.user,
+          user,
           path,
           this.createRealmSchema,
+          this.props.validateCertificates,
         );
         // Close the Realm - we don't need it open anymore
         newRealm.close();
         // If we are waiting for the realm to be created - hang on to the path
         if (this.createRealmPromiseHandle) {
           // Because we awaited creation - the admin Realm has most probably synced already
-          const newRealmFile = this.realm.objectForPrimaryKey<ros.RealmFile>(
-            'RealmFile',
-            serverPath,
-          );
+          const newRealmFile = this.adminRealm.objectForPrimaryKey<
+            ros.RealmFile
+          >('RealmFile', serverPath);
           // If the file was available - resolve the create realm promise
           if (newRealmFile) {
             this.createRealmPromiseHandle.resolve(newRealmFile);
@@ -511,7 +454,7 @@ class ServerAdministrationContainer
     }
   };
 
-  protected guessServerPath(path: string): string {
+  private guessServerPath(path: string): string {
     if (path.indexOf('/') !== 0) {
       // Prepend a slash
       path = `/${path}`;
@@ -524,7 +467,7 @@ class ServerAdministrationContainer
   }
 
   // TODO: Move this into the CreateRealmDialog
-  protected createRealm = (schema?: Realm.ObjectSchema[]) => {
+  private createRealm = (schema?: Realm.ObjectSchema[]) => {
     if (this.createRealmPromiseHandle) {
       throw new Error('You can only create one Realm at a time');
     } else {
@@ -548,7 +491,7 @@ class ServerAdministrationContainer
     }
   };
 
-  protected onCancelRealmCreation = async () => {
+  private onCancelRealmCreation = async () => {
     if (this.state.isCreateRealmOpen && this.createRealmPromiseHandle) {
       const err = new Error('Realm creation cancelled');
       this.createRealmPromiseHandle.reject(err);
@@ -556,6 +499,38 @@ class ServerAdministrationContainer
       this.setState({ isCreateRealmOpen: false });
     }
   };
+
+  private async authenticate() {
+    // Ensure the server is available and its version is compatible ..
+    const version = await this.ensureServerIsAvailable(this.props.user.server);
+    const compatible = this.isCompatibleVersion(version);
+    if (!compatible) {
+      this.setState({
+        serverVersion: version,
+        progress: {
+          status: 'failed',
+          message: `You are connecting to an old Realm Object Server,
+            no longer supported by Realm Studio.\n
+            You can download an older compatible version of Realm Studio,
+            which won't receive updates.`,
+          retry: {
+            label: 'Downgrade Realm Studio',
+            onRetry: () => this.onDowngradeStudio(version),
+          },
+        },
+      });
+    } else {
+      const user = Realm.Sync.User.deserialize(this.props.user);
+      this.setState({
+        serverVersion: version,
+        progress: {
+          status: 'done',
+          message: `Authenticated`,
+        },
+        user,
+      });
+    }
+  }
 }
 
 export { ServerAdministrationContainer as ServerAdministration };

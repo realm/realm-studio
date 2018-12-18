@@ -19,26 +19,26 @@
 import * as React from 'react';
 import { TableHeaderProps } from 'react-virtualized';
 
-import { StateSizeHeader } from './StateSizeHeader';
+import { RealmSizeHeader } from './RealmSizeHeader';
 
 // @see https://github.com/bvaughn/react-virtualized/blob/9.18.5/source/Table/defaultHeaderRenderer.js
 
-interface IStateSizeHeaderContainerState {
+interface IRealmSizeHeaderContainerState {
   isPopoverOpen: boolean;
   labelElement?: HTMLElement;
 }
 
-class StateSizeHeaderContainer extends React.Component<
+class RealmSizeHeaderContainer extends React.Component<
   TableHeaderProps,
-  IStateSizeHeaderContainerState
+  IRealmSizeHeaderContainerState
 > {
-  public state: IStateSizeHeaderContainerState = {
+  public state: IRealmSizeHeaderContainerState = {
     isPopoverOpen: false,
   };
 
   public render() {
     return (
-      <StateSizeHeader
+      <RealmSizeHeader
         isPopoverOpen={this.state.isPopoverOpen}
         label={this.props.label}
         labelElement={this.state.labelElement}
@@ -57,4 +57,4 @@ class StateSizeHeaderContainer extends React.Component<
   };
 }
 
-export { StateSizeHeaderContainer as StateSizeHeader };
+export { RealmSizeHeaderContainer as RealmSizeHeader };

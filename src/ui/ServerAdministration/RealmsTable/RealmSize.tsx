@@ -16,29 +16,27 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as classNames from 'classnames';
+import * as moment from 'moment';
 import * as React from 'react';
 
-interface IRefreshIconProps {
-  isRefreshing: boolean;
-  onRefresh: () => void;
+import { IRealmFileSize, IRealmStateSize } from '../MetricsRealm';
+import { prettyBytes } from '../utils';
+
+import { MissingSizeBadge } from './MissingSizeBadge';
+
+interface IRealmSizeProps {
+  metric?: IRealmStateSize | IRealmFileSize;
+  title: string;
+  suffix?: string;
 }
 
-const showInternalFeatures =
-  process.env.REALM_STUDIO_INTERNAL_FEATURES === 'true';
-
-export const RefreshIcon = ({ isRefreshing, onRefresh }: IRefreshIconProps) =>
-  showInternalFeatures ? (
-    <i
-      className={classNames(
-        'StateSizeHeader__RefreshIcon',
-        'fa',
-        'fa-refresh',
-        {
-          'StateSizeHeader__RefreshIcon--refreshing': isRefreshing,
-          'fa-spin': isRefreshing,
-        },
-      )}
-      onClick={onRefresh}
-    />
-  ) : null;
+export const RealmSize = ({ metric, title, suffix }: IRealmSizeProps) => (
+  <span
+    title={
+      metric ? `${title}, updated ${moment(metric.emitted).fromNow()}` : title
+    }
+  >
+    {metric ? prettyBytes(metric.value) : <MissingSizeBadge />}
+    {suffix ? ` ${suffix}` : null}
+  </span>
+);

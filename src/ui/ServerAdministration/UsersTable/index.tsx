@@ -24,6 +24,7 @@ import * as Realm from 'realm';
 import * as ros from '../../../services/ros';
 import { store } from '../../../store';
 import { showError } from '../../reusable/errors';
+import { withAdminRealm } from '../AdminRealm';
 import { querySomeFieldContainsText } from '../utils';
 import { UsersTable } from './UsersTable';
 
@@ -36,7 +37,6 @@ export interface IUsersTableContainerProps {
   adminRealm: Realm;
   adminRealmChanges: number;
   user: Realm.Sync.User;
-  validateCertificates: boolean;
 }
 
 export interface IUsersTableContainerState {
@@ -93,9 +93,24 @@ class UsersTableContainer extends React.Component<
         this.setState({ showSystemUsers: val });
       }
     });
+
+    // Register a listener to update the component once a schema is available
+    this.props.adminRealm.addListener('schema', this.onRealmChange);
+    this.props.adminRealm.addListener('change', this.onRealmChange);
+  }
+
+  public componentWillUnmount() {
+    // Remove the listener that was added when mounting
+    this.props.adminRealm.removeListener('schema', this.onRealmChange);
+    this.props.adminRealm.removeListener('change', this.onRealmChange);
   }
 
   public render() {
+    // Don't render before the schema is available
+    if (this.props.adminRealm.empty) {
+      return null;
+    }
+
     const users = this.users(
       this.props.adminRealm,
       this.state.searchString,
@@ -265,7 +280,7 @@ class UsersTableContainer extends React.Component<
     this.setState({ searchString });
   };
 
-  protected onRealmChanged = () => {
+  protected onRealmChange = () => {
     this.forceUpdate();
   };
 
@@ -304,4 +319,6 @@ class UsersTableContainer extends React.Component<
   }
 }
 
-export { UsersTableContainer as UsersTable };
+const UsersTableWithRealm = withAdminRealm(UsersTableContainer, 'adminRealm');
+
+export { UsersTableWithRealm as UsersTable };

@@ -16,9 +16,31 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import * as classNames from 'classnames';
 import * as React from 'react';
-import { Badge } from 'reactstrap';
+import * as Realm from 'realm';
 
-export const MissingSizeBadge = () => (
-  <Badge title="Size is unknown: Recalculate to update">?</Badge>
+import './ConnectionStateIndicator.scss';
+
+import connectionStateSvg from '../../../../../static/svgs/connection-state.svg';
+
+export interface IConnectionStateIndicatorProps {
+  className?: string;
+  connectionState: Realm.Sync.ConnectionState;
+}
+
+export const ConnectionStateIndicator = ({
+  className,
+  connectionState,
+}: IConnectionStateIndicatorProps) => (
+  <svg
+    viewBox={connectionStateSvg.viewBox}
+    className={classNames(
+      'ConnectionStateIndicator',
+      `ConnectionStateIndicator--${connectionState}`,
+      className,
+    )}
+  >
+    <use xlinkHref={`#${connectionStateSvg.id}`} />
+  </svg>
 );

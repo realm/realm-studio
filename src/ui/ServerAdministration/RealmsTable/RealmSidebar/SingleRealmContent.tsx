@@ -23,10 +23,11 @@ import * as Realm from 'realm';
 import { RealmFile } from '..';
 import * as ros from '../../../../services/ros';
 import { SidebarBody, SidebarControls, SidebarTitle } from '../../../reusable';
+import { IRealmFileSize, IRealmStateSize } from '../../MetricsRealm';
 import { displayUser, prettyBytes, shortenRealmPath } from '../../utils';
+import { RealmSize } from '../RealmSize';
 import { RealmTypeBadge } from '../RealmTypeBadge';
 
-import { MissingSizeBadge } from '../MissingSizeBadge';
 import { PermissionsTable } from './PermissionsTable';
 
 interface ISingleRealmContentProps {
@@ -35,7 +36,8 @@ interface ISingleRealmContentProps {
   onRealmTypeUpgrade: (realm: RealmFile) => void;
   realm: RealmFile;
   permissions: Realm.Results<ros.IPermission>;
-  realmSize?: ros.IRealmSizeInfo;
+  realmStateSize: IRealmStateSize | undefined;
+  realmFileSize: IRealmFileSize | undefined;
   onRealmSizeRecalculate: (realm: RealmFile) => void;
   shouldShowRealmSize: boolean;
 }
@@ -46,7 +48,8 @@ export const SingleRealmContent = ({
   onRealmTypeUpgrade,
   permissions,
   realm,
-  realmSize,
+  realmStateSize,
+  realmFileSize,
   onRealmSizeRecalculate,
   shouldShowRealmSize,
 }: ISingleRealmContentProps) => {
@@ -56,6 +59,16 @@ export const SingleRealmContent = ({
   // Determine if the Realm can be upgraded to a "reference" Realm,
   // It can if its defined and not already "partial" or "reference"
   const canUpgradeType = realm && !isSystemRealm && isFullRealm;
+  // Generate a list of known size labels
+  const sizeLabels = [];
+  if (shouldShowRealmSize) {
+    sizeLabels.push(
+      realmStateSize ? prettyBytes(realmStateSize.value) + ' (data)' : null,
+    );
+    sizeLabels.push(
+      realmFileSize ? prettyBytes(realmFileSize.value) + ' (file)' : null,
+    );
+  }
 
   return (
     <React.Fragment>
@@ -72,31 +85,14 @@ export const SingleRealmContent = ({
         <p className="RealmSidebar__SubTitle">
           Owned by {displayUser(realm.owner)}
         </p>
-        <p className="RealmSidebar__SubTitle">
-          Data size:{' '}
-          {realmSize && typeof realmSize.stateSize === 'number' ? (
-            prettyBytes(realmSize.stateSize)
-          ) : (
-            <MissingSizeBadge />
-          )}
-        </p>
         {shouldShowRealmSize ? (
-          <p className="RealmSidebar__SubTitle">
-            File size:{' '}
-            {realmSize && typeof realmSize.fileSize === 'number' ? (
-              prettyBytes(realmSize.fileSize)
-            ) : (
-              <MissingSizeBadge />
-            )}
+          <p>
+            {'Size: '}
+            <RealmSize metric={realmStateSize} title="Data" suffix="(data)" />
+            {' / '}
+            <RealmSize metric={realmFileSize} title="File" suffix="(file)" />
           </p>
         ) : null}
-        <Button
-          size="sm"
-          color="secondary"
-          onClick={() => onRealmSizeRecalculate(realm)}
-        >
-          Recalculate Sizes
-        </Button>
       </SidebarBody>
       {isFullRealm ? (
         <SidebarBody className="RealmSidebar__Tables" grow={1}>
@@ -135,6 +131,13 @@ export const SingleRealmContent = ({
             Upgrade
           </Button>
         ) : null}
+        <Button
+          size="sm"
+          color="secondary"
+          onClick={() => onRealmSizeRecalculate(realm)}
+        >
+          Recalculate size
+        </Button>
         {isSystemRealm ? null : (
           <Button
             size="sm"

@@ -16,9 +16,22 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
-import { Badge } from 'reactstrap';
+@import "~realm-studio-styles/variables";
 
-export const MissingSizeBadge = () => (
-  <Badge title="Size is unknown: Recalculate to update">?</Badge>
-);
+.ConnectionStateIndicator {
+  height: 20px;
+  transition: color $fast;
+  width: 20px;
+
+  &--connected {
+    color: lighten($green, 10);
+  }
+
+  &--connecting {
+    color: $warning;
+  }
+
+  &--disconnected {
+    color: $danger;
+  }
+}

@@ -26,31 +26,28 @@ import { Tab } from '../ServerAdministration';
 import { Logo } from './Logo';
 import { Status } from './Status';
 import { TabButton } from './TabButton';
-import { VersionBadge } from './VersionBadge';
 
 import './TopBar.scss';
 
 export interface ITopbarProps {
   activeTab: Tab | null;
-  adminRealmProgress: ILoadingProgress;
+  progress: ILoadingProgress;
   className?: string;
   isCloudTenant: boolean;
   onReconnect: () => void;
   onTabChanged: (tab: Tab) => void;
   serverVersion?: string;
-  syncError?: Realm.Sync.SyncError;
   user: Realm.Sync.User | null;
 }
 
 export const TopBar = ({
   activeTab,
-  adminRealmProgress,
+  progress,
   className,
   isCloudTenant,
   onReconnect,
   onTabChanged,
   serverVersion,
-  syncError,
   user,
 }: ITopbarProps) => (
   <Navbar className={classNames('TopBar', className)}>
@@ -83,9 +80,9 @@ export const TopBar = ({
     />
     <Status
       onReconnect={onReconnect}
-      progress={adminRealmProgress}
+      progress={progress}
       user={user}
+      serverVersion={serverVersion}
     />
-    <VersionBadge serverVersion={serverVersion} />
   </Navbar>
 );

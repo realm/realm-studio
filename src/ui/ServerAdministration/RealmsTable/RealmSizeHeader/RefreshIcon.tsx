@@ -16,9 +16,29 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import * as classNames from 'classnames';
 import * as React from 'react';
-import { Badge } from 'reactstrap';
 
-export const MissingSizeBadge = () => (
-  <Badge title="Size is unknown: Recalculate to update">?</Badge>
-);
+interface IRefreshIconProps {
+  isRefreshing: boolean;
+  onRefresh: () => void;
+}
+
+const showInternalFeatures =
+  process.env.REALM_STUDIO_INTERNAL_FEATURES === 'true';
+
+export const RefreshIcon = ({ isRefreshing, onRefresh }: IRefreshIconProps) =>
+  showInternalFeatures ? (
+    <i
+      className={classNames(
+        'RealmSizeHeader__RefreshIcon',
+        'fa',
+        'fa-refresh',
+        {
+          'RealmSizeHeader__RefreshIcon--refreshing': isRefreshing,
+          'fa-spin': isRefreshing,
+        },
+      )}
+      onClick={onRefresh}
+    />
+  ) : null;

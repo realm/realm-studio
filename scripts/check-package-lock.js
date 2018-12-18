@@ -6,7 +6,7 @@ const packageLock = require('../package-lock.json');
 
 function checkVersion(name, version, lockPackage) {
   assert(
-    semver.satisfies(lockPackage.version, version),
+    lockPackage.version === version || semver.satisfies(lockPackage.version, version),
     `Locks version (${lockPackage.version}) of ${name} didn't satisfy the package ${version}`,
   );
 }

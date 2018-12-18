@@ -18,19 +18,15 @@
 
 @import "~realm-studio-styles/variables";
 
-.StateSizeHeader {
-  &__RefreshIcon {
-    cursor: pointer;
-    padding: 0 ($spacer / 2);
+.RealmSizeCell {
+  display: flex;
 
-    &--refreshing {
-      color: $elephant;
-      cursor: progress;
-    }
+  &__FileSize {
+    flex-basis: 40%;
+    padding-right: $spacer / 4;
   }
 
-  &__QuestionIcon {
-    cursor: pointer;
-    padding: 0 ($spacer / 2);
+  &__StateSize {
+    flex-basis: 60%;
   }
 }

@@ -20,18 +20,18 @@ import * as React from 'react';
 import { Column } from 'react-virtualized';
 import { Button } from 'reactstrap';
 
-import { IPermission, IRealmSizeInfo } from '../../../services/ros';
+import { IPermission } from '../../../services/ros';
 import {
   FilterableTable,
   IFilterableTableProps,
 } from '../shared/FilterableTable';
 import { FloatingControls } from '../shared/FloatingControls';
-import { displayUser, prettyBytes } from '../utils';
+import { displayUser } from '../utils';
 
-import { IDeletionProgress, RealmFile } from '.';
-import { MissingSizeBadge } from './MissingSizeBadge';
+import { IDeletionProgress, MetricGetter, RealmFile } from '.';
 import { RealmSidebar } from './RealmSidebar';
-import { StateSizeHeader } from './StateSizeHeader';
+import { RealmSizeCell } from './RealmSizeCell';
+import { RealmSizeHeader } from './RealmSizeHeader';
 
 import './RealmsTable.scss';
 
@@ -42,7 +42,7 @@ const FilterableRealmTable: React.ComponentType<
 export const RealmsTable = ({
   deletionProgress,
   getRealmPermissions,
-  getRealmSize,
+  getMetric,
   onRealmClick,
   onRealmCreation,
   onRealmDeletion,
@@ -51,7 +51,6 @@ export const RealmsTable = ({
   onRealmTypeUpgrade,
   onSearchStringChange,
   realms,
-  realmSizes,
   searchString,
   selectedRealms,
   onRealmSizeRecalculate,
@@ -59,7 +58,7 @@ export const RealmsTable = ({
 }: {
   deletionProgress?: IDeletionProgress;
   getRealmPermissions: (realm: RealmFile) => Realm.Results<IPermission>;
-  getRealmSize: (realm: RealmFile) => IRealmSizeInfo | undefined;
+  getMetric: MetricGetter;
   onRealmClick: (e: React.MouseEvent<HTMLElement>, realm: RealmFile) => void;
   onRealmCreation: () => void;
   onRealmDeletion: (...realms: RealmFile[]) => void;
@@ -68,7 +67,6 @@ export const RealmsTable = ({
   onRealmTypeUpgrade: (realm: RealmFile) => void;
   onSearchStringChange: (query: string) => void;
   realms: Realm.Results<RealmFile>;
-  realmSizes?: { [path: string]: IRealmSizeInfo };
   searchString: string;
   selectedRealms: RealmFile[];
   onRealmSizeRecalculate: (realm: RealmFile) => void;
@@ -102,22 +100,18 @@ export const RealmsTable = ({
           cellRenderer={({ cellData }) => cellData || 'full'}
         />
         <Column
-          label="Data Size"
+          label="Size"
           dataKey="path"
-          width={shouldShowRealmSize ? 100 : 0}
-          headerRenderer={props => <StateSizeHeader {...props} />}
-          cellRenderer={({ cellData }) =>
-            renderRealmSize(cellData, 'stateSize', realmSizes)
-          }
-        />
-        <Column
-          label="File Size"
-          dataKey="path"
-          width={shouldShowRealmSize ? 100 : 0}
-          headerRenderer={props => <StateSizeHeader {...props} />}
-          cellRenderer={({ cellData }) =>
-            renderRealmSize(cellData, 'fileSize', realmSizes)
-          }
+          width={shouldShowRealmSize ? 170 : 0}
+          headerRenderer={props => <RealmSizeHeader {...props} />}
+          cellRenderer={({ rowData }) => {
+            return (
+              <RealmSizeCell
+                realm={rowData as RealmFile}
+                getMetric={getMetric}
+              />
+            );
+          }}
         />
       </FilterableRealmTable>
 
@@ -128,7 +122,7 @@ export const RealmsTable = ({
       <RealmSidebar
         deletionProgress={deletionProgress}
         getRealmPermissions={getRealmPermissions}
-        getRealmSize={getRealmSize}
+        getMetric={getMetric}
         isOpen={selectedRealms.length > 0}
         onRealmDeletion={onRealmDeletion}
         onRealmOpened={onRealmOpened}
@@ -140,22 +134,4 @@ export const RealmsTable = ({
       />
     </div>
   );
-};
-
-const renderRealmSize = (
-  path: string,
-  valueName: keyof IRealmSizeInfo,
-  realmSizes?: { [path: string]: IRealmSizeInfo },
-) => {
-  if (realmSizes) {
-    const realmSize = realmSizes[path];
-    if (realmSize) {
-      const value = realmSize[valueName];
-      if (typeof value === 'number') {
-        return prettyBytes(value);
-      }
-    }
-  }
-
-  return <MissingSizeBadge />;
 };

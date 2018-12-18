@@ -17,8 +17,28 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
-import { Badge } from 'reactstrap';
 
-export const MissingSizeBadge = () => (
-  <Badge title="Size is unknown: Recalculate to update">?</Badge>
-);
+import { MetricGetter, RealmFile } from '..';
+import { RealmSize } from '../RealmSize';
+
+import './RealmSizeCell.scss';
+
+interface IRealmSizeCellProps {
+  getMetric: MetricGetter;
+  realm: RealmFile;
+}
+
+export const RealmSizeCell = ({ realm, getMetric }: IRealmSizeCellProps) => {
+  const stateSize = getMetric(realm, 'RealmStateSize');
+  const fileSize = getMetric(realm, 'RealmFileSize');
+  return (
+    <div className="RealmSizeCell">
+      <span className="RealmSizeCell__FileSize">
+        <RealmSize metric={fileSize} title="File size" />
+      </span>
+      <span className="RealmSizeCell__StateSize">
+        (<RealmSize metric={stateSize} title="State size" /> data)
+      </span>
+    </div>
+  );
+};

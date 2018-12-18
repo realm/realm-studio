@@ -27,7 +27,7 @@ ENV WINEDLLOVERRIDES winemenubuilder.exe=d
 
 # The next few lines are the only commands special to our Dockerfile
 
-ADD package.json /tmp/package.json
-ADD package-lock.json /tmp/package-lock.json
-RUN cd /tmp && npm install --quiet
+ADD package.json /tmp/
+ADD package-lock.json /tmp/
+RUN cd /tmp && ls /tmp && npm install --quiet
 RUN cp -a /tmp/node_modules /project/

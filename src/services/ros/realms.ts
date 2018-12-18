@@ -18,13 +18,7 @@
 
 import * as Realm from 'realm';
 
-import {
-  fetchAuthenticated,
-  IRealmFile,
-  IRealmSizeInfo,
-  RealmType,
-  UserStatus,
-} from '.';
+import { fetchAuthenticated, IRealmFile, RealmType, UserStatus } from '.';
 import { showError } from '../../ui/reusable/errors';
 
 export interface ISslConfiguration {
@@ -92,6 +86,7 @@ export const create = (
   user: Realm.Sync.User,
   realmPath: string,
   schema: Realm.ObjectSchema[] = [],
+  validateCertificates = true,
 ): Promise<Realm> => {
   return new Promise((resolve, reject) => {
     const url = getUrl(user, realmPath);
@@ -103,6 +98,7 @@ export const create = (
         error: (session, err) => {
           reject(err);
         },
+        ssl: { validate: validateCertificates },
       },
       schema,
     }).then(resolve, reject);
@@ -177,51 +173,6 @@ export const getStats = async (
     { method: 'GET' },
     'Failed to get statistics',
   );
-};
-
-const stateSizeMetricName = 'ros_sync_realm_state_size';
-const fileSizeMetricName = 'ros_sync_realm_file_size';
-export const getSizes = async (
-  user: Realm.Sync.User,
-): Promise<{ [path: string]: IRealmSizeInfo }> => {
-  const metrics = await getStats(
-    user,
-    `${stateSizeMetricName},${fileSizeMetricName}`,
-  );
-  if (!metrics[stateSizeMetricName] || !metrics[fileSizeMetricName]) {
-    throw new Error(
-      `Expected '${stateSizeMetricName}' and '${fileSizeMetricName}' in response`,
-    );
-  }
-
-  const result: { [path: string]: IRealmSizeInfo } = {};
-
-  populateSizes(metrics[stateSizeMetricName], result, 'stateSize');
-  populateSizes(metrics[fileSizeMetricName], result, 'fileSize');
-
-  return result;
-};
-
-const populateSizes = (
-  metrics: Array<{
-    labels: { [name: string]: string };
-    value: number;
-  }>,
-  result: { [path: string]: IRealmSizeInfo },
-  propertyName: 'stateSize' | 'fileSize',
-) => {
-  for (const stat of metrics) {
-    if (stat.labels.path) {
-      // The paths are URI encoded
-      const path = decodeURIComponent(stat.labels.path);
-      let sizeElement = result[path];
-      if (!sizeElement) {
-        result[path] = sizeElement = {};
-      }
-
-      sizeElement[propertyName] = stat.value;
-    }
-  }
 };
 
 export const requestSizeRecalculation = (

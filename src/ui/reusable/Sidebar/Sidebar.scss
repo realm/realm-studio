@@ -182,9 +182,10 @@
     align-items: center;
     display: flex;
     flex-shrink: 0;
+    flex-wrap: wrap;
     justify-content: center;
-    padding: 3 * $spacer / 4;
     margin-top: auto;
+    padding: 3 * $spacer / 4;
 
     & > * {
       margin: $spacer / 4;
