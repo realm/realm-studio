@@ -1,3 +1,21 @@
+# Release 3.2.0 (2018-12-21)
+
+[Changes since v3.1.3](https://github.com/realm/realm-studio/compare/v3.1.3...v3.2.0)
+
+This version of Studio changes how Realm state and file size metrics (displayed in the server administration window) are fetched from the server. Consequently server must be at least version 3.16.0 to display these sizes correctly.
+
+## Enhancements
+- Showing connection state (disconnected, connecting or connected) in the server administration window. ([#1027](https://github.com/realm/realm-studio/pull/1027))
+- No longer waiting for the entire admin Realm to download before showing realms and users in the server administration window. ([#1027](https://github.com/realm/realm-studio/pull/1027))
+
+## Fixed
+- Fixed displaying Realm state and file size in the server administration window. ([#1027](https://github.com/realm/realm-studio/pull/1027))
+- Fixed process directory creation on initial startup. ([#1053](https://github.com/realm/realm-studio/pull/1053), since v3.1.2)
+
+## Internals
+- None
+
+
 # Release 3.1.3 (2018-12-17)
 
 [Changes since v3.1.2](https://github.com/realm/realm-studio/compare/v3.1.2...v3.1.3)
