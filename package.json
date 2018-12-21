@@ -132,8 +132,11 @@
     ]
   },
   "dependencies": {
+    "@contentful/rich-text-html-renderer": "^12.1.2",
+    "@contentful/rich-text-types": "^12.1.2",
     "@sentry/electron": "^0.13.0",
     "classnames": "^2.2.5",
+    "contentful": "^7.0.5",
     "electron-store": "^2.0.0",
     "electron-updater": "3.2.3",
     "font-awesome": "^4.7.0",

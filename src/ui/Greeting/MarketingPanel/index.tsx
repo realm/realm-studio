@@ -20,7 +20,12 @@ import * as React from 'react';
 
 import { MarketingPanel } from './MarketingPanel';
 
-import { IMessage } from '../../../services/contentful/in-app-marketing-space';
+import { main } from '../../../actions/main';
+import { inAppMarketing } from '../../../services/contentful';
+
+const previewAvailable =
+  process.env.REALM_STUDIO_INTERNAL_FEATURES === 'true' ||
+  process.env.NODE_ENV === 'development';
 
 interface IMarketingPanelContainerProps {
   className?: string;
@@ -28,22 +33,28 @@ interface IMarketingPanelContainerProps {
 
 interface IMarketingPanelContainerState {
   activeIndex: number;
-  messages: IMessage[];
+  messages: inAppMarketing.Message[];
+  loading: boolean;
+  isPreviewEnabled: boolean;
 }
 
-class MarketingPanelContainer extends React.Component<
+class MarketingPanelContainer extends React.PureComponent<
   IMarketingPanelContainerProps,
   IMarketingPanelContainerState
 > {
   public state = {
     activeIndex: 0,
-    messages: [
-      { content: 'Slide 1', key: 'slide-1' },
-      { content: 'Slide 2', key: 'slide-2' },
-      { content: 'Slide 3', key: 'slide-3' },
-      { content: 'Slide 4', key: 'slide-4' },
-    ],
+    messages: [],
+    loading: true,
+    isPreviewEnabled: previewAvailable,
   };
+
+  public constructor(props: IMarketingPanelContainerProps) {
+    super(props);
+    // Log to the console if an error occurs - we have no better way of handling that
+    // tslint:disable-next-line:no-console
+    this.fetchMessages().then(null, err => console.error(err));
+  }
 
   public render() {
     return (
@@ -51,11 +62,31 @@ class MarketingPanelContainer extends React.Component<
         activeIndex={this.state.activeIndex}
         className={this.props.className}
         goToIndex={this.goToIndex}
-        next={this.next}
-        previous={this.previous}
+        isPreviewEnabled={this.state.isPreviewEnabled}
+        loading={this.state.loading}
         messages={this.state.messages}
+        next={this.next}
+        onSlideClick={this.onSlideClick}
+        previous={this.previous}
+        onPreviewChange={previewAvailable ? this.onPreviewChange : undefined}
       />
     );
+  }
+
+  private async fetchMessages() {
+    // Choose the correct client
+    const client = this.state.isPreviewEnabled
+      ? inAppMarketing.clients.preview
+      : inAppMarketing.clients.delivery;
+    // Indicate that the messages are loading, resetting the active index
+    this.setState({ activeIndex: 0, loading: true });
+    // Fetch the messages
+    const { items: messages } = await client.getEntries<
+      inAppMarketing.IMessage
+    >({
+      content_type: 'message',
+    });
+    this.setState({ messages, loading: false });
   }
 
   private next = () => {
@@ -78,6 +109,28 @@ class MarketingPanelContainer extends React.Component<
 
   private goToIndex = (index: number) => {
     this.setState({ activeIndex: index });
+  };
+
+  private onSlideClick: React.MouseEventHandler = e => {
+    const element = e.target as HTMLElement;
+    // Check if the element clicked has a call to action
+    const { callToActionSlug } = element.dataset;
+    if (callToActionSlug === 'sign-up-for-realm-cloud') {
+      main.showCloudAuthentication({ mode: 'sign-up' });
+    } else if (callToActionSlug) {
+      // tslint:disable-next-line:no-console
+      console.warn(
+        `Asked to perform an unsupported call to action: ${callToActionSlug}`,
+      );
+    }
+  };
+
+  private onPreviewChange: React.ChangeEventHandler<HTMLInputElement> = e => {
+    this.setState({ isPreviewEnabled: e.currentTarget.checked }, () => {
+      // Refetch messages
+      // tslint:disable-next-line:no-console
+      this.fetchMessages().then(null, err => console.error(err));
+    });
   };
 }
 

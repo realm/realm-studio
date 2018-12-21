@@ -16,10 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
-
-// import { ApolloClient, HttpLink, InMemoryCache } from 'apollo-boost';
-// import { ApolloProvider } from 'react-apollo';
+import { Document } from '@contentful/rich-text-types';
+import * as Contentful from 'contentful';
 
 const SPACE_ID = 'l4znbhf42s3c';
 const DELIVERY_TOKEN =
@@ -28,6 +26,10 @@ const PREVIEW_TOKEN =
   'f2bbfb941b4c25123d3fc48770e7391fb23c903a9c307d0fbbff1dcaabd9da74';
 
 /*
+import * as React from 'react';
+import { ApolloClient, HttpLink, InMemoryCache } from 'apollo-boost';
+import { ApolloProvider } from 'react-apollo';
+
 function getUrl(accessToken: string) {
   return `https://graphql.contentful.com/content/v1/spaces/${SPACE_ID}?access_token=${accessToken}`;
 }
@@ -60,7 +62,30 @@ export const WithContentful = ({
 );
 */
 
+export const clients = {
+  delivery: Contentful.createClient({
+    space: SPACE_ID,
+    accessToken: DELIVERY_TOKEN,
+  }),
+  preview: Contentful.createClient({
+    host: 'preview.contentful.com',
+    space: SPACE_ID,
+    accessToken: PREVIEW_TOKEN,
+  }),
+};
+
 export interface IMessage {
-  content: string;
+  backgroundMedia?: Contentful.Asset;
+  content: Document;
   key: string;
+  verticalAlignment?: 'top' | 'middle' | 'bottom';
+  textAlignment?: 'left' | 'justify' | 'center';
 }
+
+export interface ICallToAction {
+  slug: string;
+  label: string;
+}
+
+export type CallToAction = Contentful.Entry<ICallToAction>;
+export type Message = Contentful.Entry<IMessage>;

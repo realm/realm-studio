@@ -20,7 +20,8 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 import { Carousel, CarouselIndicators, CarouselItem } from 'reactstrap';
 
-import { IMessage } from '../../../services/contentful/in-app-marketing-space';
+import { inAppMarketing } from '../../../services/contentful';
+import { LoadingOverlay } from '../../reusable';
 
 import { MessageSlide } from './MessageSlide';
 
@@ -30,8 +31,12 @@ interface IMarketingPanelProps {
   activeIndex: number;
   className: string | undefined;
   goToIndex: (index: number) => void;
-  messages: IMessage[];
+  isPreviewEnabled: boolean;
+  loading: boolean;
+  messages: inAppMarketing.Message[];
   next: () => void;
+  onPreviewChange: React.ChangeEventHandler | undefined;
+  onSlideClick: React.MouseEventHandler;
   previous: () => void;
 }
 
@@ -39,25 +44,48 @@ export const MarketingPanel = ({
   activeIndex,
   className,
   goToIndex,
+  isPreviewEnabled,
+  loading,
   messages,
   next,
+  onPreviewChange,
+  onSlideClick,
   previous,
 }: IMarketingPanelProps) => (
-  <Carousel
-    activeIndex={activeIndex}
-    className={classNames('MarketingPanel', className)}
-    next={next}
-    previous={previous}
-  >
-    <CarouselIndicators
-      items={messages}
-      activeIndex={activeIndex}
-      onClickHandler={goToIndex}
-    />
-    {messages.map(message => (
-      <CarouselItem className="MarketingPanel__CarouselItem" key={message.key}>
-        <MessageSlide message={message} />
-      </CarouselItem>
-    ))}
-  </Carousel>
+  <div className={classNames('MarketingPanel', className)}>
+    {loading ? (
+      <LoadingOverlay loading={loading} />
+    ) : (
+      <Carousel
+        className="MarketingPanel__Carousel"
+        activeIndex={activeIndex}
+        next={next}
+        previous={previous}
+      >
+        <CarouselIndicators
+          items={messages.map(message => ({ key: message.sys.id }))}
+          activeIndex={activeIndex}
+          onClickHandler={goToIndex}
+        />
+        {messages.map(message => (
+          <CarouselItem
+            className="MarketingPanel__CarouselItem"
+            key={message.sys.id}
+          >
+            <MessageSlide message={message} onClick={onSlideClick} />
+          </CarouselItem>
+        ))}
+      </Carousel>
+    )}
+    {onPreviewChange ? (
+      <label className="MarketingPanel__PreviewToggle">
+        <input
+          type="checkbox"
+          checked={isPreviewEnabled}
+          onChange={onPreviewChange}
+        />{' '}
+        Show drafts
+      </label>
+    ) : null}
+  </div>
 );
