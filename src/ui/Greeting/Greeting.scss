@@ -105,6 +105,10 @@ $history-panel-icon-size: 20px;
     margin-top: $spacer / 2;
   }
 
+  &__MarketingPanel {
+    width: 40%;
+  }
+
   &__HistoryPanel {
     background: $charcoal;
     color: $dove;
