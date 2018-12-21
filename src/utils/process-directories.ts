@@ -27,13 +27,21 @@ const app = electron.app || electron.remote.app;
 const userDataPath = app.getPath('userData');
 const rendererPattern = /^renderer-.+$/;
 
-function changeProcessDirectory(relativePath: string) {
-  const path = resolve(userDataPath, relativePath);
-  // Remove the directory if it already exists
+function ensureDirectory(path: string) {
+  // If the directory does not exist
   if (!fs.existsSync(path)) {
     // Create the directory
     fs.mkdirSync(path);
   }
+}
+
+function changeProcessDirectory(relativePath: string) {
+  // Ensure the usersdata directory exists
+  ensureDirectory(userDataPath);
+  // Compute the process directory path
+  const path = resolve(userDataPath, relativePath);
+  // Ensure the path exists
+  ensureDirectory(path);
   // Change to it
   process.chdir(path);
 }
