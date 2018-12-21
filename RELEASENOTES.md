@@ -8,6 +8,7 @@ This version of Studio changes how Realm state and file size metrics (displayed 
 
 ## Fixed
 - Fixed displaying Realm state and file size in the server administration window. ([#1027](https://github.com/realm/realm-studio/pull/1027))
+- Fixed process directory creation on initial startup. ([#1053](https://github.com/realm/realm-studio/pull/1053), since v3.1.2)
 
 ## Internals
 - None
