@@ -99,6 +99,10 @@ $hr-color: rgba($dove, .33);
       text-decoration: underline;
     }
 
+    code {
+      color: $white;
+    }
+
     ul,
     ol {
       padding-left: 1.2 * $spacer;
