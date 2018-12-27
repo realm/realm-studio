@@ -5,12 +5,12 @@ FROM electronuserland/builder:8
 
 RUN apt-get update && apt-get install -y --no-install-recommends software-properties-common && dpkg --add-architecture i386 && curl -L https://dl.winehq.org/wine-builds/Release.key > Release.key && apt-key add Release.key && apt-add-repository https://dl.winehq.org/wine-builds/ubuntu && \
   apt-get update && \
-  apt-get -y remove software-properties-common libdbus-glib-1-2 python3-dbus python3-gi python3-pycurl python3-software-properties && \
+  apt-get -y purge software-properties-common libdbus-glib-1-2 python3-dbus python3-gi python3-pycurl python3-software-properties && \
   apt-get install -y --no-install-recommends winehq-stable && \
   # Next three lines are copied from https://github.com/electron-userland/electron-builder/blob/master/docker/wine-chrome/Dockerfile
   wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
   echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google.list && \
-  apt-get update -y && apt-get install -y --no-install-recommends xvfb google-chrome-stable && \
+  apt-get update -y && apt-get install -y --no-install-recommends xvfb google-chrome-stable libgconf-2-4 && \
   # Install display server dependencies (see https://github.com/electron/spectron/issues/144#issuecomment-270778659)
   apt-get install -y xvfb libxtst6 libxss1 libgtk2.0-0 && \
   # Install core libraries for chromium driver (see https://github.com/electron/spectron/issues/144#issuecomment-270778659)

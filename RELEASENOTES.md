@@ -7,4 +7,4 @@
 - None
 
 ## Internals
-- None
+- Fixed the Dockerfile used when testing PRs.
