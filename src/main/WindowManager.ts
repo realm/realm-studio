@@ -78,6 +78,11 @@ export class WindowManager {
     const defaultWindowOptions = getWindowOptions(options);
     // Get the window options that are saved for this type of window
     const savedWindowOptions = this.getWindowOptions(options.type);
+    // If the window is not resizeable, ignore the width and height of the saved window options
+    if (defaultWindowOptions.resizable === false) {
+      delete savedWindowOptions.width;
+      delete savedWindowOptions.height;
+    }
     // Ensure the saved window options don't get out of control
     // @see https://github.com/realm/realm-studio/issues/962
     savedWindowOptions.height = Math.max(
