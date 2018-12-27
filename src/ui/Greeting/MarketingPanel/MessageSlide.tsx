@@ -37,7 +37,8 @@ function getAssetUrl(asset: Asset) {
 }
 
 function generateBackgroundProperty(asset: Asset | undefined) {
-  return asset ? `url(${getAssetUrl(asset)}?h=500)` : undefined;
+  // Using h=800 as its twice the height of the window, displaying sharp on a retina display
+  return asset ? `url(${getAssetUrl(asset)}?h=800)` : undefined;
 }
 
 const renderNode: { [key: string]: NodeRenderer } = {
@@ -77,7 +78,10 @@ const renderNode: { [key: string]: NodeRenderer } = {
   [INLINES.EMBEDDED_ENTRY]: node => {
     if (node && node.data && node.data.target) {
       const entry = node.data.target as Entry<any>;
-      if (entry.sys.contentType.sys.id === 'callToAction') {
+      if (
+        entry.sys.contentType &&
+        entry.sys.contentType.sys.id === 'callToAction'
+      ) {
         const { label, slug } = entry.fields;
         const attributes = [
           'class="btn btn-primary btn-sm"',
@@ -85,12 +89,18 @@ const renderNode: { [key: string]: NodeRenderer } = {
           `data-call-to-action-slug="${slug}"`,
         ];
         return `<button ${attributes.join(' ')}>${label}</button>`;
+      } else if (entry.sys.contentType) {
+        // tslint:disable-next-line:no-console
+        console.warn(
+          `Rendering unsupported embedded entry of type ${
+            entry.sys.contentType.sys.id
+          }`,
+        );
+        return '';
       } else {
         // tslint:disable-next-line:no-console
         console.warn(
-          `Asked to render an unsupported embedded entry of type ${
-            entry.sys.contentType.sys.id
-          }`,
+          `Rendering unsupported embedded entry with id ${entry.sys.id}`,
         );
         return '';
       }

@@ -21,23 +21,45 @@ import * as React from 'react';
 import { Carousel, CarouselIndicators, CarouselItem } from 'reactstrap';
 
 import { inAppMarketing } from '../../../services/contentful';
-import { LoadingOverlay } from '../../reusable';
+import { ILoadingProgress, LoadingOverlay } from '../../reusable';
 
+import { Status } from '.';
 import { MessageSlide } from './MessageSlide';
 
 import './MarketingPanel.scss';
+
+function getProgress(status: Status, onFetch: () => void): ILoadingProgress {
+  if (status === 'loaded') {
+    return { status: 'done' };
+  } else if (status === 'loading') {
+    return {
+      message: 'Welcome to\nRealm Studio',
+      status: 'in-progress',
+    };
+  } else {
+    return {
+      status: 'failed',
+      message: status.message,
+      retry: {
+        label: 'Try again',
+        onRetry: onFetch,
+      },
+    };
+  }
+}
 
 interface IMarketingPanelProps {
   activeIndex: number;
   className: string | undefined;
   goToIndex: (index: number) => void;
   isPreviewEnabled: boolean;
-  loading: boolean;
   messages: inAppMarketing.Message[];
   next: () => void;
+  onFetch: () => void;
   onPreviewChange: React.ChangeEventHandler | undefined;
   onSlideClick: React.MouseEventHandler;
   previous: () => void;
+  status: Status;
 }
 
 export const MarketingPanel = ({
@@ -45,17 +67,16 @@ export const MarketingPanel = ({
   className,
   goToIndex,
   isPreviewEnabled,
-  loading,
   messages,
   next,
+  onFetch,
   onPreviewChange,
   onSlideClick,
   previous,
+  status,
 }: IMarketingPanelProps) => (
   <div className={classNames('MarketingPanel', className)}>
-    {loading ? (
-      <LoadingOverlay loading={loading} />
-    ) : (
+    {status === 'loaded' ? (
       <Carousel
         className="MarketingPanel__Carousel"
         activeIndex={activeIndex}
@@ -76,7 +97,8 @@ export const MarketingPanel = ({
           </CarouselItem>
         ))}
       </Carousel>
-    )}
+    ) : null}
+    <LoadingOverlay progress={getProgress(status, onFetch)} />
     {onPreviewChange ? (
       <label className="MarketingPanel__PreviewToggle">
         <input

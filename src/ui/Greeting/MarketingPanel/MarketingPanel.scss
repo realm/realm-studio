@@ -90,10 +90,6 @@ $hr-color: rgba($dove, .33);
       text-align: center;
     }
 
-    p {
-      // Tumbleweed
-    }
-
     a {
       color: $white;
       text-decoration: underline;
@@ -101,6 +97,11 @@ $hr-color: rgba($dove, .33);
 
     code {
       color: $white;
+    }
+
+    blockquote {
+      border-left: ($spacer / 8) solid $dove;
+      padding-left: $spacer / 2;
     }
 
     ul,

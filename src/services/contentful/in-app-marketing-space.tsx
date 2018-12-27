@@ -75,11 +75,18 @@ export const clients = {
 };
 
 export interface IMessage {
+  slug: string;
   backgroundMedia?: Contentful.Asset;
   content: Document;
-  key: string;
   verticalAlignment?: 'top' | 'middle' | 'bottom';
   textAlignment?: 'left' | 'justify' | 'center';
+  publishedFrom?: string;
+  publishedUntil?: string;
+}
+
+export interface IChannel {
+  slug: string;
+  messages: Message[];
 }
 
 export interface ICallToAction {

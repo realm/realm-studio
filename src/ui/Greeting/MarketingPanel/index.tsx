@@ -16,6 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import * as moment from 'moment';
 import * as React from 'react';
 
 import { MarketingPanel } from './MarketingPanel';
@@ -27,33 +28,37 @@ const previewAvailable =
   process.env.REALM_STUDIO_INTERNAL_FEATURES === 'true' ||
   process.env.NODE_ENV === 'development';
 
+export type Status = 'loading' | 'loaded' | Error;
+
 interface IMarketingPanelContainerProps {
   className?: string;
 }
 
 interface IMarketingPanelContainerState {
+  status: Status;
+  isPreviewEnabled: boolean;
   activeIndex: number;
   messages: inAppMarketing.Message[];
-  loading: boolean;
-  isPreviewEnabled: boolean;
 }
 
 class MarketingPanelContainer extends React.PureComponent<
   IMarketingPanelContainerProps,
   IMarketingPanelContainerState
 > {
-  public state = {
+  public state: IMarketingPanelContainerState = {
     activeIndex: 0,
-    messages: [],
-    loading: true,
+    status: 'loading',
     isPreviewEnabled: previewAvailable,
+    messages: [],
   };
 
   public constructor(props: IMarketingPanelContainerProps) {
     super(props);
-    // Log to the console if an error occurs - we have no better way of handling that
-    // tslint:disable-next-line:no-console
-    this.fetchMessages().then(null, err => console.error(err));
+    this.onFetch();
+  }
+
+  public componentDidCatch(err: Error) {
+    this.setState({ status: err });
   }
 
   public render() {
@@ -63,12 +68,13 @@ class MarketingPanelContainer extends React.PureComponent<
         className={this.props.className}
         goToIndex={this.goToIndex}
         isPreviewEnabled={this.state.isPreviewEnabled}
-        loading={this.state.loading}
         messages={this.state.messages}
         next={this.next}
+        onFetch={this.onFetch}
+        onPreviewChange={previewAvailable ? this.onPreviewChange : undefined}
         onSlideClick={this.onSlideClick}
         previous={this.previous}
-        onPreviewChange={previewAvailable ? this.onPreviewChange : undefined}
+        status={this.state.status}
       />
     );
   }
@@ -79,14 +85,38 @@ class MarketingPanelContainer extends React.PureComponent<
       ? inAppMarketing.clients.preview
       : inAppMarketing.clients.delivery;
     // Indicate that the messages are loading, resetting the active index
-    this.setState({ activeIndex: 0, loading: true });
+    this.setState({ activeIndex: 0, status: 'loading', messages: [] });
     // Fetch the messages
-    const { items: messages } = await client.getEntries<
-      inAppMarketing.IMessage
+    const { items: channels } = await client.getEntries<
+      inAppMarketing.IChannel
     >({
-      content_type: 'message',
+      content_type: 'channel',
+      'fields.slug': 'realm-studio',
+      include: 2, // Include links to entries at depth 2 to include embedded "call to action"
     });
-    this.setState({ messages, loading: false });
+    if (channels.length === 1) {
+      const { messages } = channels[0].fields;
+      const filteredMessages = messages
+        .filter(message => {
+          // Display only messages with fields (will be missing for inaccessible drafts)
+          return message.fields;
+        })
+        .filter(message => {
+          // Check that the published datetimes are either missing or satifying the current datetime
+          // We do this client-side because Contentful doesn't support complex queries
+          const { publishedFrom, publishedUntil } = message.fields;
+          const publishedFromAccepted =
+            !publishedFrom || moment(publishedFrom).isBefore();
+          const publishedUntilAccepted =
+            !publishedUntil || moment(publishedUntil).isAfter();
+          return publishedFromAccepted && publishedUntilAccepted;
+        })
+        .slice(0, 5); // Show only the first 5 messages
+      this.setState({ messages: filteredMessages, status: 'loaded' });
+    } else {
+      const err = new Error('Expected exactly one "realm-studio" channel');
+      this.setState({ status: err });
+    }
   }
 
   private next = () => {
@@ -126,11 +156,13 @@ class MarketingPanelContainer extends React.PureComponent<
   };
 
   private onPreviewChange: React.ChangeEventHandler<HTMLInputElement> = e => {
-    this.setState({ isPreviewEnabled: e.currentTarget.checked }, () => {
-      // Refetch messages
-      // tslint:disable-next-line:no-console
-      this.fetchMessages().then(null, err => console.error(err));
-    });
+    this.setState({ isPreviewEnabled: e.currentTarget.checked }, this.onFetch);
+  };
+
+  private onFetch = () => {
+    this.fetchMessages().then(null, (err: Error) =>
+      this.setState({ status: err }),
+    );
   };
 }
 
