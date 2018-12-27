@@ -56,6 +56,7 @@
     color: $dove;
     display: flex;
     flex-direction: column;
+    font-size: .9rem;
     justify-content: center;
     min-height: 100%;
     width: 100%;
@@ -77,10 +78,10 @@
   }
 
   &__Failure {
-    flex-basis: 4rem;
     flex-shrink: 0;
-    font-size: 4rem;
+    font-size: 3em;
     margin: $spacer;
+    margin-bottom: 0;
   }
 
   &__Message {
