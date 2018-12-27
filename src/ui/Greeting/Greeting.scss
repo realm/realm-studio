@@ -34,9 +34,10 @@ $history-panel-icon-size: 20px;
     align-items: center;
     background: $window-background;
     display: flex;
+    flex-basis: 60%;
     flex-direction: column;
+    flex-shrink: 0;
     justify-content: space-around;
-    width: 65%;
   }
 
   &__Brand {
@@ -97,6 +98,7 @@ $history-panel-icon-size: 20px;
   }
 
   &__Action {
+    flex-basis: 2.5 * $spacer;
     margin-bottom: $spacer * .75;
   }
 
@@ -106,14 +108,14 @@ $history-panel-icon-size: 20px;
   }
 
   &__MarketingPanel {
-    width: 40%;
+    flex-grow: 1;
   }
 
   &__HistoryPanel {
     background: $charcoal;
     color: $dove;
+    flex-grow: 1;
     font-size: .9rem;
-    width: 40%;
 
     a {
       color: $dove;

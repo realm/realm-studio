@@ -26,7 +26,7 @@ export interface IGreetingWindowProps {
 export const GreetingWindow: IWindow = {
   getWindowOptions: () => ({
     title: `Realm Studio`,
-    width: 600,
+    width: 700,
     height: 400,
     resizable: false,
     fullscreenable: false,
