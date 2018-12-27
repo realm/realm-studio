@@ -31,12 +31,19 @@ export const IPC_SEND_EVENT_ID = 'sentry.send-event-id';
 export const IPC_EVENT_ID = 'sentry.event-id';
 
 if (process.type === 'renderer') {
-  Sentry.init({ dsn, environment });
+  Sentry.init({
+    dsn,
+    environment,
+    // Don't use the default integrations when developing (prevents overrides of console.log)
+    defaultIntegrations: isDevelopment ? false : undefined,
+  });
 } else {
   let listeners: Electron.WebContents[] = [];
   Sentry.init({
     dsn,
     environment,
+    // Don't use the default integrations when developing (prevents overrides of console.log)
+    defaultIntegrations: isDevelopment ? false : undefined,
     beforeSend: event => {
       // Iterate through the windows waiting for an event id
       for (const webContents of listeners) {
