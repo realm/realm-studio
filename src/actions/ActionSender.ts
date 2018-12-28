@@ -18,7 +18,6 @@
 
 import { v4 as uuid } from 'uuid';
 
-import { IActionHandlers } from '.';
 import { Transport } from './transports';
 
 interface IRequestHandle {

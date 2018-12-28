@@ -17,13 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
-import {
-  Button,
-  ButtonDropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle,
-} from 'reactstrap';
+import { Button } from 'reactstrap';
 
 import * as ros from '../../../../services/ros';
 

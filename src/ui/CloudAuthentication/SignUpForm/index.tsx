@@ -17,9 +17,6 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
-import { Card } from 'reactstrap';
-
-import * as raas from '../../../services/raas';
 
 import { Mode } from '..';
 import { SignUpForm } from './SignUpForm';

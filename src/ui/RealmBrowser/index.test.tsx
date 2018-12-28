@@ -160,7 +160,7 @@ describe('<RealmBrowser /> via Spectron', function() {
 
           it.skip('can focus and blur each cell', async () => {
             const cells = await app.client.elements(selectors.cell);
-            const propertyNames = Object.keys(schema.properties);
+            // const propertyNames = Object.keys(schema.properties);
             for (const cell of cells.value) {
               // Click the cell
               await app.client.elementIdClick(cell.ELEMENT);

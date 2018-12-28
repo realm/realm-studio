@@ -36,7 +36,6 @@ import { isPrimitive } from '../primitives';
 import { Content, IContentProps } from './Content';
 import { ICreateObjectDialogContainerProps } from './CreateObjectDialog';
 import { IDeleteObjectsDialogProps } from './DeleteObjectsDialog';
-import { Permissions } from './PermissionSidebar';
 import {
   IOpenSelectMultipleObjectsDialogContainerProps,
   IOpenSelectSingleObjectDialogContainerProps,
@@ -208,7 +207,6 @@ class ContentContainer extends React.Component<
     },
   );
 
-  private lastRowIndexClicked?: number;
   private contentElement: HTMLElement | null = null;
   // Used to save the initial vertical coordinate when the user starts dragging to select rows
   private rowDragStart: { offset: number; rowIndex: number } | undefined;

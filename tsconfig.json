@@ -5,12 +5,15 @@
     "module": "esnext",
 
     "allowJs": true,
-    "baseUrl": ".",
     "jsx": "react",
-    "downlevelIteration": true,
-    "noImplicitAny": true,
     "sourceMap": true,
+    "baseUrl": ".",
+
     "strict": true,
+    "noUnusedLocals": true,
+    "noImplicitAny": true,
+    "downlevelIteration": true,
+
     "typeRoots": [
       "node_modules/@types"
     ]
@@ -26,8 +29,7 @@
   "exclude": [
     "node_modules",
     "build",
-    "dist",
-    "realm-object-server-dev-server.js"
+    "dist"
   ],
   "awesomeTypescriptLoaderOptions": {
     "reportFiles": [

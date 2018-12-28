@@ -43,7 +43,6 @@ export enum Tab {
 
 interface IServerAdministrationProps {
   activeTab: Tab | null;
-  adminRealmChanges: number;
   createRealm: () => Promise<RealmFile>;
   isCloudTenant: boolean;
   isCreateRealmOpen: boolean;
@@ -61,7 +60,6 @@ interface IServerAdministrationProps {
 
 const renderContent = ({
   activeTab,
-  adminRealmChanges,
   createRealm,
   isCloudTenant,
   onRealmOpened,
@@ -75,7 +73,6 @@ const renderContent = ({
   } else if (user && activeTab === Tab.Realms) {
     return (
       <RealmsTable
-        adminRealmChanges={adminRealmChanges}
         createRealm={createRealm}
         onRealmOpened={onRealmOpened}
         user={user}
@@ -83,7 +80,7 @@ const renderContent = ({
       />
     );
   } else if (user && activeTab === Tab.Users) {
-    return <UsersTable adminRealmChanges={adminRealmChanges} user={user} />;
+    return <UsersTable user={user} />;
   } else if (user && activeTab === Tab.Logs) {
     return <Log serverUrl={user.server} token={user.token} />;
   } else if (user && activeTab === Tab.Tools) {

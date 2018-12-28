@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
-import { Button, Input, Table } from 'reactstrap';
+import { Button, Input } from 'reactstrap';
 
 import * as ros from '../../../../services/ros';
 import { SidebarTable } from '../../../reusable';

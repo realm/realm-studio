@@ -21,7 +21,6 @@ import * as React from 'react';
 import { Button, InputGroup, InputGroupAddon } from 'reactstrap';
 
 import { displayObject } from '../../../../display';
-import { IClassFocus } from '../../../../focus';
 import { SelectObjectDialog } from '../../../SelectObjectDialog';
 
 import { ISelectObjectDialog } from '.';

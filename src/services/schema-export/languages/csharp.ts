@@ -33,7 +33,7 @@ interface ICSharpProperty {
 export default class CSharpSchemaExporter extends SchemaExporter {
   private static readonly BacklinkWarning =
     '// Please note : [Backlink] properties and default values are not represented\n// in the schema and thus will not be part of the generated models';
-  private static readonly RealmsNamespace = 'Realms';
+  // private static readonly RealmsNamespace = 'Realms';
 
   private ClassPadding = '    ';
   private PropertyPadding = this.ClassPadding + this.ClassPadding;

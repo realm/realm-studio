@@ -125,7 +125,6 @@ class LogContainer extends React.Component<
     }
 
     const url = this.generateLogUrl();
-    const userRefreshToken = this.props.token;
     this.socket = new WebSocket(url);
     this.socket.addEventListener('open', e => {
       this.setState({

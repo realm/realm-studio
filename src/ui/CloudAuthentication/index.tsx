@@ -16,7 +16,6 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as electron from 'electron';
 import * as React from 'react';
 
 import { main } from '../../actions/main';
@@ -97,7 +96,7 @@ class CloudAuthenticationContainer extends React.Component<
   protected onAuthenticateWithGitHub = async () => {
     this.setState({ status: 'awaiting-github' });
     try {
-      const response = await main.authenticateWithGitHub();
+      await main.authenticateWithGitHub();
       this.setCloudIntroduced(true);
       // We could have closed not but it will get closed when the status updates
     } catch (err) {
