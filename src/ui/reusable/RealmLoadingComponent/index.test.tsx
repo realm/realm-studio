@@ -22,7 +22,6 @@ import * as React from 'react';
 // @see https://reactjs.org/docs/test-utils.html
 // tslint:disable-next-line:no-submodule-imports because this is how their guide sais to load it
 import * as ReactTestUtils from 'react-dom/test-utils';
-import * as Realm from 'realm';
 // import { TestRealmObjectServer } from '../../../testing/TestRealmObjectServer';
 
 import { IRealmLoadingComponentState, RealmLoadingComponent } from './index';
@@ -68,6 +67,7 @@ describe('<RealmLoadingComponent />', () => {
       const element = ReactTestUtils.renderIntoDocument(
         <TestRealmLoadingComponent />,
       );
+      assert(element);
       assert.equal(changes, 0, 'Expected no changes');
       assert.equal(loads, 0, 'Expected no loads');
     });

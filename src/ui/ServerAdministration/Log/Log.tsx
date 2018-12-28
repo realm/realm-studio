@@ -21,7 +21,6 @@ import {
   AutoSizer,
   CellMeasurer,
   CellMeasurerCache,
-  Column,
   Dimensions as IAutoSizerDimensions,
   List,
   ListRowRenderer,

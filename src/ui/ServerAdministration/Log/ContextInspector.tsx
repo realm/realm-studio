@@ -16,7 +16,6 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
 import { ReactObjectInspector } from '../../../module-wrappers/react-object-inspector';
 
 interface IContextInspectorProps {

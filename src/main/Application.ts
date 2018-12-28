@@ -532,7 +532,7 @@ export class Application {
       try {
         if (!currentUser) {
           await this.cloudManager.deauthenticate();
-          const newUser = await this.showCloudAuthentication({}, true);
+          await this.showCloudAuthentication({}, true);
           // Retry
           return this.openCloudUrl(url);
         } else if (url.username !== currentUser.id) {
@@ -548,7 +548,7 @@ export class Application {
             return;
           } else {
             await this.cloudManager.deauthenticate();
-            const newUser = await this.showCloudAuthentication({}, true);
+            await this.showCloudAuthentication({}, true);
             // Retry
             return this.openCloudUrl(url);
           }

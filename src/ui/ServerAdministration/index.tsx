@@ -33,11 +33,7 @@ import {
   menu,
   wait,
 } from '../../utils';
-import {
-  ISyncedRealmToLoad,
-  RealmLoadingMode,
-  RealmToLoad,
-} from '../../utils/realms';
+import { ISyncedRealmToLoad, RealmLoadingMode } from '../../utils/realms';
 import {
   IMenuGenerator,
   IMenuGeneratorProps,
@@ -58,8 +54,6 @@ export type IServerAdministrationContainerProps = IServerAdministrationWindowPro
 
 export interface IServerAdministrationContainerState {
   activeTab: Tab | null;
-  // This will increment when the realm changes to trigger updates to the UI.
-  adminRealmChanges: number;
   isCreateRealmOpen: boolean;
   isCreatingRealm: boolean;
   isRealmOpening: boolean;
@@ -76,7 +70,6 @@ class ServerAdministrationContainer
   implements IMenuGenerator {
   public state: IServerAdministrationContainerState = {
     activeTab: null,
-    adminRealmChanges: 0,
     isCreateRealmOpen: false,
     isCreatingRealm: false,
     isRealmOpening: false,
@@ -169,7 +162,6 @@ class ServerAdministrationContainer
     return (
       <ServerAdministration
         activeTab={this.state.activeTab}
-        adminRealmChanges={this.state.adminRealmChanges}
         createRealm={this.createRealm}
         isCloudTenant={this.props.isCloudTenant || false}
         isCreateRealmOpen={this.state.isCreateRealmOpen}
@@ -328,10 +320,6 @@ class ServerAdministrationContainer
       showError('Failed when importing data', err);
     }
   }
-
-  private onRealmChanged = () => {
-    this.setState({ adminRealmChanges: this.state.adminRealmChanges + 1 });
-  };
 
   private onAdminRealm = ({ realm }: { realm: Realm }) => {
     this.adminRealm = realm;

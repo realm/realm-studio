@@ -16,7 +16,6 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as fsPath from 'path';
 import { ISchemaFile, SchemaExporter } from '../schemaExporter';
 
 export default class KotlinSchemaExporter extends SchemaExporter {

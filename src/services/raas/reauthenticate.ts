@@ -17,7 +17,6 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import { main } from '../../actions/main';
-import * as user from './user';
 
 let promise: Promise<void> | null;
 

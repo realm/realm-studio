@@ -50,7 +50,6 @@ export interface IDeletionProgress {
 
 export interface IRealmTableContainerProps {
   adminRealm: Realm;
-  adminRealmChanges: number;
   createRealm: () => Promise<RealmFile>;
   onRealmOpened: (path: string) => void;
   user: Realm.Sync.User;

@@ -35,7 +35,6 @@ export interface ISelection {
 
 export interface IUsersTableContainerProps {
   adminRealm: Realm;
-  adminRealmChanges: number;
   user: Realm.Sync.User;
 }
 

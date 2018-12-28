@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
-import { Alert, Badge, Modal, ModalBody, ModalHeader } from 'reactstrap';
+import { Badge, Modal, ModalBody, ModalHeader } from 'reactstrap';
 
 import { IRole, IUser } from '..';
 

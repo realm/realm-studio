@@ -18,8 +18,6 @@
 
 import * as React from 'react';
 
-import { main } from '../../../actions/main';
-
 import { Dashboard } from './Dashboard';
 
 export type Platform = 'android' | 'apple' | 'javascript' | 'xamarin';
