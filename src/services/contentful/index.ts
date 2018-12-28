@@ -16,5 +16,5 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as inAppMarketing from './in-app-marketing-space';
-export { inAppMarketing };
+import * as marketing from './marketing-space';
+export { marketing };

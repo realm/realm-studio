@@ -22,7 +22,7 @@ import * as React from 'react';
 import { MarketingPanel } from './MarketingPanel';
 
 import { main } from '../../../actions/main';
-import { inAppMarketing } from '../../../services/contentful';
+import { marketing } from '../../../services/contentful';
 
 const previewAvailable =
   process.env.REALM_STUDIO_INTERNAL_FEATURES === 'true' ||
@@ -38,7 +38,7 @@ interface IMarketingPanelContainerState {
   status: Status;
   isPreviewEnabled: boolean;
   activeIndex: number;
-  messages: inAppMarketing.Message[];
+  messages: marketing.Message[];
 }
 
 class MarketingPanelContainer extends React.PureComponent<
@@ -82,14 +82,12 @@ class MarketingPanelContainer extends React.PureComponent<
   private async fetchMessages() {
     // Choose the correct client
     const client = this.state.isPreviewEnabled
-      ? inAppMarketing.clients.preview
-      : inAppMarketing.clients.delivery;
+      ? marketing.clients.preview
+      : marketing.clients.delivery;
     // Indicate that the messages are loading, resetting the active index
     this.setState({ activeIndex: 0, status: 'loading', messages: [] });
     // Fetch the messages
-    const { items: channels } = await client.getEntries<
-      inAppMarketing.IChannel
-    >({
+    const { items: channels } = await client.getEntries<marketing.IChannel>({
       content_type: 'channel',
       'fields.slug': 'realm-studio',
       include: 2, // Include links to entries at depth 2 to include embedded "call to action"

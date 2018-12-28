@@ -25,10 +25,10 @@ import * as classNames from 'classnames';
 import { Asset, Entry } from 'contentful';
 import * as React from 'react';
 
-import { inAppMarketing } from '../../../services/contentful';
+import { marketing } from '../../../services/contentful';
 
 interface IMessageSlideProps {
-  message: inAppMarketing.Message;
+  message: marketing.Message;
   onClick: React.MouseEventHandler;
 }
 

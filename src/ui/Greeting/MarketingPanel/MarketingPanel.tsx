@@ -20,7 +20,7 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 import { Carousel, CarouselIndicators, CarouselItem } from 'reactstrap';
 
-import { inAppMarketing } from '../../../services/contentful';
+import { marketing } from '../../../services/contentful';
 import { ILoadingProgress, LoadingOverlay } from '../../reusable';
 
 import { Status } from '.';
@@ -53,7 +53,7 @@ interface IMarketingPanelProps {
   className: string | undefined;
   goToIndex: (index: number) => void;
   isPreviewEnabled: boolean;
-  messages: inAppMarketing.Message[];
+  messages: marketing.Message[];
   next: () => void;
   onFetch: () => void;
   onPreviewChange: React.ChangeEventHandler | undefined;
