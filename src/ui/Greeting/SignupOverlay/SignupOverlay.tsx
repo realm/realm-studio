@@ -19,14 +19,12 @@
 import * as React from 'react';
 import {
   Button,
-  Col,
   FormGroup,
   Input,
   Label,
   Modal,
   ModalBody,
   ModalFooter,
-  Row,
 } from 'reactstrap';
 
 export const SignupOverlay = ({

@@ -269,29 +269,6 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
     return this.cellRenderers[cellProps.columnIndex](cellProps);
   };
 
-  private renderAddColumnCell = ({
-    key,
-    style,
-    columnIndex,
-    rowIndex,
-  }: GridCellProps) => {
-    const rowObject = this.props.filteredSortedResults[rowIndex];
-    const clickParams = { columnIndex, rowIndex, rowObject };
-    return (
-      <div
-        key={key}
-        className="RealmBrowser__Table__Cell"
-        style={style}
-        // Prevent a click through to the table
-        onClick={e => {
-          if (this.props.onCellClick) {
-            this.props.onCellClick(clickParams, e);
-          }
-        }}
-      />
-    );
-  };
-
   private getNoContentDiv = () => {
     // Accumulate the width of all columns
     const widthSum = this.props.columnWidths.reduce((sum, columnWidth) => {

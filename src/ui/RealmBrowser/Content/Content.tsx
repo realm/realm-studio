@@ -36,7 +36,7 @@ import {
   DeleteObjectsDialog,
   IDeleteObjectsDialogProps,
 } from './DeleteObjectsDialog';
-import { Permissions, PermissionSidebar } from './PermissionSidebar';
+import { PermissionSidebar } from './PermissionSidebar';
 import { ResponsiveTable } from './ResponsiveTable';
 import {
   ISelectObjectDialogContainerProps,

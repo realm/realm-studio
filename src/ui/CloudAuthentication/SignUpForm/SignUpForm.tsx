@@ -18,17 +18,7 @@
 
 import * as classNames from 'classnames';
 import * as React from 'react';
-import {
-  Alert,
-  Button,
-  Form,
-  FormGroup,
-  FormText,
-  Input,
-  InputGroup,
-  InputGroupAddon,
-  Label,
-} from 'reactstrap';
+import { Button, Form, FormGroup, Input, Label } from 'reactstrap';
 
 import { Mode } from '..';
 

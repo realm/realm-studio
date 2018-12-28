@@ -17,7 +17,6 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
-import { Button } from 'reactstrap';
 
 import { Platform } from '.';
 import nodeJsLogo from '../../../../static/svgs/node-js-logo.svg';

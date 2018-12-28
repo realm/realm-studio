@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
-import { Button, Col, Form, FormGroup, Input, Label, Row } from 'reactstrap';
+import { Button, Form, FormGroup, Input, Label } from 'reactstrap';
 
 import { LoadingOverlay } from '../reusable/LoadingOverlay';
 import { AuthenticationForm, AuthenticationMethod } from './AuthenticationForm';

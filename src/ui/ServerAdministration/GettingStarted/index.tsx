@@ -19,8 +19,6 @@
 import * as electron from 'electron';
 import * as React from 'react';
 
-import { main } from '../../../actions/main';
-
 import { GettingStarted } from './GettingStarted';
 
 export type Platform = 'android' | 'apple' | 'javascript' | 'xamarin';

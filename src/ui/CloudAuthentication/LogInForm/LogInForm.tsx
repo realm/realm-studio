@@ -23,10 +23,8 @@ import {
   Button,
   Form,
   FormGroup,
-  FormText,
   Input,
   InputGroup,
-  InputGroupAddon,
   Label,
 } from 'reactstrap';
 

@@ -18,7 +18,6 @@
 
 import * as React from 'react';
 import {
-  Grid,
   GridCellProps,
   GridCellRangeProps,
   SizeAndPositionData,
@@ -55,7 +54,6 @@ export const cellRangeRenderer = (
     horizontalOffsetAdjustment,
     isScrolling,
     parent, // Grid (or List or Table)
-    rowSizeAndPositionManager,
     styleCache,
     verticalOffsetAdjustment,
     visibleColumnIndices,
@@ -168,11 +166,7 @@ export const rowCellRangeRenderer = (rowRenderer: GridRowRenderer) => (
   // Extract the props as local variables
   const {
     cellCache,
-    cellRenderer,
     columnSizeAndPositionManager,
-    columnStartIndex,
-    columnStopIndex,
-    deferredMeasurementCache,
     horizontalOffsetAdjustment,
     isScrolling,
     parent, // Grid (or List or Table)
@@ -181,7 +175,6 @@ export const rowCellRangeRenderer = (rowRenderer: GridRowRenderer) => (
     rowStopIndex,
     styleCache,
     verticalOffsetAdjustment,
-    visibleColumnIndices,
     visibleRowIndices,
   } = props;
 
