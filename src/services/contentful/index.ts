@@ -16,25 +16,5 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import { IWindow } from './Window';
-
-// tslint:disable-next-line:no-empty-interface
-export interface IGreetingWindowProps {
-  // Tumbleweed
-}
-
-export const GreetingWindow: IWindow = {
-  getWindowOptions: () => ({
-    title: `Realm Studio`,
-    width: 700,
-    height: 400,
-    resizable: false,
-    fullscreenable: false,
-  }),
-  getComponent: () =>
-    import(/* webpackChunkName: "greeting" */ '../ui/Greeting').then(
-      // TODO: Fix the props for this to include a type
-      m => m.Greeting as any,
-    ),
-  getTrackedProperties: () => ({}),
-};
+import * as marketing from './marketing-space';
+export { marketing };

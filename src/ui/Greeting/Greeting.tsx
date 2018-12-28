@@ -26,7 +26,7 @@ import { IUpdateStatus } from '../../main/Updater';
 import realmLogo from '../../../static/svgs/realm-logo.svg';
 import { SocialNetwork } from './';
 import { CloudAction } from './CloudAction';
-import { HistoryPanel } from './HistoryPanel';
+import { MarketingPanel } from './MarketingPanel';
 import { SignupOverlay } from './SignupOverlay';
 import { UpdateStatusIndicator } from './UpdateStatusIndicator';
 
@@ -121,7 +121,7 @@ export const Greeting = ({
         </a>
       </div>
     </div>
-    <HistoryPanel />
+    <MarketingPanel className="Greeting__MarketingPanel" />
     <SignupOverlay />
   </div>
 );
