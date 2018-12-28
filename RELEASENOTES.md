@@ -1,7 +1,7 @@
 [Changes since {PREVIOUS_VERSION}](https://github.com/realm/realm-studio/compare/{PREVIOUS_VERSION}...{CURRENT_VERSION})
 
 ## Enhancements
-- None
+- Adding in-app messages from Realm to the Greeting window. ([#1056](https://github.com/realm/realm-studio/pull/1056))
 
 ## Fixed
 - None
