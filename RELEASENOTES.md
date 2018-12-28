@@ -7,4 +7,4 @@
 - None
 
 ## Internals
-- Fixed the Dockerfile used when testing PRs.
+- Fixed the Dockerfile used when testing PRs. ([#1057](https://github.com/realm/realm-studio/pull/1057))
