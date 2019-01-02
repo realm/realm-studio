@@ -109,6 +109,8 @@ class GreetingContainer extends React.Component<
       }
     } catch (err) {
       showError('Failed to connect to the server', err);
+      // The cloud token might have been invalidated, refreshing the status will show this to the user.
+      await main.refreshCloudStatus();
     }
   };
 

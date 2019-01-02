@@ -125,8 +125,8 @@ export class CloudManager {
   public async refresh(justAuthenticated = false) {
     const endpoint = raas.getEndpoint();
     try {
-      const raasToken = raas.user.getToken();
-      if (raasToken) {
+      if (raas.user.hasToken()) {
+        const raasToken = raas.user.getToken();
         this.sendCloudStatus({
           kind: 'fetching',
           endpoint,
