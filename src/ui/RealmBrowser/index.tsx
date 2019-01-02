@@ -284,10 +284,6 @@ class RealmBrowserContainer
       throw new Error('onRealmLoaded was called without a realm sat');
     }
     if (this.props.readOnly) {
-      // Pause the sync session
-      if (this.realm.syncSession) {
-        this.realm.syncSession.pause();
-      }
       // Monkey-patch the write function to ensure no-one writes to the Realm
       this.realm.write = () => {
         throw new Error('Realm was opened as read-only');
