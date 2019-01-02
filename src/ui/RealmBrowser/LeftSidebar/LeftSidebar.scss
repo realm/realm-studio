@@ -25,10 +25,11 @@
   padding-bottom: 0;
 
   &__Header {
-    align-items: baseline;
+    align-items: center;
     border-bottom: 1px solid $dove;
     color: $elephant;
     display: flex;
+    flex-basis: 2.5rem;
     flex-shrink: 0;
     font-size: .9rem;
     font-weight: bold;
@@ -159,10 +160,11 @@
     }
   }
 
-  &__HiddenClassesHint {
+  &__HiddenClassesHint,
+  &__ReadOnlyHint {
     color: $elephant;
     font-size: .75rem;
-    margin: 0 ($spacer / 2);
+    margin: $spacer / 2;
     overflow: hidden;
     text-align: center;
     text-overflow: ellipsis;

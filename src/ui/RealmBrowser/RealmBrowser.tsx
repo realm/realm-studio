@@ -108,6 +108,7 @@ export const RealmBrowser = ({
         onToggle={onLeftSidebarToggle}
         progress={progress}
         toggleAddClass={toggleAddClass}
+        readOnly={editMode === EditMode.Disabled}
       />
 
       <div className="RealmBrowser__Wrapper">
@@ -128,7 +129,7 @@ export const RealmBrowser = ({
             onRealmChanged={onRealmChanged}
             permissionSidebar={true}
             progress={progress}
-            readOnly={false}
+            readOnly={editMode === EditMode.Disabled}
             realm={realm}
             ref={contentRef}
           />

@@ -38,6 +38,7 @@ interface ILeftSidebarContainerProps {
   onClassFocussed: ClassFocussedHandler;
   onToggle: () => void;
   progress: ILoadingProgress;
+  readOnly?: boolean;
   toggleAddClass: () => void;
 }
 
@@ -85,6 +86,7 @@ class LeftSidebarContainer extends React.Component<
         onClassFocussed={this.props.onClassFocussed}
         onToggle={this.props.onToggle}
         progress={this.props.progress}
+        readOnly={this.props.readOnly || false}
         toggleAddClass={this.props.toggleAddClass}
       />
     );

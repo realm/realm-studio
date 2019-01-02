@@ -130,7 +130,7 @@ export interface IReadWriteContentContainerProps
   onCommitTransaction: () => void;
   onRealmChanged: () => void;
   permissionSidebar: boolean;
-  readOnly: false;
+  readOnly: boolean;
   realm: Realm;
 }
 

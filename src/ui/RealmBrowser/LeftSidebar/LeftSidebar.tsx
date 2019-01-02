@@ -48,6 +48,7 @@ export interface ILeftSidebarProps {
   onClassFocussed: ClassFocussedHandler;
   onToggle: () => void;
   progress: ILoadingProgress;
+  readOnly: boolean;
   toggleAddClass: () => void;
 }
 
@@ -61,6 +62,7 @@ export const LeftSidebar = ({
   onClassFocussed,
   onToggle,
   progress,
+  readOnly,
   toggleAddClass,
 }: ILeftSidebarProps) => (
   <Sidebar
@@ -73,9 +75,11 @@ export const LeftSidebar = ({
   >
     <div className="LeftSidebar__Header">
       <span>Classes</span>
-      <Button size="sm" onClick={toggleAddClass}>
-        <i className="fa fa-plus" />
-      </Button>
+      {readOnly ? null : (
+        <Button size="sm" onClick={toggleAddClass}>
+          <i className="fa fa-plus" />
+        </Button>
+      )}
     </div>
     <div className="LeftSidebar__Classes">
       {classes && classes.length > 0 ? (
@@ -121,6 +125,9 @@ export const LeftSidebar = ({
         <p className="LeftSidebar__HiddenClassesHint">
           Hiding {hiddenClassCount} system classes
         </p>
+      ) : null}
+      {readOnly ? (
+        <p className="LeftSidebar__ReadOnlyHint">Opened as "Read Only"</p>
       ) : null}
     </div>
   </Sidebar>
