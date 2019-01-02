@@ -343,7 +343,7 @@ class ServerAdministrationContainer
           electron.remote.getCurrentWindow(),
           {
             message:
-              'You are opening a partial Realm created for a specific device. To ensure other divices do not write to this it will be opened in read-only mode.',
+              'You are opening a partial Realm created for a specific client. You can only browse the content in read-only mode.',
             checkboxLabel: 'Don´t show this again',
             buttons: ['Open as read-only'],
           },
