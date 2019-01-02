@@ -123,7 +123,7 @@ class RealmBrowserContainer
         contentRef={this.contentRef}
         dataVersion={this.state.dataVersion}
         dataVersionAtBeginning={this.state.dataVersionAtBeginning}
-        editMode={this.state.editMode}
+        editMode={this.props.readOnly ? EditMode.Disabled : this.state.editMode}
         focus={this.state.focus}
         getClassFocus={this.getClassFocus}
         getSchemaLength={this.getSchemaLength}
@@ -282,6 +282,12 @@ class RealmBrowserContainer
   protected onRealmLoaded = () => {
     if (!this.realm) {
       throw new Error('onRealmLoaded was called without a realm sat');
+    }
+    if (this.props.readOnly) {
+      // Monkey-patch the write function to ensure no-one writes to the Realm
+      this.realm.write = () => {
+        throw new Error('Realm was opened as read-only');
+      };
     }
     const firstSchemaName =
       this.realm.schema.length > 0 ? this.realm.schema[0].name : undefined;

@@ -50,6 +50,8 @@ import {
 } from './AdminRealm';
 import { ServerAdministration, Tab } from './ServerAdministration';
 
+const DONT_SHOW_PARTIAL_WARNING_KEY = 'dont-show-partial-warning';
+
 export type IServerAdministrationContainerProps = IServerAdministrationWindowProps;
 
 export interface IServerAdministrationContainerState {
@@ -181,17 +183,29 @@ class ServerAdministrationContainer
 
   // TODO: Once the user serializes better, this method should be moved to the ./realms/RealmsTableContainer.tsx
   private onRealmOpened = async (path: string) => {
-    if (!this.state.isRealmOpening) {
+    if (!this.state.isRealmOpening && this.adminRealm) {
       this.setState({ isRealmOpening: true });
       try {
-        // Let the UI update before sync waiting on the window to appear
         const realm: ISyncedRealmToLoad = {
           user: this.props.user,
           mode: RealmLoadingMode.Synced,
           path,
           validateCertificates: this.props.validateCertificates,
         };
-        await main.showRealmBrowser({ realm });
+        const realmFile = this.adminRealm.objectForPrimaryKey<ros.RealmFile>(
+          'RealmFile',
+          path,
+        );
+        if (realmFile) {
+          if (realmFile.realmType === 'partial') {
+            await this.showPartialRealmWarning();
+            await main.showRealmBrowser({ realm, readOnly: true });
+          } else {
+            await main.showRealmBrowser({ realm });
+          }
+        } else {
+          throw new Error("Couldn't find the Realm in the /__admin Realm");
+        }
       } catch (err) {
         showError('Failed to open Realm', err);
       } finally {
@@ -318,6 +332,29 @@ class ServerAdministrationContainer
         return;
       }
       showError('Failed when importing data', err);
+    }
+  }
+
+  private async showPartialRealmWarning() {
+    const show = localStorage.getItem(DONT_SHOW_PARTIAL_WARNING_KEY) !== 'true';
+    if (show) {
+      return new Promise(resolve => {
+        electron.remote.dialog.showMessageBox(
+          electron.remote.getCurrentWindow(),
+          {
+            message:
+              'You are opening a partial Realm created for a specific device. To ensure other divices do not write to this it will be opened in read-only mode.',
+            checkboxLabel: 'Don´t show this again',
+            buttons: ['Open as read-only'],
+          },
+          (_, checkboxChecked) => {
+            if (checkboxChecked) {
+              localStorage.setItem(DONT_SHOW_PARTIAL_WARNING_KEY, 'true');
+            }
+            resolve();
+          },
+        );
+      });
     }
   }
 

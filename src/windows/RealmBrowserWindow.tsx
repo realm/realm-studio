@@ -25,6 +25,7 @@ import { IWindow } from './Window';
 
 export interface IRealmBrowserWindowProps {
   realm: RealmToLoad;
+  readOnly?: boolean;
   import?: {
     format: ImportFormat;
     paths: string[];
