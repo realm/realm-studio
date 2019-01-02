@@ -39,7 +39,8 @@ export const showError = (
   const messageOptions = {
     type: 'error',
     // Prepend the intent
-    message: message.length > 0 ? `${failedIntent}:\n${message}` : failedIntent,
+    message: failedIntent,
+    detail: message,
     title: failedIntent,
   };
   // Tell Sentry about this error
