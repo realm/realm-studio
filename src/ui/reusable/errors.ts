@@ -46,9 +46,11 @@ export const showError = (
   // Tell Sentry about this error
   sentry.captureEvent({
     level: sentry.Severity.Debug,
-    // We don't want the message to wrap to the next line when reporting this to Sentry
-    message: message.length > 0 ? `${failedIntent}: ${message}` : failedIntent,
+    // Using the failedIntent as message to get more similar messages
+    message: failedIntent,
     tags: { type: 'user-error' },
+    // Sending along the message as extra context
+    extra: { message },
   });
   // Show a message box ...
   if (process.type === 'renderer') {
