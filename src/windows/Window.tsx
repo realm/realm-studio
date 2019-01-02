@@ -29,6 +29,7 @@ export interface IWindow {
   getWindowOptions(
     props: WindowProps,
   ): Partial<Electron.BrowserWindowConstructorOptions>;
+  getSingletonKey?(props: WindowProps): string | undefined;
   getTrackedProperties(props: WindowProps): { [key: string]: string };
 }
 
@@ -71,4 +72,14 @@ export function getWindowOptions({
 }: WindowOptions): IWindowConstructorOptions {
   const WindowClass = getWindowClass(type);
   return WindowClass.getWindowOptions(props);
+}
+
+export function getSingletonKey({
+  type,
+  props,
+}: WindowOptions): string | undefined {
+  const WindowClass = getWindowClass(type);
+  return WindowClass.getSingletonKey
+    ? WindowClass.getSingletonKey(props)
+    : undefined;
 }

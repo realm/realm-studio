@@ -44,6 +44,10 @@ import { getDefaultMenuTemplate } from './MainMenu';
 import { Updater } from './Updater';
 import { WindowManager } from './WindowManager';
 
+interface ICloudAuthenticationWindow extends Electron.BrowserWindow {
+  accountPromise: Promise<raas.user.IAccountResponse>;
+}
+
 export class Application {
   public static sharedApplication = new Application();
 
@@ -172,7 +176,9 @@ export class Application {
     this.cloudManager.deauthenticate();
   }
 
-  public async showConnectToServer(props: IConnectToServerWindowProps) {
+  public showConnectToServer(
+    props: IConnectToServerWindowProps,
+  ): Promise<void> {
     const { window, existing } = this.windowManager.createWindow({
       type: 'connect-to-server',
       props,
@@ -181,17 +187,17 @@ export class Application {
     if (existing) {
       window.focus();
       return Promise.resolve();
-    }
-
-    return new Promise(resolve => {
-      window.show();
-      window.webContents.once('did-finish-load', () => {
-        resolve();
+    } else {
+      return new Promise<undefined>(resolve => {
+        window.show();
+        window.webContents.once('did-finish-load', () => {
+          resolve();
+        });
       });
-    });
+    }
   }
 
-  public showGreeting() {
+  public showGreeting(): Promise<void> {
     const { window, existing } = this.windowManager.createWindow({
       type: 'greeting',
       props: {},
@@ -200,27 +206,27 @@ export class Application {
     if (existing) {
       window.focus();
       return Promise.resolve();
+    } else {
+      return new Promise(resolve => {
+        // Save this for later
+        // Show the window, the first time its ready-to-show
+        window.once('ready-to-show', () => {
+          window.show();
+          resolve();
+        });
+        // Check for updates, every time the contents has loaded
+        window.webContents.on('did-finish-load', () => {
+          this.updater.checkForUpdates(true);
+          this.cloudManager.refresh();
+        });
+        this.updater.addListeningWindow(window);
+        this.cloudManager.addListeningWindow(window);
+        window.once('close', () => {
+          this.updater.removeListeningWindow(window);
+          this.cloudManager.removeListeningWindow(window);
+        });
+      });
     }
-
-    return new Promise(resolve => {
-      // Save this for later
-      // Show the window, the first time its ready-to-show
-      window.once('ready-to-show', () => {
-        window.show();
-        resolve();
-      });
-      // Check for updates, every time the contents has loaded
-      window.webContents.on('did-finish-load', () => {
-        this.updater.checkForUpdates(true);
-        this.cloudManager.refresh();
-      });
-      this.updater.addListeningWindow(window);
-      this.cloudManager.addListeningWindow(window);
-      window.once('close', () => {
-        this.updater.removeListeningWindow(window);
-        this.cloudManager.removeListeningWindow(window);
-      });
-    });
   }
 
   public showOpenLocalRealm() {
@@ -279,7 +285,7 @@ export class Application {
     });
   }
 
-  public showRealmBrowser(props: IRealmBrowserWindowProps) {
+  public showRealmBrowser(props: IRealmBrowserWindowProps): Promise<void> {
     const { window, existing } = this.windowManager.createWindow({
       type: 'realm-browser',
       props,
@@ -288,21 +294,23 @@ export class Application {
     if (existing) {
       window.focus();
       return Promise.resolve();
-    }
-
-    return new Promise<void>(resolve => {
-      // Set the represented filename
-      if (process.platform === 'darwin' && props.realm.mode === 'local') {
-        window.setRepresentedFilename(props.realm.path);
-      }
-      window.show();
-      window.webContents.once('did-finish-load', () => {
-        resolve();
+    } else {
+      return new Promise(resolve => {
+        // Set the represented filename
+        if (process.platform === 'darwin' && props.realm.mode === 'local') {
+          window.setRepresentedFilename(props.realm.path);
+        }
+        window.show();
+        window.webContents.once('did-finish-load', () => {
+          resolve();
+        });
       });
-    });
+    }
   }
 
-  public showServerAdministration(props: IServerAdministrationWindowProps) {
+  public showServerAdministration(
+    props: IServerAdministrationWindowProps,
+  ): Promise<void> {
     const { window, existing } = this.windowManager.createWindow({
       type: 'server-administration',
       props,
@@ -311,72 +319,74 @@ export class Application {
     if (existing) {
       window.focus();
       return Promise.resolve();
-    }
-
-    return new Promise(resolve => {
-      window.show();
-      window.webContents.once('did-finish-load', () => {
-        resolve();
-      });
-
-      if (props.isCloudTenant) {
-        this.cloudManager.addListeningWindow(window);
-        window.once('close', () => {
-          this.cloudManager.removeListeningWindow(window);
+    } else {
+      return new Promise(resolve => {
+        window.show();
+        window.webContents.once('did-finish-load', () => {
+          resolve();
         });
-      }
-    });
+
+        if (props.isCloudTenant) {
+          this.cloudManager.addListeningWindow(window);
+          window.once('close', () => {
+            this.cloudManager.removeListeningWindow(window);
+          });
+        }
+      });
+    }
   }
 
   public showCloudAuthentication(
     props: ICloudAuthenticationWindowProps,
     resolveUser: boolean = false,
   ): Promise<raas.user.IAccountResponse> {
-    const { window, existing } = this.windowManager.createWindow({
+    const { window, existing } = this.windowManager.createWindow<
+      ICloudAuthenticationWindow
+    >({
       type: 'cloud-authentication',
       props,
     });
 
-    let authPromise: Promise<raas.user.IAccountResponse>;
-    if (existing) {
+    if (existing && window.accountPromise) {
       window.focus();
-      // authPromise is set in the else clause
-      authPromise = (window as any).authPromise;
-    } else {
-      // Hacky way to avoid recreating the auth promise every time the window is focused.
-      (window as any).authPromise = authPromise = new Promise<
-        raas.user.IAccountResponse
-      >((resolve, reject) => {
-        const listener = (status: ICloudStatus) => {
-          if (status.kind === 'authenticated') {
+      return window.accountPromise;
+    } else if (!existing) {
+      // Saving the account promise on the window to avoid recreating it every time the window is focused.
+      window.accountPromise = new Promise<raas.user.IAccountResponse>(
+        (resolve, reject) => {
+          const listener = (status: ICloudStatus) => {
+            if (status.kind === 'authenticated') {
+              this.cloudManager.removeListener(listener);
+              resolve(status.account);
+              // Close the window once we're authenticated
+              window.close();
+            } else if (status.kind === 'error') {
+              this.cloudManager.removeListener(listener);
+              reject(new Error(status.message));
+            }
+          };
+          this.cloudManager.addListener(listener);
+          // Reject the promise if the window is closed before cloud status turns authenticated
+          window.once('close', () => {
+            // We need a timeout here, because the close event fires before the cloud status updates
+            reject(new Error('Window was closed instead of authenticating'));
             this.cloudManager.removeListener(listener);
-            resolve(status.account);
-            // Close the window once we're authenticated
-            window.close();
-          } else if (status.kind === 'error') {
-            this.cloudManager.removeListener(listener);
-            reject(new Error(status.message));
-          }
-        };
-        this.cloudManager.addListener(listener);
-        // Reject the promise if the window is closed before cloud status turns authenticated
-        window.once('close', () => {
-          // We need a timeout here, because the close event fires before the cloud status updates
-          reject(new Error('Window was closed instead of authenticating'));
-          this.cloudManager.removeListener(listener);
-          this.cloudManager.abortPendingGitHubAuthentications();
-        });
-        // If resolveUser is false - we resolve the promise as soon as the window loads
-        if (!resolveUser) {
-          window.webContents.once('did-finish-load', () => {
-            resolve();
+            this.cloudManager.abortPendingGitHubAuthentications();
           });
-        }
-        window.show();
-      });
+          // If resolveUser is false - we resolve the promise as soon as the window loads
+          if (!resolveUser) {
+            window.webContents.once('did-finish-load', () => {
+              resolve();
+            });
+          }
+          window.show();
+        },
+      );
+      // Return the newly created promise
+      return window.accountPromise;
+    } else {
+      throw new Error('Expected existing window to have an account promise');
     }
-
-    return authPromise;
   }
 
   public checkForUpdates() {
