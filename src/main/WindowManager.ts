@@ -22,7 +22,11 @@ import * as path from 'path';
 import * as url from 'url';
 
 import { store } from '../store';
-import { getWindowOptions, IWindowConstructorOptions } from '../windows/Window';
+import {
+  getSingletonKey,
+  getWindowOptions,
+  IWindowConstructorOptions,
+} from '../windows/Window';
 import { WindowOptions, WindowType } from '../windows/WindowOptions';
 
 export interface IEventListenerCallbacks {
@@ -34,7 +38,7 @@ export interface IEventListenerCallbacks {
 interface IWindowHandle {
   window: Electron.BrowserWindow;
   type: string;
-  uniqueId: string | undefined;
+  singletonKey: string | undefined;
 }
 
 const isDevelopment = process.env.NODE_ENV === 'development';
@@ -47,31 +51,32 @@ function getRendererHtmlPath() {
   return path.resolve(__dirname, indexPath);
 }
 
+interface ICreatedWindow<W extends BrowserWindow> {
+  // The existing or newly created window object
+  window: W;
+  // If true a window of the same type and singleton key already existed
+  existing: boolean;
+}
+
 export class WindowManager {
   public windows: IWindowHandle[] = [];
 
-  public createWindow(
+  /**
+   * Either creates a new or returns an existing window depending on the implementation of the getSingletonKey function
+   * defined by the window type and the props provided as argument.
+   */
+  public createWindow<W extends BrowserWindow>(
     options: WindowOptions,
-  ): { window: BrowserWindow; existing: boolean } {
-    let uniqueId = '';
-    switch (options.type) {
-      case 'realm-browser':
-        uniqueId = options.props.realm.path;
-        break;
-      case 'server-administration':
-        uniqueId = options.props.user.server;
-        break;
-    }
-
+  ): ICreatedWindow<W> {
+    // Generate a singleton key
+    const singletonKey = getSingletonKey(options);
+    // Find a window of the same type and unique id
     const existing = this.windows.find(
-      w => w.type === options.type && w.uniqueId === uniqueId,
+      w => w.type === options.type && w.singletonKey === singletonKey,
     );
-
+    // Return the window if another window of the same type and singleton key exists
     if (existing) {
-      return {
-        window: existing.window,
-        existing: true,
-      };
+      return { window: existing.window as W, existing: true };
     }
 
     // Get the window options that are default for this type of window
@@ -127,11 +132,11 @@ export class WindowManager {
     });
 
     // Construct the window
-    const window = new BrowserWindow(windowOptions);
+    const window = new BrowserWindow(windowOptions) as W;
     this.windows.push({
       window,
       type: options.type,
-      uniqueId,
+      singletonKey,
     });
 
     // If the window should maximize - let's maximize it when it gets shown
@@ -221,20 +226,17 @@ export class WindowManager {
       });
     });
 
-    return {
-      window,
-      existing: false,
-    };
+    return { window, existing: false };
   }
 
-  public async closeAllWindows(): Promise<{}> {
-    return Promise.all(
-      // Create a new array as closing the windows will remove them from the
+  public async closeAllWindows(): Promise<void> {
+    await Promise.all(
+      // Creates a new array using the mapping as closing the windows will remove them from the
       // this.windows collection
       this.windows
         .map(handle => handle.window)
         .map(window => {
-          return new Promise(resolve => {
+          return new Promise<void>(resolve => {
             window.once('closed', resolve);
             window.close();
           });
@@ -243,21 +245,21 @@ export class WindowManager {
   }
 
   /**
+   * Gets the window options from the Electron store
+   */
+  private getWindowOptions(type: WindowType) {
+    return store.getWindowOptions(type);
+  }
+
+  /**
    * Saves options that should be passed to windows of this type when created in the future.
    * Use this to remember the position or other state of the windows between instances.
    */
-  public setWindowOptions(
+  private setWindowOptions(
     type: WindowType,
     options: IWindowConstructorOptions,
   ) {
     store.setWindowOptions(type, options);
-  }
-
-  /**
-   * Gets the window options from the Electron store
-   */
-  public getWindowOptions(type: WindowType) {
-    return store.getWindowOptions(type);
   }
 
   private getDesiredDisplay() {

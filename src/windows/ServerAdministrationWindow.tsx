@@ -40,6 +40,8 @@ export const ServerAdministrationWindow: IWindow = {
       // TODO: Fix the props for this to include a type
       m => m.ServerAdministration as any,
     ),
+  getSingletonKey: (props: IServerAdministrationWindowProps) =>
+    props.user.server,
   getTrackedProperties: (props: IServerAdministrationWindowProps) => ({
     url: props.user.server,
   }),

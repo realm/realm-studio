@@ -19,7 +19,11 @@
 import { URL } from 'url';
 
 import { ImportFormat } from '../services/data-importer';
-import { ISyncedRealmToLoad, RealmToLoad } from '../utils/realms';
+import {
+  ISyncedRealmToLoad,
+  RealmLoadingMode,
+  RealmToLoad,
+} from '../utils/realms';
 
 import { IWindow } from './Window';
 
@@ -57,6 +61,14 @@ export const RealmBrowserWindow: IWindow = {
       // TODO: Fix the props for this to include a type
       m => m.RealmBrowser as any,
     ),
+  getSingletonKey: (props: IRealmBrowserWindowProps) => {
+    const { realm } = props;
+    if (realm.mode === RealmLoadingMode.Synced) {
+      return `${realm.user.server}:${realm.path}`;
+    } else {
+      return realm.path;
+    }
+  },
   getTrackedProperties: (props: IRealmBrowserWindowProps) => ({
     mode: props.realm.mode,
   }),
