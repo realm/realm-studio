@@ -36,6 +36,11 @@ pipeline {
     GITHUB_REPO="realm-studio"
   }
 
+  options {
+    // Prevent checking out multiple times
+    skipDefaultCheckout()
+  }
+
   parameters {
     booleanParam(
       name: 'PREPARE',
@@ -80,8 +85,11 @@ pipeline {
       }
     }
     
-    stage('Update version & install') {
+    stage('Install & update version') {
       steps {
+        // Install dependencies
+        sh 'npm install'
+        // Update the version
         script {
           if (TAG_NAME && TAG_NAME.startsWith("v")) {
             // Update the build display name
@@ -99,8 +107,6 @@ pipeline {
             changeVersion "${JOB_BASE_NAME}-${BUILD_NUMBER}"
           }
         }
-        // Install dependencies
-        sh 'npm install'
       }
     }
 
