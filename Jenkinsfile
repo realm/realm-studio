@@ -155,7 +155,7 @@ pipeline {
       parallel {
         stage('Unit tests') {
           steps {
-            sh 'MOCHA_FILE=pre-test-results.xml npm run test:ci'
+            sh 'MOCHA_FILE=pre-test-results.xml xvfb-run npm run test:ci'
           }
         }
       }
