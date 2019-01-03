@@ -27,13 +27,7 @@ def changeVersion(String preId = "") {
 
 pipeline {
   agent {
-    dockerfile {
-      filename 'Dockerfile.testing'
-      label 'docker'
-      // /etc/passwd is mapped so a jenkins users is available from within the container
-      // ~/.ssh is mapped to allow pushing to GitHub via SSH
-      args '-e "HOME=${WORKSPACE}" -v /etc/passwd:/etc/passwd:ro -v /home/jenkins/.ssh:/home/jenkins/.ssh:ro'
-    }
+    label 'macos-cph-02.cph.realm'
   }
 
   environment {
@@ -85,15 +79,8 @@ pipeline {
         }
       }
     }
-
-    stage('Install') {
-      steps {
-        // Perform the install
-        sh 'npm install'
-      }
-    }
     
-    stage('Update version') {
+    stage('Update version & install') {
       steps {
         script {
           if (TAG_NAME && TAG_NAME.startsWith("v")) {
@@ -112,6 +99,8 @@ pipeline {
             changeVersion "${JOB_BASE_NAME}-${BUILD_NUMBER}"
           }
         }
+        // Install dependencies
+        sh 'npm install'
       }
     }
 
@@ -152,11 +141,18 @@ pipeline {
         // Don't do this when preparing for a release
         not { environment name: 'PREPARE', value: 'true' }
       }
-      parallel {
-        stage('Unit tests') {
-          steps {
-            sh 'MOCHA_FILE=pre-test-results.xml xvfb-run npm run test:ci'
-          }
+      agent {
+        dockerfile {
+          filename 'Dockerfile.testing'
+          label 'docker'
+          // /etc/passwd is mapped so a jenkins users is available from within the container
+          // ~/.ssh is mapped to allow pushing to GitHub via SSH
+          args '-e "HOME=${WORKSPACE}" -v /etc/passwd:/etc/passwd:ro -v /home/jenkins/.ssh:/home/jenkins/.ssh:ro'
+        }
+      }
+      steps {
+        step {
+          sh 'MOCHA_FILE=pre-test-results.xml xvfb-run npm run test:ci'
         }
       }
       post {
@@ -184,23 +180,18 @@ pipeline {
         // Don't package PRs
         // not { changeRequest() }
       }
-      agent {
-        node {
-          label 'macos-cph-02.cph.realm'
-        }
-      }
       steps {
-        // Package and archive the archive
-        script {
-          withCredentials([
-            file(credentialsId: 'cose-sign-certificate-windows', variable: 'WIN_CSC_LINK'),
-            string(credentialsId: 'cose-sign-password-windows', variable: 'WIN_CSC_KEY_PASSWORD')
-          ]) {
-            sh 'npx build -mlw -c.forceCodeSigning  --publish never'
-          }
-          // Archive the packaged artifacts
-          archiveArtifacts 'dist/*'
+        // We need to install on this new node
+        sh 'npm install'
+        // Run the electron builder
+        withCredentials([
+          file(credentialsId: 'cose-sign-certificate-windows', variable: 'WIN_CSC_LINK'),
+          string(credentialsId: 'cose-sign-password-windows', variable: 'WIN_CSC_KEY_PASSWORD')
+        ]) {
+          sh 'npx build -mlw -c.forceCodeSigning  --publish never'
         }
+        // Archive the packaged artifacts
+        archiveArtifacts 'dist/*'
       }
     }
 
