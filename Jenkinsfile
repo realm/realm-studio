@@ -1,9 +1,34 @@
 #!groovy
 
+def changeVersion(String preId = "") {
+  // Determine the upcoming release type
+  nextVersionType = sh(
+    script: "node ./scripts/next-version.js",
+    returnStdout: true,
+  ).trim()
+  // Ask NPM to update the package json and lock and read the next version
+  // If a preid is specified, perform a pre-release afterwards
+  if (preId) {
+    // Update the version of the package again
+    nextVersion = sh(
+      script: "npm version pre${nextVersionType} --no-git-tag-version --preid=${preId}",
+      returnStdout: true,
+    ).trim()
+  } else {
+    nextVersion = sh(
+      script: "npm version ${nextVersionType} --no-git-tag-version",
+      returnStdout: true,
+    ).trim()
+  }
+  // Set the build name
+  currentBuild.displayName += ": ${nextVersion}"
+  return nextVersion
+}
+
 pipeline {
   agent {
-    docker {
-      image 'node:8'
+    dockerfile {
+      filename 'Dockerfile.testing'
       label 'docker'
       // /etc/passwd is mapped so a jenkins users is available from within the container
       // ~/.ssh is mapped to allow pushing to GitHub via SSH
@@ -15,11 +40,6 @@ pipeline {
     // Parameters used by the github releases script
     GITHUB_OWNER="realm"
     GITHUB_REPO="realm-studio"
-  }
-
-  options {
-    // Prevent checking out multiple times
-    skipDefaultCheckout()
   }
 
   parameters {
