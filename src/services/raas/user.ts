@@ -16,6 +16,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import * as jwt from 'jwt-decode';
+import * as moment from 'moment';
+
 import {
   buildUrl,
   fetchAuthenticated,
@@ -79,6 +82,14 @@ export interface ISubscription {
   projectDescription?: string | null;
 }
 
+interface ICloudJWT {
+  admin: boolean;
+  exp: number;
+  iat: number;
+  sub: string;
+  userId: string;
+}
+
 export const authenticateWithGitHub = async (
   githubCode: string,
 ): Promise<IAuthResponse> => {
@@ -129,8 +140,27 @@ export const hasToken = () => {
   return store.has(TOKEN_STORAGE_KEY);
 };
 
+/**
+ * Gets the token, throwing if it's expired
+ */
 export const getToken = (): string => {
-  return store.get(TOKEN_STORAGE_KEY);
+  const token = store.get(TOKEN_STORAGE_KEY);
+  if (token) {
+    const parsedToken = jwt<ICloudJWT>(token);
+    if (!parsedToken.exp) {
+      throw new Error('Expected an expiration in the JWT');
+    }
+    const expiration = moment.unix(parsedToken.exp);
+    if (expiration.isBefore(/* now */)) {
+      // The token has expired, forget about it and throw an error
+      forgetToken();
+      throw new Error('The token has expired');
+    } else {
+      return token;
+    }
+  } else {
+    throw new Error('Not authenticated');
+  }
 };
 
 export const setToken = (token: string) => {
@@ -143,12 +173,10 @@ export const forgetToken = () => {
 
 export const getTenantCredentials = (url: string): IServerCredentials => {
   return {
-    kind: 'other',
+    kind: 'jwt',
     url,
-    options: {
-      provider: 'jwt/central-owner',
-      data: getToken(),
-    },
+    providerName: 'jwt/central-owner',
+    token: getToken(),
   };
 };
 
