@@ -25,6 +25,27 @@ def changeVersion(String preId = "") {
   return nextVersion
 }
 
+def copyReleaseNotes(versionBefore, versionAfter) {
+  // Read the release notes and replace in any variables
+  releaseNotes = readFile 'RELEASENOTES.md'
+  releaseNotes = releaseNotes
+    .replaceAll("\\{PREVIOUS_VERSION\\}", versionBefore)
+    .replaceAll("\\{CURRENT_VERSION\\}", versionAfter)
+  // Write back the release notes
+  writeFile file: 'RELEASENOTES.md', text: releaseNotes
+
+  // Get todays date
+  today = new Date().format('yyyy-MM-dd')
+  // Append the release notes to the change log
+  changeLog = readFile 'CHANGELOG.md'
+  writeFile(
+    file: 'CHANGELOG.md',
+    text: "# Release ${versionAfter.substring(1)} (${today})\n\n${releaseNotes}\n\n${changeLog}",
+  )
+  // Restore the release notes from the template
+  sh 'cp docs/RELEASENOTES.template.md RELEASENOTES.md'
+}
+
 pipeline {
   agent {
     label 'macos-cph-02.cph.realm'
@@ -81,14 +102,18 @@ pipeline {
         ])
         // Setting the TAG_NAME env as this is not happening when skipping default checkout.
         script {
+          // Read any tags pointing at the current commit
           env.TAG_NAME = sh(
             script: 'git tag --points-at HEAD',
             returnStdout: true,
           ).trim()
+          // Read any tags pointing at the previous commit
           env.PREVIOUS_TAG_NAME = sh(
             script: 'git tag --points-at HEAD~1',
             returnStdout: true,
           ).trim()
+          // Was the previous commit tagged to prepare for a release?
+          env.WAS_PREPARED = PREVIOUS_TAG_NAME ==~ /prepared-.+/
         }
       }
     }
@@ -223,26 +248,35 @@ pipeline {
     // 2. Creating a draft GitHub release
     stage('Publish') {
       when {
-        // Don't do this when preparing for a release
-        not { environment name: 'PREPARE', value: 'true' }
-        // Check if a tag starting with a v (for version) is pointing at this commit
-        // expression {}
+        // We should publish only if we're at a commit with a parent commit that prepared a release
+        // This will be the case for the commit resulting from merging in the PR prepared by CI
+        expression { return WAS_PREPARED }
       }
       steps {
         /*
-        // Upload artifacts to GitHub and publish release
         withCredentials([
           string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')
         ]) {
+          // Create a draft release on GitHub
           script {
-            for (file in findFiles(glob: 'react-realm-context-*.tgz')) {
+            withCredentials([
+              string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')
+            ]) {
+              sh "node scripts/github-releases create-draft $nextVersion RELEASENOTES.md"
+            }
+          }
+          // Upload artifacts to GitHub
+          script {
+            for (file in findFiles(glob: 'dist/*')) {
               sh "node scripts/github-releases upload-asset $TAG_NAME $file"
             }
           }
+          // Publish the release
           script {
             sh "node scripts/github-releases publish $TAG_NAME"
           }
         }
+        // TODO: Annouce this on Slack
         */
         println "Publish!"
       }
@@ -255,33 +289,33 @@ pipeline {
       when {
         environment name: 'PREPARE', value: 'true'
       }
+      environment {
+        PREPARED_BRANCH = "ci/prepared-${nextVersion}"
+      }
       steps {
         // Append the RELEASENOTES to the CHANGELOG
         script {
           copyReleaseNotes(versionBefore, nextVersion)
         }
-        // Create a draft release on GitHub
-        script {
-          withCredentials([
-            string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')
-          ]) {
-            sh "node scripts/github-releases create-draft $nextVersion RELEASENOTES.md"
-          }
-        }
 
         // Set the email and name used when committing
         sh 'git config --global user.email "ci@realm.io"'
         sh 'git config --global user.name "Jenkins CI"'
+        
+        // Checkout a branch
+        sh "git checkbout -b ${PREPARED_BRANCH}"
 
         // Stage the updates to the files, commit and tag the commit
         sh 'git add package.json package-lock.json CHANGELOG.md RELEASENOTES.md'
         sh "git commit -m 'Prepare version ${nextVersion}'"
-        sh "git tag -f ${nextVersion}"
+        sh "git tag -f prepared-${nextVersion}"
 
         // Push to GitHub with tags
         sshagent(['realm-ci-ssh']) {
-          sh "git push --tags origin HEAD"
+          sh "git push --set-upstream --tags origin ${PREPARED_BRANCH}"
         }
+        
+        // TODO: Create a PR
       }
     }
   }
