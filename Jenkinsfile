@@ -92,22 +92,56 @@ pipeline {
         sh 'npm install'
       }
     }
+    
+    stage('Update version') {
+      steps {
+        script {
+          if (TAG_NAME && TAG_NAME.startsWith("v")) {
+            // Update the build display name
+            currentBuild.displayName += ": ${TAG_NAME} (publish)"
+          } else if (PREPARE == "true") {
+            // Read the current version of the package
+            packageJson = readJSON file: 'package.json'
+            versionBefore = "v${packageJson.version}"
+            // Change the version
+            nextVersion = changeVersion()
+            // Add to the displa name of the build job that we're preparing a release
+            currentBuild.displayName += " (prepare)"
+          } else {
+            // Change the version to a prerelease if it's not preparing or is a release
+            changeVersion "${JOB_BASE_NAME}-${BUILD_NUMBER}"
+          }
+        }
+      }
+    }
 
-    stage('Lint & build') {
+    stage('Build, lint & check') {
       when {
         // Don't do this when preparing for a release
         not { environment name: 'PREPARE', value: 'true' }
       }
       parallel {
-        stage('Lint') {
+        stage('Build') {
+          steps {
+            sh 'npm run build'
+          }
+        }
+        
+        stage('Lint TypeScript') {
           steps {
             sh 'npm run lint:ts'
           }
         }
-
-        stage('Build') {
+        
+        stage('Lint SASS') {
           steps {
-            sh 'npm run build'
+            sh 'npm run lint:sass'
+          }
+        }
+
+        stage('Check package-lock') {
+          steps {
+            sh 'npm run check:package-lock'
           }
         }
       }
@@ -121,17 +155,22 @@ pipeline {
       parallel {
         stage('Unit tests') {
           steps {
-            // sh 'MOCHA_FILE=pre-unit-test-results.xml npm run test:ci -- src/**/*.test.tsx'
-            println "Test!"
+            sh 'MOCHA_FILE=pre-test-results.xml npm run test:ci'
           }
         }
       }
       post {
         always {
+          // Archive the test results
           junit(
             allowEmptyResults: true,
             keepLongStdio: true,
-            testResults: 'pre-*-test-results.xml'
+            testResults: 'pre-test-results.xml'
+          )
+          // Archive any screenshots emitted by failing tests
+          archiveArtifacts(
+            artifacts: 'failure-*.png',
+            allowEmptyArchive: true,
           )
         }
       }
@@ -142,21 +181,25 @@ pipeline {
       when {
         // Don't do this when preparing for a release
         not { environment name: 'PREPARE', value: 'true' }
+        // Don't package PRs
+        // not { changeRequest() }
+      }
+      agent {
+        node {
+          label 'macos-cph-02.cph.realm'
+        }
       }
       steps {
-        script {
-          if (TAG_NAME && TAG_NAME.startsWith("v")) {
-            // Update the build display name
-            currentBuild.displayName += ": ${TAG_NAME} (publish)"
-          } else {
-            // Change the version to a prerelease if it's not preparing or is a release
-            changeVersion "${JOB_BASE_NAME}-${BUILD_NUMBER}"
-          }
-        }
         // Package and archive the archive
         script {
-          // packAndArchive()
-          println "Package!"
+          withCredentials([
+            file(credentialsId: 'cose-sign-certificate-windows', variable: 'WIN_CSC_LINK'),
+            string(credentialsId: 'cose-sign-password-windows', variable: 'WIN_CSC_KEY_PASSWORD')
+          ]) {
+            sh 'npx build -mlw -c.forceCodeSigning  --publish never'
+          }
+          // Archive the packaged artifacts
+          archiveArtifacts 'dist/*'
         }
       }
     }
@@ -167,7 +210,7 @@ pipeline {
         not { environment name: 'PREPARE', value: 'true' }
       }
       steps {
-        println "Post-package tests!"
+        println "Missing some post package tests ..."
       }
     }
 
@@ -202,23 +245,13 @@ pipeline {
     }
 
     // Prepares for a release by
-    // 1. Changing version,
-    // 2. Copying release notes to the changelog,
-    // 3. Pushing a branch with a tagged commit to GitHub
+    // 1. Copying release notes to the changelog,
+    // 2. Pushing a branch with a tagged commit to GitHub
     stage('Prepare') {
       when {
         environment name: 'PREPARE', value: 'true'
       }
       steps {
-        script {
-          // Read the current version of the package
-          packageJson = readJSON file: 'package.json'
-          versionBefore = "v${packageJson.version}"
-          // Change the version
-          nextVersion = changeVersion()
-          // Add to the displa name of the build job that we're preparing a release
-          currentBuild.displayName += " (prepare)"
-        }
         // Append the RELEASENOTES to the CHANGELOG
         script {
           copyReleaseNotes(versionBefore, nextVersion)
