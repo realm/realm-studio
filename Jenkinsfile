@@ -174,7 +174,7 @@ pipeline {
             }
             success {
               // Prematurely set the build as successful
-              currentBuild.status = "SUCCESS"
+              script { currentBuild.status = "SUCCESS" }
             }
           }
         }
