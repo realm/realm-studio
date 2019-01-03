@@ -52,6 +52,14 @@ pipeline {
         pushes a tagged commit to git.
       ''',
     )
+    booleanParam(
+      name: 'PACKAGE',
+      defaultValue: false,
+      description: '''Produce a package?
+        PRs don't get packaged by default,
+        but you can rebuild with this to produce distribution packages for all supported platforms.
+      ''',
+    )
   }
 
   stages {
@@ -172,10 +180,6 @@ pipeline {
                 allowEmptyArchive: true,
               )
             }
-            success {
-              // Prematurely set the build as successful
-              script { currentBuild.status = "SUCCESS" }
-            }
           }
         }
       }
@@ -184,10 +188,12 @@ pipeline {
     // Simple packaging for PRs and runs that don't prepare for releases
     stage('Package') {
       when {
-        // Don't do this when preparing for a release
-        not { environment name: 'PREPARE', value: 'true' }
-        // Don't package PRs
-        // not { changeRequest() }
+        anyOf {
+          // Package if asked specifically by the parameter
+          environment name: 'PACKAGE', value: 'true'
+          // Or if the previous commit was tagged
+          expression { return PREVIOUS_TAG_NAME =~ /^prepared-/ }
+        }
       }
       steps {
         // Run the electron builder
