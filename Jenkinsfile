@@ -49,7 +49,7 @@ pipeline {
           userRemoteConfigs: [[
             credentialsId: 'realm-ci-ssh',
             name: 'origin',
-            url: 'git@github.com:realm/react-realm-context.git'
+            url: "git@github.com:${GITHUB_OWNER}/${GITHUB_REPO}.git"
           ]]
         ])
         // Setting the TAG_NAME env as this is not happening when skipping default checkout.
