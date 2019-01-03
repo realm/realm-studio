@@ -113,7 +113,7 @@ pipeline {
             returnStdout: true,
           ).trim()
           // Was the previous commit tagged to prepare for a release?
-          env.WAS_PREPARED = PREVIOUS_TAG_NAME ==~ /prepared-.+/
+          env.WAS_PREPARED = (PREVIOUS_TAG_NAME ==~ /prepared-.+/)
         }
       }
     }
@@ -216,30 +216,29 @@ pipeline {
         anyOf {
           // Package if asked specifically by the parameter
           environment name: 'PACKAGE', value: 'true'
-          // Or if the previous commit was tagged
-          expression { return PREVIOUS_TAG_NAME =~ /^prepared-/ }
+          // Or if the previous commit was tagged as preparing for a release
+          equals expected: true, actual: env.WAS_PREPARED
         }
       }
-      steps {
-        // Run the electron builder
-        withCredentials([
-          file(credentialsId: 'cose-sign-certificate-windows', variable: 'WIN_CSC_LINK'),
-          string(credentialsId: 'cose-sign-password-windows', variable: 'WIN_CSC_KEY_PASSWORD')
-        ]) {
-          sh 'npx build -mlw -c.forceCodeSigning  --publish never'
+      stages {
+        stage("Electron build") {
+          steps {
+            // Run the electron builder
+            withCredentials([
+              file(credentialsId: 'cose-sign-certificate-windows', variable: 'WIN_CSC_LINK'),
+              string(credentialsId: 'cose-sign-password-windows', variable: 'WIN_CSC_KEY_PASSWORD')
+            ]) {
+              sh 'npx build -mlw -c.forceCodeSigning  --publish never'
+            }
+            // Archive the packaged artifacts
+            archiveArtifacts 'dist/*'
+          }
         }
-        // Archive the packaged artifacts
-        archiveArtifacts 'dist/*'
-      }
-    }
-
-    stage('Post-packaging tests') {
-      when {
-        // Don't do this when preparing for a release
-        not { environment name: 'PREPARE', value: 'true' }
-      }
-      steps {
-        println "Missing some post package tests ..."
+        stage('Post-packaging tests') {
+          steps {
+            println "Missing some post package tests ..."
+          }
+        }
       }
     }
 
@@ -250,7 +249,7 @@ pipeline {
       when {
         // We should publish only if we're at a commit with a parent commit that prepared a release
         // This will be the case for the commit resulting from merging in the PR prepared by CI
-        expression { return WAS_PREPARED }
+        equals expected: true, actual: env.WAS_PREPARED
       }
       steps {
         /*
