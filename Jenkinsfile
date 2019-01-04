@@ -6,6 +6,8 @@ def changeVersion(String preId = "") {
     script: "node ./scripts/next-version.js",
     returnStdout: true,
   ).trim()
+  // Print the type of version being bumped
+  println "Bumping ${nextVersionType} version"
   // Ask NPM to update the package json and lock and read the next version
   // If a preid is specified, perform a pre-release afterwards
   if (preId) {
@@ -20,9 +22,8 @@ def changeVersion(String preId = "") {
       returnStdout: true,
     ).trim()
   }
-  // Set the build name
-  currentBuild.displayName += ": ${nextVersion}"
-  return nextVersion
+  // Make the version available as an environment variable
+  env.NEXT_VERSION = nextVersion
 }
 
 def copyReleaseNotes(versionBefore, versionAfter) {
@@ -146,12 +147,14 @@ pipeline {
             currentBuild.displayName += ": ${PREVIOUS_VERSION} (publish)"
           } else if (PREPARE == "true") {
             // Change the version
-            nextVersion = changeVersion()
+            changeVersion()
             // Add to the display name of the build job that we're preparing a release
             currentBuild.displayName += " (prepare)"
           } else {
             // Change the version to a prerelease if it's not preparing or is a release
             changeVersion "${JOB_BASE_NAME}-${BUILD_NUMBER}"
+            // Set the build name
+            currentBuild.displayName += ": ${NEXT_VERSION}"
           }
         }
       }
@@ -236,7 +239,7 @@ pipeline {
               file(credentialsId: 'cose-sign-certificate-windows', variable: 'WIN_CSC_LINK'),
               string(credentialsId: 'cose-sign-password-windows', variable: 'WIN_CSC_KEY_PASSWORD')
             ]) {
-              sh 'npx build -mlw -c.forceCodeSigning  --publish never'
+              sh 'npx build -mlw -c.forceCodeSigning --publish never'
             }
             // Archive the packaged artifacts
             archiveArtifacts 'dist/*'
@@ -260,7 +263,7 @@ pipeline {
           string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')
         ]) {
           // Create a draft release on GitHub
-          sh "node scripts/github-releases create-draft $nextVersion RELEASENOTES.md"
+          sh "node scripts/github-releases create-draft ${NEXT_VERSION} RELEASENOTES.md"
           // Upload artifacts to GitHub
           script {
             for (file in findFiles(glob: 'dist/*')) {
@@ -281,12 +284,12 @@ pipeline {
         environment name: 'PREPARE', value: 'true'
       }
       environment {
-        PREPARED_BRANCH = "ci/prepared-${nextVersion}"
+        PREPARED_BRANCH = "ci/prepared-${NEXT_VERSION}"
       }
       steps {
         // Append the RELEASENOTES to the CHANGELOG
         script {
-          copyReleaseNotes(PREVIOUS_VERSION, nextVersion)
+          copyReleaseNotes(PREVIOUS_VERSION, NEXT_VERSION)
         }
 
         // Set the email and name used when committing
@@ -298,7 +301,7 @@ pipeline {
 
         // Stage the updates to the files, commit and tag the commit
         sh 'git add package.json package-lock.json CHANGELOG.md RELEASENOTES.md'
-        sh "git commit -m 'Prepare version ${nextVersion}'"
+        sh "git commit -m 'Prepare version ${NEXT_VERSION}'"
 
         // Push to GitHub with tags
         sshagent(['realm-ci-ssh']) {
@@ -310,7 +313,7 @@ pipeline {
           string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')
         ]) {
           // Create a draft release on GitHub
-          sh "node scripts/github-releases create-pull-request ${PREPARED_BRANCH} ${BRANCH_NAME} 'Preparing ${nextVersion} release'"
+          sh "node scripts/github-releases create-pull-request ${PREPARED_BRANCH} ${BRANCH_NAME} 'Prepare version ${NEXT_VERSION}'"
         }
       }
     }
