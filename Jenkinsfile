@@ -66,19 +66,36 @@ pipeline {
     booleanParam(
       name: 'PREPARE',
       defaultValue: false,
-      description: '''Prepare for publishing?
-        Changes version based on release notes,
-        copies release notes to changelog,
-        creates a draft GitHub release and
-        pushes a tagged commit to git.
+      description: '''
+        Prepare for publishing:\n
+        1) Changes version based on release notes.\n
+        2) Copies release notes to changelog.\n
+        3) Commits the changes to a branch and pushes it to GitHub.\n
+        4) Creates a pull-request from the branch into master.
       ''',
     )
     booleanParam(
       name: 'PACKAGE',
       defaultValue: false,
-      description: '''Produce a package?
-        PRs don't get packaged by default,
-        but you can rebuild with this to produce distribution packages for all supported platforms.
+      description: '''
+        Produce packaged artifacts for all supported platforms.\n
+        NOTE: PRs jobs don't get packaged by default, rebuild with this enabled to produce these.
+      ''',
+    )
+    booleanParam(
+      name: 'PUBLISH',
+      defaultValue: false,
+      description: '''
+        Publish the packaged artifacts:\n
+        1) Await user input to allow manual testing of the packaged artifacts.\n
+        2) Push the version as a tag to GitHub.\n
+        3) Create a draft GitHub release.\n
+        4) Upload the packaged artifacts to the draft release.\n
+        5) Upload the packaged artifacts to S3.\n
+        6) Upload the auto-updating .yml files to S3.\n
+        7) Publish the GitHub release.\n
+        NOTE: Enabling this will also produce distribution packages.\n
+        NOTE: This is automatically enabled for builds that change the version in the package.json.
       ''',
     )
   }
@@ -100,40 +117,33 @@ pipeline {
             url: "git@github.com:${GITHUB_OWNER}/${GITHUB_REPO}.git"
           ]]
         ])
-        // Setting the TAG_NAME env as this is not happening when skipping default checkout.
         script {
-          // Read any tags pointing at the current commit
-          env.TAG_NAME = sh(
-            script: 'git tag --points-at HEAD',
-            returnStdout: true,
-          ).trim()
-          // Read any tags pointing at the previous commit
-          env.PREVIOUS_TAG_NAME = sh(
-            script: 'git tag --points-at HEAD~1',
-            returnStdout: true,
-          ).trim()
           // Was the previous commit tagged to prepare for a release?
-          env.WAS_PREPARED = (PREVIOUS_TAG_NAME ==~ /prepared-.+/)
+          // TODO: Determine if the package version was changed ...
+          // Publishing needs some packaged artifacts to publish
+          if (PUBLISH == "true") {
+            env.PACKAGE = "true"
+          }
         }
       }
     }
-    
+
     stage('Install & update version') {
       steps {
         // Install dependencies
         sh 'npm install'
         // Update the version
         script {
-          if (TAG_NAME && TAG_NAME.startsWith("v")) {
+          // Read the current version of the package
+          packageJson = readJSON file: 'package.json'
+          env.PREVIOUS_VERSION = "v${packageJson.version}"
+          if (PUBLISH == "true") {
             // Update the build display name
-            currentBuild.displayName += ": ${TAG_NAME} (publish)"
+            currentBuild.displayName += ": ${PREVIOUS_VERSION} (publish)"
           } else if (PREPARE == "true") {
-            // Read the current version of the package
-            packageJson = readJSON file: 'package.json'
-            versionBefore = "v${packageJson.version}"
             // Change the version
             nextVersion = changeVersion()
-            // Add to the displa name of the build job that we're preparing a release
+            // Add to the display name of the build job that we're preparing a release
             currentBuild.displayName += " (prepare)"
           } else {
             // Change the version to a prerelease if it's not preparing or is a release
@@ -154,13 +164,13 @@ pipeline {
             sh 'npm run build'
           }
         }
-        
+
         stage('Lint TypeScript') {
           steps {
             sh 'npm run lint:ts'
           }
         }
-        
+
         stage('Lint SASS') {
           steps {
             sh 'npm run lint:sass'
@@ -210,15 +220,9 @@ pipeline {
       }
     }
 
-    // Simple packaging for PRs and runs that don't prepare for releases
     stage('Package') {
       when {
-        anyOf {
-          // Package if asked specifically by the parameter
-          environment name: 'PACKAGE', value: 'true'
-          // Or if the previous commit was tagged as preparing for a release
-          equals expected: true, actual: env.WAS_PREPARED
-        }
+        environment name: 'PACKAGE', value: 'true'
       }
       stages {
         stage("Electron build") {
@@ -236,20 +240,15 @@ pipeline {
         }
         stage('Post-packaging tests') {
           steps {
-            println "Missing some post package tests ..."
+            println "Lacking post-package tests ..."
           }
         }
       }
     }
 
-    // More advanced packaging for commits tagged as versions
-    // 1. Tag the commit and push that to GitHub,
-    // 2. Creating a draft GitHub release
     stage('Publish') {
       when {
-        // We should publish only if we're at a commit with a parent commit that prepared a release
-        // This will be the case for the commit resulting from merging in the PR prepared by CI
-        equals expected: true, actual: env.WAS_PREPARED
+        environment name: 'PUBLISH', value: 'true'
       }
       steps {
         /*
@@ -257,13 +256,7 @@ pipeline {
           string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')
         ]) {
           // Create a draft release on GitHub
-          script {
-            withCredentials([
-              string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')
-            ]) {
-              sh "node scripts/github-releases create-draft $nextVersion RELEASENOTES.md"
-            }
-          }
+          sh "node scripts/github-releases create-draft $nextVersion RELEASENOTES.md"
           // Upload artifacts to GitHub
           script {
             for (file in findFiles(glob: 'dist/*')) {
@@ -271,9 +264,7 @@ pipeline {
             }
           }
           // Publish the release
-          script {
-            sh "node scripts/github-releases publish $TAG_NAME"
-          }
+          sh "node scripts/github-releases publish $TAG_NAME"
         }
         // TODO: Annouce this on Slack
         */
@@ -281,9 +272,6 @@ pipeline {
       }
     }
 
-    // Prepares for a release by
-    // 1. Copying release notes to the changelog,
-    // 2. Pushing a branch with a tagged commit to GitHub
     stage('Prepare') {
       when {
         environment name: 'PREPARE', value: 'true'
@@ -294,27 +282,32 @@ pipeline {
       steps {
         // Append the RELEASENOTES to the CHANGELOG
         script {
-          copyReleaseNotes(versionBefore, nextVersion)
+          copyReleaseNotes(PREVIOUS_VERSION, nextVersion)
         }
 
         // Set the email and name used when committing
         sh 'git config --global user.email "ci@realm.io"'
         sh 'git config --global user.name "Jenkins CI"'
-        
+
         // Checkout a branch
         sh "git checkbout -b ${PREPARED_BRANCH}"
 
         // Stage the updates to the files, commit and tag the commit
         sh 'git add package.json package-lock.json CHANGELOG.md RELEASENOTES.md'
         sh "git commit -m 'Prepare version ${nextVersion}'"
-        sh "git tag -f prepared-${nextVersion}"
 
         // Push to GitHub with tags
         sshagent(['realm-ci-ssh']) {
           sh "git push --set-upstream --tags origin ${PREPARED_BRANCH}"
         }
-        
-        // TODO: Create a PR
+
+        // Create a pull-request
+        withCredentials([
+          string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')
+        ]) {
+          // Create a draft release on GitHub
+          sh "node scripts/github-releases create-pull-request ${PREPARED_BRANCH} ${BRANCH} 'Preparing ${nextVersion} release'"
+        }
       }
     }
   }
