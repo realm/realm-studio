@@ -302,7 +302,7 @@ pipeline {
 
         // Push to GitHub with tags
         sshagent(['realm-ci-ssh']) {
-          sh "git push --set-upstream --tags origin ${PREPARED_BRANCH}"
+          sh "git push --set-upstream --tags --force origin ${PREPARED_BRANCH}"
         }
 
         // Create a pull-request
