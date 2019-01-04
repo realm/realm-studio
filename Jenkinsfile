@@ -310,7 +310,7 @@ pipeline {
           string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')
         ]) {
           // Create a draft release on GitHub
-          sh "node scripts/github-releases create-pull-request ${PREPARED_BRANCH} ${BRANCH} 'Preparing ${nextVersion} release'"
+          sh "node scripts/github-releases create-pull-request ${PREPARED_BRANCH} ${BRANCH_NAME} 'Preparing ${nextVersion} release'"
         }
       }
     }
