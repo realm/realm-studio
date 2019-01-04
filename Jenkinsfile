@@ -1,29 +1,26 @@
 #!groovy
 
 def changeVersion(String preId = "") {
-  // Determine the upcoming release type
-  nextVersionType = sh(
-    script: "node ./scripts/next-version.js",
-    returnStdout: true,
-  ).trim()
-  // Print the type of version being bumped
-  println "Bumping ${nextVersionType} version"
   // Ask NPM to update the package json and lock and read the next version
-  // If a preid is specified, perform a pre-release afterwards
+  // Makeing the next version available as an environment variable
   if (preId) {
     // Update the version of the package again
-    nextVersion = sh(
-      script: "npm version pre${nextVersionType} --no-git-tag-version --preid=${preId}",
+    env.NEXT_VERSION = sh(
+      script: "npm version 0.0.0-${preId} --no-git-tag-version",
       returnStdout: true,
     ).trim()
   } else {
-    nextVersion = sh(
+    // Determine the upcoming release type
+    nextVersionType = sh(
+      script: "node ./scripts/next-version.js",
+      returnStdout: true,
+    ).trim()
+    // Bump the version accordingly
+    env.NEXT_VERSION = sh(
       script: "npm version ${nextVersionType} --no-git-tag-version",
       returnStdout: true,
     ).trim()
   }
-  // Make the version available as an environment variable
-  env.NEXT_VERSION = nextVersion
 }
 
 def copyReleaseNotes(versionBefore, versionAfter) {
