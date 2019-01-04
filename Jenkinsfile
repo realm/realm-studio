@@ -282,6 +282,8 @@ pipeline {
       }
       environment {
         PREPARED_BRANCH = "ci/prepared-${NEXT_VERSION}"
+        // Merge either into the change target (if this is a PR) or the branch (if it's not)
+        TARGET_BRANCH = "${env.CHANGE_TARGET ?: env.BRANCH_NAME}"
       }
       steps {
         // Append the RELEASENOTES to the CHANGELOG
@@ -310,7 +312,7 @@ pipeline {
           string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')
         ]) {
           // Create a draft release on GitHub
-          sh "node scripts/github-releases create-pull-request ${PREPARED_BRANCH} ${BRANCH_NAME} 'Prepare version ${NEXT_VERSION}'"
+          sh "node scripts/github-releases create-pull-request ${PREPARED_BRANCH} ${TARGET_BRANCH} 'Prepare version ${NEXT_VERSION}'"
         }
       }
     }
