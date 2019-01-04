@@ -67,35 +67,39 @@ pipeline {
       name: 'PREPARE',
       defaultValue: false,
       description: '''
-        Prepare for publishing:\n
-        1) Changes version based on release notes.\n
-        2) Copies release notes to changelog.\n
-        3) Commits the changes to a branch and pushes it to GitHub.\n
-        4) Creates a pull-request from the branch into master.
+        <p>Prepare for publishing:</p>
+        <ol>
+          <li>Changes version based on release notes.</li>
+          <li>Copies release notes to changelog.</li>
+          <li>Commits the changes to a branch and pushes it to GitHub.</li>
+          <li>Creates a pull-request from the branch into master.</li>
+        </ol>
       ''',
     )
     booleanParam(
       name: 'PACKAGE',
       defaultValue: false,
       description: '''
-        Produce packaged artifacts for all supported platforms.\n
-        NOTE: PRs jobs don't get packaged by default, rebuild with this enabled to produce these.
+        <p>Produce packaged artifacts for all supported platforms.</p>
+        <p>NOTE: PRs jobs don't get packaged by default, rebuild with this enabled to produce these.</p>
       ''',
     )
     booleanParam(
       name: 'PUBLISH',
       defaultValue: false,
       description: '''
-        Publish the packaged artifacts:\n
-        1) Await user input to allow manual testing of the packaged artifacts.\n
-        2) Push the version as a tag to GitHub.\n
-        3) Create a draft GitHub release.\n
-        4) Upload the packaged artifacts to the draft release.\n
-        5) Upload the packaged artifacts to S3.\n
-        6) Upload the auto-updating .yml files to S3.\n
-        7) Publish the GitHub release.\n
-        NOTE: Enabling this will also produce distribution packages.\n
-        NOTE: This is automatically enabled for builds that change the version in the package.json.
+        <p>Publish the packaged artifacts:</p>
+        <ol>
+          <li>Await user input to allow manual testing of the packaged artifacts.</li>
+          <li>Push the version as a tag to GitHub.</li>
+          <li>Create a draft GitHub release.</li>
+          <li>Upload the packaged artifacts to the draft release.</li>
+          <li>Upload the packaged artifacts to S3.</li>
+          <li>Upload the auto-updating .yml files to S3.</li>
+          <li>Publish the GitHub release.</li>
+        </ol>
+        <p>NOTE: Enabling this will also produce distribution packages.</p>
+        <p>NOTE: This is automatically enabled for builds that change the version in the package.json.</p>
       ''',
     )
   }
@@ -290,7 +294,7 @@ pipeline {
         sh 'git config --global user.name "Jenkins CI"'
 
         // Checkout a branch
-        sh "git checkbout -b ${PREPARED_BRANCH}"
+        sh "git checkout -b ${PREPARED_BRANCH}"
 
         // Stage the updates to the files, commit and tag the commit
         sh 'git add package.json package-lock.json CHANGELOG.md RELEASENOTES.md'
