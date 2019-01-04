@@ -1,28 +1,5 @@
 #!groovy
 
-def changeVersion(String preId = "") {
-  // Ask NPM to update the package json and lock and read the next version
-  // Makeing the next version available as an environment variable
-  if (preId) {
-    // Update the version of the package again
-    env.NEXT_VERSION = sh(
-      script: "npm version 0.0.0-${preId} --no-git-tag-version",
-      returnStdout: true,
-    ).trim()
-  } else {
-    // Determine the upcoming release type
-    nextVersionType = sh(
-      script: "node ./scripts/next-version.js",
-      returnStdout: true,
-    ).trim()
-    // Bump the version accordingly
-    env.NEXT_VERSION = sh(
-      script: "npm version ${nextVersionType} --no-git-tag-version",
-      returnStdout: true,
-    ).trim()
-  }
-}
-
 def copyReleaseNotes(versionBefore, versionAfter) {
   // Read the release notes and replace in any variables
   releaseNotes = readFile 'RELEASENOTES.md'
@@ -68,7 +45,6 @@ pipeline {
         <p>Prepare for publishing:</p>
         <ol>
           <li>Changes version based on release notes.</li>
-          <li>Copies release notes to changelog.</li>
           <li>Commits the changes to a branch and pushes it to GitHub.</li>
           <li>Creates a pull-request from the branch into master.</li>
         </ol>
@@ -80,24 +56,6 @@ pipeline {
       description: '''
         <p>Produce packaged artifacts for all supported platforms.</p>
         <p>NOTE: PRs jobs don't get packaged by default, rebuild with this enabled to produce these.</p>
-      ''',
-    )
-    booleanParam(
-      name: 'PUBLISH',
-      defaultValue: false,
-      description: '''
-        <p>Publish the packaged artifacts:</p>
-        <ol>
-          <li>Await user input to allow manual testing of the packaged artifacts.</li>
-          <li>Push the version as a tag to GitHub.</li>
-          <li>Create a draft GitHub release.</li>
-          <li>Upload the packaged artifacts to the draft release.</li>
-          <li>Upload the packaged artifacts to S3.</li>
-          <li>Upload the auto-updating .yml files to S3.</li>
-          <li>Publish the GitHub release.</li>
-        </ol>
-        <p>NOTE: Enabling this will also produce distribution packages.</p>
-        <p>NOTE: This is automatically enabled for builds that change the version in the package.json.</p>
       ''',
     )
   }
@@ -120,12 +78,11 @@ pipeline {
           ]]
         ])
         script {
-          // Was the previous commit tagged to prepare for a release?
-          // TODO: Determine if the package version was changed ...
-          // Publishing needs some packaged artifacts to publish
-          if (PUBLISH == "true") {
-            env.PACKAGE = "true"
-          }
+          env.TAG_NAME = sh(
+            script: 'git tag --points-at HEAD',
+            returnStdout: true,
+          ).trim()
+          env.PUBLISH = TAG_NAME && TAG_NAME.startsWith('v') ? 'true' : 'false'
         }
       }
     }
@@ -139,19 +96,33 @@ pipeline {
           // Read the current version of the package
           packageJson = readJSON file: 'package.json'
           env.PREVIOUS_VERSION = "v${packageJson.version}"
-          if (PUBLISH == "true") {
+          if (PUBLISH == 'true') {
             // Update the build display name
             currentBuild.displayName += ": ${PREVIOUS_VERSION} (publish)"
-          } else if (PREPARE == "true") {
-            // Change the version
-            changeVersion()
-            // Add to the display name of the build job that we're preparing a release
-            currentBuild.displayName += " (prepare)"
           } else {
-            // Change the version to a prerelease if it's not preparing or is a release
-            changeVersion "${JOB_BASE_NAME}-${BUILD_NUMBER}"
-            // Set the build name
-            currentBuild.displayName += ": ${NEXT_VERSION}"
+            // Determine the upcoming release type
+            nextVersionType = sh(
+              script: "node ./scripts/next-version.js",
+              returnStdout: true,
+            ).trim()
+            // Bump the version accordingly
+            env.NEXT_VERSION = sh(
+              script: "npm version ${nextVersionType} --no-git-tag-version",
+              returnStdout: true,
+            ).trim()
+            // If we're preparing, add this to the display name .. alternatively add a pre-release id
+            if (PREPARE == 'true') {
+            // Set the build display name
+              currentBuild.displayName += ": ${NEXT_VERSION} (prepare)"
+            } else {
+              // Update the version of the package again, this time prepending pre release id
+              env.NEXT_VERSION = sh(
+                script: "npm version ${NEXT_VERSION}-${JOB_BASE_NAME}-${BUILD_NUMBER} --no-git-tag-version",
+                returnStdout: true,
+              ).trim()
+              // Set the build display name
+              currentBuild.displayName += ": ${NEXT_VERSION}"
+            }
           }
         }
       }
@@ -250,6 +221,17 @@ pipeline {
       }
     }
 
+    /*
+     * Publish the packaged artifacts:
+     * - Await user input to allow manual testing of the packaged artifacts.
+     * - Create a draft GitHub release.
+     * - Upload the packaged artifacts to the draft release.
+     * - Upload the packaged artifacts to S3.
+     * - Upload the auto-updating .yml files to S3.
+     * - Publish the GitHub release.
+     *
+     * This stage runs when building a commit tagged with a version.
+     */
     stage('Publish') {
       when {
         environment name: 'PUBLISH', value: 'true'
@@ -315,6 +297,16 @@ pipeline {
           sh "node scripts/github-releases create-pull-request ${PREPARED_BRANCH} ${TARGET_BRANCH} 'Prepare version ${NEXT_VERSION}'"
         }
       }
+    }
+
+    /*
+     * This stage handles prepared PRs that gets merged to master:
+     * - Copies release notes to changelog.
+     * - Push the version as a tag to GitHub.
+     * - Restores the release notes from a template and push this to GitHub.
+     */
+    stage("Post prepare") {
+
     }
   }
 }
