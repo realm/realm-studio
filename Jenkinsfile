@@ -1,26 +1,5 @@
 #!groovy
 
-def copyReleaseNotes(versionBefore, versionAfter) {
-  // Read the release notes and replace in any variables
-  releaseNotes = readFile 'RELEASENOTES.md'
-  releaseNotes = releaseNotes
-    .replaceAll("\\{PREVIOUS_VERSION\\}", versionBefore)
-    .replaceAll("\\{CURRENT_VERSION\\}", versionAfter)
-  // Write back the release notes
-  writeFile file: 'RELEASENOTES.md', text: releaseNotes
-
-  // Get todays date
-  today = new Date().format('yyyy-MM-dd')
-  // Append the release notes to the change log
-  changeLog = readFile 'CHANGELOG.md'
-  writeFile(
-    file: 'CHANGELOG.md',
-    text: "# Release ${versionAfter.substring(1)} (${today})\n\n${releaseNotes}\n\n${changeLog}",
-  )
-  // Restore the release notes from the template
-  sh 'cp docs/RELEASENOTES.template.md RELEASENOTES.md'
-}
-
 pipeline {
   agent {
     label 'macos-cph-02.cph.realm'
@@ -269,9 +248,9 @@ pipeline {
       }
       steps {
         // Append the RELEASENOTES to the CHANGELOG
-        script {
-          copyReleaseNotes(PREVIOUS_VERSION, NEXT_VERSION)
-        }
+        sh "node scripts/tools copy-release-notes ${PREVIOUS_VERSION} ${NEXT_VERSION}"
+        // Restore RELEASENOTES.md from the template
+        sh 'cp docs/RELEASENOTES.template.md RELEASENOTES.md'
 
         // Set the email and name used when committing
         sh 'git config --global user.email "ci@realm.io"'
