@@ -4,6 +4,8 @@ const octokit = require("@octokit/rest")();
 const path = require("path");
 const fs = require("fs");
 
+const { wrapCommand } = require("./utils");
+
 const {
   GITHUB_TOKEN,
   GITHUB_OWNER,
@@ -20,18 +22,6 @@ octokit.authenticate({
   token: GITHUB_TOKEN
 });
 
-/**
- * Wraps an action callback with something that prints errors before exiting with an appropriate status code
- */
-function wrap(callback) {
-  return (...args) => {
-    callback(...args).then(undefined, err => {
-      console.error(err.stack);
-      process.exit(1);
-    });
-  };
-}
-
 function determinContentType(assetPath) {
   const ext = path.extname(assetPath);
   if (ext === ".tgz") {
@@ -43,7 +33,7 @@ function determinContentType(assetPath) {
 
 program
   .command("upload-asset <tag> <asset-path>")
-  .action(wrap(async (tag, assetPath) => {
+  .action(wrapCommand(async (tag, assetPath) => {
     // Request all releases, as we cannot request by tag name for draft releases
     const { data: releases } = await octokit.repos.listReleases({
       owner: GITHUB_OWNER,
@@ -70,7 +60,7 @@ program
 
 program
   .command("create-draft <tag> <release notes path>")
-  .action(wrap(async (tag, releaseNotesPath) => {
+  .action(wrapCommand(async (tag, releaseNotesPath) => {
     // Read the content of the release notes
     const releaseNotes = fs.readFileSync(releaseNotesPath, 'utf8');
     // Create a draft release
@@ -86,7 +76,7 @@ program
 
 program
   .command("publish <tag>")
-  .action(wrap(async (tag, releaseNotesPath) => {
+  .action(wrapCommand(async (tag, releaseNotesPath) => {
     // Request all releases, as we cannot request by tag name for draft releases
     const { data: releases } = await octokit.repos.listReleases({
       owner: GITHUB_OWNER,
@@ -108,7 +98,7 @@ program
 
 program
   .command("create-pull-request <head> <base> <title>")
-  .action(wrap(async (head, base, title) => {
+  .action(wrapCommand(async (head, base, title) => {
     // Create a pull request
     await octokit.pulls.create({
       owner: GITHUB_OWNER,
