@@ -11,11 +11,6 @@ pipeline {
     GITHUB_REPO="realm-studio"
   }
 
-  options {
-    // Prevent checking out multiple times
-    skipDefaultCheckout()
-  }
-
   parameters {
     booleanParam(
       name: 'PREPARE',
