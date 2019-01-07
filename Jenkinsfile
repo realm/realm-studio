@@ -175,6 +175,8 @@ pipeline {
             sh 'rm -rf node_modules'
             // Link in the node_modules from the image
             sh 'ln -s /tmp/node_modules .'
+            // Build the app for the spectron tests to run
+            sh 'npm run build'
             // Run the tests
             sh 'MOCHA_FILE=pre-test-results.xml xvfb-run npm run test:ci'
           }
