@@ -220,6 +220,7 @@ pipeline {
     /*
      * Publish the packaged artifacts:
      * - Await user input to allow manual testing of the packaged artifacts.
+     * - Extract the latest release notes from the changelog.
      * - Create a draft GitHub release.
      * - Upload the packaged artifacts to the draft release.
      * - Upload the packaged artifacts to S3.
