@@ -170,7 +170,7 @@ pipeline {
       agent {
         dockerfile {
           filename 'Dockerfile.testing'
-          label 'docker'
+          reuseNode true
           // /etc/passwd is mapped so a jenkins users is available from within the container
           // ~/.ssh is mapped to allow pushing to GitHub via SSH
           args '-e "HOME=${WORKSPACE}" -v /etc/passwd:/etc/passwd:ro -v /home/jenkins/.ssh:/home/jenkins/.ssh:ro'
