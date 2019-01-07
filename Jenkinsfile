@@ -59,13 +59,17 @@ pipeline {
           ]]
         ])
         script {
+          // Read the current version of the package
+          packageJson = readJSON file: 'package.json'
+          env.VERSION = "v${packageJson.version}"
+          // TODO: Determine if this commit changes the version, if so:
+          // - Tag the commit and push the tag to GitHub
+          // Determine what tags are pointing at the current commit
           env.TAG_NAME = sh(
             script: 'git tag --points-at HEAD',
             returnStdout: true,
           ).trim()
           env.PUBLISH = TAG_NAME && TAG_NAME.startsWith('v') ? 'true' : 'false'
-          // TODO: Determine if this commit changes the version, if so:
-          // - Push a version tag to GitHub, succeed right away (and rebuild the tagged commit)
         }
       }
     }
@@ -76,12 +80,9 @@ pipeline {
         sh 'npm install'
         // Update the version
         script {
-          // Read the current version of the package
-          packageJson = readJSON file: 'package.json'
-          env.PREVIOUS_VERSION = "v${packageJson.version}"
           if (PUBLISH == 'true') {
             // Update the build display name
-            currentBuild.displayName += ": ${PREVIOUS_VERSION} (publish)"
+            currentBuild.displayName += ": ${VERSION} (publish)"
           } else {
             // Determine the upcoming release type
             nextVersionType = sh(
@@ -247,6 +248,7 @@ pipeline {
         environment name: 'PREPARE', value: 'true'
       }
       environment {
+        PREVIOUS_VERSION = VERSION
         PREPARED_BRANCH = "ci/prepared-${NEXT_VERSION}"
       }
       steps {
