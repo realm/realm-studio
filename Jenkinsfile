@@ -62,13 +62,25 @@ pipeline {
           // Read the current version of the package
           packageJson = readJSON file: 'package.json'
           env.VERSION = "v${packageJson.version}"
-          // TODO: Determine if this commit changes the version, if so:
-          // - Tag the commit and push the tag to GitHub
+          // Determine if this commit changes the version, if so:
+          previousVersion = sh(
+            script: 'git show HEAD~1:package.json | jq -r .version',
+            returnStdout: true,
+          ).trim()
+          // Did the version change?
+          if (previousVersion != packageJson.version) {
+            sh "git tag -a ${VERSION} -m 'Release ${packageJson.version}'"
+            // Push to GitHub with tags
+            sshagent(['realm-ci-ssh']) {
+              sh "git push --set-upstream --tags --force origin master"
+            }
+          }
           // Determine what tags are pointing at the current commit
           env.TAG_NAME = sh(
             script: 'git tag --points-at HEAD',
             returnStdout: true,
           ).trim()
+          // Publish if the tag starts with a "v"
           env.PUBLISH = TAG_NAME && TAG_NAME.startsWith('v') ? 'true' : 'false'
         }
       }
@@ -248,12 +260,11 @@ pipeline {
         environment name: 'PREPARE', value: 'true'
       }
       environment {
-        PREVIOUS_VERSION = VERSION
         PREPARED_BRANCH = "ci/prepared-${NEXT_VERSION}"
       }
       steps {
         // Append the RELEASENOTES to the CHANGELOG
-        sh "node scripts/tools copy-release-notes ${PREVIOUS_VERSION} ${NEXT_VERSION}"
+        sh "node scripts/tools copy-release-notes ${VERSION} ${NEXT_VERSION}"
         // Restore RELEASENOTES.md from the template
         sh 'cp docs/RELEASENOTES.template.md RELEASENOTES.md'
 
