@@ -24,6 +24,8 @@ pipeline {
         <p>Prepare for publishing:</p>
         <ol>
           <li>Changes version based on release notes.</li>
+          <li>Copies release notes to changelog.</li>
+          <li>Restores the release notes from a template.</li>
           <li>Commits the changes to a branch and pushes it to GitHub.</li>
           <li>Creates a pull-request from the branch into master.</li>
         </ol>
@@ -34,7 +36,7 @@ pipeline {
       defaultValue: false,
       description: '''
         <p>Produce packaged artifacts for all supported platforms.</p>
-        <p>NOTE: PRs jobs don't get packaged by default, rebuild with this enabled to produce these.</p>
+        <p>NOTE: PRs jobs don't get packaged by default, rebuild with this enabled to produce packages.</p>
       ''',
     )
   }
@@ -62,6 +64,8 @@ pipeline {
             returnStdout: true,
           ).trim()
           env.PUBLISH = TAG_NAME && TAG_NAME.startsWith('v') ? 'true' : 'false'
+          // TODO: Determine if this commit changes the version, if so:
+          // - Push a version tag to GitHub, succeed right away (and rebuild the tagged commit)
         }
       }
     }
@@ -208,6 +212,7 @@ pipeline {
      * - Upload the packaged artifacts to S3.
      * - Upload the auto-updating .yml files to S3.
      * - Publish the GitHub release.
+     * - Announce the release on Slack.
      *
      * This stage runs when building a commit tagged with a version.
      */
@@ -276,16 +281,6 @@ pipeline {
           sh "node scripts/github-releases create-pull-request ${PREPARED_BRANCH} ${TARGET_BRANCH} 'Prepare version ${NEXT_VERSION}'"
         }
       }
-    }
-
-    /*
-     * This stage handles prepared PRs that gets merged to master:
-     * - Copies release notes to changelog.
-     * - Push the version as a tag to GitHub.
-     * - Restores the release notes from a template and push this to GitHub.
-     */
-    stage("Post prepare") {
-
     }
   }
 }
