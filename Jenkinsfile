@@ -68,11 +68,11 @@ pipeline {
             returnStdout: true,
           ).trim()
           // Did the version change?
-          if (previousVersion != packageJson.version) {
+          if (BRANCH_NAME == 'master' && previousVersion != packageJson.version) {
             sh "git tag -a ${VERSION} -m 'Release ${packageJson.version}'"
             // Push to GitHub with tags
             sshagent(['realm-ci-ssh']) {
-              sh "git push --set-upstream --tags --force origin master"
+              sh 'git push origin --tags'
             }
           }
           // Determine what tags are pointing at the current commit
