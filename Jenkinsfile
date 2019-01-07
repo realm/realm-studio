@@ -95,8 +95,8 @@ pipeline {
               returnStdout: true,
             ).trim()
             // If we're preparing, add this to the display name .. alternatively add a pre-release id
-            if (PREPARE == 'true') {
-            // Set the build display name
+            if (env.PREPARE == 'true') {
+              // Set the build display name
               currentBuild.displayName += ": ${NEXT_VERSION} (prepare)"
             } else {
               // Update the version of the package again, this time prepending pre release id
