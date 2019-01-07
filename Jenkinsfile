@@ -4,6 +4,11 @@ pipeline {
   agent {
     label 'macos-cph-02.cph.realm'
   }
+  
+  options {
+    // Prevent checking out multiple times
+    skipDefaultCheckout()
+  }
 
   environment {
     // Parameters used by the github releases script
@@ -164,6 +169,9 @@ pipeline {
               // ~/.ssh is mapped to allow pushing to GitHub via SSH
               args '-e "HOME=${WORKSPACE}" -v /etc/passwd:/etc/passwd:ro -v /home/jenkins/.ssh:/home/jenkins/.ssh:ro'
             }
+          }
+          options {
+            skipDefaultCheckout false
           }
           steps {
             // Remove any node_modules that might already be here
