@@ -32,29 +32,34 @@ program
     // TODO: Parse the markdown and extract the changelog
     const releaseNotes = remark()
       .use(() => {
+        // Find the index of headers in a list of children
+        function findHeadings(children, depth) {
+          const result = [];
+          // Loop through each child and add the right nodes to the results
+          children.forEach((c, index) => {
+            if (c.type === 'heading' && c.depth === depth) {
+              result.push(index);
+            }
+          });
+          // Return the list of heading indecies
+          return result;
+        }
+
         return function transformer(tree, file) {
-          // Locate the first level 1 headers
-          const firstHeaderIndex = tree.children
-            .findIndex(n => n.type === 'heading' && n.depth === 1);
-          if (firstHeaderIndex === -1) {
+          const headingsIndex = findHeadings(tree.children, 2);
+          if (headingsIndex.length < 1) {
             throw new Error("Expected at least one release in the changelog");
           }
-          // Locate the second latest level 1 header
-          const secondHeaderOffset = tree.children.slice(firstHeaderIndex + 1)
-            .findIndex(n => n.type === 'heading' && n.depth === 1);
-          // Use undefined (end of array when slicing) if the second heading wasn't found
-          const secondHeaderIndex = secondHeaderOffset === -1 ? undefined : firstHeaderIndex + 1 + secondHeaderOffset;
           // The subtree related to the latest release, exluding the depth 1 headers
-          const releaseChildren = tree.children.slice(firstHeaderIndex + 1, secondHeaderIndex);
+          const releaseChildren = tree.children.slice(headingsIndex[0] + 1, headingsIndex[1]);
           // Trim out everything internal
           const internalHeaderIndex = releaseChildren
-            .findIndex(n => n.type === 'heading' && n.depth === 2 && n.children.find(
+            .findIndex(n => n.type === 'heading' && n.children.find(
               c => c.type === 'text' && c.value === 'Internals'
             ));
-          if (internalHeaderIndex === -1) {
-            throw new Error("Expected an 'Internals' heading");
-          }
-          const trimmedReleaseChildren = releaseChildren.slice(0, internalHeaderIndex);
+          const trimmedReleaseChildren = internalHeaderIndex === -1 ?
+            releaseChildren :
+            releaseChildren.slice(0, internalHeaderIndex);
           // Replace the children
           tree.children = trimmedReleaseChildren;
         }
