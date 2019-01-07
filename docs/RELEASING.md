@@ -1,68 +1,37 @@
 # Releasing Realm Studio
 
-Below is only possible to do for Realm employees.
+The instructions below is only possible to be performed by Realm employees.
 
 ## Prepare a release
 
-### On Jenkins
-
 Start by preparing a release from the branch you want to release from (default: `master`).
 
-You have to specify the version that you want to release - please use [semantic versioning](http://semver.org/), and
-choose the next version based on what changes the master has compared to the latest release on the channel.
+The version is automatically derived from the RELEASENOTES.md to comply with [semantic versioning](http://semver.org/),
 
-- `major` if the release introduces breaking changes.
-- `minor` if the release adds features (and possibly fixes bugs too)
-- `patch` if the release fixes bugs
-- `prerelease` if on a prerelease channel, like `-alpha` or `-rc`.
+Go to https://ci.realm.io/job/realm/job/realm-studio/job/master/build, check PREPARE and hit build to prepare a release.
 
-To prepare a release, go to https://ci.realm.io/job/realm-studio/job/prepare/build.
+When preparing Jenkins does the following:
 
-To see what the prepare job does, see https://github.com/realm/realm-studio/blob/master/Jenkinsfile.prepare - this is
-what it's basically doing:
-
-1. Checkout the branch
-2. Run `npm version` with the next version specified
-3. Save that new version from the `package.json` into the `package-lock.json`
-4. Append the contents of RELEASENOTES.md into the CHANGELOG.md and restores the RELEASENOTES.md from a template.
-5. Commit in the four files changed
-6. Tag the commit with the new version
-7. Waiting for you to confirm the change - see
-   [the console output](https://ci.realm.io/blue/organizations/jenkins/realm-studio%2Fprepare/activity)
-   if you're wondering why the build is taking so long
-8. Push the changes and tag to GitHub
-9. Create a drafted GitHub release from the RELEASENOTES.md
-10. Start a release job
+1. Changes version based on release notes.
+2. Copies release notes to changelog.
+3. Restores the release notes from a template.
+4. Commits the changes to a branch and pushes it to GitHub.
+5. Creates a pull-request from the branch into master.
 
 ## Release a prepared release
 
-The prepare job starts a new release job as its final step, so usually you don't need to start the release job manually.
+The prepare job creates a PR which bumps the version and copies over release notes to the changelog, when reviewed and
+the PR gets merged, Jenkins will notice that the version within the package.json has changed, which triggers the
+following process:
 
-If you've just finished preparing a release, go to
-https://ci.realm.io/blue/organizations/jenkins/realm-studio%2Frelease/activity
-
-To start a previously prepared release manually, go to https://ci.realm.io/job/realm-studio/job/release/build and select
-the version tag that you want to build and release for.
-
-To see what the release job does, see https://github.com/realm/realm-studio/blob/master/Jenkinsfile.release - this is
-what it's basically doing:
-
-1. Checkout the branch
-2. Check that the version tag matches the version in package.json
-3. Build, test and package in two parallel tracks "MacOS" and "Others" (the latter being Windows + Linux).
-    1. Installing dependencies (`npm install`)
-    2. Build the app (`npm run build`)
-    3. Package up the app (`electron-builder`) - never publishing and cryptographically signing the result
-    4. Archive + stash artifacts
-4. Once packaged - it'll post a message to Slack notifying that the job is awaiting approval to continue.
-5. If approved - unstash and upload artifacts to S3
-6. Post the release to Slack!
-
-## Publish on GitHub
-
-Go to [the release on GitHub](https://github.com/realm/realm-studio/releases) and publish the release.
-This turns the release in to the latest release for users downloading the latest version via
-https://studio-releases.realm.io/latest.
+1. Await user input to allow manual testing of the packaged artifacts.
+2. Extract the latest release notes from the changelog.
+3. Create a draft GitHub release.
+4. Upload the packaged artifacts to the draft release.
+5. Upload the packaged artifacts to S3.
+6. Upload the auto-updating .yml files to S3.
+7. Publish the GitHub release.
+8. Announce the release on Slack.
 
 # How do I roll-back a release?
 
