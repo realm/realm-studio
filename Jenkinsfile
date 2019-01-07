@@ -11,6 +11,11 @@ pipeline {
     GITHUB_REPO="realm-studio"
   }
 
+  options {
+    // Prevent checking out multiple times
+    skipDefaultCheckout()
+  }
+
   parameters {
     booleanParam(
       name: 'PREPARE',
@@ -154,45 +159,42 @@ pipeline {
             sh 'npm run check:package-lock'
           }
         }
-      }
-    }
 
-    stage('Pre-package tests') {
-      when {
-        // Don't do this when preparing for a release
-        not { environment name: 'PREPARE', value: 'true' }
-      }
-      // Testing in a nested stage to work around an issue that would otherwise require a pipeline checkout.
-      agent {
-        dockerfile {
-          filename 'Dockerfile.testing'
-          label 'docker'
-          // /etc/passwd is mapped so a jenkins users is available from within the container
-          // ~/.ssh is mapped to allow pushing to GitHub via SSH
-          args '-e "HOME=${WORKSPACE}" -v /etc/passwd:/etc/passwd:ro -v /home/jenkins/.ssh:/home/jenkins/.ssh:ro'
-        }
-      }
-      steps {
-        // Remove any node_modules that might already be here
-        sh 'rm -rf node_modules'
-        // Link in the node_modules from the image
-        sh 'ln -s /tmp/node_modules .'
-        // Run the tests
-        sh 'MOCHA_FILE=pre-test-results.xml xvfb-run npm run test:ci'
-      }
-      post {
-        always {
-          // Archive the test results
-          junit(
-            allowEmptyResults: true,
-            keepLongStdio: true,
-            testResults: 'pre-test-results.xml'
-          )
-          // Archive any screenshots emitted by failing tests
-          archiveArtifacts(
-            artifacts: 'failure-*.png',
-            allowEmptyArchive: true,
-          )
+        stage('Pre-package tests') {
+          agent {
+            dockerfile {
+              filename 'Dockerfile.testing'
+              label 'docker'
+              // /etc/passwd is mapped so a jenkins users is available from within the container
+              // ~/.ssh is mapped to allow pushing to GitHub via SSH
+              args '-e "HOME=${WORKSPACE}" -v /etc/passwd:/etc/passwd:ro -v /home/jenkins/.ssh:/home/jenkins/.ssh:ro'
+            }
+          }
+          steps {
+            // Remove any node_modules that might already be here
+            sh 'rm -rf node_modules'
+            // Link in the node_modules from the image
+            sh 'ln -s /tmp/node_modules .'
+            // Build the app for the spectron tests to run
+            sh 'npm run build'
+            // Run the tests
+            sh 'MOCHA_FILE=pre-test-results.xml xvfb-run npm run test:ci'
+          }
+          post {
+            always {
+              // Archive the test results
+              junit(
+                allowEmptyResults: true,
+                keepLongStdio: true,
+                testResults: 'pre-test-results.xml'
+              )
+              // Archive any screenshots emitted by failing tests
+              archiveArtifacts(
+                artifacts: 'failure-*.png',
+                allowEmptyArchive: true,
+              )
+            }
+          }
         }
       }
     }
