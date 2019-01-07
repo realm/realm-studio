@@ -81,7 +81,13 @@ pipeline {
             returnStdout: true,
           ).trim()
           // Publish if the tag starts with a "v"
-          env.PUBLISH = TAG_NAME && TAG_NAME.startsWith('v') ? 'true' : 'false'
+          if (TAG_NAME && TAG_NAME.startsWith('v')) {
+            // Assert that the tag matches the version in the package.json
+            assert "v${packageJson.version}" == env.TAG_NAME : "Tag doesn't match package.json version"
+            env.PUBLISH = 'true'
+          } else {
+            env.PUBLISH = 'false'
+          }
         }
       }
     }
@@ -235,21 +241,42 @@ pipeline {
         environment name: 'PUBLISH', value: 'true'
       }
       steps {
-        /*
+        // Wait for input
+        input(message: "Ready to publish ${VERSION}?", id: 'publish')
+        // Extract release notes from the changelog
+        sh "node scripts/tools extract-release-notes ./RELEASENOTES.extracted.md"
+        // Handle GitHub release
         withCredentials([
           string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')
         ]) {
           // Create a draft release on GitHub
-          sh "node scripts/github-releases create-draft ${NEXT_VERSION} RELEASENOTES.md"
+          sh "node scripts/github-releases create-draft ${NEXT_VERSION} RELEASENOTES.extracted.md"
+          // Delete all the unpackaged directories
+          sh 'rm -rf dist/*/'
           // Upload artifacts to GitHub
           script {
             for (file in findFiles(glob: 'dist/*')) {
               sh "node scripts/github-releases upload-asset $TAG_NAME $file"
             }
           }
+          // Move yml files to another folder and upload them after other archives.
+          // This is to prevent clients from trying to upgrade before the files are there.
+          sh 'mkdir dist-finally && mv dist/*.yml dist-finally'
+          // Upload the build artifacts to S3
+          script {
+            def s3Config = packageJson.build.publish[0]
+            dir('dist') {
+              rlmS3Put(bucket: s3Config.bucket, path: s3Config.path)
+            }
+            // Upload the json and yml files
+            dir('dist-finally') {
+              // rlmS3Put(bucket: s3Config.bucket, path: s3Config.path)
+            }
+          }
           // Publish the release
-          sh "node scripts/github-releases publish $TAG_NAME"
+          // sh "node scripts/github-releases publish $TAG_NAME"
         }
+        /*
         // TODO: Annouce this on Slack
         */
         println "Publish!"
