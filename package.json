@@ -216,6 +216,7 @@
     "null-loader": "^0.1.1",
     "prettier": "^1.15.2",
     "react-hot-loader": "^4.0.0",
+    "remark": "^10.0.1",
     "resolve-url-loader": "^2.3.0",
     "sass-lint": "^1.12.1",
     "sass-loader": "^6.0.7",
