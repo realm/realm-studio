@@ -11,11 +11,6 @@ pipeline {
     GITHUB_REPO="realm-studio"
   }
 
-  options {
-    // Prevent checking out multiple times
-    skipDefaultCheckout()
-  }
-
   parameters {
     booleanParam(
       name: 'PREPARE',
@@ -167,10 +162,11 @@ pipeline {
         // Don't do this when preparing for a release
         not { environment name: 'PREPARE', value: 'true' }
       }
+      // Testing in a nested stage to work around an issue that would otherwise require a pipeline checkout.
       agent {
         dockerfile {
           filename 'Dockerfile.testing'
-          reuseNode true
+          label 'docker'
           // /etc/passwd is mapped so a jenkins users is available from within the container
           // ~/.ssh is mapped to allow pushing to GitHub via SSH
           args '-e "HOME=${WORKSPACE}" -v /etc/passwd:/etc/passwd:ro -v /home/jenkins/.ssh:/home/jenkins/.ssh:ro'
