@@ -98,15 +98,48 @@ program
 
 program
   .command("create-pull-request <head> <base> <title>")
-  .action(wrapCommand(async (head, base, title) => {
+  .option('-a, --assignee [github-handle]', 'Who should be assigned the PR?')
+  .option('-r, --reviewer [github-handle]', 'Who should be reviewing the PR?')
+  .option('-p, --print-number', 'Should the PR number be printed?')
+  .action(wrapCommand(async (head, base, title, { assignee, reviewer, printNumber }) => {
     // Create a pull request
-    await octokit.pulls.create({
+    const pr = await octokit.pulls.create({
       owner: GITHUB_OWNER,
       repo: GITHUB_REPO,
       title,
       head,
       base,
     });
+    if (reviewer) {
+      try {
+        await octokit.pulls.createReviewRequest({
+          owner: GITHUB_OWNER,
+          repo: GITHUB_REPO,
+          number: pr.data.number,
+          reviewers: [ reviewer ],
+        });
+      } catch (err) {
+        // A failed review request should not fail command.
+        console.warn(err.message);
+      }
+    }
+    if (assignee) {
+      try {
+        await octokit.issues.addAssignees({
+          owner: GITHUB_OWNER,
+          repo: GITHUB_REPO,
+          number: pr.data.number,
+          assignees: [ assignee ],
+        });
+      } catch (err) {
+        // A failed assignment should not fail command.
+        console.warn(err.message);
+      }
+    }
+    // Print the number if we're asked to
+    if (printNumber) {
+      console.log(pr.data.number);
+    }
   }));
 
 program.parse(process.argv);

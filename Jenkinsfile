@@ -4,7 +4,7 @@ pipeline {
   agent {
     label 'macos-cph-02.cph.realm'
   }
-  
+
   options {
     // Prevent checking out multiple times
     skipDefaultCheckout()
@@ -84,7 +84,9 @@ pipeline {
           if (TAG_NAME && TAG_NAME.startsWith('v')) {
             // Assert that the tag matches the version in the package.json
             assert "v${packageJson.version}" == env.TAG_NAME : "Tag doesn't match package.json version"
+            // Package and publish when building a version tag
             env.PUBLISH = 'true'
+            env.PACKAGE = 'true'
           } else {
             env.PUBLISH = 'false'
           }
@@ -322,7 +324,14 @@ pipeline {
           string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')
         ]) {
           // Create a draft release on GitHub
-          sh "node scripts/github-releases create-pull-request ${PREPARED_BRANCH} master 'Prepare version ${NEXT_VERSION}'"
+          def prId = sh(
+            script: "node scripts/github-releases create-pull-request ${PREPARED_BRANCH} master 'Prepare version ${NEXT_VERSION}' --reviewer bmunkholm --print-number",
+            returnStdout: true,
+          ).trim()
+          // Update the description of the build to include a link for the pull request.
+          currentBuild.description = """
+            Created pull request <a href='https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/pull/${prId}'>#${prId}</a>
+          """
         }
       }
     }
