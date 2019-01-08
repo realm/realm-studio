@@ -295,6 +295,7 @@ pipeline {
             'title': "Realm Studio $VERSION has been released!",
             'title_link': releaseUrl,
             'text': "Github Release and artifacts are available <${releaseUrl}|here>\n${releaseNotes}",
+            'mrkdwn_in': ['text'],
             'color': 'good',
             'unfurl_links': false
           ]])
