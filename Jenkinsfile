@@ -1,5 +1,7 @@
 #!groovy
 
+@Library('realm-ci') _
+
 pipeline {
   agent {
     label 'macos-cph-02.cph.realm'
@@ -277,16 +279,23 @@ pipeline {
             }
             // Upload the json and yml files
             dir('dist-finally') {
-              // rlmS3Put(bucket: s3Config.bucket, path: s3Config.path)
+              rlmS3Put(bucket: s3Config.bucket, path: s3Config.path)
             }
           }
           // Publish the release
-          // sh "node scripts/github-releases publish $TAG_NAME"
+          sh "node scripts/github-releases publish $VERSION"
         }
-        /*
-        // TODO: Annouce this on Slack
-        */
-        println "Publish!"
+        // Read in the extracted release notes
+        def releaseNotes = readFile "./RELEASENOTES.extracted.md"
+        def releaseUrl = "https://github.com/$GITHUB_OWNER/$GITHUB_REPO/releases/tag/$VERSION";
+        // Post to Slack
+        postToSlack('slack-releases-webhook', [[
+          'title': "Realm Studio $VERSION has been released!",
+          'title_link': releaseUrl,
+          'text': "Github Release and artifacts are available <${releaseUrl}|here>\n${releaseNotes}",
+          'color': 'good',
+          'unfurl_links': false
+        ]])
       }
     }
 
