@@ -285,17 +285,20 @@ pipeline {
           // Publish the release
           sh "node scripts/github-releases publish $VERSION"
         }
-        // Read in the extracted release notes
-        def releaseNotes = readFile "./RELEASENOTES.extracted.md"
-        def releaseUrl = "https://github.com/$GITHUB_OWNER/$GITHUB_REPO/releases/tag/$VERSION";
-        // Post to Slack
-        postToSlack('slack-releases-webhook', [[
-          'title': "Realm Studio $VERSION has been released!",
-          'title_link': releaseUrl,
-          'text': "Github Release and artifacts are available <${releaseUrl}|here>\n${releaseNotes}",
-          'color': 'good',
-          'unfurl_links': false
-        ]])
+        // Post success message to Slack
+        script {
+          // Read in the extracted release notes
+          def releaseNotes = readFile "./RELEASENOTES.extracted.md"
+          def releaseUrl = "https://github.com/$GITHUB_OWNER/$GITHUB_REPO/releases/tag/$VERSION"
+          // Post to Slack
+          postToSlack('slack-releases-webhook', [[
+            'title': "Realm Studio $VERSION has been released!",
+            'title_link': releaseUrl,
+            'text': "Github Release and artifacts are available <${releaseUrl}|here>\n${releaseNotes}",
+            'color': 'good',
+            'unfurl_links': false
+          ]])
+        }
       }
     }
 
