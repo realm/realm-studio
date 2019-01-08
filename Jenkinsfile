@@ -76,14 +76,14 @@ pipeline {
             }
           }
           // Determine what tags are pointing at the current commit
-          env.TAG_NAME = sh(
+          def tagName = sh(
             script: 'git tag --points-at HEAD',
             returnStdout: true,
           ).trim()
           // Publish if the tag starts with a "v"
-          if (TAG_NAME && TAG_NAME.startsWith('v')) {
+          if (tagName && tagName.startsWith('v')) {
             // Assert that the tag matches the version in the package.json
-            assert "v${packageJson.version}" == env.TAG_NAME : "Tag doesn't match package.json version"
+            assert "v${packageJson.version}" == tagName : "Tag doesn't match package.json version"
             // Package and publish when building a version tag
             env.PUBLISH = 'true'
             env.PACKAGE = 'true'
@@ -249,7 +249,7 @@ pipeline {
       }
       steps {
         // Wait for input
-        input(message: "Ready to publish ${VERSION}?", id: 'publish')
+        input(message: "Ready to publish $VERSION?", id: 'publish')
         // Extract release notes from the changelog
         sh "node scripts/tools extract-release-notes ./RELEASENOTES.extracted.md"
         // Handle GitHub release
@@ -257,7 +257,7 @@ pipeline {
           string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')
         ]) {
           // Create a draft release on GitHub
-          sh "node scripts/github-releases create-draft ${VERSION} RELEASENOTES.extracted.md"
+          sh "node scripts/github-releases create-draft $VERSION RELEASENOTES.extracted.md"
           // Delete all the unpackaged directories
           sh 'rm -rf dist/*/'
           // Move yml files to another folder and upload them after other archives.
@@ -266,7 +266,7 @@ pipeline {
           // Upload artifacts to GitHub
           script {
             for (file in findFiles(glob: 'dist/*')) {
-              sh "node scripts/github-releases upload-asset $TAG_NAME '$file'"
+              sh "node scripts/github-releases upload-asset $VERSION '$file'"
             }
           }
           // Upload the build artifacts to S3
