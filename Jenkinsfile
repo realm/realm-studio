@@ -323,15 +323,17 @@ pipeline {
         withCredentials([
           string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')
         ]) {
-          // Create a draft release on GitHub
-          def prId = sh(
-            script: "node scripts/github-releases create-pull-request ${PREPARED_BRANCH} master 'Prepare version ${NEXT_VERSION}' --reviewer bmunkholm --print-number",
-            returnStdout: true,
-          ).trim()
-          // Update the description of the build to include a link for the pull request.
-          currentBuild.description = """
-            Created pull request <a href='https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/pull/${prId}'>#${prId}</a>
-          """
+          script {
+            // Create a draft release on GitHub
+            def prId = sh(
+              script: "node scripts/github-releases create-pull-request ${PREPARED_BRANCH} master 'Prepare version ${NEXT_VERSION}' --reviewer bmunkholm --print-number",
+              returnStdout: true,
+            ).trim()
+            // Update the description of the build to include a link for the pull request.
+            currentBuild.description = """
+              Created pull request <a href='https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/pull/${prId}'>#${prId}</a>
+            """
+          }
         }
       }
     }
