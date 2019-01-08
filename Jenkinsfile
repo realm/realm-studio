@@ -257,18 +257,18 @@ pipeline {
           string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')
         ]) {
           // Create a draft release on GitHub
-          sh "node scripts/github-releases create-draft ${NEXT_VERSION} RELEASENOTES.extracted.md"
+          sh "node scripts/github-releases create-draft ${VERSION} RELEASENOTES.extracted.md"
           // Delete all the unpackaged directories
           sh 'rm -rf dist/*/'
-          // Upload artifacts to GitHub
-          script {
-            for (file in findFiles(glob: 'dist/*')) {
-              sh "node scripts/github-releases upload-asset $TAG_NAME $file"
-            }
-          }
           // Move yml files to another folder and upload them after other archives.
           // This is to prevent clients from trying to upgrade before the files are there.
           sh 'mkdir dist-finally && mv dist/*.yml dist-finally'
+          // Upload artifacts to GitHub
+          script {
+            for (file in findFiles(glob: 'dist/*')) {
+              sh "node scripts/github-releases upload-asset $TAG_NAME '$file'"
+            }
+          }
           // Upload the build artifacts to S3
           script {
             def s3Config = packageJson.build.publish[0]
@@ -324,9 +324,13 @@ pipeline {
           string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')
         ]) {
           script {
+            // Determine who started the build and should therefore be assigned the pull request.asSynchronized()
+            // This assumes they have the same Jenkins user ID as their GitHub handle
+            def specificCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)
+            def assignee = specificCause.getUserId()
             // Create a draft release on GitHub
             def prId = sh(
-              script: "node scripts/github-releases create-pull-request ${PREPARED_BRANCH} master 'Prepare version ${NEXT_VERSION}' --reviewer bmunkholm --print-number",
+              script: "node scripts/github-releases create-pull-request ${PREPARED_BRANCH} master 'Prepare version ${NEXT_VERSION}' --assignee ${assignee} --reviewer bmunkholm --print-number",
               returnStdout: true,
             ).trim()
             // Update the description of the build to include a link for the pull request.

@@ -23,11 +23,17 @@ octokit.authenticate({
 });
 
 function determinContentType(assetPath) {
-  const ext = path.extname(assetPath);
-  if (ext === ".tgz") {
-    return "application/tar+gzip"
-  } else {
-    throw new Error(`Unable to determine content type of ${ext} files`);
+  if (assetPath.endsWith('.tgz') || assetPath.endsWith('.tar.gz')) {
+    return "application/tar+gzip";
+  } else if (assetPath.endsWith('.exe')) {
+    return "application/vnd.microsoft.portable-executable";
+  } else if (assetPath.endsWith('.zip')) {
+    return "application/zip";
+  } else if (assetPath.endsWith('.dmg')) {
+    return "application/x-apple-diskimage";
+  } else if (assetPath.endsWith('.AppImage')) {
+    // @see https://cgit.freedesktop.org/xdg/shared-mime-info/commit/?id=01fa61fc002afdcf43f61e7df2d6cc6f6968d8d2
+    return "application/x-iso9660-appimage";
   }
 }
 
@@ -43,6 +49,11 @@ program
     const release = releases.find(({ tag_name }) => tag_name === tag);
     if (release) {
       const assetContentType = determinContentType(assetPath);
+      if (!assetContentType) {
+        // Warn instead of failing
+        console.warn(`Unexpected content type: Skipping upload of asset.`);
+        return;
+      }
       const assetContent = fs.readFileSync(assetPath);
       await octokit.repos.uploadReleaseAsset({
         headers: {
