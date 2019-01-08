@@ -79,7 +79,7 @@ program
       owner: GITHUB_OWNER,
       repo: GITHUB_REPO,
       tag_name: tag,
-      name: `${tag.substring(1)}: ...`,
+      name: tag.substring(1),
       body: releaseNotes,
       draft: true
     });
