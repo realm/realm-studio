@@ -12,7 +12,7 @@ Click the links below to download the latest version of Realm Studio for
 - [Windows](https://studio-releases.realm.io/latest/download/win-setup)
 - [Linux](https://studio-releases.realm.io/latest/download/linux-appimage)
 
-To download a specific version of Realm Studio, see https://studio-releases.realm.io/ or the releases on GitHub https://github.com/realm/realm-studio/releases.
+To download a specific version of Realm Studio, see https://studio-releases.realm.io/ or the [releases on GitHub](https://github.com/realm/realm-studio/releases).
 
 ## Code of Conduct
 
