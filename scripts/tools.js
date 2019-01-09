@@ -10,17 +10,22 @@ const releaseNotesPath = path.resolve(__dirname, '../RELEASENOTES.md');
 program
   .command('copy-release-notes <v1> <v2>')
   .action((previousVersion, nextVersion) => {
-    // Read the content of the release notes
+    // Read the content of the changelog
     const changeLog = fs.readFileSync(changeLogPath, 'utf8');
+    // Locate the header of the latest release
+    const latestReleaseIndex = changeLog.indexOf('## Release');
+    const introduction = changeLog.substring(0, latestReleaseIndex);
+    const existingReleases = changeLog.substring(latestReleaseIndex);
+    // Read the release notes
     const releaseNotes = fs.readFileSync(releaseNotesPath, 'utf8');
     // Transform the release notes
     const releaseNotesTransformed = releaseNotes
       .replace(/{PREVIOUS_VERSION}/g, previousVersion)
       .replace(/{CURRENT_VERSION}/g, nextVersion);
     // Create a header
-    const header = `# Release ${nextVersion.substring(1)} (${moment().format('YYYY-MM-DD')})`;
+    const header = `## Release ${nextVersion.substring(1)} (${moment().format('YYYY-MM-DD')})`;
     // Write back the changelog
-    const changeLogTransformed = `${header}\n\n${releaseNotesTransformed}\n\n${changeLog}`;
+    const changeLogTransformed = `${introduction}${header}\n\n${releaseNotesTransformed}\n\n${existingReleases}`;
     fs.writeFileSync(changeLogPath, changeLogTransformed);
   });
 

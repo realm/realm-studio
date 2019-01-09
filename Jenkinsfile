@@ -1,19 +1,21 @@
 #!groovy
 
+@Library('realm-ci') _
+
 pipeline {
   agent {
     label 'macos-cph-02.cph.realm'
+  }
+
+  options {
+    // Prevent checking out multiple times
+    skipDefaultCheckout()
   }
 
   environment {
     // Parameters used by the github releases script
     GITHUB_OWNER="realm"
     GITHUB_REPO="realm-studio"
-  }
-
-  options {
-    // Prevent checking out multiple times
-    skipDefaultCheckout()
   }
 
   parameters {
@@ -68,23 +70,25 @@ pipeline {
             returnStdout: true,
           ).trim()
           // Did the version change?
-          if (previousVersion != packageJson.version) {
+          if (BRANCH_NAME == 'master' && previousVersion != packageJson.version) {
             sh "git tag -a ${VERSION} -m 'Release ${packageJson.version}'"
             // Push to GitHub with tags
             sshagent(['realm-ci-ssh']) {
-              sh "git push --set-upstream --tags --force origin master"
+              sh 'git push origin --tags'
             }
           }
           // Determine what tags are pointing at the current commit
-          env.TAG_NAME = sh(
+          def tagName = sh(
             script: 'git tag --points-at HEAD',
             returnStdout: true,
           ).trim()
           // Publish if the tag starts with a "v"
-          if (TAG_NAME && TAG_NAME.startsWith('v')) {
+          if (tagName && tagName.startsWith('v')) {
             // Assert that the tag matches the version in the package.json
-            assert "v${packageJson.version}" == env.TAG_NAME : "Tag doesn't match package.json version"
+            assert "v${packageJson.version}" == tagName : "Tag doesn't match package.json version"
+            // Package and publish when building a version tag
             env.PUBLISH = 'true'
+            env.PACKAGE = 'true'
           } else {
             env.PUBLISH = 'false'
           }
@@ -170,6 +174,9 @@ pipeline {
               args '-e "HOME=${WORKSPACE}" -v /etc/passwd:/etc/passwd:ro -v /home/jenkins/.ssh:/home/jenkins/.ssh:ro'
             }
           }
+          options {
+            skipDefaultCheckout false
+          }
           steps {
             // Remove any node_modules that might already be here
             sh 'rm -rf node_modules'
@@ -244,7 +251,7 @@ pipeline {
       }
       steps {
         // Wait for input
-        input(message: "Ready to publish ${VERSION}?", id: 'publish')
+        input(message: "Ready to publish $VERSION?", id: 'publish')
         // Extract release notes from the changelog
         sh "node scripts/tools extract-release-notes ./RELEASENOTES.extracted.md"
         // Handle GitHub release
@@ -252,18 +259,18 @@ pipeline {
           string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')
         ]) {
           // Create a draft release on GitHub
-          sh "node scripts/github-releases create-draft ${NEXT_VERSION} RELEASENOTES.extracted.md"
+          sh "node scripts/github-releases create-draft $VERSION RELEASENOTES.extracted.md"
           // Delete all the unpackaged directories
           sh 'rm -rf dist/*/'
-          // Upload artifacts to GitHub
-          script {
-            for (file in findFiles(glob: 'dist/*')) {
-              sh "node scripts/github-releases upload-asset $TAG_NAME $file"
-            }
-          }
           // Move yml files to another folder and upload them after other archives.
           // This is to prevent clients from trying to upgrade before the files are there.
           sh 'mkdir dist-finally && mv dist/*.yml dist-finally'
+          // Upload artifacts to GitHub
+          script {
+            for (file in findFiles(glob: 'dist/*')) {
+              sh "node scripts/github-releases upload-asset $VERSION '$file'"
+            }
+          }
           // Upload the build artifacts to S3
           script {
             def s3Config = packageJson.build.publish[0]
@@ -272,16 +279,27 @@ pipeline {
             }
             // Upload the json and yml files
             dir('dist-finally') {
-              // rlmS3Put(bucket: s3Config.bucket, path: s3Config.path)
+              rlmS3Put(bucket: s3Config.bucket, path: s3Config.path)
             }
           }
           // Publish the release
-          // sh "node scripts/github-releases publish $TAG_NAME"
+          sh "node scripts/github-releases publish $VERSION"
         }
-        /*
-        // TODO: Annouce this on Slack
-        */
-        println "Publish!"
+        // Post success message to Slack
+        script {
+          // Read in the extracted release notes
+          def releaseNotes = readFile "./RELEASENOTES.extracted.md"
+          def releaseUrl = "https://github.com/$GITHUB_OWNER/$GITHUB_REPO/releases/tag/$VERSION"
+          // Post to Slack
+          postToSlack('slack-releases-webhook', [[
+            'title': "Realm Studio $VERSION has been released!",
+            'title_link': releaseUrl,
+            'text': "Github Release and artifacts are available <${releaseUrl}|here>\n${releaseNotes}",
+            'mrkdwn_in': ['text'],
+            'color': 'good',
+            'unfurl_links': false
+          ]])
+        }
       }
     }
 
@@ -318,8 +336,21 @@ pipeline {
         withCredentials([
           string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')
         ]) {
-          // Create a draft release on GitHub
-          sh "node scripts/github-releases create-pull-request ${PREPARED_BRANCH} master 'Prepare version ${NEXT_VERSION}'"
+          script {
+            // Determine who started the build and should therefore be assigned the pull request.asSynchronized()
+            // This assumes they have the same Jenkins user ID as their GitHub handle
+            def specificCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)
+            def assignee = specificCause.getUserId()
+            // Create a draft release on GitHub
+            def prId = sh(
+              script: "node scripts/github-releases create-pull-request ${PREPARED_BRANCH} master 'Prepare version ${NEXT_VERSION}' --assignee ${assignee} --reviewer bmunkholm --print-number",
+              returnStdout: true,
+            ).trim()
+            // Update the description of the build to include a link for the pull request.
+            currentBuild.description = """
+              Created pull request <a href='https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/pull/${prId}'>#${prId}</a>
+            """
+          }
         }
       }
     }
