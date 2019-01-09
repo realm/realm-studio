@@ -12,7 +12,7 @@ Click the links below to download the latest version of Realm Studio for
 - [Windows](https://studio-releases.realm.io/latest/download/win-setup)
 - [Linux](https://studio-releases.realm.io/latest/download/linux-appimage)
 
-To download a specific version of Realm Studio, see https://studio-releases.realm.io/.
+To download a specific version of Realm Studio, see https://studio-releases.realm.io/ or the releases on GitHub https://github.com/realm/realm-studio/releases.
 
 ## Code of Conduct
 
@@ -25,16 +25,10 @@ See [CONTRIBUTING.md](https://github.com/realm/realm-studio/blob/master/docs/CON
 
 ## License
 
-Realm Studio is published under the Apache 2.0 license.
-
-**This product is not being made available to any person located in Cuba, Iran,
-North Korea, Sudan, Syria or the Crimea region, or to any other person that is
-not eligible to receive the product under U.S. law.**
+Realm Studio is published under [the Apache 2.0 license](LICENSE).
 
 ## Feedback
 
-**_If you use Realm and are happy with it, all we ask is that you please consider sending out a tweet mentioning [@realm](https://twitter.com/realm) to share your thoughts_**
-
-**_And if you don't like it, please let us know what you would like improved, so we can fix it!_**
+If you use Realm and are happy with it, all we ask is that you please consider sending out a tweet mentioning [@realm](https://twitter.com/realm) to share your thoughts.
 
 ![analytics](https://ga-beacon.appspot.com/UA-50247013-2/realm-studio/README?pixel)
