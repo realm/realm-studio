@@ -18,8 +18,6 @@
 
 import * as Realm from 'realm';
 
-import { isPrimitive } from './primitives';
-
 export const addProperty = (
   objectSchemas: Realm.ObjectSchema[],
   className: string,
@@ -39,35 +37,5 @@ export const addProperty = (
     } else {
       return schema;
     }
-  });
-};
-
-const cleanUpProperty = (
-  property: Realm.ObjectSchemaProperty,
-): Realm.ObjectSchemaProperty | string => {
-  if (
-    property.type === 'list' &&
-    property.objectType &&
-    isPrimitive(property.objectType)
-  ) {
-    return `${property.objectType}${property.optional ? '?' : ''}[]`;
-  } else {
-    return property;
-  }
-};
-
-// A mitigation before https://github.com/realm/realm-js/issues/1847 gets fixed
-export const cleanUpSchema = (objectSchemas: Realm.ObjectSchema[]) => {
-  return objectSchemas.map(schema => {
-    const properties: Realm.PropertiesTypes = {};
-    Object.entries(schema.properties).forEach(([name, property]) => {
-      properties[name] =
-        typeof property === 'string' ? property : cleanUpProperty(property);
-    });
-    // Return the modified object schema
-    return {
-      ...schema,
-      properties,
-    };
   });
 };

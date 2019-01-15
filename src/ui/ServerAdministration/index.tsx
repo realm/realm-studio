@@ -133,10 +133,8 @@ class ServerAdministrationContainer
     const { validateCertificates } = this.props;
     if (user) {
       const config = getAdminRealmConfig(user, {
-        sync: {
-          error: this.onSyncError,
-          ssl: { validate: validateCertificates },
-        },
+        error: this.onSyncError,
+        ssl: { validate: validateCertificates },
       });
       return (
         <AdminRealmProvider {...config}>

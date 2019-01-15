@@ -363,8 +363,7 @@ class RealmBrowserContainer
       try {
         // The schema version needs to be bumped for local realms
         const nextSchemaVersion = this.realm.schemaVersion + 1;
-        const cleanedSchema = schemaUtils.cleanUpSchema(this.state.classes);
-        const modifiedSchema = [...cleanedSchema, schema];
+        const modifiedSchema = [...this.state.classes, schema];
         // Close the current Realm
         this.realm.close();
         // Deleting the object to indicate we've closed it
@@ -390,9 +389,8 @@ class RealmBrowserContainer
       try {
         const focusedClassName = this.state.focus.className;
         const nextSchemaVersion = this.realm.schemaVersion + 1;
-        const cleanedSchema = schemaUtils.cleanUpSchema(this.state.classes);
         const modifiedSchema = schemaUtils.addProperty(
-          cleanedSchema,
+          this.state.classes,
           this.state.focus.className,
           name,
           type,
