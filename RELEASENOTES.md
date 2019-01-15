@@ -7,4 +7,4 @@
 - None
 
 ## Internals
-- None
+- Updated Realm JS to v2.22.0. ([#1082](https://github.com/realm/realm-studio/pull/1082))
