@@ -28,15 +28,15 @@ const {
 
 export function getMetricsRealmConfig(
   user: Realm.Sync.User,
-  partialConfig: Realm.PartialConfiguration = {},
+  partialSyncConfig: Partial<Realm.Sync.SyncConfiguration> = {},
 ) {
-  const config = user.createConfiguration(partialConfig);
-  // TODO: Simplify this once https://github.com/realm/realm-js/issues/1981 is fixed
-  if (config.sync && config.sync.url) {
-    config.sync.url = config.sync.url.replace('/default', '/__metrics');
-    config.sync.fullSynchronization = true;
-  }
-  return config;
+  return user.createConfiguration({
+    sync: {
+      ...partialSyncConfig,
+      fullSynchronization: true,
+      url: '/__metrics',
+    },
+  });
 }
 
 /**
