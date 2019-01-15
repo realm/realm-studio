@@ -82,3 +82,7 @@ declare module 'spectron-fake-dialog' {
   }
   export function mock(dialogs: IDialog[]): void;
 }
+
+declare module 'segfault-handler' {
+  export function registerHandler(path: string): void;
+}
