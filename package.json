@@ -121,13 +121,13 @@
   "lint-staged": {
     "*.{ts,tsx}": [
       "tslint --fix",
-      "fix-headers"
+      "npm run fix-headers --"
     ],
     "*.scss": [
-      "fix-headers"
+      "npm run fix-headers --"
     ],
     "package.json": [
-      "check:package-lock"
+      "npm run check:package-lock --"
     ]
   },
   "dependencies": {
