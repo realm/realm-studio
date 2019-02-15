@@ -1,7 +1,23 @@
 # The Realm Browser
 
 By now this component is the most complex in Realm Studio and it feels necessary to start documenting its expected
-behaviour and the interfaces that is uses.
+behavior and the interfaces that is uses.
+
+## Features
+
+- See objects and their values of all classes in a Realm database (local or synched).
+- External changes to the database propagates and updates the UI in near realtime.
+- Update any existing primitive values, object references or lists of objects or primitives.
+- Perform the updates in transactions.
+- Perform the updates in one of two edit modes: As you type, one write per keystroke or when you leave the cell.
+- Downloading and uploading from / to synched Realm shows a progress bar.
+- Import data from a CSV.
+- Export model definitions in various languages, including Swift, JavaScript, Java, Kotlin and C#.
+- Open encrypted Realms.
+- Realms can be opened in read-only mode, which will prevent accidental changes to them.
+- Add new classes and properties to classes.
+- Leaving a cell with an invalid value or while in a transaction is prevented.
+- Manipulate object level permissions of reference / partial Realms.
 
 # The abstract Focus class (this.state.focus of the RealmBrowserContainer)
 
