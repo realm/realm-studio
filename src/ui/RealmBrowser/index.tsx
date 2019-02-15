@@ -36,7 +36,7 @@ import {
 } from '../reusable/RealmLoadingComponent';
 
 import { Content, EditMode } from './Content';
-import { Focus, IClassFocus, IListFocus } from './focus';
+import { Focus, generateKey, IClassFocus, IListFocus } from './focus';
 import { isPrimitive } from './primitives';
 import { RealmBrowser } from './RealmBrowser';
 import * as schemaUtils from './schema-utils';
@@ -115,7 +115,7 @@ class RealmBrowserContainer
   }
 
   public render() {
-    const contentKey = this.generateContentKey();
+    const contentKey = generateKey(this.state.focus);
     return (
       <RealmBrowser
         classes={this.state.classes}
@@ -489,24 +489,6 @@ class RealmBrowserContainer
       throw new Error('Expected a property with a name property');
     }
   };
-
-  private generateContentKey() {
-    if (this.state.focus && this.state.focus.kind === 'class') {
-      return `class:${this.state.focus.className}`;
-    } else if (this.state.focus && this.state.focus.kind === 'list') {
-      // The `[key: string]: any;` is needed because if Realm JS types
-      const parent: Realm.Object & {
-        [key: string]: any;
-      } = this.state.focus.parent;
-      const schema = parent.objectSchema();
-      const propertyName = this.state.focus.property.name;
-      const id =
-        parent.isValid() && schema.primaryKey ? parent[schema.primaryKey] : '?';
-      return `list:${schema.name}[${id}]:${propertyName}`;
-    } else {
-      return 'null';
-    }
-  }
 
   private getSchemaLength = (name: string) => {
     if (this.realm) {

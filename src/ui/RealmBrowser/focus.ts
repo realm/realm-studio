@@ -63,7 +63,7 @@ export interface IPrimitiveListFocus extends IBaseListFocus {
 export type IListFocus = IObjectListFocus | IPrimitiveListFocus;
 export type Focus = IClassFocus | IListFocus;
 
-export const getClassName = (focus: Focus): string => {
+export function getClassName(focus: Focus): string {
   if (focus.kind === 'class') {
     return focus.className;
   } else if (focus.property.objectType) {
@@ -71,4 +71,22 @@ export const getClassName = (focus: Focus): string => {
   } else {
     throw new Error('Failed to get class named from focus');
   }
-};
+}
+
+export function generateKey(focus: Focus | null) {
+  if (focus && focus.kind === 'class') {
+    return `class:${focus.className}`;
+  } else if (focus && focus.kind === 'list') {
+    // The `[key: string]: any;` is needed because if Realm JS types
+    const parent: Realm.Object & {
+      [key: string]: any;
+    } = focus.parent;
+    const schema = parent.objectSchema();
+    const propertyName = focus.property.name;
+    const id =
+      parent.isValid() && schema.primaryKey ? parent[schema.primaryKey] : '?';
+    return `list:${schema.name}[${id}]:${propertyName}`;
+  } else {
+    return 'null';
+  }
+}
