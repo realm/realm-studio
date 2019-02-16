@@ -165,27 +165,9 @@ pipeline {
         }
 
         stage('Pre-package tests') {
-          agent {
-            dockerfile {
-              filename 'Dockerfile.testing'
-              label 'docker'
-              // /etc/passwd is mapped so a jenkins users is available from within the container
-              // ~/.ssh is mapped to allow pushing to GitHub via SSH
-              args '-e "HOME=${WORKSPACE}" -v /etc/passwd:/etc/passwd:ro -v /home/jenkins/.ssh:/home/jenkins/.ssh:ro'
-            }
-          }
-          options {
-            skipDefaultCheckout false
-          }
           steps {
-            // Remove any node_modules that might already be here
-            sh 'rm -rf node_modules'
-            // Link in the node_modules from the image
-            sh 'ln -s /tmp/node_modules .'
-            // Build the app for the spectron tests to run
-            sh 'npm run build'
             // Run the tests with the JUnit reporter
-            sh 'MOCHA_FILE=pre-test-results.xml xvfb-run npm test -- --reporter mocha-junit-reporter'
+            sh 'MOCHA_FILE=pre-test-results.xml npm test -- --reporter mocha-junit-reporter'
           }
           post {
             always {
@@ -227,7 +209,7 @@ pipeline {
         stage('Post-packaging tests') {
           steps {
             // Run the tests with the JUnit reporter
-            sh 'MOCHA_FILE=post-test-results.xml xvfb-run npm test -- src/testing/post-packaging-test.ts --reporter mocha-junit-reporter'
+            sh 'MOCHA_FILE=post-test-results.xml npm test -- src/testing/post-packaging-test.ts --reporter mocha-junit-reporter'
           }
           post {
             always {
