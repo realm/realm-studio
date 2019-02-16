@@ -123,6 +123,9 @@
       "tslint --fix",
       "npm run fix-headers --"
     ],
+    "*.js": [
+      "npm run fix-headers --"
+    ],
     "*.scss": [
       "npm run fix-headers --"
     ],

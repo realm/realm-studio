@@ -1,0 +1,28 @@
+{
+  "name": "mocked-realm-studio",
+  "version": "999.0.0",
+  "description": "This is the result of auto-updating",
+  "main": "index.js",
+  "author": {
+    "name": "Realm Inc.",
+    "email": "info@realm.io",
+    "url": "https://realm.io"
+  },
+  "license": "Apache-2.0",
+  "build": {
+    "appId": "io.realm.realm-studio",
+    "mac": {
+      "target": [
+        "zip"
+      ]
+    },
+    "publish": [
+      {
+        "provider": "s3",
+        "bucket": "static.realm.io",
+        "region": "us-east-1",
+        "path": "downloads/realm-studio"
+      }
+    ]
+  }
+}
