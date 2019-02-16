@@ -37,14 +37,12 @@ export const rowHeights = {
   content: 2 * (1 + 8) + 17,
 };
 
-export type CellChangeHandler = (
-  params: {
-    parent: any;
-    property: IPropertyWithName;
-    rowIndex: number;
-    cellValue: any;
-  },
-) => void;
+export type CellChangeHandler = (params: {
+  parent: any;
+  property: IPropertyWithName;
+  rowIndex: number;
+  cellValue: any;
+}) => void;
 
 export type CellClickHandler = (
   params: {
@@ -68,9 +66,10 @@ export type CellContextMenuHandler = (
   },
 ) => void;
 
-export type CellHighlightedHandler = (
-  cell: { rowIndex: number; columnIndex: number },
-) => void;
+export type CellHighlightedHandler = (cell: {
+  rowIndex: number;
+  columnIndex: number;
+}) => void;
 
 export type CellValidatedHandler = (
   rowIndex: number,

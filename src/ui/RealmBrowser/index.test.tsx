@@ -53,7 +53,7 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
     realm = createAllTypeRealm();
     app = new Application({
       path: electronPath,
-      args: [ appPath ],
+      args: [appPath],
       env: { REALM_STUDIO_SKIP_SIGNUP: 'true' },
     });
     // Apply the modifications that will allow us to mock dialogs
