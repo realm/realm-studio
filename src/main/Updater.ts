@@ -176,24 +176,31 @@ export class Updater {
     }, 1000);
   }
 
+  private askToUpdate(lastestVersion: string) {
+    if (process.env.REALM_STUDIO_DISABLE_UPDATE_PROMPT) {
+      return true;
+    } else {
+      const appName = electron.app.getName();
+      const currentVersion = electron.app.getVersion();
+      return (
+        electron.dialog.showMessageBox({
+          type: 'info',
+          message: `A new version of ${appName} is available!`,
+          detail: `${appName} ${lastestVersion} is available – you have ${currentVersion}. Would you like to update it now?`,
+          buttons: ['Yes', 'No'],
+          defaultId: 0,
+          cancelId: 1,
+        }) === 0
+      );
+    }
+  }
+
   private onUpdateAvailable(info: any) {
-    const appName = electron.app.getName();
-    const currentVersion = electron.app.getVersion();
-    const lastestVersion = info.version;
-
     // Show a dialog synchronously
-    const response = electron.dialog.showMessageBox({
-      type: 'info',
-      message: `A new version of ${appName} is available!`,
-      detail: `${appName} ${lastestVersion} is available – you have ${currentVersion}. Would you like to update it now?`,
-      buttons: ['Yes', 'No'],
-      defaultId: 0,
-      cancelId: 1,
-    });
-
+    const shouldQuitAndInstall = this.askToUpdate(info.version);
     // Quit and install
-    if (response === 0) {
-      autoUpdater.quitAndInstall();
+    if (shouldQuitAndInstall) {
+      autoUpdater.quitAndInstall(true, true);
     }
   }
 
