@@ -184,8 +184,8 @@ pipeline {
             sh 'ln -s /tmp/node_modules .'
             // Build the app for the spectron tests to run
             sh 'npm run build'
-            // Run the tests
-            sh 'MOCHA_FILE=pre-test-results.xml xvfb-run npm run test:ci'
+            // Run the tests with the JUnit reporter
+            sh 'MOCHA_FILE=pre-test-results.xml xvfb-run npm test -- --reporter mocha-junit-reporter'
           }
           post {
             always {
@@ -226,7 +226,18 @@ pipeline {
         }
         stage('Post-packaging tests') {
           steps {
-            println "Lacking post-package tests ..."
+            // Run the tests with the JUnit reporter
+            sh 'MOCHA_FILE=post-test-results.xml xvfb-run npm test -- src/testing/post-packaging-test.ts --reporter mocha-junit-reporter'
+          }
+          post {
+            always {
+              // Archive the test results
+              junit(
+                allowEmptyResults: true,
+                keepLongStdio: true,
+                testResults: 'post-test-results.xml'
+              )
+            }
           }
         }
       }

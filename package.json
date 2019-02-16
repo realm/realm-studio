@@ -111,7 +111,6 @@
     "generate-all-types-realm": "node ./scripts/generate-realm.js",
     "start": "electron .",
     "sentry:upload-symbols": "node ./scripts/sentry-symbols.js",
-    "test:ci": "mocha-webpack --opts=configs/mocha-webpack.opts --reporter mocha-junit-reporter",
     "test": "mocha-webpack --opts=configs/mocha-webpack.opts",
     "tslint-prettier": "tslint --fix 'src/**/*.ts' 'src/**/*.tsx'",
     "wait-for-bundle": "node ./scripts/wait-for-bundle.js",
