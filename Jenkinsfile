@@ -163,27 +163,27 @@ pipeline {
             sh 'npm run check:package-lock'
           }
         }
+      }
+    }
 
-        stage('Pre-package tests') {
-          steps {
-            // Run the tests with the JUnit reporter
-            sh 'MOCHA_FILE=pre-test-results.xml npm test -- --reporter mocha-junit-reporter'
-          }
-          post {
-            always {
-              // Archive the test results
-              junit(
-                allowEmptyResults: true,
-                keepLongStdio: true,
-                testResults: 'pre-test-results.xml'
-              )
-              // Archive any screenshots emitted by failing tests
-              archiveArtifacts(
-                artifacts: 'failure-*.png',
-                allowEmptyArchive: true,
-              )
-            }
-          }
+    stage('Pre-package tests') {
+      steps {
+        // Run the tests with the JUnit reporter
+        sh 'MOCHA_FILE=pre-test-results.xml npm test -- --reporter mocha-junit-reporter'
+      }
+      post {
+        always {
+          // Archive the test results
+          junit(
+            allowEmptyResults: true,
+            keepLongStdio: true,
+            testResults: 'pre-test-results.xml'
+          )
+          // Archive any screenshots emitted by failing tests
+          archiveArtifacts(
+            artifacts: 'failure-*.png',
+            allowEmptyArchive: true,
+          )
         }
       }
     }
