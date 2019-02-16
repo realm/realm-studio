@@ -1,6 +1,0 @@
-FROM electronuserland/builder:wine-chrome
-
-ADD package.json /tmp/
-ADD package-lock.json /tmp/
-RUN cd /tmp && ls /tmp && npm install --quiet
-RUN cp -a /tmp/node_modules /project/
