@@ -14,8 +14,9 @@ pipeline {
 
   environment {
     // Parameters used by the github releases script
-    GITHUB_OWNER="realm"
-    GITHUB_REPO="realm-studio"
+    GITHUB_OWNER='realm'
+    GITHUB_REPO='realm-studio'
+    NODE_VERSION='10'
   }
 
   parameters {
@@ -98,36 +99,38 @@ pipeline {
 
     stage('Install & update version') {
       steps {
-        // Install dependencies
-        sh 'npm install'
-        // Update the version
-        script {
-          if (PUBLISH == 'true') {
-            // Update the build display name
-            currentBuild.displayName += ": ${VERSION} (publish)"
-          } else {
-            // Determine the upcoming release type
-            nextVersionType = sh(
-              script: "node ./scripts/next-version.js",
-              returnStdout: true,
-            ).trim()
-            // Bump the version accordingly
-            env.NEXT_VERSION = sh(
-              script: "npm version ${nextVersionType} --no-git-tag-version",
-              returnStdout: true,
-            ).trim()
-            // If we're preparing, add this to the display name .. alternatively add a pre-release id
-            if (env.PREPARE == 'true') {
-              // Set the build display name
-              currentBuild.displayName += ": ${NEXT_VERSION} (prepare)"
+        nvm(env.NODE_VERSION) {
+          // Install dependencies
+          sh 'npm install'
+          // Update the version
+          script {
+            if (PUBLISH == 'true') {
+              // Update the build display name
+              currentBuild.displayName += ": ${VERSION} (publish)"
             } else {
-              // Update the version of the package again, this time prepending pre release id
-              env.NEXT_VERSION = sh(
-                script: "npm version ${NEXT_VERSION}-${JOB_BASE_NAME}-${BUILD_NUMBER} --no-git-tag-version",
+              // Determine the upcoming release type
+              nextVersionType = sh(
+                script: "node ./scripts/next-version.js",
                 returnStdout: true,
               ).trim()
-              // Set the build display name
-              currentBuild.displayName += ": ${NEXT_VERSION}"
+              // Bump the version accordingly
+              env.NEXT_VERSION = sh(
+                script: "npm version ${nextVersionType} --no-git-tag-version",
+                returnStdout: true,
+              ).trim()
+              // If we're preparing, add this to the display name .. alternatively add a pre-release id
+              if (env.PREPARE == 'true') {
+                // Set the build display name
+                currentBuild.displayName += ": ${NEXT_VERSION} (prepare)"
+              } else {
+                // Update the version of the package again, this time prepending pre release id
+                env.NEXT_VERSION = sh(
+                  script: "npm version ${NEXT_VERSION}-${JOB_BASE_NAME}-${BUILD_NUMBER} --no-git-tag-version",
+                  returnStdout: true,
+                ).trim()
+                // Set the build display name
+                currentBuild.displayName += ": ${NEXT_VERSION}"
+              }
             }
           }
         }
@@ -142,25 +145,33 @@ pipeline {
       parallel {
         stage('Build') {
           steps {
-            sh 'npm run build'
+            nvm(env.NODE_VERSION) {
+              sh 'npm run build'
+            }
           }
         }
 
         stage('Lint TypeScript') {
           steps {
-            sh 'npm run lint:ts'
+            nvm(env.NODE_VERSION) {
+              sh 'npm run lint:ts'
+            }
           }
         }
 
         stage('Lint SASS') {
           steps {
-            sh 'npm run lint:sass'
+            nvm(env.NODE_VERSION) {
+              sh 'npm run lint:sass'
+            }
           }
         }
 
         stage('Check package-lock') {
           steps {
-            sh 'npm run check:package-lock'
+            nvm(env.NODE_VERSION) {
+              sh 'npm run check:package-lock'
+            }
           }
         }
       }
@@ -169,7 +180,9 @@ pipeline {
     stage('Pre-package tests') {
       steps {
         // Run the tests with the JUnit reporter
-        sh 'MOCHA_FILE=pre-test-results.xml npm test -- --reporter mocha-junit-reporter'
+        nvm(env.NODE_VERSION) {
+          sh 'MOCHA_FILE=pre-test-results.xml npm test -- --reporter mocha-junit-reporter'
+        }
       }
       post {
         always {
@@ -196,20 +209,24 @@ pipeline {
         stage("Electron build") {
           steps {
             // Run the electron builder
-            withCredentials([
-              file(credentialsId: 'cose-sign-certificate-windows', variable: 'WIN_CSC_LINK'),
-              string(credentialsId: 'cose-sign-password-windows', variable: 'WIN_CSC_KEY_PASSWORD')
-            ]) {
-              sh 'npx build -mlw -c.forceCodeSigning --publish never'
+            nvm(env.NODE_VERSION) {
+              withCredentials([
+                file(credentialsId: 'cose-sign-certificate-windows', variable: 'WIN_CSC_LINK'),
+                string(credentialsId: 'cose-sign-password-windows', variable: 'WIN_CSC_KEY_PASSWORD')
+              ]) {
+                sh 'npx build -mlw -c.forceCodeSigning --publish never'
+              }
+              // Archive the packaged artifacts
+              archiveArtifacts 'dist/*'
             }
-            // Archive the packaged artifacts
-            archiveArtifacts 'dist/*'
           }
         }
         stage('Post-packaging tests') {
           steps {
-            // Run the tests with the JUnit reporter
-            sh 'MOCHA_FILE=post-test-results.xml npm test -- src/testing/post-packaging-test.ts --reporter mocha-junit-reporter'
+            nvm(env.NODE_VERSION) {
+              // Run the tests with the JUnit reporter
+              sh 'MOCHA_FILE=post-test-results.xml npm run test:post-package -- --reporter mocha-junit-reporter'
+            }
           }
           post {
             always {
@@ -243,55 +260,57 @@ pipeline {
         environment name: 'PUBLISH', value: 'true'
       }
       steps {
-        // Wait for input
-        input(message: "Ready to publish $VERSION?", id: 'publish')
-        // Extract release notes from the changelog
-        sh "node scripts/tools extract-release-notes ./RELEASENOTES.extracted.md"
-        // Handle GitHub release
-        withCredentials([
-          string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')
-        ]) {
-          // Create a draft release on GitHub
-          sh "node scripts/github-releases create-draft $VERSION RELEASENOTES.extracted.md"
-          // Delete all the unpackaged directories
-          sh 'rm -rf dist/*/'
-          // Move yml files to another folder and upload them after other archives.
-          // This is to prevent clients from trying to upgrade before the files are there.
-          sh 'mkdir dist-finally && mv dist/*.yml dist-finally'
-          // Upload artifacts to GitHub
-          script {
-            for (file in findFiles(glob: 'dist/*')) {
-              sh "node scripts/github-releases upload-asset $VERSION '$file'"
+        nvm(env.NODE_VERSION) {
+          // Wait for input
+          input(message: "Ready to publish $VERSION?", id: 'publish')
+          // Extract release notes from the changelog
+          sh "node scripts/tools extract-release-notes ./RELEASENOTES.extracted.md"
+          // Handle GitHub release
+          withCredentials([
+            string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')
+          ]) {
+            // Create a draft release on GitHub
+            sh "node scripts/github-releases create-draft $VERSION RELEASENOTES.extracted.md"
+            // Delete all the unpackaged directories
+            sh 'rm -rf dist/*/'
+            // Move yml files to another folder and upload them after other archives.
+            // This is to prevent clients from trying to upgrade before the files are there.
+            sh 'mkdir dist-finally && mv dist/*.yml dist-finally'
+            // Upload artifacts to GitHub
+            script {
+              for (file in findFiles(glob: 'dist/*')) {
+                sh "node scripts/github-releases upload-asset $VERSION '$file'"
+              }
             }
+            // Upload the build artifacts to S3
+            script {
+              def s3Config = packageJson.build.publish[0]
+              dir('dist') {
+                rlmS3Put(bucket: s3Config.bucket, path: s3Config.path)
+              }
+              // Upload the json and yml files
+              dir('dist-finally') {
+                rlmS3Put(bucket: s3Config.bucket, path: s3Config.path)
+              }
+            }
+            // Publish the release
+            sh "node scripts/github-releases publish $VERSION"
           }
-          // Upload the build artifacts to S3
+          // Post success message to Slack
           script {
-            def s3Config = packageJson.build.publish[0]
-            dir('dist') {
-              rlmS3Put(bucket: s3Config.bucket, path: s3Config.path)
-            }
-            // Upload the json and yml files
-            dir('dist-finally') {
-              rlmS3Put(bucket: s3Config.bucket, path: s3Config.path)
-            }
+            // Read in the extracted release notes
+            def releaseNotes = readFile "./RELEASENOTES.extracted.md"
+            def releaseUrl = "https://github.com/$GITHUB_OWNER/$GITHUB_REPO/releases/tag/$VERSION"
+            // Post to Slack
+            postToSlack('slack-releases-webhook', [[
+              'title': "Realm Studio $VERSION has been released!",
+              'title_link': releaseUrl,
+              'text': "Github Release and artifacts are available <${releaseUrl}|here>\n${releaseNotes}",
+              'mrkdwn_in': ['text'],
+              'color': 'good',
+              'unfurl_links': false
+            ]])
           }
-          // Publish the release
-          sh "node scripts/github-releases publish $VERSION"
-        }
-        // Post success message to Slack
-        script {
-          // Read in the extracted release notes
-          def releaseNotes = readFile "./RELEASENOTES.extracted.md"
-          def releaseUrl = "https://github.com/$GITHUB_OWNER/$GITHUB_REPO/releases/tag/$VERSION"
-          // Post to Slack
-          postToSlack('slack-releases-webhook', [[
-            'title': "Realm Studio $VERSION has been released!",
-            'title_link': releaseUrl,
-            'text': "Github Release and artifacts are available <${releaseUrl}|here>\n${releaseNotes}",
-            'mrkdwn_in': ['text'],
-            'color': 'good',
-            'unfurl_links': false
-          ]])
         }
       }
     }
@@ -304,45 +323,47 @@ pipeline {
         PREPARED_BRANCH = "ci/prepared-${NEXT_VERSION}"
       }
       steps {
-        // Append the RELEASENOTES to the CHANGELOG
-        sh "node scripts/tools copy-release-notes ${VERSION} ${NEXT_VERSION}"
-        // Restore RELEASENOTES.md from the template
-        sh 'cp docs/RELEASENOTES.template.md RELEASENOTES.md'
+        nvm(env.NODE_VERSION) {
+          // Append the RELEASENOTES to the CHANGELOG
+          sh "node scripts/tools copy-release-notes ${VERSION} ${NEXT_VERSION}"
+          // Restore RELEASENOTES.md from the template
+          sh 'cp docs/RELEASENOTES.template.md RELEASENOTES.md'
 
-        // Set the email and name used when committing
-        sh 'git config --global user.email "ci@realm.io"'
-        sh 'git config --global user.name "Jenkins CI"'
+          // Set the email and name used when committing
+          sh 'git config --global user.email "ci@realm.io"'
+          sh 'git config --global user.name "Jenkins CI"'
 
-        // Checkout a branch
-        sh "git checkout -b ${PREPARED_BRANCH}"
+          // Checkout a branch
+          sh "git checkout -b ${PREPARED_BRANCH}"
 
-        // Stage the updates to the files, commit and tag the commit
-        sh 'git add package.json package-lock.json CHANGELOG.md RELEASENOTES.md'
-        sh "git commit -m 'Prepare version ${NEXT_VERSION}'"
+          // Stage the updates to the files, commit and tag the commit
+          sh 'git add package.json package-lock.json CHANGELOG.md RELEASENOTES.md'
+          sh "git commit -m 'Prepare version ${NEXT_VERSION}'"
 
-        // Push to GitHub with tags
-        sshagent(['realm-ci-ssh']) {
-          sh "git push --set-upstream --tags --force origin ${PREPARED_BRANCH}"
-        }
+          // Push to GitHub with tags
+          sshagent(['realm-ci-ssh']) {
+            sh "git push --set-upstream --tags --force origin ${PREPARED_BRANCH}"
+          }
 
-        // Create a pull-request
-        withCredentials([
-          string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')
-        ]) {
-          script {
-            // Determine who started the build and should therefore be assigned the pull request.asSynchronized()
-            // This assumes they have the same Jenkins user ID as their GitHub handle
-            def specificCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)
-            def assignee = specificCause.getUserId()
-            // Create a draft release on GitHub
-            def prId = sh(
-              script: "node scripts/github-releases create-pull-request ${PREPARED_BRANCH} master 'Prepare version ${NEXT_VERSION}' --assignee ${assignee} --reviewer bmunkholm --print-number",
-              returnStdout: true,
-            ).trim()
-            // Update the description of the build to include a link for the pull request.
-            currentBuild.description = """
-              Created pull request <a href='https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/pull/${prId}'>#${prId}</a>
-            """
+          // Create a pull-request
+          withCredentials([
+            string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')
+          ]) {
+            script {
+              // Determine who started the build and should therefore be assigned the pull request.asSynchronized()
+              // This assumes they have the same Jenkins user ID as their GitHub handle
+              def specificCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)
+              def assignee = specificCause.getUserId()
+              // Create a draft release on GitHub
+              def prId = sh(
+                script: "node scripts/github-releases create-pull-request ${PREPARED_BRANCH} master 'Prepare version ${NEXT_VERSION}' --assignee ${assignee} --reviewer bmunkholm --print-number",
+                returnStdout: true,
+              ).trim()
+              // Update the description of the build to include a link for the pull request.
+              currentBuild.description = """
+                Created pull request <a href='https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/pull/${prId}'>#${prId}</a>
+              """
+            }
           }
         }
       }
