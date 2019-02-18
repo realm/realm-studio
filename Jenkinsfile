@@ -4,7 +4,7 @@
 
 pipeline {
   agent {
-    label 'macos-cph-02.cph.realm'
+    label 'osx'
   }
 
   options {
