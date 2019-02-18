@@ -127,7 +127,7 @@ describeOnMac('Realm Studio packaged', () => {
   });
 
   it('auto-updates', async function() {
-    this.timeout(30000); // It takes a while to start the app
+    this.timeout(60 * 1000); // It takes a while to start the app
 
     // Assemble the app path
     const appPath = path.resolve(
