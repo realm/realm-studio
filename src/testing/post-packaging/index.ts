@@ -25,7 +25,7 @@ import * as path from 'path';
 
 import * as mockedS3Server from './mocked-s3-server';
 
-const distPath = path.resolve(__dirname, '../../dist');
+const distPath = path.resolve(__dirname, '../../../dist');
 
 /**
  * @see https://github.com/electron-userland/electron-builder/blob/master/packages/electron-updater/src/AppAdapter.ts#L31-L45
@@ -96,7 +96,7 @@ describeOnMac('Realm Studio packaged', () => {
   let temporaryMacPath: string;
 
   before(async function() {
-    this.timeout(5 * 60 * 1000); // It might take a while to package the app ..
+    this.timeout(5 * 60 * 1000); // It might take a while to package the app
     mockedS3 = await mockedS3Server.createServer();
     // Determine the URL of the mocked S3 server
     const mockedS3Url = mockedS3Server.getServerUrl(mockedS3);
@@ -111,19 +111,6 @@ describeOnMac('Realm Studio packaged', () => {
     changeS3Endpoint(temporaryMacPath, mockedS3Url);
     // Remove any cached version of the mocked Realm Studio
     pruneAutoUpdaterCache();
-    // Assemble the app path
-    const appPath = path.resolve(
-      distPath,
-      temporaryMacPath,
-      'Realm Studio.app/Contents/MacOS/Realm Studio',
-    );
-    // Start the app
-    appProcess = cp.spawn(appPath, {
-      // stdio: "inherit",
-      env: {
-        REALM_STUDIO_DISABLE_UPDATE_PROMPT: 'true',
-      },
-    });
   });
 
   after(() => {
@@ -139,20 +126,62 @@ describeOnMac('Realm Studio packaged', () => {
     }
   });
 
-  it('auto-updates', function(done) {
+  it('auto-updates', async function() {
     this.timeout(30000); // It takes a while to start the app
-    const readySignalPath = path.resolve(temporaryMacPath, 'ready.signal');
-    let updateCount = 0;
-    fs.watchFile(readySignalPath, currentStat => {
-      if (updateCount === 0) {
-        updateCount++;
-        assert.equal(currentStat.size, 0);
-      } else if (updateCount === 1) {
-        updateCount++;
-        const content = fs.readFileSync(readySignalPath, { encoding: 'utf8' });
-        assert.equal(content, 'Hello from a future Realm Studio!');
-        done();
+
+    // Assemble the app path
+    const appPath = path.resolve(
+      distPath,
+      temporaryMacPath,
+      'Realm Studio.app/Contents/MacOS/Realm Studio',
+    );
+    // Start the app
+    appProcess = cp.spawn(appPath, {
+      stdio: 'inherit',
+      env: {
+        REALM_STUDIO_DISABLE_UPDATE_PROMPT: 'true',
+      },
+    });
+
+    // Watch for changes to the ready.signal file, indicating that the app got updated successfully
+    await new Promise((resolve, reject) => {
+      const readySignalPath = path.resolve(temporaryMacPath, 'ready.signal');
+      let updateCount = 0;
+
+      appProcess.on('close', code => {
+        if (code !== 0) {
+          reject(
+            new Error(
+              `Realm Studio closed with unexpected exit code (${code})`,
+            ),
+          );
+        }
+      });
+
+      function readySignalChanged(currentStat: fs.Stats) {
+        if (updateCount === 0) {
+          updateCount++;
+          assert.equal(currentStat.size, 0);
+        } else if (updateCount === 1) {
+          updateCount++;
+          const content = fs.readFileSync(readySignalPath, {
+            encoding: 'utf8',
+          });
+          assert.equal(content, 'Hello from a future Realm Studio!');
+          // Stop watching the file
+          fs.unwatchFile(readySignalPath, readySignalChanged);
+          resolve();
+        } else {
+          reject(
+            new Error(`ready.signal changed unexpectedly (#${updateCount})`),
+          );
+        }
       }
+
+      // Start watchin gthe ready signal file
+      // tslint:disable-next-line:no-console
+      console.log(`Awaiting changes to ${readySignalPath}`);
+      fs.watchFile(readySignalPath, readySignalChanged);
     });
   });
 });
