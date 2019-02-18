@@ -81,7 +81,7 @@ function changeS3Endpoint(temporaryMacPath: string, serverUrl: string) {
 
 function buildMockedRealmStudio() {
   if (!fs.existsSync(path.resolve(__dirname, 'mocked-realm-studio/dist'))) {
-    cp.spawnSync('npx', ['electron-builder', '--mac'], {
+    cp.spawnSync('npx', ['electron-builder', '--mac', '--publish', 'never'], {
       cwd: path.resolve(__dirname, 'mocked-realm-studio'),
       stdio: 'inherit',
     });
@@ -96,7 +96,7 @@ describeOnMac('Realm Studio packaged', () => {
   let temporaryMacPath: string;
 
   before(async function() {
-    this.timeout(60000); // It might take a while to package the app ..
+    this.timeout(5 * 60 * 1000); // It might take a while to package the app ..
     mockedS3 = await mockedS3Server.createServer();
     // Determine the URL of the mocked S3 server
     const mockedS3Url = mockedS3Server.getServerUrl(mockedS3);
