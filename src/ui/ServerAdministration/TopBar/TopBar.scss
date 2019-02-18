@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-@import "~realm-studio-styles/variables";
+@import '~realm-studio-styles/variables';
 
 .TopBar {
   background: $window-background;
@@ -37,12 +37,13 @@
   }
 
   &__TabButton {
+    flex-shrink: 0;
     margin-right: $spacer / 2;
   }
 
   &__Status {
     flex-grow: 1;
-    font-size: .9rem;
+    font-size: 0.9rem;
     line-height: 2rem;
     margin: 0;
     overflow: hidden;
@@ -55,7 +56,8 @@
     }
 
     &__Icon {
-      margin-left: .5rem;
+      flex-shrink: 0;
+      margin-left: 0.5rem;
     }
   }
 
