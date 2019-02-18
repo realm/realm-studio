@@ -16,19 +16,19 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-@import "~realm-studio-styles/variables";
+@import '~realm-studio-styles/variables';
 
 @keyframes pulsing {
   0% {
-    transform: scale(.8);
+    transform: scale(0.7);
   }
 
   15% {
-    transform: scale(1.3);
+    transform: scale(1);
   }
 
   33% {
-    transform: scale(.8);
+    transform: scale(0.7);
   }
 }
 
@@ -43,15 +43,16 @@
     animation-duration: 1s;
     animation-iteration-count: infinite;
     animation-name: pulsing;
-    transform: scale(.8);
+    transform-box: fill-box;
     transform-origin: center;
+    transform: scale(0.7);
   }
 
   &__dot-2 {
-    animation-delay: .33s;
+    animation-delay: 0.33s;
   }
 
   &__dot-3 {
-    animation-delay: .66s;
+    animation-delay: 0.66s;
   }
 }

@@ -26,7 +26,7 @@ export const LoadingDots = ({ className }: { className?: string }) => (
     className={classnames('LoadingDots', className)}
     width="60px"
     height="20px"
-    viewBox="-5 -5 60 20"
+    viewBox="0 0 40 10"
     version="1.1"
     xmlns="http://www.w3.org/2000/svg"
   >
@@ -41,14 +41,14 @@ export const LoadingDots = ({ className }: { className?: string }) => (
       <circle
         fill="currentColor"
         className="LoadingDots__dot-2"
-        cx="25"
+        cx="20"
         cy="5"
         r="5"
       />
       <circle
         fill="currentColor"
         className="LoadingDots__dot-3"
-        cx="45"
+        cx="35"
         cy="5"
         r="5"
       />
