@@ -88,9 +88,18 @@ function buildMockedRealmStudio() {
   }
 }
 
-const describeOnMac = os.platform() === 'darwin' ? describe : describe.skip;
+assert.equal(
+  os.platform(),
+  'darwin',
+  'Currently, the post-package tests can only run on MacOS',
+);
 
-describeOnMac('Realm Studio packaged', () => {
+assert(
+  fs.existsSync(distPath),
+  'Build the app before running the post-package tests',
+);
+
+describe('Realm Studio packaged', () => {
   let mockedS3: http.Server;
   let appProcess: cp.ChildProcess;
   let temporaryMacPath: string;
