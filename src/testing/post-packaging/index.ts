@@ -136,7 +136,7 @@ describe('Realm Studio packaged', () => {
   });
 
   it('auto-updates', async function() {
-    this.timeout(60 * 1000); // It takes a while to start the app
+    this.timeout(2 * 60 * 1000); // It takes a while to start the app
 
     // Assemble the app path
     const appPath = path.resolve(
@@ -190,7 +190,11 @@ describe('Realm Studio packaged', () => {
       // Start watchin gthe ready signal file
       // tslint:disable-next-line:no-console
       console.log(`Awaiting changes to ${readySignalPath}`);
-      fs.watchFile(readySignalPath, readySignalChanged);
+      fs.watchFile(
+        readySignalPath,
+        { persistent: false, interval: 1000 },
+        readySignalChanged,
+      );
     });
   });
 });

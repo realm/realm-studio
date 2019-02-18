@@ -48,7 +48,8 @@ function sendFile(
 
 function handle(req: http.IncomingMessage, res: http.ServerResponse) {
   const { method, url } = req;
-  // console.log(`Mocked S3 request [${method}] ${url}`);
+  // tslint:disable-next-line:no-console
+  console.log(`Incoming ${method} request for the mocked S3 server on ${url}`);
   if (
     method === 'GET' &&
     url &&
@@ -61,6 +62,11 @@ function handle(req: http.IncomingMessage, res: http.ServerResponse) {
       '/static.realm.io/downloads/realm-studio/mocked-realm-studio-999.0.0-mac.zip'
   ) {
     sendFile(res, mockedRealmStudioZipPath, 'application/zip');
+  } else {
+    // tslint:disable-next-line:no-console
+    console.error(`The mocked S3 server got an unexpected request.`);
+    res.writeHead(500);
+    res.end();
   }
 }
 
@@ -76,10 +82,15 @@ export function getServerUrl(server: http.Server) {
 }
 
 export function createServer() {
-  const server = new http.Server(handle);
-  return new Promise<http.Server>(resolve =>
+  return new Promise<http.Server>((resolve, reject) => {
+    const server = new http.Server(handle);
+    // If an error occurs - reject it
+    server.once('error', err => {
+      reject(err);
+    });
+    // Start listening
     server.listen(0, '0.0.0.0', () => {
       resolve(server);
-    }),
-  );
+    });
+  });
 }
