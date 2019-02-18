@@ -47,20 +47,12 @@ function sendFile(
 }
 
 function handle(req: http.IncomingMessage, res: http.ServerResponse) {
-  const { method, url } = req;
+  const { method, url = '' } = req;
   // tslint:disable-next-line:no-console
   console.log(`Incoming ${method} request for the mocked S3 server on ${url}`);
-  if (
-    method === 'GET' &&
-    url &&
-    url.indexOf('/static.realm.io/downloads/realm-studio/latest-mac.yml') === 0
-  ) {
+  if (method === 'GET' && url.indexOf('.yml') !== -1) {
     sendFile(res, mockedLatestMacYmlPath, 'application/x-yaml');
-  } else if (
-    method === 'GET' &&
-    url ===
-      '/static.realm.io/downloads/realm-studio/mocked-realm-studio-999.0.0-mac.zip'
-  ) {
+  } else if (method === 'GET' && url.endsWith('.zip')) {
     sendFile(res, mockedRealmStudioZipPath, 'application/zip');
   } else {
     // tslint:disable-next-line:no-console
