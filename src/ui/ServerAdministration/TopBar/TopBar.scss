@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-@import '~realm-studio-styles/variables';
+@import "~realm-studio-styles/variables";
 
 .TopBar {
   background: $window-background;
@@ -43,7 +43,7 @@
 
   &__Status {
     flex-grow: 1;
-    font-size: 0.9rem;
+    font-size: .9rem;
     line-height: 2rem;
     margin: 0;
     overflow: hidden;
@@ -57,7 +57,7 @@
 
     &__Icon {
       flex-shrink: 0;
-      margin-left: 0.5rem;
+      margin-left: .5rem;
     }
   }
 
