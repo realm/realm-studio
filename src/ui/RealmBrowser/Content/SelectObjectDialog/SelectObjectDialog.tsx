@@ -36,11 +36,14 @@ interface IClosedSelectObjectDialogProps extends IBaseSelectObjectDialogProps {
 interface IOpenSelectObjectDialogProps extends IBaseSelectObjectDialogProps {
   contentRef: (instance: Content | null) => void;
   focus: IClassFocus;
-  highlight: IHighlight;
+  selection: Realm.Object[];
   isOpen: true;
   isOptional: boolean;
   onDeselect: () => void;
-  onHighlightChange: (highlight: IHighlight | undefined) => void;
+  onHighlightChange: (
+    highlight: IHighlight | undefined,
+    collection: Realm.Collection<any>,
+  ) => void;
   multiple: boolean;
 }
 
@@ -77,15 +80,13 @@ export const SelectObjectDialog = ({
       ) : null}
     </ModalBody>
     <ModalFooter>
-      {props.isOpen && props.highlight.rows.size > 0 && props.isOptional && (
+      {props.isOpen && props.selection.length > 0 && props.isOptional && (
         <Button color="primary" onClick={props.onDeselect}>
           Remove selection
         </Button>
       )}
       <Button color="primary" onClick={onSelect}>
-        {props.isOpen && props.highlight.rows.size > 0
-          ? 'Select'
-          : 'Select null'}
+        {props.isOpen && props.selection.length > 0 ? 'Select' : 'Select null'}
       </Button>
       <Button color="secondary" onClick={onCancel}>
         Cancel

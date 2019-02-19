@@ -57,7 +57,7 @@ export type ISelectObjectDialogContainerProps =
   | IOpenSelectMultipleObjectsDialogContainerProps;
 
 export interface ISelectObjectDialogContainerState {
-  highlight: IHighlight;
+  selection: Realm.Object[];
 }
 
 export class SelectObjectDialogContainer extends React.Component<
@@ -65,7 +65,7 @@ export class SelectObjectDialogContainer extends React.Component<
   ISelectObjectDialogContainerState
 > {
   public state: ISelectObjectDialogContainerState = {
-    highlight: { rows: new Set() },
+    selection: [],
   };
 
   private contentInstance: Content | null = null;
@@ -85,11 +85,11 @@ export class SelectObjectDialogContainer extends React.Component<
         ...common,
         isOpen: true,
         focus: this.props.focus,
-        highlight: this.state.highlight,
         isOptional: this.props.isOptional,
         onHighlightChange: this.onHighlightChange,
         onDeselect: this.onDeselect,
         contentRef: this.contentRef,
+        selection: this.state.selection,
         multiple: this.props.multiple,
       };
     } else {
@@ -104,22 +104,24 @@ export class SelectObjectDialogContainer extends React.Component<
     this.contentInstance = instance;
   };
 
-  private onHighlightChange = (highlight: IHighlight | undefined) => {
-    this.setState({ highlight: highlight || { rows: new Set() } });
+  private onHighlightChange = (
+    highlight: IHighlight | undefined,
+    collection: Realm.Collection<any>,
+  ) => {
+    // Gather the selected objects
+    const selection = highlight
+      ? [...highlight.rows].map(index => collection[index])
+      : [];
+    this.setState({ selection });
   };
 
   private onSelect = () => {
     if (this.props.isOpen) {
       if (this.props.multiple) {
-        const objects = this.props.focus.results.filter((object, index) => {
-          return this.state.highlight.rows.has(index);
-        });
-        this.props.onSelect(objects);
+        this.props.onSelect(this.state.selection);
       } else {
-        if (this.state.highlight.rows.size > 0) {
-          const firstIndex = this.state.highlight.rows.values().next().value;
-          const firstObject = this.props.focus.results[firstIndex];
-          this.props.onSelect(firstObject);
+        if (this.state.selection.length > 0) {
+          this.props.onSelect(this.state.selection[0]);
         } else {
           this.props.onSelect(null);
         }

@@ -109,7 +109,10 @@ export interface IBaseContentContainerProps {
   onCellDoubleClick?: CellClickHandler;
   onCellSingleClick?: CellClickHandler;
   onClassFocussed?: ClassFocussedHandler;
-  onHighlightChange?: (highlight: IHighlight | undefined) => void;
+  onHighlightChange?: (
+    highlight: IHighlight | undefined,
+    collection: Realm.Collection<any>,
+  ) => void;
   onListFocussed?: ListFocussedHandler;
   progress?: ILoadingProgress;
   readOnly: boolean;
@@ -224,7 +227,12 @@ class ContentContainer extends React.Component<
       this.props.onHighlightChange &&
       this.state.highlight !== prevState.highlight
     ) {
-      this.props.onHighlightChange(this.state.highlight);
+      const filteredSortedResults = this.filteredSortedResults(
+        this.props.focus.results,
+        this.state.query,
+        this.state.sorting,
+      );
+      this.props.onHighlightChange(this.state.highlight, filteredSortedResults);
     }
   }
 
