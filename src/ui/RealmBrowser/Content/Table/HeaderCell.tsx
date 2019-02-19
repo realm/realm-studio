@@ -18,7 +18,7 @@
 
 import * as classNames from 'classnames';
 import * as React from 'react';
-import { DraggableCore, DraggableData } from 'react-draggable';
+import { DraggableCore, DraggableEventHandler } from 'react-draggable';
 import * as Realm from 'realm';
 
 import { ISorting } from '..';
@@ -168,7 +168,7 @@ export class HeaderCell extends React.Component<
     );
   }
 
-  protected onDrag = (e: Event, data: DraggableData) => {
+  protected onDrag: DraggableEventHandler = (e, data) => {
     this.props.onWidthChanged(data.x + Math.ceil(HANDLE_WIDTH / 2));
   };
 

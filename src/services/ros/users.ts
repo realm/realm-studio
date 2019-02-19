@@ -16,6 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import * as Realm from 'realm';
+
 import { IServerCredentials } from '.';
 
 export const authenticate = async (
