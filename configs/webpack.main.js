@@ -9,48 +9,52 @@ module.exports = (env, argv) => {
   const baseConfig = require('./webpack.base.js')(env, argv);
 
   return merge(baseConfig, {
-    devServer: isDevelopment ? {
-      hot: true,
-      inline: true
-    } : {},
-    entry: isDevelopment ? [
-      'webpack/hot/poll?1000',
-      './src/main.ts'
-    ] : [
-      './src/main.ts',
-    ],
+    devServer: isDevelopment
+      ? {
+          hot: true,
+          inline: true,
+        }
+      : {},
+    entry: isDevelopment
+      ? ['webpack/hot/poll?1000', './src/main.ts']
+      : ['./src/main.ts'],
     module: {
       rules: [
         {
           test: /\.tsx?$/,
-          use: 'awesome-typescript-loader'
-        }, {
+          use: 'awesome-typescript-loader',
+        },
+        {
           test: /\.html$/,
-          use: 'file-loader'
-        }, {
+          use: 'file-loader',
+        },
+        {
           test: /\.(scss|svg|png)$/,
-          use: 'null-loader'
-        }, {
+          use: 'null-loader',
+        },
+        {
           test: /\.md$/,
-          use: 'file-loader'
-        }
-      ]
+          use: 'file-loader',
+        },
+      ],
     },
     output: {
       filename: 'main.bundle.js',
       // See https://github.com/webpack/hot-node-example#real-app
-      libraryTarget: 'commonjs2'
+      libraryTarget: 'commonjs2',
     },
     plugins: [
       // Prevent the windows from loading the UI components
       new webpack.IgnorePlugin(/\/ui/, /\/src\/windows$/),
-      // Prevent the main bundle from requiring Realm JS, as this does not 
-      new webpack.IgnorePlugin(/realm$/),
-    ].concat(isDevelopment ? [
-      new Visualizer({
-        filename: './main.statistics.html',
-      }),
-    ] : []),
+    ].concat(
+      isDevelopment
+        ? [
+            new Visualizer({
+              filename: './main.statistics.html',
+            }),
+          ]
+        : []
+    ),
     target: 'electron-main',
     watch: isDevelopment,
   });
