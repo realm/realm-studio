@@ -25,13 +25,13 @@ Although we don’t enforce a strict format for commit messages, we prefer that 
 
 Below are some guidelines about the format of the commit message itself:
 
-* Separate the commit message into a single-line title and a separate body that describes the change.
-* Make the title concise to be easily read within a commit log.
-* Make the body concise, while including the complete reasoning. Unless required to understand the change, additional code examples or other details should be left to the pull request.
-* If the commit fixes a bug, include the number of the issue in the message.
-* Use the first person present tense - for example "Fix …" instead of "Fixes …" or "Fixed …".
-* For text formatting and spelling, follow the same rules as documentation and in-code comments — for example, the use of capitalization and periods.
-* If the commit is a bug fix on top of another recently committed change, or a revert or reapply of a patch, include the Git revision number of the prior related commit, e.g. `Revert abcd3fg because it caused #1234`.
+- Separate the commit message into a single-line title and a separate body that describes the change.
+- Make the title concise to be easily read within a commit log.
+- Make the body concise, while including the complete reasoning. Unless required to understand the change, additional code examples or other details should be left to the pull request.
+- If the commit fixes a bug, include the number of the issue in the message.
+- Use the first person present tense - for example "Fix …" instead of "Fixes …" or "Fixed …".
+- For text formatting and spelling, follow the same rules as documentation and in-code comments — for example, the use of capitalization and periods.
+- If the commit is a bug fix on top of another recently committed change, or a revert or reapply of a patch, include the Git revision number of the prior related commit, e.g. `Revert abcd3fg because it caused #1234`.
 
 ### CLA
 
@@ -41,13 +41,11 @@ Realm welcomes all contributions! The only requirement we have is that, like man
 
 ### Developer Guidelines
 
-Please read the [Guidelines document](https://github.com/realm/realm-studio/blob/master/docs/GUIDELINES.md) for
-information about how this repository is structured and what tools are being used. Any changes should follow the
-guidelines in that document.
+Please read the [Guidelines document](https://github.com/realm/realm-studio/blob/master/docs/GUIDELINES.md) for information about how this repository is structured and what tools are being used. Any changes should follow the guidelines in that document.
 
 ## Requirements
 
-* Node v8.6.0 or later.
+- Node v8.6.0 or later.
 
 ## Running
 
@@ -72,8 +70,7 @@ Start the developer (concurrently running 2x webpack and electron internally):
 
     npm run dev
 
-To check if the source code complies with the TypeScript and SASS rules that we've decided, use your editors builtin
-checker or run the lint command:
+To check if the source code complies with the TypeScript and SASS rules that we've decided, use your editors builtin checker or run the lint command:
 
     npm run lint
 
@@ -81,34 +78,30 @@ checker or run the lint command:
 
 The application has support for some parameters that can be supplied when starting it:
 
-- The `REALM_STUDIO_INTERNAL_FEATURES` environment variable can be set to show features in Realm Studio that
-  are only useful for Realm employees, like being able to select the Staging server for the Cloud.
+- The `REALM_STUDIO_INTERNAL_FEATURES` environment variable can be set to show features in Realm Studio that are only useful for Realm employees, like being able to select the Staging server for the Cloud.
 
       REALM_STUDIO_INTERNAL_FEATURES=true
 
-- The `DISPLAY` environment variable can be set to the index of the display that windows should be created on.
-  So to start the application, opening windows on your secondary monitor, run
+- The `DISPLAY` environment variable can be set to the index of the display that windows should be created on. So to start the application, opening windows on your secondary monitor, run
 
       DISPLAY=1 npm run dev
 
 - If the `REALM_STUDIO_DEV_TOOLS` environment variable is set every window being opened will have the developer
-tools opened.
+  tools opened.
 
-      REALM_STUDIO_DEV_TOOLS=true npm run dev
+        REALM_STUDIO_DEV_TOOLS=true npm run dev
 
-- If the `REACT_PERF` environment variable is set, the window URLs will get "?react_perf" appended, which will
-activate profiling of React components on the Chrome timeline:
-https://reactjs.org/blog/2016/11/16/react-v15.4.0.html#profiling-components-with-chrome-timeline
+- If the `REALM_STUDIO_DISABLE_UPDATE_PROMPT` is set, Studio won't prompt the user before quitting and installing a newly downloaded update. This is used to test the auto-updater.
+
+- If the `REACT_PERF` environment variable is set, the window URLs will get "?react_perf" appended, which will activate profiling of React components on the Chrome timeline: https://reactjs.org/blog/2016/11/16/react-v15.4.0.html#profiling-components-with-chrome-timeline
 
       REACT_PERF=true npm run dev
 
-- If the `WHY_DID_YOU_UPDATE` environment variable is set, the renderer process React will be instrumented with a
-tool that prints the props before and after an update of a component.
+- If the `WHY_DID_YOU_UPDATE` environment variable is set, the renderer process React will be instrumented with a tool that prints the props before and after an update of a component.
 
       WHY_DID_YOU_UPDATE=true npm run dev
 
-- If the `REALM_LOG_LEVEL` environment variable is set, this will get passed to `Realm.Sync.setLogLevel(` when
-  the renderer processes start. It defaults to 'error'.
+- If the `REALM_LOG_LEVEL` environment variable is set, this will get passed to `Realm.Sync.setLogLevel(` when the renderer processes start. It defaults to 'error'.
 
 ## Testing
 

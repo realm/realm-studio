@@ -19,7 +19,7 @@
 import * as assert from 'assert';
 import * as Electron from 'electron';
 import * as fs from 'fs';
-import { resolve } from 'path';
+import * as path from 'path';
 import { Application } from 'spectron';
 import * as fakeDialog from 'spectron-fake-dialog';
 
@@ -30,16 +30,19 @@ import {
 
 // When electron is required from Node.js, it returns a string with the path of the electron executable
 const electronPath: string = Electron as any;
-const appPath = resolve(__dirname, '../../..');
+const appPath = path.resolve(__dirname, '../../..');
 
 const selectors = {
   cell: '.RealmBrowser__Table__Cell',
   headerCell: '.RealmBrowser__Table__HeaderCell',
 };
 
+const isAppBuilt = fs.existsSync(path.resolve(appPath, 'build'));
+const describeIfBuilt = isAppBuilt ? describe : describe.skip;
+
 // We need to use a non-arrow functions to adjust the suite timeout
 // tslint:disable-next-line:only-arrow-functions
-describe('<RealmBrowser /> via Spectron', function() {
+describeIfBuilt('<RealmBrowser /> via Spectron', function() {
   this.timeout(10000);
 
   let app: Application;
@@ -70,7 +73,7 @@ describe('<RealmBrowser /> via Spectron', function() {
   });
 
   afterEach(async function() {
-    if (this.currentTest.state === 'failed') {
+    if (this.currentTest && this.currentTest.state === 'failed') {
       // When a test fails and the app is running, take a screenshot
       const imageBuffer = await app.browserWindow.capturePage();
       fs.writeFileSync(`./failure-${failureCount}.png`, imageBuffer);
