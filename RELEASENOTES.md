@@ -7,4 +7,5 @@
 - None
 
 ## Internals
-- Updated Realm JS to v2.22.0. ([#1082](https://github.com/realm/realm-studio/pull/1082))
+- Added a post-package test to ensure auto-updating functions. ([#1095](https://github.com/realm/realm-studio/pull/1095))
+- Updated all dependencies, including Electron to v4 and Realm JS to v2.23.0. ([#1095](https://github.com/realm/realm-studio/pull/1095))
