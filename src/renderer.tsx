@@ -18,6 +18,7 @@
 
 import './services/mixpanel';
 
+import * as electron from 'electron';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
@@ -76,5 +77,8 @@ process.nextTick(() => {
   // If sync is enabled on Realm - make it less verbose
   if (Realm.Sync) {
     Realm.Sync.setLogLevel(process.env.REALM_LOG_LEVEL || 'error');
+    Realm.Sync.setUserAgent(
+      `Realm Studio ${electron.remote.app.getVersion() || 'unknown'}`,
+    );
   }
 });

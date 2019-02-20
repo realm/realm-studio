@@ -20,7 +20,6 @@ import * as assert from 'assert';
 import * as electron from 'electron';
 import * as fs from 'fs-extra';
 import { resolve } from 'path';
-import * as Realm from 'realm';
 
 import { getWindowOptions } from '../windows/WindowOptions';
 
@@ -79,9 +78,6 @@ export function removeRendererDirectories() {
 
 // The first time this is imported, it should change directory
 if (process.type === 'renderer') {
-  Realm.Sync.setUserAgent(
-    `Realm Studio ${electron.remote.app.getVersion() || 'unknown'}`,
-  );
   changeRendererProcessDirectory();
 } else {
   changeMainProcessDirectory();
