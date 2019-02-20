@@ -30,6 +30,7 @@ interface ITopBarProps {
   onQueryChange: QueryChangeHandler;
   onQueryHelp: () => void;
   query: string;
+  queryError: Error | undefined;
   readOnly: boolean;
 }
 
@@ -39,6 +40,7 @@ export const TopBar = ({
   onQueryChange,
   onQueryHelp,
   query,
+  queryError,
   readOnly,
 }: ITopBarProps) => {
   const className = getClassName(focus);
@@ -49,6 +51,7 @@ export const TopBar = ({
         onQueryChange={onQueryChange}
         onQueryHelp={onQueryHelp}
         query={query}
+        queryError={queryError}
         placeholder="Enter a query to filter the list"
       />
       {!readOnly ? (

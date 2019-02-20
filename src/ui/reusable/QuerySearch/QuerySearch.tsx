@@ -17,22 +17,41 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as React from 'react';
-import { Button, Input, InputGroup, InputGroupAddon } from 'reactstrap';
+import {
+  Button,
+  Input,
+  InputGroup,
+  InputGroupAddon,
+  Popover,
+  PopoverBody,
+} from 'reactstrap';
 
 export interface IQuerySearchProps {
   onQueryChange: (query: string) => void;
   onQueryHelp?: () => void;
+  onQueryBlur?: React.EventHandler<React.FocusEvent>;
+  onQueryFocus?: React.EventHandler<React.FocusEvent>;
   query: string;
+  queryError?: Error;
   placeholder: string;
   className?: string;
+  inputRef: (inputElement: HTMLInputElement) => void;
+  inputElement: HTMLElement | undefined;
+  isPopoverOpen: boolean;
 }
 
 export const QuerySearch = ({
   onQueryChange,
   onQueryHelp,
+  onQueryBlur,
+  onQueryFocus,
   query,
+  queryError,
   placeholder,
   className,
+  inputRef,
+  inputElement,
+  isPopoverOpen,
 }: IQuerySearchProps) => (
   <section className={className}>
     <InputGroup size="sm">
@@ -40,8 +59,12 @@ export const QuerySearch = ({
         onChange={e => {
           onQueryChange(e.target.value);
         }}
+        onFocus={onQueryFocus}
+        onBlur={onQueryBlur}
         placeholder={placeholder}
         value={query}
+        invalid={!!queryError}
+        innerRef={inputRef}
       />
       {onQueryHelp && (
         <InputGroupAddon addonType="append">
@@ -51,5 +74,15 @@ export const QuerySearch = ({
         </InputGroupAddon>
       )}
     </InputGroup>
+    {inputElement && (
+      <Popover
+        isOpen={!!queryError && isPopoverOpen}
+        target={inputElement}
+        placement="bottom-start"
+        hideArrow={true}
+      >
+        <PopoverBody>{queryError ? queryError.message : null}</PopoverBody>
+      </Popover>
+    )}
   </section>
 );

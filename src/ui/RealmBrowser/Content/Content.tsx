@@ -78,6 +78,7 @@ interface IBaseContentProps {
   onResetHighlight: () => void;
   onSortingChange: SortingChangeHandler;
   query: string;
+  queryError?: Error | undefined;
   sorting?: ISorting;
 }
 
@@ -127,6 +128,7 @@ export const Content = ({
   onRowMouseDown,
   onSortingChange,
   query,
+  queryError,
   sorting,
   ...props
 }: IContentProps) =>
@@ -142,6 +144,7 @@ export const Content = ({
         onQueryChange={onQueryChange}
         onQueryHelp={onQueryHelp}
         query={query}
+        queryError={queryError}
         readOnly={props.readOnly}
       />
 
