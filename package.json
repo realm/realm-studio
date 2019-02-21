@@ -220,7 +220,7 @@
     "prettier": "^1.16.4",
     "react-hot-loader": "^4.6.5",
     "remark": "^10.0.1",
-    "resolve-url-loader": "^3.0.0",
+    "resolve-url-loader": "^3.0.1",
     "sass-lint": "^1.12.1",
     "sass-loader": "^7.1.0",
     "simple-git": "^1.80.1",
