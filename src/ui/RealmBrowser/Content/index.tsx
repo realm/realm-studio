@@ -180,12 +180,12 @@ class ContentContainer extends React.Component<
   private clickTimeout?: any;
   private filteredSortedResults = memoize(
     (results: Realm.Collection<any>, query: string, sorting?: ISorting) => {
+      let filterError: Error | undefined;
       if (query) {
         try {
           results = results.filtered(query);
         } catch (err) {
-          // tslint:disable-next-line:no-console
-          console.warn(`Could not filter on "${query}"`, err);
+          filterError = err;
         }
       }
       if (sorting) {
@@ -194,7 +194,7 @@ class ContentContainer extends React.Component<
           results = results.sorted(propertyName, sorting.reverse);
         }
       }
-      return results;
+      return { results, filterError };
     },
   );
 
@@ -227,12 +227,12 @@ class ContentContainer extends React.Component<
       this.props.onHighlightChange &&
       this.state.highlight !== prevState.highlight
     ) {
-      const filteredSortedResults = this.filteredSortedResults(
+      const { results } = this.filteredSortedResults(
         this.props.focus.results,
         this.state.query,
         this.state.sorting,
       );
-      this.props.onHighlightChange(this.state.highlight, filteredSortedResults);
+      this.props.onHighlightChange(this.state.highlight, results);
     }
   }
 
@@ -274,7 +274,7 @@ class ContentContainer extends React.Component<
   };
 
   private getProps(): IContentProps {
-    const filteredSortedResults = this.filteredSortedResults(
+    const { results, filterError } = this.filteredSortedResults(
       this.props.focus.results,
       this.state.query,
       this.state.sorting,
@@ -290,7 +290,7 @@ class ContentContainer extends React.Component<
       contentRef: this.contentRef,
       dataVersion: this.props.dataVersion,
       error: this.state.error,
-      filteredSortedResults,
+      filteredSortedResults: results,
       focus,
       highlight: this.state.highlight,
       isPermissionSidebarOpen: this.state.isPermissionSidebarOpen,
@@ -306,6 +306,7 @@ class ContentContainer extends React.Component<
       onResetHighlight: this.onResetHighlight,
       onSortingChange: this.onSortingChange,
       query: this.state.query,
+      queryError: filterError,
       sorting: this.state.sorting,
     };
     if (this.props.readOnly) {
@@ -374,12 +375,12 @@ class ContentContainer extends React.Component<
     scrollToObject: boolean = true,
   ): IHighlight {
     if (object) {
-      const filteredSortedResults = this.filteredSortedResults(
+      const { results } = this.filteredSortedResults(
         this.props.focus.results,
         this.state.query,
         this.state.sorting,
       );
-      const index = filteredSortedResults.indexOf(object);
+      const index = results.indexOf(object);
       const result: IHighlight = {
         rows: new Set(index > -1 ? [index] : []),
       };
@@ -917,14 +918,14 @@ class ContentContainer extends React.Component<
   }
 
   private getHighlightedObjects(rowIndecies: Set<number>) {
-    const filteredSortedResults = this.filteredSortedResults(
+    const { results } = this.filteredSortedResults(
       this.props.focus.results,
       this.state.query,
       this.state.sorting,
     );
     const result = new Set<Realm.Object>();
     for (const index of rowIndecies) {
-      const object = filteredSortedResults[index];
+      const object = results[index];
       result.add(object);
     }
     return result;

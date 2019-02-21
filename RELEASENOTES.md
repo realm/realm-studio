@@ -2,7 +2,7 @@
 
 ## Enhancements
 
-- None
+- Adding visual feedback when a query in the Realm Browser fails to parse. ([#1100](https://github.com/realm/realm-studio/pull/1100))
 
 ## Fixed
 
