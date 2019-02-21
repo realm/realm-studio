@@ -352,8 +352,7 @@ pipeline {
             script {
               // Determine who started the build and should therefore be assigned the pull request.asSynchronized()
               // This assumes they have the same Jenkins user ID as their GitHub handle
-              def specificCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)
-              def assignee = specificCause.getUserId()
+              def assignee = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause).getUserId()
               // Create a draft release on GitHub
               def prId = sh(
                 script: "node scripts/github-releases create-pull-request ${PREPARED_BRANCH} master 'Prepare version ${NEXT_VERSION}' --assignee ${assignee} --reviewer bmunkholm --print-number",
