@@ -2,11 +2,12 @@
 
 ## Enhancements
 
-- None
+- Adding visual feedback when a query in the Realm Browser fails to parse. ([#1100](https://github.com/realm/realm-studio/pull/1100))
 
 ## Fixed
 
-- Clicking "Open in Studio" on the Realm Cloud frontend, no longer yields an error. ([#1098](https://github.com/realm/realm-studio/pull/1098))
+- Fixed clicking "Open in Studio" on the Realm Cloud frontend, no longer yields an error. ([#1098](https://github.com/realm/realm-studio/pull/1098), since v3.1.3)
+- Fixed selecting objects while filtering or sorting the list of objects. ([1099](https://github.com/realm/realm-studio/pull/1099), since v2.1.1)
 
 ## Internals
 
