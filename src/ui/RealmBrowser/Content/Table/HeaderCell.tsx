@@ -168,23 +168,7 @@ export class HeaderCell extends React.Component<
     );
   }
 
-  protected onDrag: DraggableEventHandler = (e, data) => {
-    this.props.onWidthChanged(data.x + Math.ceil(HANDLE_WIDTH / 2));
-  };
-
-  protected onDragStart = () => {
-    this.setState({ isDragging: true });
-  };
-
-  protected onDragStop = () => {
-    this.setState({ isDragging: false });
-  };
-
-  protected onSortClick = () => {
-    this.props.onSortClick(this.props.property);
-  };
-
-  protected generateHandle(state: IHeaderCellState) {
+  private generateHandle(state: IHeaderCellState) {
     // This is rendered only when the state.isDragging is updated to avoid unnessesary renders
     this.handle = (
       <DraggableCore
@@ -196,8 +180,29 @@ export class HeaderCell extends React.Component<
           className={classNames('RealmBrowser__Table__HeaderHandle', {
             'RealmBrowser__Table__HeaderHandle--dragging': state.isDragging,
           })}
+          onClick={this.onHandleClick}
         />
       </DraggableCore>
     );
   }
+
+  private onDrag: DraggableEventHandler = (e, data) => {
+    this.props.onWidthChanged(data.x + Math.ceil(HANDLE_WIDTH / 2));
+  };
+
+  private onDragStart: DraggableEventHandler = e => {
+    this.setState({ isDragging: true });
+  };
+
+  private onDragStop: DraggableEventHandler = () => {
+    this.setState({ isDragging: false });
+  };
+
+  private onHandleClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent a click of the handle to trigger sorting
+  };
+
+  private onSortClick = (e: React.MouseEvent) => {
+    this.props.onSortClick(this.props.property);
+  };
 }

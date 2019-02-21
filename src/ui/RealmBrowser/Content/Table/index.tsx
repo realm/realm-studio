@@ -30,7 +30,7 @@ import {
 
 import { EditMode, ISorting, SortingChangeHandler } from '..';
 import { IPropertyWithName } from '../..';
-import { Focus } from '../../focus';
+import { Focus, generateKey } from '../../focus';
 
 export const rowHeights = {
   header: 50,
@@ -133,6 +133,26 @@ class TableContainer extends React.PureComponent<
   ITableContainerProps,
   ITableContainerState
 > {
+  // Stores a list of column widths per focus, in a way which is not persisted across browser windows
+  public static columnWidthCache: { [focusKey: string]: number[] } = {};
+
+  public static generateDefaultColumnWidths(properties: IPropertyWithName[]) {
+    return properties.map(property => {
+      switch (property.type) {
+        case 'int':
+          return property.name === '#' ? 50 : 100;
+        case 'bool':
+          return 100;
+        case 'string':
+          return 300;
+        case 'date':
+          return 200;
+        default:
+          return 300;
+      }
+    });
+  }
+
   public state: ITableContainerState = {
     columnWidths: [],
     isSorting: false,
@@ -181,20 +201,13 @@ class TableContainer extends React.PureComponent<
     if (this.tableElement) {
       this.tableElement.removeEventListener('keydown', this.onKeyDown);
     }
+    // Save the column widths for later
+    const focusKey = generateKey(this.props.focus);
+    TableContainer.columnWidthCache[focusKey] = this.state.columnWidths;
   }
 
   public componentWillMount() {
-    if (this.props.focus) {
-      const properties = this.props.focus.properties;
-      this.setDefaultColumnWidths(properties);
-    }
-  }
-
-  public componentWillReceiveProps(props: ITableContainerProps) {
-    if (props.focus && this.props.focus !== props.focus) {
-      const properties = props.focus.properties;
-      this.setDefaultColumnWidths(properties);
-    }
+    this.setColumnWidths();
   }
 
   public componentDidUpdate(
@@ -211,6 +224,15 @@ class TableContainer extends React.PureComponent<
           rowIndex: this.props.highlight.scrollTo.row,
         });
       }
+    }
+
+    // Set the column with if the focus or properties changed
+    const focusChanged =
+      generateKey(this.props.focus) !== generateKey(prevProps.focus);
+    const propertiesChanged =
+      this.props.focus.properties.length !== prevProps.focus.properties.length;
+    if (focusChanged || propertiesChanged) {
+      this.setColumnWidths();
     }
 
     if (this.state.columnWidths !== prevState.columnWidths) {
@@ -247,9 +269,7 @@ class TableContainer extends React.PureComponent<
   private onColumnWidthChanged = (index: number, width: number) => {
     const columnWidths = Array.from(this.state.columnWidths);
     columnWidths[index] = Math.max(width, MINIMUM_COLUMN_WIDTH);
-    this.setState({
-      columnWidths,
-    });
+    this.setState({ columnWidths });
   };
 
   private onKeyDown = (e: KeyboardEvent) => {
@@ -306,24 +326,6 @@ class TableContainer extends React.PureComponent<
     }
   };
 
-  private setDefaultColumnWidths(properties: IPropertyWithName[]) {
-    const columnWidths = properties.map(property => {
-      switch (property.type) {
-        case 'int':
-          return property.name === '#' ? 50 : 100;
-        case 'bool':
-          return 100;
-        case 'string':
-          return 300;
-        case 'date':
-          return 200;
-        default:
-          return 300;
-      }
-    });
-    this.setState({ columnWidths });
-  }
-
   private tableRef = (element: HTMLElement | null) => {
     // Add a keypress listener on the table element
     if (element) {
@@ -331,6 +333,24 @@ class TableContainer extends React.PureComponent<
     }
     this.tableElement = element;
   };
+
+  private setColumnWidths() {
+    const { focus } = this.props;
+    const focusKey = generateKey(focus);
+    const cachedColumnWidths = TableContainer.columnWidthCache[focusKey];
+    const defaultColumnWidths = TableContainer.generateDefaultColumnWidths(
+      focus.properties,
+    );
+    if (cachedColumnWidths) {
+      // Reuse as many of the cached column widths as we need
+      const columnWidths = defaultColumnWidths.map((width, i) => {
+        return i < cachedColumnWidths.length ? cachedColumnWidths[i] : width;
+      });
+      this.setState({ columnWidths });
+    } else {
+      this.setState({ columnWidths: defaultColumnWidths });
+    }
+  }
 }
 
 export { TableContainer as Table };
