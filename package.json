@@ -77,6 +77,11 @@
         ]
       }
     ],
+    "fileAssociations": {
+      "ext": "realm",
+      "name": "Realm",
+      "isPackage": true
+    },
     "publish": [
       {
         "provider": "s3",
@@ -85,11 +90,9 @@
         "path": "downloads/realm-studio"
       }
     ],
-    "fileAssociations": {
-      "ext": "realm",
-      "name": "Realm",
-      "isPackage": true
-    }
+    "npmArgs": [
+      "--fallback-to-build=false"
+    ]
   },
   "scripts": {
     "build": "webpack --mode production --config=configs/webpack.js",
@@ -161,7 +164,6 @@
     "react-virtualized": "^9.20.1",
     "reactstrap": "^7.1.0",
     "realm": "2.23.0",
-    "segfault-handler": "^1.0.1",
     "semver": "^5.4.1",
     "uuid": "^3.1.0"
   },
@@ -201,7 +203,7 @@
     "copy-webpack-plugin": "^4.5.1",
     "css-loader": "^2.1.0",
     "devtron": "^1.4.0",
-    "electron": "4.0.5",
+    "electron": "3.0.15",
     "electron-builder": "20.38.5",
     "electron-download": "^4.1.1",
     "electron-publisher-s3": "^20.17.2",
