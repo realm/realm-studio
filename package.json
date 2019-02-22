@@ -77,6 +77,11 @@
         ]
       }
     ],
+    "fileAssociations": {
+      "ext": "realm",
+      "name": "Realm",
+      "isPackage": true
+    },
     "publish": [
       {
         "provider": "s3",
@@ -85,11 +90,9 @@
         "path": "downloads/realm-studio"
       }
     ],
-    "fileAssociations": {
-      "ext": "realm",
-      "name": "Realm",
-      "isPackage": true
-    }
+    "npmArgs": [
+      "--fallback-to-build=false"
+    ]
   },
   "scripts": {
     "build": "webpack --mode production --config=configs/webpack.js",
