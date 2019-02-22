@@ -25,9 +25,6 @@ import * as ReactDOM from 'react-dom';
 // This is needed to prevent Realm JS from writing to directories it doesn't have access to
 import './utils/process-directories';
 
-import * as SegfaultHandler from 'segfault-handler';
-SegfaultHandler.registerHandler('crash.log');
-
 const isDevelopment = process.env.NODE_ENV === 'development';
 
 // Don't report Realm JS analytics data
