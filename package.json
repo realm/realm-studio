@@ -149,7 +149,7 @@
     "isomorphic-fetch": "^2.2.1",
     "json5": "^2.1.0",
     "jwt-decode": "^2.2.0",
-    "keytar": "^4.4.0",
+    "keytar": "^4.4.1",
     "memoize-one": "^5.0.0",
     "mixpanel-browser": "^2.26.0",
     "moment": "^2.24.0",
