@@ -186,7 +186,7 @@ class ServerAdministrationContainer
       try {
         if (usingGrahpiql) {
           await main.showGraphiqlEditor({
-            credentials: this.props.credentials,
+            user: this.props.user,
             path,
           });
         } else {

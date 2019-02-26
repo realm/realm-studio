@@ -18,23 +18,24 @@
 
 import { URL } from 'url';
 
-import { ros } from '../services';
-
 import { IWindow } from './Window';
 
 export interface IGraphiqlEditorWindowProps {
-  credentials: ros.IServerCredentials;
+  user: Realm.Sync.SerializedUser | Realm.Sync.SerializedTokenUser;
   path: string;
 }
 
-const getUrl = (credentials: ros.IServerCredentials, path: string) => {
-  return new URL(path, credentials.url).toString();
+const getUrl = (
+  user: Realm.Sync.SerializedUser | Realm.Sync.SerializedTokenUser,
+  path: string,
+) => {
+  return new URL(path, user.server).toString();
 };
 
 export const GraphiqlEditorWindow: IWindow = {
   getWindowOptions: (props: IGraphiqlEditorWindowProps) => {
     return {
-      title: getUrl(props.credentials, props.path),
+      title: getUrl(props.user, props.path),
     };
   },
   getComponent: () =>

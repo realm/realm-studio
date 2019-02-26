@@ -16,89 +16,30 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import { Fetcher } from 'graphiql';
+// import { Fetcher } from 'graphiql';
 import * as React from 'react';
-import { Credentials, User } from 'realm-graphql-client';
-import { SubscriptionClient } from 'subscriptions-transport-ws';
+// import { Credentials, User } from 'realm-graphql-client';
+// import { SubscriptionClient } from 'subscriptions-transport-ws';
 
 import { IGraphiqlEditorWindowProps } from '../../windows/WindowProps';
-import { showError } from '../reusable/errors';
 
-import { graphQLFetcher } from './graphiql-subscriptions-fetcher';
+// import { graphQLFetcher } from './graphiql-subscriptions-fetcher';
 import { GraphiqlEditor } from './GraphiqlEditor';
 
 type IGraphiqlEditorContainerProps = IGraphiqlEditorWindowProps;
 
-interface IAutenticatingState {
-  status: 'authenticating';
-}
-
-interface IAuthenticatedState {
-  status: 'authenticated';
-  user: User;
-  fetcher: Fetcher;
-}
-
-type IGraphiqlEditorContainerState = IAutenticatingState | IAuthenticatedState;
-
 class GraphiqlEditorContainer extends React.Component<
   IGraphiqlEditorContainerProps,
-  IGraphiqlEditorContainerState
+  {}
 > {
-  public state: IGraphiqlEditorContainerState = {
-    status: 'authenticating',
-  };
-
-  public componentDidMount() {
-    this.authenticate().then(undefined, err => {
-      showError('Failed to authenticate', err);
-    });
-  }
-
   public render() {
-    return this.state.status === 'authenticated' ? (
-      <GraphiqlEditor fetcher={this.state.fetcher} />
-    ) : null;
-  }
-
-  private async authenticate() {
-    const credentials = this.getCredentials();
-    const user = await User.authenticate(
-      credentials,
-      this.props.credentials.url,
-    );
-    const fetcher = this.createFetcher(user);
-    this.setState({
-      status: 'authenticated',
-      fetcher,
-      user,
-    });
-  }
-
-  private getCredentials() {
-    const credentials = this.props.credentials;
-    if (credentials.kind === 'password') {
-      return Credentials.usernamePassword(
-        credentials.username,
-        credentials.password,
-        false,
-      );
-    } else if (credentials.kind === 'token') {
-      return Credentials.admin(credentials.token);
-    } else if (credentials.kind === 'other') {
-      const c = new Credentials();
-      Object.assign(c, credentials.options);
-      return c;
-    } else {
-      throw new Error(
-        `Unexpected kind of credentials: ${(credentials as any).kind}`,
-      );
-    }
+    // /* this.state.fetcher */
+    return <GraphiqlEditor fetcher={this.httpFetcher} />;
   }
 
   private getUrl(schema: 'http' | 'ws' = 'http') {
     const encodedPath = encodeURIComponent(this.props.path);
-    const url = new URL(`/graphql/${encodedPath}`, this.props.credentials.url);
+    const url = new URL(`/graphql/${encodedPath}`, this.props.user.server);
     if (url.protocol === 'http:' && schema === 'ws') {
       url.protocol = 'ws:';
     } else if (url.protocol === 'https:' && schema === 'ws') {
@@ -107,6 +48,7 @@ class GraphiqlEditorContainer extends React.Component<
     return url.toString();
   }
 
+  /*
   private createFetcher(user: User) {
     const url = this.getUrl('ws');
     const subscriptionsClient = new SubscriptionClient(url, {
@@ -115,22 +57,31 @@ class GraphiqlEditorContainer extends React.Component<
     });
     return graphQLFetcher(subscriptionsClient, this.httpFetcher);
   }
+  */
 
-  private httpFetcher = (graphQLParams: object) => {
-    if (this.state.status === 'authenticated') {
-      const url = this.getUrl('http');
-      return fetch(url, {
-        method: 'post',
-        headers: {
-          Authorization: this.state.user.token,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(graphQLParams),
-      }).then(response => response.json());
-    } else {
-      throw new Error('Graphiql was fetching before authenticated');
-    }
+  private httpFetcher = async (graphQLParams: object) => {
+    const url = this.getUrl('http');
+    const response = await fetch(url, {
+      method: 'post',
+      headers: {
+        Authorization: this.getToken(),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(graphQLParams),
+    });
+    return response.json();
   };
+
+  private getToken() {
+    const { user } = this.props;
+    if ('adminToken' in user) {
+      return user.adminToken;
+    } else if ('refreshToken' in user) {
+      return user.refreshToken;
+    } else {
+      throw new Error('Failed to determine token');
+    }
+  }
 }
 
 export { GraphiqlEditorContainer as GraphiqlEditor };
