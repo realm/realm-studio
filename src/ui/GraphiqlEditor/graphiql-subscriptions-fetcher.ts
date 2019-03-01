@@ -1,20 +1,82 @@
-////////////////////////////////////////////////////////////////////////////
-//
-// Copyright 2018 Realm Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-////////////////////////////////////////////////////////////////////////////
+import { parse } from 'graphql';
+import { SubscriptionClient } from 'subscriptions-transport-ws';
 
-// tslint:disable-next-line:no-submodule-imports
-export * from 'graphiql-subscriptions-fetcher/dist/fetcher';
+const hasSubscriptionOperation = (graphQlParams: any) => {
+  const queryDoc = parse(graphQlParams.query);
+
+  for (const definition of queryDoc.definitions) {
+    if (definition.kind === 'OperationDefinition') {
+      const operation = definition.operation;
+      if (operation === 'subscription') {
+        return true;
+      }
+    }
+  }
+
+  return false;
+};
+
+export const createGraphQLFetcher = (params: {
+  url: string;
+  getToken: () => string;
+}) => {
+  const wsUrl = new URL(params.url);
+  switch (wsUrl.protocol) {
+    case 'http:':
+      wsUrl.protocol = 'ws:';
+      break;
+    case 'https:':
+      wsUrl.protocol = 'wss:';
+      break;
+  }
+
+  const subscriptionsClient = new SubscriptionClient(wsUrl.toString(), {
+    reconnect: true,
+    connectionParams: { token: params.getToken() },
+  });
+  let activeSubscription: { unsubscribe: () => void } | null = null;
+
+  const fetchWS = (graphQLParams: any) => {
+    return {
+      subscribe: (observer: {
+        error: (error: Error) => void;
+        next: (value: any) => void;
+      }) => {
+        observer.next(
+          'Your subscription data will appear here after server publication!',
+        );
+
+        activeSubscription = subscriptionsClient
+          .request({
+            query: graphQLParams.query,
+            variables: graphQLParams.varaibles,
+          })
+          .subscribe(observer);
+      },
+    };
+  };
+
+  const fetchHttp = async (graphQLParams: any) => {
+    const response = await fetch(params.url, {
+      method: 'post',
+      headers: {
+        Authorization: params.getToken(),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(graphQLParams),
+    });
+    return response.json();
+  };
+
+  return (graphQLParams: any) => {
+    if (activeSubscription !== null) {
+      activeSubscription.unsubscribe();
+    }
+
+    if (subscriptionsClient && hasSubscriptionOperation(graphQLParams)) {
+      return fetchWS(graphQLParams);
+    }
+
+    return fetchHttp(graphQLParams);
+  };
+};

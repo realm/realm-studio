@@ -16,14 +16,10 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-// import { Fetcher } from 'graphiql';
 import * as React from 'react';
-// import { Credentials, User } from 'realm-graphql-client';
-// import { SubscriptionClient } from 'subscriptions-transport-ws';
-
 import { IGraphiqlEditorWindowProps } from '../../windows/WindowProps';
 
-// import { graphQLFetcher } from './graphiql-subscriptions-fetcher';
+import { createGraphQLFetcher } from './graphiql-subscriptions-fetcher';
 import { GraphiqlEditor } from './GraphiqlEditor';
 
 type IGraphiqlEditorContainerProps = IGraphiqlEditorWindowProps;
@@ -33,44 +29,18 @@ class GraphiqlEditorContainer extends React.Component<
   {}
 > {
   public render() {
-    // /* this.state.fetcher */
-    return <GraphiqlEditor fetcher={this.httpFetcher} />;
+    return (
+      <GraphiqlEditor
+        fetcher={createGraphQLFetcher({
+          getToken: () => this.getToken(),
+          url: new URL(
+            `/graphql/${encodeURIComponent(this.props.path)}`,
+            this.props.user.server,
+          ).toString(),
+        })}
+      />
+    );
   }
-
-  private getUrl(schema: 'http' | 'ws' = 'http') {
-    const encodedPath = encodeURIComponent(this.props.path);
-    const url = new URL(`/graphql/${encodedPath}`, this.props.user.server);
-    if (url.protocol === 'http:' && schema === 'ws') {
-      url.protocol = 'ws:';
-    } else if (url.protocol === 'https:' && schema === 'ws') {
-      url.protocol = 'wss:';
-    }
-    return url.toString();
-  }
-
-  /*
-  private createFetcher(user: User) {
-    const url = this.getUrl('ws');
-    const subscriptionsClient = new SubscriptionClient(url, {
-      reconnect: true,
-      connectionParams: { token: user.token },
-    });
-    return graphQLFetcher(subscriptionsClient, this.httpFetcher);
-  }
-  */
-
-  private httpFetcher = async (graphQLParams: object) => {
-    const url = this.getUrl('http');
-    const response = await fetch(url, {
-      method: 'post',
-      headers: {
-        Authorization: this.getToken(),
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(graphQLParams),
-    });
-    return response.json();
-  };
 
   private getToken() {
     const { user } = this.props;
