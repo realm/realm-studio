@@ -9,6 +9,15 @@
         "kind": "build",
         "isDefault": true
       }
+    },
+    {
+      "label": "wait-for-bundle",
+      "type": "npm",
+      "script": "wait-for-bundle",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
     }
   ]
 }
