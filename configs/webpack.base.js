@@ -19,17 +19,18 @@ module.exports = (env, argv) => {
         whitelist: [
           /webpack(\/.*)?/,
           'electron-devtools-installer',
+          'react-realm-context',
           /svg-baker-runtime(\/.*)?/,
           /svg-sprite-loader(\/.*)?/,
         ],
       }),
     ],
     module: {
-      rules: []
+      rules: [],
     },
     node: {
       // This will make __dirname equal the bundles path
-      __dirname: false
+      __dirname: false,
     },
     output: {
       path: resolve(__dirname, '../build'),
@@ -42,23 +43,27 @@ module.exports = (env, argv) => {
           isDevelopment ? 'development' : 'production'
         ),
       }),
-    ].concat(isDevelopment ? [
-      // Cache chunks
-      new HardSourceWebpackPlugin(),
-      // Plugins for development
-      new webpack.NamedModulesPlugin(),
-      new webpack.HotModuleReplacementPlugin(),
-    ] : [
-      new SentryPlugin({
-        release: `${package.name}@${package.version}`,
-        include: './build',
-        ignore: ['node_modules', 'webpack.config.js'],
-        configFile: resolve(__dirname, 'sentry.properties'),
-        ext: ['map', 'js'],
-        urlPrefix: '~/build/',
-        dryRun: !process.env.SENTRY_AUTH_TOKEN,
-      }),
-    ]),
+    ].concat(
+      isDevelopment
+        ? [
+            // Cache chunks
+            new HardSourceWebpackPlugin(),
+            // Plugins for development
+            new webpack.NamedModulesPlugin(),
+            new webpack.HotModuleReplacementPlugin(),
+          ]
+        : [
+            new SentryPlugin({
+              release: `${package.name}@${package.version}`,
+              include: './build',
+              ignore: ['node_modules', 'webpack.config.js'],
+              configFile: resolve(__dirname, 'sentry.properties'),
+              ext: ['map', 'js'],
+              urlPrefix: '~/build/',
+              dryRun: !process.env.SENTRY_AUTH_TOKEN,
+            }),
+          ]
+    ),
     resolve: {
       alias: {
         'realm-studio-styles': resolve(__dirname, '../styles'),
