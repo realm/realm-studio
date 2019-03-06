@@ -26,6 +26,7 @@ export enum MainActions {
   SetRaasEndpoint = 'set-raas-endpoint',
   ShowCloudAuthentication = 'show-cloud-authentication',
   ShowConnectToServer = 'show-connect-to-server',
+  ShowGraphiqlEditor = 'show-graphiql-editor',
   ShowGreeting = 'show-server-administration',
   ShowImportData = 'show-import-data',
   ShowOpenLocalRealm = 'show-open-local-realm',

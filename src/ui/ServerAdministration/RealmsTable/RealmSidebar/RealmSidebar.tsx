@@ -46,7 +46,7 @@ export const RealmSidebar = ({
   getMetric: MetricGetter;
   isOpen: boolean;
   onRealmDeletion: (realm: RealmFile) => void;
-  onRealmOpened: (realm: RealmFile) => void;
+  onRealmOpened: (realm: RealmFile, usingGrahpiql?: boolean) => void;
   onRealmTypeUpgrade: (realm: RealmFile) => void;
   onRealmSizeRecalculate: (realm: RealmFile) => void;
   onClose: () => void;
