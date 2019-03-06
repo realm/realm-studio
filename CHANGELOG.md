@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Release 3.5.0 (2019-03-06)
+
+[Changes since v3.4.0](https://github.com/realm/realm-studio/compare/v3.4.0...v3.5.0)
+
+### Enhancements
+
+- Added an option to open a GraphiQL explorer for a Realm. The button is located in the bottom of the sidebar menu when you click on a Realm. ([#496](https://github.com/realm/realm-studio/issues/496))
+
+### Fixed
+
+- None
+
+### Internals
+
+- Pinning the WebPack version to 4.28.4 until [https://github.com/webpack/webpack/issues/8656](https://github.com/webpack/webpack/issues/8656) gets resolved + rebuilding the package-lock.json ([#1122](https://github.com/realm/realm-studio/issues/1122))
+
+
 ## Release 3.4.0 (2019-02-21)
 
 [Changes since v3.3.0](https://github.com/realm/realm-studio/compare/v3.3.0...v3.4.0)
