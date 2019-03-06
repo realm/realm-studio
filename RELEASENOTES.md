@@ -2,7 +2,7 @@
 
 ### Enhancements
 
-- None
+- Added an option to open a GraphiQL explorer for a Realm. The button is located in the bottom of the sidebar menu when you click on a Realm.([#496](https://github.com/realm/realm-studio/issues/496))
 
 ### Fixed
 
