@@ -35,6 +35,7 @@ export interface IWindow {
 
 import { CloudAuthenticationWindow } from './CloudAuthenticationWindow';
 import { ConnectToServerWindow } from './ConnectToServerWindow';
+import { GraphiqlEditorWindow } from './GraphiqlEditorWindow';
 import { GreetingWindow } from './GreetingWindow';
 import { RealmBrowserWindow } from './RealmBrowserWindow';
 import { ServerAdministrationWindow } from './ServerAdministrationWindow';
@@ -51,6 +52,8 @@ export function getWindowClass(type: WindowType): IWindow {
     return CloudAuthenticationWindow;
   } else if (type === 'connect-to-server') {
     return ConnectToServerWindow;
+  } else if (type === 'graphiql-editor') {
+    return GraphiqlEditorWindow;
   } else if (type === 'greeting') {
     return GreetingWindow;
   } else if (type === 'realm-browser') {

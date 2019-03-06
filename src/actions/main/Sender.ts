@@ -21,6 +21,7 @@ import { ImportFormat } from '../../services/data-importer';
 import * as raas from '../../services/raas';
 import {
   ICloudAuthenticationWindowProps,
+  IGraphiqlEditorWindowProps,
   IRealmBrowserWindowProps,
   IServerAdministrationWindowProps,
 } from '../../windows/WindowProps';
@@ -77,6 +78,10 @@ export class Sender extends ActionSender {
 
   public showConnectToServer(url?: string) {
     return this.send(MainActions.ShowConnectToServer, url);
+  }
+
+  public showGraphiqlEditor(props: IGraphiqlEditorWindowProps) {
+    return this.send(MainActions.ShowGraphiqlEditor, props);
   }
 
   public showGreeting() {

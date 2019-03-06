@@ -30,7 +30,7 @@ export interface IRealmSidebarContainerProps {
   getMetric: MetricGetter;
   isOpen: boolean;
   onRealmDeletion: (...realms: RealmFile[]) => void;
-  onRealmOpened: (realm: RealmFile) => void;
+  onRealmOpened: (realm: RealmFile, usingGrahpiql?: boolean) => void;
   onRealmTypeUpgrade: (realm: RealmFile) => void;
   onClose: () => void;
   realms: RealmFile[];
