@@ -51,7 +51,7 @@ export const createGraphQLFetcher = (params: {
         activeSubscription = subscriptionsClient
           .request({
             query: graphQLParams.query,
-            variables: graphQLParams.varaibles,
+            variables: graphQLParams.variables,
           })
           .subscribe(observer);
       },
