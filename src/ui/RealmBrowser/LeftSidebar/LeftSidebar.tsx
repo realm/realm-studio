@@ -21,7 +21,7 @@ import React from 'react';
 import { Badge, Button } from 'reactstrap';
 
 import { ClassFocussedHandler } from '..';
-import { ILoadingProgress, Sidebar } from '../../reusable';
+import { Sidebar } from '../../reusable';
 import { Focus, IListFocus } from '../focus';
 
 import { ListFocus } from './ListFocus';
@@ -47,7 +47,6 @@ export interface ILeftSidebarProps {
   isOpen: boolean;
   onClassFocussed: ClassFocussedHandler;
   onToggle: () => void;
-  progress: ILoadingProgress;
   readOnly: boolean;
   toggleAddClass: () => void;
 }
@@ -61,7 +60,6 @@ export const LeftSidebar = ({
   isOpen,
   onClassFocussed,
   onToggle,
-  progress,
   readOnly,
   toggleAddClass,
 }: ILeftSidebarProps) => (
@@ -118,7 +116,7 @@ export const LeftSidebar = ({
             );
           })}
         </ul>
-      ) : progress.status === 'done' ? (
+      ) : classes && classes.length === 0 ? (
         <div className="LeftSidebar__ClassList--empty" />
       ) : null}
       {hiddenClassCount > 0 ? (

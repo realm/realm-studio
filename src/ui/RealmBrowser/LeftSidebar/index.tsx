@@ -20,7 +20,6 @@ import React from 'react';
 
 import { ClassFocussedHandler } from '..';
 import { store } from '../../../store';
-import { ILoadingProgress } from '../../reusable';
 import { Focus } from '../focus';
 
 import { LeftSidebar } from './LeftSidebar';
@@ -37,7 +36,6 @@ interface ILeftSidebarContainerProps {
   isOpen: boolean;
   onClassFocussed: ClassFocussedHandler;
   onToggle: () => void;
-  progress: ILoadingProgress;
   readOnly?: boolean;
   toggleAddClass: () => void;
 }
@@ -85,7 +83,6 @@ class LeftSidebarContainer extends React.Component<
         isOpen={this.props.isOpen}
         onClassFocussed={this.props.onClassFocussed}
         onToggle={this.props.onToggle}
-        progress={this.props.progress}
         readOnly={this.props.readOnly || false}
         toggleAddClass={this.props.toggleAddClass}
       />

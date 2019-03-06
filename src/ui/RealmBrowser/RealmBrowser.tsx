@@ -17,6 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import React from 'react';
+import { RealmProgress } from 'react-realm-context';
 import Realm from 'realm';
 
 import { ILoadingProgress, LoadingOverlay } from '../reusable/LoadingOverlay';
@@ -58,8 +59,8 @@ export interface IRealmBrowserProps {
   onLeftSidebarToggle: () => void;
   onListFocussed: ListFocussedHandler;
   onOpenWithEncryption: (key: string) => void;
-  onRealmChanged: () => void;
-  progress: ILoadingProgress;
+  onRealmChange: () => void;
+  importProgress: ILoadingProgress;
   realm?: Realm;
   toggleAddClass: () => void;
   toggleAddClassProperty: () => void;
@@ -90,8 +91,8 @@ export const RealmBrowser = ({
   onLeftSidebarToggle,
   onListFocussed,
   onOpenWithEncryption,
-  onRealmChanged,
-  progress,
+  onRealmChange,
+  importProgress,
   realm,
   toggleAddClass,
   toggleAddClassProperty,
@@ -106,7 +107,6 @@ export const RealmBrowser = ({
         isOpen={isLeftSidebarOpen}
         onClassFocussed={onClassFocussed}
         onToggle={onLeftSidebarToggle}
-        progress={progress}
         toggleAddClass={toggleAddClass}
         readOnly={editMode === EditMode.Disabled}
       />
@@ -126,9 +126,8 @@ export const RealmBrowser = ({
             onClassFocussed={onClassFocussed}
             onCommitTransaction={onCommitTransaction}
             onListFocussed={onListFocussed}
-            onRealmChanged={onRealmChanged}
+            onRealmChange={onRealmChange}
             permissionSidebar={true}
-            progress={progress}
             readOnly={editMode === EditMode.Disabled}
             realm={realm}
             ref={contentRef}
@@ -163,7 +162,26 @@ export const RealmBrowser = ({
         visible={isEncryptionDialogVisible}
       />
 
-      <LoadingOverlay progress={progress} fade={true} />
+      <LoadingOverlay progress={importProgress} fade={true} />
+
+      <RealmProgress>
+        {({ isLoading, download, upload, realm: loadingRealm }) => {
+          // TODO: Remove hack once https://github.com/realm/realm-sync/issues/2859 gets resolved
+          if (loadingRealm.syncSession && !download) {
+            isLoading = true;
+          }
+          const transferred =
+            (download ? download.transferred : 0) +
+            (upload ? upload.transferred : 0);
+          const transferable =
+            (download ? download.transferable : 0) +
+            (upload ? upload.transferable : 0);
+          const progress: ILoadingProgress = isLoading
+            ? { status: 'in-progress', transferred, transferable }
+            : { status: 'idle' };
+          return <LoadingOverlay progress={progress} fade={true} />;
+        }}
+      </RealmProgress>
     </div>
   );
 };

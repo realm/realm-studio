@@ -29,7 +29,6 @@ import {
 import { store } from '../../../store';
 import { getRange } from '../../../utils';
 import { showError } from '../../reusable/errors';
-import { ILoadingProgress } from '../../reusable/LoadingOverlay';
 import { Focus, getClassName, IClassFocus } from '../focus';
 import { isPrimitive } from '../primitives';
 
@@ -114,7 +113,6 @@ export interface IBaseContentContainerProps {
     collection: Realm.Collection<any>,
   ) => void;
   onListFocussed?: ListFocussedHandler;
-  progress?: ILoadingProgress;
   readOnly: boolean;
 }
 
@@ -131,7 +129,7 @@ export interface IReadWriteContentContainerProps
   onAddColumnClick: () => void;
   onCancelTransaction: () => void;
   onCommitTransaction: () => void;
-  onRealmChanged: () => void;
+  onRealmChange: () => void;
   permissionSidebar: boolean;
   readOnly: boolean;
   realm: Realm;
@@ -974,7 +972,7 @@ class ContentContainer extends React.Component<
       if (this.props.realm.isInTransaction) {
         callback();
         // We have to signal changes manually
-        this.props.onRealmChanged();
+        this.props.onRealmChange();
       } else {
         this.props.realm.write(callback);
       }
