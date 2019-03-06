@@ -134,7 +134,7 @@ export const ConnectToServer = ({
           </Button>
         </FormGroup>
       </div>
-      <LoadingOverlay loading={isConnecting} />
+      <LoadingOverlay isLoading={isConnecting} />
     </Form>
   );
 };

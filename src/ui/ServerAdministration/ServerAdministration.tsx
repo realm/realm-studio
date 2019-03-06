@@ -130,7 +130,7 @@ export const ServerAdministration = (props: IServerAdministrationProps) => {
       />
 
       <LoadingOverlay
-        loading={isRealmOpening}
+        isLoading={isRealmOpening}
         progress={progress}
         fade={true}
       />

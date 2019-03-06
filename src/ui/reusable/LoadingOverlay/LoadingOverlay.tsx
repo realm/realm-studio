@@ -32,16 +32,18 @@ import './LoadingOverlay.scss';
  * @param options.fade Delay and fade in the overlay, prevent flickering when the load is fast.
  */
 export const LoadingOverlay = ({
-  loading,
+  isLoading,
   progress,
   fade = true,
 }: {
-  loading?: boolean;
+  isLoading?: boolean;
   progress?: ILoadingProgress;
   fade?: boolean;
 }) => {
   // If a progress has been supplied, it overrides loading
-  const isVisible = progress ? progress.status !== 'done' : loading;
+  const isVisible = progress
+    ? progress.status === 'in-progress' || progress.status === 'failed'
+    : isLoading;
   // Show the progress bar if we know how far we've made it
   const showProgress =
     progress &&
@@ -50,7 +52,7 @@ export const LoadingOverlay = ({
   // Show the dots if making progress but being uncertain on how far
   const showDots = progress
     ? progress.status === 'in-progress' && !showProgress
-    : loading;
+    : isLoading;
   return isVisible ? (
     <div
       className={classNames('LoadingOverlay', {

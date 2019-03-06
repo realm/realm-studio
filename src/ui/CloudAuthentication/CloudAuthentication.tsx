@@ -87,7 +87,7 @@ export const CloudAuthentication = ({
       )}
     </div>
     <LoadingOverlay
-      loading={status !== 'idle'}
+      isLoading={status !== 'idle'}
       progress={
         status === 'awaiting-github'
           ? {
