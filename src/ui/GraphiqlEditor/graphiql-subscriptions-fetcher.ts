@@ -1,3 +1,5 @@
+// Heavily modified from https://github.com/apollographql/GraphiQL-Subscriptions-Fetcher
+
 import { parse } from 'graphql';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
 
