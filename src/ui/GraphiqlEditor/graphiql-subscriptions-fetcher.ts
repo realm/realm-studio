@@ -67,7 +67,12 @@ export const createGraphQLFetcher = (params: {
       },
       body: JSON.stringify(graphQLParams),
     });
-    return response.json();
+
+    if (response.headers.get('Content-Type') === 'application/json') {
+      return response.json();
+    } else {
+      return response.text();
+    }
   };
 
   return (graphQLParams: any) => {
