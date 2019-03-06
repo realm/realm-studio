@@ -7,12 +7,19 @@
       "request": "launch",
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
-      "program": "${workspaceRoot}/build/main.js",
+      "windows": {
+        "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
+      },
+      "args": ["."],
       "preLaunchTask": "build",
-      "outFiles": [
-        "${workspaceRoot}/build/**/*.js"
-      ],
-      "sourceMaps": true
+
+      "outFiles": ["${workspaceRoot}/build/**/*.js"],
+      "sourceMaps": true,
+
+      "outputCapture": "std",
+      "env": {
+        "REALM_STUDIO_INTERNAL_FEATURES": "true"
+      }
     }
   ]
 }
