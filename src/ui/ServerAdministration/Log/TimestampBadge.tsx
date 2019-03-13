@@ -23,6 +23,11 @@ import { Badge } from 'reactstrap';
 const calendarFormats = {
   // See https://momentjs.com/docs/#localized-formats
   sameDay: 'LTS',
+  nextDay: 'L LTS',
+  nextWeek: 'L LTS',
+  lastDay: 'L LTS',
+  lastWeek: 'L LTS',
+  sameElse: 'L LTS',
 };
 
 export interface ITimestampBadgeProps {
