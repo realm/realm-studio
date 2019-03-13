@@ -2,12 +2,12 @@
 
 ### Enhancements
 
-* None
+- None
 
 ### Fixed
 
-* None
+- None
 
 ### Internals
 
-* None
+- None
