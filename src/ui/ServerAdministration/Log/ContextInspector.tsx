@@ -16,75 +16,59 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import { ReactObjectInspector } from '../../../module-wrappers/react-object-inspector';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import { NodeRenderer, ObjectInspector, ObjectLabel } from 'react-inspector';
 
 interface IContextInspectorProps {
-  data: object;
-  name?: string;
-  path?: string;
-  initialExpandedPaths?: string[];
+  context: { [key: string]: any } | null;
   onUpdated: () => void;
 }
 
-interface IExpandedPaths {
-  [path: string]: boolean;
-}
+export class ContextInspector extends React.Component<IContextInspectorProps> {
+  private resizeObserver = new ResizeObserver(() => {
+    this.props.onUpdated();
+  });
+  private objectInspectorRef = React.createRef<ObjectInspector>();
 
-interface IContextInspectorState {
-  expandedPaths: IExpandedPaths;
-}
-
-function didExpandedPathsChange(a: IExpandedPaths, b: IExpandedPaths) {
-  // Create arrays of property names
-  const aProps = Object.getOwnPropertyNames(a);
-  const bProps = Object.getOwnPropertyNames(b);
-
-  // With no expanded paths in either - they cannot differ
-  if (aProps.length === 0 && bProps.length === 0) {
-    return false;
-  }
-
-  // If number of properties is different,
-  // objects are not equivalent
-  if (aProps.length !== bProps.length) {
-    return true;
-  }
-
-  for (const propName of aProps) {
-    // If values of same property are not equal,
-    // objects are not equivalent
-    if (a[propName] !== b[propName]) {
-      return true;
-    }
-  }
-
-  // If we made it this far, objects
-  // are considered equivalent
-  return false;
-}
-
-export class ContextInspector extends ReactObjectInspector<
-  IContextInspectorProps
-> {
-  // ObjectInspector mutates the expandedPaths object
-  protected previouslyExpandedPaths?: IExpandedPaths;
-
-  public componentDidUpdate(
-    prevProps: Readonly<IContextInspectorProps>,
-    prevState: Readonly<IContextInspectorState>,
-    prevContext: any,
-  ) {
-    if (this.previouslyExpandedPaths) {
-      const changed = didExpandedPathsChange(
-        this.state.expandedPaths,
-        this.previouslyExpandedPaths,
-      );
-      // If it changed - ensure the consumer knows the component was updated
-      if (changed) {
-        this.props.onUpdated();
+  public componentDidMount() {
+    const objectInspector = this.objectInspectorRef.current;
+    if (objectInspector) {
+      const element = ReactDOM.findDOMNode(objectInspector);
+      if (element instanceof Element) {
+        this.resizeObserver.observe(element);
       }
     }
-    // Save this for later
-    this.previouslyExpandedPaths = { ...this.state.expandedPaths };
   }
+
+  public componentWillUnmount() {
+    this.resizeObserver.disconnect();
+  }
+
+  public render() {
+    const children = [];
+    const context = this.props.context || {};
+    const keys = Object.keys(context);
+    for (const key of keys) {
+      const data = context[key];
+      children.push(
+        <ObjectInspector
+          name={key}
+          key={key}
+          data={data}
+          ref={this.objectInspectorRef}
+          nodeRenderer={this.nodeRenderer}
+        />,
+      );
+    }
+    return children;
+  }
+
+  private nodeRenderer: NodeRenderer = props => (
+    <ObjectLabel
+      name={props.name}
+      data={props.data}
+      isNonenumerable={props.isNonenumerable}
+    />
+  );
 }

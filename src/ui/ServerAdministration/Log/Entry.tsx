@@ -72,11 +72,7 @@ export const Entry = ({
         </div>
         {Object.keys(restOfContext).length > 0 ? (
           <div className="Log__Entry__Context">
-            <ContextInspector
-              data={context}
-              onUpdated={onResized}
-              name="context"
-            />
+            <ContextInspector context={context} onUpdated={onResized} />
           </div>
         ) : null}
       </div>
