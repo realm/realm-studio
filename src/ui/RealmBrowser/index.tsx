@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2018 Realm Inc.
+// Copyright 2019 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import * as path from 'path';
 import * as React from 'react';
 import * as Realm from 'realm';
 
+import { DataExporter, DataExportFormat } from '../../services/data-exporter';
 import * as dataImporter from '../../services/data-importer';
 import { Language, SchemaExporter } from '../../services/schema-export';
 import { menu } from '../../utils';
@@ -188,6 +189,20 @@ class RealmBrowserContainer
       ],
     };
 
+    const exportDataMenu: MenuItemConstructorOptions = {
+      label: 'Save data',
+      submenu: [
+        {
+          label: 'JSON',
+          click: () => this.onExportData(DataExportFormat.JSON),
+        },
+        {
+          label: 'Local Realm',
+          click: () => this.onExportData(DataExportFormat.LocalRealm),
+        },
+      ],
+    };
+
     const transactionMenuItems: MenuItemConstructorOptions[] =
       this.realm && this.realm.isInTransaction
         ? [
@@ -247,7 +262,7 @@ class RealmBrowserContainer
       {
         action: 'prepend',
         id: 'close',
-        items: [exportSchemaMenu, { type: 'separator' }],
+        items: [exportSchemaMenu, exportDataMenu, { type: 'separator' }],
       },
       {
         action: 'append',
@@ -660,6 +675,23 @@ class RealmBrowserContainer
         }
       },
     );
+  };
+
+  private onExportData = (format: DataExportFormat) => {
+    try {
+      const exporter = new DataExporter(format);
+      if (this.realm) {
+        const destinationPath = remote.dialog.showSaveDialog({
+          defaultPath: exporter.suggestFilename(this.realm),
+          message: 'Select a destination for the data',
+        });
+        exporter.export(this.realm, destinationPath);
+      } else {
+        throw new Error('Realm is not open');
+      }
+    } catch (err) {
+      showError('Failed to export data', err);
+    }
   };
 
   private onImportIntoExistingRealm = (

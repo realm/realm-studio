@@ -15,3 +15,11 @@
 // limitations under the License.
 //
 ////////////////////////////////////////////////////////////////////////////
+
+import { IExportEngine } from '.';
+
+export class LocalRealmExportEngine implements IExportEngine {
+  public export(realm: Realm, destinationPath: string) {
+    realm.writeCopyTo(destinationPath);
+  }
+}

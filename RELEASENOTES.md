@@ -3,6 +3,7 @@
 ### Enhancements
 
 - Improved how log entries are displayed in the server adminstration window: The timestamp now displays the date when the entry is not from the current day and the context object gets expanded initially. ([#1131](https://github.com/realm/realm-studio/issues/1131), since v1.20.0)
+- Added a menu item to export data to JSON or a local Realm from the Realm Browser window. ([#1134](https://github.com/realm/realm-studio/pull/1134))
 
 ### Fixed
 
