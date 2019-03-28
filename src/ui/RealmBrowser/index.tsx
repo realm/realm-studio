@@ -501,18 +501,15 @@ class RealmBrowserContainer
   };
 
   private onAddClass = async (schema: Realm.ObjectSchema) => {
-    if (this.realm) {
+    const realm = this.realm;
+    if (realm) {
       try {
-        // Update the schema using an undocumented API
-        if (typeof (this.realm as any)._updateSchema === 'function') {
-          (this.realm as any)._updateSchema([...this.realm.schema, schema]);
-          // Select the schema when it the realm has loaded
-          this.onClassFocussed(schema.name);
-        } else {
-          throw new Error(
-            'Missing the _updateSchema method on the Realm instance',
-          );
-        }
+        realm.write(() => {
+          // Update the schema using an undocumented API
+          realm._updateSchema([...realm.schema, schema]);
+        });
+        // Select the schema when it the realm has loaded
+        this.onClassFocussed(schema.name);
       } catch (err) {
         showError(`Failed creating the model "${schema.name}"`, err);
       }
@@ -520,25 +517,22 @@ class RealmBrowserContainer
   };
 
   private onAddProperty = async (name: string, type: Realm.PropertyType) => {
-    if (this.realm && this.state.focus && this.state.focus.kind === 'class') {
+    const realm = this.realm;
+    if (realm && this.state.focus && this.state.focus.kind === 'class') {
       try {
         const focusedClassName = this.state.focus.className;
         const modifiedSchema = schemaUtils.addProperty(
-          this.realm.schema,
+          realm.schema,
           focusedClassName,
           name,
           type,
         );
-        // Update the schema using an undocumented API
-        if (typeof (this.realm as any)._updateSchema === 'function') {
-          (this.realm as any)._updateSchema(modifiedSchema);
+
+        realm.write(() => {
+          realm._updateSchema(modifiedSchema);
           // Ensure we've selected the class that we've just added a property to
           this.onClassFocussed(focusedClassName);
-        } else {
-          throw new Error(
-            'Missing the _updateSchema method on the Realm instance',
-          );
-        }
+        });
       } catch (err) {
         showError(
           `Failed adding the property named "${name}" to the selected schema`,
