@@ -60,6 +60,7 @@ export interface IRealmTableContainerState {
   /** Prevents spamming the server too badly */
   deletionProgress?: IDeletionProgress;
   searchString: string;
+  queryError?: Error;
   // TODO: Update this once Realm JS has better support for Sets
   selectedRealms: RealmFile[];
   showPartialRealms: boolean;
@@ -84,6 +85,7 @@ class RealmsTableContainer extends React.Component<
       showPartialRealms: boolean,
       showSystemRealms: boolean,
     ) => {
+      let queryError: Error | undefined;
       let realms = adminRealm
         .objects<RealmFile>('RealmFile')
         .sorted('createdAt');
@@ -97,6 +99,7 @@ class RealmsTableContainer extends React.Component<
         try {
           realms = realms.filtered(filterQuery);
         } catch (err) {
+          queryError = err;
           // tslint:disable-next-line:no-console
           console.warn(`Could not filter on "${filterQuery}"`, err);
         }
@@ -118,7 +121,7 @@ class RealmsTableContainer extends React.Component<
           ].join(' AND '),
         );
       }
-      return realms;
+      return { realms, queryError };
     },
   );
 
@@ -283,7 +286,7 @@ class RealmsTableContainer extends React.Component<
   };
 
   private renderTable() {
-    const realms = this.realms(
+    const { realms, queryError } = this.realms(
       this.props.adminRealm,
       this.state.searchString,
       this.state.showPartialRealms,
@@ -311,6 +314,7 @@ class RealmsTableContainer extends React.Component<
         onSearchStringChange={this.onSearchStringChange}
         realms={realms}
         searchString={this.state.searchString}
+        queryError={queryError}
         selectedRealms={validSelectedRealms}
         deletionProgress={this.state.deletionProgress}
         onRealmSizeRecalculate={this.onRealmSizeRecalculate}
@@ -369,7 +373,7 @@ class RealmsTableContainer extends React.Component<
   }
 
   private getRealmsBetween(realmA: RealmFile, realmB: RealmFile) {
-    const realms = this.realms(
+    const { realms } = this.realms(
       this.props.adminRealm,
       this.state.searchString,
       this.state.showPartialRealms,

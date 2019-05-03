@@ -67,6 +67,7 @@ export const UsersTable = ({
   searchString,
   selection,
   users,
+  queryError,
 }: {
   getUsersRealms: (user: User) => Realm.Results<RealmFile>;
   isChangePasswordOpen: boolean;
@@ -93,6 +94,7 @@ export const UsersTable = ({
   users: Realm.Results<User>;
   searchString: string;
   onSearchStringChange: (query: string) => void;
+  queryError?: Error;
 }) => {
   return (
     <div className="UsersTable">
@@ -103,9 +105,10 @@ export const UsersTable = ({
         onElementClick={onUserClick}
         onElementsDeselection={onUsersDeselection}
         onSearchStringChange={onSearchStringChange}
-        searchPlaceholder="Search users"
+        searchPlaceholder="Search users (start with ! to write a verbatim realm-js query)"
         searchString={searchString}
         selectedElements={selection ? [selection.user] : []}
+        queryError={queryError}
       >
         <Column
           label="Provider Id(s)"

@@ -55,5 +55,13 @@ export const shortenRealmPath = (path: string) => {
 export const querySomeFieldContainsText = (
   fields: string[],
   textToContain: string,
-) =>
-  fields.map(field => `${field} CONTAINS[c] "${textToContain}"`).join(' OR ');
+): string => {
+  // If query starts with !, just execute as is
+  if (textToContain.indexOf('!') === 0) {
+    return textToContain.substring(1);
+  } else {
+    return fields
+      .map(field => `${field} CONTAINS[c] "${textToContain}"`)
+      .join(' OR ');
+  }
+};

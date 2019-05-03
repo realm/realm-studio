@@ -52,6 +52,7 @@ export const RealmsTable = ({
   onSearchStringChange,
   realms,
   searchString,
+  queryError,
   selectedRealms,
   onRealmSizeRecalculate,
   shouldShowRealmSize,
@@ -68,6 +69,7 @@ export const RealmsTable = ({
   onSearchStringChange: (query: string) => void;
   realms: Realm.Results<RealmFile>;
   searchString: string;
+  queryError?: Error;
   selectedRealms: RealmFile[];
   onRealmSizeRecalculate: (realm: RealmFile) => void;
   shouldShowRealmSize: boolean;
@@ -81,8 +83,9 @@ export const RealmsTable = ({
         onElementDoubleClick={onRealmOpened}
         onElementsDeselection={onRealmsDeselection}
         onSearchStringChange={onSearchStringChange}
-        searchPlaceholder="Search Realms"
+        searchPlaceholder="Search Realms (start with ! to write a verbatim realm-js query)"
         searchString={searchString}
+        queryError={queryError}
         selectedElements={selectedRealms}
         isElementsEqual={(a, b) => a.path === b.path}
       >

@@ -38,6 +38,7 @@ export interface IFilterableTableProps<E extends any> {
   onSearchStringChange: (searchString: string) => void;
   searchPlaceholder: string;
   searchString: string;
+  queryError?: Error;
   selectedElements: E[];
 }
 
@@ -53,12 +54,14 @@ export const FilterableTable = <E extends any>({
   searchPlaceholder,
   searchString,
   selectedElements,
+  queryError,
 }: IFilterableTableProps<E>) => (
   <div className={classNames('Table', className)}>
     <div className="Table__Topbar">
       <QuerySearch
         query={searchString}
         onQueryChange={onSearchStringChange}
+        queryError={queryError}
         placeholder={searchPlaceholder}
       />
     </div>
