@@ -25,7 +25,7 @@ import * as ros from '../../../services/ros';
 import { store } from '../../../store';
 import { showError } from '../../reusable/errors';
 import { withAdminRealm } from '../AdminRealm';
-import { querySomeFieldContainsText } from '../utils';
+import { getQueryForFields } from '../utils';
 import { UsersTable } from './UsersTable';
 
 export interface ISelection {
@@ -64,7 +64,7 @@ class UsersTableContainer extends React.Component<
       let users = adminRealm.objects<ros.User>('User').sorted('userId');
       // Filter if a search string is specified
       if (searchString && searchString !== '') {
-        const filterQuery = querySomeFieldContainsText(
+        const filterQuery = getQueryForFields(
           ['userId', 'accounts.providerId', 'metadata.key', 'metadata.value'],
           searchString,
         );

@@ -16,6 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import * as electron from 'electron';
 import * as React from 'react';
 import { Column } from 'react-virtualized';
 import { Button } from 'reactstrap';
@@ -38,6 +39,22 @@ import './RealmsTable.scss';
 const FilterableRealmTable: React.ComponentType<
   IFilterableTableProps<RealmFile>
 > = FilterableTable;
+
+const onQueryHelp = () => {
+  const url =
+    'https://realm.io/docs/javascript/latest/api/tutorial-query-language.html';
+  electron.shell.openExternal(url);
+};
+
+const queryHelpTooltip = (
+  <div style={{ textAlign: 'left' }}>
+    Start a query with ! to pass in a verbatim realm-js query. For example:
+    <ul>
+      <li>!path = "/default"</li>
+      <li>!userId ENDSWITH "123"</li>
+    </ul>
+  </div>
+);
 
 export const RealmsTable = ({
   deletionProgress,
@@ -84,6 +101,8 @@ export const RealmsTable = ({
         onElementsDeselection={onRealmsDeselection}
         onSearchStringChange={onSearchStringChange}
         searchPlaceholder="Search Realms (start with ! to write a verbatim realm-js query)"
+        onQueryHelp={onQueryHelp}
+        queryHelpTooltip={queryHelpTooltip}
         searchString={searchString}
         queryError={queryError}
         selectedElements={selectedRealms}

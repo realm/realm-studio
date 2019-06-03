@@ -52,16 +52,24 @@ export const shortenRealmPath = (path: string) => {
   }
 };
 
-export const querySomeFieldContainsText = (
+export const getQueryForFields = (
   fields: string[],
   textToContain: string,
 ): string => {
   // If query starts with !, just execute as is
   if (textToContain.indexOf('!') === 0) {
     return textToContain.substring(1);
-  } else {
-    return fields
-      .map(field => `${field} CONTAINS[c] "${textToContain}"`)
-      .join(' OR ');
   }
+
+  // Otherwise, generate an OR query to find the text in any of the fields.
+  return querySomeFieldContainsText(fields, textToContain);
+};
+
+const querySomeFieldContainsText = (
+  fields: string[],
+  textToContain: string,
+): string => {
+  return fields
+    .map(field => `${field} CONTAINS[c] "${textToContain}"`)
+    .join(' OR ');
 };

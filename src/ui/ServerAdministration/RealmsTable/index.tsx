@@ -32,7 +32,7 @@ import {
   IRealmStateSize,
   MetricsRealmProvider,
 } from '../MetricsRealm';
-import { querySomeFieldContainsText } from '../utils';
+import { getQueryForFields } from '../utils';
 
 import { RealmsTable } from './RealmsTable';
 
@@ -92,7 +92,7 @@ class RealmsTableContainer extends React.Component<
 
       // Filter if a search string is specified
       if (searchString || searchString !== '') {
-        const filterQuery = querySomeFieldContainsText(
+        const filterQuery = getQueryForFields(
           ['path', 'realmType', 'owner.accounts.providerId'],
           searchString,
         );
