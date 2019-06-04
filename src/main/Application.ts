@@ -22,7 +22,7 @@ import * as path from 'path';
 import { URL } from 'url';
 
 import { MainReceiver } from '../actions/main';
-import { CLOUD_PROTOCOL, STUDIO_PROTOCOL } from '../constants';
+import { CLOUD_PROTOCOL, OPEN_ROS_ACTION, STUDIO_PROTOCOL } from '../constants';
 import * as dataImporter from '../services/data-importer';
 import * as github from '../services/github';
 import * as raas from '../services/raas';
@@ -459,22 +459,31 @@ export class Application {
   private onOpenUrl = (event: Event | undefined, urlString: string) => {
     if (app.isReady()) {
       const url = new URL(urlString);
-      if (url.protocol === `${STUDIO_PROTOCOL}:`) {
-        // The protocol stores the action as the URL hostname
-        const action = url.hostname;
-        if (action === github.OPEN_URL_ACTION) {
-          const code = url.searchParams.get('code');
-          const state = url.searchParams.get('state');
-          if (!code || !state) {
-            throw new Error('Missing the code or state');
-          } else {
-            github.handleOauthCallback({ code, state });
+      switch (url.protocol.slice(0, -1)) {
+        case STUDIO_PROTOCOL:
+          // The protocol stores the action as the URL hostname
+          switch (url.hostname) {
+            case github.OPEN_URL_ACTION:
+              const code = url.searchParams.get('code');
+              const state = url.searchParams.get('state');
+              if (!code || !state) {
+                throw new Error('Missing the code or state');
+              }
+
+              github.handleOauthCallback({ code, state });
+              break;
+            case OPEN_ROS_ACTION:
+              this.openRosUrl(url.searchParams).catch((err: Error) => {
+                showError('Could not open a ROS URL', err);
+              });
+              break;
           }
-        }
-      } else if (url.protocol === `${CLOUD_PROTOCOL}:`) {
-        this.openCloudUrl(url).catch((err: Error) => {
-          showError('Could not open Realm Cloud URL', err);
-        });
+          break;
+        case CLOUD_PROTOCOL:
+          this.openCloudUrl(url).catch((err: Error) => {
+            showError('Could not open Realm Cloud URL', err);
+          });
+          break;
       }
     } else {
       this.delayedUrlOpens.push(urlString);
@@ -621,6 +630,22 @@ export class Application {
     await this.showServerAdministration({
       user: user.serialize(),
       isCloudTenant: true,
+      validateCertificates: true,
+    });
+  }
+
+  private async openRosUrl(params: URLSearchParams): Promise<void> {
+    const credentialsString = params.get('credentials');
+    const serverUrl = params.get('url');
+    if (!credentialsString || !serverUrl) {
+      throw new Error('Missing url and/or credentials from query parameters');
+    }
+
+    const credentials = JSON.parse(credentialsString);
+    credentials.url = serverUrl;
+    const user = await authenticate(credentials);
+    await this.showServerAdministration({
+      user: user.serialize(),
       validateCertificates: true,
     });
   }
