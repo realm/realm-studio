@@ -31,28 +31,34 @@ class RealmStudioStore {
   public readonly KEY_SHOW_SYSTEM_REALMS = 'realmlist.show-system-realms';
   public readonly KEY_SHOW_SYSTEM_USERS = 'userlist.show-system-users';
   public readonly KEY_SHOW_SYSTEM_CLASSES = 'browser.show-system-classes';
+  public readonly KEY_SHOW_INTERNAL_FEATURES = 'general.show-internal-features';
   public readonly KEY_WINDOW_OPTIONS = 'window-options';
 
   private store = new ElectronStore();
 
   public toggleShowPartialRealms() {
-    const currentValue = this.store.get(this.KEY_SHOW_PARTIAL_REALMS, false);
+    const currentValue = this.shouldShowPartialRealms();
     this.store.set(this.KEY_SHOW_PARTIAL_REALMS, !currentValue);
   }
 
   public toggleShowSystemRealms() {
-    const currentValue = this.store.get(this.KEY_SHOW_SYSTEM_REALMS, false);
+    const currentValue = this.shouldShowSystemRealms();
     this.store.set(this.KEY_SHOW_SYSTEM_REALMS, !currentValue);
   }
 
   public toggleShowSystemUsers() {
-    const currentValue = this.store.get(this.KEY_SHOW_SYSTEM_USERS, false);
+    const currentValue = this.shouldShowSystemUsers();
     this.store.set(this.KEY_SHOW_SYSTEM_USERS, !currentValue);
   }
 
   public toggleShowSystemClasses() {
-    const currentValue = this.store.get(this.KEY_SHOW_SYSTEM_CLASSES, false);
+    const currentValue = this.shouldShowSystemClasses();
     this.store.set(this.KEY_SHOW_SYSTEM_CLASSES, !currentValue);
+  }
+
+  public toggleShowInternalFeatures() {
+    const currentValue = this.shouldShowInternalFeatures();
+    this.store.set(this.KEY_SHOW_INTERNAL_FEATURES, !currentValue);
   }
 
   public shouldShowPartialRealms(): boolean {
@@ -69,6 +75,10 @@ class RealmStudioStore {
 
   public shouldShowSystemClasses(): boolean {
     return this.store.get(this.KEY_SHOW_SYSTEM_CLASSES, false);
+  }
+
+  public shouldShowInternalFeatures(): boolean {
+    return this.store.get(this.KEY_SHOW_INTERNAL_FEATURES, false);
   }
 
   // Window option related methods
