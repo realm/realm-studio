@@ -38,7 +38,10 @@ export interface IFilterableTableProps<E extends any> {
   onSearchStringChange: (searchString: string) => void;
   searchPlaceholder: string;
   searchString: string;
+  queryError?: Error;
   selectedElements: E[];
+  onQueryHelp?: () => void;
+  queryHelpTooltip?: JSX.Element;
 }
 
 export const FilterableTable = <E extends any>({
@@ -53,12 +56,18 @@ export const FilterableTable = <E extends any>({
   searchPlaceholder,
   searchString,
   selectedElements,
+  queryError,
+  onQueryHelp,
+  queryHelpTooltip,
 }: IFilterableTableProps<E>) => (
   <div className={classNames('Table', className)}>
     <div className="Table__Topbar">
       <QuerySearch
         query={searchString}
         onQueryChange={onSearchStringChange}
+        onQueryHelp={onQueryHelp}
+        queryHelpTooltip={queryHelpTooltip}
+        queryError={queryError}
         placeholder={searchPlaceholder}
       />
     </div>

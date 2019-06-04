@@ -16,6 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import * as electron from 'electron';
 import * as React from 'react';
 import { Column } from 'react-virtualized';
 import { Button } from 'reactstrap';
@@ -39,6 +40,22 @@ const FilterableRealmTable: React.ComponentType<
   IFilterableTableProps<RealmFile>
 > = FilterableTable;
 
+const onQueryHelp = () => {
+  const url =
+    'https://realm.io/docs/javascript/latest/api/tutorial-query-language.html';
+  electron.shell.openExternal(url);
+};
+
+const queryHelpTooltip = (
+  <div style={{ textAlign: 'left' }}>
+    Start a query with ! to pass in a verbatim realm-js query. For example:
+    <ul>
+      <li>!path = "/default"</li>
+      <li>!userId ENDSWITH "123"</li>
+    </ul>
+  </div>
+);
+
 export const RealmsTable = ({
   deletionProgress,
   getRealmPermissions,
@@ -52,6 +69,7 @@ export const RealmsTable = ({
   onSearchStringChange,
   realms,
   searchString,
+  queryError,
   selectedRealms,
   onRealmSizeRecalculate,
   shouldShowRealmSize,
@@ -68,6 +86,7 @@ export const RealmsTable = ({
   onSearchStringChange: (query: string) => void;
   realms: Realm.Results<RealmFile>;
   searchString: string;
+  queryError?: Error;
   selectedRealms: RealmFile[];
   onRealmSizeRecalculate: (realm: RealmFile) => void;
   shouldShowRealmSize: boolean;
@@ -81,8 +100,11 @@ export const RealmsTable = ({
         onElementDoubleClick={onRealmOpened}
         onElementsDeselection={onRealmsDeselection}
         onSearchStringChange={onSearchStringChange}
-        searchPlaceholder="Search Realms"
+        searchPlaceholder="Search Realms (start with ! to write a verbatim realm-js query)"
+        onQueryHelp={onQueryHelp}
+        queryHelpTooltip={queryHelpTooltip}
         searchString={searchString}
+        queryError={queryError}
         selectedElements={selectedRealms}
         isElementsEqual={(a, b) => a.path === b.path}
       >

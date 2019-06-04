@@ -24,11 +24,13 @@ import {
   InputGroupAddon,
   Popover,
   PopoverBody,
+  UncontrolledTooltip,
 } from 'reactstrap';
 
 export interface IQuerySearchProps {
   onQueryChange: (query: string) => void;
   onQueryHelp?: () => void;
+  queryHelpTooltip?: JSX.Element;
   onQueryBlur?: React.EventHandler<React.FocusEvent>;
   onQueryFocus?: React.EventHandler<React.FocusEvent>;
   query: string;
@@ -52,37 +54,45 @@ export const QuerySearch = ({
   inputRef,
   inputElement,
   isPopoverOpen,
-}: IQuerySearchProps) => (
-  <section className={className}>
-    <InputGroup size="sm">
-      <Input
-        onChange={e => {
-          onQueryChange(e.target.value);
-        }}
-        onFocus={onQueryFocus}
-        onBlur={onQueryBlur}
-        placeholder={placeholder}
-        value={query}
-        invalid={!!queryError}
-        innerRef={inputRef}
-      />
-      {onQueryHelp && (
-        <InputGroupAddon addonType="append">
-          <Button onClick={onQueryHelp}>
-            <i className="fa fa-question" aria-hidden="true" />
-          </Button>
-        </InputGroupAddon>
+  queryHelpTooltip,
+}: IQuerySearchProps) => {
+  return (
+    <section className={className}>
+      <InputGroup size="sm">
+        <Input
+          onChange={e => {
+            onQueryChange(e.target.value);
+          }}
+          onFocus={onQueryFocus}
+          onBlur={onQueryBlur}
+          placeholder={placeholder}
+          value={query}
+          invalid={!!queryError}
+          innerRef={inputRef}
+        />
+        {onQueryHelp && (
+          <InputGroupAddon addonType="append">
+            <Button onClick={onQueryHelp} id="QueryHelpButton">
+              <i className="fa fa-question" aria-hidden="true" />
+            </Button>
+          </InputGroupAddon>
+        )}
+        {onQueryHelp && queryHelpTooltip && (
+          <UncontrolledTooltip target="QueryHelpButton" placement="left">
+            {queryHelpTooltip}
+          </UncontrolledTooltip>
+        )}
+      </InputGroup>
+      {inputElement && (
+        <Popover
+          isOpen={!!queryError && isPopoverOpen}
+          target={inputElement}
+          placement="bottom-start"
+          hideArrow={true}
+        >
+          <PopoverBody>{queryError ? queryError.message : null}</PopoverBody>
+        </Popover>
       )}
-    </InputGroup>
-    {inputElement && (
-      <Popover
-        isOpen={!!queryError && isPopoverOpen}
-        target={inputElement}
-        placement="bottom-start"
-        hideArrow={true}
-      >
-        <PopoverBody>{queryError ? queryError.message : null}</PopoverBody>
-      </Popover>
-    )}
-  </section>
-);
+    </section>
+  );
+};

@@ -25,7 +25,7 @@ import * as ros from '../../../services/ros';
 import { store } from '../../../store';
 import { showError } from '../../reusable/errors';
 import { withAdminRealm } from '../AdminRealm';
-import { querySomeFieldContainsText } from '../utils';
+import { getQueryForFields } from '../utils';
 import { UsersTable } from './UsersTable';
 
 export interface ISelection {
@@ -60,16 +60,18 @@ class UsersTableContainer extends React.Component<
 
   protected users = memoize(
     (adminRealm: Realm, searchString: string, showSystemUsers: boolean) => {
+      let queryError: Error | undefined;
       let users = adminRealm.objects<ros.User>('User').sorted('userId');
       // Filter if a search string is specified
       if (searchString && searchString !== '') {
-        const filterQuery = querySomeFieldContainsText(
+        const filterQuery = getQueryForFields(
           ['userId', 'accounts.providerId', 'metadata.key', 'metadata.value'],
           searchString,
         );
         try {
           users = users.filtered(filterQuery);
         } catch (err) {
+          queryError = err;
           // tslint:disable-next-line:no-console
           console.warn(`Could not filter on "${filterQuery}"`, err);
         }
@@ -81,7 +83,7 @@ class UsersTableContainer extends React.Component<
           "NOT userId == '__admin' AND NOT accounts.provider BEGINSWITH 'jwt/central'",
         );
       }
-      return users;
+      return { users, queryError };
     },
   );
 
@@ -110,7 +112,7 @@ class UsersTableContainer extends React.Component<
       return null;
     }
 
-    const users = this.users(
+    const { users, queryError } = this.users(
       this.props.adminRealm,
       this.state.searchString,
       this.state.showSystemUsers,
@@ -142,6 +144,7 @@ class UsersTableContainer extends React.Component<
         searchString={this.state.searchString}
         selection={selection}
         users={users}
+        queryError={queryError}
       />
     );
   }
