@@ -24,7 +24,7 @@ import * as raas from '../services/raas';
 import { store } from '../store';
 import { showError } from '../ui/reusable/errors';
 
-const showInternalFeatures =
+const enableTogglingInternalFeatures =
   process.env.NODE_ENV === 'development' ||
   process.env.REALM_STUDIO_INTERNAL_FEATURES === 'true'; // Show features only relevant for Realm employees
 
@@ -48,6 +48,7 @@ function generateCloudEndpointItems(
 export const getDefaultMenuTemplate = (
   updateMenu: () => void,
 ): electron.MenuItemConstructorOptions[] => {
+  const showInternalFeatures = store.shouldShowInternalFeatures();
   const electronOrRemote = electron.remote || electron;
   const template: electron.MenuItemConstructorOptions[] = [
     {
@@ -98,42 +99,52 @@ export const getDefaultMenuTemplate = (
     {
       label: 'View',
       submenu: [
+        {
+          label: 'Show Internal Realm features',
+          visible: showInternalFeatures || enableTogglingInternalFeatures,
+          type: 'checkbox',
+          checked: showInternalFeatures,
+          click: () => {
+            store.toggleShowInternalFeatures();
+            updateMenu();
+          },
+        },
         { role: 'reload', visible: showInternalFeatures },
         { role: 'toggledevtools', visible: showInternalFeatures },
         { type: 'separator', visible: showInternalFeatures },
         {
-          label: `Show partial Realms`,
+          label: 'Show partial Realms',
           type: 'checkbox',
           checked: store.shouldShowPartialRealms(),
-          click: async () => {
-            await store.toggleShowPartialRealms();
+          click: () => {
+            store.toggleShowPartialRealms();
             updateMenu();
           },
         },
         {
-          label: `Show system Realms`,
+          label: 'Show system Realms',
           type: 'checkbox',
           checked: store.shouldShowSystemRealms(),
-          click: async () => {
-            await store.toggleShowSystemRealms();
+          click: () => {
+            store.toggleShowSystemRealms();
             updateMenu();
           },
         },
         {
-          label: `Show system users`,
+          label: 'Show system users',
           type: 'checkbox',
           checked: store.shouldShowSystemUsers(),
-          click: async () => {
-            await store.toggleShowSystemUsers();
+          click: () => {
+            store.toggleShowSystemUsers();
             updateMenu();
           },
         },
         {
-          label: `Show system classes and properties`,
+          label: 'Show system classes and properties',
           type: 'checkbox',
           checked: store.shouldShowSystemClasses(),
-          click: async () => {
-            await store.toggleShowSystemClasses();
+          click: () => {
+            store.toggleShowSystemClasses();
             updateMenu();
           },
         },
@@ -186,6 +197,15 @@ export const getDefaultMenuTemplate = (
           label: 'Clear Cache',
           click: () => {
             main.clearRendererCache();
+          },
+        },
+        {
+          label: 'Open Cache folder',
+          visible: showInternalFeatures,
+          click: () => {
+            electronOrRemote.shell.openItem(
+              electronOrRemote.app.getPath('userData'),
+            );
           },
         },
       ],
