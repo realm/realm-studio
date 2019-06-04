@@ -23,6 +23,7 @@ import { Button, Progress } from 'reactstrap';
 import { LoadingDots } from '../LoadingDots';
 import { ILoadingProgress } from './index';
 
+import { prettyBytes } from '../../../utils';
 import './LoadingOverlay.scss';
 
 /**
@@ -75,7 +76,10 @@ export const LoadingOverlay = ({
             className="LoadingOverlay__Progress"
             value={progress.transferred}
             max={progress.transferable}
-          />
+          >
+            {// tslint:disable-next-line: prettier
+            `${prettyBytes(progress.transferred || 0)} / ${prettyBytes(progress.transferable || 0)}`}
+          </Progress>
         )}
         {showDots ? <LoadingDots /> : null}
         {progress && progress.retry ? (
