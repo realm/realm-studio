@@ -4,9 +4,10 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Release 3.6.0 (2019-06-06)
 
-[Changes since v3.5.0](https://github.com/realm/realm-studio/compare/v3.5.0...v3.6.0)
+## Release 3.6.1 (2019-06-06)
+
+[Changes since v3.5.0](https://github.com/realm/realm-studio/compare/v3.5.0...v3.6.1)
 
 ### Enhancements
 
@@ -25,8 +26,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Persist whether a user is Realm employee to avoid having to run studio with magic env variables. ([#1149](https://github.com/realm/realm-studio/pull/1149))
 - Add an option to open the cache folder to make it easier to inspect client Realms. ([#1149](https://github.com/realm/realm-studio/pull/1149))
 - Expose a way to connect to ROS from a custom url. ([#1149](https://github.com/realm/realm-studio/pull/1149))
-- Update realm-js to 2.28.1. ([#1150](https://github.com/realm/realm-studio/pull/1150))
-
 
 ## Release 3.5.0 (2019-03-06)
 
