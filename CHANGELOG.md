@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Release 3.6.0 (2019-06-06)
+
+[Changes since v3.5.0](https://github.com/realm/realm-studio/compare/v3.5.0...v3.6.0)
+
+### Enhancements
+
+- Improved how log entries are displayed in the server adminstration window: The timestamp now displays the date when the entry is not from the current day and the context object gets expanded initially. ([#1131](https://github.com/realm/realm-studio/issues/1131), since v1.20.0)
+- Added a menu item to export data to JSON or a local Realm from the Realm Browser window. When exporting to a local Realm the file will be compacted and saved without additional free space. ([#1134](https://github.com/realm/realm-studio/pull/1134))
+- Added an option to run verbatim realm-js queries on the Realms and Users tables. This can be useful, for example, when you have many similarly named Realms - for example `foo`, `foo1`, etc. and you want to find exactly `foo`. To run a manual query, prefix it with `!`. ([#1147](https://github.com/realm/realm-studio/pull/1147))
+- Added progress labels when downloading a Realm file. ([#1148](https://github.com/realm/realm-studio/pull/1148))
+
+### Fixed
+
+- None
+
+### Internals
+
+- Using `react-inspector` instead of the `react-object-inspector` package. ([#1131](https://github.com/realm/realm-studio/issues/1131))
+- Persist whether a user is Realm employee to avoid having to run studio with magic env variables. ([#1149](https://github.com/realm/realm-studio/pull/1149))
+- Add an option to open the cache folder to make it easier to inspect client Realms. ([#1149](https://github.com/realm/realm-studio/pull/1149))
+- Expose a way to connect to ROS from a custom url. ([#1149](https://github.com/realm/realm-studio/pull/1149))
+- Update realm-js to 2.28.1. ([#1150](https://github.com/realm/realm-studio/pull/1150))
+
+
 ## Release 3.5.0 (2019-03-06)
 
 [Changes since v3.4.0](https://github.com/realm/realm-studio/compare/v3.4.0...v3.5.0)
