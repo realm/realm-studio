@@ -15,7 +15,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Added an option to run verbatim realm-js queries on the Realms and Users tables. This can be useful, for example, when you have many similarly named Realms - for example `foo`, `foo1`, etc. and you want to find exactly `foo`. To run a manual query, prefix it with `!`. ([#1147](https://github.com/realm/realm-studio/pull/1147))
 - Added progress labels when downloading a Realm file. ([#1148](https://github.com/realm/realm-studio/pull/1148))
 
-
 ### Fixed
 
 - None
