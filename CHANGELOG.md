@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Release 3.7.0 (2019-06-06)
+
+[Changes since v3.6.0](https://github.com/realm/realm-studio/compare/v3.6.0...v3.7.0)
+
+### Enhancements
+
+- None
+
+### Fixed
+
+- None
+
+### Internals
+
+- None
+
+
 ## Release 3.6.0 (2019-06-06)
 
 [Changes since v3.5.0](https://github.com/realm/realm-studio/compare/v3.5.0...v3.6.0)
