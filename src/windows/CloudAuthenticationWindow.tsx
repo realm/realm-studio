@@ -32,7 +32,9 @@ export const CloudAuthenticationWindow: IWindow = {
     };
   },
   getComponent: () =>
-    import(/* webpackChunkName: "cloud-authentication" */ '../ui/CloudAuthentication').then(
+    import(
+      /* webpackChunkName: "cloud-authentication" */ '../ui/CloudAuthentication'
+    ).then(
       // TODO: Fix the props for this to include a type
       m => m.CloudAuthentication as any,
     ),

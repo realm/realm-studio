@@ -36,7 +36,9 @@ export const ServerAdministrationWindow: IWindow = {
     };
   },
   getComponent: () =>
-    import(/* webpackChunkName: "server-administration" */ '../ui/ServerAdministration').then(
+    import(
+      /* webpackChunkName: "server-administration" */ '../ui/ServerAdministration'
+    ).then(
       // TODO: Fix the props for this to include a type
       m => m.ServerAdministration as any,
     ),

@@ -76,9 +76,7 @@ export class CertificateManager {
     enableDetailedButton: boolean = true,
   ): Promise<boolean> {
     const parsedUrl = new URL(url);
-    const coreMessage = `The server (${
-      parsedUrl.host
-    }) is using a certificate that cannot be automatically trusted.`;
+    const coreMessage = `The server (${parsedUrl.host}) is using a certificate that cannot be automatically trusted.`;
     const description = this.describeCertificate(certificate);
     const buttons = ['Yes - I trust it!', 'No!'];
     if (enableDetailedButton) {

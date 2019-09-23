@@ -39,7 +39,9 @@ export const GraphiqlEditorWindow: IWindow = {
     };
   },
   getComponent: () =>
-    import(/* webpackChunkName: "graphiql-editor" */ '../ui/GraphiqlEditor').then(
+    import(
+      /* webpackChunkName: "graphiql-editor" */ '../ui/GraphiqlEditor'
+    ).then(
       // TODO: Fix the props for this to include a type
       m => m.GraphiqlEditor as any,
     ),
