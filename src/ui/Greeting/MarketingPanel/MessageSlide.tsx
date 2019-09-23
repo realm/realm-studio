@@ -92,9 +92,7 @@ const renderNode: { [key: string]: NodeRenderer } = {
       } else if (entry.sys.contentType) {
         // tslint:disable-next-line:no-console
         console.warn(
-          `Rendering unsupported embedded entry of type ${
-            entry.sys.contentType.sys.id
-          }`,
+          `Rendering unsupported embedded entry of type ${entry.sys.contentType.sys.id}`,
         );
         return '';
       } else {

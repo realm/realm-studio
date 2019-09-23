@@ -32,7 +32,9 @@ export const ConnectToServerWindow: IWindow = {
     autoHideMenuBar: true,
   }),
   getComponent: () =>
-    import(/* webpackChunkName: "connect-to-server" */ '../ui/ConnectToServer').then(
+    import(
+      /* webpackChunkName: "connect-to-server" */ '../ui/ConnectToServer'
+    ).then(
       // TODO: Fix the props for this to include a type
       m => m.ConnectToServer as any,
     ),
