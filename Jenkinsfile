@@ -137,45 +137,45 @@ pipeline {
       }
     }
 
-    // stage('Build, lint & check') {
-    //   when {
-    //     // Don't do this when preparing for a release
-    //     not { environment name: 'PREPARE', value: 'true' }
-    //   }
-    //   parallel {
-    //     stage('Build') {
-    //       steps {
-    //         nvm(env.NODE_VERSION) {
-    //           sh 'npm run build'
-    //         }
-    //       }
-    //     }
+    stage('Build, lint & check') {
+      when {
+        // Don't do this when preparing for a release
+        not { environment name: 'PREPARE', value: 'true' }
+      }
+      parallel {
+        stage('Build') {
+          steps {
+            nvm(env.NODE_VERSION) {
+              sh 'npm run build'
+            }
+          }
+        }
 
-    //     stage('Lint TypeScript') {
-    //       steps {
-    //         nvm(env.NODE_VERSION) {
-    //           sh 'npm run lint:ts'
-    //         }
-    //       }
-    //     }
+        stage('Lint TypeScript') {
+          steps {
+            nvm(env.NODE_VERSION) {
+              sh 'npm run lint:ts'
+            }
+          }
+        }
 
-    //     stage('Lint SASS') {
-    //       steps {
-    //         nvm(env.NODE_VERSION) {
-    //           sh 'npm run lint:sass'
-    //         }
-    //       }
-    //     }
+        stage('Lint SASS') {
+          steps {
+            nvm(env.NODE_VERSION) {
+              sh 'npm run lint:sass'
+            }
+          }
+        }
 
-    //     stage('Check package-lock') {
-    //       steps {
-    //         nvm(env.NODE_VERSION) {
-    //           sh 'npm run check:package-lock'
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
+        stage('Check package-lock') {
+          steps {
+            nvm(env.NODE_VERSION) {
+              sh 'npm run check:package-lock'
+            }
+          }
+        }
+      }
+    }
 
     // stage('Pre-package tests') {
     //   steps {
