@@ -18,11 +18,10 @@
 
 import * as Realm from 'realm';
 
-import { fetchAuthenticated, IRealmFile, RealmType, UserStatus } from '.';
-import { showError } from '../../ui/reusable/errors';
 import * as crypto from 'crypto';
 import * as path from 'path';
-import * as fs from 'fs-extra';
+import { fetchAuthenticated, IRealmFile, RealmType, UserStatus } from '.';
+import { showError } from '../../ui/reusable/errors';
 
 export interface ISslConfiguration {
   validateCertificates: boolean;
@@ -87,15 +86,27 @@ export const open = async (params: {
   return realm;
 };
 
-const getPath = (user: Realm.Sync.User, realmPath: string): string | undefined => {
-  if (process.platform === "win32") {
-    const result = path.join(user.identity, crypto.createHash("md5").update(realmPath).digest("hex"));
-    console.log(`Rewrote: '${user.identity} - ${getUrl(user, realmPath)}' to '${result}'`);
+const getPath = (
+  user: Realm.Sync.User,
+  realmPath: string,
+): string | undefined => {
+  if (process.platform === 'win32') {
+    const result = path.join(
+      user.identity,
+      crypto
+        .createHash('md5')
+        .update(realmPath)
+        .digest('hex'),
+    );
+    // tslint:disable-next-line:no-console
+    console.log(
+      `Rewrote: '${user.identity} - ${getUrl(user, realmPath)}' to '${result}'`,
+    );
     return result;
   }
 
   return undefined;
-}
+};
 
 export const create = (
   user: Realm.Sync.User,
