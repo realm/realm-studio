@@ -91,7 +91,7 @@ const getPathOnDisk = (
   user: Realm.Sync.User,
   realmPath: string,
 ): string | undefined => {
-  if (process.platform !== 'win32') {
+  if (process.platform === 'win32') {
     const result = path.join(
       user.identity,
       crypto
