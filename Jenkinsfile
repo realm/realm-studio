@@ -101,7 +101,7 @@ pipeline {
       steps {
         nvm(env.NODE_VERSION) {
           // Install dependencies
-          sh 'npm install'
+          sh 'npm ci'
           // Update the version
           script {
             if (PUBLISH == 'true') {
