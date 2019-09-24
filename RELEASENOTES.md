@@ -2,7 +2,7 @@
 
 ### Enhancements
 
-- None
+- On Windows, hash long paths to avoid hitting the 260 character limit.
 
 ### Fixed
 

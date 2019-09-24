@@ -20,6 +20,9 @@ import * as Realm from 'realm';
 
 import { fetchAuthenticated, IRealmFile, RealmType, UserStatus } from '.';
 import { showError } from '../../ui/reusable/errors';
+import * as crypto from 'crypto';
+import * as path from 'path';
+import * as fs from 'fs-extra';
 
 export interface ISslConfiguration {
   validateCertificates: boolean;
@@ -49,9 +52,11 @@ export const open = async (params: {
   const url = getUrl(params.user, params.realmPath);
 
   let clientResetOcurred = false;
+
   const realmPromise = Realm.open({
     encryptionKey: params.encryptionKey,
     schema: params.schema,
+    path: getPath(params.user, params.realmPath),
     sync: {
       url,
       user: params.user,
@@ -81,6 +86,16 @@ export const open = async (params: {
 
   return realm;
 };
+
+const getPath = (user: Realm.Sync.User, realmPath: string): string | undefined => {
+  if (process.platform === "win32") {
+    const result = path.join(user.identity, crypto.createHash("md5").update(realmPath).digest("hex"));
+    console.log(`Rewrote: '${user.identity} - ${getUrl(user, realmPath)}' to '${result}'`);
+    return result;
+  }
+
+  return undefined;
+}
 
 export const create = (
   user: Realm.Sync.User,
