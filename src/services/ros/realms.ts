@@ -19,6 +19,7 @@
 import * as Realm from 'realm';
 
 import * as crypto from 'crypto';
+import * as fs from 'fs-extra';
 import * as path from 'path';
 import { fetchAuthenticated, IRealmFile, RealmType, UserStatus } from '.';
 import { showError } from '../../ui/reusable/errors';
@@ -55,7 +56,7 @@ export const open = async (params: {
   const realmPromise = Realm.open({
     encryptionKey: params.encryptionKey,
     schema: params.schema,
-    path: getPath(params.user, params.realmPath),
+    path: getPathOnDisk(params.user, params.realmPath),
     sync: {
       url,
       user: params.user,
@@ -86,11 +87,11 @@ export const open = async (params: {
   return realm;
 };
 
-const getPath = (
+const getPathOnDisk = (
   user: Realm.Sync.User,
   realmPath: string,
 ): string | undefined => {
-  if (process.platform === 'win32') {
+  if (process.platform !== 'win32') {
     const result = path.join(
       user.identity,
       crypto
@@ -98,6 +99,9 @@ const getPath = (
         .update(realmPath)
         .digest('hex'),
     );
+
+    fs.ensureDirSync(path.join(process.cwd(), user.identity));
+
     // tslint:disable-next-line:no-console
     console.log(
       `Rewrote: '${user.identity} - ${getUrl(user, realmPath)}' to '${result}'`,
@@ -127,6 +131,7 @@ export const create = (
         ssl: { validate: validateCertificates },
       },
       schema,
+      path: getPathOnDisk(user, realmPath),
     }).then(resolve, reject);
   });
 };
