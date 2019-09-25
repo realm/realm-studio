@@ -87,29 +87,34 @@ export const open = async (params: {
   return realm;
 };
 
+// We rewrite the path on disk on Windows because default realm paths
+// may hit the 260 character limits, especially with partial realms.
 const getPathOnDisk = (
   user: Realm.Sync.User,
   realmPath: string,
 ): string | undefined => {
-  if (process.platform === 'win32') {
-    const result = path.join(
-      user.identity,
-      crypto
-        .createHash('md5')
-        .update(realmPath)
-        .digest('hex'),
-    );
-
-    fs.ensureDirSync(path.join(process.cwd(), user.identity));
-
-    // tslint:disable-next-line:no-console
-    console.log(
-      `Rewrote: '${user.identity} - ${getUrl(user, realmPath)}' to '${result}'`,
-    );
-    return result;
+  if (process.platform !== 'win32') {
+    // Non-windows platforms don't have path limits, so it's fine to default
+    // to whatever OS generates.
+    return undefined;
   }
+  
+  const result = path.join(
+    user.identity,
+    crypto
+      .createHash('md5')
+      .update(realmPath)
+      .digest('hex'),
+  );
 
-  return undefined;
+  fs.ensureDirSync(path.join(process.cwd(), user.identity));
+
+  // tslint:disable-next-line:no-console
+  console.log(
+    `Rewrote: '${user.identity} - ${getUrl(user, realmPath)}' to '${result}'`,
+  );
+  
+  return result;
 };
 
 export const create = (
