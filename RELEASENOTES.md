@@ -1,5 +1,9 @@
 [Changes since {PREVIOUS_VERSION}](https://github.com/realm/realm-studio/compare/{PREVIOUS_VERSION}...{CURRENT_VERSION})
 
+### Breaking Changes
+
+- Cannot administer Realm Object Servers prior to version 3.23.1.
+
 ### Enhancements
 
 - Added TypeScript schema exporter ([#1185](https://github.com/realm/realm-studio/pull/1185))
