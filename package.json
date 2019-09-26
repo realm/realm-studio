@@ -114,12 +114,12 @@
     "generate-all-types-realm": "node ./scripts/generate-realm.js",
     "start": "electron .",
     "sentry:upload-symbols": "node ./scripts/sentry-symbols.js",
-    "test": "mocha-webpack --opts=configs/mocha-webpack.opts",
-    "test:post-package": "mocha-webpack --opts=configs/mocha-webpack.opts src/testing/post-packaging/index.ts",
+    "test": "mocha-webpack --opts configs/mocha-webpack.opts",
+    "test:post-package": "mocha-webpack --opts configs/mocha-webpack.opts src/testing/post-packaging/index.ts",
     "tslint-prettier": "tslint --fix 'src/**/*.ts' 'src/**/*.tsx'",
     "wait-for-bundle": "node ./scripts/wait-for-bundle.js",
-    "webpack:main": "webpack --mode development --config=configs/webpack.main.js",
-    "webpack:renderer": "webpack-dev-server --mode development --config=configs/webpack.renderer.js"
+    "webpack:main": "webpack --mode development --config configs/webpack.main.js",
+    "webpack:renderer": "webpack-dev-server --mode development --config configs/webpack.renderer.js"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -219,7 +219,7 @@
     "lint-staged": "^8.2.1",
     "mocha": "^5.2.0",
     "mocha-junit-reporter": "^1.23.1",
-    "mocha-webpack": "2.0.0-beta.0",
+    "mocha-webpack": "^2.0.0-beta.0",
     "node-sass": "^4.12.0",
     "null-loader": "^0.1.1",
     "prettier": "^1.18.2",
@@ -242,7 +242,7 @@
     "tslint-react": "^3.6.0",
     "typescript": "^3.6.3",
     "url-loader": "^1.1.2",
-    "webpack": "4.28.4",
+    "webpack": "^4.41.0",
     "webpack-cli": "^3.3.9",
     "webpack-dev-server": "^3.8.1",
     "webpack-merge": "^4.2.2",
