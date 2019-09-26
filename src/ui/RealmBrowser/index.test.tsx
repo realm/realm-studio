@@ -43,7 +43,7 @@ const describeIfBuilt = isAppBuilt ? describe : describe.skip;
 // We need to use a non-arrow functions to adjust the suite timeout
 // tslint:disable-next-line:only-arrow-functions
 describeIfBuilt('<RealmBrowser /> via Spectron', function() {
-  this.timeout(10000);
+  this.timeout(15000);
 
   let app: Application;
   let realm: ITestRealm;
