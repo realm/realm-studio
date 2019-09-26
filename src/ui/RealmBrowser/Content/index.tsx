@@ -747,7 +747,7 @@ class ContentContainer extends React.Component<
     const { highlight } = this.state;
     if (this.contentElement && highlightMode === HighlightMode.Multiple) {
       // Create a mutation friendly version of the set of row indecies currently highlighted
-      const rows = highlight ? new Set(highlight.rows) : new Set();
+      const rows = highlight ? new Set(highlight.rows) : new Set<number>();
       // This is a left click with the meta-key (command on Mac) pressed
       if (e.button === 0 && e.metaKey) {
         // The user wants to add or remove a row to the current selection
