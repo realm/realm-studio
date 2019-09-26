@@ -10,4 +10,4 @@
 
 ### Internals
 
-- None
+- Upgraded a lot of dependencies to their latest versions.
