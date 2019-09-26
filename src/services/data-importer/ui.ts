@@ -22,7 +22,7 @@ import { ImportFormat } from '.';
 
 export const showOpenDialog = (
   format: ImportFormat = ImportFormat.CSV,
-): string[] => {
+): string[] | undefined => {
   const dialog = electron.dialog || electron.remote.dialog;
 
   if (format !== ImportFormat.CSV) {
