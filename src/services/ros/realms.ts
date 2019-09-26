@@ -93,28 +93,19 @@ const getPathOnDisk = (
   user: Realm.Sync.User,
   realmPath: string,
 ): string | undefined => {
-  if (process.platform !== 'win32') {
-    // Non-windows platforms don't have path limits, so it's fine to default
-    // to whatever OS generates.
-    return undefined;
+  // Only Windows have path limits, so it's fine to default to whatever OS generates.
+  if (process.platform === 'win32') {
+    const userPath = path.join(process.cwd(), user.identity);
+    fs.ensureDirSync(userPath);
+
+    return path.join(
+      userPath,
+      crypto
+        .createHash('md5')
+        .update(realmPath)
+        .digest('hex'),
+    );
   }
-
-  const result = path.join(
-    user.identity,
-    crypto
-      .createHash('md5')
-      .update(realmPath)
-      .digest('hex'),
-  );
-
-  fs.ensureDirSync(path.join(process.cwd(), user.identity));
-
-  // tslint:disable-next-line:no-console
-  console.log(
-    `Rewrote: '${user.identity} - ${getUrl(user, realmPath)}' to '${result}'`,
-  );
-
-  return result;
 };
 
 export const create = (
