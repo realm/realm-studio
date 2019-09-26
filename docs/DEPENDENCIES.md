@@ -12,3 +12,7 @@ of stylesheets, images, etc). A new major version (6) of mocha is out, but the n
 ## `@types/webdriverio`
 
 Pinned at version 4.13.3, because we only need the types and the latest version (5.0.0) removes them.
+
+## `electron`
+
+Pinned at `4.2.6` as newer versions use node v12 which is not yet supported by Realm JS.
