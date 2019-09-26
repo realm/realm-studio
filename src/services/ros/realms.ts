@@ -98,7 +98,7 @@ const getPathOnDisk = (
     // to whatever OS generates.
     return undefined;
   }
-  
+
   const result = path.join(
     user.identity,
     crypto
@@ -113,7 +113,7 @@ const getPathOnDisk = (
   console.log(
     `Rewrote: '${user.identity} - ${getUrl(user, realmPath)}' to '${result}'`,
   );
-  
+
   return result;
 };
 
