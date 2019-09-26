@@ -30,3 +30,7 @@ of stylesheets, images, etc). A new major version (6) of mocha is out, but the n
 
 ## `@types/webdriverio`
 We've pinned the package at version 4.13.3, because we only need the types and the latest version (5.0.0) removes them.
+
+## `react-inspector`
+Downgraded to `^2.2.2` as this seems to be the latest release on GitHub and v3 had this issue:
+https://github.com/storybookjs/react-inspector/issues/84
