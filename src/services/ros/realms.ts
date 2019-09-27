@@ -18,6 +18,9 @@
 
 import * as Realm from 'realm';
 
+import * as crypto from 'crypto';
+import * as fs from 'fs-extra';
+import * as path from 'path';
 import { fetchAuthenticated, IRealmFile, RealmType, UserStatus } from '.';
 import { showError } from '../../ui/reusable/errors';
 
@@ -49,9 +52,11 @@ export const open = async (params: {
   const url = getUrl(params.user, params.realmPath);
 
   let clientResetOcurred = false;
+
   const realmPromise = Realm.open({
     encryptionKey: params.encryptionKey,
     schema: params.schema,
+    path: getPathOnDisk(params.user, params.realmPath),
     sync: {
       url,
       user: params.user,
@@ -82,6 +87,27 @@ export const open = async (params: {
   return realm;
 };
 
+// We rewrite the path on disk on Windows because default realm paths
+// may hit the 260 character limits, especially with partial realms.
+const getPathOnDisk = (
+  user: Realm.Sync.User,
+  realmPath: string,
+): string | undefined => {
+  // Only Windows have path limits, so it's fine to default to whatever OS generates.
+  if (process.platform === 'win32') {
+    const userPath = path.join(process.cwd(), user.identity);
+    fs.ensureDirSync(userPath);
+
+    return path.join(
+      userPath,
+      crypto
+        .createHash('md5')
+        .update(realmPath)
+        .digest('hex'),
+    );
+  }
+};
+
 export const create = (
   user: Realm.Sync.User,
   realmPath: string,
@@ -101,6 +127,7 @@ export const create = (
         ssl: { validate: validateCertificates },
       },
       schema,
+      path: getPathOnDisk(user, realmPath),
     }).then(resolve, reject);
   });
 };

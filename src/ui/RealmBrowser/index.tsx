@@ -253,6 +253,15 @@ class RealmBrowserContainer
       ],
     };
 
+    const copyRealmPathItem: MenuItemConstructorOptions = {
+      label: 'Copy local Realm path',
+      click: () => {
+        this.copyRealmPathToClipboard().then(null, err => {
+          showError('Failed to copy Realm path', err);
+        });
+      },
+    };
+
     return menu.performModifications(template, [
       {
         action: 'append',
@@ -262,7 +271,12 @@ class RealmBrowserContainer
       {
         action: 'prepend',
         id: 'close',
-        items: [exportSchemaMenu, exportDataMenu, { type: 'separator' }],
+        items: [
+          exportSchemaMenu,
+          exportDataMenu,
+          copyRealmPathItem,
+          { type: 'separator' },
+        ],
       },
       {
         action: 'append',
@@ -726,6 +740,14 @@ class RealmBrowserContainer
       } finally {
         this.setState({ progress: { status: 'done' } });
       }
+    }
+  }
+
+  private async copyRealmPathToClipboard(): Promise<void> {
+    if (this.realm) {
+      await navigator.clipboard.writeText(this.realm.path);
+    } else {
+      throw new Error('Realm was not loaded');
     }
   }
 }
