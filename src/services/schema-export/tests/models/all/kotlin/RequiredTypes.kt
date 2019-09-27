@@ -29,7 +29,6 @@ open class RequiredTypes : RealmObject() {
     var dateRequiredArray: RealmList<Date> = RealmList()
     @Required
     var dataRequiredArray: RealmList<ByteArray> = RealmList()
-    @Required
     var objectRequiredArray: RealmList<RequiredTypes> = RealmList()
 
 }
