@@ -17,6 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import { ISchemaFile, SchemaExporter } from '../schemaExporter';
+import { isPrimitive } from '../utils';
 
 export default class JavaSchemaExporter extends SchemaExporter {
   private static readonly PADDING = '    ';
@@ -65,10 +66,7 @@ export default class JavaSchemaExporter extends SchemaExporter {
           this.realmImports.add('import io.realm.annotations.Index;');
         }
 
-        if (
-          !prop.optional &&
-          this.javaPropertyTypeCanBeMarkedRequired(prop.type)
-        ) {
+        if (!prop.optional && this.javaPropertyTypeCanBeMarkedRequired(prop)) {
           this.realmImports.add('import io.realm.annotations.Required;');
         }
       }
@@ -109,7 +107,7 @@ export default class JavaSchemaExporter extends SchemaExporter {
     } else if (prop.indexed) {
       this.fieldsContent += `${JavaSchemaExporter.PADDING}@Index\n`;
     }
-    if (!prop.optional && this.javaPropertyTypeCanBeMarkedRequired(prop.type)) {
+    if (!prop.optional && this.javaPropertyTypeCanBeMarkedRequired(prop)) {
       this.fieldsContent += `${JavaSchemaExporter.PADDING}@Required\n`;
     }
 
@@ -132,8 +130,10 @@ export default class JavaSchemaExporter extends SchemaExporter {
     }; }\n\n`;
   }
 
-  private javaPropertyTypeCanBeMarkedRequired(type: any): boolean {
-    switch (type) {
+  private javaPropertyTypeCanBeMarkedRequired(
+    property: Realm.ObjectSchemaProperty,
+  ): boolean {
+    switch (property.type) {
       case 'bool':
       case 'int':
       case 'float':
@@ -143,8 +143,9 @@ export default class JavaSchemaExporter extends SchemaExporter {
       case 'string':
       case 'data':
       case 'date':
-      case 'list':
         return true;
+      case 'list':
+        return isPrimitive(property.objectType);
     }
     return false;
   }

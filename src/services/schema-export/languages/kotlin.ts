@@ -17,6 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import { ISchemaFile, SchemaExporter } from '../schemaExporter';
+import { isPrimitive } from '../utils';
 
 export default class KotlinSchemaExporter extends SchemaExporter {
   private static readonly PADDING = '    ';
@@ -62,7 +63,11 @@ export default class KotlinSchemaExporter extends SchemaExporter {
         if (prop.indexed && prop.name !== schema.primaryKey) {
           this.realmImports.add('import io.realm.annotations.Index');
         }
-        if (!prop.optional && prop.type === 'list') {
+        if (
+          !prop.optional &&
+          prop.type === 'list' &&
+          isPrimitive(prop.objectType)
+        ) {
           this.realmImports.add('import io.realm.annotations.Required');
         }
       }
@@ -99,7 +104,11 @@ export default class KotlinSchemaExporter extends SchemaExporter {
     } else if (prop.indexed) {
       this.fieldsContent += `${KotlinSchemaExporter.PADDING}@Index\n`;
     }
-    if (!prop.optional && prop.type === 'list') {
+    if (
+      !prop.optional &&
+      prop.type === 'list' &&
+      isPrimitive(prop.objectType)
+    ) {
       this.fieldsContent += `${KotlinSchemaExporter.PADDING}@Required\n`;
     }
     this.fieldsContent += `${KotlinSchemaExporter.PADDING}var ${

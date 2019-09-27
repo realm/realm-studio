@@ -19,7 +19,6 @@ open class SampleTypes : RealmObject() {
     @Index
     var indexedInt: Long = 0
     var linkToObject: SampleTypes? = null
-    @Required
     var listOfObjects: RealmList<SampleTypes> = RealmList()
 
 }

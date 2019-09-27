@@ -3,12 +3,10 @@ package your.package.name.here;
 
 import io.realm.RealmObject;
 import io.realm.RealmList;
-import io.realm.annotations.Required;
 
 public class LinkTypes extends RealmObject {
     private ReverseType objectType;
     private ReverseType objectType2;
-    @Required
     private RealmList<ReverseType> listType;
 
     public ReverseType getObjectType() { return objectType; }

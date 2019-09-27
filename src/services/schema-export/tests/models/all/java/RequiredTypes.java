@@ -31,7 +31,6 @@ public class RequiredTypes extends RealmObject {
     private RealmList<Date> dateRequiredArray;
     @Required
     private RealmList<byte[]> dataRequiredArray;
-    @Required
     private RealmList<RequiredTypes> objectRequiredArray;
 
     public boolean isBoolRequired() { return boolRequired; }

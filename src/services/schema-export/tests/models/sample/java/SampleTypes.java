@@ -18,7 +18,6 @@ public class SampleTypes extends RealmObject {
     @Index
     private long indexedInt;
     private SampleTypes linkToObject;
-    @Required
     private RealmList<SampleTypes> listOfObjects;
 
     public long getPrimary() { return primary; }
