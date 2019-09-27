@@ -41,6 +41,7 @@ interface IPermissionSidebarContainerProps {
   onToggle?: () => void;
   highlight?: IHighlight;
   focus: Focus;
+  filteredSortedResults: Realm.Collection<any>;
   // TODO: Use the Realm react context to access the Realm
   realm: Realm;
 }
@@ -81,6 +82,7 @@ class PermissionSidebarContainer extends React.Component<
             className={this.props.className}
             classPermissions={classPermissions}
             focus={this.props.focus}
+            filteredSortedResults={this.props.filteredSortedResults}
             getObjectPermissions={this.getObjectPermissions}
             hasPermissionProperty={hasPermissionProperty}
             highlight={this.props.highlight}

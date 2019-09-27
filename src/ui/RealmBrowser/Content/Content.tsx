@@ -181,6 +181,7 @@ export const Content = ({
             isOpen={isPermissionSidebarOpen}
             onToggle={onPermissionSidebarToggle}
             focus={focus}
+            filteredSortedResults={filteredSortedResults}
             highlight={highlight}
             realm={props.realm}
           />
