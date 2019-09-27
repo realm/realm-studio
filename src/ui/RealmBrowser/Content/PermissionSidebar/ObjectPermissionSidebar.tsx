@@ -44,6 +44,7 @@ interface IObjectPermissionSidebarProps {
   ) => void;
   onRoleClick: (role: IRole) => void;
   realmPermissions: Permissions | null;
+  filteredSortedResults: Realm.Collection<any>;
 }
 
 export const ObjectPermissionSidebar = ({
@@ -58,6 +59,7 @@ export const ObjectPermissionSidebar = ({
   onRoleClick,
   onToggle,
   realmPermissions,
+  filteredSortedResults,
 }: IObjectPermissionSidebarProps) => (
   <Sidebar
     className={className}
@@ -72,7 +74,7 @@ export const ObjectPermissionSidebar = ({
       }
       hasPermissionProperty={hasPermissionProperty}
       objects={Array.from(highlight.rows.values()).map(
-        index => focus.results[index],
+        index => filteredSortedResults[index],
       )}
       onPermissionChange={onPermissionChange}
       onRoleClick={onRoleClick}
