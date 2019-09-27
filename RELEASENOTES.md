@@ -2,8 +2,7 @@
 
 ### Enhancements
 
-- Added hashing of the paths that Realms gets downloaded to on Windows. This is to avoid hitting the 260 character limit. ([#1172](https://github.com/realm/realm-studio/pull/1172))
-- Added a menu item to "Copy local Realm path" to the users clipboard. ([#1172](https://github.com/realm/realm-studio/pull/1172))
+- None
 
 ### Fixed
 
@@ -11,4 +10,4 @@
 
 ### Internals
 
-- Upgraded a lot of dependencies to their latest versions.
+- None
