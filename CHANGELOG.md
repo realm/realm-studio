@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release 3.7.0 (2019-09-27)
+
+[Changes since v3.6.1](https://github.com/realm/realm-studio/compare/v3.6.1...v3.7.0)
+
+### Enhancements
+
+- Added hashing of the paths that Realms gets downloaded to on Windows. This is to avoid hitting the 260 character limit. ([#1172](https://github.com/realm/realm-studio/pull/1172))
+- Added a menu item to "Copy local Realm path" to the users clipboard. ([#1172](https://github.com/realm/realm-studio/pull/1172))
+
+### Fixed
+
+- None
+
+### Internals
+
+- Upgraded a lot of dependencies to their latest versions.
+
+
 ## Release 3.6.1 (2019-06-06)
 
 [Changes since v3.5.0](https://github.com/realm/realm-studio/compare/v3.5.0...v3.6.1)
