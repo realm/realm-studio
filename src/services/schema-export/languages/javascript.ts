@@ -20,8 +20,32 @@ import * as fsPath from 'path';
 import { ISchemaFile, SchemaExporter } from '../schemaExporter';
 
 export default class JSSchemaExporter extends SchemaExporter {
-  constructor() {
-    super();
+  public static propertyLine(prop: any, primaryKey: boolean): string {
+    // Name of the type
+    let typeStr = '';
+    switch (prop.type) {
+      case 'list':
+      case 'object':
+        typeStr = prop.objectType;
+        break;
+      default:
+        typeStr = prop.type;
+    }
+    if (prop.optional && prop.type !== 'object') {
+      typeStr += '?';
+    }
+    if (prop.type === 'list') {
+      typeStr += '[]';
+    }
+
+    // Make line
+    let line = prop.name + ': ';
+    if (prop.indexed && !primaryKey) {
+      line += `{ type: '${typeStr}', indexed: true }`;
+    } else {
+      line += `'${typeStr}'`;
+    }
+    return line;
   }
 
   public exportSchema(realm: Realm): ISchemaFile[] {
@@ -55,7 +79,7 @@ export default class JSSchemaExporter extends SchemaExporter {
         if (prop.type === 'linkingObjects') {
           continue;
         }
-        line = '    ' + this.propertyLine(prop, primaryKey);
+        line = '    ' + JSSchemaExporter.propertyLine(prop, primaryKey);
         if (i++ < lastIdx) {
           line += ',';
         }
@@ -64,33 +88,5 @@ export default class JSSchemaExporter extends SchemaExporter {
     }
 
     this.appendLine('  }\n}\n');
-  }
-
-  public propertyLine(prop: any, primaryKey: boolean): string {
-    // Name of the type
-    let typeStr = '';
-    switch (prop.type) {
-      case 'list':
-      case 'object':
-        typeStr = prop.objectType;
-        break;
-      default:
-        typeStr = prop.type;
-    }
-    if (prop.optional && prop.type !== 'object') {
-      typeStr += '?';
-    }
-    if (prop.type === 'list') {
-      typeStr += '[]';
-    }
-
-    // Make line
-    let line = prop.name + ': ';
-    if (prop.indexed && !primaryKey) {
-      line += `{ type: '${typeStr}', indexed: true }`;
-    } else {
-      line += `'${typeStr}'`;
-    }
-    return line;
   }
 }

@@ -102,6 +102,24 @@ describe('Export schema tests', () => {
     );
   });
 
+  it('TS export with sample types', () => {
+    assertGeneratedSchemaIsValid(
+      Language.TS,
+      `${TESTS_PATH}/models/sample/ts/SampleTypes.ts.unformatted`,
+      `${TESTS_PATH}/temporal/${Language.TS}/SampleTypes-model.ts`,
+      sampleRealm as Realm,
+    );
+  });
+
+  it('TS export with all types', () => {
+    assertGeneratedSchemaIsValid(
+      Language.TS,
+      `${TESTS_PATH}/models/all/ts/AllTypes.ts.unformatted`,
+      `${TESTS_PATH}/temporal/${Language.TS}/AllTypes-model.ts`,
+      allRealm as Realm,
+    );
+  });
+
   it('Swift export with sample types', () => {
     assertGeneratedSchemaIsValid(
       Language.Swift,

@@ -2,7 +2,7 @@
 
 ### Enhancements
 
-- None
+- Added TypeScript schema exporter ([#1185](https://github.com/realm/realm-studio/pull/1185))
 
 ### Fixed
 
