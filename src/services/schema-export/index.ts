@@ -21,6 +21,7 @@ import JavaSchemaExporter from './languages/java';
 import JSSchemaExporter from './languages/javascript';
 import KotlinSchemaExporter from './languages/kotlin';
 import SwiftSchemaExporter from './languages/swift';
+import TSSchemaExporter from './languages/typescript';
 
 import { ISchemaExporter } from './schemaExporter';
 
@@ -40,6 +41,8 @@ export const SchemaExporter = (language: Language): ISchemaExporter => {
       return new SwiftSchemaExporter();
     case Language.JS:
       return new JSSchemaExporter();
+    case Language.TS:
+      return new TSSchemaExporter();
     case Language.Java:
       return new JavaSchemaExporter();
     case Language.Kotlin:

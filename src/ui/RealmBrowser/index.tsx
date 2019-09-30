@@ -175,6 +175,10 @@ class RealmBrowserContainer
           click: () => this.onExportSchema(Language.JS),
         },
         {
+          label: 'TypeScript',
+          click: () => this.onExportSchema(Language.TS),
+        },
+        {
           label: 'Java',
           click: () => this.onExportSchema(Language.Java),
         },

@@ -1,0 +1,125 @@
+import * as Realm from "realm";
+
+export type IndexedTypes = {
+    boolIndexed: boolean;
+    intIndexed: number;
+    stringIndexed: string;
+    dateIndexed: Date;
+};
+
+export const IndexedTypesSchema = {
+  name: 'IndexedTypes',
+  primaryKey: 'intIndexed',
+  properties: {
+    boolIndexed: { type: 'bool', indexed: true },
+    intIndexed: 'int',
+    stringIndexed: { type: 'string', indexed: true },
+    dateIndexed: { type: 'date', indexed: true }
+  }
+};
+
+export type LinkTypes = {
+    objectType?: ReverseType;
+    objectType2?: ReverseType;
+    listType: Array<ReverseType>;
+};
+
+export const LinkTypesSchema = {
+  name: 'LinkTypes',
+  properties: {
+    objectType: 'ReverseType',
+    objectType2: 'ReverseType',
+    listType: 'ReverseType[]',
+  }
+};
+
+export type OptionalTypes = {
+    boolOptional?: boolean;
+    intOptional?: number;
+    floatOptional?: number;
+    doubleOptional?: number;
+    stringOptional?: string;
+    dateOptional?: Date;
+    dataOptional?: ArrayBuffer;
+    objectOptional?: RequiredTypes;
+    boolOptionalArray?: Array<boolean | undefined>;
+    intOptionalArray?: Array<number | undefined>;
+    floatOptionalArray?: Array<number | undefined>;
+    doubleOptionalArray?: Array<number | undefined>;
+    stringOptionalArray?: Array<string | undefined>;
+    dateOptionalArray?: Array<Date | undefined>;
+    dataOptionalArray?: Array<ArrayBuffer | undefined>;
+};
+
+export const OptionalTypesSchema = {
+  name: 'OptionalTypes',
+  properties: {
+    boolOptional: 'bool?',
+    intOptional: 'int?',
+    floatOptional: 'float?',
+    doubleOptional: 'double?',
+    stringOptional: 'string?',
+    dateOptional: 'date?',
+    dataOptional: 'data?',
+    objectOptional: 'RequiredTypes',
+    boolOptionalArray: 'bool?[]',
+    intOptionalArray: 'int?[]',
+    floatOptionalArray: 'float?[]',
+    doubleOptionalArray: 'double?[]',
+    stringOptionalArray: 'string?[]',
+    dateOptionalArray: 'date?[]',
+    dataOptionalArray: 'data?[]'
+  }
+};
+
+export type RequiredTypes = {
+    boolRequired: boolean;
+    intRequired: number;
+    floatRequired: number;
+    doubleRequired: number;
+    stringRequired: string;
+    dateRequired: Date;
+    dataRequired: ArrayBuffer;
+    boolRequiredArray: Array<boolean>;
+    intRequiredArray: Array<number>;
+    floatRequiredArray: Array<number>;
+    doubleRequiredArray: Array<number>;
+    stringRequiredArray: Array<string>;
+    dateRequiredArray: Array<Date>;
+    dataRequiredArray: Array<ArrayBuffer>;
+    objectRequiredArray: Array<RequiredTypes>;
+};
+
+export const RequiredTypesSchema = {
+  name: 'RequiredTypes',
+  properties: {
+    boolRequired: 'bool',
+    intRequired: 'int',
+    floatRequired: 'float',
+    doubleRequired: 'double',
+    stringRequired: 'string',
+    dateRequired: 'date',
+    dataRequired: 'data',
+    boolRequiredArray: 'bool[]',
+    intRequiredArray: 'int[]',
+    floatRequiredArray: 'float[]',
+    doubleRequiredArray: 'double[]',
+    stringRequiredArray: 'string[]',
+    dateRequiredArray: 'date[]',
+    dataRequiredArray: 'data[]',
+    objectRequiredArray: 'RequiredTypes[]'
+  }
+};
+
+export type ReverseType = {
+    links?: LinkTypes;
+};
+
+export const ReverseTypeSchema = {
+  name: 'ReverseType',
+  properties: {
+    links: 'LinkTypes'
+  }
+};
+
+export const Schema = [IndexedTypesSchema, LinkTypesSchema, OptionalTypesSchema, RequiredTypesSchema, ReverseTypeSchema];
