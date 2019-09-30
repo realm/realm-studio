@@ -93,18 +93,24 @@ const getPathOnDisk = (
   user: Realm.Sync.User,
   realmPath: string,
 ): string | undefined => {
-  // Only Windows have path limits, so it's fine to default to whatever OS generates.
+  // Only Windows has path limits, so it's fine to generate a path from hashes.
   if (process.platform === 'win32') {
-    const userPath = path.join(process.cwd(), user.identity);
-    fs.ensureDirSync(userPath);
+    const userSegment = crypto
+      .createHash('md5')
+      .update(`${user.server}:${user.identity}`)
+      .digest('hex');
 
-    return path.join(
-      userPath,
-      crypto
-        .createHash('md5')
-        .update(realmPath)
-        .digest('hex'),
-    );
+    const realmPathSegment = crypto
+      .createHash('md5')
+      .update(realmPath)
+      .digest('hex');
+
+    const result = path.join(process.cwd(), userSegment, realmPathSegment);
+
+    // Ensure the parent folder exists as Realm doesn't create it automatically
+    fs.ensureDirSync(path.dirname(result));
+
+    return result;
   }
 };
 
