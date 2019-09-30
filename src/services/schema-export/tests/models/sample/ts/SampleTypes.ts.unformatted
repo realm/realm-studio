@@ -4,7 +4,7 @@ export type SampleTypes = {
     primary: number;
     ArrayFloatValue?: number;
     listOfStrings: Array<string>;
-    listOfOptionalDates?: Array<Date | undefined>;
+    listOfOptionalDates: Array<Date | undefined>;
     indexedInt: number;
     linkToObject?: SampleTypes;
     listOfObjects: Array<SampleTypes>;

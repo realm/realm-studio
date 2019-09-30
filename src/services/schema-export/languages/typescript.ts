@@ -132,7 +132,7 @@ export default class TSSchemaExporter extends SchemaExporter {
   public propertyLine(prop: INamedObjectSchemaProperty): string {
     return (
       prop.name +
-      (prop.optional ? '?' : '') +
+      (prop.optional && prop.type !== 'list' ? '?' : '') +
       ': ' +
       this.getTypeFromProperty(prop) +
       ';'

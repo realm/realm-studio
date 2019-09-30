@@ -42,13 +42,13 @@ export type OptionalTypes = {
     dateOptional?: Date;
     dataOptional?: ArrayBuffer;
     objectOptional?: RequiredTypes;
-    boolOptionalArray?: Array<boolean | undefined>;
-    intOptionalArray?: Array<number | undefined>;
-    floatOptionalArray?: Array<number | undefined>;
-    doubleOptionalArray?: Array<number | undefined>;
-    stringOptionalArray?: Array<string | undefined>;
-    dateOptionalArray?: Array<Date | undefined>;
-    dataOptionalArray?: Array<ArrayBuffer | undefined>;
+    boolOptionalArray: Array<boolean | undefined>;
+    intOptionalArray: Array<number | undefined>;
+    floatOptionalArray: Array<number | undefined>;
+    doubleOptionalArray: Array<number | undefined>;
+    stringOptionalArray: Array<string | undefined>;
+    dateOptionalArray: Array<Date | undefined>;
+    dataOptionalArray: Array<ArrayBuffer | undefined>;
 };
 
 export const OptionalTypesSchema = {
