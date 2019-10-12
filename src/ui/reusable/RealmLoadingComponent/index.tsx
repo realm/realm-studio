@@ -224,13 +224,16 @@ export abstract class RealmLoadingComponent<
   }
 
   private progressChanged = (transferred: number, transferable: number) => {
-    this.setState({
-      progress: {
-        message: 'Downloading Realm',
-        status: transferred >= transferable ? 'done' : 'in-progress',
-        transferred,
-        transferable,
-      },
-    });
+    // Don't change the progress if a failure has occurred
+    if (this.state.progress.status !== 'failed') {
+      this.setState({
+        progress: {
+          message: 'Downloading Realm',
+          status: transferred >= transferable ? 'done' : 'in-progress',
+          transferred,
+          transferable,
+        },
+      });
+    }
   };
 }
