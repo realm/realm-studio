@@ -21,7 +21,7 @@ import * as React from 'react';
 
 import { GettingStarted } from './GettingStarted';
 
-export type Platform = 'android' | 'apple' | 'javascript' | 'xamarin';
+export type Platform = 'ios' | 'android' | 'react-native' | 'xamarin';
 
 interface IGettingStartedContainerProps {
   serverUrl: string;
@@ -49,18 +49,22 @@ class GettingStartedContainer extends React.Component<
     return url;
   };
 
-  public onShowTutorial = (name: 'ios' | 'android' | 'react-native') => {
+  public onShowTutorial = (name: Platform) => {
     if (name === 'ios') {
       electron.shell.openExternal(
-        'https://docs.realm.io/platform/getting-started-1/ios-quick-start',
+        'https://docs.realm.io/sync/getting-started-1/step-1-my-first-realm-app',
       );
     } else if (name === 'android') {
       electron.shell.openExternal(
-        'https://docs.realm.io/platform/getting-started-1/android-quick-start',
+        'https://docs.realm.io/sync/getting-started-1/step-1-my-first-realm-app-1',
+      );
+    } else if (name === 'xamarin') {
+      electron.shell.openExternal(
+        'https://docs.realm.io/sync/getting-started-1/step-1-my-first-realm-app-2',
       );
     } else if (name === 'react-native') {
       electron.shell.openExternal(
-        'https://docs.realm.io/platform/getting-started-1/react-native-quick-start',
+        'https://docs.realm.io/sync/getting-started-1/step-1-my-first-realm-app-2',
       );
     }
   };

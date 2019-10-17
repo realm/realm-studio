@@ -19,10 +19,12 @@
 import * as React from 'react';
 import { Button, Input } from 'reactstrap';
 
+import { Platform } from '.';
+
 import './GettingStarted.scss';
 
 interface IGettingStartedProps {
-  onShowTutorial: (name: 'ios' | 'android' | 'react-native') => void;
+  onShowTutorial: (name: Platform) => void;
   serverUrl: string;
 }
 
@@ -70,6 +72,14 @@ export const GettingStarted = ({
           }}
         >
           Start with Android
+        </Button>
+        <Button
+          className="GettingStarted__Button"
+          onClick={() => {
+            onShowTutorial('xamarin');
+          }}
+        >
+          Start with Xamarin
         </Button>
         <Button
           className="GettingStarted__Button"
