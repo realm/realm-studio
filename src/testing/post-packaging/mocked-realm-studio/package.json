@@ -24,5 +24,8 @@
         "path": "downloads/realm-studio"
       }
     ]
+  },
+  "devDependencies": {
+    "electron": "file:../../../../node_modules/electron"
   }
 }
