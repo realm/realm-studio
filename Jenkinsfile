@@ -178,6 +178,10 @@ pipeline {
     }
 
     stage('Pre-package tests') {
+      when {
+        // Don't do this when preparing for a release
+        not { environment name: 'PREPARE', value: 'true' }
+      }
       steps {
         // Run the tests with the JUnit reporter
         nvm(env.NODE_VERSION) {
