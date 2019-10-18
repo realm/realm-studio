@@ -223,7 +223,7 @@ pipeline {
                 file(credentialsId: 'cose-sign-certificate-windows', variable: 'WIN_CSC_LINK'),
                 string(credentialsId: 'cose-sign-password-windows', variable: 'WIN_CSC_KEY_PASSWORD')
               ]) {
-                sh 'npx build -mlw -c.forceCodeSigning --publish never'
+                sh 'npx electron-builder -mlw -c.forceCodeSigning --publish never'
               }
               // Archive the packaged artifacts
               archiveArtifacts 'dist/*'
