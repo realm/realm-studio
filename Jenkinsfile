@@ -46,6 +46,7 @@ pipeline {
 
   stages {
     stage('Checkout') {
+      when { not { branch 'ci/prepared-*' } }
       steps {
         checkout([
           $class: 'GitSCM',
@@ -98,6 +99,7 @@ pipeline {
     }
 
     stage('Install & update version') {
+      when { not { branch 'ci/prepared-*' } }
       steps {
         nvm(env.NODE_VERSION) {
           // Install dependencies
@@ -141,6 +143,7 @@ pipeline {
       when {
         // Don't do this when preparing for a release
         not { environment name: 'PREPARE', value: 'true' }
+        not { branch 'ci/prepared-*' }
       }
       parallel {
         stage('Build') {
@@ -181,6 +184,7 @@ pipeline {
       when {
         // Don't do this when preparing for a release
         not { environment name: 'PREPARE', value: 'true' }
+        not { branch 'ci/prepared-*' }
       }
       steps {
         // Run the tests with the JUnit reporter
@@ -208,6 +212,7 @@ pipeline {
     stage('Package') {
       when {
         environment name: 'PACKAGE', value: 'true'
+        not { branch 'ci/prepared-*' }
       }
       stages {
         stage("Electron build") {
@@ -262,6 +267,7 @@ pipeline {
     stage('Publish') {
       when {
         environment name: 'PUBLISH', value: 'true'
+        branch 'master'
       }
       steps {
         nvm(env.NODE_VERSION) {
