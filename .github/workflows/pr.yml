@@ -1,0 +1,39 @@
+name: Pull requests
+on: [pull_request]
+jobs:
+  build:
+    runs-on: macOS-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Setup Node
+      uses: actions/setup-node@v1
+      with:
+       node-version: '10.x'
+    - name: Install dependencies
+      run: npm install
+    - name: Check package-lock.json
+      run: npm run check:package-lock
+    - name: Lint TypeScript
+      run: npm run lint:ts
+    - name: Lint SASS
+      run: npm run lint:sass
+    - name: Build the bundle
+      run: npm run build
+    - name: Run pre-package tests
+      env:
+        MOCHA_FILE: pre-test-results.xml
+      run: npm test -- --reporter mocha-junit-reporter
+    # TODO: Find an action which display the test results somewhere useful
+    - name: Upload pre-package test results
+      uses: actions/upload-artifact@master
+      with:
+        name: pre-test-results
+        path: pre-test-results.xml
+    - name: Build the package
+      run: npx electron-builder -mlw -c.forceCodeSigning --publish never
+    - name: Upload the package
+      uses: actions/upload-artifact@master
+      with:
+        name: package
+        path: dist
