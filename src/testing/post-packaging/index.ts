@@ -80,9 +80,18 @@ function changeS3Endpoint(temporaryMacPath: string, serverUrl: string) {
 }
 
 function buildMockedRealmStudio() {
-  if (!fs.existsSync(path.resolve(__dirname, 'mocked-realm-studio/dist'))) {
+  const mockedRealmStudioPath = path.resolve(__dirname, 'mocked-realm-studio');
+  // Install the root projects electron into the node_modules
+  if (!fs.existsSync(path.resolve(mockedRealmStudioPath, 'node_modules'))) {
+    cp.spawnSync('npm', ['install'], {
+      cwd: mockedRealmStudioPath,
+      stdio: 'inherit',
+    });
+  }
+  // Build a packaged version of the app
+  if (!fs.existsSync(path.resolve(mockedRealmStudioPath, 'dist'))) {
     cp.spawnSync('npx', ['electron-builder', '--mac', '--publish', 'never'], {
-      cwd: path.resolve(__dirname, 'mocked-realm-studio'),
+      cwd: mockedRealmStudioPath,
       stdio: 'inherit',
     });
   }
