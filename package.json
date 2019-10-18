@@ -29,6 +29,7 @@
       "!node_modules/realm/vendor${/*}"
     ],
     "mac": {
+      "hardenedRuntime": false,
       "category": "public.app-category.developer-tools",
       "target": [
         "dmg",
