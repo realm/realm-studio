@@ -31,7 +31,7 @@ jobs:
         name: pre-test-results
         path: pre-test-results.xml
     - name: Build the package
-      run: npx electron-builder -mlw -c.forceCodeSigning --publish never
+      run: npx electron-builder -mlw --publish never
     - name: Upload the package
       uses: actions/upload-artifact@master
       with:
