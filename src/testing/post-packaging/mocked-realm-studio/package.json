@@ -12,6 +12,9 @@
   "build": {
     "appId": "io.realm.realm-studio",
     "mac": {
+      "hardenedRuntime": false,
+      "entitlements": "../../../../resources/entitlements.mac.plist",
+      "entitlementsInherit": "../../../../resources/entitlements.mac.plist",
       "target": [
         "zip"
       ]
