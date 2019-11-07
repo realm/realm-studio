@@ -267,7 +267,6 @@ pipeline {
     stage('Publish') {
       when {
         environment name: 'PUBLISH', value: 'true'
-        branch 'master'
       }
       steps {
         nvm(env.NODE_VERSION) {
