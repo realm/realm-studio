@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
+import React from 'react';
 import { Col, FormGroup, Label, Row } from 'reactstrap';
 
 export const CredentialsFormGroup = ({

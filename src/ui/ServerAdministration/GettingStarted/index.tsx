@@ -16,8 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as electron from 'electron';
-import * as React from 'react';
+import electron from 'electron';
+import React from 'react';
 
 import { GettingStarted } from './GettingStarted';
 

@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import { remote } from 'electron';
-import * as React from 'react';
+import React from 'react';
 
 import { EditMode } from '../../..';
 import { IPropertyWithName } from '../../../..';

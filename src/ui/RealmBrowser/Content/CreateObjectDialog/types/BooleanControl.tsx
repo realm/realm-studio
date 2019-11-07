@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
+import React from 'react';
 import { Button, InputGroup, InputGroupAddon } from 'reactstrap';
 
 import { IBaseControlProps } from './TypeControl';

@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
+import React from 'react';
 import { Button, Progress } from 'reactstrap';
 
 import { IDeletionProgress, RealmFile } from '..';

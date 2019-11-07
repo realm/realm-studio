@@ -16,8 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as electron from 'electron';
-import * as keytar from 'keytar';
+import electron from 'electron';
+import keytar from 'keytar';
 
 import * as ros from '../../services/ros';
 

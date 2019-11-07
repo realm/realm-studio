@@ -18,7 +18,7 @@
 
 import * as sentry from '@sentry/electron';
 
-import * as electron from 'electron';
+import electron from 'electron';
 
 export const showError = (
   failedIntent: string,

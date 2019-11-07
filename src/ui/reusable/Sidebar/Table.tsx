@@ -16,15 +16,15 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as classNames from 'classnames';
-import * as React from 'react';
-import * as Reactstrap from 'reactstrap';
+import classNames from 'classnames';
+import React from 'react';
+import { Table as ReactstrapTable, TableProps } from 'reactstrap';
 
-export const Table = (props: Reactstrap.TableProps) => (
-  <Reactstrap.Table
+export const Table = (props: TableProps) => (
+  <ReactstrapTable
     {...props}
     className={classNames('Sidebar__Table', props.className)}
   >
     {props.children}
-  </Reactstrap.Table>
+  </ReactstrapTable>
 );

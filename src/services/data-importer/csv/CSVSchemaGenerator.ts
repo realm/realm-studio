@@ -16,8 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as fs from 'fs-extra';
-import * as papaparse from 'papaparse';
+import fs from 'fs-extra';
+import papaparse from 'papaparse';
 import { basename, extname } from 'path';
 
 import { ImportObjectSchema } from '../ImportObjectSchema';

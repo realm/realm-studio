@@ -16,9 +16,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as fs from 'fs-extra';
-import * as fsPath from 'path';
-import * as Realm from 'realm';
+import fs from 'fs-extra';
+import fsPath from 'path';
+import Realm from 'realm';
 
 export interface ISchemaExporter {
   exportSchema: (realm: Realm) => ISchemaFile[];

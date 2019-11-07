@@ -17,8 +17,8 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import { resolve } from 'path';
-import * as Realm from 'realm';
-import * as tmp from 'tmp';
+import Realm from 'realm';
+import tmp from 'tmp';
 
 import { TYPES as primitiveTypes } from '../ui/RealmBrowser/primitives';
 

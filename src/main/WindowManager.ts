@@ -18,8 +18,8 @@
 
 import * as sentry from '@sentry/electron';
 import { BrowserWindow, screen, shell } from 'electron';
-import * as path from 'path';
-import * as url from 'url';
+import path from 'path';
+import url from 'url';
 
 import { store } from '../store';
 import {

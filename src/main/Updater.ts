@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as electron from 'electron';
+import electron from 'electron';
 import { autoUpdater, UpdateInfo } from 'electron-updater';
 
 import { WindowManager } from './WindowManager';

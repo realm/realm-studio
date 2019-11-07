@@ -16,10 +16,10 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as electron from 'electron';
+import electron from 'electron';
 import memoize from 'memoize-one';
-import * as React from 'react';
-import * as Realm from 'realm';
+import React from 'react';
+import Realm from 'realm';
 
 import * as ros from '../../../services/ros';
 import { store } from '../../../store';

@@ -16,9 +16,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as electron from 'electron';
-import * as qs from 'querystring';
-import * as React from 'react';
+import electron from 'electron';
+import qs from 'querystring';
+import React from 'react';
 
 import { main } from '../../actions/main';
 import { ICloudStatus, IInstance } from '../../main/CloudManager';

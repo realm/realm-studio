@@ -16,9 +16,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
+import React from 'react';
 import { Badge } from 'reactstrap';
-import * as Realm from 'realm';
+import Realm from 'realm';
 
 import * as primitives from '../../../primitives';
 

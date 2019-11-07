@@ -16,8 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as classnames from 'classnames';
-import * as React from 'react';
+import classNames from 'classnames';
+import React from 'react';
 import { Input } from 'reactstrap';
 
 interface IStringCellProps {
@@ -44,7 +44,7 @@ export const StringCell = ({
 }: IStringCellProps) => {
   return (
     <Input
-      className={classnames(
+      className={classNames(
         'RealmBrowser__Table__StringCell',
         `RealmBrowser__Table__StringCell--${property.type}`,
         {

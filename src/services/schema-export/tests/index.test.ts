@@ -16,9 +16,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as assert from 'assert';
-import * as fs from 'fs-extra';
-import * as Realm from 'realm';
+import assert from 'assert';
+import fs from 'fs-extra';
+import Realm from 'realm';
 import { Language, SchemaExporter } from '../index';
 import * as modelAll from './models/all/AllTypes';
 import * as model from './models/sample/SampleTypes';

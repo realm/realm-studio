@@ -17,8 +17,8 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as sentry from '@sentry/electron';
-import * as electron from 'electron';
-import * as React from 'react';
+import electron from 'electron';
+import React from 'react';
 
 import { IPC_EVENT_ID, IPC_SEND_EVENT_ID } from '../../sentry';
 import { ErrorOverlay } from './ErrorOverlay';

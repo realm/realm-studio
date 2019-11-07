@@ -16,10 +16,10 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
+import React from 'react';
 // import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { Alert, Button, InputGroupAddon } from 'reactstrap';
-import * as Realm from 'realm';
+import Realm from 'realm';
 
 import { isPrimitive } from '../../../primitives';
 

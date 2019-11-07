@@ -16,9 +16,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
+import React from 'react';
 import { Badge, FormGroup, Label } from 'reactstrap';
-import * as Realm from 'realm';
+import Realm from 'realm';
 
 import { IClassFocus } from '../../focus';
 

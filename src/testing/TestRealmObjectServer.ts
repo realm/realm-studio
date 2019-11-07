@@ -20,8 +20,8 @@
 // It needs to register the appropreate services.
 
 /*
-import * as fs from 'fs-extra';
-import * as Realm from 'realm';
+import fs from 'fs-extra';
+import Realm from 'realm';
 import {
   AuthService,
   HealthService,

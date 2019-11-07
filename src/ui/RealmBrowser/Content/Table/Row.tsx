@@ -16,8 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as classnames from 'classnames';
-import * as React from 'react';
+import classNames from 'classnames';
+import React from 'react';
 
 import { RowMouseDownHandler } from '.';
 import { IGridRowProps } from './rowCellRangeRenderer';
@@ -38,7 +38,7 @@ export const Row = ({
 }: IRowProps) => {
   return (
     <div
-      className={classnames('RealmBrowser__Table__Row', {
+      className={classNames('RealmBrowser__Table__Row', {
         'RealmBrowser__Table__Row--highlighted': isHighlighted,
         'RealmBrowser__Table__Row--striped': rowIndex % 2 === 1 && !isSorting,
         'RealmBrowser__Table__Row--sorting': isSorting,

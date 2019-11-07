@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import GraphiQL, { Fetcher } from 'graphiql';
-import * as React from 'react';
+import React from 'react';
 
 import './GraphiqlEditor.scss';
 

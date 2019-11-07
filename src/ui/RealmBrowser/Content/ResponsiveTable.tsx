@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
+import React from 'react';
 import { AutoSizer, ScrollSync } from 'react-virtualized';
 
 import { IBaseTableContainerProps, Table } from './Table';

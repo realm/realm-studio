@@ -16,9 +16,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as fs from 'fs';
-import * as http from 'http';
-import * as path from 'path';
+import fs from 'fs-extra';
+import http from 'http';
+import path from 'path';
 
 const mockedLatestMacYmlPath = path.resolve(
   __dirname,

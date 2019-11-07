@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
+import React from 'react';
 import { AutoSizer, List } from 'react-virtualized';
 
 import { IUser } from '../..';

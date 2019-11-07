@@ -16,9 +16,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as classnames from 'classnames';
-import * as React from 'react';
-import * as Realm from 'realm';
+import classNames from 'classnames';
+import React from 'react';
+import Realm from 'realm';
 
 import { displayObject } from '../../../display';
 
@@ -40,7 +40,7 @@ export const ObjectCell = ({
   return (
     <div
       tabIndex={0}
-      className={classnames('RealmBrowser__Table__ObjectCell', {
+      className={classNames('RealmBrowser__Table__ObjectCell', {
         'RealmBrowser__Table__ObjectCell--null': value === null,
       })}
       onKeyPress={doubleClickIfEnter}

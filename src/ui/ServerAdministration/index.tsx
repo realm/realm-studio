@@ -16,11 +16,11 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as electron from 'electron';
-import * as os from 'os';
-import * as React from 'react';
-import * as Realm from 'realm';
-import * as semver from 'semver';
+import electron from 'electron';
+import os from 'os';
+import React from 'react';
+import Realm from 'realm';
+import semver from 'semver';
 import { URL } from 'url';
 
 import { main } from '../../actions/main';

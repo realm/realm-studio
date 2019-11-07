@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as Realm from 'realm';
+import Realm from 'realm';
 
 export abstract class DataImporter {
   protected files: string[];

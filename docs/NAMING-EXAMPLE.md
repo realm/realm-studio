@@ -8,7 +8,7 @@ Initially this should be a single file, named `Status.tsx` exporting a single fu
 
 This is `Status.tsx`:
 ```
-import * as React from 'react';
+import React from 'react';
 
 export const Status = () => <p>Status is good!</p>;
 ```
@@ -19,7 +19,7 @@ Now let's make the message a property of the React component, exporting the inte
 
 This is `Status.tsx`:
 ```
-import * as React from 'react';
+import React from 'react';
 
 export interface IStatusProps {
   message: string;
@@ -34,7 +34,7 @@ Let's say we wanted to style this component. We need to save a stylesheet next t
 
 This is `Status/index.tsx`:
 ```
-import * as React from 'react';
+import React from 'react';
 
 import './Status.scss';
 
@@ -63,7 +63,7 @@ Now - if we wanted to add behaviour and a state to the component, we want to sep
 Now we rename the `index.tsx` to `Status.tsx` and implement the container component (with state & behaviour):
 
 ```
-import * as React from 'react';
+import React from 'react';
 
 export interface IStatusContainerProps {
   message: string;
@@ -102,7 +102,7 @@ export { StatusContainer as Status };
 
 This is `Status/Status.tsx`:
 ```
-import * as React from 'react';
+import React from 'react';
 
 import './Status.scss';
 

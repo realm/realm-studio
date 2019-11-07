@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import { createRealmContext } from 'react-realm-context';
-import * as Realm from 'realm';
+import Realm from 'realm';
 
 const {
   RealmProvider: AdminRealmProvider,

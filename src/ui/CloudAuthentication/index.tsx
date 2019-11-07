@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
+import React from 'react';
 
 import { main } from '../../actions/main';
 import * as raas from '../../services/raas';

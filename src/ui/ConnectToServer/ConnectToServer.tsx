@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
+import React from 'react';
 import { Button, Form, FormGroup, Input, Label } from 'reactstrap';
 
 import { LoadingOverlay } from '../reusable/LoadingOverlay';

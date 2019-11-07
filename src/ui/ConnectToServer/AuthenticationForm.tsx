@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
+import React from 'react';
 
 import { AdminTokenForm } from './AdminTokenForm';
 import { AuthenticationMethodSelector } from './AuthenticationMethodSelector';

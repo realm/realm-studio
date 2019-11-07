@@ -16,9 +16,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
+import React from 'react';
 import { Alert } from 'reactstrap';
-import * as Realm from 'realm';
+import Realm from 'realm';
 
 export interface IDefaultControlProps {
   property: Realm.ObjectSchemaProperty;

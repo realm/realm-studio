@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as path from 'path';
+import path from 'path';
 
 export interface IExportEngine {
   export(realm: Realm, destinationPath: string): void;

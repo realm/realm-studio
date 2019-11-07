@@ -17,9 +17,9 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import { ipcRenderer, MenuItemConstructorOptions, remote } from 'electron';
-import * as path from 'path';
-import * as React from 'react';
-import * as Realm from 'realm';
+import path from 'path';
+import React from 'react';
+import Realm from 'realm';
 
 import { DataExporter, DataExportFormat } from '../../services/data-exporter';
 import * as dataImporter from '../../services/data-importer';

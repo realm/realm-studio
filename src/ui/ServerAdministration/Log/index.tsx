@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
+import React from 'react';
 import { CellMeasurerCache } from 'react-virtualized';
 
 import { ILoadingProgress } from '../../reusable/LoadingOverlay';

@@ -16,12 +16,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as assert from 'assert';
-import * as Electron from 'electron';
-import * as fs from 'fs';
-import * as path from 'path';
+import assert from 'assert';
+import Electron from 'electron';
+import fs from 'fs';
+import path from 'path';
 import { Application } from 'spectron';
-import * as fakeDialog from 'spectron-fake-dialog';
+import fakeDialog from 'spectron-fake-dialog';
 
 import {
   create as createAllTypeRealm,

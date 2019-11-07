@@ -16,8 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
-import * as Realm from 'realm';
+import React from 'react';
+import Realm from 'realm';
 
 import { IPropertyWithName } from '../..';
 import { Focus } from '../../focus';

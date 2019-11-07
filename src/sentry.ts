@@ -20,7 +20,7 @@
 // This is external to the bundle and will be copied by WebPack to catch any errors that may happen early
 
 import * as Sentry from '@sentry/electron';
-import * as electron from 'electron';
+import electron from 'electron';
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
