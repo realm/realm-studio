@@ -52,8 +52,8 @@ interface ICloudAuthenticationWindow extends Electron.BrowserWindow {
 export class Application {
   public static sharedApplication = new Application();
 
-  private updater = new Updater();
   private windowManager = new WindowManager();
+  private updater = new Updater(this.windowManager);
   private certificateManager = new CertificateManager();
   private cloudManager = new CloudManager();
 
