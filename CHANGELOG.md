@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Release 3.7.0-ros-3.19.0 (2019-09-27)
+
+[Changes since v3.7.0](https://github.com/realm/realm-studio/compare/v3.8.1...v3.8.1-ros-3.19.0)
+
+This is a compatibility version of Realm Studio, used to connect to Realm Object Servers running v3.19.0 or lower.
 
 ## Release 3.8.1 (2019-10-18)
 
@@ -20,7 +25,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Internals
 
 - Upgraded Realm JS to v3.3.0. ([#1196](https://github.com/realm/realm-studio/pull/1196), since v3.8.0)
-
 
 ## Release 3.8.0 (2019-10-17)
 
@@ -42,7 +46,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 - Upgraded Realm JS to v3.2.0. ([#1177](https://github.com/realm/realm-studio/pull/1177))
 
-
 ## Release 3.7.0 (2019-09-27)
 
 [Changes since v3.6.1](https://github.com/realm/realm-studio/compare/v3.6.1...v3.7.0)
@@ -59,7 +62,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Internals
 
 - Upgraded a lot of dependencies to their latest versions. ([#1167](https://github.com/realm/realm-studio/pull/1167), [#1169](https://github.com/realm/realm-studio/pull/1169), [#1173](https://github.com/realm/realm-studio/pull/1173), [#1175](https://github.com/realm/realm-studio/pull/1175), [#1176](https://github.com/realm/realm-studio/pull/1176))
-
 
 ## Release 3.6.1 (2019-06-06)
 
