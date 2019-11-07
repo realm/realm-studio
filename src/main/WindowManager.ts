@@ -58,8 +58,12 @@ interface ICreatedWindow<W extends BrowserWindow> {
   existing: boolean;
 }
 
+const OUTDATED_PREFIX = '[Outdated] ';
+
 export class WindowManager {
   public windows: IWindowHandle[] = [];
+
+  private pendingUpdate = false;
 
   /**
    * Either creates a new or returns an existing window depending on the implementation of the getSingletonKey function
@@ -118,6 +122,12 @@ export class WindowManager {
           : path.resolve(__dirname, './sentry.bundle.js'),
       },
     };
+
+    // Prefix the title of the window, if an update is pending
+    if (this.pendingUpdate) {
+      combinedWindowOptions.title =
+        OUTDATED_PREFIX + combinedWindowOptions.title;
+    }
 
     // Spread out the options that Studio extends Electron with
     const { maximize, ...windowOptions } = combinedWindowOptions;
@@ -242,6 +252,20 @@ export class WindowManager {
           });
         }),
     );
+  }
+
+  public setPendingUpdate(pendingUpdate: boolean) {
+    this.pendingUpdate = pendingUpdate;
+    // Update title of all windows
+    for (const w of this.windows) {
+      const { window } = w;
+      const title = window.getTitle();
+      if (this.pendingUpdate && !title.startsWith(OUTDATED_PREFIX)) {
+        window.setTitle(OUTDATED_PREFIX + title);
+      } else if (!this.pendingUpdate) {
+        window.setTitle(title.replace(OUTDATED_PREFIX, ''));
+      }
+    }
   }
 
   /**

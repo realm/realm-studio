@@ -74,6 +74,7 @@ const getIsBusy = (status: IUpdateStatus) => {
   switch (status.state) {
     case 'failed':
     case 'up-to-date':
+    case 'available':
       return false;
     default:
       return true;
