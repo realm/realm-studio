@@ -103,6 +103,7 @@ class ServerAdministrationContainer
   }> = [
     { rosVersion: '3.0.0', studioVersion: '1.19.2-ros2' },
     { rosVersion: '3.11.0', studioVersion: '2.9.1-ros3.10.7' },
+    { rosVersion: '3.20.1', studioVersion: '3.8.1-ros-3-19-0' },
   ];
 
   public async componentDidMount() {
