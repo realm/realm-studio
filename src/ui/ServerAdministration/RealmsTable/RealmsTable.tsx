@@ -36,9 +36,9 @@ import { RealmSizeHeader } from './RealmSizeHeader';
 
 import './RealmsTable.scss';
 
-const FilterableRealmTable: React.ComponentType<
-  IFilterableTableProps<RealmFile>
-> = FilterableTable;
+const FilterableRealmTable: React.ComponentType<IFilterableTableProps<
+  RealmFile
+>> = FilterableTable;
 
 const onQueryHelp = () => {
   const url =
