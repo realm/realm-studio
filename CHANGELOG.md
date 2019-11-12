@@ -15,8 +15,9 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
-- Fixed auto updating, to ask before downloading enabling users to say "no", quit and restart Studio without getting the new update. ([#1209](https://github.com/realm/realm-studio/pull/1209), since v0.0.1-alpha.8)
-- Fixed prompting users to download the 3.8.1-ros-3-19-0 compatibility version when connecting to ROS < 3.20.1. ([#1211](https://github.com/realm/realm-studio/pull/1211), since v3.8.0)
+- When saying no to upgrade Studio and restarting Studio, update to the newest version would happen at next start.
+This is fixed so you are always asked to confirm download when starting Studio ([#1209](https://github.com/realm/realm-studio/pull/1209), since v0.0.1-alpha.8)
+- Now prompting users to download the 3.8.1-ros-3-19-0 compatibility version when connecting to ROS < 3.20.1. ([#1211](https://github.com/realm/realm-studio/pull/1211), since v3.8.0)
 - Fixed highlighting rows for editing in a `List`. ([#1216](https://github.com/realm/realm-studio/pull/1216), since v2.9.0)
 
 ### Internals
