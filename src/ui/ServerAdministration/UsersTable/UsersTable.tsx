@@ -42,9 +42,9 @@ import { UserSidebar } from './UserSidebar';
 
 import './UsersTable.scss';
 
-const FilterableUserTable: React.ComponentType<
-  IFilterableTableProps<User>
-> = FilterableTable;
+const FilterableUserTable: React.ComponentType<IFilterableTableProps<
+  User
+>> = FilterableTable;
 
 export const UsersTable = ({
   getUsersRealms,
