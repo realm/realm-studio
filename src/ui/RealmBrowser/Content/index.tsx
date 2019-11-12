@@ -769,6 +769,7 @@ class ContentContainer extends React.Component<
         }
         this.setState({ highlight: { rows } });
       } else if (e.button === 0 && focus.kind !== 'list') {
+        // The user left-clicked on a non-list row
         this.contentElement.addEventListener('mousemove', this.onRowMouseMove);
         document.addEventListener('mouseup', this.onRowMouseUp);
         const rect = e.currentTarget.getBoundingClientRect();
@@ -777,6 +778,9 @@ class ContentContainer extends React.Component<
           rowIndex,
         };
         // Highlight the row
+        this.setState({ highlight: { rows: new Set([rowIndex]) } });
+      } else if (e.button === 0 && focus.kind === 'list') {
+        // The user left-clicked on a list row - highlight it
         this.setState({ highlight: { rows: new Set([rowIndex]) } });
       } else if (e.button === 2 && rows.size === 0) {
         // Right clicked when nothing was highlighted:
