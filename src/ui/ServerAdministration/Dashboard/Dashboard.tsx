@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
+import React from 'react';
 
 import { Platform } from '.';
 import nodeJsLogo from '../../../../static/svgs/node-js-logo.svg';

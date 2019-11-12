@@ -16,10 +16,10 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as electron from 'electron';
-import * as fs from 'fs-extra';
-import * as mixpanel from 'mixpanel-browser';
-import * as path from 'path';
+import electron from 'electron';
+import fs from 'fs-extra';
+import mixpanel from 'mixpanel-browser';
+import path from 'path';
 import { v4 as uuid } from 'uuid';
 
 import { store } from '../../store';

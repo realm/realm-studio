@@ -26,7 +26,7 @@ const PREVIEW_TOKEN =
   'f2bbfb941b4c25123d3fc48770e7391fb23c903a9c307d0fbbff1dcaabd9da74';
 
 /*
-import * as React from 'react';
+import React from 'react';
 import { ApolloClient, HttpLink, InMemoryCache } from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
 

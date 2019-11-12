@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
+import React from 'react';
 import { Tooltip } from 'reactstrap';
 
 import { Action } from '../../..';

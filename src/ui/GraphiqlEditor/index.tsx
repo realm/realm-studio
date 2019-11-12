@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
+import React from 'react';
 import { IGraphiqlEditorWindowProps } from '../../windows/WindowProps';
 
 import { createGraphQLFetcher } from './graphiql-subscriptions-fetcher';

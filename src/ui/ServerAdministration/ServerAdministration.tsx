@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
+import React from 'react';
 
 import { RealmFile } from '../../services/ros';
 import { ILoadingProgress, LoadingOverlay } from '../reusable/LoadingOverlay';

@@ -16,8 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as fs from 'fs';
-import * as Realm from 'realm';
+import fs from 'fs-extra';
+import Realm from 'realm';
 
 import { IExportEngine } from '.';
 

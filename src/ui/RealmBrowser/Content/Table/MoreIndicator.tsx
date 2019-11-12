@@ -16,8 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as classnames from 'classnames';
-import * as React from 'react';
+import classNames from 'classnames';
+import React from 'react';
 
 export const MoreIndicator = ({
   position,
@@ -27,7 +27,7 @@ export const MoreIndicator = ({
   visible: boolean;
 }) => (
   <div
-    className={classnames(
+    className={classNames(
       'RealmBrowser__Table__More',
       `RealmBrowser__Table__More--${position}`,
       {

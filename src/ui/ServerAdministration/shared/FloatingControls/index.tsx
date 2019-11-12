@@ -16,8 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as classnames from 'classnames';
-import * as React from 'react';
+import classNames from 'classnames';
+import React from 'react';
 import './FloatingControls.scss';
 
 export interface IProps {
@@ -27,7 +27,7 @@ export interface IProps {
 
 export const FloatingControls = ({ isOpen, children }: IProps) => (
   <div
-    className={classnames(
+    className={classNames(
       isOpen ? 'FloatingControls' : 'FloatingControls FloatingControls--hidden',
     )}
   >

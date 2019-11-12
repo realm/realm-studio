@@ -16,10 +16,10 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as classnames from 'classnames';
-import * as React from 'react';
-import * as Realm from 'realm';
-import * as util from 'util';
+import classNames from 'classnames';
+import React from 'react';
+import Realm from 'realm';
+import util from 'util';
 
 export const DefaultCell = ({
   property,
@@ -29,7 +29,7 @@ export const DefaultCell = ({
   value: any;
 }) => (
   <div
-    className={classnames(
+    className={classNames(
       'RealmBrowser__Table__Input',
       'RealmBrowser__Table__Input--disabled',
     )}

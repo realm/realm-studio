@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
+import React from 'react';
 
 import { Action, IPermission, IRole, Permissions } from '..';
 import { SidebarBody, SidebarTable } from '../../../../reusable';

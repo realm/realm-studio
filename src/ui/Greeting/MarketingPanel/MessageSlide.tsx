@@ -21,9 +21,9 @@ import {
   NodeRenderer,
 } from '@contentful/rich-text-html-renderer';
 import { BLOCKS, INLINES } from '@contentful/rich-text-types';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { Asset, Entry } from 'contentful';
-import * as React from 'react';
+import React from 'react';
 
 import { marketing } from '../../../services/contentful';
 

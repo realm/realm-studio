@@ -166,7 +166,7 @@ declare module 'segfault-handler' {
 }
 
 declare module 'graphiql' {
-  import * as React from 'react';
+  import React from 'react';
 
   export type Fetcher = (graphQLParams: object) => void;
 

@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as moment from 'moment';
+import moment from 'moment';
 
 export const parseNumber = (
   value: string,

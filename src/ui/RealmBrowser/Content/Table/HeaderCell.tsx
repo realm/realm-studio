@@ -16,10 +16,10 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as classNames from 'classnames';
-import * as React from 'react';
+import classNames from 'classnames';
+import React from 'react';
 import { DraggableCore, DraggableEventHandler } from 'react-draggable';
-import * as Realm from 'realm';
+import Realm from 'realm';
 
 import { ISorting } from '..';
 import { IPropertyWithName } from '../..';

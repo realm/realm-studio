@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as electron from 'electron';
+import electron from 'electron';
 import { URL } from 'url';
 
 export class CertificateManager {

@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
+import React from 'react';
 import { TableHeaderProps } from 'react-virtualized';
 
 import { RealmSizeHeader } from './RealmSizeHeader';

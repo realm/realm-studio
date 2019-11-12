@@ -18,7 +18,7 @@
 
 import * as sentry from '@sentry/electron';
 import { app, dialog, Menu } from 'electron';
-import * as path from 'path';
+import path from 'path';
 import { URL } from 'url';
 
 import { MainReceiver } from '../actions/main';

@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
+import React from 'react';
 
 export const ListIndexCell = ({ value }: { value: number }) => (
   <div className="RealmBrowser__Table__ListIndexCell">{value}</div>

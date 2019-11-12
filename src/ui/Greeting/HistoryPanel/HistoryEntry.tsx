@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
+import React from 'react';
 
 import serverIcon from '../../../../static/svgs/server-icon.svg';
 import syncedRealmFileIcon from '../../../../static/svgs/synced-realm-icon.svg';

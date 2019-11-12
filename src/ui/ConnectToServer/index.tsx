@@ -16,9 +16,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as electron from 'electron';
-import * as json5 from 'json5';
-import * as React from 'react';
+import electron from 'electron';
+import json5 from 'json5';
+import React from 'react';
 
 import { main } from '../../actions/main';
 import {

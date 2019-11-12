@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as Realm from 'realm';
+import Realm from 'realm';
 
 import * as csv from './csv';
 export { csv };

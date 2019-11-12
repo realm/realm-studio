@@ -16,11 +16,11 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as Realm from 'realm';
+import Realm from 'realm';
 
-import * as crypto from 'crypto';
-import * as fs from 'fs-extra';
-import * as path from 'path';
+import crypto from 'crypto';
+import fs from 'fs-extra';
+import path from 'path';
 import { fetchAuthenticated, IRealmFile, RealmType, UserStatus } from '.';
 import { showError } from '../../ui/reusable/errors';
 

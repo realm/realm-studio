@@ -11,4 +11,4 @@
 
 ### Internals
 
-- None
+- Switched to using "esModuleInterop", allowing `import Lib from 'lib'` instead of `import * as Lib from 'lib'`. ([#1210](https://github.com/realm/realm-studio/pull/1210))

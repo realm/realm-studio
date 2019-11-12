@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
+import React from 'react';
 import { Badge } from 'reactstrap';
 
 import * as ros from '../../../services/ros';

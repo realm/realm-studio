@@ -3,6 +3,7 @@
     "target": "es2017",
     "moduleResolution": "node",
     "module": "esnext",
+    "esModuleInterop": true,
 
     "allowJs": true,
     "jsx": "react",
@@ -14,26 +15,11 @@
     "noImplicitAny": true,
     "downlevelIteration": true,
 
-    "typeRoots": [
-      "node_modules/@types"
-    ]
+    "typeRoots": ["node_modules/@types"]
   },
-  "files": [
-    "src/index.d.ts",
-    "src/main.ts",
-    "src/renderer.tsx"
-  ],
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "build",
-    "dist"
-  ],
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "build", "dist"],
   "awesomeTypescriptLoaderOptions": {
-    "reportFiles": [
-      "src/**/*.{ts,tsx}"
-    ]
+    "reportFiles": ["src/**/*.{ts,tsx}"]
   }
 }

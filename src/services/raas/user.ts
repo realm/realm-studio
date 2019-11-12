@@ -16,8 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as jwt from 'jwt-decode';
-import * as moment from 'moment';
+import jwt from 'jwt-decode';
+import moment from 'moment';
 
 import {
   buildUrl,

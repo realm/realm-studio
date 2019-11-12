@@ -18,9 +18,9 @@
 
 import './services/mixpanel';
 
-import * as electron from 'electron';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import electron from 'electron';
+import React from 'react';
+import ReactDOM from 'react-dom';
 
 // This is needed to prevent Realm JS from writing to directories it doesn't have access to
 import './utils/process-directories';

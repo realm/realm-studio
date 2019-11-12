@@ -16,8 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as assert from 'assert';
-import * as fs from 'fs-extra';
+import assert from 'assert';
+import fs from 'fs-extra';
 import { resolve } from 'path';
 import { ObjectSchemaProperty } from 'realm';
 

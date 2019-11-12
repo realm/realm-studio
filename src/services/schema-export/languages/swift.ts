@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as fsPath from 'path';
+import fsPath from 'path';
 import { ISchemaFile, SchemaExporter } from '../schemaExporter';
 
 export default class SwiftSchemaExporter extends SchemaExporter {

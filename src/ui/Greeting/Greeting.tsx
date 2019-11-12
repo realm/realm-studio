@@ -16,8 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as os from 'os';
-import * as React from 'react';
+import os from 'os';
+import React from 'react';
 import { Button } from 'reactstrap';
 
 import { ICloudStatus, IInstance } from '../../main/CloudManager';

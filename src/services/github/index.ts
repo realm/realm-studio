@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as electron from 'electron';
+import electron from 'electron';
 import { URL } from 'url';
 import { v4 as uuid } from 'uuid';
 

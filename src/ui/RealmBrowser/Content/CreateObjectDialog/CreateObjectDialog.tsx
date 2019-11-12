@@ -16,9 +16,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
+import React from 'react';
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
-import * as Realm from 'realm';
+import Realm from 'realm';
 
 import { IClassFocus } from '../../focus';
 

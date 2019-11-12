@@ -16,9 +16,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as classNames from 'classnames';
-import * as React from 'react';
-import * as Realm from 'realm';
+import classNames from 'classnames';
+import React from 'react';
+import Realm from 'realm';
 
 import './ConnectionStateIndicator.scss';
 

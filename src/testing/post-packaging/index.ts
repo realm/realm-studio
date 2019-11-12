@@ -16,12 +16,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as assert from 'assert';
-import * as cp from 'child_process';
-import * as fs from 'fs-extra';
-import * as http from 'http';
-import * as os from 'os';
-import * as path from 'path';
+import assert from 'assert';
+import cp from 'child_process';
+import fs from 'fs-extra';
+import http from 'http';
+import os from 'os';
+import path from 'path';
 
 import * as mockedS3Server from './mocked-s3-server';
 

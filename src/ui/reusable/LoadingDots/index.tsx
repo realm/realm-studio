@@ -16,14 +16,14 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as classnames from 'classnames';
-import * as React from 'react';
+import classNames from 'classnames';
+import React from 'react';
 
 import './LoadingDots.scss';
 
 export const LoadingDots = ({ className }: { className?: string }) => (
   <svg
-    className={classnames('LoadingDots', className)}
+    className={classNames('LoadingDots', className)}
     width="60px"
     height="20px"
     viewBox="0 0 40 10"

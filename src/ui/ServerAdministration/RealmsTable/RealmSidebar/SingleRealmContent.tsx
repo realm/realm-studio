@@ -16,9 +16,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as React from 'react';
+import React from 'react';
 import { Button } from 'reactstrap';
-import * as Realm from 'realm';
+import Realm from 'realm';
 
 import { RealmFile } from '..';
 import * as ros from '../../../../services/ros';

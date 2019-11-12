@@ -16,9 +16,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as assert from 'assert';
-import * as electron from 'electron';
-import * as fs from 'fs-extra';
+import assert from 'assert';
+import electron from 'electron';
+import fs from 'fs-extra';
 import { resolve } from 'path';
 
 import { getWindowOptions } from '../windows/WindowOptions';

@@ -23,7 +23,7 @@ if (process.type === 'browser') {
 
 import * as sentry from '@sentry/electron';
 import { remote } from 'electron';
-import * as React from 'react';
+import React from 'react';
 
 import { mixpanel } from '../services/mixpanel';
 
