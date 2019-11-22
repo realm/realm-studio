@@ -10,4 +10,4 @@
 
 ### Internals
 
-- None
+- Removed call-to-action and button to upgrade a full Realm to a query-based sync "reference" Realm. ([#1226](https://github.com/realm/realm-studio/pull/1226))
