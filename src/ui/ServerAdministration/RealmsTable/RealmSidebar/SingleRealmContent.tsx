@@ -33,7 +33,6 @@ import { PermissionsTable } from './PermissionsTable';
 interface ISingleRealmContentProps {
   onRealmDeletion: (realm: RealmFile) => void;
   onRealmOpened: (realm: RealmFile, usingGrahpiql?: boolean) => void;
-  onRealmTypeUpgrade: (realm: RealmFile) => void;
   realm: RealmFile;
   permissions: Realm.Results<ros.IPermission>;
   realmStateSize: IRealmStateSize | undefined;
@@ -45,7 +44,6 @@ interface ISingleRealmContentProps {
 export const SingleRealmContent = ({
   onRealmDeletion,
   onRealmOpened,
-  onRealmTypeUpgrade,
   permissions,
   realm,
   realmStateSize,
@@ -56,17 +54,14 @@ export const SingleRealmContent = ({
   const isSystemRealm = realm && realm.path.startsWith('/__');
   const isFullRealm =
     ['partial', 'reference'].indexOf(realm.realmType || '') === -1;
-  // Determine if the Realm can be upgraded to a "reference" Realm,
-  // It can if its defined and not already "partial" or "reference"
-  const canUpgradeType = realm && !isSystemRealm && isFullRealm;
   // Generate a list of known size labels
   const sizeLabels = [];
   if (shouldShowRealmSize) {
     sizeLabels.push(
-      realmStateSize ? prettyBytes(realmStateSize.value) + ' (data)' : null,
+      realmStateSize ? prettyBytes(realmStateSize.value) + ' (data)' : null
     );
     sizeLabels.push(
-      realmFileSize ? prettyBytes(realmFileSize.value) + ' (file)' : null,
+      realmFileSize ? prettyBytes(realmFileSize.value) + ' (file)' : null
     );
   }
 
@@ -99,25 +94,6 @@ export const SingleRealmContent = ({
           {permissions ? <PermissionsTable permissions={permissions} /> : null}
         </SidebarBody>
       ) : null}
-      {canUpgradeType ? (
-        <SidebarBody className="RealmSidebar__UpgradeTypeBlock">
-          This Realm can be upgraded to a Reference Realm which will enable{' '}
-          <a
-            target="_blank"
-            href="https://docs.realm.io/platform/using-synced-realms/syncing-data"
-          >
-            query-based synchronization
-          </a>{' '}
-          and{' '}
-          <a
-            target="_blank"
-            href="https://docs.realm.io/platform/using-synced-realms/access-control#overview"
-          >
-            Fine-Grained Permissions
-          </a>
-          . Note: Doing so will remove any existing permissions.
-        </SidebarBody>
-      ) : null}
       <SidebarControls>
         <Button size="sm" color="primary" onClick={() => onRealmOpened(realm)}>
           Open
@@ -129,15 +105,6 @@ export const SingleRealmContent = ({
         >
           Open with Graph<i>i</i>QL
         </Button>
-        {canUpgradeType ? (
-          <Button
-            size="sm"
-            color="secondary"
-            onClick={() => onRealmTypeUpgrade(realm)}
-          >
-            Upgrade
-          </Button>
-        ) : null}
         <Button
           size="sm"
           color="secondary"

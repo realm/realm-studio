@@ -31,7 +31,6 @@ export interface IRealmSidebarContainerProps {
   isOpen: boolean;
   onRealmDeletion: (...realms: RealmFile[]) => void;
   onRealmOpened: (realm: RealmFile, usingGrahpiql?: boolean) => void;
-  onRealmTypeUpgrade: (realm: RealmFile) => void;
   onClose: () => void;
   realms: RealmFile[];
   onRealmSizeRecalculate: (realm: RealmFile) => void;
@@ -74,7 +73,6 @@ export class RealmSidebarContainer extends React.Component<
         isOpen={this.props.isOpen}
         onRealmDeletion={this.props.onRealmDeletion}
         onRealmOpened={this.props.onRealmOpened}
-        onRealmTypeUpgrade={this.props.onRealmTypeUpgrade}
         onClose={this.props.onClose}
         realms={validRealms}
         onRealmSizeRecalculate={this.props.onRealmSizeRecalculate}

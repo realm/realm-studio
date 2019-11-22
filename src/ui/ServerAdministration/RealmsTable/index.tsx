@@ -38,7 +38,7 @@ import { RealmsTable } from './RealmsTable';
 
 export type MetricGetter = (
   realm: RealmFile,
-  name: 'RealmStateSize' | 'RealmFileSize',
+  name: 'RealmStateSize' | 'RealmFileSize'
 ) => IRealmStateSize | IRealmFileSize | undefined;
 
 export type RealmFile = ros.IRealmFile & Realm.Object;
@@ -83,7 +83,7 @@ class RealmsTableContainer extends React.Component<
       adminRealm: Realm,
       searchString: string,
       showPartialRealms: boolean,
-      showSystemRealms: boolean,
+      showSystemRealms: boolean
     ) => {
       let queryError: Error | undefined;
       let realms = adminRealm
@@ -94,7 +94,7 @@ class RealmsTableContainer extends React.Component<
       if (searchString || searchString !== '') {
         const filterQuery = getQueryForFields(
           ['path', 'realmType', 'owner.accounts.providerId'],
-          searchString,
+          searchString
         );
         try {
           realms = realms.filtered(filterQuery);
@@ -118,11 +118,11 @@ class RealmsTableContainer extends React.Component<
             "NOT path ENDSWITH '__management'",
             "NOT path ENDSWITH '__perm'",
             "NOT path ENDSWITH '__permission'",
-          ].join(' AND '),
+          ].join(' AND ')
         );
       }
       return { realms, queryError };
-    },
+    }
   );
 
   private metricsRealm: Realm | null = null;
@@ -138,7 +138,7 @@ class RealmsTableContainer extends React.Component<
 
     // Generate a configuration to open the /__metrics Realm
     const metricsRealmConfig = getMetricsRealmConfig(
-      adminRealm.syncSession.user,
+      adminRealm.syncSession.user
     );
     // Render with the /__metrics Realm only if it was already created by the Server
     return hasMetricsRealm ? (
@@ -172,7 +172,7 @@ class RealmsTableContainer extends React.Component<
   }
 
   public getRealmPermissions = (
-    realm: RealmFile,
+    realm: RealmFile
   ): Realm.Results<ros.IPermission> => {
     const { adminRealm } = this.props;
     return adminRealm
@@ -182,7 +182,7 @@ class RealmsTableContainer extends React.Component<
 
   public getMetric: MetricGetter = (
     realm: RealmFile,
-    name: 'RealmStateSize' | 'RealmFileSize',
+    name: 'RealmStateSize' | 'RealmFileSize'
   ) => {
     if (
       this.metricsRealm &&
@@ -191,7 +191,7 @@ class RealmsTableContainer extends React.Component<
     ) {
       return this.metricsRealm.objectForPrimaryKey<IRealmStateSize>(
         name,
-        realm.path,
+        realm.path
       );
     }
   };
@@ -240,24 +240,12 @@ class RealmsTableContainer extends React.Component<
   public onRealmOpened = (realm: RealmFile, usingGrahpiql = false) => {
     this.props.onRealmOpened(realm.path, usingGrahpiql);
   };
-
-  public onRealmTypeUpgrade = async (realm: RealmFile) => {
-    const confirmed = this.confirmRealmTypeUpgrade(realm.path);
-    if (confirmed) {
-      try {
-        await ros.realms.changeType(this.props.user, realm.path, 'reference');
-      } catch (err) {
-        showError('Failed to upgrade the Realm', err);
-      }
-    }
-  };
-
   public onRealmClick = (
     e: React.MouseEvent<HTMLElement>,
-    realm: RealmFile,
+    realm: RealmFile
   ) => {
     const isCurrentlySelected = !!this.state.selectedRealms.find(
-      r => r.isValid() && r.path === realm.path,
+      r => r.isValid() && r.path === realm.path
     );
     if (e.metaKey) {
       // The user wants to modify the existing selection
@@ -290,7 +278,7 @@ class RealmsTableContainer extends React.Component<
       this.props.adminRealm,
       this.state.searchString,
       this.state.showPartialRealms,
-      this.state.showSystemRealms,
+      this.state.showSystemRealms
     );
     const validSelectedRealms = this.state.selectedRealms.filter(r => {
       // Filter out the Realm objects
@@ -310,7 +298,6 @@ class RealmsTableContainer extends React.Component<
         onRealmOpened={this.onRealmOpened}
         onRealmsDeselection={this.onRealmsDeselection}
         onRealmClick={this.onRealmClick}
-        onRealmTypeUpgrade={this.onRealmTypeUpgrade}
         onSearchStringChange={this.onSearchStringChange}
         realms={realms}
         searchString={this.state.searchString}
@@ -333,22 +320,7 @@ class RealmsTableContainer extends React.Component<
           'Before deleting Realms here, make sure that any / all clients (iOS, Android, Js, etc.) has already deleted the app or database locally. If this is not done, they will try to upload their copy of the database - which might have been replaced in the meantime.',
         title: `Deleting ${paths.join(', ')}`,
         buttons: ['Cancel', 'Delete'],
-      },
-    );
-
-    return result === 1;
-  }
-
-  private confirmRealmTypeUpgrade(path: string): boolean {
-    const result = electron.remote.dialog.showMessageBox(
-      electron.remote.getCurrentWindow(),
-      {
-        type: 'warning',
-        message:
-          'Upgrading the Realm to be a Reference Realm will delete all current permissions for it. WARNING: This operation cannot be reverted.',
-        title: `Upgrading type of ${path}`,
-        buttons: ['Cancel', 'Upgrade to "reference" Realm'],
-      },
+      }
     );
 
     return result === 1;
@@ -367,7 +339,7 @@ class RealmsTableContainer extends React.Component<
   private deselectRealm(realm: RealmFile) {
     this.setState({
       selectedRealms: this.state.selectedRealms.filter(
-        r => r.isValid() && r.path !== realm.path,
+        r => r.isValid() && r.path !== realm.path
       ),
     });
   }
@@ -377,7 +349,7 @@ class RealmsTableContainer extends React.Component<
       this.props.adminRealm,
       this.state.searchString,
       this.state.showPartialRealms,
-      this.state.showSystemRealms,
+      this.state.showSystemRealms
     );
     const realmAIndex = realms.indexOf(realmA);
     const realmBIndex = realms.indexOf(realmB);
