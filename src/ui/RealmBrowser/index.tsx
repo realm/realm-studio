@@ -703,7 +703,9 @@ class RealmBrowserContainer
           defaultPath: exporter.suggestFilename(this.realm),
           message: 'Select a destination for the data',
         });
-        exporter.export(this.realm, destinationPath);
+        if (destinationPath) {
+          exporter.export(this.realm, destinationPath);
+        }
       } else {
         throw new Error('Realm is not open');
       }
@@ -716,7 +718,7 @@ class RealmBrowserContainer
     format: dataImporter.ImportFormat = dataImporter.ImportFormat.CSV,
   ) => {
     const paths = dataImporter.showOpenDialog(format);
-    if (this.realm && paths.length > 0) {
+    if (this.realm && paths && paths.length > 0) {
       try {
         const schema = dataImporter.generateSchema(format, paths);
         try {
