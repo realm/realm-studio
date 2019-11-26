@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release 3.8.3 (2019-11-26)
+
+[Changes since v3.8.2](https://github.com/realm/realm-studio/compare/v3.8.2...v3.8.3)
+
+### Enhancements
+
+- None
+
+### Fixed
+
+- None
+
+### Internals
+
+- Removed call-to-action and button to upgrade a full Realm to a query-based sync "reference" Realm. ([#1226](https://github.com/realm/realm-studio/pull/1226))
+
+
 ## Release 3.8.2 (2019-11-12)
 
 [Changes since v3.8.1](https://github.com/realm/realm-studio/compare/v3.8.1...v3.8.2)
