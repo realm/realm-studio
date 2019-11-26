@@ -240,18 +240,6 @@ class RealmsTableContainer extends React.Component<
   public onRealmOpened = (realm: RealmFile, usingGrahpiql = false) => {
     this.props.onRealmOpened(realm.path, usingGrahpiql);
   };
-
-  public onRealmTypeUpgrade = async (realm: RealmFile) => {
-    const confirmed = this.confirmRealmTypeUpgrade(realm.path);
-    if (confirmed) {
-      try {
-        await ros.realms.changeType(this.props.user, realm.path, 'reference');
-      } catch (err) {
-        showError('Failed to upgrade the Realm', err);
-      }
-    }
-  };
-
   public onRealmClick = (
     e: React.MouseEvent<HTMLElement>,
     realm: RealmFile,
@@ -310,7 +298,6 @@ class RealmsTableContainer extends React.Component<
         onRealmOpened={this.onRealmOpened}
         onRealmsDeselection={this.onRealmsDeselection}
         onRealmClick={this.onRealmClick}
-        onRealmTypeUpgrade={this.onRealmTypeUpgrade}
         onSearchStringChange={this.onSearchStringChange}
         realms={realms}
         searchString={this.state.searchString}
@@ -333,21 +320,6 @@ class RealmsTableContainer extends React.Component<
           'Before deleting Realms here, make sure that any / all clients (iOS, Android, Js, etc.) has already deleted the app or database locally. If this is not done, they will try to upload their copy of the database - which might have been replaced in the meantime.',
         title: `Deleting ${paths.join(', ')}`,
         buttons: ['Cancel', 'Delete'],
-      },
-    );
-
-    return result === 1;
-  }
-
-  private confirmRealmTypeUpgrade(path: string): boolean {
-    const result = electron.remote.dialog.showMessageBox(
-      electron.remote.getCurrentWindow(),
-      {
-        type: 'warning',
-        message:
-          'Upgrading the Realm to be a Reference Realm will delete all current permissions for it. WARNING: This operation cannot be reverted.',
-        title: `Upgrading type of ${path}`,
-        buttons: ['Cancel', 'Upgrade to "reference" Realm'],
       },
     );
 

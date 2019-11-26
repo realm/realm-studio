@@ -65,7 +65,6 @@ export const RealmsTable = ({
   onRealmDeletion,
   onRealmOpened,
   onRealmsDeselection,
-  onRealmTypeUpgrade,
   onSearchStringChange,
   realms,
   searchString,
@@ -82,7 +81,6 @@ export const RealmsTable = ({
   onRealmDeletion: (...realms: RealmFile[]) => void;
   onRealmOpened: (realm: RealmFile, usingGrahpiql?: boolean) => void;
   onRealmsDeselection: () => void;
-  onRealmTypeUpgrade: (realm: RealmFile) => void;
   onSearchStringChange: (query: string) => void;
   realms: Realm.Results<RealmFile>;
   searchString: string;
@@ -148,7 +146,6 @@ export const RealmsTable = ({
         isOpen={selectedRealms.length > 0}
         onRealmDeletion={onRealmDeletion}
         onRealmOpened={onRealmOpened}
-        onRealmTypeUpgrade={onRealmTypeUpgrade}
         onClose={onRealmsDeselection}
         realms={selectedRealms}
         onRealmSizeRecalculate={onRealmSizeRecalculate}

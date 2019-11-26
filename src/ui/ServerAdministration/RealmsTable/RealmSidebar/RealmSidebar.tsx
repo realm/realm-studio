@@ -35,7 +35,6 @@ export const RealmSidebar = ({
   isOpen,
   onRealmDeletion,
   onRealmOpened,
-  onRealmTypeUpgrade,
   onClose,
   realms,
   onRealmSizeRecalculate,
@@ -47,7 +46,6 @@ export const RealmSidebar = ({
   isOpen: boolean;
   onRealmDeletion: (realm: RealmFile) => void;
   onRealmOpened: (realm: RealmFile, usingGrahpiql?: boolean) => void;
-  onRealmTypeUpgrade: (realm: RealmFile) => void;
   onRealmSizeRecalculate: (realm: RealmFile) => void;
   onClose: () => void;
   realms: RealmFile[];
@@ -65,7 +63,6 @@ export const RealmSidebar = ({
       <SingleRealmContent
         onRealmDeletion={onRealmDeletion}
         onRealmOpened={onRealmOpened}
-        onRealmTypeUpgrade={onRealmTypeUpgrade}
         permissions={getRealmPermissions(realms[0])}
         realm={realms[0]}
         realmFileSize={getMetric(realms[0], 'RealmFileSize')}
