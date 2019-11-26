@@ -58,10 +58,10 @@ export const SingleRealmContent = ({
   const sizeLabels = [];
   if (shouldShowRealmSize) {
     sizeLabels.push(
-      realmStateSize ? prettyBytes(realmStateSize.value) + ' (data)' : null
+      realmStateSize ? prettyBytes(realmStateSize.value) + ' (data)' : null,
     );
     sizeLabels.push(
-      realmFileSize ? prettyBytes(realmFileSize.value) + ' (file)' : null
+      realmFileSize ? prettyBytes(realmFileSize.value) + ' (file)' : null,
     );
   }
 
