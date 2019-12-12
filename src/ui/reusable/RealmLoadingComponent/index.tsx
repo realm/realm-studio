@@ -177,6 +177,7 @@ export abstract class RealmLoadingComponent<
         return new Realm({
           path: realm.path,
           encryptionKey: realm.encryptionKey,
+          disableFormatUpgrade: realm.enableFormatUpgrade ? false : true,
           sync: realm.sync as any,
           schema,
           schemaVersion,

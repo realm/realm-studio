@@ -35,6 +35,7 @@ export interface ISyncedRealmToLoad extends IRealmToLoad {
 
 export interface ILocalRealmToLoad extends IRealmToLoad {
   mode: RealmLoadingMode.Local;
+  enableFormatUpgrade?: boolean;
   sync?: boolean;
 }
 
