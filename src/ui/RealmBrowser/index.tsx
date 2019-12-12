@@ -62,6 +62,8 @@ export type ClassFocussedHandler = (
 ) => void;
 
 const EDIT_MODE_STORAGE_KEY = 'realm-browser-edit-mode';
+const FILE_UPGRADE_NEEDED_MESSAGE =
+  'The Realm file format must be allowed to be upgraded in order to proceed.';
 
 export interface IRealmBrowserState extends IRealmLoadingComponentState {
   // A number that we can use to make components update on changes to data
@@ -302,8 +304,18 @@ class RealmBrowserContainer
           status: 'done',
         },
       });
+    } else if (message === FILE_UPGRADE_NEEDED_MESSAGE) {
+      const answer = remote.dialog.showMessageBox({
+        type: 'question',
+        buttons: ['Cancel', 'Upgrade in-place', 'Backup and upgrade'],
+        defaultId: 2,
+        title: 'Realm file needs an upgrade',
+        message: 'The Realm file stores data in an outdated format',
+        detail:
+          'This file needs to be upgraded to a newer file format before it can be opened. Would you like a backup of the file, before performing an irreversible upgrade of the file?',
+      });
     } else {
-      this.props.realm.encryptionKey = undefined;
+      delete this.props.realm.encryptionKey;
       super.loadingRealmFailed(err);
     }
   }
