@@ -17,6 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import { ipcRenderer, MenuItemConstructorOptions, remote } from 'electron';
+import fs from 'fs-extra';
 import path from 'path';
 import React from 'react';
 import Realm from 'realm';
@@ -24,7 +25,7 @@ import Realm from 'realm';
 import { DataExporter, DataExportFormat } from '../../services/data-exporter';
 import * as dataImporter from '../../services/data-importer';
 import { Language, SchemaExporter } from '../../services/schema-export';
-import { menu } from '../../utils';
+import { menu, realms } from '../../utils';
 import {
   IMenuGenerator,
   IMenuGeneratorProps,
@@ -297,6 +298,7 @@ class RealmBrowserContainer
     const mightBeEncrypted =
       message.indexOf('Not a Realm file.') >= 0 ||
       message.indexOf('Invalid mnemonic') >= 0;
+    const realm = this.props.realm;
     if (mightBeEncrypted) {
       this.setState({
         isEncryptionDialogVisible: true,
@@ -304,16 +306,52 @@ class RealmBrowserContainer
           status: 'done',
         },
       });
-    } else if (message === FILE_UPGRADE_NEEDED_MESSAGE) {
-      const answer = remote.dialog.showMessageBox({
+    } else if (
+      message === FILE_UPGRADE_NEEDED_MESSAGE &&
+      realm.mode === realms.RealmLoadingMode.Local
+    ) {
+      const buttons = ['Cancel', 'Upgrade in-place', 'Backup and upgrade'];
+      const answerIndex = remote.dialog.showMessageBox({
         type: 'question',
-        buttons: ['Cancel', 'Upgrade in-place', 'Backup and upgrade'],
+        buttons,
         defaultId: 2,
         title: 'Realm file needs an upgrade',
         message: 'The Realm file stores data in an outdated format',
         detail:
           'This file needs to be upgraded to a newer file format before it can be opened. Would you like a backup of the file, before performing an irreversible upgrade of the file?',
       });
+      const answer = buttons[answerIndex];
+
+      if (answer === 'Upgrade in-place' || answer === 'Backup and upgrade') {
+        try {
+          if (answer === 'Backup and upgrade') {
+            // Create a backup first
+            const backupDirectory = path.dirname(realm.path);
+            const backupFileName = path.basename(realm.path, '.realm');
+            const backupPath = path.resolve(
+              backupDirectory,
+              backupFileName + '.backup.realm',
+            );
+            // Copy, but ensure we don't override an existing file
+            fs.copyFileSync(realm.path, backupPath, fs.constants.COPYFILE_EXCL);
+            remote.dialog.showMessageBox({
+              title: 'Backup saved',
+              message: 'The backup Realm file was saved to:',
+              detail: backupPath,
+            });
+          }
+          // Reopen, enabling format upgrades an upgrade
+          this.loadRealm({
+            ...realm,
+            enableFormatUpgrade: true,
+          });
+        } catch (err) {
+          showError('Failed upgrading Realm', err);
+          window.close();
+        }
+      } else {
+        window.close();
+      }
     } else {
       delete this.props.realm.encryptionKey;
       super.loadingRealmFailed(err);
