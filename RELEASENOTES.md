@@ -10,4 +10,4 @@
 
 ### Internals
 
-- None
+- Upgraded Realm JS to v4.0.0-beta.0, forcing an upgrade of the Realm file format when opening Realm files with the browser.

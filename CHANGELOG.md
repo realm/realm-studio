@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Release 3.9.0-beta.0 (2019-12-17)
+
+[Changes since v3.8.2](https://github.com/realm/realm-studio/compare/v3.8.3...v3.9.0-beta.0)
+
+### Enhancements
+
+- Added a prompt to upgrade (and optionally backup) when opening a Realm file which uses an outdated file format. This disables automatically upgrading local Realm files when opening them. ([#1236](https://github.com/realm/realm-studio/pull/1236))
+
+### Fixed
+
+- None
+
+### Internals
+
+- Upgraded Realm JS to v4.0.0-beta.0, forcing an upgrade of the Realm file format when opening Realm files with the browser.
 
 ## Release 3.8.3 (2019-11-26)
 
@@ -22,7 +37,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Removed call-to-action and button to upgrade a full Realm to a query-based sync "reference" Realm. ([#1226](https://github.com/realm/realm-studio/pull/1226))
 - Upgraded dependencies, including Electron to v4. ([#1174](https://github.com/realm/realm-studio/pull/1174), [#1221](https://github.com/realm/realm-studio/pull/1221) & [#1228](https://github.com/realm/realm-studio/pull/1228))
 
-
 ## Release 3.8.2 (2019-11-12)
 
 [Changes since v3.8.1](https://github.com/realm/realm-studio/compare/v3.8.1...v3.8.2)
@@ -34,14 +48,13 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Fixed
 
 - When saying no to upgrade Studio and restarting Studio, update to the newest version would happen at next start.
-This is fixed so you are always asked to confirm download when starting Studio ([#1209](https://github.com/realm/realm-studio/pull/1209), since v0.0.1-alpha.8)
+  This is fixed so you are always asked to confirm download when starting Studio ([#1209](https://github.com/realm/realm-studio/pull/1209), since v0.0.1-alpha.8)
 - Now prompting users to download the 3.8.1-ros-3-19-0 compatibility version when connecting to ROS < 3.20.1. ([#1211](https://github.com/realm/realm-studio/pull/1211), since v3.8.0)
 - Fixed highlighting rows for editing in a `List`. ([#1216](https://github.com/realm/realm-studio/pull/1216), since v2.9.0)
 
 ### Internals
 
 - Switched to using "esModuleInterop", allowing `import Lib from 'lib'` instead of `import * as Lib from 'lib'`. ([#1210](https://github.com/realm/realm-studio/pull/1210))
-
 
 ## Release 3.8.1 (2019-10-18)
 
@@ -58,7 +71,6 @@ This is fixed so you are always asked to confirm download when starting Studio (
 ### Internals
 
 - Upgraded Realm JS to v3.3.0. ([#1196](https://github.com/realm/realm-studio/pull/1196), since v3.8.0)
-
 
 ## Release 3.8.0 (2019-10-17)
 
@@ -80,7 +92,6 @@ This is fixed so you are always asked to confirm download when starting Studio (
 
 - Upgraded Realm JS to v3.2.0. ([#1177](https://github.com/realm/realm-studio/pull/1177))
 
-
 ## Release 3.7.0 (2019-09-27)
 
 [Changes since v3.6.1](https://github.com/realm/realm-studio/compare/v3.6.1...v3.7.0)
@@ -97,7 +108,6 @@ This is fixed so you are always asked to confirm download when starting Studio (
 ### Internals
 
 - Upgraded a lot of dependencies to their latest versions. ([#1167](https://github.com/realm/realm-studio/pull/1167), [#1169](https://github.com/realm/realm-studio/pull/1169), [#1173](https://github.com/realm/realm-studio/pull/1173), [#1175](https://github.com/realm/realm-studio/pull/1175), [#1176](https://github.com/realm/realm-studio/pull/1176))
-
 
 ## Release 3.6.1 (2019-06-06)
 
