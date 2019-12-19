@@ -51,8 +51,6 @@ export const open = async (params: {
   const ssl = params.ssl || { validateCertificates: true };
   const url = getUrl(params.user, params.realmPath);
 
-  let clientResetOcurred = false;
-
   const realmPromise = Realm.open({
     encryptionKey: params.encryptionKey,
     schema: params.schema,
@@ -60,13 +58,8 @@ export const open = async (params: {
     sync: {
       url,
       user: params.user,
-      error: (session, error) => {
-        if (error.name === 'ClientReset') {
-          clientResetOcurred = true;
-        } else {
-          (ssl.errorCallback || defaultSyncErrorCallback)(session, error);
-        }
-      },
+      error: ssl.errorCallback || defaultSyncErrorCallback,
+      clientResyncMode: Realm.Sync.ClientResyncMode.Discard,
       validate_ssl: ssl.validateCertificates,
       ssl_trust_certificate_path: ssl.certificatePath,
       _disableQueryBasedSyncUrlChecks: true,
@@ -77,14 +70,7 @@ export const open = async (params: {
     realmPromise.progress(params.progressCallback);
   }
 
-  const realm = await realmPromise;
-  if (clientResetOcurred) {
-    realm.close();
-    Realm.Sync.initiateClientReset(realm.path);
-    return open(params);
-  }
-
-  return realm;
+  return realmPromise;
 };
 
 // We rewrite the path on disk on Windows because default realm paths
