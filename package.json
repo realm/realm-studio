@@ -172,7 +172,7 @@
     "uuid": "^3.3.3"
   },
   "devDependencies": {
-    "@octokit/rest": "^16.35.2",
+    "@octokit/rest": "^16.36.0",
     "@sentry/cli": "^1.49.0",
     "@sentry/webpack-plugin": "^1.9.3",
     "@types/classnames": "^2.2.9",
@@ -233,7 +233,7 @@
     "source-map-support": "^0.5.16",
     "spectron": "^6",
     "spectron-fake-dialog": "0.0.1",
-    "style-loader": "^1.1.1",
+    "style-loader": "^1.1.2",
     "svg-sprite-loader": "^4.1.6",
     "tmp": "^0.1.0",
     "tslint": "^5.20.1",
@@ -243,7 +243,7 @@
     "tslint-react": "^4.1.0",
     "typescript": "^3.7.4",
     "url-loader": "^2.3.0",
-    "webpack": "^4.41.4",
+    "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.10.1",
     "webpack-merge": "^4.2.2",
