@@ -62,6 +62,24 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
     await app.start();
   });
 
+  afterEach(async function() {
+    if (
+      this.currentTest &&
+      this.currentTest.state === 'failed' &&
+      app.isRunning()
+    ) {
+      const lines = await app.client.getMainProcessLogs();
+      for (const line of lines) {
+        // tslint:disable-next-line:no-console
+        console.error(line);
+      }
+      // When a test fails and the app is running, take a screenshot
+      const imageBuffer = await app.browserWindow.capturePage();
+      fs.writeFileSync(`./failure-${failureCount}.png`, imageBuffer);
+      failureCount++;
+    }
+  });
+
   after(async () => {
     if (app && app.isRunning()) {
       await app.stop();
@@ -69,15 +87,6 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
     if (realm) {
       // Close the Realm file
       realm.closeAndDelete();
-    }
-  });
-
-  afterEach(async function() {
-    if (this.currentTest && this.currentTest.state === 'failed') {
-      // When a test fails and the app is running, take a screenshot
-      const imageBuffer = await app.browserWindow.capturePage();
-      fs.writeFileSync(`./failure-${failureCount}.png`, imageBuffer);
-      failureCount++;
     }
   });
 
@@ -90,7 +99,7 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
       fakeDialog.mock([
         {
           method: 'showOpenDialog',
-          value: [realm.path],
+          value: { filePaths: [realm.path] },
         },
       ]);
       // Click on the button to open a Realm file
