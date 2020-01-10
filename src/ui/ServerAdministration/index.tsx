@@ -344,23 +344,19 @@ class ServerAdministrationContainer
   private async showPartialRealmWarning() {
     const show = localStorage.getItem(DONT_SHOW_PARTIAL_WARNING_KEY) !== 'true';
     if (show) {
-      return new Promise(resolve => {
-        electron.remote.dialog.showMessageBox(
-          electron.remote.getCurrentWindow(),
-          {
-            message:
-              'You are opening a partial Realm created for a specific client. You can only browse the content in read-only mode.',
-            checkboxLabel: 'Don´t show this again',
-            buttons: ['Open as read-only'],
-          },
-          (_, checkboxChecked) => {
-            if (checkboxChecked) {
-              localStorage.setItem(DONT_SHOW_PARTIAL_WARNING_KEY, 'true');
-            }
-            resolve();
-          },
-        );
-      });
+      const response = await electron.remote.dialog.showMessageBox(
+        electron.remote.getCurrentWindow(),
+        {
+          message:
+            'You are opening a partial Realm created for a specific client. You can only browse the content in read-only mode.',
+          checkboxLabel: 'Don´t show this again',
+          buttons: ['Open as read-only'],
+        },
+      );
+
+      if (response.checkboxChecked) {
+        localStorage.setItem(DONT_SHOW_PARTIAL_WARNING_KEY, 'true');
+      }
     }
   }
 
@@ -405,7 +401,7 @@ class ServerAdministrationContainer
   };
 
   private cloudStatusChanged = (
-    e: Electron.IpcMessageEvent,
+    e: Electron.IpcRendererEvent,
     status: ICloudStatus,
   ) => {
     // If the user is deauthenticated - close the window if it's administering a cloud tenant

@@ -311,7 +311,7 @@ class RealmBrowserContainer
       realm.mode === realms.RealmLoadingMode.Local
     ) {
       const buttons = ['Cancel', 'Upgrade in-place', 'Backup and upgrade'];
-      const answerIndex = remote.dialog.showMessageBox({
+      const answerIndex = remote.dialog.showMessageBoxSync({
         type: 'question',
         buttons,
         defaultId: 2,
@@ -611,18 +611,17 @@ class RealmBrowserContainer
       // Show a dialog
       const currentWindow = remote.getCurrentWindow();
       const plural = unsavedChanges > 1 ? 's' : '';
-      remote.dialog.showMessageBox(
-        currentWindow,
-        {
+      remote.dialog
+        .showMessageBox(currentWindow, {
           type: 'warning',
           message: `You have ${unsavedChanges} unsaved change${plural}`,
           buttons: ['Save and close', 'Discard and close', 'Cancel'],
-        },
-        result => {
-          if (result === 0 || result === 1) {
-            if (result === 0) {
+        })
+        .then(({ response }) => {
+          if (response === 0 || response === 1) {
+            if (response === 0) {
               this.onCommitTransaction();
-            } else if (result === 1) {
+            } else if (response === 1) {
               this.onCancelTransaction();
             }
             // Allow the for the state to update
@@ -630,8 +629,7 @@ class RealmBrowserContainer
               window.close();
             });
           }
-        },
-      );
+        });
     }
   };
 
@@ -730,26 +728,22 @@ class RealmBrowserContainer
 
   private onExportSchema = (language: Language): void => {
     const basename = path.basename(this.props.realm.path, '.realm');
-    remote.dialog.showSaveDialog(
-      {
-        defaultPath: `${basename}-classes`,
-        message: `Select a directory to store the ${language} schema files`,
-      },
-      selectedPath => {
-        if (selectedPath && this.realm) {
-          const exporter = SchemaExporter(language);
-          exporter.exportSchema(this.realm);
-          exporter.writeFilesToDisk(selectedPath);
-        }
-      },
-    );
+    const selectedPath = remote.dialog.showSaveDialogSync({
+      defaultPath: `${basename}-classes`,
+      message: `Select a directory to store the ${language} schema files`,
+    });
+    if (selectedPath && this.realm) {
+      const exporter = SchemaExporter(language);
+      exporter.exportSchema(this.realm);
+      exporter.writeFilesToDisk(selectedPath);
+    }
   };
 
   private onExportData = (format: DataExportFormat) => {
     try {
       const exporter = new DataExporter(format);
       if (this.realm) {
-        const destinationPath = remote.dialog.showSaveDialog({
+        const destinationPath = remote.dialog.showSaveDialogSync({
           defaultPath: exporter.suggestFilename(this.realm),
           message: 'Select a destination for the data',
         });

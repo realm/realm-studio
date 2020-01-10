@@ -105,7 +105,7 @@ export abstract class RealmLoadingComponent<
             realm.mode === RealmLoadingMode.Synced
           ) {
             // Ask the user if they want to trust the certificate
-            const result = electron.remote.dialog.showMessageBox(
+            const result = electron.remote.dialog.showMessageBoxSync(
               electron.remote.getCurrentWindow(),
               {
                 type: 'warning',
