@@ -83,30 +83,17 @@ export class CertificateManager {
       buttons.push('Show certificate details');
     }
     // Show the message box
-    const response = await electron.dialog.showMessageBox(window, {
+    const response = await electron.dialog.showMessageBoxSync(window, {
       type: 'warning',
       message: `${coreMessage}\n\n${description}\n\nDo you trust this certificate?`,
       buttons,
     });
     if (enableDetailedButton && response === 2) {
-      return new Promise<boolean>(resolve => {
-        electron.dialog.showCertificateTrustDialog(
-          window,
-          {
-            certificate,
-            message: coreMessage,
-          },
-          async () => {
-            const finalResponse = await this.showCertificateTrustDialog(
-              window,
-              url,
-              certificate,
-              false,
-            );
-            resolve(finalResponse);
-          },
-        );
+      await electron.dialog.showCertificateTrustDialog(window, {
+        certificate,
+        message: coreMessage,
       });
+      return this.showCertificateTrustDialog(window, url, certificate, false);
     }
     // Return true when trusted
     return response === 0;

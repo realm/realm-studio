@@ -55,7 +55,7 @@ if (process.type === 'renderer') {
     },
   });
   // Register a listener for renderer processes asking for the event id
-  electron.ipcMain.on(IPC_SEND_EVENT_ID, (event: electron.Event) => {
+  electron.ipcMain.on(IPC_SEND_EVENT_ID, event => {
     listeners.push(event.sender);
   });
 }

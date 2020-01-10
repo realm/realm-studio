@@ -292,7 +292,7 @@ class UsersTableContainer extends React.Component<
       ? '\n\nThis will delete the user on which you are currently logged in!'
       : '';
 
-    const result = electron.remote.dialog.showMessageBox(
+    const result = electron.remote.dialog.showMessageBoxSync(
       electron.remote.getCurrentWindow(),
       {
         type: 'warning',

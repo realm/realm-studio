@@ -47,14 +47,14 @@ export class RendererTransport extends Transport {
   }
 
   private onResponseMessage = (
-    event: Electron.IpcMessageEvent,
+    event: Electron.IpcRendererEvent,
     ...args: any[]
   ) => {
     this.emit(Transport.RESPONSE_EVENT_NAME, ...args);
   };
 
   private onRequestMessage = (
-    event: Electron.IpcMessageEvent,
+    event: Electron.IpcRendererEvent,
     ...args: any[]
   ) => {
     this.emit(Transport.REQUEST_EVENT_NAME, ...args);

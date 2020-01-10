@@ -1,4 +1,4 @@
-exports.IndexedTypes = {
+export const IndexedTypes = {
   name: 'IndexedTypes',
   primaryKey: 'intIndexed',
   properties: {
@@ -6,10 +6,10 @@ exports.IndexedTypes = {
     intIndexed: { type: 'int', indexed: true },
     stringIndexed: { type: 'string', indexed: true },
     dateIndexed: { type: 'date', indexed: true },
-  }
-}
+  },
+};
 
-exports.OptionalTypes = {
+export const OptionalTypes = {
   name: 'OptionalTypes',
   properties: {
     boolOptional: 'bool?',
@@ -27,10 +27,10 @@ exports.OptionalTypes = {
     stringOptionalArray: 'string?[]',
     dateOptionalArray: 'date?[]',
     dataOptionalArray: 'data?[]',
-  }
-}
+  },
+};
 
-exports.RequiredTypes = {
+export const RequiredTypes = {
   name: 'RequiredTypes',
   properties: {
     boolRequired: 'bool',
@@ -47,23 +47,27 @@ exports.RequiredTypes = {
     stringRequiredArray: 'string[]',
     dateRequiredArray: 'date[]',
     dataRequiredArray: 'data[]',
-    objectRequiredArray: 'RequiredTypes[]'
-  }
-}
+    objectRequiredArray: 'RequiredTypes[]',
+  },
+};
 
-exports.LinkTypes = {
+export const LinkTypes = {
   name: 'LinkTypes',
   properties: {
-    objectType: { type: 'ReverseType',  optional: true },
-    objectType2: { type: 'ReverseType',  optional: true },
+    objectType: { type: 'ReverseType', optional: true },
+    objectType2: { type: 'ReverseType', optional: true },
     listType: 'ReverseType[]',
-    linkingObjects: {type: 'linkingObjects', objectType: 'ReverseType', property: 'links'}
-  }
-}
+    linkingObjects: {
+      type: 'linkingObjects',
+      objectType: 'ReverseType',
+      property: 'links',
+    },
+  },
+};
 
-exports.ReverseType = {
+export const ReverseType = {
   name: 'ReverseType',
   properties: {
-    links: 'LinkTypes'
-  }
-}
+    links: 'LinkTypes',
+  },
+};

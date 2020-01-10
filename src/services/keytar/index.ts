@@ -21,7 +21,7 @@ import keytar from 'keytar';
 
 import * as ros from '../../services/ros';
 
-const SERVICE_NAME = electron.remote.app.getName();
+const SERVICE_NAME = electron.remote.app.name;
 
 export const setCredentials = (credentials: ros.IServerCredentials) => {
   return keytar.setPassword(

@@ -131,14 +131,14 @@ class GreetingContainer extends React.Component<
   };
 
   public updateStatusChanged = (
-    e: Electron.IpcMessageEvent,
+    e: Electron.IpcRendererEvent,
     status: IUpdateStatus,
   ) => {
     this.setState({ updateStatus: status });
   };
 
   public cloudStatusChanged = (
-    e: Electron.IpcMessageEvent,
+    e: Electron.IpcRendererEvent,
     status: ICloudStatus,
   ) => {
     // Focus the window when the status requires the users attention

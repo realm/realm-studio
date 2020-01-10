@@ -56,10 +56,7 @@ export class MainTransport extends Transport {
     }
   }
 
-  private onRequestMessage = (
-    event: Electron.IpcMessageEvent,
-    ...args: any[]
-  ) => {
+  private onRequestMessage = (event: Electron.IpcMainEvent, ...args: any[]) => {
     // Make this transport emit whenever the ipcMain receives something from this webContent.
     if (event.sender === this.webContents) {
       this.emit(Transport.REQUEST_EVENT_NAME, ...args);
@@ -67,7 +64,7 @@ export class MainTransport extends Transport {
   };
 
   private onResponseMessage = (
-    event: Electron.IpcMessageEvent,
+    event: Electron.IpcMainEvent,
     ...args: any[]
   ) => {
     // Make this transport emit whenever the ipcMain receives something from this webContent.

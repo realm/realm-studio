@@ -220,7 +220,7 @@ export class StringCellContainer extends React.Component<
   }
 
   private showInvalidValueError(message: string): boolean {
-    const answer = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+    const answer = remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
       type: 'warning',
       // tslint:disable-next-line:max-line-length
       message,

@@ -20,9 +20,7 @@ import electron from 'electron';
 
 import { ImportFormat } from '.';
 
-export const showOpenDialog = (
-  format: ImportFormat = ImportFormat.CSV,
-): string[] | undefined => {
+export const showOpenDialog = (format: ImportFormat = ImportFormat.CSV) => {
   const dialog = electron.dialog || electron.remote.dialog;
 
   if (format !== ImportFormat.CSV) {
@@ -30,7 +28,7 @@ export const showOpenDialog = (
       `Currently, only CSV import is supported - format was ${format}`,
     );
   }
-  return dialog.showOpenDialog({
+  return dialog.showOpenDialogSync({
     properties: ['openFile', 'multiSelections'],
     filters: [{ name: 'CSV File(s)', extensions: ['csv', 'CSV'] }],
   });
