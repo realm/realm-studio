@@ -1,13 +1,18 @@
-const assert = require('assert');
-const semver = require('semver');
+const assert = require("assert");
+const semver = require("semver");
 
-const package = require('../package.json');
-const packageLock = require('../package-lock.json');
+const package = require("../package.json");
+const packageLock = require("../package-lock.json");
 
-function checkVersion(name, version, lockPackage) {
+function checkVersion(name, version, lockVersion) {
+  const bothGit =
+    lockVersion.startsWith("git+https://") &&
+    version.startsWith("git+https://");
   assert(
-    lockPackage.version === version || semver.satisfies(lockPackage.version, version),
-    `Locks version (${lockPackage.version}) of ${name} didn't satisfy the package ${version}`,
+    bothGit ||
+      lockVersion === version ||
+      semver.satisfies(lockVersion, version),
+    `Locks version (${lockVersion}) of ${name} didn't satisfy the package ${version}`
   );
 }
 
@@ -21,7 +26,7 @@ try {
     const lockPackage = packageLock.dependencies[name];
     assert(lockPackage, `"${name}" is missing from the lock`);
     assert(!lockPackage.dev, `"${name}" is now a production dependency`);
-    checkVersion(name, version, lockPackage);
+    checkVersion(name, version, lockPackage.version);
   });
   // And the same for the devDependencies
   Object.keys(package.devDependencies).forEach(name => {
@@ -31,9 +36,9 @@ try {
     assert(lockPackage, `"${name}" is missing from the lock`);
     // We shouldn't check that lockPackage.dev is true - because another production
     // dependency might depend on this package.
-    checkVersion(name, version, lockPackage);
+    checkVersion(name, version, lockPackage.version);
   });
-} catch(err) {
+} catch (err) {
   if (err instanceof assert.AssertionError) {
     console.error("Package changed, but lock wasn't updated:");
     console.error(err.message);
