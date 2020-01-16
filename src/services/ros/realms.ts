@@ -59,7 +59,7 @@ export const open = async (params: {
       url,
       user: params.user,
       error: ssl.errorCallback || defaultSyncErrorCallback,
-      clientResyncMode: Realm.Sync.ClientResyncMode.Discard,
+      clientResyncMode: 'discard' as Realm.Sync.ClientResyncMode.Discard,
       validate_ssl: ssl.validateCertificates,
       ssl_trust_certificate_path: ssl.certificatePath,
       _disableQueryBasedSyncUrlChecks: true,
