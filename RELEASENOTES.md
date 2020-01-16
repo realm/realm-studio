@@ -6,7 +6,7 @@
 
 ### Fixed
 
-- None
+- Fixed an issue occurring if a Realm had been opened from a server, deleted from the server and reopened in Studio. A local cache of the Realm would exist and instead of discarding the local copy entirely, the schema of the local copy would be written to the realm and uploaded to the server. ([#1238](https://github.com/realm/realm-studio/pull/1238)
 
 ### Internals
 

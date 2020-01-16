@@ -637,10 +637,7 @@ class RealmBrowserContainer
 
   private addListeners() {
     ipcRenderer.addListener('export-schema', this.onExportSchema);
-    window.addEventListener<'beforeunload'>(
-      'beforeunload',
-      this.onBeforeUnload,
-    );
+    window.addEventListener('beforeunload', this.onBeforeUnload);
   }
 
   private removeListeners() {
