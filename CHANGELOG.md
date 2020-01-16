@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release 3.9.0 (2020-01-16)
+
+[Changes since v3.8.3](https://github.com/realm/realm-studio/compare/v3.8.3...v3.9.0)
+
+### Enhancements
+
+- Added a prompt to upgrade (and optionally backup) when opening a Realm file which uses an outdated file format. This disables automatically upgrading local Realm files when opening them. ([#1236](https://github.com/realm/realm-studio/pull/1236))
+
+### Fixed
+
+- Fixed an issue occurring if a Realm had been opened from a server, deleted from the server and reopened in Studio. A local cache of the Realm would exist and instead of discarding the local copy entirely, the schema of the local copy would be written to the realm and uploaded to the server. ([#1238](https://github.com/realm/realm-studio/pull/1238)
+
+### Internals
+
+- None
+
+
 ## Release 3.8.3 (2019-11-26)
 
 [Changes since v3.8.2](https://github.com/realm/realm-studio/compare/v3.8.2...v3.8.3)
