@@ -35,6 +35,7 @@ export abstract class RealmLoadingComponent<
   S extends IRealmLoadingComponentState
 > extends React.Component<P, S> {
   protected abstract onRealmChanged: () => void;
+  protected abstract onRealmSchemaChanged: () => void;
   protected abstract onRealmLoaded: () => void;
 
   protected realm?: Realm;
@@ -42,13 +43,6 @@ export abstract class RealmLoadingComponent<
   protected certificateWasRejected: boolean = false;
 
   public componentWillUnmount() {
-    // Closing and remove any existing a change listeners
-    if (this.realm) {
-      this.realm.removeListener('change', this.onRealmChanged);
-      this.realm.close();
-      // Deleting indicates we've closed it
-      delete this.realm;
-    }
     this.closeRealm();
     this.cancelLoadingRealms();
   }
@@ -92,6 +86,7 @@ export abstract class RealmLoadingComponent<
 
         // Register change listeners
         this.realm.addListener('change', this.onRealmChanged);
+        this.realm.addListener('schema', this.onRealmSchemaChanged);
         this.onRealmLoaded();
         // Update the state, to indicate we're done loading
         this.setState({ progress: { status: 'done' } });
@@ -130,9 +125,10 @@ export abstract class RealmLoadingComponent<
   }
 
   protected closeRealm() {
-    // Remove any existing a change listeners
+    // Closing and remove any existing a change listeners
     if (this.realm) {
       this.realm.removeListener('change', this.onRealmChanged);
+      this.realm.removeListener('schema', this.onRealmSchemaChanged);
       this.realm.close();
       delete this.realm;
     }

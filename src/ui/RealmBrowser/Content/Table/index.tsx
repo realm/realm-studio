@@ -201,9 +201,6 @@ class TableContainer extends React.PureComponent<
     if (this.tableElement) {
       this.tableElement.removeEventListener('keydown', this.onKeyDown);
     }
-    // Save the column widths for later
-    const focusKey = generateKey(this.props.focus);
-    TableContainer.columnWidthCache[focusKey] = this.state.columnWidths;
   }
 
   public componentWillMount() {
@@ -224,15 +221,6 @@ class TableContainer extends React.PureComponent<
           rowIndex: this.props.highlight.scrollTo.row,
         });
       }
-    }
-
-    // Set the column with if the focus or properties changed
-    const focusChanged =
-      generateKey(this.props.focus) !== generateKey(prevProps.focus);
-    const propertiesChanged =
-      this.props.focus.properties.length !== prevProps.focus.properties.length;
-    if (focusChanged || propertiesChanged) {
-      this.setColumnWidths();
     }
 
     if (this.state.columnWidths !== prevState.columnWidths) {
@@ -269,7 +257,11 @@ class TableContainer extends React.PureComponent<
   private onColumnWidthChanged = (index: number, width: number) => {
     const columnWidths = Array.from(this.state.columnWidths);
     columnWidths[index] = Math.max(width, MINIMUM_COLUMN_WIDTH);
-    this.setState({ columnWidths });
+    this.setState({ columnWidths }, () => {
+      // Save the column widths for later
+      const focusKey = generateKey(this.props.focus);
+      TableContainer.columnWidthCache[focusKey] = this.state.columnWidths;
+    });
   };
 
   private onKeyDown = (e: KeyboardEvent) => {

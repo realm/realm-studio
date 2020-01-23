@@ -119,7 +119,9 @@ class RealmBrowserContainer
   }
 
   public render() {
-    const contentKey = generateKey(this.state.focus);
+    const { focus } = this.state;
+    // Generating a key for the content component (includes length of properties to update when the schema changes)
+    const contentKey = generateKey(focus) + `(${focus ? focus.properties.length : 0})`;
     return (
       <RealmBrowser
         classes={this.state.classes}
@@ -360,6 +362,19 @@ class RealmBrowserContainer
 
   protected onRealmChanged = () => {
     this.setState({ dataVersion: this.state.dataVersion + 1 });
+  };
+
+  protected onRealmSchemaChanged = () => {
+    if (this.realm) {
+      let { focus } = this.state;
+      // Update the classes and derive properties for the active focus
+      if (focus && focus.kind === 'class') {
+        focus = this.getClassFocus(focus.className);
+      } else if (focus && focus.kind === 'list') {
+        focus = this.getListFocus(focus.parent, focus.property);
+      }
+      this.setState({ classes: this.realm.schema, focus });
+    }
   };
 
   protected onRealmLoaded = () => {
