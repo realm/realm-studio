@@ -58,6 +58,10 @@ describe('<RealmLoadingComponent />', () => {
         changes++;
       };
 
+      protected onRealmSchemaChanged = () => {
+        changes++;
+      };
+
       protected onRealmLoaded = () => {
         loads++;
       };
