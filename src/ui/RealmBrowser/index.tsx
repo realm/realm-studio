@@ -121,7 +121,7 @@ class RealmBrowserContainer
   public render() {
     const { focus } = this.state;
     // Generating a key for the content component (includes length of properties to update when the schema changes)
-    const contentKey = generateKey(focus) + `(${focus ? focus.properties.length : 0})`;
+    const contentKey = generateKey(focus, true);
     return (
       <RealmBrowser
         classes={this.state.classes}
