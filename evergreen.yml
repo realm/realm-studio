@@ -1,0 +1,15 @@
+tasks:
+  - name: build
+    depends_on: []
+    commands:
+      - command: shell.exec
+        params:
+          script: |
+            echo "Building ..."
+
+buildvariants:
+  - name: macos
+    display_name: macOS
+    run_on: macos-1014
+    tasks:
+      - name: build
