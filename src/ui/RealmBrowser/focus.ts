@@ -73,9 +73,16 @@ export function getClassName(focus: Focus): string {
   }
 }
 
-export function generateKey(focus: Focus | null) {
+/**
+ * Generates a string which can uniquely identify a focus
+ * @param focus The focus to generate the key from
+ * @param prependPropertyCount Should the number of properties be prepended the key?
+ */
+export function generateKey(focus: Focus | null, prependPropertyCount = false) {
+  const propertiesSuffix =
+    prependPropertyCount && focus ? `(${focus.properties.length})` : '';
   if (focus && focus.kind === 'class') {
-    return `class:${focus.className}`;
+    return `class:${focus.className}${propertiesSuffix}`;
   } else if (focus && focus.kind === 'list') {
     // The `[key: string]: any;` is needed because if Realm JS types
     const parent: Realm.Object & {
@@ -85,7 +92,7 @@ export function generateKey(focus: Focus | null) {
     const propertyName = focus.property.name;
     const id =
       parent.isValid() && schema.primaryKey ? parent[schema.primaryKey] : '?';
-    return `list:${schema.name}[${id}]:${propertyName}`;
+    return `list:${schema.name}[${id}]:${propertyName}${propertiesSuffix}`;
   } else {
     return 'null';
   }
