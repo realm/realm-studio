@@ -27,23 +27,13 @@ const app = electron.app || electron.remote.app;
 const userDataPath = app.getPath('userData');
 const rendererPattern = /^renderer-.+$/;
 
-function ensureDirectory(path: string) {
-  // If the directory does not exist
-  if (!fs.existsSync(path)) {
-    // Create the directory
-    fs.mkdirSync(path);
-  }
-}
-
 function changeProcessDirectory(relativePath: string) {
-  // Ensure the usersdata directory exists
-  ensureDirectory(userDataPath);
   // Compute the process directory path
-  const path = resolve(userDataPath, relativePath);
+  const processDirectoryPath = resolve(userDataPath, relativePath);
   // Ensure the path exists
-  ensureDirectory(path);
+  fs.ensureDirSync(processDirectoryPath);
   // Change to it
-  process.chdir(path);
+  process.chdir(processDirectoryPath);
 }
 
 export function changeRendererProcessDirectory() {
@@ -64,7 +54,7 @@ export function changeMainProcessDirectory() {
     'browser',
     'This should only be called from a main process',
   );
-  return changeProcessDirectory(`main`);
+  return changeProcessDirectory('main');
 }
 
 export function removeRendererDirectories() {
