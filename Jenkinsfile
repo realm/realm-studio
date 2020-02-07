@@ -189,7 +189,7 @@ pipeline {
       steps {
         // Run the tests with the JUnit reporter
         nvm(env.NODE_VERSION) {
-          sh 'MOCHA_FILE=pre-test-results.xml npm test -- --reporter mocha-junit-reporter'
+          sh 'REALM_STUDIO_PRINT_LOGS=true MOCHA_FILE=pre-test-results.xml npm test -- --reporter mocha-junit-reporter'
         }
       }
       post {
