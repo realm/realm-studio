@@ -27,6 +27,10 @@ import {
   create as createAllTypeRealm,
   ITestRealm,
 } from '../../testing/all-type-realm';
+import { startAppWithTimeout } from '../../testing/utils';
+
+const APP_START_TIMEOUT = 5000; // 5 sec
+const TOTAL_TIMEOUT = APP_START_TIMEOUT + 10000; // 15 sec
 
 // When electron is required from Node.js, it returns a string with the path of the electron executable
 const electronPath: string = Electron as any;
@@ -43,7 +47,7 @@ const describeIfBuilt = isAppBuilt ? describe : describe.skip;
 // We need to use a non-arrow functions to adjust the suite timeout
 // tslint:disable-next-line:only-arrow-functions
 describeIfBuilt('<RealmBrowser /> via Spectron', function() {
-  this.timeout(15000);
+  this.timeout(TOTAL_TIMEOUT); // 15 sec
 
   let app: Application;
   let realm: ITestRealm;
@@ -53,13 +57,14 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
     realm = createAllTypeRealm();
     app = new Application({
       path: electronPath,
-      args: [appPath],
+      // Requiring in the "log-error-messages.js" script to capture error messages via STDOUT
+      args: ['-r', './scripts/log-error-messages.js', appPath],
       env: { REALM_STUDIO_SKIP_SIGNUP: 'true' },
     });
     // Apply the modifications that will allow us to mock dialogs
     fakeDialog.apply(app);
-    // Start the app
-    await app.start();
+    // Starts the app and prints STDOUT on timeouts
+    await startAppWithTimeout(app, APP_START_TIMEOUT);
   });
 
   after(async () => {
