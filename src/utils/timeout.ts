@@ -16,14 +16,16 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+type ErrorFactory = () => Error | Promise<Error>;
+
 export const timeout = <Result>(
   ms: number,
-  err: Error,
+  err: Error | ErrorFactory,
   wrappedPromise: Promise<Result>,
 ): Promise<Result> => {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => {
-      reject(err);
+      Promise.resolve(typeof err === 'function' ? err() : err).then(reject);
     }, ms);
     // Resolve or reject this promise from the wrappedPromise
     wrappedPromise.then(

@@ -16,6 +16,7 @@ secrets.sh
 # Test results from JUnit and screenshots from failures
 test-results.xml
 failure-*.png
+spectron.log
 
 # Realm locks and management files
 *.realm.lock
