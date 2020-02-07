@@ -29,8 +29,8 @@ import {
 } from '../../testing/all-type-realm';
 import { saveChromeDriverLogs, startAppWithTimeout } from '../../testing/utils';
 
-const APP_START_TIMEOUT = 5000; // 5 sec
-const TOTAL_TIMEOUT = APP_START_TIMEOUT + 10000; // 15 sec
+const APP_START_TIMEOUT = 15000; // 15 sec
+const TOTAL_TIMEOUT = APP_START_TIMEOUT + 15000; // 30 sec
 
 // When electron is required from Node.js, it returns a string with the path of the electron executable
 const electronPath: string = Electron as any;
