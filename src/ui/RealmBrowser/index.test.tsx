@@ -18,7 +18,7 @@
 
 import assert from 'assert';
 import Electron from 'electron';
-import fs from 'fs';
+import fs from 'fs-extra';
 import path from 'path';
 import { Application } from 'spectron';
 import fakeDialog from 'spectron-fake-dialog';
@@ -27,7 +27,7 @@ import {
   create as createAllTypeRealm,
   ITestRealm,
 } from '../../testing/all-type-realm';
-import { pullAppLogs, startAppWithTimeout } from '../../testing/utils';
+import { saveChromeDriverLogs, startAppWithTimeout } from '../../testing/utils';
 
 const APP_START_TIMEOUT = 5000; // 5 sec
 const TOTAL_TIMEOUT = APP_START_TIMEOUT + 10000; // 15 sec
@@ -68,11 +68,9 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
   });
 
   after(async () => {
-    if ('REALM_STUDIO_PRINT_LOGS' in process.env) {
-      // Print any available log lines
-      const lines = await pullAppLogs(app);
-      // tslint:disable-next-line:no-console
-      console.error(lines.join('\n'));
+    if (typeof process.env.SPECTRON_LOG_FILE === 'string') {
+      // Save the STDOUT of the electron process
+      await saveChromeDriverLogs(app, process.env.SPECTRON_LOG_FILE);
     }
     // Stop the application if its running
     if (app.isRunning()) {

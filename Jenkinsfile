@@ -189,7 +189,7 @@ pipeline {
       steps {
         // Run the tests with the JUnit reporter
         nvm(env.NODE_VERSION) {
-          sh 'REALM_STUDIO_PRINT_LOGS=true MOCHA_FILE=pre-test-results.xml npm test -- --reporter mocha-junit-reporter'
+          sh 'SPECTRON_LOG_FILE=spectron.log MOCHA_FILE=pre-test-results.xml npm test -- --reporter mocha-junit-reporter'
         }
       }
       post {
@@ -205,6 +205,8 @@ pipeline {
             artifacts: 'failure-*.png',
             allowEmptyArchive: true,
           )
+          // Print the STDOUT produced while running the Spectron tests
+          sh 'cat spectron.log || true'
         }
       }
     }
