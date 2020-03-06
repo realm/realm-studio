@@ -2,11 +2,11 @@
 
 ### Enhancements
 
-- Added a MongoDB Realm CTA to the marketing panel. ([#1266](https://github.com/realm/realm-studio/pull/1266))
+- None
 
 ### Fixed
 
-- Fixed updating to the browser UI when another client updates the schema of a Realm. ([#1256](https://github.com/realm/realm-studio/pull/1256))
+- None
 
 ### Internals
 
