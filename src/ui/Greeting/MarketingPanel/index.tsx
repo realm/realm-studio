@@ -16,6 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import { remote } from 'electron';
 import moment from 'moment';
 import React from 'react';
 
@@ -145,6 +146,9 @@ class MarketingPanelContainer extends React.PureComponent<
     const { callToActionSlug } = element.dataset;
     if (callToActionSlug === 'sign-up-for-realm-cloud') {
       main.showCloudAuthentication({ mode: 'sign-up' });
+    } else if (callToActionSlug === 'mongodb-realm-keep-me-updated') {
+      const url = 'https://www.mongodb.com/realm/subscribe';
+      remote.shell.openExternal(url);
     } else if (callToActionSlug) {
       // tslint:disable-next-line:no-console
       console.warn(
