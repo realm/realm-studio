@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release 3.10.0 (2020-03-06)
+
+[Changes since v3.9.0](https://github.com/realm/realm-studio/compare/v3.9.0...v3.10.0)
+
+### Enhancements
+
+- Added a MongoDB Realm CTA to the marketing panel. ([#1266](https://github.com/realm/realm-studio/pull/1266))
+
+### Fixed
+
+- Fixed missing update of the browser UI when another client updates the schema of a Realm. ([#1256](https://github.com/realm/realm-studio/pull/1256))
+
+### Internals
+
+- None
+
+
 ## Release 3.9.0 (2020-01-16)
 
 [Changes since v3.8.3](https://github.com/realm/realm-studio/compare/v3.8.3...v3.9.0)
