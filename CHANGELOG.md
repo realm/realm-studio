@@ -15,7 +15,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
-- Fixed updating to the browser UI when another client updates the schema of a Realm. ([#1256](https://github.com/realm/realm-studio/pull/1256))
+- Fixed missing update of the browser UI when another client updates the schema of a Realm. ([#1256](https://github.com/realm/realm-studio/pull/1256))
 
 ### Internals
 
