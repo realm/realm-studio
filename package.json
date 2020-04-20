@@ -197,7 +197,7 @@
     "@types/source-map-support": "^0.5.1",
     "@types/tmp": "^0.1.0",
     "@types/uuid": "^7.0.2",
-    "@types/webdriverio": "5.0.0",
+    "@types/webdriverio": "4.13.3",
     "@types/webpack": "^4.41.12",
     "@types/webpack-env": "^1.15.1",
     "awesome-typescript-loader": "^v5.2.1",
