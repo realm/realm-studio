@@ -39,10 +39,7 @@ export const parseBoolean = (
   value: string,
   property: Realm.ObjectSchemaProperty,
 ) => {
-  const normalizedValue = value
-    .toString()
-    .trim()
-    .toLowerCase();
+  const normalizedValue = value.toString().trim().toLowerCase();
 
   if (normalizedValue === '' && property.optional) {
     return null;

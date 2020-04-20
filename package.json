@@ -117,7 +117,6 @@
     "sentry:upload-symbols": "node ./scripts/sentry-symbols.js",
     "test": "mocha-webpack --opts configs/mocha-webpack.opts",
     "test:post-package": "mocha-webpack --opts configs/mocha-webpack.opts src/testing/post-packaging/index.ts",
-    "tslint-prettier": "tslint --fix 'src/**/*.ts' 'src/**/*.tsx'",
     "wait-for-bundle": "node ./scripts/wait-for-bundle.js",
     "webpack:main": "webpack --mode development --config configs/webpack.main.js",
     "webpack:renderer": "webpack-dev-server --mode development --config configs/webpack.renderer.js"

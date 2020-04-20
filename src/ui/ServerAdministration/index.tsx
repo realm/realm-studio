@@ -97,10 +97,10 @@ class ServerAdministrationContainer
    * in which case the studioVersion is the latest version compatible with the server in question.
    * The array is ordered, such that newer incompatibilities must be added to the end.
    */
-  private readonly compatibilityVersions: Array<{
+  private readonly compatibilityVersions: {
     rosVersion: string;
     studioVersion: string;
-  }> = [
+  }[] = [
     { rosVersion: '3.0.0', studioVersion: '1.19.2-ros2' },
     { rosVersion: '3.11.0', studioVersion: '2.9.1-ros3.10.7' },
     { rosVersion: '3.20.1', studioVersion: '3.8.1-ros-3-19-0' },
