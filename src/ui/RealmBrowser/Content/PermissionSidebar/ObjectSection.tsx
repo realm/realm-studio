@@ -27,7 +27,7 @@ import { PermissionTable } from './PermissionTable';
 interface IObjectSectionProps {
   getPermissions: (object: any) => Permissions | null;
   hasPermissionProperty: boolean;
-  objects: Array<any & Realm.Object>;
+  objects: (any & Realm.Object)[];
   onPermissionChange: (
     permission: IPermission,
     action: Action,

@@ -176,10 +176,10 @@ export const updateUserStatus = async (
 };
 
 interface IStatisticsResponse {
-  [metricName: string]: Array<{
+  [metricName: string]: {
     labels: { [name: string]: string };
     value: number;
-  }>;
+  }[];
 }
 
 export const getStats = async (

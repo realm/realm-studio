@@ -113,7 +113,7 @@ describe('Realm Studio packaged', () => {
   let appProcess: cp.ChildProcess;
   let temporaryMacPath: string;
 
-  before(async function() {
+  before(async function () {
     this.timeout(5 * 60 * 1000); // It might take a while (but no more than 5 minutes) to package the app
     mockedS3 = await mockedS3Server.createServer();
     // Determine the URL of the mocked S3 server
@@ -144,7 +144,7 @@ describe('Realm Studio packaged', () => {
     }
   });
 
-  it('auto-updates', async function() {
+  it('auto-updates', async function () {
     this.timeout(30 * 1000); // It takes a while (~30 seconds) to start the app
 
     // Assemble the app path

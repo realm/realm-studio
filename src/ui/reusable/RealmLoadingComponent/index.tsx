@@ -39,7 +39,7 @@ export abstract class RealmLoadingComponent<
   protected abstract onRealmLoaded: () => void;
 
   protected realm?: Realm;
-  protected cancellations: Array<() => void> = [];
+  protected cancellations: (() => void)[] = [];
   protected certificateWasRejected: boolean = false;
 
   public componentWillUnmount() {

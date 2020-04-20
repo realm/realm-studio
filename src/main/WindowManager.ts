@@ -44,11 +44,11 @@ interface IWindowHandle {
 const isDevelopment = process.env.NODE_ENV === 'development';
 
 function getRendererHtmlPath() {
-  const indexPath = isDevelopment
+  const indexModule = isDevelopment
     ? require('../../static/index.development.html')
     : require('../../static/index.html');
   // __dirname is the directory of the bundle
-  return path.resolve(__dirname, indexPath);
+  return path.resolve(__dirname, indexModule.default);
 }
 
 interface ICreatedWindow<W extends BrowserWindow> {

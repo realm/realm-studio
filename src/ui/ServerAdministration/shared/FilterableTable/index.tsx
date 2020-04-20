@@ -29,7 +29,7 @@ import './FilterableTable.scss';
 
 export interface IFilterableTableProps<E extends any> {
   className?: string;
-  children: Array<React.ReactElement<ColumnProps>>;
+  children: React.ReactElement<ColumnProps>[];
   elements: Realm.Results<E>;
   isElementsEqual: (a: E, b: E) => boolean;
   onElementClick: (e: React.MouseEvent<HTMLElement>, element: E) => void;
