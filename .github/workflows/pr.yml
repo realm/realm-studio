@@ -1,0 +1,39 @@
+name: Pull requests
+on: [pull_request]
+jobs:
+  build:
+    runs-on: macOS-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Setup Node
+      uses: actions/setup-node@v1
+      with:
+       node-version: '10.x'
+    - name: Install dependencies
+      run: npm ci
+    - name: Check package-lock.json
+      run: npm run check:package-lock
+    - name: Lint TypeScript
+      run: npm run lint:ts
+    - name: Lint SASS
+      run: npm run lint:sass
+    - name: Build the bundle
+      run: npm run build
+    - name: Run pre-package tests
+      env:
+        MOCHA_FILE: pre-test-results.xml
+      run: npm test -- --reporter mocha-junit-reporter
+    - name: Report the pre-package results
+      uses: IgnusG/jest-report-action@v2.3.1
+      if: always()
+      with:
+        junit-file: pre-test-results.xml
+        check-name: Pre-package tests
+    - name: Build the package
+      run: npx electron-builder -mlw --publish never
+    - name: Upload the package
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: package
+        path: dist
