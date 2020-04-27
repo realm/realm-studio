@@ -26,6 +26,7 @@ jobs:
         MOCHA_FILE: pre-test-results.xml
       run: npm test -- --reporter mocha-github-actions-reporter
   package:
+    name: Package (on master)
     runs-on: macOS-latest
     if: ${{ github.ref == 'master' }}
     needs: build
