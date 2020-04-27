@@ -23,14 +23,7 @@ jobs:
     - name: Run pre-package tests
       env:
         MOCHA_FILE: pre-test-results.xml
-      run: npm test -- --reporter mocha-junit-reporter
-    - name: Report the pre-package results
-      uses: IgnusG/jest-report-action@v2.3.1
-      if: always()
-      with:
-        access-token: ${{ secrets.GITHUB_TOKEN }}
-        junit-file: pre-test-results.xml
-        check-name: Pre-package tests
+      run: npm test -- --reporter mocha-github-actions-reporter
     - name: Build the package
       run: npx electron-builder -mlw --publish never
     - name: Upload the package
