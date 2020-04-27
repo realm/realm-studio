@@ -28,6 +28,7 @@ jobs:
       uses: IgnusG/jest-report-action@v2.3.1
       if: always()
       with:
+        access-token: ${{ secrets.GITHUB_TOKEN }}
         junit-file: pre-test-results.xml
         check-name: Pre-package tests
     - name: Build the package
