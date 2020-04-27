@@ -24,6 +24,19 @@ jobs:
       env:
         MOCHA_FILE: pre-test-results.xml
       run: npm test -- --reporter mocha-github-actions-reporter
+  package:
+    runs-on: macOS-latest
+    if: ${{ github.ref == 'master' }}
+    needs: build
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Setup Node
+      uses: actions/setup-node@v1
+      with:
+       node-version: '10.x'
+    - name: Install dependencies
+      run: npm ci
     - name: Build the package
       run: npx electron-builder -mlw --publish never
     - name: Upload the package
