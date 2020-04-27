@@ -1,7 +1,8 @@
-name: Pull requests
-on: [pull_request]
+name: Continuous Integration
+on: [push, pull_request]
 jobs:
   build:
+    name: Build, lint & test
     runs-on: macOS-latest
     steps:
     - name: Checkout
