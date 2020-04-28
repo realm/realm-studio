@@ -1,5 +1,11 @@
 name: Continuous Integration
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 jobs:
   build:
     name: Build, lint & test
@@ -26,7 +32,7 @@ jobs:
         MOCHA_FILE: pre-test-results.xml
       run: npm test -- --reporter mocha-github-actions-reporter
   package:
-    name: Package (on master)
+    name: Package
     runs-on: macOS-latest
     if: ${{ github.ref == 'master' }}
     needs: build
