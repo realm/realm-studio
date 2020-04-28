@@ -35,7 +35,6 @@ jobs:
     name: Package
     runs-on: macOS-latest
     if: ${{ github.ref == 'master' }}
-    needs: build
     steps:
     - name: Checkout
       uses: actions/checkout@v1
@@ -45,6 +44,8 @@ jobs:
        node-version: '10.x'
     - name: Install dependencies
       run: npm ci
+    - name: Build the bundle
+      run: npm run build
     - name: Build the package
       run: npx electron-builder -mlw --publish never
     - name: Upload the package
