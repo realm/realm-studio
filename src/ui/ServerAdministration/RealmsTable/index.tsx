@@ -312,7 +312,7 @@ class RealmsTableContainer extends React.Component<
 
   private confirmRealmDeletion(...realms: RealmFile[]): boolean {
     const paths = realms.map(r => r.path);
-    const result = electron.remote.dialog.showMessageBox(
+    const result = electron.remote.dialog.showMessageBoxSync(
       electron.remote.getCurrentWindow(),
       {
         type: 'warning',

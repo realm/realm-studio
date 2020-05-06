@@ -67,6 +67,24 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
     await startAppWithTimeout(app, APP_START_TIMEOUT);
   });
 
+  afterEach(async function() {
+    if (
+      this.currentTest &&
+      this.currentTest.state === 'failed' &&
+      app.isRunning()
+    ) {
+      const lines = await app.client.getMainProcessLogs();
+      for (const line of lines) {
+        // tslint:disable-next-line:no-console
+        console.error(line);
+      }
+      // When a test fails and the app is running, take a screenshot
+      const imageBuffer = await app.browserWindow.capturePage();
+      fs.writeFileSync(`./failure-${failureCount}.png`, imageBuffer);
+      failureCount++;
+    }
+  });
+
   after(async () => {
     if (typeof process.env.SPECTRON_LOG_FILE === 'string') {
       // Save the STDOUT of the electron process
@@ -82,15 +100,6 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
     }
   });
 
-  afterEach(async function() {
-    if (this.currentTest && this.currentTest.state === 'failed') {
-      // When a test fails and the app is running, take a screenshot
-      const imageBuffer = await app.browserWindow.capturePage();
-      fs.writeFileSync(`./failure-${failureCount}.png`, imageBuffer);
-      failureCount++;
-    }
-  });
-
   describe('opening Realm file', () => {
     before(async () => {
       // Await the Greeting window
@@ -100,7 +109,7 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
       fakeDialog.mock([
         {
           method: 'showOpenDialog',
-          value: [realm.path],
+          value: { filePaths: [realm.path] },
         },
       ]);
       // Click on the button to open a Realm file

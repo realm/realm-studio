@@ -93,7 +93,7 @@ export const getDefaultMenuTemplate = (
         { role: 'copy' },
         { role: 'paste' },
         { role: 'delete' },
-        { role: 'selectall', id: 'select-all' },
+        { role: 'selectAll', id: 'select-all' },
       ],
     },
     {
@@ -110,7 +110,7 @@ export const getDefaultMenuTemplate = (
           },
         },
         { role: 'reload', visible: showInternalFeatures },
-        { role: 'toggledevtools', visible: showInternalFeatures },
+        { role: 'toggleDevTools', visible: showInternalFeatures },
         { type: 'separator', visible: showInternalFeatures },
         {
           label: 'Show partial Realms',
@@ -149,9 +149,9 @@ export const getDefaultMenuTemplate = (
           },
         },
         { type: 'separator' },
-        { role: 'resetzoom' },
-        { role: 'zoomin' },
-        { role: 'zoomout' },
+        { role: 'resetZoom' },
+        { role: 'zoomIn' },
+        { role: 'zoomOut' },
         { type: 'separator' },
         { role: 'togglefullscreen' },
       ],
@@ -214,7 +214,7 @@ export const getDefaultMenuTemplate = (
 
   if (process.platform === 'darwin') {
     template.unshift({
-      label: electronOrRemote.app.getName(),
+      label: electronOrRemote.app.name,
       submenu: [
         { role: 'about' },
         { type: 'separator' },
@@ -228,7 +228,7 @@ export const getDefaultMenuTemplate = (
         { role: 'services', submenu: [] },
         { type: 'separator' },
         { role: 'hide' },
-        { role: 'hideothers' },
+        { role: 'hideOthers' },
         { role: 'unhide' },
         { type: 'separator' },
         { role: 'quit' },

@@ -12,6 +12,7 @@
   "license": "Apache-2.0",
   "main": "./build/main.bundle.js",
   "build": {
+    "buildDependenciesFromSource": true,
     "appId": "io.realm.realm-studio",
     "directories": {
       "buildResources": "./resources"
@@ -165,7 +166,7 @@
     "react-sortable-hoc": "^1.11.0",
     "react-virtualized": "^9.21.2",
     "reactstrap": "^8.4.1",
-    "realm": "^3.6.5",
+    "realm": "^6.0.0-beta.1",
     "semver": "^7.3.2",
     "subscriptions-transport-ws": "^0.9.16",
     "uuid": "^8.0.0"
@@ -207,7 +208,7 @@
     "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^3.5.3",
     "devtron": "^1.4.0",
-    "electron": "4.2.6",
+    "electron": "^8.1.1",
     "electron-builder": "^22.6.0",
     "electron-download": "^4.1.1",
     "electron-publisher-s3": "^20.17.2",
@@ -230,7 +231,7 @@
     "sass-loader": "^8.0.2",
     "simple-git": "^2.4.0",
     "source-map-support": "^0.5.19",
-    "spectron": "^6",
+    "spectron": "^10.0.1",
     "spectron-fake-dialog": "0.0.1",
     "style-loader": "^1.2.1",
     "svg-sprite-loader": "^4.3.0",

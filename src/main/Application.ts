@@ -248,27 +248,16 @@ export class Application {
     });
   }
 
-  public showOpenLocalRealm() {
-    return new Promise((resolve, reject) => {
-      dialog.showOpenDialog(
-        {
-          properties: ['openFile', 'multiSelections'],
-          filters: [{ name: 'Realm Files', extensions: ['realm'] }],
-        },
-        selectedPaths => {
-          if (selectedPaths) {
-            const realmsLoaded = selectedPaths.map(selectedPath => {
-              return this.openLocalRealmAtPath(selectedPath);
-            });
-            // Call Resolve or reject when all realms are opened or a single fails
-            Promise.all(realmsLoaded).then(resolve, reject);
-          } else {
-            // Nothing loaded
-            resolve();
-          }
-        },
-      );
+  public async showOpenLocalRealm() {
+    const response = await dialog.showOpenDialog({
+      properties: ['openFile', 'multiSelections'],
+      filters: [{ name: 'Realm Files', extensions: ['realm'] }],
     });
+    const realmsLoaded = response.filePaths.map(filePath =>
+      this.openLocalRealmAtPath(filePath),
+    );
+    // Resolves when all realms are opened or rejects when a single realm fails
+    return Promise.all(realmsLoaded);
   }
 
   public showImportData(format: dataImporter.ImportFormat) {
@@ -285,7 +274,7 @@ export class Application {
     );
     // Start the import
     const defaultPath = path.dirname(paths[0]) + '/default.realm';
-    const destinationPath = dialog.showSaveDialog({
+    const destinationPath = dialog.showSaveDialogSync({
       defaultPath,
       title: 'Choose where to store the imported data',
       filters: [{ name: 'Realm file', extensions: ['realm'] }],
@@ -575,7 +564,7 @@ export class Application {
           // Retry
           return this.openCloudUrl(url);
         } else if (url.username !== currentUser.id) {
-          const answer = dialog.showMessageBox({
+          const answer = dialog.showMessageBoxSync({
             type: 'warning',
             message: `You're trying to connect to a cloud instance that is not owned by you.\n\nDo you want to login as another user?`,
             buttons: ['Yes, login with another user!', 'No, abort!'],
@@ -612,7 +601,7 @@ export class Application {
     const serverUrl = new URL(`https://${url.host}`);
 
     if (!trusted) {
-      const answer = dialog.showMessageBox({
+      const answer = dialog.showMessageBoxSync({
         type: 'warning',
         message: `You're about to connect to ${serverUrl.toString()}.\n\nThis will reveal your cloud token to the server. Do you wish to proceed?`,
         buttons: ['Yes, connect!', 'No, abort!'],
