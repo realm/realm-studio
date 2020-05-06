@@ -11,7 +11,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Enhancements
 
-- Added support for reading / writing Realm files using Realm file format v10. When opening a file which is using an older format, you will get prompted to upgrade (and optionally backup) the Realm file. NOTE: Once the file has been upgraded, there is no way to downgrade it again and it can only be used by the SDK's that support realm format v10. ([#1278](https://github.com/realm/realm-studio/pull/1278))
+- Added support for reading / writing Realm files using Realm file format v10 which is used by realm-js v6, realm-java v7, realm-cocoa v5 and realm-dotnet v5). When opening a file which is using an older format, you will get prompted to upgrade (and optionally backup) the Realm file. NOTE: Once the file has been upgraded, there is no way to downgrade it again and it can only be used by the SDK's that support realm format v10. ([#1278](https://github.com/realm/realm-studio/pull/1278))
 
 ### Fixed
 
