@@ -1,6 +1,6 @@
 const assert = require("assert");
 const program = require("commander");
-const octokit = require("@octokit/rest")();
+const { Octokit } = require("@octokit/rest");
 const path = require("path");
 const fs = require("fs");
 
@@ -16,10 +16,8 @@ assert(GITHUB_TOKEN, "Expected a GITHUB_TOKEN environment variable");
 assert(GITHUB_OWNER, "Expected a GITHUB_OWNER environment variable");
 assert(GITHUB_REPO, "Expected a GITHUB_REPO environment variable");
 
-// Authenticate
-octokit.authenticate({
-  type: "token",
-  token: GITHUB_TOKEN
+const octokit = new Octokit({
+  auth: GITHUB_TOKEN,
 });
 
 function determinContentType(assetPath) {
