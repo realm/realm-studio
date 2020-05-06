@@ -121,10 +121,10 @@ program
     });
     if (reviewer) {
       try {
-        await octokit.pulls.createReviewRequest({
+        await octokit.pulls.({
           owner: GITHUB_OWNER,
           repo: GITHUB_REPO,
-          number: pr.data.number,
+          pull_number: pr.data.number,
           reviewers: [ reviewer ],
         });
       } catch (err) {
@@ -137,7 +137,7 @@ program
         await octokit.issues.addAssignees({
           owner: GITHUB_OWNER,
           repo: GITHUB_REPO,
-          number: pr.data.number,
+          issue_number: pr.data.number,
           assignees: [ assignee ],
         });
       } catch (err) {
