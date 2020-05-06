@@ -19,12 +19,8 @@
 import qs from 'querystring';
 
 import {
-  ICloudAuthenticationWindowProps,
-  IConnectToServerWindowProps,
-  IGraphiqlEditorWindowProps,
   IGreetingWindowProps,
   IRealmBrowserWindowProps,
-  IServerAdministrationWindowProps,
   WindowProps,
 } from './WindowProps';
 
@@ -44,21 +40,6 @@ interface IWindowOptions {
   props: WindowProps;
 }
 
-export interface ICloudAuthenticationWindowOptions extends IWindowOptions {
-  type: 'cloud-authentication';
-  props: ICloudAuthenticationWindowProps;
-}
-
-export interface IConnectToServerWindowOptions extends IWindowOptions {
-  type: 'connect-to-server';
-  props: IConnectToServerWindowProps;
-}
-
-export interface IGraphiqlEditorWindowOptions extends IWindowOptions {
-  type: 'graphiql-editor';
-  props: IGraphiqlEditorWindowProps;
-}
-
 export interface IGreetingWindowOptions extends IWindowOptions {
   type: 'greeting';
   props: IGreetingWindowProps;
@@ -69,18 +50,9 @@ export interface IRealmBrowserWindowOptions extends IWindowOptions {
   props: IRealmBrowserWindowProps;
 }
 
-export interface IServerAdministrationWindowOptions extends IWindowOptions {
-  type: 'server-administration';
-  props: IServerAdministrationWindowProps;
-}
-
 export type WindowOptions =
-  | ICloudAuthenticationWindowOptions
-  | IConnectToServerWindowOptions
-  | IGraphiqlEditorWindowOptions
   | IGreetingWindowOptions
-  | IRealmBrowserWindowOptions
-  | IServerAdministrationWindowOptions;
+  | IRealmBrowserWindowOptions;
 
 export function getWindowOptions(): WindowOptions {
   // Strip away the "?" of the location.search

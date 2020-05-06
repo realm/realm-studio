@@ -33,12 +33,8 @@ export interface IWindow {
   getTrackedProperties(props: WindowProps): { [key: string]: string };
 }
 
-import { CloudAuthenticationWindow } from './CloudAuthenticationWindow';
-import { ConnectToServerWindow } from './ConnectToServerWindow';
-import { GraphiqlEditorWindow } from './GraphiqlEditorWindow';
 import { GreetingWindow } from './GreetingWindow';
 import { RealmBrowserWindow } from './RealmBrowserWindow';
-import { ServerAdministrationWindow } from './ServerAdministrationWindow';
 
 export interface IWindowConstructorOptions
   extends Partial<Electron.BrowserWindowConstructorOptions> {
@@ -48,18 +44,10 @@ export interface IWindowConstructorOptions
 export function getWindowClass(type: WindowType): IWindow {
   // We're using calls to require here, to prevent loading anything that does not
   // relate to the specific window being loaded.
-  if (type === 'cloud-authentication') {
-    return CloudAuthenticationWindow;
-  } else if (type === 'connect-to-server') {
-    return ConnectToServerWindow;
-  } else if (type === 'graphiql-editor') {
-    return GraphiqlEditorWindow;
-  } else if (type === 'greeting') {
+  if (type === 'greeting') {
     return GreetingWindow;
   } else if (type === 'realm-browser') {
     return RealmBrowserWindow;
-  } else if (type === 'server-administration') {
-    return ServerAdministrationWindow;
   } else {
     throw new Error(`Unexpected window type: ${type}`);
   }

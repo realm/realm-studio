@@ -20,26 +20,14 @@
  * A WindowProps object is passed to the UI component when mounted and describes the internal properties for that.
  */
 
-import { ICloudAuthenticationWindowProps } from './CloudAuthenticationWindow';
-import { IConnectToServerWindowProps } from './ConnectToServerWindow';
-import { IGraphiqlEditorWindowProps } from './GraphiqlEditorWindow';
 import { IGreetingWindowProps } from './GreetingWindow';
 import { IRealmBrowserWindowProps } from './RealmBrowserWindow';
-import { IServerAdministrationWindowProps } from './ServerAdministrationWindow';
 
 export {
-  ICloudAuthenticationWindowProps,
-  IConnectToServerWindowProps,
-  IGraphiqlEditorWindowProps,
   IGreetingWindowProps,
   IRealmBrowserWindowProps,
-  IServerAdministrationWindowProps,
 };
 
 export type WindowProps =
-  | ICloudAuthenticationWindowProps
-  | IConnectToServerWindowProps
-  | IGraphiqlEditorWindowProps
   | IGreetingWindowProps
-  | IRealmBrowserWindowProps
-  | IServerAdministrationWindowProps;
+  | IRealmBrowserWindowProps;

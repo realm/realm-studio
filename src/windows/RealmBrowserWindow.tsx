@@ -16,14 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import { URL } from 'url';
-
 import { ImportFormat } from '../services/data-importer';
-import {
-  ISyncedRealmToLoad,
-  RealmLoadingMode,
-  RealmToLoad,
-} from '../utils/realms';
+import { RealmToLoad } from '../utils/realms';
 
 import { IWindow } from './Window';
 
@@ -37,21 +31,12 @@ export interface IRealmBrowserWindowProps {
   };
 }
 
-const getRealmUrl = (realm: ISyncedRealmToLoad) => {
-  const url = new URL(realm.user.server);
-  url.pathname = realm.path;
-  return url.toString();
-};
-
 // TODO: Consider if we can have the window not show before a connection has been established.
 
 export const RealmBrowserWindow: IWindow = {
   getWindowOptions: (props: IRealmBrowserWindowProps) => {
     return {
-      title:
-        props.realm.mode === 'synced'
-          ? getRealmUrl(props.realm)
-          : props.realm.path,
+      title: props.realm.path,
       width: 900,
       height: 600,
     };
@@ -63,11 +48,7 @@ export const RealmBrowserWindow: IWindow = {
     ),
   getSingletonKey: (props: IRealmBrowserWindowProps) => {
     const { realm } = props;
-    if (realm.mode === RealmLoadingMode.Synced) {
-      return `${realm.user.server}:${realm.path}`;
-    } else {
-      return realm.path;
-    }
+    return realm.path;
   },
   getTrackedProperties: (props: IRealmBrowserWindowProps) => ({
     mode: props.realm.mode,
