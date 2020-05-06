@@ -88,18 +88,23 @@ export class CertificateManager {
       message: `${coreMessage}\n\n${description}\n\nDo you trust this certificate?`,
       buttons,
     };
-    const response = window ?
-      electron.dialog.showMessageBoxSync(window, messageOptions) :
-      electron.dialog.showMessageBoxSync(messageOptions);
+    const response = window
+      ? electron.dialog.showMessageBoxSync(window, messageOptions)
+      : electron.dialog.showMessageBoxSync(messageOptions);
     if (enableDetailedButton && response === 2) {
       const certificateDialogOptions = {
         certificate,
         message: coreMessage,
       };
       if (window) {
-        await electron.dialog.showCertificateTrustDialog(window, certificateDialogOptions);
+        await electron.dialog.showCertificateTrustDialog(
+          window,
+          certificateDialogOptions,
+        );
       } else {
-        await electron.dialog.showCertificateTrustDialog(certificateDialogOptions);
+        await electron.dialog.showCertificateTrustDialog(
+          certificateDialogOptions,
+        );
       }
       return this.showCertificateTrustDialog(window, url, certificate, false);
     }
