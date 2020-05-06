@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release 3.11.0 (2020-05-06)
+
+[Changes since v3.10.0](https://github.com/realm/realm-studio/compare/v3.10.0...v3.11.0)
+
+### Enhancements
+
+- Added support for reading / writing Realm files using Realm file format v10. When opening a file which is using an older format, you will get prompted to upgrade (and optionally backup) the Realm file. ([#1278](https://github.com/realm/realm-studio/pull/1278))
+
+### Fixed
+
+- None
+
+### Internals
+
+- Upgraded dependencies, including Electron to v8 and Realm to v6.0.0. ([#1278](https://github.com/realm/realm-studio/pull/1278) & [#1284](https://github.com/realm/realm-studio/pull/1284))
+
+
 ## Release 3.10.0 (2020-03-06)
 
 [Changes since v3.9.0](https://github.com/realm/realm-studio/compare/v3.9.0...v3.10.0)
