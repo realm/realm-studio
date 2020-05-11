@@ -77,6 +77,7 @@ export interface IRealmBrowserState {
   // The classes are only supposed to be used to produce a list of classes in the sidebar
   classes: Realm.ObjectSchema[];
   importProgress: ILoadingProgress;
+  enableFormatUpgrade: boolean;
 }
 
 class RealmBrowserContainer
@@ -97,18 +98,13 @@ class RealmBrowserContainer
     isLeftSidebarOpen: true,
     importProgress: { status: 'idle' },
     classes: [],
+    enableFormatUpgrade: false,
   };
 
   private contentInstance: Content | null = null;
   private realm: Realm | null = null;
 
   public componentDidMount() {
-    /*
-    this.loadRealm(
-      this.props.realm,
-      this.props.import ? this.props.import.schema : undefined,
-    );
-    */
     this.addListeners();
   }
 
@@ -124,6 +120,7 @@ class RealmBrowserContainer
     // Generating a key for the content component (includes length of properties to update when the schema changes)
     const contentKey = generateKey(focus, true);
     const realmConfig: Realm.PartialConfiguration = this.generateRealmConfig();
+
     return (
       <RealmProvider {...realmConfig}>
         <RealmConsumer>
@@ -172,6 +169,10 @@ class RealmBrowserContainer
         </RealmConsumer>
       </RealmProvider>
     );
+  }
+
+  public componentDidCatch(error: Error, info: React.ErrorInfo) {
+    this.loadingRealmFailed(error);
   }
 
   public generateMenu(template: MenuItemConstructorOptions[]) {
@@ -319,27 +320,21 @@ class RealmBrowserContainer
     ]);
   }
 
-  /*
-  // TODO: Fix opening encrypted Realms
   protected loadingRealmFailed(err: Error) {
     const message = err.message || '';
     const mightBeEncrypted =
       message.indexOf('Not a Realm file.') >= 0 ||
       message.indexOf('Invalid mnemonic') >= 0;
     const realm = this.props.realm;
+    const window = remote.getCurrentWindow();
     if (mightBeEncrypted) {
-      this.setState({
-        isEncryptionDialogVisible: true,
-        progress: {
-          status: 'done',
-        },
-      });
+      this.setState({ isEncryptionDialogVisible: true });
     } else if (
       message === FILE_UPGRADE_NEEDED_MESSAGE &&
       realm.mode === realms.RealmLoadingMode.Local
     ) {
       const buttons = ['Cancel', 'Upgrade in-place', 'Backup and upgrade'];
-      const answerIndex = remote.dialog.showMessageBoxSync({
+      const answerIndex = remote.dialog.showMessageBoxSync(window, {
         type: 'question',
         buttons,
         defaultId: 2,
@@ -362,17 +357,14 @@ class RealmBrowserContainer
             );
             // Copy, but ensure we don't override an existing file
             fs.copyFileSync(realm.path, backupPath, fs.constants.COPYFILE_EXCL);
-            remote.dialog.showMessageBox({
+            remote.dialog.showMessageBoxSync(window, {
               title: 'Backup saved',
               message: 'The backup Realm file was saved to:',
               detail: backupPath,
             });
           }
           // Reopen, enabling format upgrades an upgrade
-          this.loadRealm({
-            ...realm,
-            enableFormatUpgrade: true,
-          });
+          this.setState({ enableFormatUpgrade: true });
         } catch (err) {
           showError('Failed upgrading Realm', err);
           window.close();
@@ -382,10 +374,9 @@ class RealmBrowserContainer
       }
     } else {
       delete this.props.realm.encryptionKey;
-      super.loadingRealmFailed(err);
+      throw err;
     }
   }
-  */
 
   protected onRealmChange = () => {
     this.setState({ dataVersion: this.state.dataVersion + 1 });
@@ -413,6 +404,7 @@ class RealmBrowserContainer
     const { realm } = this.props;
     if (realm.mode === 'local') {
       return {
+        disableFormatUpgrade: !this.state.enableFormatUpgrade,
         path: realm.path,
         encryptionKey: realm.encryptionKey,
         // It's undocumented, but sync can indeed take a boolean allowing it to open local Realms with sync history.
