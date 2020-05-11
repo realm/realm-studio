@@ -72,7 +72,8 @@ pipeline {
             returnStdout: true,
           ).trim()
           // Did the version change?
-          if (BRANCH_NAME == 'master' && previousVersion != packageJson.version) {
+          def isReleasableBranch = BRANCH_NAME == 'master' || BRANCH_NAME.startsWith('channel/');
+          if (isReleasableBranch && previousVersion != packageJson.version) {
             sh "git tag -a ${VERSION} -m 'Release ${packageJson.version}'"
             // Push to GitHub with tags
             sshagent(['realm-ci-ssh']) {
