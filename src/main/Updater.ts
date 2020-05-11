@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import electron from 'electron';
+import { app, dialog } from 'electron';
 import { autoUpdater, UpdateInfo } from 'electron-updater';
 
 import { WindowManager } from './WindowManager';
@@ -190,10 +190,10 @@ export class Updater {
     if (process.env.REALM_STUDIO_DISABLE_UPDATE_PROMPT) {
       return true;
     } else {
-      const appName = electron.app.name;
-      const currentVersion = electron.app.getVersion();
+      const appName = app.name;
+      const currentVersion = app.getVersion();
       return (
-        electron.dialog.showMessageBoxSync({
+        dialog.showMessageBoxSync({
           type: 'info',
           message: `A new version of ${appName} is available!`,
           detail: `${appName} ${lastestVersion} is available – you have ${currentVersion}.\nWould you like to update it now?`,
@@ -209,9 +209,9 @@ export class Updater {
     if (process.env.REALM_STUDIO_DISABLE_UPDATE_PROMPT) {
       return true;
     } else {
-      const appName = electron.app.name;
+      const appName = app.name;
       return (
-        electron.dialog.showMessageBoxSync({
+        dialog.showMessageBoxSync({
           type: 'info',
           message: `A new version of ${appName} is downloaded!`,
           detail: `${appName} ${lastestVersion} is downloaded.\nClick "Ok" to quit and restart Realm Studio.`,
@@ -245,7 +245,7 @@ export class Updater {
   }
 
   private showError(message: string, detail: string = '') {
-    electron.dialog.showMessageBox({
+    dialog.showMessageBox({
       type: 'error',
       message,
       detail,

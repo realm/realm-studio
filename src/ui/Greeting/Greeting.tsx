@@ -16,6 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import { remote } from 'electron';
 import os from 'os';
 import React from 'react';
 import { Button } from 'reactstrap';
@@ -31,6 +32,8 @@ import { SignupOverlay } from './SignupOverlay';
 import { UpdateStatusIndicator } from './UpdateStatusIndicator';
 
 import './Greeting.scss';
+
+const { app } = remote;
 
 export const Greeting = ({
   cloudStatus,
@@ -71,7 +74,7 @@ export const Greeting = ({
         <svg className="Greeting__Logo" viewBox={realmLogo.viewBox}>
           <use xlinkHref={`#${realmLogo.id}`} />
         </svg>
-        <h3 className="Greeting__Title">Realm Studio</h3>
+        <h3 className="Greeting__Title">{app.name}</h3>
         <div>Version {version}</div>
       </div>
       <UpdateStatusIndicator

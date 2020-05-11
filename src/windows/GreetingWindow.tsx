@@ -17,6 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import { IWindow } from './Window';
+import { app } from 'electron';
 
 // tslint:disable-next-line:no-empty-interface
 export interface IGreetingWindowProps {
@@ -25,7 +26,7 @@ export interface IGreetingWindowProps {
 
 export const GreetingWindow: IWindow = {
   getWindowOptions: () => ({
-    title: `Realm Studio`,
+    title: app.name,
     width: 700,
     height: 400,
     resizable: false,

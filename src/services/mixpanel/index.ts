@@ -16,13 +16,15 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import electron from 'electron';
+import { remote } from 'electron';
 import fs from 'fs-extra';
 import mixpanel from 'mixpanel-browser';
 import path from 'path';
 import { v4 as uuid } from 'uuid';
 
 import { store } from '../../store';
+
+const { app } = remote;
 
 // Ensure that this is only called from the renderer process.
 if (process.type === 'renderer') {
@@ -51,8 +53,8 @@ if (process.type === 'renderer') {
   ]);
 
   const browserParams = {
-    $browser: 'Realm Studio',
-    $browser_version: electron.remote.app.getVersion() || 'unknown',
+    $browser: app.name,
+    $browser_version: app.getVersion() || 'unknown',
   };
 
   // Sends the browser version on every request
@@ -66,7 +68,7 @@ if (process.type === 'renderer') {
     } else {
       // Try migrating from the old settings
       const settingsPath = path.resolve(
-        electron.remote.app.getPath('userData'),
+        app.getPath('userData'),
         'settings.json',
       );
       if (fs.existsSync(settingsPath)) {

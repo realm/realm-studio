@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as sentry from '@sentry/electron';
-import { BrowserWindow, screen, shell } from 'electron';
+import { app, BrowserWindow, screen, shell } from 'electron';
 import path from 'path';
 import url from 'url';
 
@@ -101,7 +101,7 @@ export class WindowManager {
     // Combine these with general default options
     const combinedWindowOptions: IWindowConstructorOptions = {
       // Starting with the default options
-      title: 'Realm Studio',
+      title: app.name,
       width: 800,
       height: 600,
       vibrancy: 'light',

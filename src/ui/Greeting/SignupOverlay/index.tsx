@@ -16,13 +16,14 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import electron from 'electron';
+import { remote } from 'electron';
 import React from 'react';
 import { mixpanel } from '../../../services/mixpanel';
 
 import { SignupOverlay } from './SignupOverlay';
 
 const HAS_SIGNED_UP_STORAGE_KEY = 'has-signed-up';
+const { app } = remote;
 
 function determineVisibility() {
   return !(
@@ -67,8 +68,8 @@ class SignupOverlayContainer extends React.Component<
   public onSignup = () => {
     mixpanel.people.set(
       {
-        $browser: 'Realm Studio',
-        $browser_version: electron.remote.app.getVersion() || 'unknown',
+        $browser: app.name,
+        $browser_version: app.getVersion() || 'unknown',
         $email: this.state.email,
         newsletter: this.state.newsletter,
         signupDate: new Date(),
