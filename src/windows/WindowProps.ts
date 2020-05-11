@@ -23,11 +23,6 @@
 import { IGreetingWindowProps } from './GreetingWindow';
 import { IRealmBrowserWindowProps } from './RealmBrowserWindow';
 
-export {
-  IGreetingWindowProps,
-  IRealmBrowserWindowProps,
-};
+export { IGreetingWindowProps, IRealmBrowserWindowProps };
 
-export type WindowProps =
-  | IGreetingWindowProps
-  | IRealmBrowserWindowProps;
+export type WindowProps = IGreetingWindowProps | IRealmBrowserWindowProps;

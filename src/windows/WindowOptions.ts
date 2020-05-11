@@ -50,9 +50,7 @@ export interface IRealmBrowserWindowOptions extends IWindowOptions {
   props: IRealmBrowserWindowProps;
 }
 
-export type WindowOptions =
-  | IGreetingWindowOptions
-  | IRealmBrowserWindowOptions;
+export type WindowOptions = IGreetingWindowOptions | IRealmBrowserWindowOptions;
 
 export function getWindowOptions(): WindowOptions {
   // Strip away the "?" of the location.search

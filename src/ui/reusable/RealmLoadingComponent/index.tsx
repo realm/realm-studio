@@ -61,11 +61,7 @@ export abstract class RealmLoadingComponent<
         // Reset the state that captures rejected certificates
         this.certificateWasRejected = false;
         // Get the realms from the ROS interface
-        this.realm = await this.openRealm(
-          realm,
-          schema,
-          schemaVersion,
-        );
+        this.realm = await this.openRealm(realm, schema, schemaVersion);
 
         // Register change listeners
         this.realm.addListener('change', this.onRealmChanged);

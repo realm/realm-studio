@@ -57,9 +57,7 @@ export const Greeting = ({
       />
       <div className="Greeting__Actions">
         <div className="Greeting__Action">
-          <Button onClick={onOpenLocalRealm}>
-            Open Realm file
-          </Button>
+          <Button onClick={onOpenLocalRealm}>Open Realm file</Button>
         </div>
       </div>
       <div className="Greeting__DownloadDemo">
