@@ -128,7 +128,7 @@ pipeline {
               } else {
                 // Update the version of the package again, this time prepending pre release id
                 env.NEXT_VERSION = sh(
-                  script: "npm version ${NEXT_VERSION}-${JOB_BASE_NAME}-${BUILD_NUMBER} --no-git-tag-version",
+                  script: "npm version ${NEXT_VERSION}-${BUILD_TAG} --no-git-tag-version",
                   returnStdout: true,
                 ).trim()
                 // Set the build display name
