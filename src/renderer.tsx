@@ -18,13 +18,14 @@
 
 import './services/mixpanel';
 
-import electron from 'electron';
+import { remote } from 'electron';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
 // This is needed to prevent Realm JS from writing to directories it doesn't have access to
 import './utils/process-directories';
 
+const { app } = remote;
 const isDevelopment = process.env.NODE_ENV === 'development';
 
 // Don't report Realm JS analytics data
@@ -78,7 +79,7 @@ process.nextTick(() => {
   if (Realm.Sync) {
     Realm.Sync.setLogLevel(process.env.REALM_LOG_LEVEL || 'error');
     Realm.Sync.setUserAgent(
-      `Realm Studio ${electron.remote.app.getVersion() || 'unknown'}`,
+      `${app.name} ${app.getVersion() || 'unknown'}`,
     );
   }
 });

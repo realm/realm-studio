@@ -16,6 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import { remote } from 'electron';
 import classNames from 'classnames';
 import React from 'react';
 import { Carousel, CarouselIndicators, CarouselItem } from 'reactstrap';
@@ -28,12 +29,14 @@ import { MessageSlide } from './MessageSlide';
 
 import './MarketingPanel.scss';
 
+const { app } = remote;
+
 function getProgress(status: Status, onFetch: () => void): ILoadingProgress {
   if (status === 'loaded') {
     return { status: 'done' };
   } else if (status === 'loading') {
     return {
-      message: 'Welcome to\nRealm Studio',
+      message: `Welcome to\n${app.name}`,
       status: 'in-progress',
     };
   } else {

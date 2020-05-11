@@ -17,6 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import React from 'react';
+import { remote } from "electron";
 
 import './ErrorOverlay.scss';
 
@@ -32,7 +33,7 @@ export const ErrorOverlay = ({ error, info, eventId }: IErrorOverlayProps) => {
   return (
     <div className="ErrorOverlay">
       <p className="ErrorOverlay__Introduction">
-        💥 Realm Studio encountered an unrecoverable error! 💥
+        💥 {remote.app.name} encountered an unrecoverable error! 💥
       </p>
       {eventId ? <p className="ErrorOverlay__Id">ID: “{eventId}”</p> : null}
       {eventId ? (

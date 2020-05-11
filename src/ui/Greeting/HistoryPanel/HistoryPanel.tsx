@@ -16,30 +16,16 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import { remote } from "electron";
 import React from 'react';
-import { Button } from 'reactstrap';
 
-import { main } from '../../../actions/main';
 import { HistoryEntry, IHistoryEntry } from './HistoryEntry';
+
+const { app } = remote;
 
 const Empty = () => (
   <div className="Greeting__HistoryPanel__Empty">
-    <p>Welcome to Realm Studio!</p>
-    <p>Sync your data and objects in real-time via Realm Cloud:</p>
-    <p>
-      <Button
-        size="sm"
-        color="primary"
-        onClick={() => main.showCloudAuthentication({ mode: 'sign-up' })}
-      >
-        Sign up (free trial)
-      </Button>
-      <br />
-      {' or '}
-      <a href="https://realm.io/pricing" target="_blank">
-        view plans
-      </a>
-    </p>
+    <p>Welcome to {app.name}!</p>
   </div>
 );
 

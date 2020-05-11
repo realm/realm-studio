@@ -16,6 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import { remote } from 'electron';
 import React from 'react';
 import {
   Button,
@@ -52,7 +53,7 @@ export const SignupOverlay = ({
       }}
     >
       <ModalBody>
-        <h5>Thanks for using Realm Studio!</h5>
+        <h5>Thanks for using {remote.app.name}!</h5>
         <p>Please enter your email to continue.</p>
         <FormGroup>
           <Input
