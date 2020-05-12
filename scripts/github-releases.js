@@ -121,7 +121,7 @@ program
     });
     if (reviewer) {
       try {
-        await octokit.pulls.({
+        await octokit.pulls.createReviewRequest({
           owner: GITHUB_OWNER,
           repo: GITHUB_REPO,
           pull_number: pr.data.number,
