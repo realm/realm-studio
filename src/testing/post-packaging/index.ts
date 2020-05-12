@@ -27,6 +27,11 @@ import * as mockedS3Server from './mocked-s3-server';
 
 const distPath = path.resolve(__dirname, '../../../dist');
 
+// Extract information from the package.json
+const packageJsonPath = path.resolve(__dirname, '../../../package.json');
+const packageJson = fs.readJSONSync(packageJsonPath);
+const { productName } = packageJson;
+
 /**
  * @see https://github.com/electron-userland/electron-builder/blob/master/packages/electron-updater/src/AppAdapter.ts#L31-L45
  */
@@ -61,7 +66,7 @@ function pruneAutoUpdaterCache() {
 function changeS3Endpoint(temporaryMacPath: string, serverUrl: string) {
   const appUpdateYmlPath = path.resolve(
     temporaryMacPath,
-    'Realm Studio.app/Contents/Resources/app-update.yml',
+    `${productName}.app/Contents/Resources/app-update.yml`,
   );
   const appUpdateYml = fs.readFileSync(appUpdateYmlPath, { encoding: 'utf8' });
   const lines = appUpdateYml.split('\n');
@@ -108,6 +113,8 @@ assert(
   'Build the app before running the post-package tests',
 );
 
+assert.equal(typeof productName, 'string', 'Expected a product name');
+
 describe('Realm Studio packaged', () => {
   let mockedS3: http.Server;
   let appProcess: cp.ChildProcess;
@@ -118,7 +125,7 @@ describe('Realm Studio packaged', () => {
     mockedS3 = await mockedS3Server.createServer();
     // Determine the URL of the mocked S3 server
     const mockedS3Url = mockedS3Server.getServerUrl(mockedS3);
-    // Build a mocked version of Realm Studio, which we'll attempt an auto-update to
+    // Build a mocked version of MongoDB Realm Studio, which we'll attempt an auto-update to
     buildMockedRealmStudio();
     // Copy the current dist/mac folder to a different location to prevent the auto updater
     // from overriding the current dist/mac folder.
@@ -127,7 +134,7 @@ describe('Realm Studio packaged', () => {
     fs.copySync(originalMacPath, temporaryMacPath);
     // Package the app with the mocked server URL
     changeS3Endpoint(temporaryMacPath, mockedS3Url);
-    // Remove any cached version of the mocked Realm Studio
+    // Remove any cached version of the mocked MongoDB Realm Studio
     pruneAutoUpdaterCache();
   });
 
@@ -151,7 +158,7 @@ describe('Realm Studio packaged', () => {
     const appPath = path.resolve(
       distPath,
       temporaryMacPath,
-      'Realm Studio.app/Contents/MacOS/Realm Studio',
+      `${productName}.app/Contents/MacOS/${productName}`,
     );
     // Start the app
     appProcess = cp.spawn(appPath, {
@@ -170,7 +177,7 @@ describe('Realm Studio packaged', () => {
         if (code !== 0) {
           reject(
             new Error(
-              `Realm Studio closed with unexpected exit code (${code})`,
+              `${productName} closed with unexpected exit code (${code})`,
             ),
           );
         }
@@ -185,7 +192,7 @@ describe('Realm Studio packaged', () => {
           const content = fs.readFileSync(readySignalPath, {
             encoding: 'utf8',
           });
-          assert.equal(content, 'Hello from a future Realm Studio!');
+          assert.equal(content, `Hello from a future ${productName}!`);
           // Stop watching the file
           fs.unwatchFile(readySignalPath, readySignalChanged);
           resolve();
