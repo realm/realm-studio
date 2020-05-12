@@ -75,10 +75,6 @@ pipeline {
           def isReleasableBranch = BRANCH_NAME == 'master' || BRANCH_NAME.startsWith('channel/');
           if (isReleasableBranch && previousVersion != packageJson.version) {
             sh "git tag -a ${VERSION} -m 'Release ${packageJson.version}'"
-            // Push to GitHub with tags
-            sshagent(['realm-ci-ssh']) {
-              sh 'git push origin --tags'
-            }
           }
           // Determine what tags are pointing at the current commit
           def tagName = sh(
@@ -276,6 +272,10 @@ pipeline {
         nvm(env.NODE_VERSION) {
           // Wait for input
           input(message: "Ready to publish $VERSION?", id: 'publish')
+          // Push to GitHub with tags to get the version tag created at checkout pushed to origin
+          sshagent(['realm-ci-ssh']) {
+            sh 'git push origin --tags'
+          }
           // Extract release notes from the changelog
           sh "node scripts/tools extract-release-notes ./RELEASENOTES.extracted.md"
           // Handle GitHub release
