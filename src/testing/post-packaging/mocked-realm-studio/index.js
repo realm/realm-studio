@@ -11,7 +11,7 @@ electron.app.once('ready', () => {
     message: `Writing to the ready signal: ${p}`,
   });
   */
-  fs.writeFileSync(p, 'Hello from a future Realm Studio!', {
+  fs.writeFileSync(p, 'Hello from a future MongoDB Realm Studio!', {
     encoding: 'utf8',
   });
   // Exit ...

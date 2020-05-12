@@ -1,10 +1,10 @@
 {
   "name": "realm-studio",
-  "productName": "Realm Studio",
-  "version": "3.11.0",
-  "description": "A tool for everything Realm!",
+  "productName": "MongoDB Realm Studio",
+  "version": "10.0.0-beta.0",
+  "description": "A tool for everything MongoDB Realm!",
   "author": {
-    "name": "Realm Inc.",
+    "name": "Realm",
     "email": "info@realm.io",
     "url": "https://realm.io"
   },
@@ -12,7 +12,7 @@
   "license": "Apache-2.0",
   "main": "./build/main.bundle.js",
   "build": {
-    "appId": "io.realm.realm-studio",
+    "appId": "com.mongodb.realm-studio",
     "directories": {
       "buildResources": "./resources"
     },
