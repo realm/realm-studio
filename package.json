@@ -121,21 +121,6 @@
     "webpack:main": "webpack --mode development --config configs/webpack.main.js",
     "webpack:renderer": "webpack-dev-server --mode development --config configs/webpack.renderer.js"
   },
-  "lint-staged": {
-    "*.{ts,tsx}": [
-      "tslint --fix",
-      "npm run fix-headers --"
-    ],
-    "*.js": [
-      "npm run fix-headers --"
-    ],
-    "*.scss": [
-      "npm run fix-headers --"
-    ],
-    "package.json": [
-      "npm run check:package-lock --"
-    ]
-  },
   "dependencies": {
     "@contentful/rich-text-html-renderer": "^13.4.0",
     "@contentful/rich-text-types": "^14.1.0",
@@ -216,7 +201,6 @@
     "hard-source-webpack-plugin": "^0.13.1",
     "js-yaml": "^3.13.1",
     "jsdom": "^16.2.2",
-    "lint-staged": "^10.2.2",
     "mocha": "^7.1.2",
     "mocha-junit-reporter": "^1.23.3",
     "mocha-webpack": "^2.0.0-beta.0",
@@ -252,6 +236,6 @@
     "xvfb-maybe": "^0.2.1"
   },
   "engines": {
-    "node": "^10"
+    "node": "^12"
   }
 }
