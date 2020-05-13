@@ -20,30 +20,12 @@ import electron from 'electron';
 
 import { main } from '../actions/main';
 import { ImportFormat } from '../services/data-importer';
-import * as raas from '../services/raas';
 import { store } from '../store';
 import { showError } from '../ui/reusable/errors';
 
 const enableTogglingInternalFeatures =
   process.env.NODE_ENV === 'development' ||
   process.env.REALM_STUDIO_INTERNAL_FEATURES === 'true'; // Show features only relevant for Realm employees
-
-function generateCloudEndpointItems(
-  updateMenu: () => void,
-): Electron.MenuItemConstructorOptions[] {
-  return Object.entries(raas.Endpoint).map(([name, url]) => {
-    const item: Electron.MenuItemConstructorOptions = {
-      type: 'radio',
-      label: name,
-      click: async () => {
-        await main.setRaasEndpoint(url);
-        updateMenu();
-      },
-      checked: raas.getEndpoint() === url,
-    };
-    return item;
-  });
-}
 
 export const getDefaultMenuTemplate = (
   updateMenu: () => void,
@@ -159,30 +141,6 @@ export const getDefaultMenuTemplate = (
     {
       role: 'window',
       submenu: [{ role: 'minimize' }, { role: 'zoom' }],
-    },
-    {
-      label: 'Realm Cloud',
-      submenu: [
-        {
-          label: 'Login',
-          visible: !raas.user.hasToken(),
-          click: () => {
-            main.showCloudAuthentication();
-          },
-        },
-        {
-          label: 'Logout',
-          visible: raas.user.hasToken(),
-          click: () => {
-            main.deauthenticate();
-          },
-        },
-        {
-          label: 'Change endpoint',
-          visible: showInternalFeatures,
-          submenu: generateCloudEndpointItems(updateMenu),
-        },
-      ],
     },
     {
       role: 'help',

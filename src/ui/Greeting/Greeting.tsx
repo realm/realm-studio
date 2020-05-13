@@ -17,16 +17,12 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import { remote } from 'electron';
-import os from 'os';
 import React from 'react';
 import { Button } from 'reactstrap';
 
-import { ICloudStatus, IInstance } from '../../main/CloudManager';
 import { IUpdateStatus } from '../../main/Updater';
 
 import realmLogo from '../../../static/svgs/realm-logo.svg';
-import { SocialNetwork } from './';
-import { CloudAction } from './CloudAction';
 import { MarketingPanel } from './MarketingPanel';
 import { SignupOverlay } from './SignupOverlay';
 import { UpdateStatusIndicator } from './UpdateStatusIndicator';
@@ -36,35 +32,13 @@ import './Greeting.scss';
 const { app } = remote;
 
 export const Greeting = ({
-  cloudStatus,
-  isCloudInstancesDropdownOpen,
-  isSyncEnabled,
-  onAuthenticate,
   onCheckForUpdates,
-  onConnectToCloudInstance,
-  onConnectToServer,
-  onDeauthenticate,
-  onInstanceCreate,
   onOpenLocalRealm,
-  onRefreshCloudStatus,
-  onShare,
-  onToggleCloudInstancesDropdown,
   updateStatus,
   version,
 }: {
-  cloudStatus?: ICloudStatus;
-  isCloudInstancesDropdownOpen: boolean;
-  isSyncEnabled: boolean;
-  onAuthenticate: () => void;
   onCheckForUpdates: () => void;
-  onConnectToCloudInstance: (instance: IInstance) => void;
-  onConnectToServer: () => void;
-  onDeauthenticate: () => void;
-  onInstanceCreate: () => void;
   onOpenLocalRealm: () => void;
-  onRefreshCloudStatus: () => void;
-  onShare: (socialNetwork: SocialNetwork) => void;
-  onToggleCloudInstancesDropdown: () => void;
   updateStatus: IUpdateStatus;
   version: string;
 }) => (
@@ -83,35 +57,7 @@ export const Greeting = ({
       />
       <div className="Greeting__Actions">
         <div className="Greeting__Action">
-          <CloudAction
-            cloudStatus={cloudStatus}
-            isCloudInstancesDropdownOpen={isCloudInstancesDropdownOpen}
-            onAuthenticate={onAuthenticate}
-            onConnectToCloudInstance={onConnectToCloudInstance}
-            onDeauthenticate={onDeauthenticate}
-            onInstanceCreate={onInstanceCreate}
-            onRefresh={onRefreshCloudStatus}
-            onShare={onShare}
-            onToggleCloudInstancesDropdown={onToggleCloudInstancesDropdown}
-          />
-        </div>
-        <div className="Greeting__SecondaryActions">
-          <Button color="secondary" size="sm" onClick={onOpenLocalRealm}>
-            Open Realm file
-          </Button>
-          <Button
-            onClick={onConnectToServer}
-            disabled={!isSyncEnabled}
-            color="secondary"
-            size="sm"
-            title={
-              isSyncEnabled
-                ? 'Click to connect to a Realm Object Server'
-                : `This feature is currently not available on ${os.type()}`
-            }
-          >
-            Connect to Server
-          </Button>
+          <Button onClick={onOpenLocalRealm}>Open Realm file</Button>
         </div>
       </div>
       <div className="Greeting__DownloadDemo">
