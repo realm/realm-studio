@@ -17,7 +17,6 @@
 ////////////////////////////////////////////////////////////////////////////
 
 export enum RealmLoadingMode {
-  Synced = 'synced',
   Local = 'local',
 }
 
@@ -27,16 +26,10 @@ export interface IRealmToLoad {
   encryptionKey?: Uint8Array;
 }
 
-export interface ISyncedRealmToLoad extends IRealmToLoad {
-  mode: RealmLoadingMode.Synced;
-  user: Realm.Sync.SerializedUser | Realm.Sync.SerializedTokenUser;
-  validateCertificates: boolean;
-}
-
 export interface ILocalRealmToLoad extends IRealmToLoad {
   mode: RealmLoadingMode.Local;
   enableFormatUpgrade?: boolean;
   sync?: boolean;
 }
 
-export type RealmToLoad = ILocalRealmToLoad | ISyncedRealmToLoad;
+export type RealmToLoad = ILocalRealmToLoad;

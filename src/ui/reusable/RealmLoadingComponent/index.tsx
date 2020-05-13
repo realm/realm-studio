@@ -16,19 +16,14 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import electron from 'electron';
 import React from 'react';
 
-import { realms } from '../../../services/ros';
 import { RealmLoadingMode, RealmToLoad } from '../../../utils/realms';
 import { ILoadingProgress } from '../LoadingOverlay';
 
 export interface IRealmLoadingComponentState {
   progress: ILoadingProgress;
 }
-
-const TRUST_DIALOG_MESSAGE =
-  'The servers SSL certificate failed validation:\n\nDo you want to retry without validating the certificate?';
 
 export abstract class RealmLoadingComponent<
   P,
@@ -60,29 +55,13 @@ export abstract class RealmLoadingComponent<
     // Close the realm - if open
     this.closeRealm();
 
-    // Should certificates get validated?
-    const validateCertificates =
-      realm.mode === 'synced' && realm.validateCertificates;
-
     if (realm) {
       try {
         this.setState({ progress: { status: 'in-progress' } });
         // Reset the state that captures rejected certificates
         this.certificateWasRejected = false;
         // Get the realms from the ROS interface
-        this.realm = await this.openRealm(
-          realm,
-          {
-            errorCallback: this.onSyncError,
-            validateCertificates,
-            // Uncomment the line below to test failing certificate validation
-            /*
-            certificatePath: '... some path of a valid but failing certificate',
-            */
-          },
-          schema,
-          schemaVersion,
-        );
+        this.realm = await this.openRealm(realm, schema, schemaVersion);
 
         // Register change listeners
         this.realm.addListener('change', this.onRealmChanged);
@@ -93,32 +72,7 @@ export abstract class RealmLoadingComponent<
       } catch (err) {
         // Ignore an error that originates from the load being cancelled
         if (!err.wasCancelled) {
-          // Could this error originate from an untrusted SSL certificate?
-          if (
-            validateCertificates &&
-            this.certificateWasRejected &&
-            realm.mode === RealmLoadingMode.Synced
-          ) {
-            // Ask the user if they want to trust the certificate
-            const result = electron.remote.dialog.showMessageBox(
-              electron.remote.getCurrentWindow(),
-              {
-                type: 'warning',
-                message: TRUST_DIALOG_MESSAGE,
-                buttons: ['Retry, without validating certificate', 'Cancel'],
-              },
-            );
-            if (result === 0) {
-              this.loadRealm({
-                ...realm,
-                validateCertificates: false,
-              });
-            } else {
-              this.loadingRealmFailed(err);
-            }
-          } else {
-            this.loadingRealmFailed(err);
-          }
+          this.loadingRealmFailed(err);
         } // ignore errors from cancelled loading
       }
     }
@@ -160,7 +114,6 @@ export abstract class RealmLoadingComponent<
 
   private async openRealm(
     realm: RealmToLoad | undefined,
-    ssl: realms.ISslConfiguration = { validateCertificates: true },
     schema?: Realm.ObjectSchema[],
     schemaVersion?: number,
   ): Promise<Realm> {
@@ -183,7 +136,6 @@ export abstract class RealmLoadingComponent<
           // Try to open the Realm locally with a sync history mode.
           return this.openRealm(
             { ...realm, sync: true },
-            ssl,
             schema,
             schemaVersion,
           );
@@ -193,40 +145,10 @@ export abstract class RealmLoadingComponent<
       }
     }
 
-    if (realm && realm.mode === RealmLoadingMode.Synced) {
-      const realmPromise = realms.open({
-        user: Realm.Sync.User.deserialize(realm.user),
-        realmPath: realm.path,
-        encryptionKey: realm.encryptionKey,
-        ssl,
-        progressCallback: this.progressChanged,
-        schema,
-      });
-      // Save a wrapping promise so this can be cancelled
-      return new Promise<Realm>((resolve, reject) => {
-        this.cancellations.push(() => reject({ wasCancelled: true }));
-        realmPromise.then(resolve, reject);
-      });
-    }
-
     if (!realm) {
       throw new Error(`Called without a realm to load`);
     }
 
     throw new Error('Unexpected mode');
   }
-
-  private progressChanged = (transferred: number, transferable: number) => {
-    // Don't change the progress if a failure has occurred
-    if (this.state.progress.status !== 'failed') {
-      this.setState({
-        progress: {
-          message: 'Downloading Realm',
-          status: transferred >= transferable ? 'done' : 'in-progress',
-          transferred,
-          transferable,
-        },
-      });
-    }
-  };
 }

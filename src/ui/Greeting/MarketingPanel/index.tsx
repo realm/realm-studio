@@ -22,7 +22,6 @@ import React from 'react';
 
 import { MarketingPanel } from './MarketingPanel';
 
-import { main } from '../../../actions/main';
 import { marketing } from '../../../services/contentful';
 
 const previewAvailable =
@@ -144,9 +143,7 @@ class MarketingPanelContainer extends React.PureComponent<
     const element = e.target as HTMLElement;
     // Check if the element clicked has a call to action
     const { callToActionSlug } = element.dataset;
-    if (callToActionSlug === 'sign-up-for-realm-cloud') {
-      main.showCloudAuthentication({ mode: 'sign-up' });
-    } else if (callToActionSlug === 'mongodb-realm-keep-me-updated') {
+    if (callToActionSlug === 'mongodb-realm-keep-me-updated') {
       const url = 'https://www.mongodb.com/realm/subscribe';
       remote.shell.openExternal(url);
     } else if (callToActionSlug) {

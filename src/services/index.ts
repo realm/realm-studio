@@ -17,11 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import * as dataImporter from './data-importer';
-import * as github from './github';
-import * as keytar from './keytar';
 import * as mixpanel from './mixpanel';
-import * as raas from './raas';
-import * as ros from './ros';
 import * as schemaExport from './schema-export';
 
-export { dataImporter, github, keytar, mixpanel, raas, ros, schemaExport };
+export { dataImporter, mixpanel, schemaExport };

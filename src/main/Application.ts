@@ -16,38 +16,22 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import * as sentry from '@sentry/electron';
 import { app, dialog, Menu } from 'electron';
 import path from 'path';
-import { URL } from 'url';
 
 import { MainReceiver } from '../actions/main';
-import { CLOUD_PROTOCOL, OPEN_ROS_ACTION, STUDIO_PROTOCOL } from '../constants';
+import { CLOUD_PROTOCOL, STUDIO_PROTOCOL } from '../constants';
 import * as dataImporter from '../services/data-importer';
-import * as github from '../services/github';
-import * as raas from '../services/raas';
-import { authenticate } from '../services/ros/users';
 import { showError } from '../ui/reusable/errors';
 import { RealmLoadingMode } from '../utils/realms';
-import {
-  ICloudAuthenticationWindowProps,
-  IConnectToServerWindowProps,
-  IGraphiqlEditorWindowProps,
-  IRealmBrowserWindowProps,
-  IServerAdministrationWindowProps,
-} from '../windows/WindowProps';
+import { IRealmBrowserWindowProps } from '../windows/WindowProps';
 
 import { removeRendererDirectories } from '../utils';
 import { CertificateManager } from './CertificateManager';
-import { CloudManager, ICloudStatus } from './CloudManager';
 import { MainActions } from './MainActions';
 import { getDefaultMenuTemplate } from './MainMenu';
 import { Updater } from './Updater';
 import { WindowManager } from './WindowManager';
-
-interface ICloudAuthenticationWindow extends Electron.BrowserWindow {
-  accountPromise: Promise<raas.user.IAccountResponse>;
-}
 
 export class Application {
   public static sharedApplication = new Application();
@@ -55,44 +39,10 @@ export class Application {
   private windowManager = new WindowManager();
   private updater = new Updater(this.windowManager);
   private certificateManager = new CertificateManager();
-  private cloudManager = new CloudManager();
 
   private actionHandlers = {
-    [MainActions.AuthenticateWithEmail]: (email: string, password: string) => {
-      return this.authenticateWithEmail(email, password);
-    },
-    [MainActions.AuthenticateWithGitHub]: () => {
-      return this.authenticateWithGitHub();
-    },
-    [MainActions.Deauthenticate]: () => {
-      return this.deauthenticate();
-    },
     [MainActions.CheckForUpdates]: () => {
       this.checkForUpdates();
-    },
-    [MainActions.RefreshCloudStatus]: () => {
-      this.cloudManager.refresh();
-    },
-    [MainActions.ReopenGitHubUrl]: () => {
-      this.cloudManager.reopenGitHubUrl();
-    },
-    [MainActions.SetRaasEndpoint]: (endpoint: raas.Endpoint) => {
-      return this.setRaasEndpoint(endpoint);
-    },
-    [MainActions.ShowCloudAuthentication]: (
-      props: ICloudAuthenticationWindowProps,
-      resolveUser: boolean,
-    ) => {
-      return this.showCloudAuthentication(props, resolveUser);
-    },
-    [MainActions.ShowConnectToServer]: (url?: string) => {
-      return this.showConnectToServer({ url });
-    },
-    [MainActions.ShowGraphiqlEditor]: (props: IGraphiqlEditorWindowProps) => {
-      return this.showGraphiqlEditor(props);
-    },
-    [MainActions.ShowGreeting]: () => {
-      return this.showGreeting();
     },
     [MainActions.ShowImportData]: (format: dataImporter.ImportFormat) => {
       return this.showImportData(format);
@@ -102,11 +52,6 @@ export class Application {
     },
     [MainActions.ShowRealmBrowser]: (props: IRealmBrowserWindowProps) => {
       return this.showRealmBrowser(props);
-    },
-    [MainActions.ShowServerAdministration]: (
-      props: IServerAdministrationWindowProps,
-    ) => {
-      return this.showServerAdministration(props);
     },
     [MainActions.ClearRendererCache]: async () => {
       await this.windowManager.closeAllWindows();
@@ -120,8 +65,6 @@ export class Application {
 
   // All files opened while app is loading will be stored on this array and opened when app is ready
   private delayedRealmOpens: string[] = [];
-  // All urls opened while app is loading will be stored in this array and upened when app is ready
-  private delayedUrlOpens: string[] = [];
 
   public run() {
     // Check to see if this is the first instance or not
@@ -139,7 +82,6 @@ export class Application {
       }
       // Register all app listeners
       this.addAppListeners();
-      this.cloudManager.addListener(this.onCloudStatusChange);
       // If its already ready - the handler won't be called
       if (app.isReady()) {
         this.onReady();
@@ -153,7 +95,6 @@ export class Application {
     this.removeAppListeners();
     this.updater.destroy();
     this.certificateManager.destroy();
-    this.cloudManager.removeListener(this.onCloudStatusChange);
     this.windowManager.closeAllWindows();
     this.certificateManager.destroy();
     this.loopbackReceiver.destroy();
@@ -164,44 +105,6 @@ export class Application {
   }
 
   // Implementation of action handlers below
-
-  public async authenticateWithEmail(email: string, password: string) {
-    return this.cloudManager.authenticateWithEmail(email, password);
-  }
-
-  public async authenticateWithGitHub() {
-    return this.cloudManager.authenticateWithGitHub();
-  }
-
-  public deauthenticate() {
-    return this.cloudManager.deauthenticate();
-  }
-
-  public setRaasEndpoint(endpoint: raas.Endpoint) {
-    this.cloudManager.setEndpoint(endpoint);
-    this.cloudManager.deauthenticate();
-  }
-
-  public showConnectToServer(
-    props: IConnectToServerWindowProps,
-  ): Promise<void> {
-    const { window, existing } = this.windowManager.createWindow({
-      type: 'connect-to-server',
-      props,
-    });
-
-    if (existing) {
-      window.focus();
-      return Promise.resolve();
-    } else {
-      return new Promise<undefined>(resolve => {
-        window.show();
-        window.webContents.once('did-finish-load', () => {
-          resolve();
-        });
-      });
-    }
-  }
 
   public showGreeting(): Promise<void> {
     const { window, existing } = this.windowManager.createWindow({
@@ -223,52 +126,27 @@ export class Application {
         // Check for updates, every time the contents has loaded
         window.webContents.on('did-finish-load', () => {
           this.updater.checkForUpdates(true);
-          this.cloudManager.refresh();
         });
         this.updater.addListeningWindow(window);
-        this.cloudManager.addListeningWindow(window);
         window.once('close', () => {
           this.updater.removeListeningWindow(window);
-          this.cloudManager.removeListeningWindow(window);
         });
       });
     }
   }
 
-  public showGraphiqlEditor(props: IGraphiqlEditorWindowProps) {
-    return new Promise(resolve => {
-      const { window } = this.windowManager.createWindow({
-        type: 'graphiql-editor',
-        props,
-      });
-      window.show();
-      window.webContents.once('did-finish-load', () => {
-        resolve();
-      });
+  public async showOpenLocalRealm() {
+    const filePaths = await dialog.showOpenDialog({
+      properties: ['openFile', 'multiSelections'],
+      filters: [{ name: 'Realm Files', extensions: ['realm'] }],
     });
-  }
-
-  public showOpenLocalRealm() {
-    return new Promise((resolve, reject) => {
-      dialog.showOpenDialog(
-        {
-          properties: ['openFile', 'multiSelections'],
-          filters: [{ name: 'Realm Files', extensions: ['realm'] }],
-        },
-        selectedPaths => {
-          if (selectedPaths) {
-            const realmsLoaded = selectedPaths.map(selectedPath => {
-              return this.openLocalRealmAtPath(selectedPath);
-            });
-            // Call Resolve or reject when all realms are opened or a single fails
-            Promise.all(realmsLoaded).then(resolve, reject);
-          } else {
-            // Nothing loaded
-            resolve();
-          }
-        },
+    if (filePaths) {
+      const realmsLoaded = filePaths.map(filePath =>
+        this.openLocalRealmAtPath(filePath),
       );
-    });
+      // Resolves when all realms are opened or rejects when a single realm fails
+      return Promise.all(realmsLoaded);
+    }
   }
 
   public showImportData(format: dataImporter.ImportFormat) {
@@ -327,87 +205,6 @@ export class Application {
     }
   }
 
-  public showServerAdministration(
-    props: IServerAdministrationWindowProps,
-  ): Promise<void> {
-    const { window, existing } = this.windowManager.createWindow({
-      type: 'server-administration',
-      props,
-    });
-
-    if (existing) {
-      window.focus();
-      return Promise.resolve();
-    } else {
-      return new Promise(resolve => {
-        window.show();
-        window.webContents.once('did-finish-load', () => {
-          resolve();
-        });
-
-        if (props.isCloudTenant) {
-          this.cloudManager.addListeningWindow(window);
-          window.once('close', () => {
-            this.cloudManager.removeListeningWindow(window);
-          });
-        }
-      });
-    }
-  }
-
-  public showCloudAuthentication(
-    props: ICloudAuthenticationWindowProps,
-    resolveUser: boolean = false,
-  ): Promise<raas.user.IAccountResponse> {
-    const { window, existing } = this.windowManager.createWindow<
-      ICloudAuthenticationWindow
-    >({
-      type: 'cloud-authentication',
-      props,
-    });
-
-    if (existing && window.accountPromise) {
-      window.focus();
-      return window.accountPromise;
-    } else if (!existing) {
-      // Saving the account promise on the window to avoid recreating it every time the window is focused.
-      window.accountPromise = new Promise<raas.user.IAccountResponse>(
-        (resolve, reject) => {
-          const listener = (status: ICloudStatus) => {
-            if (status.kind === 'authenticated') {
-              this.cloudManager.removeListener(listener);
-              resolve(status.account);
-              // Close the window once we're authenticated
-              window.close();
-            } else if (status.kind === 'error') {
-              this.cloudManager.removeListener(listener);
-              reject(new Error(status.message));
-            }
-          };
-          this.cloudManager.addListener(listener);
-          // Reject the promise if the window is closed before cloud status turns authenticated
-          window.once('close', () => {
-            // We need a timeout here, because the close event fires before the cloud status updates
-            reject(new Error('Window was closed instead of authenticating'));
-            this.cloudManager.removeListener(listener);
-            this.cloudManager.abortPendingGitHubAuthentications();
-          });
-          // If resolveUser is false - we resolve the promise as soon as the window loads
-          if (!resolveUser) {
-            window.webContents.once('did-finish-load', () => {
-              resolve();
-            });
-          }
-          window.show();
-        },
-      );
-      // Return the newly created promise
-      return window.accountPromise;
-    } else {
-      throw new Error('Expected existing window to have an account promise');
-    }
-  }
-
   public checkForUpdates() {
     this.updater.checkForUpdates();
   }
@@ -416,7 +213,6 @@ export class Application {
     app.addListener('ready', this.onReady);
     app.addListener('activate', this.onActivate);
     app.addListener('open-file', this.onOpenFile);
-    app.addListener('open-url', this.onOpenUrl);
     app.addListener('window-all-closed', this.onWindowAllClosed);
     app.addListener('web-contents-created', this.onWebContentsCreated);
   }
@@ -425,7 +221,6 @@ export class Application {
     app.removeListener('ready', this.onReady);
     app.removeListener('activate', this.onActivate);
     app.removeListener('open-file', this.onOpenFile);
-    app.removeListener('open-url', this.onOpenUrl);
     app.removeListener('window-all-closed', this.onWindowAllClosed);
     app.removeListener('web-contents-created', this.onWebContentsCreated);
   }
@@ -456,40 +251,6 @@ export class Application {
     }
   };
 
-  private onOpenUrl = (event: Event | undefined, urlString: string) => {
-    if (app.isReady()) {
-      const url = new URL(urlString);
-      switch (url.protocol.slice(0, -1)) {
-        case STUDIO_PROTOCOL:
-          // The protocol stores the action as the URL hostname
-          switch (url.hostname) {
-            case github.OPEN_URL_ACTION:
-              const code = url.searchParams.get('code');
-              const state = url.searchParams.get('state');
-              if (!code || !state) {
-                throw new Error('Missing the code or state');
-              }
-
-              github.handleOauthCallback({ code, state });
-              break;
-            case OPEN_ROS_ACTION:
-              this.openRosUrl(url.searchParams).catch((err: Error) => {
-                showError('Could not open a ROS URL', err);
-              });
-              break;
-          }
-          break;
-        case CLOUD_PROTOCOL:
-          this.openCloudUrl(url).catch((err: Error) => {
-            showError('Could not open Realm Cloud URL', err);
-          });
-          break;
-      }
-    } else {
-      this.delayedUrlOpens.push(urlString);
-    }
-  };
-
   private onWindowAllClosed = () => {
     if (process.platform !== 'darwin') {
       app.quit();
@@ -506,23 +267,6 @@ export class Application {
     webContents.once('destroyed', () => {
       receiver.destroy();
     });
-  };
-
-  private onCloudStatusChange = (status: ICloudStatus) => {
-    // Refresh the menu, as the authentication state might have changed
-    // this.mainMenu.update();
-    // TODO: Update the main menu
-    if (status.kind === 'authenticated') {
-      // Add the users account into the context for Raven to consume
-      const { id, email, nameFirst, nameLast, ...rest } = status.account;
-      sentry.configureScope(scope => {
-        scope.setUser({
-          id,
-          email,
-          extra: { ...rest, name: `${nameFirst} ${nameLast}` },
-        });
-      });
-    }
   };
 
   private registerProtocols() {
@@ -564,92 +308,6 @@ export class Application {
     Menu.setApplicationMenu(menu);
   };
 
-  private async openCloudUrl(url: URL): Promise<void> {
-    // Test that any user id matches the currently authenticated user
-    const currentUser = raas.user.hasToken() ? await raas.user.getAuth() : null;
-    if (url.username) {
-      try {
-        if (!currentUser) {
-          await this.cloudManager.deauthenticate();
-          await this.showCloudAuthentication({}, true);
-          // Retry
-          return this.openCloudUrl(url);
-        } else if (url.username !== currentUser.id) {
-          const answer = dialog.showMessageBox({
-            type: 'warning',
-            message: `You're trying to connect to a cloud instance that is not owned by you.\n\nDo you want to login as another user?`,
-            buttons: ['Yes, login with another user!', 'No, abort!'],
-            defaultId: 0,
-            cancelId: 1,
-          });
-          if (answer === 1) {
-            // Abort!
-            return;
-          } else {
-            await this.cloudManager.deauthenticate();
-            await this.showCloudAuthentication({}, true);
-            // Retry
-            return this.openCloudUrl(url);
-          }
-        }
-      } catch (err) {
-        // We consider closing the window aborting the opening
-        if (err.message === 'Window was closed') {
-          // Abort!
-          return;
-        } else {
-          throw err;
-        }
-      }
-    }
-
-    // Check the hostname to ensure it ends on a trusted domain
-    const trustedHosts = ['.realm.io', '.realmlab.net'];
-    const trusted = trustedHosts.reduce((result, host) => {
-      return result || url.host.endsWith(host);
-    }, false);
-
-    const serverUrl = new URL(`https://${url.host}`);
-
-    if (!trusted) {
-      const answer = dialog.showMessageBox({
-        type: 'warning',
-        message: `You're about to connect to ${serverUrl.toString()}.\n\nThis will reveal your cloud token to the server. Do you wish to proceed?`,
-        buttons: ['Yes, connect!', 'No, abort!'],
-        defaultId: 0,
-        cancelId: 1,
-      });
-      if (answer === 1) {
-        // Abort!
-        return;
-      }
-    }
-
-    const credentials = raas.user.getTenantCredentials(serverUrl.toString());
-    const user = await authenticate(credentials);
-    await this.showServerAdministration({
-      user: user.serialize(),
-      isCloudTenant: true,
-      validateCertificates: true,
-    });
-  }
-
-  private async openRosUrl(params: URLSearchParams): Promise<void> {
-    const credentialsString = params.get('credentials');
-    const serverUrl = params.get('url');
-    if (!credentialsString || !serverUrl) {
-      throw new Error('Missing url and/or credentials from query parameters');
-    }
-
-    const credentials = JSON.parse(credentialsString);
-    credentials.url = serverUrl;
-    const user = await authenticate(credentials);
-    await this.showServerAdministration({
-      user: user.serialize(),
-      validateCertificates: true,
-    });
-  }
-
   private openLocalRealmAtPath = (filePath: string) => {
     return this.showRealmBrowser({
       realm: {
@@ -663,12 +321,6 @@ export class Application {
     this.delayedRealmOpens = argv.filter(arg => {
       return arg.endsWith('.realm');
     });
-    this.delayedUrlOpens = argv.filter(arg => {
-      return (
-        arg.startsWith(`${CLOUD_PROTOCOL}://`) ||
-        arg.startsWith(`${STUDIO_PROTOCOL}://`)
-      );
-    });
   }
 
   private async performDelayedTasks() {
@@ -681,17 +333,6 @@ export class Application {
     // Wait for all realms to open or show an error on failure
     await Promise.all(realmsLoaded).catch(err =>
       showError(`Failed opening Realm`, err),
-    );
-
-    // Open any URLs that the app was not ready to open during startup
-    const urlsOpened = this.delayedUrlOpens.map(url => {
-      return this.onOpenUrl(undefined, url);
-    });
-    // Reset the array to prevent double opening
-    this.delayedUrlOpens = [];
-    // Wait for all realms to open or show an error on failure
-    await Promise.all(urlsOpened).catch(err =>
-      showError(`Failed opening URL`, err),
     );
   }
 }
