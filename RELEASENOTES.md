@@ -10,4 +10,4 @@
 
 ### Internals
 
-- Upgraded dependencies, including Electron to v8 and Realm to v6.0.0-beta.1. ([#1278](https://github.com/realm/realm-studio/pull/1278))
+- Upgraded dependencies, including Electron to v8 and Realm to v6.0.0. ([#1278](https://github.com/realm/realm-studio/pull/1278) & [#1284](https://github.com/realm/realm-studio/pull/1284))
