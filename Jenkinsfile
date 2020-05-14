@@ -123,9 +123,9 @@ pipeline {
                 currentBuild.displayName += ": ${NEXT_VERSION} (prepare)"
               } else {
                 // Update the version of the package again, this time prepending pre release id
-                def preId = BUILD_TAG.minus("jenkins-realm-realm-studio-")
+                def baseName = java.net.URLDecoder.decode(env.JOB_BASE_NAME).replaceAll("[^A-Za-z0-9\\-\\_]", "-")
                 env.NEXT_VERSION = sh(
-                  script: "npm version ${NEXT_VERSION}-${preId} --no-git-tag-version",
+                  script: "npm version ${NEXT_VERSION}-${baseName}.${BUILD_NUMBER} --no-git-tag-version",
                   returnStdout: true,
                 ).trim()
                 // Set the build display name
