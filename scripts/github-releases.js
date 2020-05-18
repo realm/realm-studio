@@ -60,7 +60,7 @@ program
         },
         url: release.upload_url,
         name: path.basename(assetPath),
-        file: assetContent,
+        data: assetContent,
       });
     } else {
       throw new Error("Couldn't find the release");
