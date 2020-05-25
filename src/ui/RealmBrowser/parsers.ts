@@ -27,7 +27,7 @@ export const parseObjectId = (
     return null;
   } else {
     try {
-      return new ObjectId(value);
+      return ObjectId.createFromHexString(value);
     } catch (_) {
       throw new Error(
         `"${value}" is not a proper ${property.type}:\nUse a 24 character hexadecimal string`,
