@@ -93,10 +93,7 @@ export abstract class RealmLoadingComponent<
     this.setState({ progress: { message, status: 'failed' } });
   }
 
-  protected onSyncError = (
-    session: Realm.Session,
-    error: Realm.SyncError,
-  ) => {
+  protected onSyncError = (session: Realm.Session, error: Realm.SyncError) => {
     if (error.message === 'SSL server certificate rejected') {
       this.certificateWasRejected = true;
     } else if (error.isFatal === false) {
