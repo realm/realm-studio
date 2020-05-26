@@ -18,7 +18,7 @@
 
 import React from 'react';
 import Realm from 'realm';
-import { v4 as uuid } from 'uuid';
+import { ObjectId } from 'bson';
 
 import { CreateObjectHandler } from '..';
 import { showError } from '../../../reusable/errors';
@@ -87,16 +87,18 @@ class CreateObjectDialogContainer extends React.PureComponent<
   ) {
     // TODO: Initialize the values based on their property
     if (
-      propertyName === 'uuid' &&
+      propertyName === '_id' &&
       propertyName === primaryKey &&
-      property.type === 'string'
+      property.type === 'object id'
     ) {
-      return uuid();
+      return new ObjectId();
     } else if (property.type === 'list') {
       // If a list is optional, it refers to the type of the elements
       return [];
     } else if (property.optional) {
       return null;
+    } else if (property.type === 'object id') {
+      return new ObjectId();
     } else if (
       property.type === 'int' ||
       property.type === 'float' ||

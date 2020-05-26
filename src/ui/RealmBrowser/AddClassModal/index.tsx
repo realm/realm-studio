@@ -87,7 +87,7 @@ class AddClassModalContainer extends React.Component<
   };
 
   private preparePrimaryKeyName = (primaryKeyName: string) =>
-    primaryKeyName === '' ? 'uuid' : primaryKeyName;
+    primaryKeyName === '' ? '_id' : primaryKeyName;
 
   private getSchema = (): Realm.ObjectSchema => {
     const { name, primaryKey, primaryKeyType } = this.state;
