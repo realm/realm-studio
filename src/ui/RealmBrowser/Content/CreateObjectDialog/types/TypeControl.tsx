@@ -28,6 +28,7 @@ import { DefaultControl } from './DefaultControl';
 import { ListControl } from './ListControl';
 import { NummericControl } from './NummericControl';
 import { ObjectControl } from './ObjectControl';
+import { ObjectIdControl } from './ObjectIdControl';
 import { StringControl } from './StringControl';
 
 export interface IBaseControlProps {
@@ -50,7 +51,16 @@ export const TypeControl = ({
   property,
   value,
 }: ITypeControlProps) => {
-  if (property.type === 'bool') {
+  if (property.type === 'object id') {
+    return (
+      <ObjectIdControl
+        children={children}
+        onChange={onChange}
+        property={property}
+        value={value as string}
+      />
+    );
+  } else if (property.type === 'bool') {
     return (
       <BooleanControl
         children={children}
