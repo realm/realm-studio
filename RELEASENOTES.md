@@ -7,6 +7,7 @@
 
 ### Enhancements
 
+- Added support for creating & generating `ObjectId` in create-flow. ([#1291](https://github.com/realm/realm-studio/pull/1291))
 - Added support for editing existing `ObjectId` values. ([#1290](https://github.com/realm/realm-studio/pull/1290))
 
 ### Fixed
