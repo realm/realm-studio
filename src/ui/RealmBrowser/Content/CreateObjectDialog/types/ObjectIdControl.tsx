@@ -16,23 +16,70 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import React, { useState } from 'react';
+import React from 'react';
 import { ObjectId } from 'bson';
 import { Button, Input, InputGroup, InputGroupAddon } from 'reactstrap';
 
 import { IBaseControlProps } from './TypeControl';
 import { parseObjectId } from '../../../parsers';
 
-export const ObjectIdControl = ({
-  children,
-  onChange,
-  property,
-  value,
-}: IBaseControlProps) => {
-  const [internalValue, setInternalValue] = useState<string | null>(value);
+interface IObjectIdControlState {
+  internalValue: string | null;
+}
 
-  const internalChangeHandler = (val: string | null) => {
-    setInternalValue(val);
+export class ObjectIdControl extends React.PureComponent<
+  IBaseControlProps,
+  IObjectIdControlState
+> {
+  constructor(props: IBaseControlProps) {
+    super(props);
+
+    this.state = {
+      internalValue: props.value,
+    };
+  }
+
+  render() {
+    const { children, property, value } = this.props;
+    const { internalValue } = this.state;
+
+    return (
+      <InputGroup className="CreateObjectDialog__ObjectIdControl">
+        <Input
+          className="CreateObjectDialog__ObjectIdControl__Input"
+          onChange={this.inputChangeEventHandler}
+          placeholder={value === null ? 'null' : ''}
+          value={internalValue ?? ''}
+          required={!property.optional}
+          invalid={(!!internalValue || !property.optional) && value === null}
+        />
+        {internalValue && property.optional ? (
+          <InputGroupAddon addonType="append">
+            <Button size="sm" onClick={this.clearValue}>
+              <i className="fa fa-close" />
+            </Button>
+          </InputGroupAddon>
+        ) : (
+          <InputGroupAddon addonType="append">
+            <Button size="sm" onClick={this.generateObjectId}>
+              <i className="fa fa-refresh" />
+            </Button>
+          </InputGroupAddon>
+        )}
+        {children}
+      </InputGroup>
+    );
+  }
+
+  private inputChangeEventHandler = (e: React.ChangeEvent<HTMLInputElement>) =>
+    this.internalChangeHandler(e.target.value);
+
+  private clearValue = () => this.internalChangeHandler(null);
+
+  private internalChangeHandler = (val: string | null) => {
+    const { property, onChange } = this.props;
+
+    this.setState({ internalValue: val });
 
     let parsedId: ObjectId | null = null;
 
@@ -47,37 +94,12 @@ export const ObjectIdControl = ({
     onChange(parsedId);
   };
 
-  const generateNewObjectId = () => {
+  private generateObjectId = () => {
+    const { onChange } = this.props;
+
     const generatedId = new ObjectId();
 
-    setInternalValue(generatedId.toHexString());
+    this.setState({ internalValue: generatedId.toHexString() });
     onChange(generatedId);
   };
-
-  return (
-    <InputGroup className="CreateObjectDialog__ObjectIdControl">
-      <Input
-        className="CreateObjectDialog__ObjectIdControl__Input"
-        onChange={e => internalChangeHandler(e.target.value)}
-        placeholder={value === null ? 'null' : ''}
-        value={internalValue ?? ''}
-        required={!property.optional}
-        invalid={(!!internalValue || !property.optional) && value === null}
-      />
-      {internalValue && property.optional ? (
-        <InputGroupAddon addonType="append">
-          <Button size="sm" onClick={() => internalChangeHandler(null)}>
-            <i className="fa fa-close" />
-          </Button>
-        </InputGroupAddon>
-      ) : (
-        <InputGroupAddon addonType="append">
-          <Button size="sm" onClick={generateNewObjectId}>
-            <i className="fa fa-refresh" />
-          </Button>
-        </InputGroupAddon>
-      )}
-      {children}
-    </InputGroup>
-  );
-};
+}
