@@ -19,6 +19,7 @@
 import React from 'react';
 import Realm from 'realm';
 import { ObjectId } from 'bson';
+import { v4 as uuid } from 'uuid';
 
 import { CreateObjectHandler } from '..';
 import { showError } from '../../../reusable/errors';
@@ -85,19 +86,20 @@ class CreateObjectDialogContainer extends React.PureComponent<
     propertyName?: string,
     primaryKey?: string,
   ) {
-    // TODO: Initialize the values based on their property
-    if (
-      propertyName === '_id' &&
-      propertyName === primaryKey &&
-      property.type === 'object id'
-    ) {
-      return new ObjectId();
+    if (propertyName === primaryKey) {
+      // Special handling for primary keys. Opting out of optional handling & return a random value.
+      if (property.type === 'object id') {
+        return new ObjectId();
+      } else if (propertyName === 'uuid' && property.type === 'string') {
+        return uuid();
+      }
     } else if (property.type === 'list') {
       // If a list is optional, it refers to the type of the elements
       return [];
     } else if (property.optional) {
       return null;
     } else if (property.type === 'object id') {
+      // TODO: should this instead return same default as Object Store? e.g.: ObjectId.createFromHexString('000000000000000000000000')
       return new ObjectId();
     } else if (
       property.type === 'int' ||
