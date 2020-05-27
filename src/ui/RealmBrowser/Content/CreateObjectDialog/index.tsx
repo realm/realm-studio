@@ -99,7 +99,6 @@ class CreateObjectDialogContainer extends React.PureComponent<
     } else if (property.optional) {
       return null;
     } else if (property.type === 'object id') {
-      // TODO: should this instead return same default as Object Store? e.g.: ObjectId.createFromHexString('000000000000000000000000')
       return new ObjectId();
     } else if (
       property.type === 'int' ||
