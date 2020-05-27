@@ -97,7 +97,7 @@ export const AddClassModal = ({
                 </InputGroupText>
               </InputGroupAddon>
               <Input
-                placeholder="uuid"
+                placeholder="_id"
                 name="primaryKeyName"
                 type="text"
                 value={primaryKeyName}
@@ -105,6 +105,20 @@ export const AddClassModal = ({
                 disabled={!primaryKey}
               />
               <InputGroupAddon addonType="append">
+                <InputGroupText>
+                  <Label check>
+                    <Input
+                      addon
+                      type="radio"
+                      name="primaryKeyType"
+                      value="object id"
+                      checked={primaryKeyType === 'object id'}
+                      onChange={onPKTypeChange}
+                      disabled={!primaryKey}
+                    />{' '}
+                    ObjectId
+                  </Label>
+                </InputGroupText>
                 <InputGroupText>
                   <Label check>
                     <Input
