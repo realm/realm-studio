@@ -24,6 +24,7 @@ import { IClassFocus } from '../../../focus';
 import { BooleanControl } from './BooleanControl';
 import { DataControl } from './DataControl';
 import { DateControl } from './DateControl';
+import { Decimal128Control } from './Decimal128Control';
 import { DefaultControl } from './DefaultControl';
 import { ListControl } from './ListControl';
 import { NummericControl } from './NummericControl';
@@ -86,6 +87,15 @@ export const TypeControl = ({
   ) {
     return (
       <NummericControl
+        children={children}
+        property={property}
+        value={value as number | null}
+        onChange={onChange}
+      />
+    );
+  } else if (property.type === 'decimal') {
+    return (
+      <Decimal128Control
         children={children}
         property={property}
         value={value as number | null}
