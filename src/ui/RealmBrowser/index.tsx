@@ -49,6 +49,7 @@ export interface IPropertyWithName extends Realm.ObjectSchemaProperty {
   name: string | null;
   readOnly: boolean;
   isPrimaryKey: boolean;
+  isEmbedded?: boolean;
 }
 
 export type EditModeChangeHandler = (editMode: EditMode) => void;
@@ -704,9 +705,17 @@ class RealmBrowserContainer
     return Object.keys(objectSchema.properties).map(propertyName => {
       const property = objectSchema.properties[propertyName];
       if (typeof property === 'object') {
+        let isEmbedded = false;
+        if (property.objectType) {
+          const propertyObjectSchema = this.realm?.schema.find(schema => {
+            return schema.name === property.objectType;
+          });
+          isEmbedded = propertyObjectSchema?.embedded ?? false;
+        }
         return {
           name: propertyName,
           readOnly: false,
+          isEmbedded,
           isPrimaryKey: objectSchema.primaryKey === propertyName,
           ...property,
         };

@@ -93,11 +93,13 @@ class LeftSidebarContainer extends React.Component<
   }
 
   private filterClasses(classes: Realm.ObjectSchema[]) {
+    let filtered = classes.filter(c => c.embedded !== true);
+
     if (this.state.hideSystemClasses) {
-      return classes.filter(c => !isSystemClassName(c.name));
-    } else {
-      return classes;
+      filtered = filtered.filter(c => !isSystemClassName(c.name));
     }
+
+    return filtered;
   }
 
   private onShowSystemClassesChange = (showSystemClasses: boolean) => {

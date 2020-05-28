@@ -3,7 +3,7 @@ dist/
 node_modules/
 realm-object-server/
 .idea
-
+.vscode
 .DS_Store
 data/
 
