@@ -93,7 +93,9 @@ class CreateObjectDialogContainer extends React.PureComponent<
       } else if (propertyName === 'uuid' && property.type === 'string') {
         return uuid();
       }
-    } else if (property.type === 'list') {
+    }
+
+    if (property.type === 'list') {
       // If a list is optional, it refers to the type of the elements
       return [];
     } else if (property.optional) {
