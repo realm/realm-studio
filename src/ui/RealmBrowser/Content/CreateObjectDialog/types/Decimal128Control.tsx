@@ -75,16 +75,16 @@ export class Decimal128Control extends React.PureComponent<
 
     this.setState({ internalValue: val });
 
-    let parsedId: Decimal128 | null = null;
+    let parsedDecimal: Decimal128 | null = null;
 
     if (val) {
       try {
-        parsedId = parseDecimal128(val, property);
+        parsedDecimal = parseDecimal128(val, property);
       } catch (_) {
         // ignored
       }
     }
 
-    onChange(parsedId);
+    onChange(parsedDecimal);
   };
 }
