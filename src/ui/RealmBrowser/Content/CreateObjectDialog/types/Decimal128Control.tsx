@@ -28,16 +28,12 @@ interface IDecimal128ControlState {
 }
 
 export class Decimal128Control extends React.PureComponent<
-  IBaseControlProps,
+  IBaseControlProps<Decimal128 | null>,
   IDecimal128ControlState
 > {
-  constructor(props: IBaseControlProps) {
-    super(props);
-
-    this.state = {
-      internalValue: props.value,
-    };
-  }
+  state: IDecimal128ControlState = {
+    internalValue: this.props.value?.toString() ?? null,
+  };
 
   render() {
     const { children, property, value } = this.props;
@@ -66,22 +62,23 @@ export class Decimal128Control extends React.PureComponent<
   }
 
   private inputChangeEventHandler = (e: React.ChangeEvent<HTMLInputElement>) =>
-    this.internalChangeHandler(e.target.value);
+    this.changeHandler(e.target.value);
 
-  private clearValue = () => this.internalChangeHandler(null);
+  private clearValue = () => this.changeHandler(null);
 
-  private internalChangeHandler = (val: string | null) => {
+  private changeHandler = (value: string | null) => {
     const { property, onChange } = this.props;
 
-    this.setState({ internalValue: val });
+    this.setState({ internalValue: value });
 
     let parsedDecimal: Decimal128 | null = null;
 
-    if (val) {
+    if (value) {
       try {
-        parsedDecimal = parseDecimal128(val, property);
-      } catch (_) {
-        // ignored
+        parsedDecimal = parseDecimal128(value, property);
+      } catch (err) {
+        // tslint:disable-next-line:no-console
+        console.warn(err.message);
       }
     }
 

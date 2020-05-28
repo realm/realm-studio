@@ -46,7 +46,8 @@ export const parseDecimal128 = (
     try {
       // Note: thousand separators are not supported by Decimal128, so we can help out the user by converting ',' to '.'.
       return Decimal128.fromString(value.replace(',', '.'));
-    } catch (_) {
+    } catch (err) {
+      console.error(err);
       throw new Error(`"${value}" is not a proper ${property.type}`);
     }
   }

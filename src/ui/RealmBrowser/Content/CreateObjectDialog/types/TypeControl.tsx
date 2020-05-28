@@ -31,7 +31,7 @@ import { NummericControl } from './NummericControl';
 import { ObjectControl } from './ObjectControl';
 import { ObjectIdControl } from './ObjectIdControl';
 import { StringControl } from './StringControl';
-import { ObjectId } from 'bson';
+import { ObjectId, Decimal128 } from 'bson';
 
 export interface IBaseControlProps<ValueType = any> {
   children?: React.ReactNode;
@@ -98,7 +98,7 @@ export const TypeControl = ({
       <Decimal128Control
         children={children}
         property={property}
-        value={value as number | null}
+        value={value as Decimal128 | null}
         onChange={onChange}
       />
     );
