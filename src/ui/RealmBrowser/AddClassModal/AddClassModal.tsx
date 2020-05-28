@@ -120,7 +120,7 @@ export const AddClassModal = ({
                       onChange={onPKTypeChange}
                       disabled={!primaryKey}
                     />{' '}
-                    ObjectId
+                    object id
                   </Label>
                 </InputGroupText>
                 <InputGroupText>
@@ -162,7 +162,7 @@ export const AddClassModal = ({
                 <CardText>
                   <small>
                     {
-                      'If this Realm is intended to be synced with MongoDB, ensure to keep the primary key name "_id", with the type "ObjectId".'
+                      'If this Realm is intended to be synced with MongoDB, ensure to keep the primary key name "_id", with the type "object id".'
                     }
                   </small>
                 </CardText>
