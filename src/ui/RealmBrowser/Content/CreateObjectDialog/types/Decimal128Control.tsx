@@ -51,7 +51,7 @@ export class Decimal128Control extends React.PureComponent<
         />
         {internalValue && property.optional && (
           <InputGroupAddon addonType="append">
-            <Button size="sm" onClick={this.clearValue}>
+            <Button size="sm" onClick={this.handleClearValue}>
               <i className="fa fa-close" />
             </Button>
           </InputGroupAddon>
@@ -64,7 +64,7 @@ export class Decimal128Control extends React.PureComponent<
   private inputChangeEventHandler = (e: React.ChangeEvent<HTMLInputElement>) =>
     this.changeHandler(e.target.value);
 
-  private clearValue = () => this.changeHandler(null);
+  private handleClearValue = () => this.changeHandler(null);
 
   private changeHandler = (value: string | null) => {
     const { property, onChange } = this.props;
