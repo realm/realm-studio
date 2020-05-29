@@ -18,7 +18,7 @@
 
 import React from 'react';
 import Realm from 'realm';
-import { ObjectId } from 'bson';
+import { ObjectId, Decimal128 } from 'bson';
 import { v4 as uuid } from 'uuid';
 
 import { CreateObjectHandler } from '..';
@@ -108,6 +108,8 @@ class CreateObjectDialogContainer extends React.PureComponent<
       property.type === 'double'
     ) {
       return 0;
+    } else if (property.type === 'decimal') {
+      return Decimal128.fromString('0');
     } else if (property.type === 'string') {
       return '';
     } else if (property.type === 'bool') {
