@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import moment from 'moment';
-import { ObjectId } from 'bson';
+import { ObjectId, Decimal128 } from 'bson';
 
 export const parseObjectId = (
   value: string,
@@ -32,6 +32,22 @@ export const parseObjectId = (
       throw new Error(
         `"${value}" is not a proper ${property.type}:\nUse a 24 character hexadecimal string`,
       );
+    }
+  }
+};
+
+export const parseDecimal128 = (
+  value: string,
+  property: Realm.ObjectSchemaProperty,
+) => {
+  if (value === '' && property.optional) {
+    return null;
+  } else {
+    try {
+      // Note: thousand separators are not supported by Decimal128, so we can help out the user by converting ',' to '.'.
+      return Decimal128.fromString(value.replace(',', '.'));
+    } catch (err) {
+      throw new Error(`"${value}" is not a proper ${property.type}`);
     }
   }
 };
@@ -104,12 +120,12 @@ export const parse = (value: string, property: Realm.ObjectSchemaProperty) => {
       return parseObjectId(value, property);
     case 'int':
     case 'float':
-    case 'double': {
+    case 'double':
       return parseNumber(value, property);
-    }
-    case 'bool': {
+    case 'decimal':
+      return parseDecimal128(value, property);
+    case 'bool':
       return parseBoolean(value, property);
-    }
     case 'date':
       return parseDate(value, property);
     case 'string':

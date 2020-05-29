@@ -60,6 +60,7 @@ const getCellContent = ({
     case 'int':
     case 'float':
     case 'double':
+    case 'decimal':
     case 'bool':
     case 'string':
     case 'date': {
