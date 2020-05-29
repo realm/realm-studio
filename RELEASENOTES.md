@@ -7,7 +7,7 @@
 
 ### Enhancements
 
-- None
+- Added support for editing existing `ObjectId` values. ([#1290](https://github.com/realm/realm-studio/pull/1290))
 
 ### Fixed
 
