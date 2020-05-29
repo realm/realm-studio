@@ -31,6 +31,10 @@ import {
   ModalBody,
   ModalFooter,
   ModalHeader,
+  Card,
+  CardBody,
+  CardText,
+  CardSubtitle,
 } from 'reactstrap';
 
 export const AddClassModal = ({
@@ -97,7 +101,7 @@ export const AddClassModal = ({
                 </InputGroupText>
               </InputGroupAddon>
               <Input
-                placeholder="uuid"
+                placeholder="_id"
                 name="primaryKeyName"
                 type="text"
                 value={primaryKeyName}
@@ -105,6 +109,20 @@ export const AddClassModal = ({
                 disabled={!primaryKey}
               />
               <InputGroupAddon addonType="append">
+                <InputGroupText>
+                  <Label check>
+                    <Input
+                      addon
+                      type="radio"
+                      name="primaryKeyType"
+                      value="object id"
+                      checked={primaryKeyType === 'object id'}
+                      onChange={onPKTypeChange}
+                      disabled={!primaryKey}
+                    />{' '}
+                    object id
+                  </Label>
+                </InputGroupText>
                 <InputGroupText>
                   <Label check>
                     <Input
@@ -136,6 +154,29 @@ export const AddClassModal = ({
               </InputGroupAddon>
             </InputGroup>
           </FormGroup>
+          {primaryKey && (
+            <Card>
+              {/* Todo: Wording */}
+              <CardBody>
+                <CardSubtitle>MongoDB Sync:</CardSubtitle>
+                <CardText>
+                  <small>
+                    {
+                      'If this Realm is intended to be synced with MongoDB, ensure to keep the primary key name "_id", with the type "object id".'
+                    }
+                  </small>
+                </CardText>
+                <CardSubtitle>UUID auto generation:</CardSubtitle>
+                <CardText>
+                  <small>
+                    {
+                      'If the primary key is named "uuid" with the type "string", Studio will auto generate a UUID (v4) for new entries.'
+                    }
+                  </small>
+                </CardText>
+              </CardBody>
+            </Card>
+          )}
         </ModalBody>
         <ModalFooter>
           <Button color="primary" disabled={!nameIsValid}>

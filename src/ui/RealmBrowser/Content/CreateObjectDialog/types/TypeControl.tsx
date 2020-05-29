@@ -28,13 +28,15 @@ import { DefaultControl } from './DefaultControl';
 import { ListControl } from './ListControl';
 import { NummericControl } from './NummericControl';
 import { ObjectControl } from './ObjectControl';
+import { ObjectIdControl } from './ObjectIdControl';
 import { StringControl } from './StringControl';
+import { ObjectId } from 'bson';
 
-export interface IBaseControlProps {
+export interface IBaseControlProps<ValueType = any> {
   children?: React.ReactNode;
-  onChange: (value: any) => void;
+  onChange: (value: ValueType) => void;
   property: Realm.ObjectSchemaProperty;
-  value: any;
+  value: ValueType;
 }
 
 export interface ITypeControlProps extends IBaseControlProps {
@@ -50,7 +52,16 @@ export const TypeControl = ({
   property,
   value,
 }: ITypeControlProps) => {
-  if (property.type === 'bool') {
+  if (property.type === 'object id') {
+    return (
+      <ObjectIdControl
+        children={children}
+        onChange={onChange}
+        property={property}
+        value={value as ObjectId | null}
+      />
+    );
+  } else if (property.type === 'bool') {
     return (
       <BooleanControl
         children={children}
