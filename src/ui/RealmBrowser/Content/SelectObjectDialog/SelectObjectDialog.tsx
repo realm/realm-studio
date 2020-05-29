@@ -69,6 +69,7 @@ export const SelectObjectDialog = ({
       {props.isOpen ? (
         <Content
           editMode={EditMode.Disabled}
+          allowCreate={false}
           highlightMode={
             props.multiple ? HighlightMode.Multiple : HighlightMode.Single
           }

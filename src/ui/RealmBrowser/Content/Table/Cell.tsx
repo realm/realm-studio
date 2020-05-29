@@ -88,14 +88,7 @@ const getCellContent = ({
     case 'list':
       return <ListCell property={property} value={value} />;
     case 'object':
-      console.log(`object cell props ${JSON.stringify(property)}`);
-      console.log(`object cell value ${JSON.stringify(value)}`);
-      return property.isEmbedded ? (
-        <DefaultCell property={property} value={JSON.stringify(value)} />
-      ) : (
-        // <div>{JSON.stringify(value)}</div>
-        <ObjectCell property={property} value={value} />
-      );
+      return <ObjectCell property={property} value={value} />;
     default:
       return <DefaultCell property={property} value={value} />;
   }

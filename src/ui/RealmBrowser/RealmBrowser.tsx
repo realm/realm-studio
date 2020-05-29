@@ -39,6 +39,7 @@ export interface IRealmBrowserProps {
   createObjectSchema?: Realm.ObjectSchema;
   dataVersion: number;
   dataVersionAtBeginning?: number;
+  allowCreate: boolean;
   editMode: EditMode;
   focus: Focus | null;
   getClassFocus: (className: string) => IClassFocus;
@@ -71,6 +72,7 @@ export const RealmBrowser = ({
   contentRef,
   dataVersion,
   dataVersionAtBeginning,
+  allowCreate,
   editMode,
   focus,
   getClassFocus,
@@ -116,6 +118,7 @@ export const RealmBrowser = ({
           <Content
             dataVersion={dataVersion}
             dataVersionAtBeginning={dataVersionAtBeginning}
+            allowCreate={allowCreate}
             editMode={editMode}
             focus={focus}
             getClassFocus={getClassFocus}

@@ -102,6 +102,7 @@ export type ISelectObjectDialog =
 
 export interface IBaseContentContainerProps {
   dataVersion?: number;
+  allowCreate: boolean;
   editMode: EditMode;
   focus: Focus;
   highlightMode: HighlightMode;
@@ -314,6 +315,7 @@ class ContentContainer extends React.Component<
         ...common,
         editMode: EditMode.Disabled,
         readOnly: true,
+        allowCreate: this.props.allowCreate,
       };
     } else {
       const { dataVersion = 0, dataVersionAtBeginning = 0 } = this.props;
@@ -322,6 +324,7 @@ class ContentContainer extends React.Component<
         changeCount: dataVersion - dataVersionAtBeginning,
         createObjectDialog: this.state.createObjectDialog,
         deleteObjectsDialog: this.state.deleteObjectsDialog,
+        allowCreate: this.props.allowCreate,
         editMode: this.props.editMode,
         getClassFocus: this.props.getClassFocus,
         inTransaction: this.props.realm.isInTransaction,
@@ -531,7 +534,7 @@ class ContentContainer extends React.Component<
     params,
   ) => {
     e.preventDefault();
-    const { focus, readOnly } = this.props;
+    const { allowCreate, focus, readOnly } = this.props;
     const { Menu, MenuItem } = electron.remote;
 
     const contextMenu = new Menu();
@@ -619,7 +622,7 @@ class ContentContainer extends React.Component<
     }
 
     // If we right-clicking on the content we can always create a new object
-    if (!readOnly && focus) {
+    if (allowCreate && !readOnly && focus) {
       const className = getClassName(focus);
       contextMenu.append(
         new MenuItem({

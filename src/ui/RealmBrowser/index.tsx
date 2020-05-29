@@ -71,6 +71,7 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   // A number that we can use to make components update on changes to data
   dataVersion: number;
   dataVersionAtBeginning?: number;
+  allowCreate: boolean;
   editMode: EditMode;
   focus: Focus | null;
   isAddClassOpen: boolean;
@@ -89,6 +90,7 @@ class RealmBrowserContainer
   implements IMenuGenerator {
   public state: IRealmBrowserState = {
     dataVersion: 0,
+    allowCreate: false,
     editMode:
       (localStorage.getItem(EDIT_MODE_STORAGE_KEY) as EditMode) ||
       EditMode.InputBlur,
@@ -130,6 +132,7 @@ class RealmBrowserContainer
         contentRef={this.contentRef}
         dataVersion={this.state.dataVersion}
         dataVersionAtBeginning={this.state.dataVersionAtBeginning}
+        allowCreate={this.state.allowCreate}
         editMode={this.props.readOnly ? EditMode.Disabled : this.state.editMode}
         focus={this.state.focus}
         getClassFocus={this.getClassFocus}
@@ -399,6 +402,19 @@ class RealmBrowserContainer
     this.performImport();
   };
 
+  private isCreateAllowed = (focus: Focus): boolean => {
+    const { classes } = this.state;
+
+    if (focus && focus.kind === 'class') {
+      return !classes.find(c => c.name === focus.className)?.embedded;
+    } else if (focus && focus.kind === 'list') {
+      // TODO: Warning, not entirely sure about this one!
+      return !focus.property.isEmbedded;
+    }
+
+    return false;
+  };
+
   private getFirstSchemaName = () =>
     this.realm?.schema.find(c => c.name.indexOf('__') !== 0 && !c.embedded)
       ?.name;
@@ -523,7 +539,8 @@ class RealmBrowserContainer
   private changeFocusIfAllowed(focus: Focus, highligtedObject?: Realm.Object) {
     const canChangeFocus = this.canChangeFocus();
     if (canChangeFocus) {
-      this.setState({ focus }, () => {
+      const allowCreate = this.isCreateAllowed(focus);
+      this.setState({ focus, allowCreate }, () => {
         if (highligtedObject && this.contentInstance) {
           this.contentInstance.highlightObject(highligtedObject);
         }
