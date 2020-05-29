@@ -17,6 +17,24 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import moment from 'moment';
+import { ObjectId } from 'bson';
+
+export const parseObjectId = (
+  value: string,
+  property: Realm.ObjectSchemaProperty,
+) => {
+  if (value === '' && property.optional) {
+    return null;
+  } else {
+    try {
+      return ObjectId.createFromHexString(value);
+    } catch (_) {
+      throw new Error(
+        `"${value}" is not a proper ${property.type}:\nUse a 24 character hexadecimal string`,
+      );
+    }
+  }
+};
 
 export const parseNumber = (
   value: string,
@@ -82,6 +100,8 @@ export const parseDate = (
 export const parse = (value: string, property: Realm.ObjectSchemaProperty) => {
   // For every type
   switch (property.type) {
+    case 'object id':
+      return parseObjectId(value, property);
     case 'int':
     case 'float':
     case 'double': {
