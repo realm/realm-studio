@@ -388,8 +388,7 @@ class RealmBrowserContainer
         throw new Error('Realm was opened as read-only');
       };
     }
-    const firstSchemaName =
-      this.realm.schema.length > 0 ? this.realm.schema[0].name : undefined;
+    const firstSchemaName = this.getFirstSchemaName();
     this.setState({
       classes: this.realm.schema,
     });
@@ -399,6 +398,10 @@ class RealmBrowserContainer
     // Start importing data if needed
     this.performImport();
   };
+
+  private getFirstSchemaName = () =>
+    this.realm?.schema.find(c => c.name.indexOf('__') !== 0 && !c.embedded)
+      ?.name;
 
   private onBeginTransaction = () => {
     if (this.realm && !this.realm.isInTransaction) {

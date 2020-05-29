@@ -29,6 +29,10 @@ function isSystemClassName(className: string) {
   return className.indexOf('__') === 0;
 }
 
+function isEmbeddedClass(cls: Realm.ObjectSchema) {
+  return cls.embedded || false;
+}
+
 interface ILeftSidebarContainerProps {
   classes: Realm.ObjectSchema[];
   className?: string;
@@ -61,6 +65,7 @@ class LeftSidebarContainer extends React.Component<
       store.KEY_SHOW_SYSTEM_CLASSES,
       this.onShowSystemClassesChange,
     );
+    this.onShowSystemClassesChange(!this.state.hideSystemClasses);
   }
 
   public componentWillUnmount() {
@@ -93,13 +98,13 @@ class LeftSidebarContainer extends React.Component<
   }
 
   private filterClasses(classes: Realm.ObjectSchema[]) {
-    let filtered = classes.filter(c => c.embedded !== true);
-
     if (this.state.hideSystemClasses) {
-      filtered = filtered.filter(c => !isSystemClassName(c.name));
+      return classes.filter(
+        c => !isSystemClassName(c.name) && !isEmbeddedClass(c),
+      );
+    } else {
+      return classes;
     }
-
-    return filtered;
   }
 
   private onShowSystemClassesChange = (showSystemClasses: boolean) => {
