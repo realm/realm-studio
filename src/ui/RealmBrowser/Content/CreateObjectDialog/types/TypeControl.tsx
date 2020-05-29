@@ -24,13 +24,14 @@ import { IClassFocus } from '../../../focus';
 import { BooleanControl } from './BooleanControl';
 import { DataControl } from './DataControl';
 import { DateControl } from './DateControl';
+import { Decimal128Control } from './Decimal128Control';
 import { DefaultControl } from './DefaultControl';
 import { ListControl } from './ListControl';
 import { NummericControl } from './NummericControl';
 import { ObjectControl } from './ObjectControl';
 import { ObjectIdControl } from './ObjectIdControl';
 import { StringControl } from './StringControl';
-import { ObjectId } from 'bson';
+import { ObjectId, Decimal128 } from 'bson';
 
 export interface IBaseControlProps<ValueType = any> {
   children?: React.ReactNode;
@@ -89,6 +90,15 @@ export const TypeControl = ({
         children={children}
         property={property}
         value={value as number | null}
+        onChange={onChange}
+      />
+    );
+  } else if (property.type === 'decimal') {
+    return (
+      <Decimal128Control
+        children={children}
+        property={property}
+        value={value as Decimal128 | null}
         onChange={onChange}
       />
     );

@@ -17,10 +17,12 @@
 ////////////////////////////////////////////////////////////////////////////
 
 export const TYPES: string[] = [
+  'object id',
   'bool',
   'int',
   'float',
   'double',
+  'decimal',
   'string',
   'data',
   'date',
