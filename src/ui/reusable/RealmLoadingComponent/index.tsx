@@ -16,6 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import Realm from 'realm';
 import React from 'react';
 
 import { RealmLoadingMode, RealmToLoad } from '../../../utils/realms';
@@ -92,25 +93,6 @@ export abstract class RealmLoadingComponent<
     const message = err.message || 'Failed to open the Realm';
     this.setState({ progress: { message, status: 'failed' } });
   }
-
-  protected onSyncError = (
-    session: Realm.Sync.Session,
-    error: Realm.Sync.SyncError,
-  ) => {
-    if (error.message === 'SSL server certificate rejected') {
-      this.certificateWasRejected = true;
-    } else if (error.isFatal === false) {
-      /* tslint:disable-next-line:no-console */
-      console.warn(`A non-fatal sync error happened: ${error.message}`, error);
-    } else {
-      this.setState({
-        progress: {
-          message: error.message,
-          status: 'failed',
-        },
-      });
-    }
-  };
 
   private async openRealm(
     realm: RealmToLoad | undefined,
