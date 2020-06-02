@@ -542,7 +542,12 @@ class ContentContainer extends React.Component<
     if (params) {
       const { property, rowObject } = params;
       // If we clicked a property that refers to an object
-      if (!readOnly && property && property.type === 'object') {
+      if (
+        !readOnly &&
+        property &&
+        property.type === 'object' &&
+        property.isEmbedded !== true
+      ) {
         contextMenu.append(
           new MenuItem({
             label: 'Update reference',
