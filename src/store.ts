@@ -34,7 +34,7 @@ class RealmStudioStore {
   public readonly KEY_SHOW_INTERNAL_FEATURES = 'general.show-internal-features';
   public readonly KEY_WINDOW_OPTIONS = 'window-options';
 
-  private store = new ElectronStore();
+  private store = new ElectronStore({ watch: true });
 
   public toggleShowPartialRealms() {
     const currentValue = this.shouldShowPartialRealms();
