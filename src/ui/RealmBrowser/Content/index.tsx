@@ -117,6 +117,7 @@ export interface IBaseContentContainerProps {
   onListFocussed?: ListFocussedHandler;
   progress?: ILoadingProgress;
   readOnly: boolean;
+  isEmbeddedType: (className: string) => boolean;
 }
 
 export interface IReadOnlyContentContainerProps
@@ -669,6 +670,7 @@ class ContentContainer extends React.Component<
             onCancel: this.onCancelCreateObjectDialog,
             onCreate: this.onCreateObject,
             schema,
+            isEmbeddedType: this.props.isEmbeddedType,
           },
         });
       }

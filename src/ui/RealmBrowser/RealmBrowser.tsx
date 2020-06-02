@@ -64,6 +64,7 @@ export interface IRealmBrowserProps {
   realm?: Realm;
   toggleAddClass: () => void;
   toggleAddClassProperty: () => void;
+  isEmbeddedType: (className: string) => boolean;
 }
 
 export const RealmBrowser = ({
@@ -97,6 +98,7 @@ export const RealmBrowser = ({
   realm,
   toggleAddClass,
   toggleAddClassProperty,
+  isEmbeddedType,
 }: IRealmBrowserProps) => {
   return (
     <div className="RealmBrowser">
@@ -135,6 +137,7 @@ export const RealmBrowser = ({
             readOnly={editMode === EditMode.Disabled}
             realm={realm}
             ref={contentRef}
+            isEmbeddedType={isEmbeddedType}
           />
         ) : (
           // TODO: Use the loading overlay until Realm has fully loaded

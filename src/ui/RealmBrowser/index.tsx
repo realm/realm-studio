@@ -157,6 +157,7 @@ class RealmBrowserContainer
         realm={this.realm}
         toggleAddClass={this.toggleAddClass}
         toggleAddClassProperty={this.toggleAddClassProperty}
+        isEmbeddedType={this.isEmbeddedType}
       />
     );
   }
@@ -402,11 +403,14 @@ class RealmBrowserContainer
     this.performImport();
   };
 
-  private isCreateAllowed = (focus: Focus): boolean => {
+  private isEmbeddedType = (className: string): boolean => {
     const { classes } = this.state;
+    return classes.find(c => c.name === className)?.embedded ?? false;
+  };
 
+  private isCreateAllowed = (focus?: Focus): boolean => {
     if (focus && focus.kind === 'class') {
-      return !classes.find(c => c.name === focus.className)?.embedded;
+      return !this.isEmbeddedType(focus.className);
     } else if (focus && focus.kind === 'list') {
       // TODO: Warning, not entirely sure about this one!
       return !focus.property.isEmbedded;

@@ -32,6 +32,7 @@ interface IPropertyRowProps {
   property: Realm.ObjectSchemaProperty;
   propertyName: string;
   value: any;
+  isEmbeddedType: (className: string) => boolean;
 }
 
 export const PropertyRow = ({
@@ -42,6 +43,7 @@ export const PropertyRow = ({
   property,
   propertyName,
   value,
+  isEmbeddedType,
 }: IPropertyRowProps) => (
   <FormGroup className="CreateObjectDialog__PropertyRow">
     <Label
@@ -61,6 +63,7 @@ export const PropertyRow = ({
       onChange={onValueChange}
       property={property}
       value={value}
+      isEmbeddedType={isEmbeddedType}
     />
   </FormGroup>
 );
