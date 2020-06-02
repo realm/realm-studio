@@ -95,33 +95,6 @@ export const getDefaultMenuTemplate = (
         { role: 'toggleDevTools', visible: showInternalFeatures },
         { type: 'separator', visible: showInternalFeatures },
         {
-          label: 'Show partial Realms',
-          type: 'checkbox',
-          checked: store.shouldShowPartialRealms(),
-          click: () => {
-            store.toggleShowPartialRealms();
-            updateMenu();
-          },
-        },
-        {
-          label: 'Show system Realms',
-          type: 'checkbox',
-          checked: store.shouldShowSystemRealms(),
-          click: () => {
-            store.toggleShowSystemRealms();
-            updateMenu();
-          },
-        },
-        {
-          label: 'Show system users',
-          type: 'checkbox',
-          checked: store.shouldShowSystemUsers(),
-          click: () => {
-            store.toggleShowSystemUsers();
-            updateMenu();
-          },
-        },
-        {
           label: 'Show system classes and properties',
           type: 'checkbox',
           checked: store.shouldShowSystemClasses(),
