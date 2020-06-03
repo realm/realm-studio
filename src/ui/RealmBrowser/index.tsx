@@ -392,10 +392,15 @@ class RealmBrowserContainer
         throw new Error('Realm was opened as read-only');
       };
     }
-    const firstSchemaName = this.getFirstSchemaName();
+
     this.setState({
       classes: this.realm.schema,
     });
+
+    const firstSchemaName = this.realm.schema.find(
+      c => c.name.indexOf('__') !== 0 && !c.embedded,
+    )?.name;
+
     if (firstSchemaName) {
       this.onClassFocussed(firstSchemaName);
     }
@@ -412,16 +417,11 @@ class RealmBrowserContainer
     if (focus && focus.kind === 'class') {
       return !this.isEmbeddedType(focus.className);
     } else if (focus && focus.kind === 'list') {
-      // TODO: Warning, not entirely sure about this one!
       return !focus.property.isEmbedded;
     }
 
     return false;
   };
-
-  private getFirstSchemaName = () =>
-    this.realm?.schema.find(c => c.name.indexOf('__') !== 0 && !c.embedded)
-      ?.name;
 
   private onBeginTransaction = () => {
     if (this.realm && !this.realm.isInTransaction) {
@@ -729,13 +729,9 @@ class RealmBrowserContainer
     return Object.keys(objectSchema.properties).map(propertyName => {
       const property = objectSchema.properties[propertyName];
       if (typeof property === 'object') {
-        let isEmbedded = false;
-        if (property.objectType) {
-          const propertyObjectSchema = this.realm?.schema.find(schema => {
-            return schema.name === property.objectType;
-          });
-          isEmbedded = propertyObjectSchema?.embedded ?? false;
-        }
+        const isEmbedded =
+          !!property.objectType && this.isEmbeddedType(property.objectType);
+
         return {
           name: propertyName,
           readOnly: false,
