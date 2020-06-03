@@ -102,6 +102,7 @@ export type ISelectObjectDialog =
 
 export interface IBaseContentContainerProps {
   dataVersion?: number;
+  allowCreate: boolean;
   editMode: EditMode;
   focus: Focus;
   highlightMode: HighlightMode;
@@ -116,6 +117,7 @@ export interface IBaseContentContainerProps {
   onListFocussed?: ListFocussedHandler;
   progress?: ILoadingProgress;
   readOnly: boolean;
+  isEmbeddedType: (className: string) => boolean;
 }
 
 export interface IReadOnlyContentContainerProps
@@ -314,6 +316,7 @@ class ContentContainer extends React.Component<
         ...common,
         editMode: EditMode.Disabled,
         readOnly: true,
+        allowCreate: this.props.allowCreate,
       };
     } else {
       const { dataVersion = 0, dataVersionAtBeginning = 0 } = this.props;
@@ -322,6 +325,7 @@ class ContentContainer extends React.Component<
         changeCount: dataVersion - dataVersionAtBeginning,
         createObjectDialog: this.state.createObjectDialog,
         deleteObjectsDialog: this.state.deleteObjectsDialog,
+        allowCreate: this.props.allowCreate,
         editMode: this.props.editMode,
         getClassFocus: this.props.getClassFocus,
         inTransaction: this.props.realm.isInTransaction,
@@ -484,7 +488,8 @@ class ContentContainer extends React.Component<
         property &&
         property.type === 'object' &&
         property.name &&
-        property.objectType
+        property.objectType &&
+        !property.isEmbedded
       ) {
         this.onShowSelectObjectDialog({
           action: {
@@ -494,6 +499,7 @@ class ContentContainer extends React.Component<
           },
           className: property.objectType,
           isOptional: property.optional,
+          isEmbeddedType: this.props.isEmbeddedType,
         });
       }
     }
@@ -531,7 +537,7 @@ class ContentContainer extends React.Component<
     params,
   ) => {
     e.preventDefault();
-    const { focus, readOnly } = this.props;
+    const { allowCreate, focus, readOnly } = this.props;
     const { Menu, MenuItem } = electron.remote;
 
     const contextMenu = new Menu();
@@ -539,7 +545,12 @@ class ContentContainer extends React.Component<
     if (params) {
       const { property, rowObject } = params;
       // If we clicked a property that refers to an object
-      if (!readOnly && property && property.type === 'object') {
+      if (
+        !readOnly &&
+        property &&
+        property.type === 'object' &&
+        property.isEmbedded !== true
+      ) {
         contextMenu.append(
           new MenuItem({
             label: 'Update reference',
@@ -553,6 +564,7 @@ class ContentContainer extends React.Component<
                   },
                   className: property.objectType,
                   isOptional: property.optional,
+                  isEmbeddedType: this.props.isEmbeddedType,
                 });
               }
             },
@@ -597,7 +609,8 @@ class ContentContainer extends React.Component<
       focus &&
       focus.kind === 'list' &&
       focus.property.objectType &&
-      !isPrimitive(focus.property.objectType)
+      !isPrimitive(focus.property.objectType) &&
+      !focus.property.isEmbedded
     ) {
       const className = getClassName(focus);
       contextMenu.append(
@@ -611,6 +624,7 @@ class ContentContainer extends React.Component<
                   list: focus.results,
                 },
                 className: focus.property.objectType,
+                isEmbeddedType: this.props.isEmbeddedType,
               });
             }
           },
@@ -619,7 +633,7 @@ class ContentContainer extends React.Component<
     }
 
     // If we right-clicking on the content we can always create a new object
-    if (!readOnly && focus) {
+    if (allowCreate && !readOnly && focus) {
       const className = getClassName(focus);
       contextMenu.append(
         new MenuItem({
@@ -661,6 +675,7 @@ class ContentContainer extends React.Component<
             onCancel: this.onCancelCreateObjectDialog,
             onCreate: this.onCreateObject,
             schema,
+            isEmbeddedType: this.props.isEmbeddedType,
           },
         });
       }
@@ -853,10 +868,12 @@ class ContentContainer extends React.Component<
     className,
     isOptional = false,
     action,
+    isEmbeddedType,
   }: {
     className: string;
     isOptional?: boolean;
     action: SelectObjectAction;
+    isEmbeddedType: (className: string) => boolean;
   }) {
     if (!this.props.readOnly) {
       const focus: IClassFocus = this.props.getClassFocus(className);
@@ -871,6 +888,7 @@ class ContentContainer extends React.Component<
           onCancel: this.onCancelSelectObjectDialog,
           onSelect: this.onObjectSelect,
           propertyName: action.propertyName,
+          isEmbeddedType,
         };
         this.setState({ selectObjectDialog });
       } else {
@@ -883,6 +901,7 @@ class ContentContainer extends React.Component<
           multiple: true,
           onCancel: this.onCancelSelectObjectDialog,
           onSelect: this.onObjectSelect,
+          isEmbeddedType,
         };
         this.setState({ selectObjectDialog });
       }

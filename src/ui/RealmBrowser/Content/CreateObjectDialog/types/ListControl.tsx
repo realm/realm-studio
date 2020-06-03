@@ -28,7 +28,12 @@ import { ITypeControlProps, TypeControl } from './TypeControl';
 interface IItemProps
   extends Pick<
     ITypeControlProps,
-    'generateInitialValue' | 'getClassFocus' | 'onChange' | 'value' | 'property'
+    | 'generateInitialValue'
+    | 'getClassFocus'
+    | 'onChange'
+    | 'value'
+    | 'property'
+    | 'isEmbeddedType'
   > {
   onDelete: () => void;
 }
@@ -40,6 +45,7 @@ const Item = ({
   onChange,
   onDelete,
   value,
+  isEmbeddedType,
 }: IItemProps) => (
   <section className="CreateObjectDialog__ListControl__Item">
     <TypeControl
@@ -48,6 +54,7 @@ const Item = ({
       onChange={onChange}
       property={property}
       value={value}
+      isEmbeddedType={isEmbeddedType}
     >
       <InputGroupAddon addonType="append">
         <Button onClick={onDelete} size="sm">
@@ -63,7 +70,11 @@ const Item = ({
 interface IListProps
   extends Pick<
     ITypeControlProps,
-    'generateInitialValue' | 'getClassFocus' | 'onChange' | 'value'
+    | 'generateInitialValue'
+    | 'getClassFocus'
+    | 'onChange'
+    | 'value'
+    | 'isEmbeddedType'
   > {
   itemProperty: Realm.ObjectSchemaProperty;
 }
@@ -74,6 +85,7 @@ const List = ({
   itemProperty,
   onChange,
   value,
+  isEmbeddedType,
 }: IListProps) => (
   <section className="CreateObjectDialog__ListControl__Items">
     {Array.isArray(value) ? (
@@ -94,6 +106,7 @@ const List = ({
           }}
           property={itemProperty}
           value={value[index]}
+          isEmbeddedType={isEmbeddedType}
         />
       ))
     ) : (
@@ -129,6 +142,7 @@ export const ListControl = ({
   onChange,
   property,
   value,
+  isEmbeddedType,
 }: ITypeControlProps): React.ReactElement<ITypeControlProps> => {
   if (!property.objectType) {
     return <Alert color="danger">Expected an objectType</Alert>;
@@ -142,6 +156,7 @@ export const ListControl = ({
           itemProperty={itemProperty}
           onChange={onChange}
           value={value}
+          isEmbeddedType={isEmbeddedType}
         />
         <section className="CreateObjectDialog__ListControl__Buttons">
           <Button

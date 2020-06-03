@@ -58,6 +58,7 @@ import { TopBar } from './TopBar';
 interface IBaseContentProps {
   contentRef: (element: HTMLElement | null) => void;
   dataVersion?: number;
+  allowCreate: boolean;
   editMode: EditMode;
   error?: Error;
   filteredSortedResults: Realm.Collection<any>;
@@ -146,6 +147,7 @@ export const Content = ({
         query={query}
         queryError={queryError}
         readOnly={props.readOnly}
+        allowCreate={props.allowCreate}
       />
 
       <div className="RealmBrowser__TableContainer">

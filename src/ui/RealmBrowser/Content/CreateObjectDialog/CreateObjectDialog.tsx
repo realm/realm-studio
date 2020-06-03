@@ -42,6 +42,7 @@ export interface IOpenCreateObjectDialogProps
   getClassFocus: (className: string) => IClassFocus;
   isOpen: true;
   schema: Realm.ObjectSchema;
+  isEmbeddedType: (className: string) => boolean;
 }
 
 export type ICreateObjectDialogProps =
@@ -76,6 +77,7 @@ export const CreateObjectDialog = ({
               }
               propertyName={propertyName}
               value={values[propertyName]}
+              isEmbeddedType={props.isEmbeddedType}
             />
           ))
         : null}

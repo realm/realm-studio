@@ -37,6 +37,7 @@ export interface IOpenSelectObjectDialogContainerProps {
   isOptional: boolean;
   multiple: boolean;
   onCancel: () => void;
+  isEmbeddedType: (className: string) => boolean;
 }
 
 export interface IOpenSelectSingleObjectDialogContainerProps
@@ -91,6 +92,7 @@ export class SelectObjectDialogContainer extends React.Component<
         contentRef: this.contentRef,
         selection: this.state.selection,
         multiple: this.props.multiple,
+        isEmbeddedType: this.props.isEmbeddedType,
       };
     } else {
       return {

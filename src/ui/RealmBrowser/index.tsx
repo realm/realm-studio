@@ -49,6 +49,7 @@ export interface IPropertyWithName extends Realm.ObjectSchemaProperty {
   name: string | null;
   readOnly: boolean;
   isPrimaryKey: boolean;
+  isEmbedded?: boolean;
 }
 
 export type EditModeChangeHandler = (editMode: EditMode) => void;
@@ -70,6 +71,7 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   // A number that we can use to make components update on changes to data
   dataVersion: number;
   dataVersionAtBeginning?: number;
+  allowCreate: boolean;
   editMode: EditMode;
   focus: Focus | null;
   isAddClassOpen: boolean;
@@ -88,6 +90,7 @@ class RealmBrowserContainer
   implements IMenuGenerator {
   public state: IRealmBrowserState = {
     dataVersion: 0,
+    allowCreate: false,
     editMode:
       (localStorage.getItem(EDIT_MODE_STORAGE_KEY) as EditMode) ||
       EditMode.InputBlur,
@@ -129,6 +132,7 @@ class RealmBrowserContainer
         contentRef={this.contentRef}
         dataVersion={this.state.dataVersion}
         dataVersionAtBeginning={this.state.dataVersionAtBeginning}
+        allowCreate={this.state.allowCreate}
         editMode={this.props.readOnly ? EditMode.Disabled : this.state.editMode}
         focus={this.state.focus}
         getClassFocus={this.getClassFocus}
@@ -153,6 +157,7 @@ class RealmBrowserContainer
         realm={this.realm}
         toggleAddClass={this.toggleAddClass}
         toggleAddClassProperty={this.toggleAddClassProperty}
+        isEmbeddedType={this.isEmbeddedType}
       />
     );
   }
@@ -387,16 +392,35 @@ class RealmBrowserContainer
         throw new Error('Realm was opened as read-only');
       };
     }
-    const firstSchemaName =
-      this.realm.schema.length > 0 ? this.realm.schema[0].name : undefined;
+
     this.setState({
       classes: this.realm.schema,
     });
+
+    const firstSchemaName = this.realm.schema.find(
+      c => c.name.indexOf('__') !== 0 && !c.embedded,
+    )?.name;
+
     if (firstSchemaName) {
       this.onClassFocussed(firstSchemaName);
     }
     // Start importing data if needed
     this.performImport();
+  };
+
+  private isEmbeddedType = (className: string): boolean => {
+    const { classes } = this.state;
+    return classes.find(c => c.name === className)?.embedded ?? false;
+  };
+
+  private isCreateAllowed = (focus?: Focus): boolean => {
+    if (focus && focus.kind === 'class') {
+      return !this.isEmbeddedType(focus.className);
+    } else if (focus && focus.kind === 'list') {
+      return !focus.property.isEmbedded;
+    }
+
+    return false;
   };
 
   private onBeginTransaction = () => {
@@ -519,7 +543,8 @@ class RealmBrowserContainer
   private changeFocusIfAllowed(focus: Focus, highligtedObject?: Realm.Object) {
     const canChangeFocus = this.canChangeFocus();
     if (canChangeFocus) {
-      this.setState({ focus }, () => {
+      const allowCreate = this.isCreateAllowed(focus);
+      this.setState({ focus, allowCreate }, () => {
         if (highligtedObject && this.contentInstance) {
           this.contentInstance.highlightObject(highligtedObject);
         }
@@ -704,9 +729,13 @@ class RealmBrowserContainer
     return Object.keys(objectSchema.properties).map(propertyName => {
       const property = objectSchema.properties[propertyName];
       if (typeof property === 'object') {
+        const isEmbedded =
+          !!property.objectType && this.isEmbeddedType(property.objectType);
+
         return {
           name: propertyName,
           readOnly: false,
+          isEmbedded,
           isPrimaryKey: objectSchema.primaryKey === propertyName,
           ...property,
         };
