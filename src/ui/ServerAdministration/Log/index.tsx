@@ -67,7 +67,6 @@ class LogContainer extends React.Component<
   public render() {
     return (
       <Log
-        isLevelSelectorOpen={this.state.isLevelSelectorOpen}
         cellMeasurerCache={this.cellMeasurerCache}
         onLevelChanged={this.onLevelChanged}
         toggleLevelSelector={this.toggleLevelSelector}

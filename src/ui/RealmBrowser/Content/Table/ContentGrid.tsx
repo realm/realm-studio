@@ -155,7 +155,6 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
       return (
         <Row
           isHighlighted={isRowHighlighted(highlight, rowProps.rowIndex)}
-          key={rowProps.key}
           isSorting={isSorting}
           onRowMouseDown={onRowMouseDown}
           {...rowProps}
@@ -171,7 +170,6 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
         <SortableRow
           disabled={!isSortable}
           index={rowProps.rowIndex}
-          key={rowProps.rowIndex}
           {...rowProps}
         />
       );
