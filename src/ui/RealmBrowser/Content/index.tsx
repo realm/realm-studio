@@ -609,7 +609,8 @@ class ContentContainer extends React.Component<
       focus &&
       focus.kind === 'list' &&
       focus.property.objectType &&
-      !isPrimitive(focus.property.objectType)
+      !isPrimitive(focus.property.objectType) &&
+      !focus.property.isEmbedded
     ) {
       const className = getClassName(focus);
       contextMenu.append(
