@@ -128,7 +128,7 @@ export const TypeControl = ({
       return (
         <DefaultControl
           property={property}
-          message="Creation of embedded objects are not supported yet"
+          message="Creation of embedded objects is not yet supported"
         />
       );
     }
