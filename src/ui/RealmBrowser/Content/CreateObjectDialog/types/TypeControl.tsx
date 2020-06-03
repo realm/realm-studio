@@ -140,6 +140,7 @@ export const TypeControl = ({
         onChange={onChange}
         property={property}
         value={value as object}
+        isEmbeddedType={isEmbeddedType}
       />
     );
   } else if (property.type === 'list') {

@@ -498,6 +498,7 @@ class ContentContainer extends React.Component<
           },
           className: property.objectType,
           isOptional: property.optional,
+          isEmbeddedType: this.props.isEmbeddedType,
         });
       }
     }
@@ -562,6 +563,7 @@ class ContentContainer extends React.Component<
                   },
                   className: property.objectType,
                   isOptional: property.optional,
+                  isEmbeddedType: this.props.isEmbeddedType,
                 });
               }
             },
@@ -620,6 +622,7 @@ class ContentContainer extends React.Component<
                   list: focus.results,
                 },
                 className: focus.property.objectType,
+                isEmbeddedType: this.props.isEmbeddedType,
               });
             }
           },
@@ -863,10 +866,12 @@ class ContentContainer extends React.Component<
     className,
     isOptional = false,
     action,
+    isEmbeddedType,
   }: {
     className: string;
     isOptional?: boolean;
     action: SelectObjectAction;
+    isEmbeddedType: (className: string) => boolean;
   }) {
     if (!this.props.readOnly) {
       const focus: IClassFocus = this.props.getClassFocus(className);
@@ -881,6 +886,7 @@ class ContentContainer extends React.Component<
           onCancel: this.onCancelSelectObjectDialog,
           onSelect: this.onObjectSelect,
           propertyName: action.propertyName,
+          isEmbeddedType,
         };
         this.setState({ selectObjectDialog });
       } else {
@@ -893,6 +899,7 @@ class ContentContainer extends React.Component<
           multiple: true,
           onCancel: this.onCancelSelectObjectDialog,
           onSelect: this.onObjectSelect,
+          isEmbeddedType,
         };
         this.setState({ selectObjectDialog });
       }
