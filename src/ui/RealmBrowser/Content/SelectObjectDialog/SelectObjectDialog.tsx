@@ -45,6 +45,7 @@ interface IOpenSelectObjectDialogProps extends IBaseSelectObjectDialogProps {
     collection: Realm.Collection<any>,
   ) => void;
   multiple: boolean;
+  isEmbeddedType: (className: string) => boolean;
 }
 
 export type ISelectObjectDialogProps =
@@ -69,6 +70,7 @@ export const SelectObjectDialog = ({
       {props.isOpen ? (
         <Content
           editMode={EditMode.Disabled}
+          allowCreate={false}
           highlightMode={
             props.multiple ? HighlightMode.Multiple : HighlightMode.Single
           }
@@ -76,6 +78,7 @@ export const SelectObjectDialog = ({
           onHighlightChange={props.onHighlightChange}
           readOnly={true}
           ref={props.contentRef}
+          isEmbeddedType={props.isEmbeddedType}
         />
       ) : null}
     </ModalBody>

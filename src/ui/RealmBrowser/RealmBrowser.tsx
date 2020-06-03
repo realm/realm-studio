@@ -39,6 +39,7 @@ export interface IRealmBrowserProps {
   createObjectSchema?: Realm.ObjectSchema;
   dataVersion: number;
   dataVersionAtBeginning?: number;
+  allowCreate: boolean;
   editMode: EditMode;
   focus: Focus | null;
   getClassFocus: (className: string) => IClassFocus;
@@ -63,6 +64,7 @@ export interface IRealmBrowserProps {
   realm?: Realm;
   toggleAddClass: () => void;
   toggleAddClassProperty: () => void;
+  isEmbeddedType: (className: string) => boolean;
 }
 
 export const RealmBrowser = ({
@@ -71,6 +73,7 @@ export const RealmBrowser = ({
   contentRef,
   dataVersion,
   dataVersionAtBeginning,
+  allowCreate,
   editMode,
   focus,
   getClassFocus,
@@ -95,6 +98,7 @@ export const RealmBrowser = ({
   realm,
   toggleAddClass,
   toggleAddClassProperty,
+  isEmbeddedType,
 }: IRealmBrowserProps) => {
   return (
     <div className="RealmBrowser">
@@ -116,6 +120,7 @@ export const RealmBrowser = ({
           <Content
             dataVersion={dataVersion}
             dataVersionAtBeginning={dataVersionAtBeginning}
+            allowCreate={allowCreate}
             editMode={editMode}
             focus={focus}
             getClassFocus={getClassFocus}
@@ -132,6 +137,7 @@ export const RealmBrowser = ({
             readOnly={editMode === EditMode.Disabled}
             realm={realm}
             ref={contentRef}
+            isEmbeddedType={isEmbeddedType}
           />
         ) : (
           // TODO: Use the loading overlay until Realm has fully loaded

@@ -22,8 +22,11 @@ import Realm from 'realm';
 
 export interface IDefaultControlProps {
   property: Realm.ObjectSchemaProperty;
+  message?: string;
 }
 
-export const DefaultControl = ({ property }: IDefaultControlProps) => (
-  <Alert color="warning">Cannot select "{property.type}" yet</Alert>
+export const DefaultControl = ({ property, message }: IDefaultControlProps) => (
+  <Alert color="warning">
+    {message ?? `Cannot select "${property.type}" yet`}
+  </Alert>
 );

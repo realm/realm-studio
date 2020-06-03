@@ -32,6 +32,7 @@ interface ITopBarProps {
   query: string;
   queryError: Error | undefined;
   readOnly: boolean;
+  allowCreate: boolean;
 }
 
 export const TopBar = ({
@@ -42,6 +43,7 @@ export const TopBar = ({
   query,
   queryError,
   readOnly,
+  allowCreate,
 }: ITopBarProps) => {
   const className = getClassName(focus);
   return (
@@ -54,7 +56,7 @@ export const TopBar = ({
         queryError={queryError}
         placeholder="Enter a query to filter the list"
       />
-      {!readOnly ? (
+      {allowCreate && !readOnly ? (
         <Button
           size="sm"
           color="secondary"

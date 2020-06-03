@@ -25,8 +25,8 @@ import { Focus } from '../focus';
 
 import { LeftSidebar } from './LeftSidebar';
 
-function isSystemClassName(className: string) {
-  return className.indexOf('__') === 0;
+function isSystemClassName(cls?: Realm.ObjectSchema) {
+  return cls && (cls.name.indexOf('__') === 0 || cls.embedded === true);
 }
 
 interface ILeftSidebarContainerProps {
@@ -94,7 +94,7 @@ class LeftSidebarContainer extends React.Component<
 
   private filterClasses(classes: Realm.ObjectSchema[]) {
     if (this.state.hideSystemClasses) {
-      return classes.filter(c => !isSystemClassName(c.name));
+      return classes.filter(c => !isSystemClassName(c));
     } else {
       return classes;
     }
@@ -105,9 +105,7 @@ class LeftSidebarContainer extends React.Component<
       const shouldSelectAnotherClass = this.isFocussedOnSystemClass();
       if (showSystemClasses === false && shouldSelectAnotherClass) {
         // Focus on another class
-        const firstClass = this.props.classes.find(
-          c => !isSystemClassName(c.name),
-        );
+        const firstClass = this.props.classes.find(c => !isSystemClassName(c));
         if (firstClass) {
           this.props.onClassFocussed(firstClass.name);
         }
@@ -116,11 +114,14 @@ class LeftSidebarContainer extends React.Component<
   };
 
   private isFocussedOnSystemClass() {
-    const { focus } = this.props;
-    if (focus && focus.kind === 'class') {
-      return isSystemClassName(focus.className);
-    } else if (focus && focus.kind === 'list') {
-      return isSystemClassName(focus.parent.objectSchema().name);
+    const { focus, classes } = this.props;
+    if (focus && (focus.kind === 'class' || focus.kind === 'list')) {
+      const name =
+        focus.kind === 'class'
+          ? focus.className
+          : focus.parent.objectSchema().name;
+      const targetClass = classes.find(cls => cls.name === name);
+      return isSystemClassName(targetClass);
     } else {
       return false;
     }

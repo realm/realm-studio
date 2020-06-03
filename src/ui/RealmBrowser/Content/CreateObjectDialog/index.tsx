@@ -46,6 +46,7 @@ interface IOpenCreateObjectDialogContainerProps {
   onCancel: () => void;
   onCreate: CreateObjectHandler;
   schema: Realm.ObjectSchema;
+  isEmbeddedType: (className: string) => boolean;
 }
 
 export interface ICreateObjectDialogContainerState {
@@ -161,6 +162,7 @@ class CreateObjectDialogContainer extends React.PureComponent<
       onCreate: this.onCreate,
       onValueChange: this.onValueChange,
       values: this.state.values,
+      isEmbeddedType: this.isEmbeddedType,
     };
     if (this.props.isOpen) {
       return {
@@ -195,6 +197,9 @@ class CreateObjectDialogContainer extends React.PureComponent<
       throw new Error('Expected a schema');
     }
   };
+
+  protected isEmbeddedType = (className: string) =>
+    this.props.isOpen && this.props.isEmbeddedType(className);
 
   protected onValueChange = (propertyName: string, value: any) => {
     this.setState({

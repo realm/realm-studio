@@ -31,12 +31,14 @@ export interface IOpenSelectObjectDialog {
   isOptional: boolean;
   onCancel: () => void;
   onSelect: (object: any) => void;
+  isEmbeddedType: (className: string) => boolean;
 }
 
 export type ISelectObjectDialog = IOpenSelectObjectDialog | { isOpen: false };
 
 export interface IObjectControlContainerProps extends IBaseControlProps {
   getClassFocus: (className: string) => IClassFocus;
+  isEmbeddedType: (className: string) => boolean;
 }
 
 export interface IObjectControlContainerState {
@@ -84,6 +86,7 @@ class ObjectControlContainer extends React.Component<
           isOptional: this.props.property.optional || false,
           onCancel: this.onCancelSelectObjectDialog,
           onSelect: this.updateObjectReference,
+          isEmbeddedType: this.props.isEmbeddedType,
         },
       });
     }

@@ -43,6 +43,7 @@ export interface IBaseControlProps<ValueType = any> {
 export interface ITypeControlProps extends IBaseControlProps {
   generateInitialValue: (property: Realm.ObjectSchemaProperty) => any;
   getClassFocus: (className: string) => IClassFocus;
+  isEmbeddedType: (className: string) => boolean;
 }
 
 export const TypeControl = ({
@@ -52,6 +53,7 @@ export const TypeControl = ({
   onChange,
   property,
   value,
+  isEmbeddedType,
 }: ITypeControlProps) => {
   if (property.type === 'object id') {
     return (
@@ -121,6 +123,16 @@ export const TypeControl = ({
       />
     );
   } else if (property.type === 'object') {
+    // TODO: implement
+    if (isEmbeddedType(property.objectType!)) {
+      return (
+        <DefaultControl
+          property={property}
+          message="Creation of embedded objects is not yet supported"
+        />
+      );
+    }
+
     return (
       <ObjectControl
         children={children}
@@ -128,6 +140,7 @@ export const TypeControl = ({
         onChange={onChange}
         property={property}
         value={value as object}
+        isEmbeddedType={isEmbeddedType}
       />
     );
   } else if (property.type === 'list') {
@@ -139,6 +152,7 @@ export const TypeControl = ({
         onChange={onChange}
         property={property}
         value={value as any[]}
+        isEmbeddedType={isEmbeddedType}
       />
     );
   } else {
