@@ -488,7 +488,8 @@ class ContentContainer extends React.Component<
         property &&
         property.type === 'object' &&
         property.name &&
-        property.objectType
+        property.objectType &&
+        !property.isEmbedded
       ) {
         this.onShowSelectObjectDialog({
           action: {
