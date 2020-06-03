@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release 10.0.0 (2020-06-03)
+
+[Changes since v10.0.0-mongodb.0](https://github.com/realm/realm-studio/compare/v10.0.0-mongodb.0...v10.0.0)
+
+### Breaking Changes
+
+- All functionality related to the Realm Object Server (ROS), such as connecting to a server, opening synchronized Realms from it and managing users and their permissions has been removed. ([#1282](https://github.com/realm/realm-studio/pull/1282))
+- All functionality related to the "legacy" Realm Cloud (available via https://cloud.realm.io/), such as authenticating and connecting to a server instance has been removed. ([#1282](https://github.com/realm/realm-studio/pull/1282))
+
+### Enhancements
+
+- Added support for creating & generating `ObjectId` when creating objects. ([#1291](https://github.com/realm/realm-studio/pull/1291))
+- Added support for editing existing `ObjectId` values. ([#1290](https://github.com/realm/realm-studio/pull/1290))
+- Primary keys in Class/Schema creation now defaults to an `ObjectId` property named `_id`.
+- Added support for creating `Decimal128` when creating objects. ([#1292](https://github.com/realm/realm-studio/pull/1292))
+- Added support for editing existing `Decimal128` values. ([#1292](https://github.com/realm/realm-studio/pull/1292))
+
+### Fixed
+
+- None
+
+### Internals
+
+- None
+
+
 ## Release 3.10.0 (2020-03-06)
 
 [Changes since v3.9.0](https://github.com/realm/realm-studio/compare/v3.9.0...v3.10.0)
