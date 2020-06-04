@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ## Release 10.0.0-beta.1 (2020-06-04)
 
 This is the first release for MongoDB Realm to be used with the v10.0.0-beta versions of the Realm SDKs.
+
 NOTE: This version do not support Realm Cloud and Realm Object Server. Realm Studio 3.11 is the latest
 release that supports that.
 
@@ -26,6 +27,6 @@ release that supports that.
 - None
 
 ### Compatibility
-- File format: Generates Realms with format v10 (reads and upgrades previous file format).
+- File format: Generates Realms with file format v11 (used by SDK v10.x.y versions). Earlier file formats can be read and automatically upgraded to v11. But you will not be able to edit older file formats. 
 
 The notes for previous releases can be found on GitHub: https://github.com/realm/realm-studio/releases
