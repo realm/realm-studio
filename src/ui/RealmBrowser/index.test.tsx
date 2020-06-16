@@ -79,8 +79,13 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
         console.error(line);
       }
       // When a test fails and the app is running, take a screenshot
-      const imageBuffer = await app.browserWindow.capturePage();
-      fs.writeFileSync(`./failure-${failureCount}.png`, imageBuffer);
+      const image = await app.browserWindow.capturePage();
+      if (image instanceof Buffer) {
+        // It seems Electron 8.1.1 is actually returning a buffer instead of a NativeImage as the types suggests
+        fs.writeFileSync(`./failure-${failureCount}.png`, image);
+      } else {
+        fs.writeFileSync(`./failure-${failureCount}.png`, image.toPNG());
+      }
       failureCount++;
     }
   });

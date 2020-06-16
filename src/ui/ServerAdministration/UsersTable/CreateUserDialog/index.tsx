@@ -46,12 +46,7 @@ class CreateUserDialogContainer extends React.Component<
 
   public render() {
     return (
-      <CreateUserDialog
-        isOpen={this.props.isOpen}
-        onToggle={this.onToggle}
-        {...this.state}
-        {...this}
-      />
+      <CreateUserDialog isOpen={this.props.isOpen} {...this.state} {...this} />
     );
   }
 
@@ -89,7 +84,7 @@ class CreateUserDialogContainer extends React.Component<
     });
   };
 
-  protected onToggle = () => {
+  public onToggle = () => {
     this.setState({ ...initialState });
     this.props.onToggle();
   };
