@@ -29,7 +29,7 @@ export class CSVDataImporter extends DataImporter {
       const schema = this.importSchema[index];
 
       const rawCSV = fs.readFileSync(file, 'utf8');
-      const data = papaparse.parse(rawCSV, {
+      const data = papaparse.parse<any>(rawCSV, {
         header: true, // to avoid parsing first line as data
         skipEmptyLines: true,
       }).data;
