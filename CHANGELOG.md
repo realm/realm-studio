@@ -10,7 +10,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Enhancements
 
-- None
+- Updated the link to "Download a demo Realm file" on the greetings window, to link to a Realm file with the v11 file-format.
 
 ### Fixed
 
