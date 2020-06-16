@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release 10.0.0-beta.2 (2020-06-16)
+
+[Changes since v10.0.0-beta.1](https://github.com/realm/realm-studio/compare/v10.0.0-beta.1...v10.0.0-beta.2)
+
+### Enhancements
+
+- None
+
+### Fixed
+
+- None
+
+### Internals
+
+- None
+
+
 ## Release 10.0.0-beta.1 (2020-06-04)
 
 This is the first release for MongoDB Realm to be used with the v10.0.0-beta versions of the Realm SDKs.
