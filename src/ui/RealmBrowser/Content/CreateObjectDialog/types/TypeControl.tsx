@@ -127,8 +127,9 @@ export const TypeControl = ({
     if (isEmbeddedType(property.objectType!)) {
       return (
         <DefaultControl
+          type="info"
           property={property}
-          message="Creation of embedded objects is not yet supported"
+          message="Add an embedded object from the grid view, once created."
         />
       );
     }

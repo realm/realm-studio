@@ -24,6 +24,7 @@ import Realm from 'realm';
 import { isPrimitive } from '../../../primitives';
 
 import { ITypeControlProps, TypeControl } from './TypeControl';
+import { DefaultControl } from './DefaultControl'
 
 interface IItemProps
   extends Pick<
@@ -146,8 +147,15 @@ export const ListControl = ({
 }: ITypeControlProps): React.ReactElement<ITypeControlProps> => {
   if (!property.objectType) {
     return <Alert color="danger">Expected an objectType</Alert>;
+  } else if (isEmbeddedType(property.objectType)) {
+    return (<DefaultControl
+      type="info"
+      property={property}
+      message="Add embedded objects from the grid view, once created."
+    />);
   } else {
     const itemProperty = getItemProperty(property);
+
     return (
       <section className="CreateObjectDialog__ListControl">
         <List

@@ -20,13 +20,16 @@ import React from 'react';
 import { Alert } from 'reactstrap';
 import Realm from 'realm';
 
+export type AlertColorType = "info" | "warning" | "danger"
+
 export interface IDefaultControlProps {
   property: Realm.ObjectSchemaProperty;
   message?: string;
+  type?: AlertColorType;
 }
 
-export const DefaultControl = ({ property, message }: IDefaultControlProps) => (
-  <Alert color="warning">
+export const DefaultControl = ({ property, message, type }: IDefaultControlProps) => (
+  <Alert color={type || "warning"}>
     {message ?? `Cannot select "${property.type}" yet`}
   </Alert>
 );
