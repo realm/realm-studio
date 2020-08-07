@@ -91,21 +91,39 @@
     }
 
     &__AddColumnControl {
-      align-items: center;
-      display: flex;
-      height: $realm-browser-header-height;
-      justify-content: flex-start;
-      padding: $spacer;
       position: absolute;
-      right: 0;
       top: 0;
-      transition: opacity $fast, margin-left $fast;
+      right: $spacer / 2;
       z-index: 1;
 
-      &--hidden {
-        margin-left: $spacer;
+      display: flex;
+      align-items: center;
+      height: $realm-browser-header-height;
+
+      &__Button {
+        align-items: baseline;
+        display: flex;
+        white-space: nowrap;
+      }
+
+      &__Button:hover &__Text {
+        opacity: 1;
+        max-width: 1000px;
+        transition: opacity $slow linear, max-width $extraSlow ease-in-out;
+      }
+
+      &__Text {
+        overflow: hidden;
         opacity: 0;
-        pointer-events: none;
+        max-width: 0;
+        transition: opacity $slow linear, max-width $slow ease;
+
+        // "hack" to include "padding" as content:
+        &::before {
+          content: '';
+          display: inline-flex;
+          width: 10px;
+        }
       }
     }
 
