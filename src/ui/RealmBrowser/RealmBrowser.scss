@@ -196,12 +196,16 @@
     }
 
     &__HeaderType {
-      color: $primary;
+      color: $elephant;
       font-size: $font-size-sm;
       font-weight: normal;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+
+      &--sortable {
+        color: $primary;
+      }
     }
 
     &__HeaderSort {
