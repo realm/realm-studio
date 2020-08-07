@@ -46,6 +46,7 @@ export const getPropertyDisplayed = (property: IPropertyWithName) => {
     getPropertyType(property),
     property.optional ? '?' : '',
     property.type === 'list' ? '[]' : '',
+    property.isEmbedded ? ' (Embedded)' : '',
     property.isPrimaryKey ? ' (Primary Key)' : '',
   ].join('');
 };
