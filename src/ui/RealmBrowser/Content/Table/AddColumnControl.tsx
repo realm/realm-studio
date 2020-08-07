@@ -23,11 +23,17 @@ interface IAddColumnControlProps {
   onClick: () => void;
 }
 
-export const AddColumnControl = ({ onClick, }: IAddColumnControlProps) => (
+export const AddColumnControl = ({ onClick }: IAddColumnControlProps) => (
   <div className="RealmBrowser__Table__AddColumnControl">
-    <Button className="RealmBrowser__Table__AddColumnControl__Button" onClick={onClick} size="sm">
+    <Button
+      className="RealmBrowser__Table__AddColumnControl__Button"
+      onClick={onClick}
+      size="sm"
+    >
       <i className="fa fa-plus" />
-      <span className="RealmBrowser__Table__AddColumnControl__Text">Add property</span>
+      <span className="RealmBrowser__Table__AddColumnControl__Text">
+        Add property
+      </span>
     </Button>
   </div>
 );

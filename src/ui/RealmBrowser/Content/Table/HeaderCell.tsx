@@ -132,9 +132,11 @@ export class HeaderCell extends React.Component<
           >
             {property.name}
           </div>
-          <div className={classNames('RealmBrowser__Table__HeaderType', {
-            'RealmBrowser__Table__HeaderType--sortable': isSortable,
-          })}>
+          <div
+            className={classNames('RealmBrowser__Table__HeaderType', {
+              'RealmBrowser__Table__HeaderType--sortable': isSortable,
+            })}
+          >
             {getPropertyDisplayed(property)}
           </div>
         </div>

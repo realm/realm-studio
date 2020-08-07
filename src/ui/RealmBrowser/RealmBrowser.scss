@@ -91,14 +91,13 @@
     }
 
     &__AddColumnControl {
-      position: absolute;
-      top: 0;
-      right: $spacer / 2;
-      z-index: 1;
-
-      display: flex;
       align-items: center;
+      display: flex;
       height: $realm-browser-header-height;
+      position: absolute;
+      right: $spacer / 2;
+      top: 0;
+      z-index: 1;
 
       &__Button {
         align-items: baseline;
@@ -106,21 +105,21 @@
         white-space: nowrap;
       }
 
-      &__Button:hover &__Text {
-        opacity: 1;
+      &__Button:hover &__Text { // sass-lint:disable-line force-pseudo-nesting
         max-width: 1000px;
-        transition: opacity $slow linear, max-width $extraSlow ease-in-out;
+        opacity: 1;
+        transition: opacity $slow linear, max-width $extra-slow ease-in-out;
       }
 
       &__Text {
-        overflow: hidden;
-        opacity: 0;
         max-width: 0;
+        opacity: 0;
+        overflow: hidden;
         transition: opacity $slow linear, max-width $slow ease;
 
         // "hack" to include "padding" as content:
         &::before {
-          content: '';
+          content: "";
           display: inline-flex;
           width: 10px;
         }
