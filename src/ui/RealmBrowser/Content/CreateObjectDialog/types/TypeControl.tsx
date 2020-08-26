@@ -55,7 +55,7 @@ export const TypeControl = ({
   value,
   isEmbeddedType,
 }: ITypeControlProps) => {
-  if (property.type === 'object id') {
+  if (property.type === 'objectId') {
     return (
       <ObjectIdControl
         children={children}
@@ -95,7 +95,7 @@ export const TypeControl = ({
         onChange={onChange}
       />
     );
-  } else if (property.type === 'decimal') {
+  } else if (property.type === 'decimal128') {
     return (
       <Decimal128Control
         children={children}

@@ -116,13 +116,13 @@ export const parseDate = (
 export const parse = (value: string, property: Realm.ObjectSchemaProperty) => {
   // For every type
   switch (property.type) {
-    case 'object id':
+    case 'objectId':
       return parseObjectId(value, property);
     case 'int':
     case 'float':
     case 'double':
       return parseNumber(value, property);
-    case 'decimal':
+    case 'decimal128':
       return parseDecimal128(value, property);
     case 'bool':
       return parseBoolean(value, property);

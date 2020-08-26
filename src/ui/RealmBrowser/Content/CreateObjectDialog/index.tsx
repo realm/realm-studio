@@ -89,7 +89,7 @@ class CreateObjectDialogContainer extends React.PureComponent<
   ) {
     if (propertyName === primaryKey) {
       // Special handling for primary keys. Opting out of optional handling & return a random value.
-      if (property.type === 'object id') {
+      if (property.type === 'objectId') {
         return new ObjectId();
       } else if (propertyName === 'uuid' && property.type === 'string') {
         return uuid();
@@ -101,7 +101,7 @@ class CreateObjectDialogContainer extends React.PureComponent<
       return [];
     } else if (property.optional) {
       return null;
-    } else if (property.type === 'object id') {
+    } else if (property.type === 'objectId') {
       return new ObjectId();
     } else if (
       property.type === 'int' ||
@@ -109,7 +109,7 @@ class CreateObjectDialogContainer extends React.PureComponent<
       property.type === 'double'
     ) {
       return 0;
-    } else if (property.type === 'decimal') {
+    } else if (property.type === 'decimal128') {
       return Decimal128.fromString('0');
     } else if (property.type === 'string') {
       return '';

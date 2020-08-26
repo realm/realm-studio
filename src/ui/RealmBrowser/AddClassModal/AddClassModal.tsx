@@ -115,12 +115,12 @@ export const AddClassModal = ({
                       addon
                       type="radio"
                       name="primaryKeyType"
-                      value="object id"
-                      checked={primaryKeyType === 'object id'}
+                      value="objectId"
+                      checked={primaryKeyType === 'objectId'}
                       onChange={onPKTypeChange}
                       disabled={!primaryKey}
                     />{' '}
-                    object id
+                    objectId
                   </Label>
                 </InputGroupText>
                 <InputGroupText>
@@ -162,7 +162,7 @@ export const AddClassModal = ({
                 <CardText>
                   <small>
                     {
-                      'If this Realm is intended to be synced with MongoDB, ensure to keep the primary key name "_id", with the type "object id".'
+                      'If this Realm is intended to be synced with MongoDB, ensure to keep the primary key name "_id", with the type "objectId".'
                     }
                   </small>
                 </CardText>
