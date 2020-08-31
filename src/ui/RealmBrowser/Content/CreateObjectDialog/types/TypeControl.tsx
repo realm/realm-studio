@@ -27,7 +27,7 @@ import { DateControl } from './DateControl';
 import { Decimal128Control } from './Decimal128Control';
 import { DefaultControl } from './DefaultControl';
 import { ListControl } from './ListControl';
-import { NummericControl } from './NummericControl';
+import { NumericControl } from './NumericControl';
 import { ObjectControl } from './ObjectControl';
 import { ObjectIdControl } from './ObjectIdControl';
 import { StringControl } from './StringControl';
@@ -89,7 +89,7 @@ export const TypeControl = ({
     property.type === 'double'
   ) {
     return (
-      <NummericControl
+      <NumericControl
         children={children}
         property={property}
         value={value as number | null}
