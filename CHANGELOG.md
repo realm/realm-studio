@@ -11,10 +11,16 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Enhancements
 
 - JSON export now supports circular structures. ([#1315](https://github.com/realm/realm-studio/pull/1315))
+- UI: Add Property always visible ([#1321](https://github.com/realm/realm-studio/pull/1321))
+- UI: Non sortable grid headers now has different color ([#1321](https://github.com/realm/realm-studio/pull/1321))
+- UI: Grid headers for Embedded Objects marked with `(embedded)` ([#1321](https://github.com/realm/realm-studio/pull/1321))
+- Ebedded Objects can now be created, edited, viewed & deleted ([#1321](https://github.com/realm/realm-studio/pull/1321))
+- Lists of Embedded Objects now has same functionality as Linked Objects ([#1321](https://github.com/realm/realm-studio/pull/1321))
 
 ### Fixed
 
 - Re-established JSON export functionality after v10 update [#1312](https://github.com/realm/realm-studio/issues/1312)
+- Edit mode for primary keys has been disabled ([#1321](https://github.com/realm/realm-studio/pull/1321))
 
 ### Internals
 
