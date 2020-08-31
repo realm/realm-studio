@@ -48,7 +48,7 @@ export interface IClassFocus extends IFocus {
 
 interface IBaseListFocus extends IFocus {
   kind: 'list';
-  parent: Realm.Object;
+  parent: Realm.Object & { [key: string]: any };
   property: IPropertyWithName;
   results: Realm.List<any>;
 }

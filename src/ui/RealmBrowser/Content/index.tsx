@@ -886,11 +886,22 @@ class ContentContainer extends React.Component<
   };
 
   private onReorderingEnd: ReorderingEndHandler = ({ oldIndex, newIndex }) => {
-    if (this.props.focus.kind === 'list') {
-      const results = (this.props.focus.results as any) as Realm.List<any>;
+    const { focus } = this.props;
+    if (focus.kind === 'list') {
       this.write(() => {
-        const movedElements = results.splice(oldIndex, 1);
-        results.splice(newIndex, 0, movedElements[0]);
+        // For embedded objects, we have to work on detached objects, as we otherwise
+        // delete the moved object (not sure if this is best practice).
+        if (focus.isEmbedded && focus.property.name) {
+          const detached = focus.results.toJSON();
+
+          const removed = detached.splice(oldIndex, 1);
+          detached.splice(newIndex, 0, removed[0]);
+
+          focus.parent[focus.property.name] = detached;
+        } else {
+          const removed = focus.results.splice(oldIndex, 1);
+          focus.results.splice(newIndex, 0, removed[0]);
+        }
       });
     }
     this.setState({
