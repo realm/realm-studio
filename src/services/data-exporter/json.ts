@@ -21,29 +21,39 @@ import Realm from 'realm';
 
 import { IExportEngine } from '.';
 
-const INDENTATION_SPACES = 2
+const INDENTATION_SPACES = 2;
 
 type ResultMap = {
-  [key: string]: Realm.Results<Object>;
+  [key: string]: Realm.Results<Realm.Object>;
 };
 
 const serialize = (map: ResultMap) => {
   try {
     return JSON.stringify(map, null, INDENTATION_SPACES);
   } catch (err) {
-    if (err instanceof TypeError && err.message.startsWith('Converting circular structure to JSON')) {
-      return JSON.stringify(map, Realm.JsonSerializationReplacer, INDENTATION_SPACES);
+    if (
+      err instanceof TypeError &&
+      err.message.startsWith('Converting circular structure to JSON')
+    ) {
+      return JSON.stringify(
+        map,
+        Realm.JsonSerializationReplacer,
+        INDENTATION_SPACES,
+      );
     }
     throw err;
   }
-}
+};
 
 export class JSONExportEngine implements IExportEngine {
   public export(realm: Realm, destinationPath: string) {
-    const resultMap: ResultMap = realm.schema.reduce((map: ResultMap, objectSchema) => {
-      map[objectSchema.name] = realm.objects(objectSchema.name).snapshot();
-      return map;
-    }, {});
+    const resultMap: ResultMap = realm.schema.reduce(
+      (map: ResultMap, objectSchema) => {
+        map[objectSchema.name] = realm.objects(objectSchema.name).snapshot();
+        return map;
+      },
+      {},
+    );
 
     // Write the stringified data to a file
     fs.writeFileSync(destinationPath, serialize(resultMap));
