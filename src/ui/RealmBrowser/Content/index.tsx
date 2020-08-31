@@ -857,7 +857,7 @@ class ContentContainer extends React.Component<
       const offsetRelative = e.clientY - offset;
       const offsetIndex = Math.floor(offsetRelative / rowHeights.content);
       const hoveredIndex = rowIndex + offsetIndex;
-      // Compute the set of highlighted row indexes
+      // Compute the set of highlighted row indices
       const minIndex = Math.min(rowIndex, hoveredIndex);
       const maxIndex = Math.max(rowIndex, hoveredIndex);
       const rows = new Set<number>();
