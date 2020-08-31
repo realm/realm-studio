@@ -21,7 +21,11 @@ import Realm from 'realm';
 
 import { ILoadingProgress, LoadingOverlay } from '../reusable/LoadingOverlay';
 
-import { ClassFocussedHandler, ListFocussedHandler } from '.';
+import {
+  ClassFocussedHandler,
+  ListFocussedHandler,
+  IsEmbeddedTypeChecker,
+} from '.';
 import { AddClassModal } from './AddClassModal';
 import { AddPropertyModal } from './AddPropertyModal';
 import { Content, EditMode, HighlightMode } from './Content';
@@ -64,7 +68,7 @@ export interface IRealmBrowserProps {
   realm?: Realm;
   toggleAddClass: () => void;
   toggleAddClassProperty: () => void;
-  isEmbeddedType: (className: string) => boolean;
+  isEmbeddedType: IsEmbeddedTypeChecker;
 }
 
 export const RealmBrowser = ({

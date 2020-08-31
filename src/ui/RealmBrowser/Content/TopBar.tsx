@@ -22,11 +22,11 @@ import { Button } from 'reactstrap';
 import { QuerySearch } from '../../reusable/QuerySearch';
 import { Focus, getClassName } from '../focus';
 
-import { QueryChangeHandler } from '.';
+import { QueryChangeHandler, EmbeddedInfo } from '.';
 
 interface ITopBarProps {
   focus: Focus;
-  onNewObjectClick?: () => void;
+  onNewObjectClick?: (embeddedInfo?: EmbeddedInfo) => void;
   onQueryChange: QueryChangeHandler;
   onQueryHelp: () => void;
   query: string;
@@ -46,6 +46,14 @@ export const TopBar = ({
   allowCreate,
 }: ITopBarProps) => {
   const className = getClassName(focus);
+  let embeddedInfo: EmbeddedInfo | undefined;
+  if (focus.isEmbedded && focus.kind === 'list' && focus.property.name) {
+    embeddedInfo = {
+      parent: focus.parent,
+      key: focus.property.name,
+    };
+  }
+
   return (
     <div className="RealmBrowser__Topbar">
       <QuerySearch
@@ -61,7 +69,7 @@ export const TopBar = ({
           size="sm"
           color="secondary"
           className="RealmBrowser__Topbar__Button"
-          onClick={onNewObjectClick}
+          onClick={() => onNewObjectClick && onNewObjectClick(embeddedInfo)}
           title={`Create ${className}`}
         >
           Create {className}

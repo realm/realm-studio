@@ -23,6 +23,7 @@ import { IClassFocus } from '../../../../focus';
 import { IBaseControlProps } from '../TypeControl';
 
 import { ObjectControl } from './ObjectControl';
+import { IsEmbeddedTypeChecker } from '../../../..';
 
 export interface IOpenSelectObjectDialog {
   isOpen: true;
@@ -31,14 +32,14 @@ export interface IOpenSelectObjectDialog {
   isOptional: boolean;
   onCancel: () => void;
   onSelect: (object: any) => void;
-  isEmbeddedType: (className: string) => boolean;
+  isEmbeddedType: IsEmbeddedTypeChecker;
 }
 
 export type ISelectObjectDialog = IOpenSelectObjectDialog | { isOpen: false };
 
 export interface IObjectControlContainerProps extends IBaseControlProps {
   getClassFocus: (className: string) => IClassFocus;
-  isEmbeddedType: (className: string) => boolean;
+  isEmbeddedType: IsEmbeddedTypeChecker;
 }
 
 export interface IObjectControlContainerState {

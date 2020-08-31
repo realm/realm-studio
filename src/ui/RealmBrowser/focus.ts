@@ -37,6 +37,7 @@ interface IFocus {
   kind: string;
   properties: IPropertyWithName[];
   results: Realm.Collection<any>;
+  isEmbedded: boolean;
 }
 
 export interface IClassFocus extends IFocus {

@@ -32,6 +32,7 @@ import { ObjectControl } from './ObjectControl';
 import { ObjectIdControl } from './ObjectIdControl';
 import { StringControl } from './StringControl';
 import { ObjectId, Decimal128 } from 'bson';
+import { IsEmbeddedTypeChecker } from '../../..';
 
 export interface IBaseControlProps<ValueType = any> {
   children?: React.ReactNode;
@@ -43,7 +44,7 @@ export interface IBaseControlProps<ValueType = any> {
 export interface ITypeControlProps extends IBaseControlProps {
   generateInitialValue: (property: Realm.ObjectSchemaProperty) => any;
   getClassFocus: (className: string) => IClassFocus;
-  isEmbeddedType: (className: string) => boolean;
+  isEmbeddedType: IsEmbeddedTypeChecker;
 }
 
 export const TypeControl = ({
@@ -123,8 +124,7 @@ export const TypeControl = ({
       />
     );
   } else if (property.type === 'object') {
-    // TODO: implement
-    if (isEmbeddedType(property.objectType!)) {
+    if (isEmbeddedType(property.objectType)) {
       return (
         <DefaultControl
           type="info"

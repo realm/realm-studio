@@ -25,6 +25,7 @@ import {
   ClassFocussedHandler,
   IPropertyWithName,
   ListFocussedHandler,
+  IsEmbeddedTypeChecker,
 } from '..';
 import { store } from '../../../store';
 import { getRange } from '../../../utils';
@@ -52,6 +53,7 @@ import {
   rowHeights,
   RowMouseDownHandler,
 } from './Table';
+import { SingleObjectCollection } from './SingleObjectCollection';
 
 export enum EditMode {
   Disabled = 'disabled',
@@ -65,7 +67,15 @@ export enum HighlightMode {
   Multiple = 'multiple',
 }
 
-export type CreateObjectHandler = (className: string, values: {}) => void;
+export type EmbeddedInfo = {
+  parent: Realm.Object & { [key: string]: any };
+  key: string;
+};
+export type CreateObjectHandler = (
+  className: string,
+  values: {},
+  embeddedInfo?: EmbeddedInfo,
+) => void;
 export type QueryChangeHandler = (query: string) => void;
 export type SortingChangeHandler = (sorting: ISorting | undefined) => void;
 
@@ -117,7 +127,7 @@ export interface IBaseContentContainerProps {
   onListFocussed?: ListFocussedHandler;
   progress?: ILoadingProgress;
   readOnly: boolean;
-  isEmbeddedType: (className: string) => boolean;
+  isEmbeddedType: IsEmbeddedTypeChecker;
 }
 
 export interface IReadOnlyContentContainerProps
@@ -471,10 +481,22 @@ class ContentContainer extends React.Component<
         property &&
         property.type === 'object' &&
         property.objectType &&
-        cellValue &&
+        (cellValue || property.isEmbedded) &&
         this.props.onClassFocussed
       ) {
-        this.props.onClassFocussed(property.objectType, cellValue);
+        // Handle Embedded Objects
+        if (property.isEmbedded) {
+          if (cellValue === null && property.name && property.objectType) {
+            this.onShowCreateObjectDialog(property.objectType, {
+              key: property.name,
+              parent: rowObject,
+            });
+          } else if (this.props.onListFocussed) {
+            this.props.onListFocussed(rowObject, property, cellValue);
+          }
+        } else {
+          this.props.onClassFocussed(property.objectType, cellValue);
+        }
       }
     }
   };
@@ -654,7 +676,10 @@ class ContentContainer extends React.Component<
     }
   };
 
-  private onShowCreateObjectDialog = (className: string) => {
+  private onShowCreateObjectDialog = (
+    className: string,
+    embeddedInfo?: EmbeddedInfo,
+  ) => {
     if (!this.props.readOnly) {
       const schema =
         className && isPrimitive(className)
@@ -676,6 +701,7 @@ class ContentContainer extends React.Component<
             onCreate: this.onCreateObject,
             schema,
             isEmbeddedType: this.props.isEmbeddedType,
+            embeddedInfo,
           },
         });
       }
@@ -698,7 +724,7 @@ class ContentContainer extends React.Component<
         onDelete: () => {
           this.deleteObjects(rows);
           this.setState({
-            // Deleting objects will messup the highlight
+            // Deleting objects will mess up the highlight
             highlight: undefined,
             deleteObjectsDialog: { isOpen: false },
           });
@@ -710,6 +736,7 @@ class ContentContainer extends React.Component<
   private onCreateObject: CreateObjectHandler = (
     className: string,
     values: {},
+    embeddedInfo?: EmbeddedInfo,
   ) => {
     if (!this.props.readOnly) {
       const { focus, realm } = this.props;
@@ -718,8 +745,18 @@ class ContentContainer extends React.Component<
       this.write(() => {
         // Writing makes no sense if the realm was not loaded
         if (realm) {
-          // Adding a primitive value into a list
-          if (isPrimitive(className)) {
+          if (embeddedInfo) {
+            const { parent, key } = embeddedInfo;
+
+            if (focus && focus.kind === 'list') {
+              if (typeof parent[key].push === 'function') {
+                parent[key].push(values);
+              }
+            } else {
+              parent[key] = values;
+            }
+          } else if (isPrimitive(className)) {
+            // Adding a primitive value into a list
             if (focus && focus.kind === 'list') {
               const valueToPush = (values as any)[className];
               focus.results.push(valueToPush);
@@ -761,7 +798,7 @@ class ContentContainer extends React.Component<
     const { highlightMode, focus } = this.props;
     const { highlight } = this.state;
     if (this.contentElement && highlightMode === HighlightMode.Multiple) {
-      // Create a mutation friendly version of the set of row indecies currently highlighted
+      // Create a mutation friendly version of the set of row indices currently highlighted
       const rows = highlight ? new Set(highlight.rows) : new Set<number>();
       // This is a left click with the meta-key (command on Mac) pressed
       if (e.button === 0 && e.metaKey) {
@@ -820,7 +857,7 @@ class ContentContainer extends React.Component<
       const offsetRelative = e.clientY - offset;
       const offsetIndex = Math.floor(offsetRelative / rowHeights.content);
       const hoveredIndex = rowIndex + offsetIndex;
-      // Compute the set of highlighted row indexcies
+      // Compute the set of highlighted row indexes
       const minIndex = Math.min(rowIndex, hoveredIndex);
       const maxIndex = Math.max(rowIndex, hoveredIndex);
       const rows = new Set<number>();
@@ -832,9 +869,9 @@ class ContentContainer extends React.Component<
     }
   };
 
-  private onNewObjectClick = () => {
+  private onNewObjectClick = (embeddedInfo?: EmbeddedInfo) => {
     const className = getClassName(this.props.focus);
-    this.onShowCreateObjectDialog(className);
+    this.onShowCreateObjectDialog(className, embeddedInfo);
   };
 
   private onPermissionSidebarToggle = () => {
@@ -873,7 +910,7 @@ class ContentContainer extends React.Component<
     className: string;
     isOptional?: boolean;
     action: SelectObjectAction;
-    isEmbeddedType: (className: string) => boolean;
+    isEmbeddedType: IsEmbeddedTypeChecker;
   }) {
     if (!this.props.readOnly) {
       const focus: IClassFocus = this.props.getClassFocus(className);
@@ -908,29 +945,42 @@ class ContentContainer extends React.Component<
     }
   }
 
-  private deleteObjects(rowIndecies: Set<number>) {
+  private deleteObjects(rowIndices: Set<number>) {
     if (!this.props.readOnly) {
       try {
-        const { focus, realm } = this.props;
+        const { focus, realm, onClassFocussed } = this.props;
 
         this.write(() => {
-          const objects = this.getHighlightedObjects(rowIndecies);
+          const objects = this.getHighlightedObjects(rowIndices);
           if (realm && focus.kind === 'class') {
             for (const object of objects) {
               realm.delete(object);
             }
           } else if (focus.kind === 'list') {
-            // Creating a list of the indecies of the objects in the original (unfiltered, unsorted) list
-            const listIndecies: number[] = [];
-            for (const object of objects) {
-              const index = focus.results.indexOf(object);
-              listIndecies.push(index);
-            }
-            // Sort and reverse, in-place
-            listIndecies.sort((a, b) => a - b).reverse();
-            // Remove these objects from the list one by one - starting from the bottom
-            for (const index of listIndecies) {
-              focus.results.splice(index, 1);
+            if (focus.results instanceof SingleObjectCollection) {
+              if (focus.results[0]) {
+                const object = focus.results.pop();
+                realm.delete(object);
+                if (onClassFocussed) {
+                  onClassFocussed(
+                    focus.parent.objectSchema().name,
+                    focus.parent,
+                  );
+                }
+              }
+            } else {
+              // Creating a list of the indices of the objects in the original (unfiltered, unsorted) list
+              const listIndices: number[] = [];
+              for (const object of objects) {
+                const index = focus.results.indexOf(object);
+                listIndices.push(index);
+              }
+              // Sort and reverse, in-place
+              listIndices.sort((a, b) => a - b).reverse();
+              // Remove these objects from the list one by one - starting from the bottom
+              for (const index of listIndices) {
+                focus.results.splice(index, 1);
+              }
             }
           }
         });
@@ -940,14 +990,14 @@ class ContentContainer extends React.Component<
     }
   }
 
-  private getHighlightedObjects(rowIndecies: Set<number>) {
+  private getHighlightedObjects(rowIndices: Set<number>) {
     const { results } = this.filteredSortedResults(
       this.props.focus.results,
       this.state.query,
       this.state.sorting,
     );
     const result = new Set<Realm.Object>();
-    for (const index of rowIndecies) {
+    for (const index of rowIndices) {
       const object = results[index];
       result.add(object);
     }
@@ -956,35 +1006,30 @@ class ContentContainer extends React.Component<
 
   private generateDeleteTexts(focus: Focus, multiple: boolean) {
     if (focus.kind === 'list') {
-      if (multiple) {
-        return {
-          label: 'Remove selected rows from the list',
-          title: 'Removing rows',
-          description:
-            'Are you sure you want to remove these rows from the list?',
-        };
-      } else {
-        return {
-          label: 'Remove selected row from the list',
-          title: 'Removing row',
-          description:
-            'Are you sure you want to remove this row from the list?',
-        };
-      }
+      const parent = focus.isEmbedded
+        ? focus.parent.objectSchema().name
+        : 'list';
+      const target = focus.isEmbedded
+        ? 'embedded object'
+        : multiple
+        ? 'rows'
+        : 'row';
+      const determinedTarget = `${multiple ? 'these' : 'this'} ${target}`;
+
+      return {
+        label: `Remove selected ${target} from the ${parent}`,
+        title: `Removing ${target}`,
+        description: `Are you sure you want to remove ${determinedTarget} from the ${parent}?`,
+      };
     } else {
-      if (multiple) {
-        return {
-          label: 'Delete selected objects',
-          title: 'Delete objects',
-          description: 'Are you sure you want to delete these objects?',
-        };
-      } else {
-        return {
-          label: 'Delete selected object',
-          title: 'Delete object',
-          description: 'Are you sure you want to delete this object?',
-        };
-      }
+      const target = multiple ? 'objects' : 'object';
+      const determinedTarget = `${multiple ? 'these' : 'this'} ${target}`;
+
+      return {
+        label: `Delete selected ${target}`,
+        title: `Delete ${target}`,
+        description: `Are you sure you want to delete ${determinedTarget}?`,
+      };
     }
   }
 

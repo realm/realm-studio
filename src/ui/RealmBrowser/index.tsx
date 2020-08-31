@@ -42,6 +42,7 @@ import { Focus, generateKey, IClassFocus, IListFocus } from './focus';
 import { isPrimitive } from './primitives';
 import { RealmBrowser } from './RealmBrowser';
 import * as schemaUtils from './schema-utils';
+import { SingleObjectCollection } from './Content/SingleObjectCollection';
 
 // TODO: Remove this interface once the Realm.ObjectSchemaProperty
 // has a name parameter in its type definition.
@@ -52,6 +53,7 @@ export interface IPropertyWithName extends Realm.ObjectSchemaProperty {
   isEmbedded?: boolean;
 }
 
+export type IsEmbeddedTypeChecker = (className?: string) => boolean;
 export type EditModeChangeHandler = (editMode: EditMode) => void;
 export type ListFocussedHandler = (
   object: Realm.Object,
@@ -408,19 +410,24 @@ class RealmBrowserContainer
     this.performImport();
   };
 
-  private isEmbeddedType = (className: string): boolean => {
+  private isEmbeddedType: IsEmbeddedTypeChecker = (
+    className?: string,
+  ): boolean => {
     const { classes } = this.state;
     return classes.find(c => c.name === className)?.embedded ?? false;
   };
 
   private isCreateAllowed = (focus?: Focus): boolean => {
-    if (focus && focus.kind === 'class') {
-      return !this.isEmbeddedType(focus.className);
-    } else if (focus && focus.kind === 'list') {
-      return !focus.property.isEmbedded;
+    // Disallow creation on full embedded class list
+    if (focus?.isEmbedded && focus.kind === 'class') {
+      return false;
+    }
+    // Disallow creation on single object ListFocussedHandler
+    if (focus?.results instanceof SingleObjectCollection) {
+      return false;
     }
 
-    return false;
+    return true;
   };
 
   private onBeginTransaction = () => {
@@ -540,13 +547,13 @@ class RealmBrowserContainer
     }
   };
 
-  private changeFocusIfAllowed(focus: Focus, highligtedObject?: Realm.Object) {
+  private changeFocusIfAllowed(focus: Focus, highlightedObject?: Realm.Object) {
     const canChangeFocus = this.canChangeFocus();
     if (canChangeFocus) {
       const allowCreate = this.isCreateAllowed(focus);
       this.setState({ focus, allowCreate }, () => {
-        if (highligtedObject && this.contentInstance) {
-          this.contentInstance.highlightObject(highligtedObject);
+        if (highlightedObject && this.contentInstance) {
+          this.contentInstance.highlightObject(highlightedObject);
         }
       });
     }
@@ -571,12 +578,12 @@ class RealmBrowserContainer
 
   private getClassFocus = (className: string): IClassFocus => {
     if (this.realm) {
-      const results = this.realm.objects(className);
       return {
         kind: 'class',
         className,
-        results,
+        results: this.realm.objects(className),
         properties: this.derivePropertiesFromClassName(className),
+        isEmbedded: this.isEmbeddedType(className),
       };
     } else {
       throw new Error('getClassFocus called before realm was loaded');
@@ -589,11 +596,17 @@ class RealmBrowserContainer
     property: IPropertyWithName,
   ): IListFocus => {
     if (property.name) {
+      const results =
+        property.isEmbedded && property.type === 'object'
+          ? new SingleObjectCollection(object[property.name])
+          : object[property.name];
+
       const common = {
         parent: object,
         property,
         properties: this.derivePropertiesFromProperty(property),
-        results: object[property.name],
+        results,
+        isEmbedded: this.isEmbeddedType(property.objectType),
       };
       if (property.objectType && isPrimitive(property.objectType)) {
         return {
@@ -687,7 +700,10 @@ class RealmBrowserContainer
     property: IPropertyWithName,
   ): IPropertyWithName[] {
     // Determine the properties
-    if (property.type === 'list' && property.objectType) {
+    if (
+      property.objectType &&
+      (property.type === 'list' || property.isEmbedded)
+    ) {
       const properties: IPropertyWithName[] = [
         { name: '#', type: 'int', readOnly: true, isPrimaryKey: false },
       ];
@@ -812,10 +828,10 @@ class RealmBrowserContainer
           const importer = dataImporter.getDataImporter(format, paths, schema);
           importer.import(this.realm);
         } catch (err) {
-          showError('Faild to import data', err);
+          showError('Failed to import data', err);
         }
       } catch (err) {
-        showError('Faild to generate schema', err);
+        showError('Failed to generate schema', err);
       }
     }
   };
@@ -829,7 +845,7 @@ class RealmBrowserContainer
         const importer = dataImporter.getDataImporter(format, paths, schema);
         importer.import(this.realm);
       } catch (err) {
-        showError('Faild to import data', err);
+        showError('Failed to import data', err);
       } finally {
         this.setState({ progress: { status: 'done' } });
       }

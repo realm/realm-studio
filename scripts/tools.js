@@ -46,7 +46,7 @@ program
               result.push(index);
             }
           });
-          // Return the list of heading indecies
+          // Return the list of heading indices
           return result;
         }
 

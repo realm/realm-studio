@@ -21,7 +21,7 @@ import Realm from 'realm';
 import { ObjectId, Decimal128 } from 'bson';
 import { v4 as uuid } from 'uuid';
 
-import { CreateObjectHandler } from '..';
+import { CreateObjectHandler, EmbeddedInfo } from '..';
 import { showError } from '../../../reusable/errors';
 import { IClassFocus } from '../../focus';
 
@@ -31,6 +31,7 @@ import {
 } from './CreateObjectDialog';
 
 import './CreateObjectDialog.scss';
+import { IsEmbeddedTypeChecker } from '../..';
 
 interface IRealmObject {
   [propertyName: string]: any;
@@ -46,7 +47,8 @@ interface IOpenCreateObjectDialogContainerProps {
   onCancel: () => void;
   onCreate: CreateObjectHandler;
   schema: Realm.ObjectSchema;
-  isEmbeddedType: (className: string) => boolean;
+  isEmbeddedType: IsEmbeddedTypeChecker;
+  embeddedInfo?: EmbeddedInfo;
 }
 
 export interface ICreateObjectDialogContainerState {
@@ -188,7 +190,11 @@ class CreateObjectDialogContainer extends React.PureComponent<
   protected onCreate = () => {
     if (this.props.isOpen) {
       try {
-        this.props.onCreate(this.props.schema.name, this.state.values);
+        this.props.onCreate(
+          this.props.schema.name,
+          this.state.values,
+          this.props.embeddedInfo,
+        );
       } catch (err) {
         const className = this.props.schema.name;
         showError(`Couldn't create the ${className}:\n\n${err.message}`, err);
@@ -198,7 +204,7 @@ class CreateObjectDialogContainer extends React.PureComponent<
     }
   };
 
-  protected isEmbeddedType = (className: string) =>
+  protected isEmbeddedType: IsEmbeddedTypeChecker = (className?: string) =>
     this.props.isOpen && this.props.isEmbeddedType(className);
 
   protected onValueChange = (propertyName: string, value: any) => {
