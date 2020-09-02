@@ -29,12 +29,15 @@ type ResultMap = {
 
 const serialize = (map: ResultMap) => {
   try {
+    // First try default stringify to avoid Realm.JsonSerializationReplacer
+    // adding unnecessary `$refId` to the output.
     return JSON.stringify(map, null, INDENTATION_SPACES);
   } catch (err) {
     if (
       err instanceof TypeError &&
       err.message.startsWith('Converting circular structure to JSON')
     ) {
+      // If a circular structure is detected, serialize using Realm.JsonSerializationReplacer
       return JSON.stringify(
         map,
         Realm.JsonSerializationReplacer,
