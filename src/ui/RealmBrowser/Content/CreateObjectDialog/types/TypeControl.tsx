@@ -127,7 +127,7 @@ export const TypeControl = ({
     if (isEmbeddedType(property.objectType)) {
       return (
         <DefaultControl
-          type="info"
+          color="info"
           property={property}
           message="Embedded objects can be created from the table, once this object has been created."
         />

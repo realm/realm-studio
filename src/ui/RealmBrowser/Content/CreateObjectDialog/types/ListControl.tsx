@@ -150,9 +150,9 @@ export const ListControl = ({
   } else if (isEmbeddedType(property.objectType)) {
     return (
       <DefaultControl
-        type="info"
+        color="info"
         property={property}
-        message="Add embedded objects from the grid view, once created."
+        message="Embedded objects can be created from the table, once this object has been created."
       />
     );
   } else {
