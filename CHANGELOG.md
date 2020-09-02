@@ -10,7 +10,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Enhancements
 
-- JSON export now supports circular structures.
+- JSON export now supports circular structures. ([#1315](https://github.com/realm/realm-studio/pull/1315))
 
 ### Fixed
 
