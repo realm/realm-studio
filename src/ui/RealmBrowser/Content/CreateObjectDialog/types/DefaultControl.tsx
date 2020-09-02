@@ -25,15 +25,15 @@ export type AlertColorType = 'info' | 'warning' | 'danger';
 export interface IDefaultControlProps {
   property: Realm.ObjectSchemaProperty;
   message?: string;
-  type?: AlertColorType;
+  color?: AlertColorType;
 }
 
 export const DefaultControl = ({
   property,
   message,
-  type,
+  color = "warning",
 }: IDefaultControlProps) => (
-  <Alert color={type || 'warning'}>
+  <Alert color={color}>
     {message ?? `Cannot select "${property.type}" yet`}
   </Alert>
 );
