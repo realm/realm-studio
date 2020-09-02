@@ -727,7 +727,9 @@ class RealmBrowserContainer
     }
     // Derive the properties from the objectSchema
     return Object.keys(objectSchema.properties).map(propertyName => {
-      const property = objectSchema.properties[propertyName] as Realm.ObjectSchemaProperty;
+      const property = objectSchema.properties[
+        propertyName
+      ] as Realm.ObjectSchemaProperty;
       if (typeof property === 'object') {
         const isEmbedded =
           !!property.objectType && this.isEmbeddedType(property.objectType);
