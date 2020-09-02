@@ -71,11 +71,7 @@ export type EmbeddedInfo = {
   parent: Realm.Object & { [key: string]: any };
   key: string;
 };
-export type CreateObjectHandler = (
-  className: string,
-  values: {},
-  embeddedInfo?: EmbeddedInfo,
-) => void;
+export type CreateObjectHandler = (className: string, values: {}) => void;
 export type QueryChangeHandler = (query: string) => void;
 export type SortingChangeHandler = (sorting: ISorting | undefined) => void;
 
@@ -681,6 +677,7 @@ class ContentContainer extends React.Component<
     embeddedInfo?: EmbeddedInfo,
   ) => {
     if (!this.props.readOnly) {
+      const { realm, getClassFocus, isEmbeddedType } = this.props;
       const schema =
         className && isPrimitive(className)
           ? {
@@ -691,16 +688,16 @@ class ContentContainer extends React.Component<
                 },
               },
             }
-          : this.props.realm.schema.find(s => s.name === className);
+          : realm.schema.find(s => s.name === className);
       if (schema) {
         this.setState({
           createObjectDialog: {
-            getClassFocus: this.props.getClassFocus,
+            getClassFocus,
             isOpen: true,
             onCancel: this.onCancelCreateObjectDialog,
             onCreate: this.onCreateObject,
             schema,
-            isEmbeddedType: this.props.isEmbeddedType,
+            isEmbeddedType,
             embeddedInfo,
           },
         });
