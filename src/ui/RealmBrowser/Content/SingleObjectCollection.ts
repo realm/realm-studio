@@ -16,6 +16,10 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Mock implementation of Realm.Result<T> to wrap a single Realm.Object, to allow
+ * using a single Realm.Object in the Table.
+ */
 export class SingleObjectCollection<T extends Realm.Object> extends Array<T>
   implements Realm.Results<T> {
   public readonly type: Realm.PropertyType;
