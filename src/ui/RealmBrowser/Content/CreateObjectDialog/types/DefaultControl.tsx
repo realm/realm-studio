@@ -31,7 +31,7 @@ export interface IDefaultControlProps {
 export const DefaultControl = ({
   property,
   message,
-  color = "warning",
+  color = 'warning',
 }: IDefaultControlProps) => (
   <Alert color={color}>
     {message ?? `Cannot select "${property.type}" yet`}
