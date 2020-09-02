@@ -129,7 +129,7 @@ export const TypeControl = ({
         <DefaultControl
           type="info"
           property={property}
-          message="Add an embedded object from the grid view, once created."
+          message="Embedded objects can be created from the table, once this object has been created."
         />
       );
     }
