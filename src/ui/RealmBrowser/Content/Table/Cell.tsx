@@ -50,11 +50,6 @@ const getCellContent = ({
   property: IPropertyWithName;
   value: any;
 }) => {
-  // Override EditMode for primary keys, to avoid "not editable" popup when tabbing through cells
-  if (property.isPrimaryKey) {
-    editMode = EditMode.Disabled;
-  }
-
   // A special cell for the list index
   if (property.name === '#' && property.type === 'int' && property.readOnly) {
     return <ListIndexCell value={value} />;

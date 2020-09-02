@@ -197,7 +197,7 @@ export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
 
         return (
           <Cell
-            editMode={editMode}
+            editMode={property.isPrimaryKey ? EditMode.Disabled : editMode}
             isHighlighted={isCellHighlighted}
             key={cellProps.key}
             onCellClick={e => {
