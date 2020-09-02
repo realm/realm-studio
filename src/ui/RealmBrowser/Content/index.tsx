@@ -749,6 +749,7 @@ class ContentContainer extends React.Component<
             const { parent, key } = embeddedInfo;
 
             if (focus && focus.kind === 'list') {
+              // Using this method as instanceof Realm.List is not currently valid
               if (typeof parent[key].push === 'function') {
                 parent[key].push(values);
               }
