@@ -21,82 +21,46 @@ import Realm from 'realm';
 
 import { IExportEngine } from '.';
 
-function serializeObject(object: { [key: string]: any } & Realm.Object) {
-  // This is an object reference
-  const objectSchema = object.objectSchema();
-  if (objectSchema.primaryKey) {
-    return object[objectSchema.primaryKey];
-  } else {
-    // Shallow copy the object
-    return RealmObjectToJSON.call(object);
-  }
-}
+const INDENTATION_SPACES = 2;
 
-function serializeValue(propertyName: string, value: any) {
-  if (
-    value === null ||
-    typeof value === 'string' ||
-    typeof value === 'number' ||
-    typeof value === 'boolean'
-  ) {
-    return value;
-  } else if (value instanceof Date) {
-    return value.toISOString();
-  } else if (value instanceof ArrayBuffer) {
-    return Buffer.from(value).toString('base64');
-  } else if (
-    typeof value === 'object' &&
-    typeof value.objectSchema === 'function'
-  ) {
-    return serializeObject(value);
-  } else if (typeof value === 'object' && typeof value.length === 'number') {
-    if (value.type === 'object') {
-      // A list of objects
-      return value.map((item: any) => {
-        if (typeof item === 'object') {
-          return serializeObject(item);
-        } else {
-          return item;
-        }
-      });
-    } else {
-      // A list of primitives
-      return [...value];
-    }
-  } else {
-    throw new Error(
-      `Failed to serialize '${propertyName}' field of type ${typeof value}`,
-    );
-  }
-}
+type ResultMap = {
+  [key: string]: Realm.Results<Realm.Object>;
+};
 
-function RealmObjectToJSON(this: { [key: string]: any } & Realm.Object) {
-  const values: { [key: string]: any } = {};
-  for (const propertyName of Object.getOwnPropertyNames(this)) {
-    const value = this[propertyName];
-    if (propertyName === '_realm' || typeof value === 'function') {
-      continue; // Skip this property
-    } else {
-      values[propertyName] = serializeValue(propertyName, value);
+const serialize = (map: ResultMap) => {
+  try {
+    // First try default stringify to avoid Realm.JsonSerializationReplacer
+    // adding unnecessary `$refId` to the output.
+    return JSON.stringify(map, null, INDENTATION_SPACES);
+  } catch (err) {
+    if (
+      err instanceof TypeError &&
+      err.message.startsWith('Converting circular structure to JSON')
+    ) {
+      // If a circular structure is detected, serialize using Realm.JsonSerializationReplacer
+      return JSON.stringify(
+        map,
+        Realm.JsonSerializationReplacer,
+        INDENTATION_SPACES,
+      );
     }
+    throw err;
   }
-  return values;
-}
+};
 
 export class JSONExportEngine implements IExportEngine {
   public export(realm: Realm, destinationPath: string) {
-    const data: { [objectSchemaName: string]: any[] } = {};
-    for (const objectSchema of realm.schema) {
-      data[objectSchema.name] = [
-        ...realm.objects(objectSchema.name).snapshot(),
-      ].map((object: any) => {
-        return Object.defineProperty(object, 'toJSON', {
-          value: RealmObjectToJSON.bind(object),
-          enumerable: false,
-        });
-      });
-    }
+    const resultMap: ResultMap = realm.schema.reduce(
+      (map: ResultMap, objectSchema) => {
+        if (!objectSchema.embedded) {
+          map[objectSchema.name] = realm.objects(objectSchema.name).snapshot();
+        }
+        return map;
+      },
+      {},
+    );
+
     // Write the stringified data to a file
-    fs.writeFileSync(destinationPath, JSON.stringify(data, null, 2));
+    fs.writeFileSync(destinationPath, serialize(resultMap));
   }
 }
