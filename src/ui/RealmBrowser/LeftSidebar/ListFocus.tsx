@@ -22,6 +22,7 @@ import { Badge } from 'reactstrap';
 import { ClassFocussedHandler } from '..';
 import { displayObject } from '../display';
 import { IListFocus } from '../focus';
+import { SingleObjectCollection } from '../Content/SingleObjectCollection';
 
 interface IListFocusProps {
   focus: IListFocus;
@@ -30,14 +31,16 @@ interface IListFocusProps {
 
 export const ListFocus = ({ focus, onClassFocussed }: IListFocusProps) => (
   <div className="LeftSidebar__List">
-    <div className="LeftSidebar__List__Name">
-      <span className="LeftSidebar__List__Name__Text">
-        List of {focus.property.objectType}
-      </span>
-      <Badge color="primary">
-        {focus.parent.isValid() ? focus.results.length : '?'}
-      </Badge>
-    </div>
+    {!(focus.results instanceof SingleObjectCollection) && (
+      <div className="LeftSidebar__List__Name">
+        <span className="LeftSidebar__List__Name__Text">
+          List of {focus.property.objectType}
+        </span>
+        <Badge color="primary">
+          {focus.parent.isValid() ? focus.results.length : '?'}
+        </Badge>
+      </div>
+    )}
     <div className="LeftSidebar__List__Parent">
       <div>
         <strong>{focus.property.name}</strong> on

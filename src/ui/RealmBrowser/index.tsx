@@ -700,29 +700,34 @@ class RealmBrowserContainer
     property: IPropertyWithName,
   ): IPropertyWithName[] {
     // Determine the properties
-    if (
-      property.objectType &&
-      (property.type === 'list' || property.isEmbedded)
-    ) {
-      const properties: IPropertyWithName[] = [
-        { name: '#', type: 'int', readOnly: true, isPrimaryKey: false },
-      ];
-      if (isPrimitive(property.objectType)) {
-        return properties.concat([
-          {
-            name: null,
-            type: property.objectType,
-            readOnly: false,
-            isPrimaryKey: false,
-          },
-        ]);
-      } else {
-        return properties.concat(
-          this.derivePropertiesFromClassName(property.objectType),
-        );
+    if (property.objectType) {
+      if (property.type === 'list') {
+        const properties: IPropertyWithName[] = [
+          { name: '#', type: 'int', readOnly: true, isPrimaryKey: false },
+        ];
+        if (isPrimitive(property.objectType)) {
+          return properties.concat([
+            {
+              name: null,
+              type: property.objectType,
+              readOnly: false,
+              isPrimaryKey: false,
+            },
+          ]);
+        } else {
+          return properties.concat(
+            this.derivePropertiesFromClassName(property.objectType),
+          );
+        }
       }
+
+      if (property.type === 'object' && property.isEmbedded) {
+        return this.derivePropertiesFromClassName(property.objectType);
+      }
+
+      throw new Error('Expected a list or embedded object');
     } else {
-      throw new Error(`Expected a list property with an objectType`);
+      throw new Error('Expected a list property with an objectType');
     }
   }
 
