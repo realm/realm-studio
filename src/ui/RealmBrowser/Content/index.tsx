@@ -867,8 +867,18 @@ class ContentContainer extends React.Component<
     }
   };
 
-  private onNewObjectClick = (embeddedInfo?: EmbeddedInfo) => {
+  private onNewObjectClick = () => {
+    const { focus } = this.props;
     const className = getClassName(this.props.focus);
+
+    const embeddedInfo: EmbeddedInfo | undefined =
+      focus.isEmbedded && focus.kind === 'list' && focus.property.name
+        ? {
+            parent: focus.parent,
+            key: focus.property.name,
+          }
+        : undefined;
+
     this.onShowCreateObjectDialog(className, embeddedInfo);
   };
 
