@@ -190,7 +190,11 @@ class CreateObjectDialogContainer extends React.PureComponent<
   protected onCreate = () => {
     if (this.props.isOpen) {
       try {
-        this.props.onCreate(this.props.schema.name, this.state.values);
+        this.props.onCreate(
+          this.props.schema.name,
+          this.state.values,
+          this.props.embeddedInfo,
+        );
       } catch (err) {
         const className = this.props.schema.name;
         showError(`Couldn't create the ${className}:\n\n${err.message}`, err);

@@ -71,7 +71,11 @@ export type EmbeddedInfo = {
   parent: Realm.Object & { [key: string]: any };
   key: string;
 };
-export type CreateObjectHandler = (className: string, values: {}) => void;
+export type CreateObjectHandler = (
+  className: string,
+  values: {},
+  embeddedInfo?: EmbeddedInfo,
+) => void;
 export type QueryChangeHandler = (query: string) => void;
 export type SortingChangeHandler = (sorting: ISorting | undefined) => void;
 
@@ -868,6 +872,7 @@ class ContentContainer extends React.Component<
   };
 
   private onNewObjectClick = () => {
+    console.log('HIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIT');
     const { focus } = this.props;
     const className = getClassName(this.props.focus);
 
@@ -878,7 +883,7 @@ class ContentContainer extends React.Component<
             key: focus.property.name,
           }
         : undefined;
-
+    console.log('embeddedInfo', embeddedInfo);
     this.onShowCreateObjectDialog(className, embeddedInfo);
   };
 
