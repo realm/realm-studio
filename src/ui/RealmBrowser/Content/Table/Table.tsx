@@ -44,7 +44,6 @@ import { AddColumnControl } from './AddColumnControl';
 import { ContentGrid } from './ContentGrid';
 import { HeaderGrid } from './HeaderGrid';
 import { MoreIndicator } from './MoreIndicator';
-import { SingleObjectCollection } from '../SingleObjectCollection';
 
 export interface ITableProps {
   columnWidths: number[];
@@ -109,7 +108,6 @@ export const Table = ({
   const { height, width } = dimensions;
   const scrollBottom = rowHeights.header + scrollHeight - height - scrollTop;
   const scrollRight = scrollWidth - width - scrollLeft;
-  const isSingleCollection = focus.results instanceof SingleObjectCollection;
 
   return (
     <div
@@ -145,7 +143,7 @@ export const Table = ({
         gridRef={gridContentRef}
         height={height - rowHeights.header}
         highlight={highlight}
-        isSortable={focus.kind === 'list' && !isSingleCollection && !sorting}
+        isSortable={focus.kind === 'list' && !sorting}
         isSorting={isSorting}
         onCellChange={onCellChange}
         onCellClick={onCellClick}

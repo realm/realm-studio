@@ -25,6 +25,7 @@ import {
   ClassFocussedHandler,
   ListFocussedHandler,
   IsEmbeddedTypeChecker,
+  SingleListFocussedHandler,
 } from '.';
 import { AddClassModal } from './AddClassModal';
 import { AddPropertyModal } from './AddPropertyModal';
@@ -62,6 +63,7 @@ export interface IRealmBrowserProps {
   onHideEncryptionDialog: () => void;
   onLeftSidebarToggle: () => void;
   onListFocussed: ListFocussedHandler;
+  onSingleListFocussed: SingleListFocussedHandler;
   onOpenWithEncryption: (key: string) => void;
   onRealmChanged: () => void;
   progress: ILoadingProgress;
@@ -96,6 +98,7 @@ export const RealmBrowser = ({
   onHideEncryptionDialog,
   onLeftSidebarToggle,
   onListFocussed,
+  onSingleListFocussed,
   onOpenWithEncryption,
   onRealmChanged,
   progress,
@@ -135,6 +138,7 @@ export const RealmBrowser = ({
             onClassFocussed={onClassFocussed}
             onCommitTransaction={onCommitTransaction}
             onListFocussed={onListFocussed}
+            onSingleListFocussed={onSingleListFocussed}
             onRealmChanged={onRealmChanged}
             permissionSidebar={true}
             progress={progress}

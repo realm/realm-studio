@@ -26,6 +26,7 @@ import {
   IPropertyWithName,
   ListFocussedHandler,
   IsEmbeddedTypeChecker,
+  SingleListFocussedHandler,
 } from '..';
 import { store } from '../../../store';
 import { getRange } from '../../../utils';
@@ -53,7 +54,6 @@ import {
   rowHeights,
   RowMouseDownHandler,
 } from './Table';
-import { SingleObjectCollection } from './SingleObjectCollection';
 
 export enum EditMode {
   Disabled = 'disabled',
@@ -125,6 +125,7 @@ export interface IBaseContentContainerProps {
     collection: Realm.Collection<any>,
   ) => void;
   onListFocussed?: ListFocussedHandler;
+  onSingleListFocussed?: SingleListFocussedHandler;
   progress?: ILoadingProgress;
   readOnly: boolean;
   isEmbeddedType: IsEmbeddedTypeChecker;
@@ -491,8 +492,8 @@ class ContentContainer extends React.Component<
               key: property.name,
               parent: rowObject,
             });
-          } else if (this.props.onListFocussed) {
-            this.props.onListFocussed(rowObject, property, cellValue);
+          } else if (this.props.onSingleListFocussed) {
+            this.props.onSingleListFocussed(rowObject, property);
           }
         } else {
           this.props.onClassFocussed(property.objectType, cellValue);
@@ -872,7 +873,6 @@ class ContentContainer extends React.Component<
   };
 
   private onNewObjectClick = () => {
-    console.log('HIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIT');
     const { focus } = this.props;
     const className = getClassName(this.props.focus);
 
@@ -883,7 +883,7 @@ class ContentContainer extends React.Component<
             key: focus.property.name,
           }
         : undefined;
-    console.log('embeddedInfo', embeddedInfo);
+
     this.onShowCreateObjectDialog(className, embeddedInfo);
   };
 
@@ -981,29 +981,24 @@ class ContentContainer extends React.Component<
               realm.delete(object);
             }
           } else if (focus.kind === 'list') {
-            if (focus.results instanceof SingleObjectCollection) {
-              if (focus.results[0]) {
-                const object = focus.results.pop();
-                realm.delete(object);
-                if (onClassFocussed) {
-                  onClassFocussed(
-                    focus.parent.objectSchema().name,
-                    focus.parent,
-                  );
-                }
-              }
-            } else {
-              // Creating a list of the indices of the objects in the original (unfiltered, unsorted) list
-              const listIndices: number[] = [];
-              for (const object of objects) {
-                const index = focus.results.indexOf(object);
-                listIndices.push(index);
-              }
-              // Sort and reverse, in-place
-              listIndices.sort((a, b) => a - b).reverse();
-              // Remove these objects from the list one by one - starting from the bottom
-              for (const index of listIndices) {
-                focus.results.splice(index, 1);
+            // Creating a list of the indices of the objects in the original (unfiltered, unsorted) list
+            const listIndices: number[] = [];
+            for (const object of objects) {
+              const index = focus.results.indexOf(object);
+              listIndices.push(index);
+            }
+            // Sort and reverse, in-place
+            listIndices.sort((a, b) => a - b).reverse();
+            // Remove these objects from the list one by one - starting from the bottom
+            for (const index of listIndices) {
+              focus.results.splice(index, 1);
+            }
+          } else if (focus.kind === 'single-object') {
+            if (focus.results[0]) {
+              const object = focus.results.pop();
+              realm.delete(object);
+              if (onClassFocussed) {
+                onClassFocussed(focus.parent.objectSchema().name, focus.parent);
               }
             }
           }

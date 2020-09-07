@@ -38,7 +38,13 @@ import {
 } from '../reusable/RealmLoadingComponent';
 
 import { Content, EditMode } from './Content';
-import { Focus, generateKey, IClassFocus, IListFocus } from './focus';
+import {
+  Focus,
+  generateKey,
+  IClassFocus,
+  IListFocus,
+  ISingleObjectFocus,
+} from './focus';
 import { isPrimitive } from './primitives';
 import { RealmBrowser } from './RealmBrowser';
 import * as schemaUtils from './schema-utils';
@@ -59,6 +65,10 @@ export type ListFocussedHandler = (
   object: Realm.Object,
   property: IPropertyWithName,
   highlightedObject?: Realm.Object,
+) => void;
+export type SingleListFocussedHandler = (
+  parent: Realm.Object,
+  property: IPropertyWithName,
 ) => void;
 export type ClassFocussedHandler = (
   className: string,
@@ -153,6 +163,7 @@ class RealmBrowserContainer
         onHideEncryptionDialog={this.onHideEncryptionDialog}
         onLeftSidebarToggle={this.onLeftSidebarToggle}
         onListFocussed={this.onListFocussed}
+        onSingleListFocussed={this.onSingleListFocussed}
         onOpenWithEncryption={this.onOpenWithEncryption}
         onRealmChanged={this.onRealmChanged}
         progress={this.state.progress}
@@ -379,6 +390,8 @@ class RealmBrowserContainer
         focus = this.getClassFocus(focus.className);
       } else if (focus && focus.kind === 'list') {
         focus = this.getListFocus(focus.parent, focus.property);
+      } else if (focus && focus.kind === 'single-object') {
+        focus = this.getSingleObjectFocus(focus.parent, focus.property);
       }
       this.setState({ classes: this.realm.schema, focus });
     }
@@ -419,11 +432,10 @@ class RealmBrowserContainer
 
   private isCreateAllowed = (focus?: Focus): boolean => {
     // Disallow creation on full embedded class list
-    if (focus?.isEmbedded && focus.kind === 'class') {
-      return false;
-    }
-    // Disallow creation on single object ListFocussedHandler
-    if (focus?.results instanceof SingleObjectCollection) {
+    if (
+      focus?.isEmbedded &&
+      (focus.kind === 'class' || focus.kind === 'single-object')
+    ) {
       return false;
     }
 
@@ -576,6 +588,14 @@ class RealmBrowserContainer
     this.changeFocusIfAllowed(focus, highlightedObject);
   };
 
+  private onSingleListFocussed: SingleListFocussedHandler = (
+    object: Realm.Object,
+    property: IPropertyWithName,
+  ) => {
+    const focus = this.getSingleObjectFocus(object, property);
+    this.changeFocusIfAllowed(focus);
+  };
+
   private getClassFocus = (className: string): IClassFocus => {
     if (this.realm) {
       return {
@@ -590,22 +610,35 @@ class RealmBrowserContainer
     }
   };
 
+  private getSingleObjectFocus = (
+    object: Realm.Object & { [name: string]: any },
+    property: IPropertyWithName,
+  ): ISingleObjectFocus => {
+    if (property.name && property.objectType) {
+      return {
+        kind: 'single-object',
+        parent: object,
+        property,
+        results: new SingleObjectCollection(object[property.name]),
+        properties: this.derivePropertiesFromClassName(property.objectType),
+        isEmbedded: property.isEmbedded ?? false,
+      };
+    } else {
+      throw new Error('Expected a property with a name & objectType property');
+    }
+  };
+
   private getListFocus = (
     // `{ [name: string]: any }` because of Realm JS types
     object: Realm.Object & { [name: string]: any },
     property: IPropertyWithName,
   ): IListFocus => {
     if (property.name) {
-      const results =
-        property.isEmbedded && property.type === 'object'
-          ? new SingleObjectCollection(object[property.name])
-          : object[property.name];
-
       const common = {
         parent: object,
         property,
         properties: this.derivePropertiesFromProperty(property),
-        results,
+        results: object[property.name],
         isEmbedded: this.isEmbeddedType(property.objectType),
       };
       if (property.objectType && isPrimitive(property.objectType)) {
