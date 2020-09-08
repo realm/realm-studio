@@ -46,24 +46,18 @@ export const getPropertyDisplayed = (property: IPropertyWithName) => {
     getPropertyType(property),
     property.optional ? '?' : '',
     property.type === 'list' ? '[]' : '',
+    property.isEmbedded ? ' (Embedded)' : '',
     property.isPrimaryKey ? ' (Primary Key)' : '',
   ].join('');
 };
 
+const NON_SORTABLE_TYPES = ['data', 'list', 'object'];
 const isPropertySortable = (property: IPropertyWithName) => {
   if (property.name === '#' || property.name === null) {
     return false;
-  } else if (property.type === 'data') {
-    return false;
-  } else if (property.type === 'list') {
-    return false;
-  } else if (property.type === 'object') {
-    // Technically - this is possible,
-    // @see https://github.com/realm/realm-studio/issues/310
-    return false;
-  } else {
-    return true;
   }
+
+  return !NON_SORTABLE_TYPES.includes(property.type);
 };
 
 interface IHeaderCellProps {
@@ -138,7 +132,11 @@ export class HeaderCell extends React.Component<
           >
             {property.name}
           </div>
-          <div className="RealmBrowser__Table__HeaderType">
+          <div
+            className={classNames('RealmBrowser__Table__HeaderType', {
+              'RealmBrowser__Table__HeaderType--sortable': isSortable,
+            })}
+          >
             {getPropertyDisplayed(property)}
           </div>
         </div>

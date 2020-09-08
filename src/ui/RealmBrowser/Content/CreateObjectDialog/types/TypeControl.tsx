@@ -27,11 +27,12 @@ import { DateControl } from './DateControl';
 import { Decimal128Control } from './Decimal128Control';
 import { DefaultControl } from './DefaultControl';
 import { ListControl } from './ListControl';
-import { NummericControl } from './NummericControl';
+import { NumericControl } from './NumericControl';
 import { ObjectControl } from './ObjectControl';
 import { ObjectIdControl } from './ObjectIdControl';
 import { StringControl } from './StringControl';
 import { ObjectId, Decimal128 } from 'bson';
+import { IsEmbeddedTypeChecker } from '../../..';
 
 export interface IBaseControlProps<ValueType = any> {
   children?: React.ReactNode;
@@ -43,7 +44,7 @@ export interface IBaseControlProps<ValueType = any> {
 export interface ITypeControlProps extends IBaseControlProps {
   generateInitialValue: (property: Realm.ObjectSchemaProperty) => any;
   getClassFocus: (className: string) => IClassFocus;
-  isEmbeddedType: (className: string) => boolean;
+  isEmbeddedType: IsEmbeddedTypeChecker;
 }
 
 export const TypeControl = ({
@@ -88,7 +89,7 @@ export const TypeControl = ({
     property.type === 'double'
   ) {
     return (
-      <NummericControl
+      <NumericControl
         children={children}
         property={property}
         value={value as number | null}
@@ -123,12 +124,12 @@ export const TypeControl = ({
       />
     );
   } else if (property.type === 'object') {
-    // TODO: implement
-    if (isEmbeddedType(property.objectType!)) {
+    if (isEmbeddedType(property.objectType)) {
       return (
         <DefaultControl
+          color="info"
           property={property}
-          message="Creation of embedded objects is not yet supported"
+          message="Embedded objects can be created from the table, once this object has been created."
         />
       );
     }

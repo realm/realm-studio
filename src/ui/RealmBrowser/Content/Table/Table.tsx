@@ -108,7 +108,6 @@ export const Table = ({
   const { height, width } = dimensions;
   const scrollBottom = rowHeights.header + scrollHeight - height - scrollTop;
   const scrollRight = scrollWidth - width - scrollLeft;
-  const totalColumnWidth = columnWidths.reduce((sum, w) => sum + w, 0);
 
   return (
     <div
@@ -162,14 +161,7 @@ export const Table = ({
         width={width}
       />
       {onAddColumnClick ? (
-        <AddColumnControl
-          isHidden={scrollLeft > 0 && scrollRight === 0}
-          onClick={onAddColumnClick}
-          left={Math.min(
-            totalColumnWidth - scrollLeft,
-            width - (29 + 2 * 16) /* button width + 2*padding */,
-          )}
-        />
+        <AddColumnControl onClick={onAddColumnClick} />
       ) : null}
     </div>
   );

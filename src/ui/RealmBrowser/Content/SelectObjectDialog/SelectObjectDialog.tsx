@@ -22,6 +22,7 @@ import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { Content, EditMode, HighlightMode } from '..';
 import { IClassFocus } from '../../focus';
 import { IHighlight } from '../Table';
+import { IsEmbeddedTypeChecker } from '../..';
 
 interface IBaseSelectObjectDialogProps {
   isOpen: boolean;
@@ -45,7 +46,7 @@ interface IOpenSelectObjectDialogProps extends IBaseSelectObjectDialogProps {
     collection: Realm.Collection<any>,
   ) => void;
   multiple: boolean;
-  isEmbeddedType: (className: string) => boolean;
+  isEmbeddedType: IsEmbeddedTypeChecker;
 }
 
 export type ISelectObjectDialogProps =

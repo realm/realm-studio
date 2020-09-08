@@ -23,6 +23,7 @@ import Realm from 'realm';
 import { IClassFocus } from '../../focus';
 
 import { TypeControl } from './types/TypeControl';
+import { IsEmbeddedTypeChecker } from '../..';
 
 interface IPropertyRowProps {
   generateInitialValue: (property: Realm.ObjectSchemaProperty) => any;
@@ -32,7 +33,7 @@ interface IPropertyRowProps {
   property: Realm.ObjectSchemaProperty;
   propertyName: string;
   value: any;
-  isEmbeddedType: (className: string) => boolean;
+  isEmbeddedType: IsEmbeddedTypeChecker;
 }
 
 export const PropertyRow = ({

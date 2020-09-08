@@ -94,18 +94,35 @@
       align-items: center;
       display: flex;
       height: $realm-browser-header-height;
-      justify-content: flex-start;
-      padding: $spacer;
       position: absolute;
-      right: 0;
+      right: $spacer / 2;
       top: 0;
-      transition: opacity $fast, margin-left $fast;
       z-index: 1;
 
-      &--hidden {
-        margin-left: $spacer;
+      &__Button {
+        align-items: baseline;
+        display: flex;
+        white-space: nowrap;
+      }
+
+      &__Button:hover &__Text { // sass-lint:disable-line force-pseudo-nesting
+        max-width: 1000px;
+        opacity: 1;
+        transition: opacity $slow linear, max-width $extra-slow ease-in-out;
+      }
+
+      &__Text {
+        max-width: 0;
         opacity: 0;
-        pointer-events: none;
+        overflow: hidden;
+        transition: opacity $slow linear, max-width $slow ease;
+
+        // "hack" to include "padding" as content:
+        &::before {
+          content: "";
+          display: inline-flex;
+          width: 10px;
+        }
       }
     }
 
@@ -196,12 +213,16 @@
     }
 
     &__HeaderType {
-      color: $primary;
+      color: $elephant;
       font-size: $font-size-sm;
       font-weight: normal;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+
+      &--sortable {
+        color: $primary;
+      }
     }
 
     &__HeaderSort {
