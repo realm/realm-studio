@@ -19,7 +19,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Internals
 
 - Electron v8.4.1
-- Realm v10.0.0@beta.11
+- Realm v10.0.0@beta.12
 
 
 ## Release 10.0.0-beta.2 (2020-06-16)
