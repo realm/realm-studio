@@ -26,7 +26,7 @@ import { Focus } from '../focus';
 import { LeftSidebar } from './LeftSidebar';
 
 function isSystemClassName(cls?: Realm.ObjectSchema) {
-  return cls && (cls.name.indexOf('__') === 0 || cls.embedded === true);
+  return cls && cls.name.indexOf('__') === 0;
 }
 
 interface ILeftSidebarContainerProps {
@@ -70,9 +70,9 @@ class LeftSidebarContainer extends React.Component<
   }
 
   public render() {
-    const classes = this.filterClasses(this.props.classes);
+    const classes = this.getFilterClasses();
     const hiddenClassCount = Math.max(
-      this.props.classes.length - classes.length,
+      this.getAllowedClasses().length - classes.length,
       0,
     );
     return (
@@ -92,12 +92,14 @@ class LeftSidebarContainer extends React.Component<
     );
   }
 
-  private filterClasses(classes: Realm.ObjectSchema[]) {
-    if (this.state.hideSystemClasses) {
-      return classes.filter(c => !isSystemClassName(c));
-    } else {
-      return classes;
-    }
+  private getAllowedClasses() {
+    return this.props.classes.filter(c => !c.embedded);
+  }
+
+  private getFilterClasses() {
+    return this.state.hideSystemClasses
+      ? this.getAllowedClasses().filter(c => !isSystemClassName(c))
+      : this.getAllowedClasses();
   }
 
   private onShowSystemClassesChange = (showSystemClasses: boolean) => {
@@ -105,7 +107,9 @@ class LeftSidebarContainer extends React.Component<
       const shouldSelectAnotherClass = this.isFocussedOnSystemClass();
       if (showSystemClasses === false && shouldSelectAnotherClass) {
         // Focus on another class
-        const firstClass = this.props.classes.find(c => !isSystemClassName(c));
+        const firstClass = this.getAllowedClasses().find(
+          c => !isSystemClassName(c),
+        );
         if (firstClass) {
           this.props.onClassFocussed(firstClass.name);
         }
