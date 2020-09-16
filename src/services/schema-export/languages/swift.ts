@@ -106,6 +106,12 @@ export default class SwiftSchemaExporter extends SchemaExporter {
           return 'Data';
         case 'date':
           return 'Date';
+        case 'object id':
+        case 'objectId':
+          return 'ObjectId';
+        case 'decimal':
+        case 'decimal128':
+          return 'Decimal128';
       }
       return type;
     }
@@ -133,6 +139,8 @@ export default class SwiftSchemaExporter extends SchemaExporter {
         case 'string':
         case 'data':
         case 'date':
+        case 'objectId':
+        case 'decimal128':
           return `@objc dynamic var ${prop.name}: ${propType}? = nil`;
 
         case 'object':
@@ -157,6 +165,10 @@ export default class SwiftSchemaExporter extends SchemaExporter {
         return str + 'Data()';
       case 'date':
         return str + 'Date()';
+      case 'objectId':
+        return str + 'ObjectId()';
+      case 'decimal128':
+        return str + 'Decimal128()';
       case 'object':
         return 'Objects must always be optional. Something is not right in this model!';
     }

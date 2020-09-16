@@ -1,6 +1,10 @@
 import Foundation
 import RealmSwift
 
+class ChildEmbeddedType: Object {
+    @objc dynamic var id: Int = 0
+}
+
 class IndexedTypes: Object {
     @objc dynamic var boolIndexed: Bool = false
     @objc dynamic var intIndexed: Int = 0
@@ -30,6 +34,8 @@ class OptionalTypes: Object {
     @objc dynamic var stringOptional: String? = nil
     @objc dynamic var dateOptional: Date? = nil
     @objc dynamic var dataOptional: Data? = nil
+    @objc dynamic var objectIdOptional: ObjectId? = nil
+    @objc dynamic var decimal128Optional: Decimal128? = nil
     @objc dynamic var objectOptional: RequiredTypes?
     let boolOptionalArray = List<Bool?>()
     let intOptionalArray = List<Int?>()
@@ -38,6 +44,13 @@ class OptionalTypes: Object {
     let stringOptionalArray = List<String?>()
     let dateOptionalArray = List<Date?>()
     let dataOptionalArray = List<Data?>()
+    let objectIdOptionalArray = List<ObjectId?>()
+    let decimal128OptionalArray = List<Decimal128?>()
+}
+
+class ParentEmbeddedType: Object {
+    @objc dynamic var objectType: ChildEmbeddedType?
+    let listType = List<ChildEmbeddedType>()
 }
 
 class RequiredTypes: Object {
@@ -48,6 +61,8 @@ class RequiredTypes: Object {
     @objc dynamic var stringRequired: String = ""
     @objc dynamic var dateRequired: Date = Date()
     @objc dynamic var dataRequired: Data = Data()
+    @objc dynamic var objectIdRequired: ObjectId = ObjectId()
+    @objc dynamic var decimal128Required: Decimal128 = Decimal128()
     let boolRequiredArray = List<Bool>()
     let intRequiredArray = List<Int>()
     let floatRequiredArray = List<Float>()
@@ -55,6 +70,8 @@ class RequiredTypes: Object {
     let stringRequiredArray = List<String>()
     let dateRequiredArray = List<Date>()
     let dataRequiredArray = List<Data>()
+    let objectIdRequiredArray = List<ObjectId>()
+    let decimal128RequiredArray = List<Decimal128>()
     let objectRequiredArray = List<RequiredTypes>()
 }
 
