@@ -18,6 +18,7 @@
 
 import fsPath from 'path';
 import { ISchemaFile, SchemaExporter } from '../schemaExporter';
+import { reMapType } from '../utils';
 
 export default class JSSchemaExporter extends SchemaExporter {
   public static propertyLine(prop: any, primaryKey: boolean): string {
@@ -26,10 +27,10 @@ export default class JSSchemaExporter extends SchemaExporter {
     switch (prop.type) {
       case 'list':
       case 'object':
-        typeStr = prop.objectType;
+        typeStr = reMapType(prop.objectType);
         break;
       default:
-        typeStr = prop.type;
+        typeStr = reMapType(prop.type);
     }
     if (prop.optional && prop.type !== 'object') {
       typeStr += '?';
@@ -65,27 +66,25 @@ export default class JSSchemaExporter extends SchemaExporter {
       this.appendLine(`  primaryKey: '${schema.primaryKey}',`);
     }
 
+    if (schema.embedded) {
+      this.appendLine(`  embedded: true,`);
+    }
+
     // properties
     this.appendLine(`  properties: {`);
-    let i = 1;
-    const lastIdx = Object.keys(schema.properties).length;
-    let line: string;
-    for (const key in schema.properties) {
-      if (schema.properties.hasOwnProperty(key)) {
+    (Object.entries(schema.properties) as [
+      string,
+      Realm.ObjectSchemaProperty,
+    ][])
+      .filter(([_, prop]) => prop.type !== 'linkingObjects')
+      .forEach(([key, prop], idx, arr) => {
+        const last = idx === arr.length - 1;
         const primaryKey = key === schema.primaryKey;
-        const prop: any = schema.properties[key];
-        // Ignoring 'linkingObjects' https://github.com/realm/realm-js/issues/1519
-        // happens only tests, when opening a Realm using schema that includes 'linkingObjects'
-        if (prop.type === 'linkingObjects') {
-          continue;
-        }
-        line = '    ' + JSSchemaExporter.propertyLine(prop, primaryKey);
-        if (i++ < lastIdx) {
-          line += ',';
-        }
+        const line = `    ${JSSchemaExporter.propertyLine(prop, primaryKey)}${
+          last ? '' : ','
+        }`;
         this.appendLine(line);
-      }
-    }
+      });
 
     this.appendLine('  }\n}\n');
   }

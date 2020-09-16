@@ -8,7 +8,7 @@ exports.SampleTypes = {
     listOfOptionalDates: 'date?[]',
     indexedInt: { type: 'int', indexed: true },
     linkToObject: 'SampleTypes',
-    listOfObjects: 'SampleTypes[]',
+    listOfObjects: 'SampleTypes[]'
   }
 }
 

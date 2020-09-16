@@ -1,3 +1,11 @@
+exports.ChildEmbeddedType = {
+  name: 'ChildEmbeddedType',
+  embedded: true,
+  properties: {
+    id: 'int'
+  }
+}
+
 exports.IndexedTypes = {
   name: 'IndexedTypes',
   primaryKey: 'intIndexed',
@@ -14,7 +22,7 @@ exports.LinkTypes = {
   properties: {
     objectType: 'ReverseType',
     objectType2: 'ReverseType',
-    listType: 'ReverseType[]',
+    listType: 'ReverseType[]'
   }
 }
 
@@ -28,6 +36,8 @@ exports.OptionalTypes = {
     stringOptional: 'string?',
     dateOptional: 'date?',
     dataOptional: 'data?',
+    objectIdOptional: 'objectId?',
+    decimal128Optional: 'decimal128?',
     objectOptional: 'RequiredTypes',
     boolOptionalArray: 'bool?[]',
     intOptionalArray: 'int?[]',
@@ -35,7 +45,17 @@ exports.OptionalTypes = {
     doubleOptionalArray: 'double?[]',
     stringOptionalArray: 'string?[]',
     dateOptionalArray: 'date?[]',
-    dataOptionalArray: 'data?[]'
+    dataOptionalArray: 'data?[]',
+    objectIdOptionalArray: 'objectId?[]',
+    decimal128OptionalArray: 'decimal128?[]'
+  }
+}
+
+exports.ParentEmbeddedType = {
+  name: 'ParentEmbeddedType',
+  properties: {
+    objectType: 'ChildEmbeddedType',
+    listType: 'ChildEmbeddedType[]'
   }
 }
 
@@ -49,6 +69,8 @@ exports.RequiredTypes = {
     stringRequired: 'string',
     dateRequired: 'date',
     dataRequired: 'data',
+    objectIdRequired: 'objectId',
+    decimal128Required: 'decimal128',
     boolRequiredArray: 'bool[]',
     intRequiredArray: 'int[]',
     floatRequiredArray: 'float[]',
@@ -56,6 +78,8 @@ exports.RequiredTypes = {
     stringRequiredArray: 'string[]',
     dateRequiredArray: 'date[]',
     dataRequiredArray: 'data[]',
+    objectIdRequiredArray: 'objectId[]',
+    decimal128RequiredArray: 'decimal128[]',
     objectRequiredArray: 'RequiredTypes[]'
   }
 }

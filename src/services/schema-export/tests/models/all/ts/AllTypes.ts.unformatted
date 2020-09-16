@@ -1,10 +1,22 @@
 import * as Realm from "realm";
 
+export type ChildEmbeddedType = {
+  id: number;
+};
+
+export const ChildEmbeddedTypeSchema = {
+  name: 'ChildEmbeddedType',
+  embedded: true,
+  properties: {
+    id: 'int'
+  }
+};
+
 export type IndexedTypes = {
-    boolIndexed: boolean;
-    intIndexed: number;
-    stringIndexed: string;
-    dateIndexed: Date;
+  boolIndexed: boolean;
+  intIndexed: number;
+  stringIndexed: string;
+  dateIndexed: Date;
 };
 
 export const IndexedTypesSchema = {
@@ -19,9 +31,9 @@ export const IndexedTypesSchema = {
 };
 
 export type LinkTypes = {
-    objectType?: ReverseType;
-    objectType2?: ReverseType;
-    listType: Array<ReverseType>;
+  objectType?: ReverseType;
+  objectType2?: ReverseType;
+  listType: Array<ReverseType>;
 };
 
 export const LinkTypesSchema = {
@@ -29,26 +41,30 @@ export const LinkTypesSchema = {
   properties: {
     objectType: 'ReverseType',
     objectType2: 'ReverseType',
-    listType: 'ReverseType[]',
+    listType: 'ReverseType[]'
   }
 };
 
 export type OptionalTypes = {
-    boolOptional?: boolean;
-    intOptional?: number;
-    floatOptional?: number;
-    doubleOptional?: number;
-    stringOptional?: string;
-    dateOptional?: Date;
-    dataOptional?: ArrayBuffer;
-    objectOptional?: RequiredTypes;
-    boolOptionalArray: Array<boolean | undefined>;
-    intOptionalArray: Array<number | undefined>;
-    floatOptionalArray: Array<number | undefined>;
-    doubleOptionalArray: Array<number | undefined>;
-    stringOptionalArray: Array<string | undefined>;
-    dateOptionalArray: Array<Date | undefined>;
-    dataOptionalArray: Array<ArrayBuffer | undefined>;
+  boolOptional?: boolean;
+  intOptional?: number;
+  floatOptional?: number;
+  doubleOptional?: number;
+  stringOptional?: string;
+  dateOptional?: Date;
+  dataOptional?: ArrayBuffer;
+  objectIdOptional?: Realm.ObjectId;
+  decimal128Optional?: Realm.Decimal128;
+  objectOptional?: RequiredTypes;
+  boolOptionalArray: Array<boolean | undefined>;
+  intOptionalArray: Array<number | undefined>;
+  floatOptionalArray: Array<number | undefined>;
+  doubleOptionalArray: Array<number | undefined>;
+  stringOptionalArray: Array<string | undefined>;
+  dateOptionalArray: Array<Date | undefined>;
+  dataOptionalArray: Array<ArrayBuffer | undefined>;
+  objectIdOptionalArray: Array<Realm.ObjectId | undefined>;
+  decimal128OptionalArray: Array<Realm.Decimal128 | undefined>;
 };
 
 export const OptionalTypesSchema = {
@@ -61,6 +77,8 @@ export const OptionalTypesSchema = {
     stringOptional: 'string?',
     dateOptional: 'date?',
     dataOptional: 'data?',
+    objectIdOptional: 'objectId?',
+    decimal128Optional: 'decimal128?',
     objectOptional: 'RequiredTypes',
     boolOptionalArray: 'bool?[]',
     intOptionalArray: 'int?[]',
@@ -68,26 +86,45 @@ export const OptionalTypesSchema = {
     doubleOptionalArray: 'double?[]',
     stringOptionalArray: 'string?[]',
     dateOptionalArray: 'date?[]',
-    dataOptionalArray: 'data?[]'
+    dataOptionalArray: 'data?[]',
+    objectIdOptionalArray: 'objectId?[]',
+    decimal128OptionalArray: 'decimal128?[]'
+  }
+};
+
+export type ParentEmbeddedType = {
+  objectType?: ChildEmbeddedType;
+  listType: Array<ChildEmbeddedType>;
+};
+
+export const ParentEmbeddedTypeSchema = {
+  name: 'ParentEmbeddedType',
+  properties: {
+    objectType: 'ChildEmbeddedType',
+    listType: 'ChildEmbeddedType[]'
   }
 };
 
 export type RequiredTypes = {
-    boolRequired: boolean;
-    intRequired: number;
-    floatRequired: number;
-    doubleRequired: number;
-    stringRequired: string;
-    dateRequired: Date;
-    dataRequired: ArrayBuffer;
-    boolRequiredArray: Array<boolean>;
-    intRequiredArray: Array<number>;
-    floatRequiredArray: Array<number>;
-    doubleRequiredArray: Array<number>;
-    stringRequiredArray: Array<string>;
-    dateRequiredArray: Array<Date>;
-    dataRequiredArray: Array<ArrayBuffer>;
-    objectRequiredArray: Array<RequiredTypes>;
+  boolRequired: boolean;
+  intRequired: number;
+  floatRequired: number;
+  doubleRequired: number;
+  stringRequired: string;
+  dateRequired: Date;
+  dataRequired: ArrayBuffer;
+  objectIdRequired: Realm.ObjectId;
+  decimal128Required: Realm.Decimal128;
+  boolRequiredArray: Array<boolean>;
+  intRequiredArray: Array<number>;
+  floatRequiredArray: Array<number>;
+  doubleRequiredArray: Array<number>;
+  stringRequiredArray: Array<string>;
+  dateRequiredArray: Array<Date>;
+  dataRequiredArray: Array<ArrayBuffer>;
+  objectIdRequiredArray: Array<Realm.ObjectId>;
+  decimal128RequiredArray: Array<Realm.Decimal128>;
+  objectRequiredArray: Array<RequiredTypes>;
 };
 
 export const RequiredTypesSchema = {
@@ -100,6 +137,8 @@ export const RequiredTypesSchema = {
     stringRequired: 'string',
     dateRequired: 'date',
     dataRequired: 'data',
+    objectIdRequired: 'objectId',
+    decimal128Required: 'decimal128',
     boolRequiredArray: 'bool[]',
     intRequiredArray: 'int[]',
     floatRequiredArray: 'float[]',
@@ -107,12 +146,14 @@ export const RequiredTypesSchema = {
     stringRequiredArray: 'string[]',
     dateRequiredArray: 'date[]',
     dataRequiredArray: 'data[]',
+    objectIdRequiredArray: 'objectId[]',
+    decimal128RequiredArray: 'decimal128[]',
     objectRequiredArray: 'RequiredTypes[]'
   }
 };
 
 export type ReverseType = {
-    links?: LinkTypes;
+  links?: LinkTypes;
 };
 
 export const ReverseTypeSchema = {
@@ -122,4 +163,4 @@ export const ReverseTypeSchema = {
   }
 };
 
-export const Schema = [IndexedTypesSchema, LinkTypesSchema, OptionalTypesSchema, RequiredTypesSchema, ReverseTypeSchema];
+export const Schema = [ChildEmbeddedTypeSchema, IndexedTypesSchema, LinkTypesSchema, OptionalTypesSchema, ParentEmbeddedTypeSchema, RequiredTypesSchema, ReverseTypeSchema];

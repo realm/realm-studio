@@ -52,7 +52,7 @@ export default class TSSchemaExporter extends SchemaExporter {
         if (prop.type === 'linkingObjects') {
           continue;
         }
-        this.appendLine('    ' + this.propertyLine(prop));
+        this.appendLine('  ' + this.propertyLine(prop));
       }
     }
     this.appendLine(`};\n`);
@@ -66,27 +66,25 @@ export default class TSSchemaExporter extends SchemaExporter {
       this.appendLine(`  primaryKey: '${schema.primaryKey}',`);
     }
 
+    if (schema.embedded) {
+      this.appendLine(`  embedded: true,`);
+    }
+
     // properties
     this.appendLine(`  properties: {`);
-    let i = 1;
-    const lastIdx = Object.keys(schema.properties).length;
-    let line: string;
-    for (const key in schema.properties) {
-      if (schema.properties.hasOwnProperty(key)) {
+    (Object.entries(schema.properties) as [
+      string,
+      INamedObjectSchemaProperty,
+    ][])
+      .filter(([_, prop]) => prop.type !== 'linkingObjects')
+      .forEach(([key, prop], idx, arr) => {
+        const last = idx === arr.length - 1;
         const primaryKey = key === schema.primaryKey;
-        const prop: any = schema.properties[key];
-        // Ignoring 'linkingObjects' https://github.com/realm/realm-js/issues/1519
-        // happens only tests, when opening a Realm using schema that includes 'linkingObjects'
-        if (prop.type === 'linkingObjects') {
-          continue;
-        }
-        line = '    ' + JSSchemaExporter.propertyLine(prop, primaryKey);
-        if (i++ < lastIdx) {
-          line += ',';
-        }
+        const line = `    ${JSSchemaExporter.propertyLine(prop, primaryKey)}${
+          last ? '' : ','
+        }`;
         this.appendLine(line);
-      }
-    }
+      });
 
     this.appendLine('  }\n};\n');
   }
@@ -108,6 +106,12 @@ export default class TSSchemaExporter extends SchemaExporter {
         return 'ArrayBuffer';
       case 'date':
         return 'Date';
+      case 'object id':
+      case 'objectId':
+        return 'Realm.ObjectId';
+      case 'decimal':
+      case 'decimal128':
+        return 'Realm.Decimal128';
       default:
         return type;
     }
@@ -119,6 +123,7 @@ export default class TSSchemaExporter extends SchemaExporter {
    * @param prop The property to produce a TypeScript type for.
    */
   public getTypeFromProperty(prop: Realm.ObjectSchemaProperty) {
+    // console.log(prop.type, this.getTypeFromPropertyType(prop.objectType));
     if (prop.type === 'list') {
       const typeStr = this.getTypeFromPropertyType(prop.objectType);
       return `Array<${typeStr}${prop.optional ? ' | undefined' : ''}>`;

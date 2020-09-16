@@ -82,6 +82,8 @@ describe('Export schema tests', () => {
       modelAll.OptionalTypes,
       modelAll.RequiredTypes,
       modelAll.ReverseType,
+      modelAll.ParentEmbeddedType,
+      modelAll.ChildEmbeddedType,
     ]);
   });
 
