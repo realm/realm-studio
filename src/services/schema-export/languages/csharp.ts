@@ -170,6 +170,16 @@ export default class CSharpSchemaExporter extends SchemaExporter {
       case 'date':
         result = 'DateTimeOffset';
         break;
+      case 'object id':
+      case 'objectId':
+        result = 'ObjectId';
+        isNullable = true;
+        break;
+      case 'decimal':
+      case 'decimal128':
+        result = 'Decimal128';
+        isNullable = true;
+        break;
       case 'data':
         result = 'byte[]';
         isNullable = true;

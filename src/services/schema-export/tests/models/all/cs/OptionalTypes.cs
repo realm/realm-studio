@@ -30,6 +30,12 @@ namespace MyProject.Models
         [MapTo("dataOptional")]
         public byte[] DataOptional { get; set; }
 
+        [MapTo("objectIdOptional")]
+        public ObjectId ObjectIdOptional { get; set; }
+
+        [MapTo("decimal128Optional")]
+        public Decimal128 Decimal128Optional { get; set; }
+
         [MapTo("objectOptional")]
         public RequiredTypes ObjectOptional { get; set; }
 
@@ -53,5 +59,11 @@ namespace MyProject.Models
 
         [MapTo("dataOptionalArray")]
         public IList<byte[]> DataOptionalArray { get; }
+
+        [MapTo("objectIdOptionalArray")]
+        public IList<ObjectId> ObjectIdOptionalArray { get; }
+
+        [MapTo("decimal128OptionalArray")]
+        public IList<Decimal128> Decimal128OptionalArray { get; }
     }
 }
