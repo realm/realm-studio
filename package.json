@@ -115,8 +115,8 @@
     "generate-all-types-realm": "node ./scripts/generate-realm.js",
     "start": "electron .",
     "sentry:upload-symbols": "node ./scripts/sentry-symbols.js",
-    "test": "mocha-webpack --opts configs/mocha-webpack.opts",
-    "test:post-package": "mocha-webpack --opts configs/mocha-webpack.opts src/testing/post-packaging/index.ts",
+    "test": "npm run build && mocha-webpack --opts configs/mocha-webpack.opts",
+    "test:post-package": "npm run build && mocha-webpack --opts configs/mocha-webpack.opts src/testing/post-packaging/index.ts",
     "wait-for-bundle": "node ./scripts/wait-for-bundle.js",
     "webpack:main": "webpack --mode development --config configs/webpack.main.js",
     "webpack:renderer": "webpack-dev-server --mode development --config configs/webpack.renderer.js"
