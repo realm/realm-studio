@@ -143,6 +143,10 @@ export default class JavaSchemaExporter extends SchemaExporter {
       case 'string':
       case 'data':
       case 'date':
+      case 'object id':
+      case 'objectId':
+      case 'decimal':
+      case 'decimal128':
         return true;
       case 'list':
         return isPrimitive(property.objectType);
@@ -169,6 +173,12 @@ export default class JavaSchemaExporter extends SchemaExporter {
         case 'date':
           this.realmImports.add('import java.util.Date;');
           return 'RealmList<Date>';
+        case 'object id':
+        case 'objectId':
+          return 'RealmList<ObjectId>';
+        case 'decimal':
+        case 'decimal128':
+          return 'RealmList<Decimal128>';
         default:
           return `RealmList<${property.objectType}>`;
       }
@@ -189,6 +199,12 @@ export default class JavaSchemaExporter extends SchemaExporter {
       case 'date':
         this.realmImports.add('import java.util.Date;');
         return 'Date';
+      case 'object id':
+      case 'objectId':
+        return 'ObjectId';
+      case 'decimal':
+      case 'decimal128':
+        return 'Decimal128';
       case 'object':
         return property.objectType;
     }

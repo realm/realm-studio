@@ -18,6 +18,10 @@ public class RequiredTypes extends RealmObject {
     @Required
     private byte[] dataRequired;
     @Required
+    private ObjectId objectIdRequired;
+    @Required
+    private Decimal128 decimal128Required;
+    @Required
     private RealmList<Boolean> boolRequiredArray;
     @Required
     private RealmList<Long> intRequiredArray;
@@ -31,6 +35,10 @@ public class RequiredTypes extends RealmObject {
     private RealmList<Date> dateRequiredArray;
     @Required
     private RealmList<byte[]> dataRequiredArray;
+    @Required
+    private RealmList<ObjectId> objectIdRequiredArray;
+    @Required
+    private RealmList<Decimal128> decimal128RequiredArray;
     private RealmList<RequiredTypes> objectRequiredArray;
 
     public boolean isBoolRequired() { return boolRequired; }
@@ -61,6 +69,14 @@ public class RequiredTypes extends RealmObject {
 
     public void setDataRequired(byte[] dataRequired) { this.dataRequired = dataRequired; }
 
+    public ObjectId getObjectIdRequired() { return objectIdRequired; }
+
+    public void setObjectIdRequired(ObjectId objectIdRequired) { this.objectIdRequired = objectIdRequired; }
+
+    public Decimal128 getDecimal128Required() { return decimal128Required; }
+
+    public void setDecimal128Required(Decimal128 decimal128Required) { this.decimal128Required = decimal128Required; }
+
     public RealmList<Boolean> getBoolRequiredArray() { return boolRequiredArray; }
 
     public void setBoolRequiredArray(RealmList<Boolean> boolRequiredArray) { this.boolRequiredArray = boolRequiredArray; }
@@ -88,6 +104,14 @@ public class RequiredTypes extends RealmObject {
     public RealmList<byte[]> getDataRequiredArray() { return dataRequiredArray; }
 
     public void setDataRequiredArray(RealmList<byte[]> dataRequiredArray) { this.dataRequiredArray = dataRequiredArray; }
+
+    public RealmList<ObjectId> getObjectIdRequiredArray() { return objectIdRequiredArray; }
+
+    public void setObjectIdRequiredArray(RealmList<ObjectId> objectIdRequiredArray) { this.objectIdRequiredArray = objectIdRequiredArray; }
+
+    public RealmList<Decimal128> getDecimal128RequiredArray() { return decimal128RequiredArray; }
+
+    public void setDecimal128RequiredArray(RealmList<Decimal128> decimal128RequiredArray) { this.decimal128RequiredArray = decimal128RequiredArray; }
 
     public RealmList<RequiredTypes> getObjectRequiredArray() { return objectRequiredArray; }
 

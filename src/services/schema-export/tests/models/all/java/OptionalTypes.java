@@ -13,6 +13,8 @@ public class OptionalTypes extends RealmObject {
     private String stringOptional;
     private Date dateOptional;
     private byte[] dataOptional;
+    private ObjectId objectIdOptional;
+    private Decimal128 decimal128Optional;
     private RequiredTypes objectOptional;
     private RealmList<Boolean> boolOptionalArray;
     private RealmList<Long> intOptionalArray;
@@ -21,6 +23,8 @@ public class OptionalTypes extends RealmObject {
     private RealmList<String> stringOptionalArray;
     private RealmList<Date> dateOptionalArray;
     private RealmList<byte[]> dataOptionalArray;
+    private RealmList<ObjectId> objectIdOptionalArray;
+    private RealmList<Decimal128> decimal128OptionalArray;
 
     public Boolean isBoolOptional() { return boolOptional; }
 
@@ -49,6 +53,14 @@ public class OptionalTypes extends RealmObject {
     public byte[] getDataOptional() { return dataOptional; }
 
     public void setDataOptional(byte[] dataOptional) { this.dataOptional = dataOptional; }
+
+    public ObjectId getObjectIdOptional() { return objectIdOptional; }
+
+    public void setObjectIdOptional(ObjectId objectIdOptional) { this.objectIdOptional = objectIdOptional; }
+
+    public Decimal128 getDecimal128Optional() { return decimal128Optional; }
+
+    public void setDecimal128Optional(Decimal128 decimal128Optional) { this.decimal128Optional = decimal128Optional; }
 
     public RequiredTypes getObjectOptional() { return objectOptional; }
 
@@ -81,6 +93,14 @@ public class OptionalTypes extends RealmObject {
     public RealmList<byte[]> getDataOptionalArray() { return dataOptionalArray; }
 
     public void setDataOptionalArray(RealmList<byte[]> dataOptionalArray) { this.dataOptionalArray = dataOptionalArray; }
+
+    public RealmList<ObjectId> getObjectIdOptionalArray() { return objectIdOptionalArray; }
+
+    public void setObjectIdOptionalArray(RealmList<ObjectId> objectIdOptionalArray) { this.objectIdOptionalArray = objectIdOptionalArray; }
+
+    public RealmList<Decimal128> getDecimal128OptionalArray() { return decimal128OptionalArray; }
+
+    public void setDecimal128OptionalArray(RealmList<Decimal128> decimal128OptionalArray) { this.decimal128OptionalArray = decimal128OptionalArray; }
 
 
 }
