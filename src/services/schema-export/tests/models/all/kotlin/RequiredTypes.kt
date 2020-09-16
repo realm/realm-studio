@@ -15,6 +15,8 @@ open class RequiredTypes : RealmObject() {
     var stringRequired: String = ""
     var dateRequired: Date = Date()
     var dataRequired: ByteArray = ByteArray(0)
+    var objectIdRequired: ObjectId = ObjectId()
+    var decimal128Required: Decimal128 = Decimal128()
     @Required
     var boolRequiredArray: RealmList<Boolean> = RealmList()
     @Required
@@ -29,6 +31,10 @@ open class RequiredTypes : RealmObject() {
     var dateRequiredArray: RealmList<Date> = RealmList()
     @Required
     var dataRequiredArray: RealmList<ByteArray> = RealmList()
+    @Required
+    var objectIdRequiredArray: RealmList<ObjectId> = RealmList()
+    @Required
+    var decimal128RequiredArray: RealmList<Decimal128> = RealmList()
     var objectRequiredArray: RealmList<RequiredTypes> = RealmList()
 
 }

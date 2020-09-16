@@ -143,6 +143,12 @@ export default class KotlinSchemaExporter extends SchemaExporter {
           return `${prefix} ByteArray(0)`;
         case 'date':
           return `${prefix} Date()`;
+        case 'object id':
+        case 'objectId':
+          return `${prefix} ObjectId()`;
+        case 'decimal':
+        case 'decimal128':
+          return `${prefix} Decimal128()`;
         case 'list':
           return `${prefix} RealmList()`;
       }
@@ -152,71 +158,87 @@ export default class KotlinSchemaExporter extends SchemaExporter {
   }
 
   private kotlinTypeForProperty(property: any): any {
-    let properyType = null;
+    let propertyType = null;
 
     if (property.type === 'list') {
       this.realmImports.add('import io.realm.RealmList');
       switch (property.objectType) {
         case 'bool':
-          properyType = 'RealmList<Boolean>';
+          propertyType = 'RealmList<Boolean>';
           break;
         case 'int':
-          properyType = 'RealmList<Long>';
+          propertyType = 'RealmList<Long>';
           break;
         case 'float':
-          properyType = 'RealmList<Float>';
+          propertyType = 'RealmList<Float>';
           break;
         case 'double':
-          properyType = 'RealmList<Double>';
+          propertyType = 'RealmList<Double>';
           break;
         case 'string':
-          properyType = 'RealmList<String>';
+          propertyType = 'RealmList<String>';
           break;
         case 'data':
-          properyType = 'RealmList<ByteArray>';
+          propertyType = 'RealmList<ByteArray>';
           break;
         case 'date':
           this.realmImports.add('import java.util.Date');
-          properyType = 'RealmList<Date>';
+          propertyType = 'RealmList<Date>';
+          break;
+        case 'object id':
+        case 'objectId':
+          propertyType = 'RealmList<ObjectId>';
+          break;
+        case 'decimal':
+        case 'decimal128':
+          propertyType = 'RealmList<Decimal128>';
           break;
         default:
-          properyType = `RealmList<${property.objectType}>`;
+          propertyType = `RealmList<${property.objectType}>`;
           break;
       }
     } else {
       switch (property.type) {
         case 'bool':
-          properyType = 'Boolean';
+          propertyType = 'Boolean';
           break;
         case 'int':
-          properyType = 'Long';
+          propertyType = 'Long';
           break;
         case 'float':
-          properyType = 'Float';
+          propertyType = 'Float';
           break;
         case 'double':
-          properyType = 'Double';
+          propertyType = 'Double';
           break;
         case 'string':
-          properyType = 'String';
+          propertyType = 'String';
           break;
         case 'data':
-          properyType = 'ByteArray';
+          propertyType = 'ByteArray';
           break;
         case 'date':
           this.realmImports.add('import java.util.Date');
-          properyType = 'Date';
+          propertyType = 'Date';
+          break;
+        case 'object id':
+        case 'objectId':
+          propertyType = 'ObjectId';
+          break;
+        case 'decimal':
+        case 'decimal128':
+          propertyType = 'Decimal128';
           break;
         case 'object':
-          properyType = property.objectType;
+          propertyType = property.objectType;
           break;
       }
     }
 
     if (property.optional) {
-      properyType += '?';
+      propertyType += '?';
     }
 
-    return properyType;
+    return propertyType;
   }
 }
