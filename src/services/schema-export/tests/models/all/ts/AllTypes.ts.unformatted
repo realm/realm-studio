@@ -93,15 +93,15 @@ export const OptionalTypesSchema = {
 };
 
 export type ParentEmbeddedType = {
-  objectType?: ChildEmbeddedType;
-  listType: Array<ChildEmbeddedType>;
+  embeddedObject?: ChildEmbeddedType;
+  embeddedObjectList: Array<ChildEmbeddedType>;
 };
 
 export const ParentEmbeddedTypeSchema = {
   name: 'ParentEmbeddedType',
   properties: {
-    objectType: 'ChildEmbeddedType',
-    listType: 'ChildEmbeddedType[]'
+    embeddedObject: 'ChildEmbeddedType',
+    embeddedObjectList: 'ChildEmbeddedType[]'
   }
 };
 

@@ -54,8 +54,8 @@ exports.OptionalTypes = {
 exports.ParentEmbeddedType = {
   name: 'ParentEmbeddedType',
   properties: {
-    objectType: 'ChildEmbeddedType',
-    listType: 'ChildEmbeddedType[]'
+    embeddedObject: 'ChildEmbeddedType',
+    embeddedObjectList: 'ChildEmbeddedType[]'
   }
 }
 

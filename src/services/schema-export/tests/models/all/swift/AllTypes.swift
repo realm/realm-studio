@@ -49,8 +49,8 @@ class OptionalTypes: Object {
 }
 
 class ParentEmbeddedType: Object {
-    @objc dynamic var objectType: ChildEmbeddedType?
-    let listType = List<ChildEmbeddedType>()
+    @objc dynamic var embeddedObject: ChildEmbeddedType?
+    let embeddedObjectList = List<ChildEmbeddedType>()
 }
 
 class RequiredTypes: Object {

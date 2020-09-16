@@ -91,7 +91,7 @@ export const ChildEmbeddedType = {
 export const ParentEmbeddedType = {
   name: 'ParentEmbeddedType',
   properties: {
-    objectType: { type: 'ChildEmbeddedType' },
-    listType: 'ChildEmbeddedType[]',
+    embeddedObject: 'ChildEmbeddedType',
+    embeddedObjectList: 'ChildEmbeddedType[]',
   },
 };
