@@ -45,7 +45,7 @@ export class CSVSchemaGenerator extends SchemaGenerator {
         preview: 1,
       });
       rawCSV = '';
-      const headers: string[] = content.meta.fields;
+      const headers: string[] = content.meta.fields || [];
       const data: any[] = content.data;
       headers.forEach(header => {
         const value: string = data[0][header];
