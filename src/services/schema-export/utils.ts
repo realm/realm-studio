@@ -29,3 +29,18 @@ export const reMapType = (type: string): string => {
       return type;
   }
 };
+
+const BSON_TYPES = ['objectId', 'decimal128'];
+export const isBsonType = (prop: Realm.ObjectSchemaProperty): boolean =>
+  BSON_TYPES.includes(prop.type) ||
+  (!!prop.objectType && BSON_TYPES.includes(reMapType(prop.objectType)));
+
+export interface INamedObjectSchemaProperty extends Realm.ObjectSchemaProperty {
+  name: string;
+}
+
+export const filteredProperties = (propsMap: Realm.PropertiesTypes) => {
+  const props = Object.values(propsMap) as INamedObjectSchemaProperty[];
+
+  return props.filter(prop => prop.type !== 'linkingObjects');
+};

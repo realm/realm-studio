@@ -18,11 +18,8 @@
 
 import fsPath from 'path';
 import { ISchemaFile, SchemaExporter } from '../schemaExporter';
+import { filteredProperties, INamedObjectSchemaProperty } from '../utils';
 import JSSchemaExporter from './javascript';
-
-interface INamedObjectSchemaProperty extends Realm.ObjectSchemaProperty {
-  name: string;
-}
 
 export default class TSSchemaExporter extends SchemaExporter {
   public exportSchema(realm: Realm): ISchemaFile[] {
@@ -44,17 +41,9 @@ export default class TSSchemaExporter extends SchemaExporter {
     // TypeScript Type
 
     this.appendLine(`export type ${schema.name} = {`);
-    for (const key in schema.properties) {
-      if (schema.properties.hasOwnProperty(key)) {
-        const prop = schema.properties[key] as INamedObjectSchemaProperty;
-        // Ignoring 'linkingObjects' https://github.com/realm/realm-js/issues/1519
-        // happens only tests, when opening a Realm using schema that includes 'linkingObjects'
-        if (prop.type === 'linkingObjects') {
-          continue;
-        }
-        this.appendLine('  ' + this.propertyLine(prop));
-      }
-    }
+    filteredProperties(schema.properties).forEach(prop => {
+      this.appendLine('  ' + this.propertyLine(prop));
+    });
     this.appendLine(`};\n`);
 
     // JavaScript Schema
@@ -72,19 +61,14 @@ export default class TSSchemaExporter extends SchemaExporter {
 
     // properties
     this.appendLine(`  properties: {`);
-    (Object.entries(schema.properties) as [
-      string,
-      INamedObjectSchemaProperty,
-    ][])
-      .filter(([_, prop]) => prop.type !== 'linkingObjects')
-      .forEach(([key, prop], idx, arr) => {
-        const last = idx === arr.length - 1;
-        const primaryKey = key === schema.primaryKey;
-        const line = `    ${JSSchemaExporter.propertyLine(prop, primaryKey)}${
-          last ? '' : ','
-        }`;
-        this.appendLine(line);
-      });
+    filteredProperties(schema.properties).forEach((prop, idx, arr) => {
+      const last = idx === arr.length - 1;
+      const primaryKey = prop.name === schema.primaryKey;
+      const line = `    ${JSSchemaExporter.propertyLine(prop, primaryKey)}${
+        last ? '' : ','
+      }`;
+      this.appendLine(line);
+    });
 
     this.appendLine('  }\n};\n');
   }

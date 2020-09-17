@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using Realms;
+using MongoDB.Bson;
 
 namespace MyProject.Models
 {

@@ -18,7 +18,7 @@
 
 import fsPath from 'path';
 import { ISchemaFile, SchemaExporter } from '../schemaExporter';
-import { reMapType } from '../utils';
+import { filteredProperties, reMapType } from '../utils';
 
 export default class JSSchemaExporter extends SchemaExporter {
   public static propertyLine(prop: any, primaryKey: boolean): string {
@@ -72,19 +72,14 @@ export default class JSSchemaExporter extends SchemaExporter {
 
     // properties
     this.appendLine(`  properties: {`);
-    (Object.entries(schema.properties) as [
-      string,
-      Realm.ObjectSchemaProperty,
-    ][])
-      .filter(([_, prop]) => prop.type !== 'linkingObjects')
-      .forEach(([key, prop], idx, arr) => {
-        const last = idx === arr.length - 1;
-        const primaryKey = key === schema.primaryKey;
-        const line = `    ${JSSchemaExporter.propertyLine(prop, primaryKey)}${
-          last ? '' : ','
-        }`;
-        this.appendLine(line);
-      });
+    filteredProperties(schema.properties).forEach((prop, idx, arr) => {
+      const last = idx === arr.length - 1;
+      const primaryKey = prop.name === schema.primaryKey;
+      const line = `    ${JSSchemaExporter.propertyLine(prop, primaryKey)}${
+        last ? '' : ','
+      }`;
+      this.appendLine(line);
+    });
 
     this.appendLine('  }\n}\n');
   }

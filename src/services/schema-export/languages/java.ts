@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import { ISchemaFile, SchemaExporter } from '../schemaExporter';
-import { isPrimitive } from '../utils';
+import { filteredProperties, isPrimitive } from '../utils';
 
 export default class JavaSchemaExporter extends SchemaExporter {
   private static readonly PADDING = '    ';
@@ -53,24 +53,16 @@ export default class JavaSchemaExporter extends SchemaExporter {
     this.fieldsContent += `public class ${schema.name} extends RealmObject {\n`;
 
     // Properties
-    for (const key in schema.properties) {
-      if (schema.properties.hasOwnProperty(key)) {
-        const prop: any = schema.properties[key];
-        // Ignoring 'linkingObjects' https://github.com/realm/realm-js/issues/1519
-        // happens only tests, when opening a Realm using schema that includes 'linkingObjects'
-        if (prop.type === 'linkingObjects') {
-          continue;
-        }
-        this.propertyLine(prop, schema.primaryKey);
-        if (prop.indexed && prop.name !== schema.primaryKey) {
-          this.realmImports.add('import io.realm.annotations.Index;');
-        }
-
-        if (!prop.optional && this.javaPropertyTypeCanBeMarkedRequired(prop)) {
-          this.realmImports.add('import io.realm.annotations.Required;');
-        }
+    filteredProperties(schema.properties).forEach(prop => {
+      this.propertyLine(prop, schema.primaryKey);
+      if (prop.indexed && prop.name !== schema.primaryKey) {
+        this.realmImports.add('import io.realm.annotations.Index;');
       }
-    }
+
+      if (!prop.optional && this.javaPropertyTypeCanBeMarkedRequired(prop)) {
+        this.realmImports.add('import io.realm.annotations.Required;');
+      }
+    });
 
     // Primary key
     if (schema.primaryKey) {
