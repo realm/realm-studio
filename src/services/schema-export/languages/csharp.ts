@@ -186,7 +186,10 @@ export default class CSharpSchemaExporter extends SchemaExporter {
         isNullable = true;
         break;
       default:
-        if (!objectType) throw new Error('Missing objectType');
+        if (!objectType)
+          throw new Error(
+            `No specific match & missing objectType for type "${type}".`,
+          );
 
         result = objectType;
         isNullable = true;
