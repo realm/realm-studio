@@ -10,4 +10,4 @@
 
 ### Internals
 
-- None
+- Upgraded Realm to v6.1.2. ([#1331](https://github.com/realm/realm-studio/pull/1331))
