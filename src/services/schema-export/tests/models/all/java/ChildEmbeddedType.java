@@ -2,7 +2,9 @@
 package your.package.name.here;
 
 import io.realm.RealmObject;
+import io.realm.annotations.RealmClass;
 
+@RealmClass(embedded = true)
 public class ChildEmbeddedType extends RealmObject {
     private long id;
 

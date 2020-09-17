@@ -50,6 +50,10 @@ export default class JavaSchemaExporter extends SchemaExporter {
 
     this.realmImports.add('import io.realm.RealmObject;');
 
+    if (schema.embedded) {
+      this.realmImports.add('import io.realm.annotations.RealmClass;');
+      this.fieldsContent += '@RealmClass(embedded = true)\n';
+    }
     this.fieldsContent += `public class ${schema.name} extends RealmObject {\n`;
 
     // Properties
