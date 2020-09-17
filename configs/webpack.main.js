@@ -1,7 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const Visualizer = require('webpack-visualizer-plugin');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 
 module.exports = (env, argv) => {
   const isDevelopment = argv.mode === 'development';
