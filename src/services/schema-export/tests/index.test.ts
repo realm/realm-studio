@@ -41,8 +41,8 @@ const assertGeneratedSchemaIsValid = (
 ) => {
   assertGeneratedSchemaAreValid(
     language,
-    Array<string>(expectedFilePath),
-    Array<string>(generatedFilePath),
+    [expectedFilePath],
+    [generatedFilePath],
     realm,
   );
 };
@@ -153,7 +153,7 @@ describe('Export schema tests', () => {
   it('Java exporter model with all types', () => {
     assertGeneratedSchemaAreValid(
       Language.Java,
-      Array<string>(
+      [
         `${TESTS_PATH}/models/all/java/IndexedTypes.java`,
         `${TESTS_PATH}/models/all/java/LinkTypes.java`,
         `${TESTS_PATH}/models/all/java/OptionalTypes.java`,
@@ -161,8 +161,8 @@ describe('Export schema tests', () => {
         `${TESTS_PATH}/models/all/java/ReverseType.java`,
         `${TESTS_PATH}/models/all/java/ChildEmbeddedType.java`,
         `${TESTS_PATH}/models/all/java/ParentEmbeddedType.java`,
-      ),
-      Array<string>(
+      ],
+      [
         `${TESTS_PATH}/temporal/${Language.Java}/IndexedTypes.java`,
         `${TESTS_PATH}/temporal/${Language.Java}/LinkTypes.java`,
         `${TESTS_PATH}/temporal/${Language.Java}/OptionalTypes.java`,
@@ -170,7 +170,7 @@ describe('Export schema tests', () => {
         `${TESTS_PATH}/temporal/${Language.Java}/ReverseType.java`,
         `${TESTS_PATH}/temporal/${Language.Java}/ChildEmbeddedType.java`,
         `${TESTS_PATH}/temporal/${Language.Java}/ParentEmbeddedType.java`,
-      ),
+      ],
       allRealm,
     );
   });
@@ -187,7 +187,7 @@ describe('Export schema tests', () => {
   it('Kotlin exporter model with all types', () => {
     assertGeneratedSchemaAreValid(
       Language.Kotlin,
-      Array<string>(
+      [
         `${TESTS_PATH}/models/all/kotlin/IndexedTypes.kt`,
         `${TESTS_PATH}/models/all/kotlin/LinkTypes.kt`,
         `${TESTS_PATH}/models/all/kotlin/OptionalTypes.kt`,
@@ -195,8 +195,8 @@ describe('Export schema tests', () => {
         `${TESTS_PATH}/models/all/kotlin/ReverseType.kt`,
         `${TESTS_PATH}/models/all/kotlin/ChildEmbeddedType.kt`,
         `${TESTS_PATH}/models/all/kotlin/ParentEmbeddedType.kt`,
-      ),
-      Array<string>(
+      ],
+      [
         `${TESTS_PATH}/temporal/${Language.Kotlin}/IndexedTypes.kt`,
         `${TESTS_PATH}/temporal/${Language.Kotlin}/LinkTypes.kt`,
         `${TESTS_PATH}/temporal/${Language.Kotlin}/OptionalTypes.kt`,
@@ -204,7 +204,7 @@ describe('Export schema tests', () => {
         `${TESTS_PATH}/temporal/${Language.Kotlin}/ReverseType.kt`,
         `${TESTS_PATH}/temporal/${Language.Kotlin}/ChildEmbeddedType.kt`,
         `${TESTS_PATH}/temporal/${Language.Kotlin}/ParentEmbeddedType.kt`,
-      ),
+      ],
       allRealm,
     );
   });
@@ -221,7 +221,7 @@ describe('Export schema tests', () => {
   it('C# exporter model with all types', () => {
     assertGeneratedSchemaAreValid(
       Language.CS,
-      Array<string>(
+      [
         `${TESTS_PATH}/models/all/cs/IndexedTypes.cs`,
         `${TESTS_PATH}/models/all/cs/LinkTypes.cs`,
         `${TESTS_PATH}/models/all/cs/OptionalTypes.cs`,
@@ -229,8 +229,8 @@ describe('Export schema tests', () => {
         `${TESTS_PATH}/models/all/cs/ReverseType.cs`,
         `${TESTS_PATH}/models/all/cs/ChildEmbeddedType.cs`,
         `${TESTS_PATH}/models/all/cs/ParentEmbeddedType.cs`,
-      ),
-      Array<string>(
+      ],
+      [
         `${TESTS_PATH}/temporal/${Language.CS}/IndexedTypes.cs`,
         `${TESTS_PATH}/temporal/${Language.CS}/LinkTypes.cs`,
         `${TESTS_PATH}/temporal/${Language.CS}/OptionalTypes.cs`,
@@ -238,7 +238,7 @@ describe('Export schema tests', () => {
         `${TESTS_PATH}/temporal/${Language.CS}/ReverseType.cs`,
         `${TESTS_PATH}/temporal/${Language.CS}/ChildEmbeddedType.cs`,
         `${TESTS_PATH}/temporal/${Language.CS}/ParentEmbeddedType.cs`,
-      ),
+      ],
       allRealm,
     );
   });
