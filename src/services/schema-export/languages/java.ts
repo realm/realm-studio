@@ -171,9 +171,11 @@ export default class JavaSchemaExporter extends SchemaExporter {
           return 'RealmList<Date>';
         case 'object id':
         case 'objectId':
+          this.realmImports.add('import org.bson.types.ObjectId;');
           return 'RealmList<ObjectId>';
         case 'decimal':
         case 'decimal128':
+          this.realmImports.add('import org.bson.types.Decimal128;');
           return 'RealmList<Decimal128>';
         default:
           return `RealmList<${property.objectType}>`;
@@ -195,11 +197,11 @@ export default class JavaSchemaExporter extends SchemaExporter {
       case 'date':
         this.realmImports.add('import java.util.Date;');
         return 'Date';
-      case 'object id':
       case 'objectId':
+        this.realmImports.add('import org.bson.types.ObjectId;');
         return 'ObjectId';
-      case 'decimal':
       case 'decimal128':
+        this.realmImports.add('import org.bson.types.Decimal128;');
         return 'Decimal128';
       case 'object':
         return property.objectType;

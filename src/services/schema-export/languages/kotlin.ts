@@ -183,10 +183,12 @@ export default class KotlinSchemaExporter extends SchemaExporter {
           break;
         case 'object id':
         case 'objectId':
+          this.realmImports.add('import org.bson.types.ObjectId');
           propertyType = 'RealmList<ObjectId>';
           break;
         case 'decimal':
         case 'decimal128':
+          this.realmImports.add('import org.bson.types.Decimal128');
           propertyType = 'RealmList<Decimal128>';
           break;
         default:
@@ -217,12 +219,12 @@ export default class KotlinSchemaExporter extends SchemaExporter {
           this.realmImports.add('import java.util.Date');
           propertyType = 'Date';
           break;
-        case 'object id':
         case 'objectId':
+          this.realmImports.add('import org.bson.types.ObjectId');
           propertyType = 'ObjectId';
           break;
-        case 'decimal':
         case 'decimal128':
+          this.realmImports.add('import org.bson.types.Decimal128');
           propertyType = 'Decimal128';
           break;
         case 'object':

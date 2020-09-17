@@ -4,6 +4,8 @@ package your.package.name.here;
 import io.realm.RealmObject;
 import io.realm.annotations.Required;
 import java.util.Date;
+import org.bson.types.ObjectId;
+import org.bson.types.Decimal128;
 import io.realm.RealmList;
 
 public class RequiredTypes extends RealmObject {
