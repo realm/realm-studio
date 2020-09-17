@@ -32,11 +32,9 @@ namespace MyProject.Models
         [MapTo("dataRequired")]
         public byte[] DataRequired { get; set; }
 
-        [Required]
         [MapTo("objectIdRequired")]
         public ObjectId ObjectIdRequired { get; set; }
 
-        [Required]
         [MapTo("decimal128Required")]
         public Decimal128 Decimal128Required { get; set; }
 
@@ -63,11 +61,9 @@ namespace MyProject.Models
         [MapTo("dataRequiredArray")]
         public IList<byte[]> DataRequiredArray { get; }
 
-        [Required]
         [MapTo("objectIdRequiredArray")]
         public IList<ObjectId> ObjectIdRequiredArray { get; }
 
-        [Required]
         [MapTo("decimal128RequiredArray")]
         public IList<Decimal128> Decimal128RequiredArray { get; }
 

@@ -7,7 +7,7 @@ using Realms;
 
 namespace MyProject.Models
 {
-    public class ChildEmbeddedType : RealmObject
+    public class ChildEmbeddedType : EmbeddedObject
     {
         [MapTo("id")]
         public long Id { get; set; }
