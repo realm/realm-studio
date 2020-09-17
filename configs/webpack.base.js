@@ -16,7 +16,7 @@ module.exports = (env, argv) => {
     externals: [
       nodeExternals({
         // Anyting related to webpack, we want to keep in the bundle
-        whitelist: [
+        allowlist: [
           /webpack(\/.*)?/,
           'electron-devtools-installer',
           /svg-baker-runtime(\/.*)?/,
