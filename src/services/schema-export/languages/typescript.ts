@@ -123,7 +123,6 @@ export default class TSSchemaExporter extends SchemaExporter {
    * @param prop The property to produce a TypeScript type for.
    */
   public getTypeFromProperty(prop: Realm.ObjectSchemaProperty) {
-    // console.log(prop.type, this.getTypeFromPropertyType(prop.objectType));
     if (prop.type === 'list') {
       const typeStr = this.getTypeFromPropertyType(prop.objectType);
       return `Array<${typeStr}${prop.optional ? ' | undefined' : ''}>`;
