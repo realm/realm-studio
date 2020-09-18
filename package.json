@@ -1,7 +1,7 @@
 {
   "name": "realm-studio",
   "productName": "Realm Studio",
-  "version": "3.10.0",
+  "version": "3.10.1",
   "description": "A tool for everything Realm!",
   "author": {
     "name": "Realm Inc.",
@@ -88,7 +88,8 @@
         "provider": "s3",
         "bucket": "static.realm.io",
         "region": "us-east-1",
-        "path": "downloads/realm-studio"
+        "path": "downloads/realm-studio",
+        "channel": "major-3"
       }
     ],
     "npmArgs": [

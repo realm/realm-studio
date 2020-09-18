@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release 3.10.1 (2020-09-18)
+
+[Changes since v3.10.0](https://github.com/realm/realm-studio/compare/v3.10.0...v3.10.1)
+
+### Enhancements
+
+- None
+
+### Fixed
+
+- Auto updating will now look for updates on the "major-3" channel.
+
+### Internals
+
+- None
+
+
 ## Release 3.10.0 (2020-03-06)
 
 [Changes since v3.9.0](https://github.com/realm/realm-studio/compare/v3.9.0...v3.10.0)
