@@ -151,7 +151,7 @@
     "react-sortable-hoc": "^1.11.0",
     "react-virtualized": "^9.21.2",
     "reactstrap": "^8.4.1",
-    "realm": "^10.0.0-beta.12",
+    "realm": "^10.0.0-beta.13",
     "semver": "^7.3.2",
     "subscriptions-transport-ws": "^0.9.16",
     "uuid": "^8.1.0"
