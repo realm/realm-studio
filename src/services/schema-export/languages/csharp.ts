@@ -167,12 +167,12 @@ export default class CSharpSchemaExporter extends SchemaExporter {
       case 'date':
         result = 'DateTimeOffset';
         break;
-      case 'object id':
+      case 'object id': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
       case 'objectId':
         result = 'ObjectId';
         canBeRequired = false;
         break;
-      case 'decimal':
+      case 'decimal': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
       case 'decimal128':
         result = 'Decimal128';
         canBeRequired = false;

@@ -139,10 +139,10 @@ export default class KotlinSchemaExporter extends SchemaExporter {
           return `${prefix} ByteArray(0)`;
         case 'date':
           return `${prefix} Date()`;
-        case 'object id':
+        case 'object id': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
         case 'objectId':
           return `${prefix} ObjectId()`;
-        case 'decimal':
+        case 'decimal': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
         case 'decimal128':
           return `${prefix} Decimal128()`;
         case 'list':
@@ -181,12 +181,12 @@ export default class KotlinSchemaExporter extends SchemaExporter {
           this.realmImports.add('import java.util.Date');
           propertyType = 'RealmList<Date>';
           break;
-        case 'object id':
+        case 'object id': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
         case 'objectId':
           this.realmImports.add('import org.bson.types.ObjectId');
           propertyType = 'RealmList<ObjectId>';
           break;
-        case 'decimal':
+        case 'decimal': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
         case 'decimal128':
           this.realmImports.add('import org.bson.types.Decimal128');
           propertyType = 'RealmList<Decimal128>';
@@ -219,10 +219,12 @@ export default class KotlinSchemaExporter extends SchemaExporter {
           this.realmImports.add('import java.util.Date');
           propertyType = 'Date';
           break;
+        case 'object id': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
         case 'objectId':
           this.realmImports.add('import org.bson.types.ObjectId');
           propertyType = 'ObjectId';
           break;
+        case 'decimal': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
         case 'decimal128':
           this.realmImports.add('import org.bson.types.Decimal128');
           propertyType = 'Decimal128';

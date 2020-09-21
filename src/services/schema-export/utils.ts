@@ -1,5 +1,3 @@
-// Note: shouldn't 'object id' & 'decimal' be renamed to 'objectId' & 'decimal128' by realm-js?
-
 export function isPrimitive(type: string | undefined) {
   switch (type) {
     case 'bool':
@@ -9,9 +7,9 @@ export function isPrimitive(type: string | undefined) {
     case 'string':
     case 'data':
     case 'date':
-    case 'object id':
+    case 'object id': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
     case 'objectId':
-    case 'decimal':
+    case 'decimal': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
     case 'decimal128':
       return true;
     default:
@@ -19,6 +17,8 @@ export function isPrimitive(type: string | undefined) {
   }
 }
 
+// Due to a bug in realm-js, we incorrectly get 'object id'/'decimal' for .type & .objectType in some scenarios.
+// TODO: remove (including usages) once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
 export const reMapType = (type: string): string => {
   switch (type) {
     case 'object id':

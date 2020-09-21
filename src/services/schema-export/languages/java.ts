@@ -139,9 +139,9 @@ export default class JavaSchemaExporter extends SchemaExporter {
       case 'string':
       case 'data':
       case 'date':
-      case 'object id':
+      case 'object id': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
       case 'objectId':
-      case 'decimal':
+      case 'decimal': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
       case 'decimal128':
         return true;
       case 'list':
