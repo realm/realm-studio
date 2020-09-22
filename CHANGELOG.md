@@ -7,6 +7,39 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## Release 4.0.0 (2020-09-22)
 
+[Changes since v3.11.0](https://github.com/realm/realm-studio/compare/v3.11.0...v4.0.0)
+
+### Breaking Changes
+
+- Added support for reading / writing Realm files using Realm file format v11 (used by realm-js v6.1.1, realm-java v7.0.4, realm-cocoa v5.4.0 and realm-dotnet v5.0.1). When opening a file which is using an older format, you will get prompted to upgrade (and optionally backup) the Realm file. NOTE: Once the file has been upgraded, there is no way to downgrade it again and it can only be used by the SDKs that support Realm file format v11. ([#1331](https://github.com/realm/realm-studio/pull/1331))
+
+### Enhancements
+
+- None
+
+### Fixed
+
+- None
+
+### Compatibility
+
+Use this version of Realm Studio to read and write Realm database files, using the same file format as:
+
+| SDK              | Version    |
+| ---------------- | ---------- |
+| Realm JavaScript | 6.1.1 - ?  |
+| Realm Java       | v7.0.4 - ? |
+| Realm Cocoa      | v5.4.0 - ? |
+| Realm .NET       | v5.0.1 - ? |
+
+### Internals
+
+- Upgraded Realm to v6.1.2. ([#1331](https://github.com/realm/realm-studio/pull/1331))
+- Upgraded Electron to v9.3.1 and Spectron to v11.1.0 ([#1332](https://github.com/realm/realm-studio/pull/1332))
+
+
+## Release 4.0.0 (2020-09-22)
+
 [Changes since v3.10.0](https://github.com/realm/realm-studio/compare/v3.11.0...v4.0.0)
 
 This is mostly a re-release of v3.11.0, except now with a major version bump because we discovered the upgrade of file format to v10 was in-fact breaking users workflows.
