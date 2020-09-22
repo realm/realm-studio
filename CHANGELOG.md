@@ -17,7 +17,7 @@ This is mostly a re-release of v3.11.0, except now with a major version bump bec
 
 ### Enhancements
 
-- Auto updating will now look for updates on the "major-4" channel.
+- None
 
 ### Fixed
 
@@ -36,7 +36,7 @@ Use this version of Realm Studio to read and write Realm database files, using t
 
 ### Internals
 
-- None
+- Auto updating will now look for updates on the "major-4" channel.
 
 
 ## Release 3.10.1 (2020-09-18)
@@ -49,11 +49,11 @@ Use this version of Realm Studio to read and write Realm database files, using t
 
 ### Fixed
 
-- Auto updating will now look for updates on the "major-3" channel.
+- None
 
 ### Internals
 
-- None
+- Auto updating will now look for updates on the "major-3" channel.
 
 
 ## Release 3.11.0 (2020-05-06)
