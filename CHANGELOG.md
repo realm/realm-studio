@@ -13,7 +13,7 @@ This is mostly a re-release of v3.11.0, except now with a major version bump bec
 
 ### Breaking Changes
 
-- Added support for reading / writing Realm files using Realm file format v10 (used by realm-js v6, realm-java v7, realm-cocoa v5 and realm-dotnet v5). When opening a file which is using an older format, you will get prompted to upgrade (and optionally backup) the Realm file. NOTE: Once the file has been upgraded, there is no way to downgrade it again and it can only be used by the SDKs that support Realm file format v10. ([#1278](https://github.com/realm/realm-studio/pull/1278))
+- Added support for reading / writing Realm files using Realm file format v10 (used by realm-js v6, realm-java v7, realm-cocoa v5 and realm-dotnet v5.0.0). When opening a file which is using an older format, you will get prompted to upgrade (and optionally backup) the Realm file. NOTE: Once the file has been upgraded, there is no way to downgrade it again and it can only be used by the SDKs that support Realm file format v10. ([#1278](https://github.com/realm/realm-studio/pull/1278))
 
 ### Enhancements
 
@@ -27,12 +27,12 @@ This is mostly a re-release of v3.11.0, except now with a major version bump bec
 
 Use this version of Realm Studio to read and write Realm database files, using the same file format as:
 
-| SDK              | Version         |
-| ---------------- | --------------- |
-| Realm JavaScript | v6.0.0 - v6.1.0 |
-| Realm Java       | v7.0.0 - v7.0.3 |
-| Realm Cocoa      | v5.0.0 - v5.3.6 |
-| Realm .NET       | v5.0.1          |
+| SDK              | Version          |
+| ---------------- | ---------------- |
+| Realm JavaScript | v6.0.0 - v6.1.0  |
+| Realm Java       | v7.0.0 - v7.0.3  |
+| Realm Cocoa      | v5.0.0 - v5.3.6  |
+| Realm .NET       | v5.0.0 (removed) |
 
 ### Internals
 
