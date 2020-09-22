@@ -88,7 +88,8 @@
         "provider": "s3",
         "bucket": "static.realm.io",
         "region": "us-east-1",
-        "path": "downloads/realm-studio"
+        "path": "downloads/realm-studio",
+        "channel": "major-5"
       }
     ],
     "npmArgs": [
