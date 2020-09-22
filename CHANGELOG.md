@@ -15,11 +15,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
-- Auto updating will now look for updates on the "major-3" channel.
+- None
 
 ### Internals
 
-- None
+- Auto updating will now look for updates on the "major-3" channel.
 
 
 ## Release 3.10.0 (2020-03-06)
