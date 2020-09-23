@@ -41,8 +41,8 @@ const assertGeneratedSchemaIsValid = (
 ) => {
   assertGeneratedSchemaAreValid(
     language,
-    Array<string>(expectedFilePath),
-    Array<string>(generatedFilePath),
+    [expectedFilePath],
+    [generatedFilePath],
     realm,
   );
 };
@@ -67,8 +67,8 @@ const assertGeneratedSchemaAreValid = (
 };
 
 describe('Export schema tests', () => {
-  let sampleRealm = {};
-  let allRealm = {};
+  let sampleRealm: Realm;
+  let allRealm: Realm;
 
   before(() => {
     fs.removeSync(`${TESTS_PATH}/realms`);
@@ -82,6 +82,8 @@ describe('Export schema tests', () => {
       modelAll.OptionalTypes,
       modelAll.RequiredTypes,
       modelAll.ReverseType,
+      modelAll.ParentEmbeddedType,
+      modelAll.ChildEmbeddedType,
     ]);
   });
 
@@ -90,7 +92,7 @@ describe('Export schema tests', () => {
       Language.JS,
       `${TESTS_PATH}/models/sample/js/SampleTypes.js`,
       `${TESTS_PATH}/temporal/${Language.JS}/SampleTypes-model.js`,
-      sampleRealm as Realm,
+      sampleRealm,
     );
   });
 
@@ -99,7 +101,7 @@ describe('Export schema tests', () => {
       Language.JS,
       `${TESTS_PATH}/models/all/js/AllTypes.js`,
       `${TESTS_PATH}/temporal/${Language.JS}/AllTypes-model.js`,
-      allRealm as Realm,
+      allRealm,
     );
   });
 
@@ -108,7 +110,7 @@ describe('Export schema tests', () => {
       Language.TS,
       `${TESTS_PATH}/models/sample/ts/SampleTypes.ts.unformatted`,
       `${TESTS_PATH}/temporal/${Language.TS}/SampleTypes-model.ts`,
-      sampleRealm as Realm,
+      sampleRealm,
     );
   });
 
@@ -117,7 +119,7 @@ describe('Export schema tests', () => {
       Language.TS,
       `${TESTS_PATH}/models/all/ts/AllTypes.ts.unformatted`,
       `${TESTS_PATH}/temporal/${Language.TS}/AllTypes-model.ts`,
-      allRealm as Realm,
+      allRealm,
     );
   });
 
@@ -126,7 +128,7 @@ describe('Export schema tests', () => {
       Language.Swift,
       `${TESTS_PATH}/models/sample/swift/SampleTypes.swift`,
       `${TESTS_PATH}/temporal/${Language.Swift}/SampleTypes-model.swift`,
-      sampleRealm as Realm,
+      sampleRealm,
     );
   });
 
@@ -135,7 +137,7 @@ describe('Export schema tests', () => {
       Language.Swift,
       `${TESTS_PATH}/models/all/swift/AllTypes.swift`,
       `${TESTS_PATH}/temporal/${Language.Swift}/AllTypes-model.swift`,
-      allRealm as Realm,
+      allRealm,
     );
   });
 
@@ -144,28 +146,32 @@ describe('Export schema tests', () => {
       Language.Java,
       `${TESTS_PATH}/models/sample/java/SampleTypes.java`,
       `${TESTS_PATH}/temporal/${Language.Java}/SampleTypes.java`,
-      sampleRealm as Realm,
+      sampleRealm,
     );
   });
 
   it('Java exporter model with all types', () => {
     assertGeneratedSchemaAreValid(
       Language.Java,
-      Array<string>(
+      [
         `${TESTS_PATH}/models/all/java/IndexedTypes.java`,
         `${TESTS_PATH}/models/all/java/LinkTypes.java`,
         `${TESTS_PATH}/models/all/java/OptionalTypes.java`,
         `${TESTS_PATH}/models/all/java/RequiredTypes.java`,
         `${TESTS_PATH}/models/all/java/ReverseType.java`,
-      ),
-      Array<string>(
+        `${TESTS_PATH}/models/all/java/ChildEmbeddedType.java`,
+        `${TESTS_PATH}/models/all/java/ParentEmbeddedType.java`,
+      ],
+      [
         `${TESTS_PATH}/temporal/${Language.Java}/IndexedTypes.java`,
         `${TESTS_PATH}/temporal/${Language.Java}/LinkTypes.java`,
         `${TESTS_PATH}/temporal/${Language.Java}/OptionalTypes.java`,
         `${TESTS_PATH}/temporal/${Language.Java}/RequiredTypes.java`,
         `${TESTS_PATH}/temporal/${Language.Java}/ReverseType.java`,
-      ),
-      allRealm as Realm,
+        `${TESTS_PATH}/temporal/${Language.Java}/ChildEmbeddedType.java`,
+        `${TESTS_PATH}/temporal/${Language.Java}/ParentEmbeddedType.java`,
+      ],
+      allRealm,
     );
   });
 
@@ -174,28 +180,32 @@ describe('Export schema tests', () => {
       Language.Kotlin,
       `${TESTS_PATH}/models/sample/kotlin/SampleTypes.kt`,
       `${TESTS_PATH}/temporal/${Language.Kotlin}/SampleTypes.kt`,
-      sampleRealm as Realm,
+      sampleRealm,
     );
   });
 
   it('Kotlin exporter model with all types', () => {
     assertGeneratedSchemaAreValid(
       Language.Kotlin,
-      Array<string>(
+      [
         `${TESTS_PATH}/models/all/kotlin/IndexedTypes.kt`,
         `${TESTS_PATH}/models/all/kotlin/LinkTypes.kt`,
         `${TESTS_PATH}/models/all/kotlin/OptionalTypes.kt`,
         `${TESTS_PATH}/models/all/kotlin/RequiredTypes.kt`,
         `${TESTS_PATH}/models/all/kotlin/ReverseType.kt`,
-      ),
-      Array<string>(
+        `${TESTS_PATH}/models/all/kotlin/ChildEmbeddedType.kt`,
+        `${TESTS_PATH}/models/all/kotlin/ParentEmbeddedType.kt`,
+      ],
+      [
         `${TESTS_PATH}/temporal/${Language.Kotlin}/IndexedTypes.kt`,
         `${TESTS_PATH}/temporal/${Language.Kotlin}/LinkTypes.kt`,
         `${TESTS_PATH}/temporal/${Language.Kotlin}/OptionalTypes.kt`,
         `${TESTS_PATH}/temporal/${Language.Kotlin}/RequiredTypes.kt`,
         `${TESTS_PATH}/temporal/${Language.Kotlin}/ReverseType.kt`,
-      ),
-      allRealm as Realm,
+        `${TESTS_PATH}/temporal/${Language.Kotlin}/ChildEmbeddedType.kt`,
+        `${TESTS_PATH}/temporal/${Language.Kotlin}/ParentEmbeddedType.kt`,
+      ],
+      allRealm,
     );
   });
 
@@ -204,28 +214,32 @@ describe('Export schema tests', () => {
       Language.CS,
       `${TESTS_PATH}/models/sample/cs/SampleTypes.cs`,
       `${TESTS_PATH}/temporal/${Language.CS}/SampleTypes.cs`,
-      sampleRealm as Realm,
+      sampleRealm,
     );
   });
 
   it('C# exporter model with all types', () => {
     assertGeneratedSchemaAreValid(
       Language.CS,
-      Array<string>(
+      [
         `${TESTS_PATH}/models/all/cs/IndexedTypes.cs`,
         `${TESTS_PATH}/models/all/cs/LinkTypes.cs`,
         `${TESTS_PATH}/models/all/cs/OptionalTypes.cs`,
         `${TESTS_PATH}/models/all/cs/RequiredTypes.cs`,
         `${TESTS_PATH}/models/all/cs/ReverseType.cs`,
-      ),
-      Array<string>(
+        `${TESTS_PATH}/models/all/cs/ChildEmbeddedType.cs`,
+        `${TESTS_PATH}/models/all/cs/ParentEmbeddedType.cs`,
+      ],
+      [
         `${TESTS_PATH}/temporal/${Language.CS}/IndexedTypes.cs`,
         `${TESTS_PATH}/temporal/${Language.CS}/LinkTypes.cs`,
         `${TESTS_PATH}/temporal/${Language.CS}/OptionalTypes.cs`,
         `${TESTS_PATH}/temporal/${Language.CS}/RequiredTypes.cs`,
         `${TESTS_PATH}/temporal/${Language.CS}/ReverseType.cs`,
-      ),
-      allRealm as Realm,
+        `${TESTS_PATH}/temporal/${Language.CS}/ChildEmbeddedType.cs`,
+        `${TESTS_PATH}/temporal/${Language.CS}/ParentEmbeddedType.cs`,
+      ],
+      allRealm,
     );
   });
 

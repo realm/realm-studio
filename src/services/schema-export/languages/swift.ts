@@ -18,6 +18,7 @@
 
 import fsPath from 'path';
 import { ISchemaFile, SchemaExporter } from '../schemaExporter';
+import { filteredProperties, INamedObjectSchemaProperty } from '../utils';
 
 export default class SwiftSchemaExporter extends SchemaExporter {
   constructor() {
@@ -40,21 +41,13 @@ export default class SwiftSchemaExporter extends SchemaExporter {
     this.appendLine(`class ${schema.name}: Object {`);
 
     // Properties
-    const indexedProp = [];
-    for (const key in schema.properties) {
-      if (schema.properties.hasOwnProperty(key)) {
-        const prop: any = schema.properties[key];
-        // Ignoring 'linkingObjects' https://github.com/realm/realm-js/issues/1519
-        // happens only tests, when opening a Realm using schema that includes 'linkingObjects'
-        if (prop.type === 'linkingObjects') {
-          continue;
-        }
-        this.appendLine('    ' + this.propertyLine(prop));
-        if (prop.indexed && prop.name !== schema.primaryKey) {
-          indexedProp.push(prop);
-        }
+    const indexedProp: INamedObjectSchemaProperty[] = [];
+    filteredProperties(schema.properties).forEach(prop => {
+      this.appendLine('    ' + this.propertyLine(prop));
+      if (prop.indexed && prop.name !== schema.primaryKey) {
+        indexedProp.push(prop);
       }
-    }
+    });
 
     // Primary key
     if (schema.primaryKey) {
@@ -71,16 +64,10 @@ export default class SwiftSchemaExporter extends SchemaExporter {
         '    override static func indexedProperties() -> [String] {',
       );
 
-      let line = '        return [';
-      let prop: any;
-      for (let i = 0; i < indexedProp.length; i++) {
-        prop = indexedProp[i];
-        line += `"${prop.name}"`;
-        if (i < indexedProp.length - 1) {
-          line += ', ';
-        }
-      }
-      this.appendLine(line + ']');
+      const indexedPropsStr = indexedProp
+        .map(prop => `"${prop.name}"`)
+        .join(', ');
+      this.appendLine(`        return [${indexedPropsStr}]`);
       this.appendLine('    }');
     }
 
@@ -106,6 +93,12 @@ export default class SwiftSchemaExporter extends SchemaExporter {
           return 'Data';
         case 'date':
           return 'Date';
+        case 'object id': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
+        case 'objectId':
+          return 'ObjectId';
+        case 'decimal': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
+        case 'decimal128':
+          return 'Decimal128';
       }
       return type;
     }
@@ -133,6 +126,8 @@ export default class SwiftSchemaExporter extends SchemaExporter {
         case 'string':
         case 'data':
         case 'date':
+        case 'objectId':
+        case 'decimal128':
           return `@objc dynamic var ${prop.name}: ${propType}? = nil`;
 
         case 'object':
@@ -157,6 +152,10 @@ export default class SwiftSchemaExporter extends SchemaExporter {
         return str + 'Data()';
       case 'date':
         return str + 'Date()';
+      case 'objectId':
+        return str + 'ObjectId()';
+      case 'decimal128':
+        return str + 'Decimal128()';
       case 'object':
         return 'Objects must always be optional. Something is not right in this model!';
     }

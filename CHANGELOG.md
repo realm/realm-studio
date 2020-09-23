@@ -4,6 +4,31 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release 10.0.0-beta.? (2020-??-??)
+
+[Changes since v10.0.0-beta.2](https://github.com/realm/realm-studio/compare/v10.0.0-beta.2...v10.0.0-beta.?)
+
+### Enhancements
+
+- JSON export now supports circular structures. ([#1315](https://github.com/realm/realm-studio/pull/1315))
+- Embedded Objects can now be created, edited, viewed & deleted ([#1321](https://github.com/realm/realm-studio/pull/1321))
+- Lists of Embedded Objects now have same functionality as Linked Objects ([#1321](https://github.com/realm/realm-studio/pull/1321))
+- UI: Add Property always visible ([#1321](https://github.com/realm/realm-studio/pull/1321))
+- UI: Non sortable grid headers now have a different color ([#1321](https://github.com/realm/realm-studio/pull/1321))
+- UI: Grid headers for Embedded Objects marked with `(embedded)` ([#1321](https://github.com/realm/realm-studio/pull/1321))
+- Schema export now supports new types (`ObjectId`, `Decimal128` & Embedded Objects). ([#1329](https://github.com/realm/realm-studio/pull/1329))
+
+### Fixed
+
+- Re-established JSON export functionality after v10 update [#1312](https://github.com/realm/realm-studio/issues/1312)
+- Edit mode for primary keys has been disabled ([#1321](https://github.com/realm/realm-studio/pull/1321))
+
+### Internals
+
+- Electron v8.4.1
+- Realm v10.0.0-beta.13
+
+
 ## Release 10.0.0-beta.2 (2020-06-16)
 
 [Changes since v10.0.0-beta.1](https://github.com/realm/realm-studio/compare/v10.0.0-beta.1...v10.0.0-beta.2)

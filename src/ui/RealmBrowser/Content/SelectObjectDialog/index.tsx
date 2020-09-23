@@ -26,6 +26,7 @@ import {
   ISelectObjectDialogProps,
   SelectObjectDialog,
 } from './SelectObjectDialog';
+import { IsEmbeddedTypeChecker } from '../..';
 
 export interface IClosedSelectObjectDialogContainerProps {
   isOpen: false;
@@ -37,7 +38,7 @@ export interface IOpenSelectObjectDialogContainerProps {
   isOptional: boolean;
   multiple: boolean;
   onCancel: () => void;
-  isEmbeddedType: (className: string) => boolean;
+  isEmbeddedType: IsEmbeddedTypeChecker;
 }
 
 export interface IOpenSelectSingleObjectDialogContainerProps

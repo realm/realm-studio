@@ -19,6 +19,8 @@ export const OptionalTypes = {
     stringOptional: 'string?',
     dateOptional: 'date?',
     dataOptional: 'data?',
+    objectIdOptional: 'objectId?',
+    decimal128Optional: 'decimal128?',
     objectOptional: 'RequiredTypes',
     boolOptionalArray: 'bool?[]',
     intOptionalArray: 'int?[]',
@@ -27,6 +29,8 @@ export const OptionalTypes = {
     stringOptionalArray: 'string?[]',
     dateOptionalArray: 'date?[]',
     dataOptionalArray: 'data?[]',
+    objectIdOptionalArray: 'objectId?[]',
+    decimal128OptionalArray: 'decimal128?[]',
   },
 };
 
@@ -40,6 +44,8 @@ export const RequiredTypes = {
     stringRequired: 'string',
     dateRequired: 'date',
     dataRequired: 'data',
+    objectIdRequired: 'objectId',
+    decimal128Required: 'decimal128',
     boolRequiredArray: 'bool[]',
     intRequiredArray: 'int[]',
     floatRequiredArray: 'float[]',
@@ -47,6 +53,8 @@ export const RequiredTypes = {
     stringRequiredArray: 'string[]',
     dateRequiredArray: 'date[]',
     dataRequiredArray: 'data[]',
+    objectIdRequiredArray: 'objectId[]',
+    decimal128RequiredArray: 'decimal128[]',
     objectRequiredArray: 'RequiredTypes[]',
   },
 };
@@ -69,5 +77,21 @@ export const ReverseType = {
   name: 'ReverseType',
   properties: {
     links: 'LinkTypes',
+  },
+};
+
+export const ChildEmbeddedType = {
+  name: 'ChildEmbeddedType',
+  embedded: true,
+  properties: {
+    id: 'int',
+  },
+};
+
+export const ParentEmbeddedType = {
+  name: 'ParentEmbeddedType',
+  properties: {
+    embeddedObject: 'ChildEmbeddedType',
+    embeddedObjectList: 'ChildEmbeddedType[]',
   },
 };

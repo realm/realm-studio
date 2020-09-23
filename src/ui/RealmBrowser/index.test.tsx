@@ -135,9 +135,11 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
       'CustomClassProperties',
       'DataProperties',
       'DateProperties',
+      'Decimal128Properties',
       'DoubleProperties',
       'FloatProperties',
       'IntProperties',
+      'ObjectIdProperties',
       'StringProperties',
     ];
 

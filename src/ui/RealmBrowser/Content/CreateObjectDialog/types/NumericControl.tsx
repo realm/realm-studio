@@ -23,15 +23,15 @@ import { parseNumber } from '../../../parsers';
 
 import { IBaseControlProps } from './TypeControl';
 
-export const NummericControl = ({
+export const NumericControl = ({
   children,
   onChange,
   property,
   value,
 }: IBaseControlProps) => (
-  <InputGroup className="CreateObjectDialog__NummericControl">
+  <InputGroup className="CreateObjectDialog__NumericControl">
     <Input
-      className="CreateObjectDialog__NummericControl__Input"
+      className="CreateObjectDialog__NumericControl__Input"
       type="number"
       step={property.type === 'int' ? 1 : 'any'}
       max={property.type === 'int' ? Number.MAX_SAFE_INTEGER : Number.MAX_VALUE}

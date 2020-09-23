@@ -56,11 +56,11 @@ const getCellContent = ({
   }
   // Alternatively - based on type
   switch (property.type) {
-    case 'object id':
+    case 'objectId':
     case 'int':
     case 'float':
     case 'double':
-    case 'decimal':
+    case 'decimal128':
     case 'bool':
     case 'string':
     case 'date': {

@@ -25,6 +25,7 @@ export * from './ListFocus';
 import { GridCellRenderer } from 'react-virtualized';
 
 import { IPropertyWithName } from '.';
+import { SingleObjectCollection } from './Content/SingleObjectCollection';
 
 export interface IRenderers {
   columnCount: number;
@@ -37,6 +38,7 @@ interface IFocus {
   kind: string;
   properties: IPropertyWithName[];
   results: Realm.Collection<any>;
+  isEmbedded: boolean;
 }
 
 export interface IClassFocus extends IFocus {
@@ -45,9 +47,16 @@ export interface IClassFocus extends IFocus {
   className: string;
 }
 
+export interface ISingleObjectFocus extends IFocus {
+  kind: 'single-object';
+  parent: Realm.Object & { [key: string]: unknown };
+  property: IPropertyWithName;
+  results: SingleObjectCollection<any>;
+}
+
 interface IBaseListFocus extends IFocus {
   kind: 'list';
-  parent: Realm.Object;
+  parent: Realm.Object & { [key: string]: unknown };
   property: IPropertyWithName;
   results: Realm.List<any>;
 }
@@ -61,16 +70,21 @@ export interface IPrimitiveListFocus extends IBaseListFocus {
 }
 
 export type IListFocus = IObjectListFocus | IPrimitiveListFocus;
-export type Focus = IClassFocus | IListFocus;
+export type Focus = IClassFocus | IListFocus | ISingleObjectFocus;
 
 export function getClassName(focus: Focus): string {
-  if (focus.kind === 'class') {
-    return focus.className;
-  } else if (focus.property.objectType) {
-    return focus.property.objectType;
-  } else {
-    throw new Error('Failed to get class named from focus');
+  switch (focus.kind) {
+    case 'class':
+      return focus.className;
+    case 'list':
+    case 'single-object':
+      if (focus.property.objectType) {
+        return focus.property.objectType;
+      }
+      break;
   }
+
+  throw new Error('Failed to get class name from focus');
 }
 
 /**
@@ -79,21 +93,32 @@ export function getClassName(focus: Focus): string {
  * @param prependPropertyCount Should the number of properties be prepended the key?
  */
 export function generateKey(focus: Focus | null, prependPropertyCount = false) {
-  const propertiesSuffix =
-    prependPropertyCount && focus ? `(${focus.properties.length})` : '';
-  if (focus && focus.kind === 'class') {
-    return `class:${focus.className}${propertiesSuffix}`;
-  } else if (focus && focus.kind === 'list') {
-    // The `[key: string]: any;` is needed because if Realm JS types
-    const parent: Realm.Object & {
-      [key: string]: any;
-    } = focus.parent;
-    const schema = parent.objectSchema();
-    const propertyName = focus.property.name;
-    const id =
-      parent.isValid() && schema.primaryKey ? parent[schema.primaryKey] : '?';
-    return `list:${schema.name}[${id}]:${propertyName}${propertiesSuffix}`;
-  } else {
+  if (!focus) {
     return 'null';
+  }
+
+  const propertiesSuffix = prependPropertyCount
+    ? `(${focus.properties.length})`
+    : '';
+
+  switch (focus.kind) {
+    case 'class':
+      return `class:${focus.className}${propertiesSuffix}`;
+
+    case 'list': {
+      const parent = focus.parent;
+      const schema = parent.objectSchema();
+      const propertyName = focus.property.name;
+      const id =
+        parent.isValid() && schema.primaryKey ? parent[schema.primaryKey] : '?';
+      return `list:${schema.name}[${id}]:${propertyName}${propertiesSuffix}`;
+    }
+
+    case 'single-object': {
+      const parent = focus.parent;
+      const schema = parent.objectSchema();
+      const propertyName = focus.property.name;
+      return `single-object:${schema.name}:${propertyName}${propertiesSuffix}`;
+    }
   }
 }

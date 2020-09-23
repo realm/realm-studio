@@ -16,29 +16,24 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import classNames from 'classnames';
 import React from 'react';
 import { Button } from 'reactstrap';
 
 interface IAddColumnControlProps {
-  isHidden: boolean;
-  left: number;
   onClick: () => void;
 }
 
-export const AddColumnControl = ({
-  isHidden,
-  left,
-  onClick,
-}: IAddColumnControlProps) => (
-  <div
-    className={classNames('RealmBrowser__Table__AddColumnControl', {
-      'RealmBrowser__Table__AddColumnControl--hidden': isHidden,
-    })}
-    style={{ left }}
-  >
-    <Button onClick={onClick} size="sm">
+export const AddColumnControl = ({ onClick }: IAddColumnControlProps) => (
+  <div className="RealmBrowser__Table__AddColumnControl">
+    <Button
+      className="RealmBrowser__Table__AddColumnControl__Button"
+      onClick={onClick}
+      size="sm"
+    >
       <i className="fa fa-plus" />
+      <span className="RealmBrowser__Table__AddColumnControl__Text">
+        Add property
+      </span>
     </Button>
   </div>
 );

@@ -21,7 +21,12 @@ import Realm from 'realm';
 
 import { ILoadingProgress, LoadingOverlay } from '../reusable/LoadingOverlay';
 
-import { ClassFocussedHandler, ListFocussedHandler } from '.';
+import {
+  ClassFocussedHandler,
+  ListFocussedHandler,
+  IsEmbeddedTypeChecker,
+  SingleListFocussedHandler,
+} from '.';
 import { AddClassModal } from './AddClassModal';
 import { AddPropertyModal } from './AddPropertyModal';
 import { Content, EditMode, HighlightMode } from './Content';
@@ -58,13 +63,14 @@ export interface IRealmBrowserProps {
   onHideEncryptionDialog: () => void;
   onLeftSidebarToggle: () => void;
   onListFocussed: ListFocussedHandler;
+  onSingleListFocussed: SingleListFocussedHandler;
   onOpenWithEncryption: (key: string) => void;
   onRealmChanged: () => void;
   progress: ILoadingProgress;
   realm?: Realm;
   toggleAddClass: () => void;
   toggleAddClassProperty: () => void;
-  isEmbeddedType: (className: string) => boolean;
+  isEmbeddedType: IsEmbeddedTypeChecker;
 }
 
 export const RealmBrowser = ({
@@ -92,6 +98,7 @@ export const RealmBrowser = ({
   onHideEncryptionDialog,
   onLeftSidebarToggle,
   onListFocussed,
+  onSingleListFocussed,
   onOpenWithEncryption,
   onRealmChanged,
   progress,
@@ -131,6 +138,7 @@ export const RealmBrowser = ({
             onClassFocussed={onClassFocussed}
             onCommitTransaction={onCommitTransaction}
             onListFocussed={onListFocussed}
+            onSingleListFocussed={onSingleListFocussed}
             onRealmChanged={onRealmChanged}
             permissionSidebar={true}
             progress={progress}

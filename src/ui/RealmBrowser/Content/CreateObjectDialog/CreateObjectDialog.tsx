@@ -23,6 +23,7 @@ import Realm from 'realm';
 import { IClassFocus } from '../../focus';
 
 import { PropertyRow } from './PropertyRow';
+import { IsEmbeddedTypeChecker } from '../..';
 
 interface IBaseCreateObjectDialogProps {
   generateInitialValue: (property: Realm.ObjectSchemaProperty) => any;
@@ -42,7 +43,7 @@ export interface IOpenCreateObjectDialogProps
   getClassFocus: (className: string) => IClassFocus;
   isOpen: true;
   schema: Realm.ObjectSchema;
-  isEmbeddedType: (className: string) => boolean;
+  isEmbeddedType: IsEmbeddedTypeChecker;
 }
 
 export type ICreateObjectDialogProps =

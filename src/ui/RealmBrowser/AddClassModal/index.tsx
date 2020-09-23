@@ -40,7 +40,7 @@ const initialState: IAddClassModalState = {
   nameIsValid: true,
   primaryKey: false,
   primaryKeyName: '',
-  primaryKeyType: 'object id',
+  primaryKeyType: 'objectId',
 };
 
 class AddClassModalContainer extends React.Component<
