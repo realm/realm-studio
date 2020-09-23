@@ -18,11 +18,8 @@
 
 import fsPath from 'path';
 import { ISchemaFile, SchemaExporter } from '../schemaExporter';
+import { filteredProperties, INamedObjectSchemaProperty } from '../utils';
 import JSSchemaExporter from './javascript';
-
-interface INamedObjectSchemaProperty extends Realm.ObjectSchemaProperty {
-  name: string;
-}
 
 export default class TSSchemaExporter extends SchemaExporter {
   public exportSchema(realm: Realm): ISchemaFile[] {
@@ -44,17 +41,9 @@ export default class TSSchemaExporter extends SchemaExporter {
     // TypeScript Type
 
     this.appendLine(`export type ${schema.name} = {`);
-    for (const key in schema.properties) {
-      if (schema.properties.hasOwnProperty(key)) {
-        const prop = schema.properties[key] as INamedObjectSchemaProperty;
-        // Ignoring 'linkingObjects' https://github.com/realm/realm-js/issues/1519
-        // happens only tests, when opening a Realm using schema that includes 'linkingObjects'
-        if (prop.type === 'linkingObjects') {
-          continue;
-        }
-        this.appendLine('    ' + this.propertyLine(prop));
-      }
-    }
+    filteredProperties(schema.properties).forEach(prop => {
+      this.appendLine('  ' + this.propertyLine(prop));
+    });
     this.appendLine(`};\n`);
 
     // JavaScript Schema
@@ -66,27 +55,20 @@ export default class TSSchemaExporter extends SchemaExporter {
       this.appendLine(`  primaryKey: '${schema.primaryKey}',`);
     }
 
+    if (schema.embedded) {
+      this.appendLine(`  embedded: true,`);
+    }
+
     // properties
     this.appendLine(`  properties: {`);
-    let i = 1;
-    const lastIdx = Object.keys(schema.properties).length;
-    let line: string;
-    for (const key in schema.properties) {
-      if (schema.properties.hasOwnProperty(key)) {
-        const primaryKey = key === schema.primaryKey;
-        const prop: any = schema.properties[key];
-        // Ignoring 'linkingObjects' https://github.com/realm/realm-js/issues/1519
-        // happens only tests, when opening a Realm using schema that includes 'linkingObjects'
-        if (prop.type === 'linkingObjects') {
-          continue;
-        }
-        line = '    ' + JSSchemaExporter.propertyLine(prop, primaryKey);
-        if (i++ < lastIdx) {
-          line += ',';
-        }
-        this.appendLine(line);
-      }
-    }
+    filteredProperties(schema.properties).forEach((prop, idx, arr) => {
+      const last = idx === arr.length - 1;
+      const primaryKey = prop.name === schema.primaryKey;
+      const line = `    ${JSSchemaExporter.propertyLine(prop, primaryKey)}${
+        last ? '' : ','
+      }`;
+      this.appendLine(line);
+    });
 
     this.appendLine('  }\n};\n');
   }
@@ -108,6 +90,12 @@ export default class TSSchemaExporter extends SchemaExporter {
         return 'ArrayBuffer';
       case 'date':
         return 'Date';
+      case 'object id': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
+      case 'objectId':
+        return 'Realm.ObjectId';
+      case 'decimal': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
+      case 'decimal128':
+        return 'Realm.Decimal128';
       default:
         return type;
     }

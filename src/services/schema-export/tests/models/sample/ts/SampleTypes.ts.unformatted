@@ -1,13 +1,13 @@
 import * as Realm from "realm";
 
 export type SampleTypes = {
-    primary: number;
-    ArrayFloatValue?: number;
-    listOfStrings: Array<string>;
-    listOfOptionalDates: Array<Date | undefined>;
-    indexedInt: number;
-    linkToObject?: SampleTypes;
-    listOfObjects: Array<SampleTypes>;
+  primary: number;
+  ArrayFloatValue?: number;
+  listOfStrings: Array<string>;
+  listOfOptionalDates: Array<Date | undefined>;
+  indexedInt: number;
+  linkToObject?: SampleTypes;
+  listOfObjects: Array<SampleTypes>;
 };
 
 export const SampleTypesSchema = {
@@ -20,7 +20,7 @@ export const SampleTypesSchema = {
     listOfOptionalDates: 'date?[]',
     indexedInt: { type: 'int', indexed: true },
     linkToObject: 'SampleTypes',
-    listOfObjects: 'SampleTypes[]',
+    listOfObjects: 'SampleTypes[]'
   }
 };
 

@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import { ISchemaFile, SchemaExporter } from '../schemaExporter';
-import { isPrimitive } from '../utils';
+import { filteredProperties, isPrimitive } from '../utils';
 
 export default class KotlinSchemaExporter extends SchemaExporter {
   private static readonly PADDING = '    ';
@@ -48,30 +48,26 @@ export default class KotlinSchemaExporter extends SchemaExporter {
 
     this.realmImports.add('import io.realm.RealmObject');
 
+    if (schema.embedded) {
+      this.realmImports.add('import io.realm.annotations.RealmClass');
+      this.fieldsContent += '@RealmClass(embedded = true)\n';
+    }
     this.fieldsContent += `open class ${schema.name} : RealmObject() {\n\n`;
 
     // Properties
-    for (const key in schema.properties) {
-      if (schema.properties.hasOwnProperty(key)) {
-        const prop: any = schema.properties[key];
-        // Ignoring 'linkingObjects' https://github.com/realm/realm-js/issues/1519
-        // happens only tests, when opening a Realm using schema that includes 'linkingObjects'
-        if (prop.type === 'linkingObjects') {
-          continue;
-        }
-        this.propertyLine(prop, schema.primaryKey);
-        if (prop.indexed && prop.name !== schema.primaryKey) {
-          this.realmImports.add('import io.realm.annotations.Index');
-        }
-        if (
-          !prop.optional &&
-          prop.type === 'list' &&
-          isPrimitive(prop.objectType)
-        ) {
-          this.realmImports.add('import io.realm.annotations.Required');
-        }
+    filteredProperties(schema.properties).forEach(prop => {
+      this.propertyLine(prop, schema.primaryKey);
+      if (prop.indexed && prop.name !== schema.primaryKey) {
+        this.realmImports.add('import io.realm.annotations.Index');
       }
-    }
+      if (
+        !prop.optional &&
+        prop.type === 'list' &&
+        isPrimitive(prop.objectType)
+      ) {
+        this.realmImports.add('import io.realm.annotations.Required');
+      }
+    });
 
     // Primary key
     if (schema.primaryKey) {
@@ -143,6 +139,12 @@ export default class KotlinSchemaExporter extends SchemaExporter {
           return `${prefix} ByteArray(0)`;
         case 'date':
           return `${prefix} Date()`;
+        case 'object id': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
+        case 'objectId':
+          return `${prefix} ObjectId()`;
+        case 'decimal': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
+        case 'decimal128':
+          return `${prefix} Decimal128()`;
         case 'list':
           return `${prefix} RealmList()`;
       }
@@ -152,71 +154,91 @@ export default class KotlinSchemaExporter extends SchemaExporter {
   }
 
   private kotlinTypeForProperty(property: any): any {
-    let properyType = null;
+    let propertyType = null;
 
     if (property.type === 'list') {
       this.realmImports.add('import io.realm.RealmList');
       switch (property.objectType) {
         case 'bool':
-          properyType = 'RealmList<Boolean>';
+          propertyType = 'RealmList<Boolean>';
           break;
         case 'int':
-          properyType = 'RealmList<Long>';
+          propertyType = 'RealmList<Long>';
           break;
         case 'float':
-          properyType = 'RealmList<Float>';
+          propertyType = 'RealmList<Float>';
           break;
         case 'double':
-          properyType = 'RealmList<Double>';
+          propertyType = 'RealmList<Double>';
           break;
         case 'string':
-          properyType = 'RealmList<String>';
+          propertyType = 'RealmList<String>';
           break;
         case 'data':
-          properyType = 'RealmList<ByteArray>';
+          propertyType = 'RealmList<ByteArray>';
           break;
         case 'date':
           this.realmImports.add('import java.util.Date');
-          properyType = 'RealmList<Date>';
+          propertyType = 'RealmList<Date>';
+          break;
+        case 'object id': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
+        case 'objectId':
+          this.realmImports.add('import org.bson.types.ObjectId');
+          propertyType = 'RealmList<ObjectId>';
+          break;
+        case 'decimal': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
+        case 'decimal128':
+          this.realmImports.add('import org.bson.types.Decimal128');
+          propertyType = 'RealmList<Decimal128>';
           break;
         default:
-          properyType = `RealmList<${property.objectType}>`;
+          propertyType = `RealmList<${property.objectType}>`;
           break;
       }
     } else {
       switch (property.type) {
         case 'bool':
-          properyType = 'Boolean';
+          propertyType = 'Boolean';
           break;
         case 'int':
-          properyType = 'Long';
+          propertyType = 'Long';
           break;
         case 'float':
-          properyType = 'Float';
+          propertyType = 'Float';
           break;
         case 'double':
-          properyType = 'Double';
+          propertyType = 'Double';
           break;
         case 'string':
-          properyType = 'String';
+          propertyType = 'String';
           break;
         case 'data':
-          properyType = 'ByteArray';
+          propertyType = 'ByteArray';
           break;
         case 'date':
           this.realmImports.add('import java.util.Date');
-          properyType = 'Date';
+          propertyType = 'Date';
+          break;
+        case 'object id': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
+        case 'objectId':
+          this.realmImports.add('import org.bson.types.ObjectId');
+          propertyType = 'ObjectId';
+          break;
+        case 'decimal': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
+        case 'decimal128':
+          this.realmImports.add('import org.bson.types.Decimal128');
+          propertyType = 'Decimal128';
           break;
         case 'object':
-          properyType = property.objectType;
+          propertyType = property.objectType;
           break;
       }
     }
 
     if (property.optional) {
-      properyType += '?';
+      propertyType += '?';
     }
 
-    return properyType;
+    return propertyType;
   }
 }

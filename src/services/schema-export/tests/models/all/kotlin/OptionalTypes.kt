@@ -3,6 +3,8 @@ package your.package.name.here
 
 import io.realm.RealmObject
 import java.util.Date
+import org.bson.types.ObjectId
+import org.bson.types.Decimal128
 import io.realm.RealmList
 
 open class OptionalTypes : RealmObject() {
@@ -14,6 +16,8 @@ open class OptionalTypes : RealmObject() {
     var stringOptional: String? = null
     var dateOptional: Date? = null
     var dataOptional: ByteArray? = null
+    var objectIdOptional: ObjectId? = null
+    var decimal128Optional: Decimal128? = null
     var objectOptional: RequiredTypes? = null
     var boolOptionalArray: RealmList<Boolean>? = null
     var intOptionalArray: RealmList<Long>? = null
@@ -22,5 +26,7 @@ open class OptionalTypes : RealmObject() {
     var stringOptionalArray: RealmList<String>? = null
     var dateOptionalArray: RealmList<Date>? = null
     var dataOptionalArray: RealmList<ByteArray>? = null
+    var objectIdOptionalArray: RealmList<ObjectId>? = null
+    var decimal128OptionalArray: RealmList<Decimal128>? = null
 
 }

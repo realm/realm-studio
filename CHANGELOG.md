@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - UI: Add Property always visible ([#1321](https://github.com/realm/realm-studio/pull/1321))
 - UI: Non sortable grid headers now have a different color ([#1321](https://github.com/realm/realm-studio/pull/1321))
 - UI: Grid headers for Embedded Objects marked with `(embedded)` ([#1321](https://github.com/realm/realm-studio/pull/1321))
+- Schema export now supports new types (`ObjectId`, `Decimal128` & Embedded Objects). ([#1329](https://github.com/realm/realm-studio/pull/1329))
 
 ### Fixed
 

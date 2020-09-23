@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import { ISchemaFile, SchemaExporter } from '../schemaExporter';
-import { isPrimitive } from '../utils';
+import { filteredProperties, isPrimitive } from '../utils';
 
 export default class JavaSchemaExporter extends SchemaExporter {
   private static readonly PADDING = '    ';
@@ -50,27 +50,23 @@ export default class JavaSchemaExporter extends SchemaExporter {
 
     this.realmImports.add('import io.realm.RealmObject;');
 
+    if (schema.embedded) {
+      this.realmImports.add('import io.realm.annotations.RealmClass;');
+      this.fieldsContent += '@RealmClass(embedded = true)\n';
+    }
     this.fieldsContent += `public class ${schema.name} extends RealmObject {\n`;
 
     // Properties
-    for (const key in schema.properties) {
-      if (schema.properties.hasOwnProperty(key)) {
-        const prop: any = schema.properties[key];
-        // Ignoring 'linkingObjects' https://github.com/realm/realm-js/issues/1519
-        // happens only tests, when opening a Realm using schema that includes 'linkingObjects'
-        if (prop.type === 'linkingObjects') {
-          continue;
-        }
-        this.propertyLine(prop, schema.primaryKey);
-        if (prop.indexed && prop.name !== schema.primaryKey) {
-          this.realmImports.add('import io.realm.annotations.Index;');
-        }
-
-        if (!prop.optional && this.javaPropertyTypeCanBeMarkedRequired(prop)) {
-          this.realmImports.add('import io.realm.annotations.Required;');
-        }
+    filteredProperties(schema.properties).forEach(prop => {
+      this.propertyLine(prop, schema.primaryKey);
+      if (prop.indexed && prop.name !== schema.primaryKey) {
+        this.realmImports.add('import io.realm.annotations.Index;');
       }
-    }
+
+      if (!prop.optional && this.javaPropertyTypeCanBeMarkedRequired(prop)) {
+        this.realmImports.add('import io.realm.annotations.Required;');
+      }
+    });
 
     // Primary key
     if (schema.primaryKey) {
@@ -143,6 +139,10 @@ export default class JavaSchemaExporter extends SchemaExporter {
       case 'string':
       case 'data':
       case 'date':
+      case 'object id': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
+      case 'objectId':
+      case 'decimal': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
+      case 'decimal128':
         return true;
       case 'list':
         return isPrimitive(property.objectType);
@@ -169,6 +169,14 @@ export default class JavaSchemaExporter extends SchemaExporter {
         case 'date':
           this.realmImports.add('import java.util.Date;');
           return 'RealmList<Date>';
+        case 'object id':
+        case 'objectId':
+          this.realmImports.add('import org.bson.types.ObjectId;');
+          return 'RealmList<ObjectId>';
+        case 'decimal':
+        case 'decimal128':
+          this.realmImports.add('import org.bson.types.Decimal128;');
+          return 'RealmList<Decimal128>';
         default:
           return `RealmList<${property.objectType}>`;
       }
@@ -189,6 +197,12 @@ export default class JavaSchemaExporter extends SchemaExporter {
       case 'date':
         this.realmImports.add('import java.util.Date;');
         return 'Date';
+      case 'objectId':
+        this.realmImports.add('import org.bson.types.ObjectId;');
+        return 'ObjectId';
+      case 'decimal128':
+        this.realmImports.add('import org.bson.types.Decimal128;');
+        return 'Decimal128';
       case 'object':
         return property.objectType;
     }

@@ -17,6 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import { ISchemaFile, SchemaExporter } from '../schemaExporter';
+import { filteredProperties, isBsonType } from '../utils';
 
 interface ICSharpProperty {
   attributes: string[];
@@ -52,53 +53,49 @@ export default class CSharpSchemaExporter extends SchemaExporter {
 
   public makeSchema(schema: Realm.ObjectSchema) {
     const properties = new Array<ICSharpProperty>();
+    const additionalUsing = new Set<string>();
 
-    for (const key in schema.properties) {
-      if (schema.properties.hasOwnProperty(key)) {
-        const prop: any = schema.properties[key];
-        // Ignoring 'linkingObjects' https://github.com/realm/realm-js/issues/1519
-        // happens only tests, when opening a Realm using schema that includes 'linkingObjects'
-        if (prop.type === 'linkingObjects') {
-          continue;
-        }
+    filteredProperties(schema.properties).forEach(prop => {
+      const csharpProperty = {
+        name: this.capitalizedString(prop.name),
+        mappedTo: prop.name,
+        attributes: new Array<string>(),
+        setter: ' set;',
+        type: '',
+      };
 
-        const csharpProperty = {
-          name: this.capitalizedString(prop.name),
-          mappedTo: prop.name,
-          attributes: new Array<string>(),
-          setter: ' set;',
-          type: '',
-        };
-
-        if (prop.name === schema.primaryKey) {
-          csharpProperty.attributes.push('PrimaryKey');
-        } else if (prop.indexed) {
-          csharpProperty.attributes.push('Indexed');
-        }
-
-        if (prop.type === 'list') {
-          csharpProperty.setter = '';
-
-          const type = this.getCSharpType(
-            prop.objectType,
-            prop.objectType,
-            prop.optional,
-            csharpProperty.attributes,
-          );
-
-          csharpProperty.type = `IList<${type}>`;
-        } else {
-          csharpProperty.type = this.getCSharpType(
-            prop.type,
-            prop.objectType,
-            prop.optional,
-            csharpProperty.attributes,
-          );
-        }
-
-        properties.push(csharpProperty);
+      if (prop.name === schema.primaryKey) {
+        csharpProperty.attributes.push('PrimaryKey');
+      } else if (prop.indexed) {
+        csharpProperty.attributes.push('Indexed');
       }
-    }
+
+      if (isBsonType(prop)) {
+        additionalUsing.add('using MongoDB.Bson;');
+      }
+
+      if (prop.type === 'list') {
+        csharpProperty.setter = '';
+
+        const type = this.getCSharpType(
+          prop.objectType,
+          prop.objectType,
+          prop.optional,
+          csharpProperty.attributes,
+        );
+
+        csharpProperty.type = `IList<${type}>`;
+      } else {
+        csharpProperty.type = this.getCSharpType(
+          prop.type,
+          prop.objectType,
+          prop.optional,
+          csharpProperty.attributes,
+        );
+      }
+
+      properties.push(csharpProperty);
+    });
 
     this.appendLine(CSharpSchemaExporter.BacklinkWarning);
 
@@ -107,6 +104,7 @@ export default class CSharpSchemaExporter extends SchemaExporter {
     this.appendLine('using System;');
     this.appendLine('using System.Collections.Generic;');
     this.appendLine('using Realms;');
+    additionalUsing.forEach(using => this.appendLine(using));
 
     this.appendLine('');
 
@@ -114,21 +112,20 @@ export default class CSharpSchemaExporter extends SchemaExporter {
     this.appendLine('{');
 
     this.appendLine(
-      `${this.ClassPadding}public class ${schema.name} : RealmObject`,
+      `${this.ClassPadding}public class ${schema.name} : ${
+        schema.embedded ? 'EmbeddedObject' : 'RealmObject'
+      }`,
     );
     this.appendLine(`${this.ClassPadding}{`);
 
-    let isFirst = true;
-    for (const prop of properties) {
-      if (isFirst) {
-        isFirst = false;
-      } else {
+    properties.forEach((prop, idx) => {
+      if (idx > 0) {
         this.appendLine('');
       }
 
-      for (const attribute of prop.attributes) {
-        this.appendLine(`${this.PropertyPadding}[${attribute}]`);
-      }
+      prop.attributes.forEach(attribute =>
+        this.appendLine(`${this.PropertyPadding}[${attribute}]`),
+      );
 
       if (prop.mappedTo !== prop.name) {
         this.appendLine(`${this.PropertyPadding}[MapTo("${prop.mappedTo}")]`);
@@ -137,7 +134,7 @@ export default class CSharpSchemaExporter extends SchemaExporter {
       this.appendLine(
         `${this.PropertyPadding}public ${prop.type} ${prop.name} { get;${prop.setter} }`,
       );
-    }
+    });
 
     this.appendLine(`${this.ClassPadding}}`);
     this.appendLine('}');
@@ -149,9 +146,9 @@ export default class CSharpSchemaExporter extends SchemaExporter {
   }
 
   private getCSharpType(
-    type: string,
-    objectType: string,
-    isOptional: boolean,
+    type: string | undefined,
+    objectType: string | undefined,
+    isOptional: boolean | undefined,
     attributes: string[],
   ): string {
     let isNullable = false;
@@ -170,6 +167,16 @@ export default class CSharpSchemaExporter extends SchemaExporter {
       case 'date':
         result = 'DateTimeOffset';
         break;
+      case 'object id': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
+      case 'objectId':
+        result = 'ObjectId';
+        canBeRequired = false;
+        break;
+      case 'decimal': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
+      case 'decimal128':
+        result = 'Decimal128';
+        canBeRequired = false;
+        break;
       case 'data':
         result = 'byte[]';
         isNullable = true;
@@ -179,6 +186,11 @@ export default class CSharpSchemaExporter extends SchemaExporter {
         isNullable = true;
         break;
       default:
+        if (!objectType)
+          throw new Error(
+            `No specific match & missing objectType for type "${type}".`,
+          );
+
         result = objectType;
         isNullable = true;
         canBeRequired = false;
