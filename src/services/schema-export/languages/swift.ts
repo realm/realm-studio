@@ -96,7 +96,7 @@ export default class SwiftSchemaExporter extends SchemaExporter {
         case 'object id': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
         case 'objectId':
           return 'ObjectId';
-        case 'decimal':// TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
+        case 'decimal': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
         case 'decimal128':
           return 'Decimal128';
       }
