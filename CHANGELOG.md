@@ -4,9 +4,9 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## Release 10.0.0-beta.? (2020-??-??)
+## Release 10.0.0-rc.1 (2020-10-02)
 
-[Changes since v10.0.0-beta.2](https://github.com/realm/realm-studio/compare/v10.0.0-beta.2...v10.0.0-beta.?)
+[Changes since v10.0.0-beta.2](https://github.com/realm/realm-studio/compare/v10.0.0-beta.2...v10.0.0-rc.1)
 
 ### Enhancements
 
@@ -26,7 +26,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Internals
 
 - Electron v8.4.1
-- Realm v10.0.0-beta.13
+- Realm v10.0.0-rc.1
 
 
 ## Release 10.0.0-beta.2 (2020-06-16)
