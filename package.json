@@ -193,7 +193,7 @@
     "copy-webpack-plugin": "^6.0.2",
     "css-loader": "^3.6.0",
     "devtron": "^1.4.0",
-    "electron": "^8.1.1",
+    "electron": "^8.5.2",
     "electron-builder": "^22.7.0",
     "electron-download": "^4.1.1",
     "electron-publisher-s3": "^20.17.2",
