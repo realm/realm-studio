@@ -31,8 +31,8 @@
     "afterSign": "./scripts/notarize.js",
     "mac": {
       "hardenedRuntime": true,
+      "gatekeeperAssess": false,
       "category": "public.app-category.developer-tools",
-      "entitlements": "./resources/entitlements.mac.inherit.plist",
       "target": [
         "dmg",
         "zip"
