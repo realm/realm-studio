@@ -28,9 +28,11 @@
       "!node_modules/realm/src${/*}",
       "!node_modules/realm/vendor${/*}"
     ],
+    "afterSign": "./scripts/notarize.js",
     "mac": {
-      "hardenedRuntime": false,
+      "hardenedRuntime": true,
       "category": "public.app-category.developer-tools",
+      "entitlements": "./resources/entitlements.mac.inherit.plist",
       "target": [
         "dmg",
         "zip"
@@ -120,7 +122,8 @@
     "test:post-package": "mocha-webpack --opts configs/mocha-webpack.opts src/testing/post-packaging/index.ts",
     "wait-for-bundle": "node ./scripts/wait-for-bundle.js",
     "webpack:main": "webpack --mode development --config configs/webpack.main.js",
-    "webpack:renderer": "webpack-dev-server --mode development --config configs/webpack.renderer.js"
+    "webpack:renderer": "webpack-dev-server --mode development --config configs/webpack.renderer.js",
+    "notarize": "node ./scripts/notarize"
   },
   "dependencies": {
     "@contentful/rich-text-html-renderer": "^13.4.0",
@@ -198,6 +201,7 @@
     "electron": "^8.5.2",
     "electron-builder": "^22.9.1",
     "electron-download": "^4.1.1",
+    "electron-notarize": "^1.0.0",
     "electron-publisher-s3": "^20.17.2",
     "faker": "^4.1.0",
     "file-loader": "^6.0.0",
