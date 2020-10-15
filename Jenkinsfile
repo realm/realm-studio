@@ -221,7 +221,12 @@ pipeline {
             nvm(env.NODE_VERSION) {
               withCredentials([
                 file(credentialsId: 'cose-sign-certificate-windows', variable: 'WIN_CSC_LINK'),
-                string(credentialsId: 'cose-sign-password-windows', variable: 'WIN_CSC_KEY_PASSWORD')
+                string(credentialsId: 'cose-sign-password-windows', variable: 'WIN_CSC_KEY_PASSWORD'),
+                usernamePassword(
+                  credentialsId: 'realm-apple-id',
+                  usernameVariable: 'APPLE_ID_APP_USERNAME',
+                  passwordVariable: 'APPLE_ID_APP_PASSWORD',
+                )
               ]) {
                 sh 'npx electron-builder -mlw -c.forceCodeSigning --publish never'
               }

@@ -23,13 +23,9 @@ module.exports = async function notarizeApp (context) {
   // Options variables
   const appBundleId = "com.mongodb.realm-studio";
   const appPath = path.join(appOutDir, `${productFilename}.app`);
-  const appleId = "[APPLE ID PENDING]";
-  const appleIdPassword = process.env.GITHUB_ACTION
-    ? process.env.APPLE_ID_APP_PASSWORD
-    : `@keychain:"Application Loader: ${appleId}"`;
-  const ascProvider = "[TEAM PENDING]";
-  // TODO: find ascProvider with:
-  // /Applications/Transporter.app/Contents/itms/bin/iTMSTransporter -m provider -u APPLE_DEV_ACCOUNT -p APP_PASSWORD
+  const appleId = process.env.APPLE_ID_APP_USERNAME;
+  const appleIdPassword = process.env.APPLE_ID_APP_PASSWORD;
+  const ascProvider = "QX5CR2FTN2";
 
   const options = { appBundleId, appPath, appleId, appleIdPassword, ascProvider };
 
@@ -38,8 +34,7 @@ module.exports = async function notarizeApp (context) {
     throw new Error(`Cannot find application: ${appPath}`);
   }
 
-  // await notarize(options);
-  console.log("[SKIPPING] notarization of app! options:", options);
+  await notarize(options);
 
   console.log(`Done notarizing ${appBundleId}`);
 };
