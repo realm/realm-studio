@@ -1,6 +1,5 @@
 {
   "name": "realm-studio",
-  "productName": "MongoDB Realm Studio",
   "version": "10.0.0-rc.1",
   "description": "A tool for everything MongoDB Realm!",
   "author": {
@@ -28,14 +27,13 @@
       "!node_modules/realm/src${/*}",
       "!node_modules/realm/vendor${/*}"
     ],
-    "afterSign": "./scripts/notarize.js",
+    "afterSign": "./scripts/afterSign",
     "mac": {
       "hardenedRuntime": true,
       "gatekeeperAssess": false,
       "category": "public.app-category.developer-tools",
       "target": [
-        "dmg",
-        "zip"
+        "dmg"
       ]
     },
     "dmg": {
