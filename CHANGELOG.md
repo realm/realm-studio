@@ -10,10 +10,10 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 This is the first release for MongoDB Realm to be used with the v10.0.0 versions of the Realm SDKs.
 
-NOTE: This version do not support Realm Cloud and Realm Object Server. Realm Studio 3.11 is the latest
+NOTE: This version do not support Realm Cloud and Realm Object Server. Realm Studio 5.0.0 is the latest
 release that supports that.
 
-### Breaking Changes (compared to Studio 3.11)
+### Breaking Changes (compared to v5.0.0)
 - All functionality related to the Realm Object Server (ROS), such as connecting to a server, opening synchronized Realms from it and managing users and their permissions has been removed. ([#1282](https://github.com/realm/realm-studio/pull/1282))
 - All functionality related to the "legacy" Realm Cloud (available via https://cloud.realm.io/), such as authenticating and connecting to a server instance has been removed. ([#1282](https://github.com/realm/realm-studio/pull/1282))
 
@@ -27,13 +27,13 @@ release that supports that.
 - UI: Non sortable grid headers now have a different color ([#1321](https://github.com/realm/realm-studio/pull/1321))
 - UI: Grid headers for Embedded Objects marked with `(embedded)` ([#1321](https://github.com/realm/realm-studio/pull/1321))
 - Schema export now supports new types (`ObjectId`, `Decimal128` & Embedded Objects). ([#1329](https://github.com/realm/realm-studio/pull/1329))
-- Updated the link to "Download a demo Realm file" on the greetings window, to link to a Realm file with the v11 file-format.
+- Updated the link to "Download a demo Realm file" on the greetings window, to link to a Realm file with the v20 file-format.
 - Added support for creating & generating `ObjectId` when creating objects. ([#1291](https://github.com/realm/realm-studio/pull/1291))
 - Added support for editing existing `ObjectId` values. ([#1290](https://github.com/realm/realm-studio/pull/1290))
 - Primary keys in Class/Schema creation now defaults to an `ObjectId` property named `_id`.
 - Added support for creating `Decimal128` when creating objects. ([#1292](https://github.com/realm/realm-studio/pull/1292))
 - Added support for editing existing `Decimal128` values. ([#1292](https://github.com/realm/realm-studio/pull/1292))
-- Added support for viewing and editing `Embedded Objects`([#1298](https://github.com/realm/realm-studio/pull/1298)). Creation of Embedded Objects is not supported yet.
+- Added support for viewing and editing `Embedded Objects`([#1298](https://github.com/realm/realm-studio/pull/1298)).
 
 ### Fixed
 
