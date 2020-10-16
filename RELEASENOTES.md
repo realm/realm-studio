@@ -2,7 +2,7 @@
 
 ### Enhancements
 
-- Mac app is now notarized.
+- None
 
 ### Fixed
 
@@ -10,5 +10,4 @@
 
 ### Internals
 
-- Electron v8.5.2
-- Realm v10.0.0
+- None
