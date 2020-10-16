@@ -34,6 +34,13 @@ pipeline {
         </ol>
       ''',
     )
+    string(
+      name: 'PREPARE_VERSION',
+      defaultValue: '',
+      description: '''
+        Force a specific version of the version when preparing.
+      ''',
+    )
     booleanParam(
       name: 'PACKAGE',
       defaultValue: false,
@@ -108,7 +115,7 @@ pipeline {
               currentBuild.displayName += ": ${VERSION} (publish)"
             } else {
               // Determine the upcoming release type
-              nextVersionType = sh(
+              nextVersionType = env.PREPARE_VERSION ?: sh(
                 script: "node ./scripts/next-version.js",
                 returnStdout: true,
               ).trim()
