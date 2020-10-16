@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release 10.0.0 (2020-10-16)
+
+[Changes since v10.0.0-rc.1](https://github.com/realm/realm-studio/compare/v10.0.0-rc.1...v10.0.0)
+
+### Enhancements
+
+- Mac app is now notarized.
+
+### Fixed
+
+- None
+
+### Internals
+
+- Electron v8.5.2
+- Realm v10.0.0
+
 ## Release 10.0.0-rc.1 (2020-10-02)
 
 [Changes since v10.0.0-beta.2](https://github.com/realm/realm-studio/compare/v10.0.0-beta.2...v10.0.0-rc.1)
