@@ -10,4 +10,5 @@
 
 ### Internals
 
-- None
+- Electron v8.5.2
+- Realm v10.0.0
