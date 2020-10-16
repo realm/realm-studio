@@ -2,7 +2,7 @@
 
 ### Enhancements
 
-- None
+- Mac app is now notarized.
 
 ### Fixed
 
