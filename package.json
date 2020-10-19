@@ -34,7 +34,8 @@
       "gatekeeperAssess": false,
       "category": "public.app-category.developer-tools",
       "target": [
-        "dmg"
+        "dmg",
+        "zip"
       ]
     },
     "dmg": {
@@ -109,7 +110,7 @@
     "lint:sass": "sass-lint --max-warnings=0 -c .sass-lint.yml 'src/**/*.scss' -v",
     "lint:ts": "tslint --project tsconfig.json 'src/**/*.ts' 'src/**/*.tsx'",
     "lint": "npm run lint:ts && npm run lint:sass && echo 'Everything looks good!'",
-    "package": "electron-builder --publish=never",
+    "package": "electron-builder --publish=never && node ./scripts/mac/re-zip-with-blockmap",
     "postinstall": "electron-builder install-app-deps",
     "prepackage": "rm -rf ./build && npm run build",
     "prestart": "rm -rf ./build && npm run build",
