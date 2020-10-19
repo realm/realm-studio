@@ -1,6 +1,9 @@
 name: Lint, build & package
+
 on:
-  pull_request
+  pull_request:
+    branches:
+      - channel/*
 jobs:
   build:
     name: Build, lint & test
