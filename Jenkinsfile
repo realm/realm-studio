@@ -235,7 +235,7 @@ pipeline {
                   passwordVariable: 'APPLE_ID_APP_PASSWORD',
                 )
               ]) {
-                sh 'npx electron-builder -mlw -c.forceCodeSigning --publish never'
+                sh 'npx electron-builder -mlw -c.forceCodeSigning --publish never && node ./scripts/mac/re-zip-with-blockmap'
               }
               // Archive the packaged artifacts
               archiveArtifacts 'dist/*'
