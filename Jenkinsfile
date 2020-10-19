@@ -303,7 +303,7 @@ pipeline {
             sh 'mkdir dist-finally && mv dist/*.yml dist-finally'
             // Upload artifacts to GitHub
             script {
-              for (file in findFiles(glob: 'dist/*')) {
+              for (file in findFiles(glob: 'dist/*', excludes: '*.zip')) {
                 sh "node scripts/github-releases upload-asset $VERSION '$file'"
               }
             }
