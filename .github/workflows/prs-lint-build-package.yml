@@ -1,11 +1,6 @@
-name: Continuous Integration
+name: Lint, build & package
 on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+  pull_request
 jobs:
   build:
     name: Build, lint & test
@@ -32,11 +27,14 @@ jobs:
         MOCHA_FILE: pre-test-results.xml
       run: npm test -- --reporter mocha-github-actions-reporter
     - name: Build the package
-      if: ${{ github.ref == 'master' }}
       run: npx electron-builder -mlw --publish never
-    - name: Upload the package
-      if: ${{ github.ref == 'master' }}
-      uses: actions/upload-artifact@v1.0.0
+    - name: Archive the .dmg for macOS
+      uses: actions/upload-artifact@v2
       with:
-        name: package
-        path: dist
+        name: mac-dmg
+        path: dist/*.dmg
+    - name: Archive the .zip for macOS
+      uses: actions/upload-artifact@v2
+      with:
+        name: mac-zip
+        path: dist/*-mac.zip
