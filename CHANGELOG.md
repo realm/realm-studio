@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release 4.0.1 (2020-10-20)
+
+[Changes since v4.0.0](https://github.com/realm/realm-studio/compare/v4.0.0...v4.0.1)
+
+### Enhancements
+
+- None
+
+### Fixed
+
+- Fixed an issue where opening a Realm with the GraphiQL editor would produce a blank window. ([#1345](https://github.com/realm/realm-studio/pull/1345), since 3.11.0)
+
+### Internals
+
+- None
+
+
 ## Release 4.0.0 (2020-09-22)
 
 [Changes since v3.10.0](https://github.com/realm/realm-studio/compare/v3.11.0...v4.0.0)
