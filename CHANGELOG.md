@@ -15,7 +15,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
-- Fixed JSON export (producing empty objects). ([#1344](https://github.com/realm/realm-studio/issues/1344))
+- Fixed JSON export (producing empty objects). ([#1344](https://github.com/realm/realm-studio/issues/1344), since v5.0.0)
 
 ### Internals
 
