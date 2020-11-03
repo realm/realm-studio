@@ -6,7 +6,7 @@
 
 ### Fixed
 
-- None
+- When opening an encrypted Realm, users was shown an error instead of the prompt to enter an encryption key. ([#1351](https://github.com/realm/realm-studio/pull/1351), since v10.0.0)
 
 ### Internals
 
