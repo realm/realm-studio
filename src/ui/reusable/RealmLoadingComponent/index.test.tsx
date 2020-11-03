@@ -72,8 +72,8 @@ describe('<RealmLoadingComponent />', () => {
         <TestRealmLoadingComponent />,
       );
       assert(element);
-      assert.equal(changes, 0, 'Expected no changes');
-      assert.equal(loads, 0, 'Expected no loads');
+      assert.strictEqual(changes, 0, 'Expected no changes');
+      assert.strictEqual(loads, 0, 'Expected no loads');
     });
   });
 
@@ -132,8 +132,8 @@ describe('<RealmLoadingComponent />', () => {
       const element = ReactTestUtils.renderIntoDocument(
         <AdminRealmLoadingComponent />,
       );
-      assert.equal(changes, 0, 'Expected no changes');
-      assert.equal(loads, 0, 'Expected no loads');
+      assert.strictEqual(changes, 0, 'Expected no changes');
+      assert.strictEqual(loads, 0, 'Expected no loads');
     });
   });
 

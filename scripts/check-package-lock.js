@@ -17,8 +17,8 @@ function checkVersion(name, version, lockVersion) {
 }
 
 try {
-  assert.equal(package.name, packageLock.name, "Name changed");
-  assert.equal(package.version, packageLock.version, "Version changed");
+  assert.strictEqual(package.name, packageLock.name, "Name changed");
+  assert.strictEqual(package.version, packageLock.version, "Version changed");
   // Check that all package.json dependencies are semantically compatible with the lock
   Object.keys(package.dependencies).forEach(name => {
     const version = package.dependencies[name];

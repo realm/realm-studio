@@ -108,8 +108,8 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
   describe('opening Realm file', () => {
     before(async () => {
       // Await the Greeting window
-      assert.equal(await app.client.getWindowCount(), 1);
-      assert.equal(await app.client.getTitle(), 'Realm Studio');
+      assert.strictEqual(await app.client.getWindowCount(), 1);
+      assert.strictEqual(await app.client.getTitle(), 'Realm Studio');
       // Mock the open dialog to return the Realm path
       fakeDialog.mock([
         {
@@ -125,7 +125,7 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
 
     it('shows the Realm Browser', async () => {
       // Wait for the browser window to open and change focus to that
-      assert.equal(await app.client.getWindowCount(), 2);
+      assert.strictEqual(await app.client.getWindowCount(), 2);
       // Wait for the left sidebar to exist
       await app.client.waitForExist('span=Classes');
     });
@@ -159,7 +159,7 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
           // Assert something about the header
           const headerCells = await app.client.elements(selectors.headerCell);
           // Assert that is has the same number of header cells as it has properties
-          assert.equal(
+          assert.strictEqual(
             headerCells.value.length,
             Object.keys(schema.properties).length,
           );
@@ -169,7 +169,7 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
           before(async () => {
             // Expect no cells
             const cells = await app.client.elements(selectors.cell);
-            assert.equal(cells.value.length, 0);
+            assert.strictEqual(cells.value.length, 0);
             // Create a row
             await app.client.click(`button=Create ${className}`);
             await app.client.waitForVisible('button=Create');
@@ -181,7 +181,7 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
           // Assert something about the row that was just created
           it('creates a row in the table', async () => {
             const cells = await app.client.elements(selectors.cell);
-            assert.equal(
+            assert.strictEqual(
               cells.value.length,
               Object.keys(schema.properties).length,
             );

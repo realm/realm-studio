@@ -53,7 +53,7 @@ const assertGeneratedSchemaAreValid = (
   generatedFilePaths: string[],
   realm: Realm,
 ) => {
-  assert.equal(expectedFilePaths.length, generatedFilePaths.length);
+  assert.strictEqual(expectedFilePaths.length, generatedFilePaths.length);
 
   const exporter = SchemaExporter(language);
   exporter.exportSchema(realm);
@@ -62,7 +62,7 @@ const assertGeneratedSchemaAreValid = (
   for (let i = 0; i < expectedFilePaths.length; i++) {
     const expected = fs.readFileSync(expectedFilePaths[i], 'utf8');
     const generated = fs.readFileSync(generatedFilePaths[i], 'utf8');
-    assert.equal(generated, expected);
+    assert.strictEqual(generated, expected);
   }
 };
 
