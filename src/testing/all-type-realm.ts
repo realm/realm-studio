@@ -20,6 +20,8 @@ import { resolve } from 'path';
 import Realm from 'realm';
 import tmp from 'tmp';
 
+import { ITestRealm } from './index';
+
 import { TYPES as primitiveTypes } from '../ui/RealmBrowser/primitives';
 
 const CustomClass: Realm.ObjectSchema = {
@@ -81,10 +83,6 @@ function generateSchema() {
   schema.push(CustomClass);
   // Return the list of object schemas
   return schema;
-}
-
-export interface ITestRealm extends Realm {
-  closeAndDelete: () => void;
 }
 
 export const create = () => {
