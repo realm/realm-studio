@@ -120,11 +120,13 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
       await app.client.windowByIndex(1);
     });
 
-    after(() => {
+    after(async () => {
       if (realm) {
         // Close the Realm file
         realm.closeAndDelete();
       }
+      // Close the window ...
+      await app.client.close();
     });
 
     it('shows the Realm Browser', async () => {
@@ -230,11 +232,13 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
       await app.client.windowByIndex(1);
     });
 
-    after(() => {
+    after(async () => {
       if (realm) {
         // Close the Realm file
         realm.closeAndDelete();
       }
+      // Close the window ...
+      await app.client.close();
     });
 
     it('shows the Realm Browser (with the encryption key modal)', async () => {
