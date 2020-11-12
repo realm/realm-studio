@@ -102,7 +102,7 @@ function buildMockedRealmStudio() {
   }
 }
 
-assert.equal(
+assert.strictEqual(
   os.platform(),
   'darwin',
   'Currently, the post-package tests can only run on MacOS',
@@ -113,7 +113,7 @@ assert(
   'Build the app before running the post-package tests',
 );
 
-assert.equal(typeof productName, 'string', 'Expected a product name');
+assert.strictEqual(typeof productName, 'string', 'Expected a product name');
 
 describe('Realm Studio packaged', () => {
   let mockedS3: http.Server;
@@ -186,13 +186,13 @@ describe('Realm Studio packaged', () => {
       function readySignalChanged(currentStat: fs.Stats) {
         if (updateCount === 0) {
           updateCount++;
-          assert.equal(currentStat.size, 0);
+          assert.strictEqual(currentStat.size, 0);
         } else if (updateCount === 1) {
           updateCount++;
           const content = fs.readFileSync(readySignalPath, {
             encoding: 'utf8',
           });
-          assert.equal(content, `Hello from a future ${productName}!`);
+          assert.strictEqual(content, `Hello from a future ${productName}!`);
           // Stop watching the file
           fs.unwatchFile(readySignalPath, readySignalChanged);
           resolve();

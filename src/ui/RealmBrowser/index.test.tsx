@@ -23,10 +23,9 @@ import path from 'path';
 import { Application } from 'spectron';
 import fakeDialog from 'spectron-fake-dialog';
 
-import {
-  create as createAllTypeRealm,
-  ITestRealm,
-} from '../../testing/all-type-realm';
+import { ITestRealm } from '../../testing';
+import { create as createAllTypeRealm } from '../../testing/all-type-realm';
+import { create as createEncryptedRealm } from "../../testing/encrypted-realm";
 import { saveChromeDriverLogs, startAppWithTimeout } from '../../testing/utils';
 
 const APP_START_TIMEOUT = 15000; // 15 sec
@@ -50,11 +49,9 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
   this.timeout(TOTAL_TIMEOUT); // 15 sec
 
   let app: Application;
-  let realm: ITestRealm;
   let failureCount = 0;
 
   before(async () => {
-    realm = createAllTypeRealm();
     app = new Application({
       path: electronPath,
       // Requiring in the "log-error-messages.js" script to capture error messages via STDOUT
@@ -99,17 +96,17 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
     if (app.isRunning()) {
       await app.stop();
     }
-    if (realm) {
-      // Close the Realm file
-      realm.closeAndDelete();
-    }
   });
 
   describe('opening Realm file', () => {
+    let realm: ITestRealm;
+
     before(async () => {
+      // Create the all type realm
+      realm = createAllTypeRealm();
       // Await the Greeting window
-      assert.equal(await app.client.getWindowCount(), 1);
-      assert.equal(await app.client.getTitle(), 'Realm Studio');
+      assert.strictEqual(await app.client.getWindowCount(), 1);
+      assert.strictEqual(await app.client.getTitle(), 'Realm Studio');
       // Mock the open dialog to return the Realm path
       fakeDialog.mock([
         {
@@ -123,9 +120,18 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
       await app.client.windowByIndex(1);
     });
 
+    after(async () => {
+      if (realm) {
+        // Close the Realm file
+        realm.closeAndDelete();
+      }
+      // Close the window ...
+      await app.client.close();
+    });
+
     it('shows the Realm Browser', async () => {
       // Wait for the browser window to open and change focus to that
-      assert.equal(await app.client.getWindowCount(), 2);
+      assert.strictEqual(await app.client.getWindowCount(), 2);
       // Wait for the left sidebar to exist
       await app.client.waitForExist('span=Classes');
     });
@@ -159,7 +165,7 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
           // Assert something about the header
           const headerCells = await app.client.elements(selectors.headerCell);
           // Assert that is has the same number of header cells as it has properties
-          assert.equal(
+          assert.strictEqual(
             headerCells.value.length,
             Object.keys(schema.properties).length,
           );
@@ -169,7 +175,7 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
           before(async () => {
             // Expect no cells
             const cells = await app.client.elements(selectors.cell);
-            assert.equal(cells.value.length, 0);
+            assert.strictEqual(cells.value.length, 0);
             // Create a row
             await app.client.click(`button=Create ${className}`);
             await app.client.waitForVisible('button=Create');
@@ -181,7 +187,7 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
           // Assert something about the row that was just created
           it('creates a row in the table', async () => {
             const cells = await app.client.elements(selectors.cell);
-            assert.equal(
+            assert.strictEqual(
               cells.value.length,
               Object.keys(schema.properties).length,
             );
@@ -198,5 +204,59 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
         });
       });
     }
+  });
+
+  describe('opening an encrypted Realm file', () => {
+    // A 64 byte sequence of hex encoded randomness
+    const key = "5C8B54D92223310B4D531EA1F1BBEDEC199F2052DF44EEBD7F0935418671B61F197C6A8CFA7ECDE821C5592E52D74EFC22495B8D1E2866155C9CC469A1D9E876";
+    let realm: ITestRealm;
+
+    before(async () => {
+      // Create the all type realm
+      realm = createEncryptedRealm(key);
+      // Close it right away, since sharing encrypted realms between processes are not supported yet
+      realm.close();
+      // Await the Greeting window
+      assert.strictEqual(await app.client.getWindowCount(), 1);
+      assert.strictEqual(await app.client.getTitle(), 'Realm Studio');
+      // Mock the open dialog to return the Realm path
+      fakeDialog.mock([
+        {
+          method: 'showOpenDialog',
+          value: { filePaths: [realm.path] },
+        },
+      ]);
+      // Click on the button to open a Realm file
+      await app.client.click('button=Open Realm file');
+      // Select the browser window
+      await app.client.windowByIndex(1);
+    });
+
+    after(async () => {
+      if (realm) {
+        // Close the Realm file
+        realm.closeAndDelete();
+      }
+      // Close the window ...
+      await app.client.close();
+    });
+
+    it('shows the Realm Browser (with the encryption key modal)', async () => {
+      // Wait for the browser window to open and change focus to that
+      assert.strictEqual(await app.client.getWindowCount(), 2);
+      // Wait for the left sidebar to exist
+      await app.client.waitForVisible("h5=The Realm might be encrypted");
+    });
+
+    it('entering the key, opens the realm', async () => {
+      // Add the key to the input element
+      await app.client.addValue("input", key);
+      await app.client.click("button=Try again")
+      // Wait for the left sidebar to exist
+      await app.client.waitForVisible('span=Classes');
+      // Ensure the schema can be read
+      await app.client.waitForVisible('.LeftSidebar__Class__Name=Item');
+    });
+
   });
 });

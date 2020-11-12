@@ -37,7 +37,7 @@ function changeProcessDirectory(relativePath: string) {
 }
 
 export function changeRendererProcessDirectory() {
-  assert.equal(
+  assert.strictEqual(
     process.type,
     'renderer',
     'This should only be called from a renderer process',
@@ -49,7 +49,7 @@ export function changeRendererProcessDirectory() {
 }
 
 export function changeMainProcessDirectory() {
-  assert.equal(
+  assert.strictEqual(
     process.type,
     'browser',
     'This should only be called from a main process',

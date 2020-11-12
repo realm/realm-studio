@@ -37,12 +37,12 @@ try {
       // This is one of the auto updating "latest-*" json / yml files
 
       // 1. Check that the version matches that of the package.json and package-lock.json
-      assert.equal(
+      assert.strictEqual(
         autoUpdateContent.version,
         packageJson.version,
         'Expected version to equal that of package.json',
       );
-      assert.equal(
+      assert.strictEqual(
         autoUpdateContent.version,
         packageLockJson.version,
         'Expected version to equal that of package-lock.json',

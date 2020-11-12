@@ -30,32 +30,35 @@ const TESTS_PATH = './src/services/data-importer/tests';
 describe('Import CSV tests', () => {
   describe('Util helper methods', () => {
     it('parses strings to booleans', () => {
-      assert.equal(Util.isBoolean('true'), true);
-      assert.equal(Util.isBoolean('TRUE'), true);
-      assert.equal(Util.isBoolean('TrUe'), true);
+      assert.strictEqual(Util.isBoolean('true'), true);
+      assert.strictEqual(Util.isBoolean('TRUE'), true);
+      assert.strictEqual(Util.isBoolean('TrUe'), true);
 
-      assert.equal(Util.isBoolean('false'), true);
-      assert.equal(Util.isBoolean('FALSE'), true);
-      assert.equal(Util.isBoolean('FaLse'), true);
+      assert.strictEqual(Util.isBoolean('false'), true);
+      assert.strictEqual(Util.isBoolean('FALSE'), true);
+      assert.strictEqual(Util.isBoolean('FaLse'), true);
 
-      assert.equal(Util.isBoolean('123'), false);
-      assert.equal(Util.isBoolean(' false'), false);
-      assert.equal(Util.isBoolean('true '), false);
+      assert.strictEqual(Util.isBoolean('123'), false);
+      assert.strictEqual(Util.isBoolean(' false'), false);
+      assert.strictEqual(Util.isBoolean('true '), false);
     });
 
     it('parses strings to ints', () => {
-      assert.equal(Util.isInt('123'), true);
-      assert.equal(Util.isInt('3.14'), false);
-      assert.equal(Util.isInt('true'), false);
-      assert.equal(Util.isInt('A094E453-46FD-4F13-AD2F-7333E2C4ABCA'), false);
+      assert.strictEqual(Util.isInt('123'), true);
+      assert.strictEqual(Util.isInt('3.14'), false);
+      assert.strictEqual(Util.isInt('true'), false);
+      assert.strictEqual(
+        Util.isInt('A094E453-46FD-4F13-AD2F-7333E2C4ABCA'),
+        false,
+      );
     });
 
     it('parses strings to doubles', () => {
-      assert.equal(Util.isDouble('3.14'), true);
-      assert.equal(Util.isDouble('3.0'), true);
-      assert.equal(Util.isDouble('3'), true); // always check isInt before isDouble when parsing!
-      assert.equal(Util.isDouble('true'), false);
-      assert.equal(Util.isDouble('0XCAFEBABE'), false);
+      assert.strictEqual(Util.isDouble('3.14'), true);
+      assert.strictEqual(Util.isDouble('3.0'), true);
+      assert.strictEqual(Util.isDouble('3'), true); // always check isInt before isDouble when parsing!
+      assert.strictEqual(Util.isDouble('true'), false);
+      assert.strictEqual(Util.isDouble('0XCAFEBABE'), false);
     });
   });
 
@@ -64,17 +67,21 @@ describe('Import CSV tests', () => {
 
     const schema = generateSchema(ImportFormat.CSV, files);
 
-    assert.equal(schema.length, 1, 'Expected to parse one schema (Cat)');
+    assert.strictEqual(schema.length, 1, 'Expected to parse one schema (Cat)');
     const catSchema = schema[0];
-    assert.equal(catSchema.name, 'Cat', 'Expected to parse schema named (Cat)');
-    assert.equal(catSchema.properties.name, 'string?');
-    assert.equal(catSchema.properties.age, 'int?');
-    assert.equal(catSchema.properties.height, 'double?');
-    assert.equal(catSchema.properties.weight, 'int?');
-    assert.equal(catSchema.properties.hasTail, 'bool?');
-    assert.equal(catSchema.properties.birthday, 'string?');
-    assert.equal(catSchema.properties.owner, 'string?');
-    assert.equal(catSchema.properties.scaredOfDog, 'string?');
+    assert.strictEqual(
+      catSchema.name,
+      'Cat',
+      'Expected to parse schema named (Cat)',
+    );
+    assert.strictEqual(catSchema.properties.name, 'string?');
+    assert.strictEqual(catSchema.properties.age, 'int?');
+    assert.strictEqual(catSchema.properties.height, 'double?');
+    assert.strictEqual(catSchema.properties.weight, 'int?');
+    assert.strictEqual(catSchema.properties.hasTail, 'bool?');
+    assert.strictEqual(catSchema.properties.birthday, 'string?');
+    assert.strictEqual(catSchema.properties.owner, 'string?');
+    assert.strictEqual(catSchema.properties.scaredOfDog, 'string?');
   });
 
   describe('Creating and populating the Realm', () => {
@@ -94,72 +101,79 @@ describe('Import CSV tests', () => {
       // open the Realm and make sure the schema matches
       const realm = new Realm({ path: REALM_FILE_PATH, schema });
 
-      assert.equal(
+      assert.strictEqual(
         fs.existsSync(REALM_FILE_PATH),
         true,
         `Realm file was not found at the expected path: ${REALM_FILE_PATH}`,
       );
 
-      assert.equal(realm.schema.length, 1, 'Expected to find one schema (Cat)');
+      assert.strictEqual(
+        realm.schema.length,
+        1,
+        'Expected to find one schema (Cat)',
+      );
       const catSchema = realm.schema[0];
-      assert.equal(
+      assert.strictEqual(
         catSchema.name,
         'Cat',
         'Expected Schema name to match (Cat)',
       );
 
-      assert.equal(catSchema.properties.hasOwnProperty('name'), true);
+      assert.strictEqual(catSchema.properties.hasOwnProperty('name'), true);
       const nameProperty = catSchema.properties.name as ObjectSchemaProperty;
-      assert.equal(nameProperty.type, 'string');
-      assert.equal(nameProperty.optional, true);
-      assert.equal(nameProperty.indexed, false);
+      assert.strictEqual(nameProperty.type, 'string');
+      assert.strictEqual(nameProperty.optional, true);
+      assert.strictEqual(nameProperty.indexed, false);
 
-      assert.equal(catSchema.properties.hasOwnProperty('age'), true);
+      assert.strictEqual(catSchema.properties.hasOwnProperty('age'), true);
       const ageProperty = catSchema.properties.age as ObjectSchemaProperty;
-      assert.equal(ageProperty.type, 'int');
-      assert.equal(ageProperty.optional, true);
-      assert.equal(ageProperty.indexed, false);
+      assert.strictEqual(ageProperty.type, 'int');
+      assert.strictEqual(ageProperty.optional, true);
+      assert.strictEqual(ageProperty.indexed, false);
 
-      assert.equal(catSchema.properties.hasOwnProperty('height'), true);
+      assert.strictEqual(catSchema.properties.hasOwnProperty('height'), true);
       const heightProperty = catSchema.properties
         .height as ObjectSchemaProperty;
-      assert.equal(heightProperty.type, 'double');
-      assert.equal(heightProperty.optional, true);
-      assert.equal(heightProperty.indexed, false);
+      assert.strictEqual(heightProperty.type, 'double');
+      assert.strictEqual(heightProperty.optional, true);
+      assert.strictEqual(heightProperty.indexed, false);
 
-      assert.equal(catSchema.properties.hasOwnProperty('weight'), true);
+      assert.strictEqual(catSchema.properties.hasOwnProperty('weight'), true);
       const weightProperty = catSchema.properties
         .weight as ObjectSchemaProperty;
-      assert.equal(weightProperty.type, 'int');
-      assert.equal(weightProperty.optional, true);
-      assert.equal(weightProperty.indexed, false);
+      assert.strictEqual(weightProperty.type, 'int');
+      assert.strictEqual(weightProperty.optional, true);
+      assert.strictEqual(weightProperty.indexed, false);
 
-      assert.equal(catSchema.properties.hasOwnProperty('hasTail'), true);
+      assert.strictEqual(catSchema.properties.hasOwnProperty('hasTail'), true);
       const hasTailProperty = catSchema.properties
         .hasTail as ObjectSchemaProperty;
-      assert.equal(hasTailProperty.type, 'bool');
-      assert.equal(hasTailProperty.optional, true);
-      assert.equal(hasTailProperty.indexed, false);
+      assert.strictEqual(hasTailProperty.type, 'bool');
+      assert.strictEqual(hasTailProperty.optional, true);
+      assert.strictEqual(hasTailProperty.indexed, false);
 
-      assert.equal(catSchema.properties.hasOwnProperty('birthday'), true);
+      assert.strictEqual(catSchema.properties.hasOwnProperty('birthday'), true);
       const birthdayProperty = catSchema.properties
         .birthday as ObjectSchemaProperty;
-      assert.equal(birthdayProperty.type, 'string');
-      assert.equal(birthdayProperty.optional, true);
-      assert.equal(birthdayProperty.indexed, false);
+      assert.strictEqual(birthdayProperty.type, 'string');
+      assert.strictEqual(birthdayProperty.optional, true);
+      assert.strictEqual(birthdayProperty.indexed, false);
 
-      assert.equal(catSchema.properties.hasOwnProperty('owner'), true);
+      assert.strictEqual(catSchema.properties.hasOwnProperty('owner'), true);
       const ownerProperty = catSchema.properties.owner as ObjectSchemaProperty;
-      assert.equal(ownerProperty.type, 'string');
-      assert.equal(ownerProperty.optional, true);
-      assert.equal(ownerProperty.indexed, false);
+      assert.strictEqual(ownerProperty.type, 'string');
+      assert.strictEqual(ownerProperty.optional, true);
+      assert.strictEqual(ownerProperty.indexed, false);
 
-      assert.equal(catSchema.properties.hasOwnProperty('scaredOfDog'), true);
+      assert.strictEqual(
+        catSchema.properties.hasOwnProperty('scaredOfDog'),
+        true,
+      );
       const scaredOfDogProperty = catSchema.properties
         .scaredOfDog as ObjectSchemaProperty;
-      assert.equal(scaredOfDogProperty.type, 'string');
-      assert.equal(scaredOfDogProperty.optional, true);
-      assert.equal(scaredOfDogProperty.indexed, false);
+      assert.strictEqual(scaredOfDogProperty.type, 'string');
+      assert.strictEqual(scaredOfDogProperty.optional, true);
+      assert.strictEqual(scaredOfDogProperty.indexed, false);
 
       realm.close();
     });
@@ -173,26 +187,26 @@ describe('Import CSV tests', () => {
       csvImporter.import(realm);
 
       const cats = realm.objects('Cat').sorted('name');
-      assert.equal(cats.length, 2);
+      assert.strictEqual(cats.length, 2);
       let cat = cats[0] as any;
-      assert.equal(cat.name, 'Kitty');
-      assert.equal(cat.age, 3);
-      assert.equal(cat.height, 22.1);
-      assert.equal(cat.weight, 0);
-      assert.equal(cat.hasTail, false);
-      assert.equal(cat.birthday, '<null>');
-      assert.equal(cat.owner, '<null>');
-      assert.equal(cat.scaredOfDog, '<null>');
+      assert.strictEqual(cat.name, 'Kitty');
+      assert.strictEqual(cat.age, 3);
+      assert.strictEqual(cat.height, 22.1);
+      assert.strictEqual(cat.weight, 0);
+      assert.strictEqual(cat.hasTail, false);
+      assert.strictEqual(cat.birthday, '<null>');
+      assert.strictEqual(cat.owner, '<null>');
+      assert.strictEqual(cat.scaredOfDog, '<null>');
 
       cat = cats[1] as any;
-      assert.equal(cat.name, 'Ninneko');
-      assert.equal(cat.age, 4);
-      assert.equal(cat.height, 21.0);
-      assert.equal(cat.weight, 0);
-      assert.equal(cat.hasTail, true);
-      assert.equal(cat.birthday, '<null>');
-      assert.equal(cat.owner, '<null>');
-      assert.equal(cat.scaredOfDog, '<null>');
+      assert.strictEqual(cat.name, 'Ninneko');
+      assert.strictEqual(cat.age, 4);
+      assert.strictEqual(cat.height, 21.0);
+      assert.strictEqual(cat.weight, 0);
+      assert.strictEqual(cat.hasTail, true);
+      assert.strictEqual(cat.birthday, '<null>');
+      assert.strictEqual(cat.owner, '<null>');
+      assert.strictEqual(cat.scaredOfDog, '<null>');
 
       realm.close();
     });
@@ -226,8 +240,8 @@ describe('Import CSV tests', () => {
 
       const people = realm.objects('people');
       const dogs = realm.objects('dogs');
-      assert.equal(people.length, 2);
-      assert.equal(dogs.length, 2);
+      assert.strictEqual(people.length, 2);
+      assert.strictEqual(dogs.length, 2);
       realm.close();
     });
 
@@ -241,13 +255,13 @@ describe('Import CSV tests', () => {
       csvImporter.import(realm);
 
       const optionals: any = realm.objects('optional').sorted('integerValue');
-      assert.equal(optionals.length, 5);
+      assert.strictEqual(optionals.length, 5);
 
       // checking null values
-      assert.equal(optionals[0].integerValue, null);
-      assert.equal(optionals[2].boolValue, null);
-      assert.equal(optionals[3].doubleValue, null);
-      assert.equal(optionals[4].stringValue, null);
+      assert.strictEqual(optionals[0].integerValue, null);
+      assert.strictEqual(optionals[2].boolValue, null);
+      assert.strictEqual(optionals[3].doubleValue, null);
+      assert.strictEqual(optionals[4].stringValue, null);
       realm.close();
     });
 
@@ -261,7 +275,7 @@ describe('Import CSV tests', () => {
       const realm = new Realm({ path: REALM_FILE_PATH, schema });
 
       csvImporter.import(realm);
-      assert.equal(realm.objects('inspections').length, 18480);
+      assert.strictEqual(realm.objects('inspections').length, 18480);
 
       realm.close();
     });
@@ -278,7 +292,7 @@ describe('Import CSV tests', () => {
 
       // Open existing Realm file containing schema for Dog, Cat, Owner and DogPromaryKey
       const assetRealm = new Realm({ path: temporaryPath });
-      assert.equal(assetRealm.schema.length, 4);
+      assert.strictEqual(assetRealm.schema.length, 4);
       assert.notEqual(
         assetRealm.schema.find(objectSchema => objectSchema.name === 'Dog'),
         undefined,
@@ -288,23 +302,23 @@ describe('Import CSV tests', () => {
       assetRealm.delete(assetRealm.objects('Dog'));
       assetRealm.commitTransaction();
 
-      assert.equal(assetRealm.objects('Dog').length, 0);
+      assert.strictEqual(assetRealm.objects('Dog').length, 0);
 
       csvImporter.import(assetRealm);
 
       // Check new rows were added
       const dogs: any = assetRealm.objects('Dog').sorted('name');
-      assert.equal(dogs.length, 2);
-      assert.equal(dogs[0].name, 'Caesar');
-      assert.equal(dogs[1].name, 'Rex');
-      assert.equal(dogs[0].age, 3);
-      assert.equal(dogs[1].age, 5);
-      assert.equal(dogs[0].height, 6);
-      assert.equal(dogs[1].height.toPrecision(3), 3.14);
-      assert.equal(dogs[0].weight, 16);
-      assert.equal(dogs[1].weight, 17);
-      assert.equal(dogs[0].hasTail, true);
-      assert.equal(dogs[1].hasTail, false);
+      assert.strictEqual(dogs.length, 2);
+      assert.strictEqual(dogs[0].name, 'Caesar');
+      assert.strictEqual(dogs[1].name, 'Rex');
+      assert.strictEqual(dogs[0].age, 3);
+      assert.strictEqual(dogs[1].age, 5);
+      assert.strictEqual(dogs[0].height, 6);
+      assert.strictEqual(dogs[1].height.toPrecision(3), '3.14');
+      assert.strictEqual(dogs[0].weight, 16);
+      assert.strictEqual(dogs[1].weight, 17);
+      assert.strictEqual(dogs[0].hasTail, true);
+      assert.strictEqual(dogs[1].hasTail, false);
 
       assetRealm.close();
     });

@@ -43,10 +43,10 @@ describe('menu utilities', () => {
       id: 'item-b',
       items: [{ id: 'item-b-replaced', label: 'Item B Replaced' }],
     });
-    assert.equal(before.length, 3);
-    assert.equal(after.length, 3);
-    assert.equal(after[1].id, 'item-b-replaced');
-    assert.equal(after[1].label, 'Item B Replaced');
+    assert.strictEqual(before.length, 3);
+    assert.strictEqual(after.length, 3);
+    assert.strictEqual(after[1].id, 'item-b-replaced');
+    assert.strictEqual(after[1].label, 'Item B Replaced');
   });
 
   it('can append', () => {
@@ -55,10 +55,10 @@ describe('menu utilities', () => {
       id: 'item-b',
       items: [{ id: 'item-after-b', label: 'Item After B' }],
     });
-    assert.equal(before.length, 3);
-    assert.equal(after.length, 4);
-    assert.equal(after[2].id, 'item-after-b');
-    assert.equal(after[2].label, 'Item After B');
+    assert.strictEqual(before.length, 3);
+    assert.strictEqual(after.length, 4);
+    assert.strictEqual(after[2].id, 'item-after-b');
+    assert.strictEqual(after[2].label, 'Item After B');
   });
 
   it('can prepend', () => {
@@ -67,12 +67,12 @@ describe('menu utilities', () => {
       id: 'item-b',
       items: [{ id: 'item-before-b', label: 'Item Before B' }],
     });
-    assert.equal(before.length, 3);
-    assert.equal(after.length, 4);
-    assert.equal(after[1].id, 'item-before-b');
-    assert.equal(after[1].label, 'Item Before B');
-    assert.equal(after[2].id, 'item-b');
-    assert.equal(after[2].label, 'Item B');
+    assert.strictEqual(before.length, 3);
+    assert.strictEqual(after.length, 4);
+    assert.strictEqual(after[1].id, 'item-before-b');
+    assert.strictEqual(after[1].label, 'Item Before B');
+    assert.strictEqual(after[2].id, 'item-b');
+    assert.strictEqual(after[2].label, 'Item B');
   });
 
   it('can perform multiple modifications in submenus', () => {
@@ -106,9 +106,9 @@ describe('menu utilities', () => {
         ],
       },
     ]);
-    assert.equal(before.length, 3);
+    assert.strictEqual(before.length, 3);
     const itemC = after[2];
-    assert.equal(itemC.id, 'item-c');
+    assert.strictEqual(itemC.id, 'item-c');
     assert.deepStrictEqual(itemC.submenu, [
       { id: 'item-c-1', label: 'Item C 1' },
       { id: 'item-before-c-2', label: 'Item Before C 2' },

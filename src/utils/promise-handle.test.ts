@@ -23,16 +23,16 @@ import { createPromiseHandle } from './promise-handle';
 describe('promise handle', () => {
   it('can create a handle', () => {
     const handle = createPromiseHandle();
-    assert.equal(typeof handle.resolve, 'function');
-    assert.equal(typeof handle.reject, 'function');
-    assert.equal(typeof handle.promise, 'object');
+    assert.strictEqual(typeof handle.resolve, 'function');
+    assert.strictEqual(typeof handle.reject, 'function');
+    assert.strictEqual(typeof handle.promise, 'object');
     assert(handle.promise instanceof Promise);
   });
 
   it('can resolve the promise', done => {
     const handle = createPromiseHandle();
     handle.promise.then(result => {
-      assert.equal(result, 'w00t');
+      assert.strictEqual(result, 'w00t');
       done();
     });
     process.nextTick(() => {
@@ -43,7 +43,7 @@ describe('promise handle', () => {
   it('can reject the promise', done => {
     const handle = createPromiseHandle();
     handle.promise.catch(result => {
-      assert.equal(result, 'w00t');
+      assert.strictEqual(result, 'w00t');
       done();
     });
     process.nextTick(() => {
