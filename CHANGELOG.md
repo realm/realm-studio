@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release 10.0.1 (2020-11-12)
+
+[Changes since v10.0.0](https://github.com/realm/realm-studio/compare/v10.0.0...v10.0.1)
+
+### Enhancements
+
+- None
+
+### Fixed
+
+- When opening an encrypted Realm, users were shown an error instead of the prompt to enter an encryption key. ([#1351](https://github.com/realm/realm-studio/pull/1351), since v10.0.0)
+
+### Internals
+
+- None
+
+
 ## Release 10.0.0 (2020-10-16)
 
 [Changes since v5.0.0](https://github.com/realm/realm-studio/compare/v5.0.0...v10.0.0)
