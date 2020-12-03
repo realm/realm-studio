@@ -64,3 +64,11 @@ export class JSONExportEngine implements IExportEngine {
     fs.writeFileSync(destinationPath, serialize(resultMap));
   }
 }
+
+/**
+ * Adding serialization in form of base64 string to ArrayBuffer
+ */
+// @ts-ignore ArrayBuffer has no toJSON defined/implemented
+ArrayBuffer.prototype.toJSON = function () {
+  return Buffer.from(this).toString('base64');
+};
