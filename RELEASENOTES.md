@@ -6,7 +6,7 @@
 
 ### Fixed
 
-- None
+- Fixed opening synced Realms devices. ([#1378](https://github.com/realm/realm-studio/pull/1378))
 
 ### Internals
 
