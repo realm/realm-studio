@@ -119,7 +119,7 @@ export abstract class RealmLoadingComponent<
       } catch (error) {
         if (
           error instanceof Error &&
-          error.message.includes('Incompatible histories.') &&
+          (error.message.includes('Incompatible histories.') || error.message.startsWith("History type (as specified by the Replication implementation passed to the DB constructor) was not consistent across the session")) &&
           realm.sync !== true
         ) {
           // Try to open the Realm locally with a sync history mode.
