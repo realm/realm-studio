@@ -1,0 +1,43 @@
+name: Lint, build & package
+
+on:
+  pull_request:
+    branches:
+      - channel/*
+jobs:
+  build:
+    name: Build, lint & test
+    runs-on: macOS-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Setup Node
+      uses: actions/setup-node@v1
+      with:
+       node-version: '10.x'
+    - name: Install dependencies
+      run: npm ci
+    - name: Check package-lock.json
+      run: npm run check:package-lock
+    - name: Lint TypeScript
+      run: npm run lint:ts
+    - name: Lint SASS
+      run: npm run lint:sass
+    - name: Build the bundle
+      run: npm run build
+    - name: Run pre-package tests
+      env:
+        MOCHA_FILE: pre-test-results.xml
+      run: npm test -- --reporter mocha-github-actions-reporter
+    - name: Build the package
+      run: npx electron-builder -mlw --publish never
+    - name: Archive the .dmg for macOS
+      uses: actions/upload-artifact@v2
+      with:
+        name: mac-dmg
+        path: dist/*.dmg
+    - name: Archive the .zip for macOS
+      uses: actions/upload-artifact@v2
+      with:
+        name: mac-zip
+        path: dist/*-mac.zip
