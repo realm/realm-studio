@@ -2,11 +2,11 @@
 
 ### Enhancements
 
-- Improved the experience of errors thrown when loading the Realm browser. ([#1377](https://github.com/realm/realm-studio/pull/1377))
+- None
 
 ### Fixed
 
-- Fixed opening synced Realms devices. ([#1378](https://github.com/realm/realm-studio/pull/1378))
+- None
 
 ### Internals
 
