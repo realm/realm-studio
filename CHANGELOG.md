@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release 10.1.0 (2021-01-13)
+
+[Changes since v10.0.1](https://github.com/realm/realm-studio/compare/v10.0.1...v10.1.0)
+
+### Enhancements
+
+- Improved the experience of errors thrown when loading the Realm browser. ([#1377](https://github.com/realm/realm-studio/pull/1377))
+
+### Fixed
+
+- Fixed opening synced Realms devices. ([#1378](https://github.com/realm/realm-studio/pull/1378))
+
+### Internals
+
+- None
+
+
 ## Release 10.0.1 (2020-11-12)
 
 [Changes since v10.0.0](https://github.com/realm/realm-studio/compare/v10.0.0...v10.0.1)
