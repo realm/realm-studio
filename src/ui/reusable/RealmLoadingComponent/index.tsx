@@ -91,7 +91,14 @@ export abstract class RealmLoadingComponent<
 
   protected loadingRealmFailed(err: Error) {
     const message = err.message || 'Failed to open the Realm';
-    this.setState({ progress: { message, status: 'failed' } });
+    const backtraceStart = message.indexOf('Exception backtrace:');
+    const summary = message.substring(0, backtraceStart);
+    // Trim off useless information
+    const trimmedSummary = summary.replace(/ Path:$/, '');
+    const details = message.substring(backtraceStart);
+    this.setState({
+      progress: { message: trimmedSummary, details, status: 'failed' },
+    });
   }
 
   private async openRealm(
