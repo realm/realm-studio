@@ -27,6 +27,7 @@ export interface IRetryParams {
 
 export interface ILoadingProgress {
   message?: string;
+  details?: string;
   status: LoadingStatus;
   transferable?: number;
   transferred?: number;

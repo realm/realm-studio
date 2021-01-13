@@ -71,6 +71,9 @@ export const LoadingOverlay = ({
             {progress.message}
           </section>
         ) : null}
+        {progress && progress.details ? (
+          <code className="LoadingOverlay__Details">{progress.details}</code>
+        ) : null}
         {progress && showProgress && (
           <Progress
             className="LoadingOverlay__Progress"
