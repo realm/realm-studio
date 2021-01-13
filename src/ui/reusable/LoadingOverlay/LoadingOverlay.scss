@@ -57,8 +57,8 @@
     display: flex;
     flex-direction: column;
     font-size: .9rem;
-    justify-content: center;
     height: 100%;
+    justify-content: center;
     width: 100%;
   }
 
@@ -89,10 +89,10 @@
   }
 
   &__Details {
+    color: $dove;
     overflow: auto;
     text-align: left;
     width: 100%;
-    color: $dove;
   }
 
   &__RetryButton {
