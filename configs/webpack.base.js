@@ -1,4 +1,3 @@
-const { CheckerPlugin } = require('awesome-typescript-loader');
 const { resolve } = require('path');
 const nodeExternals = require('webpack-node-externals');
 const webpack = require('webpack');
@@ -34,8 +33,6 @@ module.exports = (env, argv) => {
       path: resolve(__dirname, '../build'),
     },
     plugins: [
-      // @see https://github.com/s-panferov/awesome-typescript-loader#configuration on why CheckerPlugin is needed
-      new CheckerPlugin(),
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify(
           isDevelopment ? 'development' : 'production'

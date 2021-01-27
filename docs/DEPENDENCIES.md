@@ -3,11 +3,9 @@
 This document will describe known limitations on the dependencies, specifically why some of the packages are not
 upgraded to the latest current versions:
 
-## `mocha`
+## Webpack
 
-We use `mocha-webpack` to run tests that can load directly from our TS source files (because these may include imports
-of stylesheets, images, etc). A new major version (6) of mocha is out, but the newest version of `mocha-webpack`
-(2.0.0-beta.0) has a peerDependency on `mocha@>=4 <=5`.
+We're using `mochapack` (a fork of `mocha-webpack`) to run our tests (enabling importing stylesheets, images, etc) and [this doesn't yet support WebPack v5](https://github.com/sysgears/mochapack/issues/82).
 
 ## `@types/webdriverio`
 

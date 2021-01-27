@@ -12,7 +12,7 @@ module.exports = (env) => {
       rules: [
         {
           test: /\.tsx?$/,
-          use: 'awesome-typescript-loader?silent=true'
+          use: 'ts-loader'
         }, {
           test: /\.html$/,
           use: 'file-loader'
