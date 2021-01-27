@@ -1,6 +1,5 @@
 const path = require('path');
 const webpack = require('webpack');
-const Visualizer = require('webpack-visualizer-plugin');
 const { merge } = require('webpack-merge');
 
 module.exports = (env, argv) => {
@@ -46,15 +45,7 @@ module.exports = (env, argv) => {
     plugins: [
       // Prevent the windows from loading the UI components
       new webpack.IgnorePlugin(/\/ui/, /\/src\/windows$/),
-    ].concat(
-      isDevelopment
-        ? [
-            new Visualizer({
-              filename: './main.statistics.html',
-            }),
-          ]
-        : []
-    ),
+    ],
     target: 'electron-main',
     watch: isDevelopment,
   });

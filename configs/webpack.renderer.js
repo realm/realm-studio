@@ -1,7 +1,5 @@
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
-const Visualizer = require('webpack-visualizer-plugin');
 const { merge } = require('webpack-merge');
 
 module.exports = (env, argv) => {
@@ -51,11 +49,6 @@ module.exports = (env, argv) => {
       chunkFilename: '[name].renderer.bundle.js',
       publicPath: isDevelopment ? 'http://localhost:8080/' : '',
     },
-    plugins: isDevelopment ? [
-      new Visualizer({
-        filename: './renderer.statistics.html',
-      }),
-    ] : [],
     target: 'electron-renderer'
   });
 };

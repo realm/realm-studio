@@ -169,7 +169,7 @@ describe('Realm Studio packaged', () => {
     });
 
     // Watch for changes to the ready.signal file, indicating that the app got updated successfully
-    await new Promise((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       const readySignalPath = path.resolve(temporaryMacPath, 'ready.signal');
       let updateCount = 0;
 
