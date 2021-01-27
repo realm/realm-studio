@@ -10,7 +10,7 @@
     "baseUrl": ".",
 
     "strict": true,
-    // "noUnusedLocals": true,
+    "noUnusedLocals": true,
     "noImplicitAny": true,
     "downlevelIteration": true,
 
