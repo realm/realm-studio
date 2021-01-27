@@ -116,6 +116,8 @@ export class WindowManager {
       ...savedWindowOptions,
       webPreferences: {
         nodeIntegration: true,
+        // TODO: Since the remote interface is being deprecated, we should stop relying on it
+        enableRemoteModule: true,
         // Load Sentry as a preload in production - this doesn't work in development because the
         // sentry.js is not emitted to the build folder.
         preload: isDevelopment

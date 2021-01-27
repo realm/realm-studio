@@ -59,9 +59,6 @@ if (!isDevelopment) {
     });
   }
 
-  // Load devtron - if not in production
-  // tslint:disable-next-line:no-var-requires
-  require('devtron').install();
   // Add a tool that will notify us when components update
   if (process.env.WHY_DID_YOU_UPDATE) {
     // tslint:disable-next-line:no-console
