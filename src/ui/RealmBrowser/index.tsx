@@ -862,9 +862,12 @@ class RealmBrowserContainer
     const paths = dataImporter.showOpenDialog(format);
     if (this.realm && paths && paths.length > 0) {
       try {
-        const schema = dataImporter.generateSchema(format, paths);
         try {
-          const importer = dataImporter.getDataImporter(format, paths, schema);
+          const importer = dataImporter.getDataImporter(
+            format,
+            paths,
+            this.realm.schema,
+          );
           importer.import(this.realm);
         } catch (err) {
           showError('Failed to import data', err);
