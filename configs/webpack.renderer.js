@@ -1,8 +1,6 @@
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
-const Visualizer = require('webpack-visualizer-plugin');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 
 module.exports = (env, argv) => {
   const isDevelopment = argv.mode === 'development';
@@ -22,7 +20,7 @@ module.exports = (env, argv) => {
       rules: [
         {
           test: /\.tsx?$/,
-          use: 'awesome-typescript-loader',
+          use: 'ts-loader',
         }, {
           test: /\.html$/,
           use: 'file-loader'
@@ -51,11 +49,6 @@ module.exports = (env, argv) => {
       chunkFilename: '[name].renderer.bundle.js',
       publicPath: isDevelopment ? 'http://localhost:8080/' : '',
     },
-    plugins: isDevelopment ? [
-      new Visualizer({
-        filename: './renderer.statistics.html',
-      }),
-    ] : [],
     target: 'electron-renderer'
   });
 };

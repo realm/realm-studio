@@ -26,29 +26,39 @@ import { WindowType } from './windows/WindowOptions';
 
 type RemovalCallback = () => void;
 
-class RealmStudioStore {
-  public readonly KEY_SHOW_SYSTEM_CLASSES = 'browser.show-system-classes';
-  public readonly KEY_SHOW_INTERNAL_FEATURES = 'general.show-internal-features';
-  public readonly KEY_WINDOW_OPTIONS = 'window-options';
+const KEY_SHOW_SYSTEM_CLASSES = 'browser.show-system-classes';
+const KEY_SHOW_INTERNAL_FEATURES = 'general.show-internal-features';
+const KEY_WINDOW_OPTIONS = 'window-options';
 
-  private store = new ElectronStore({ watch: true });
+type StudioStore = {
+  [KEY_SHOW_SYSTEM_CLASSES]: boolean;
+  [KEY_SHOW_INTERNAL_FEATURES]: boolean;
+  [key: string]: unknown;
+};
+
+class RealmStudioStore {
+  public readonly KEY_SHOW_SYSTEM_CLASSES = KEY_SHOW_SYSTEM_CLASSES;
+  public readonly KEY_SHOW_INTERNAL_FEATURES = KEY_SHOW_INTERNAL_FEATURES;
+  public readonly KEY_WINDOW_OPTIONS = KEY_WINDOW_OPTIONS;
+
+  private store = new ElectronStore<StudioStore>({ watch: true });
 
   public toggleShowSystemClasses() {
     const currentValue = this.shouldShowSystemClasses();
-    this.store.set(this.KEY_SHOW_SYSTEM_CLASSES, !currentValue);
+    this.store.set(KEY_SHOW_SYSTEM_CLASSES, !currentValue);
   }
 
   public toggleShowInternalFeatures() {
     const currentValue = this.shouldShowInternalFeatures();
-    this.store.set(this.KEY_SHOW_INTERNAL_FEATURES, !currentValue);
+    this.store.set(KEY_SHOW_INTERNAL_FEATURES, !currentValue);
   }
 
   public shouldShowSystemClasses(): boolean {
-    return this.store.get(this.KEY_SHOW_SYSTEM_CLASSES, false);
+    return this.store.get(KEY_SHOW_SYSTEM_CLASSES, false);
   }
 
   public shouldShowInternalFeatures(): boolean {
-    return this.store.get(this.KEY_SHOW_INTERNAL_FEATURES, false);
+    return this.store.get(KEY_SHOW_INTERNAL_FEATURES, false);
   }
 
   // Window option related methods
@@ -56,14 +66,19 @@ class RealmStudioStore {
     type: WindowType,
     options: IWindowConstructorOptions,
   ) {
-    const key = `${this.KEY_WINDOW_OPTIONS}.${type}`;
+    const key = `${KEY_WINDOW_OPTIONS}.${type}`;
     this.store.set(key, options);
   }
 
   // Window option related methods
   public getWindowOptions(type: WindowType): IWindowConstructorOptions {
-    const key = `${this.KEY_WINDOW_OPTIONS}.${type}`;
-    return this.store.get(key, {});
+    const key = `${KEY_WINDOW_OPTIONS}.${type}`;
+    const value = this.store.get(key, {});
+    if (typeof value === 'object') {
+      return value as IWindowConstructorOptions;
+    } else {
+      throw new Error(`Expected ${key} to be an object`);
+    }
   }
 
   // Subclassing ElectronStore results in

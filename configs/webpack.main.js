@@ -1,7 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
-const Visualizer = require('webpack-visualizer-plugin');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 
 module.exports = (env, argv) => {
   const isDevelopment = argv.mode === 'development';
@@ -22,7 +21,7 @@ module.exports = (env, argv) => {
       rules: [
         {
           test: /\.tsx?$/,
-          use: 'awesome-typescript-loader',
+          use: 'ts-loader',
         },
         {
           test: /\.html$/,
@@ -46,15 +45,7 @@ module.exports = (env, argv) => {
     plugins: [
       // Prevent the windows from loading the UI components
       new webpack.IgnorePlugin(/\/ui/, /\/src\/windows$/),
-    ].concat(
-      isDevelopment
-        ? [
-            new Visualizer({
-              filename: './main.statistics.html',
-            }),
-          ]
-        : []
-    ),
+    ],
     target: 'electron-main',
     watch: isDevelopment,
   });

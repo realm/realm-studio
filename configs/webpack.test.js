@@ -1,4 +1,4 @@
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 
 module.exports = (env) => {
   const baseConfig = require('./webpack.base.js')(env, {
@@ -12,7 +12,7 @@ module.exports = (env) => {
       rules: [
         {
           test: /\.tsx?$/,
-          use: 'awesome-typescript-loader?silent=true'
+          use: 'ts-loader'
         }, {
           test: /\.html$/,
           use: 'file-loader'

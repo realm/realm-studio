@@ -1,6 +1,4 @@
-const { CheckerPlugin } = require('awesome-typescript-loader');
 const { resolve } = require('path');
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 const webpack = require('webpack');
 const SentryPlugin = require('@sentry/webpack-plugin');
@@ -16,7 +14,7 @@ module.exports = (env, argv) => {
     externals: [
       nodeExternals({
         // Anyting related to webpack, we want to keep in the bundle
-        whitelist: [
+        allowlist: [
           /webpack(\/.*)?/,
           'electron-devtools-installer',
           /svg-baker-runtime(\/.*)?/,
@@ -35,18 +33,13 @@ module.exports = (env, argv) => {
       path: resolve(__dirname, '../build'),
     },
     plugins: [
-      // @see https://github.com/s-panferov/awesome-typescript-loader#configuration on why CheckerPlugin is needed
-      new CheckerPlugin(),
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify(
           isDevelopment ? 'development' : 'production'
         ),
       }),
     ].concat(isDevelopment ? [
-      // Cache chunks
-      new HardSourceWebpackPlugin(),
       // Plugins for development
-      new webpack.NamedModulesPlugin(),
       new webpack.HotModuleReplacementPlugin(),
     ] : [
       new SentryPlugin({
