@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release 5.0.2 (2021-01-27)
+
+[Changes since v5.0.1](https://github.com/realm/realm-studio/compare/v5.0.1...v5.0.2)
+
+### Enhancements
+
+- None
+
+### Fixed
+
+- Fixed CSV importing into an existing Realm. The schema declared by the Realm file was not used, but instead generated from the in the CSV file data. ([#1381](https://github.com/realm/realm-studio/pull/1381), since 1.12.0)
+
+### Internals
+
+- None
+
+
 ## Release 5.0.1 (2020-10-20)
 
 [Changes since v5.0.0](https://github.com/realm/realm-studio/compare/v5.0.0...v5.0.1)
