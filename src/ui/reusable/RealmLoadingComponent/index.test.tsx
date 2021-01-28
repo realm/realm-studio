@@ -43,7 +43,7 @@ describe('<RealmLoadingComponent />', () => {
     let changes = 0;
     let loads = 0;
     class TestRealmLoadingComponent extends RealmLoadingComponent<
-      {},
+      Record<string, never>,
       IRealmLoadingComponentState
     > {
       public render() {

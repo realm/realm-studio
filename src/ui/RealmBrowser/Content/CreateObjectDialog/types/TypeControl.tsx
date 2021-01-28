@@ -140,7 +140,7 @@ export const TypeControl = ({
         getClassFocus={getClassFocus}
         onChange={onChange}
         property={property}
-        value={value as object}
+        value={value}
         isEmbeddedType={isEmbeddedType}
       />
     );

@@ -42,10 +42,7 @@ type IRoleDialogContainerProps =
   | IRoleDialogContainerOpenedProps
   | IRoleDialogContainerClosedProps;
 
-class RoleDialogContainer extends React.Component<
-  IRoleDialogContainerProps,
-  {}
-> {
+class RoleDialogContainer extends React.Component<IRoleDialogContainerProps> {
   public render() {
     const props = this.getProps();
     return <RoleDialog {...props} />;

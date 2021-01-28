@@ -26,6 +26,12 @@ import { ILoadingProgress } from './index';
 import { prettyBytes } from '../../../utils';
 import './LoadingOverlay.scss';
 
+function formatProgress(progress: ILoadingProgress) {
+  const transferred = prettyBytes(progress.transferred || 0);
+  const transferable = prettyBytes(progress.transferable || 0);
+  return `${transferred} / ${transferable}`;
+}
+
 /**
  * An absolutly positioned loading overlay with three animated dots.
  * @param options.loading Is it loading?
@@ -80,10 +86,7 @@ export const LoadingOverlay = ({
             value={progress.transferred}
             max={progress.transferable}
           >
-            {
-            // eslint-disable-next-line prettier/prettier
-            }
-            `${prettyBytes(progress.transferred || 0)} / ${prettyBytes(progress.transferable || 0)}`}
+            {formatProgress(progress)}
           </Progress>
         )}
         {showDots ? <LoadingDots /> : null}

@@ -123,7 +123,7 @@ class SidebarContainer extends React.Component<
     }
   };
 
-  private onWindowResize = (e: Event) => {
+  private onWindowResize = () => {
     // When a window got resized, the width of the sidebar might have been reduced
     if (this.outerElement && this.props.isOpen) {
       const rect = this.outerElement.getBoundingClientRect();

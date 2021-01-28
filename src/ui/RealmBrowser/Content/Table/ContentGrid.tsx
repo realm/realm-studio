@@ -86,7 +86,7 @@ const isRowHighlighted = (
   return highlight ? highlight.rows.has(rowIndex) : false;
 };
 
-export class ContentGrid extends React.PureComponent<IContentGridProps, {}> {
+export class ContentGrid extends React.PureComponent<IContentGridProps> {
   private cellRangeRenderer?: GridCellRangeRenderer;
   private cellRenderers: GridCellRenderer[] = [];
 

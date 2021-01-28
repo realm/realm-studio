@@ -73,7 +73,7 @@ export type EmbeddedInfo = {
 };
 export type CreateObjectHandler = (
   className: string,
-  values: {},
+  values: Record<string, unknown>,
   embeddedInfo?: EmbeddedInfo,
 ) => void;
 export type QueryChangeHandler = (query: string) => void;
@@ -737,7 +737,7 @@ class ContentContainer extends React.Component<
 
   private onCreateObject: CreateObjectHandler = (
     className: string,
-    values: {},
+    values: Record<string, unknown>,
     embeddedInfo?: EmbeddedInfo,
   ) => {
     if (!this.props.readOnly) {
