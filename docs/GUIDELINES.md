@@ -21,7 +21,7 @@ understood by editors - if the correct plugins have been installed.
 
 If you cannot find editor support for `tslint` and `sass-lint`, run this to test the two respectively
 
-    npm run lint:ts
+    npm run lint:es
     npm run lint:sass
 
 Or just run `npm run lint` to run one followed by the other.
