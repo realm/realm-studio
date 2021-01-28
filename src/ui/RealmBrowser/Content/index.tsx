@@ -387,7 +387,7 @@ class ContentContainer extends React.Component<
 
   private generateHighlight(
     object: Realm.Object | null,
-    scrollToObject: boolean = true,
+    scrollToObject = true,
   ): IHighlight {
     if (object) {
       const { results } = this.filteredSortedResults(

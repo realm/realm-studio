@@ -128,7 +128,7 @@ export class Updater {
     this.listeningWindows.splice(index, 1);
   }
 
-  public checkForUpdates(quiet: boolean = false) {
+  public checkForUpdates(quiet = false) {
     // Checking this prevents two updates at the same time
     if (!this.isBusy) {
       this.quite = quiet;
@@ -244,7 +244,7 @@ export class Updater {
     }
   }
 
-  private showError(message: string, detail: string = '') {
+  private showError(message: string, detail = '') {
     dialog.showMessageBox({
       type: 'error',
       message,

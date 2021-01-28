@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import React from 'react';
-import { remote } from "electron";
+import { remote } from 'electron';
 
 import './ErrorOverlay.scss';
 

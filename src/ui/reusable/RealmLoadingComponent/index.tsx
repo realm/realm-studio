@@ -36,7 +36,7 @@ export abstract class RealmLoadingComponent<
 
   protected realm?: Realm;
   protected cancellations: (() => void)[] = [];
-  protected certificateWasRejected: boolean = false;
+  protected certificateWasRejected = false;
 
   public componentWillUnmount() {
     this.closeRealm();

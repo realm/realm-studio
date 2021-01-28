@@ -73,7 +73,7 @@ export class CertificateManager {
     window: electron.BrowserWindow | null,
     url: string,
     certificate: electron.Certificate,
-    enableDetailedButton: boolean = true,
+    enableDetailedButton = true,
   ): Promise<boolean> {
     const parsedUrl = new URL(url);
     const coreMessage = `The server (${parsedUrl.host}) is using a certificate that cannot be automatically trusted.`;
