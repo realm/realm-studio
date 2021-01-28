@@ -147,7 +147,6 @@ class MarketingPanelContainer extends React.PureComponent<
       const url = 'https://www.mongodb.com/realm/subscribe';
       remote.shell.openExternal(url);
     } else if (callToActionSlug) {
-      // tslint:disable-next-line:no-console
       console.warn(
         `Asked to perform an unsupported call to action: ${callToActionSlug}`,
       );

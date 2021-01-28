@@ -41,7 +41,7 @@ if (isDevelopment) {
   // We must require this the old fasioned way, as this is a dev dependency that might
   // not be available when the packaged application is shipped, and import statements cannot
   // be used in a block like this.
-  // tslint:disable-next-line:no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   require('source-map-support').install();
 }
 
@@ -53,10 +53,10 @@ app.on('will-quit', () => {
 // Look for changes to application
 if (module.hot) {
   module.hot.accept('./main/Application', () => {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const NewApplication = require('./main/Application').Application;
     NewApplication.sharedApplication.run();
   });
 } else if (isDevelopment) {
-  // tslint:disable-next-line:no-console
   console.warn('Hot module replacement was disabled!');
 }

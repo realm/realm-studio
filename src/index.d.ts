@@ -16,8 +16,6 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-// tslint:disable:max-classes-per-file
-
 declare module '*.svg' {
   const svg: {
     id: string;

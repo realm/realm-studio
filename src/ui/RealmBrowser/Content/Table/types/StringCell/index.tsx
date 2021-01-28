@@ -137,7 +137,6 @@ export class StringCellContainer extends React.Component<
           this.propagateChange();
         }
       } catch (err) {
-        // tslint:disable-next-line:no-console
         console.warn(`StringCell validation failed: ${err.message}`);
       }
     });
@@ -222,7 +221,6 @@ export class StringCellContainer extends React.Component<
   private showInvalidValueError(message: string): boolean {
     const answer = remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
       type: 'warning',
-      // tslint:disable-next-line:max-line-length
       message,
       title: `Updating cell`,
       buttons: ['Leave without saving', 'Keep editing'],

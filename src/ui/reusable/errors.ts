@@ -25,9 +25,8 @@ export const showError = (
   error?: any,
   messageOverrides: { [msg: string]: string } = {},
 ) => {
-  // tslint:disable-next-line:no-console
   console.error(error);
-  let message: string = '';
+  let message = '';
   if (typeof error === 'string') {
     message = error;
   } else if (typeof error === 'object') {

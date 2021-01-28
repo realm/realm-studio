@@ -43,7 +43,7 @@ if (!isDevelopment) {
   ReactDOM.render(window, appElement);
 } else {
   // The react-hot-loader is a dev-dependency, why we cannot use a regular import in the top of this file
-  // tslint:disable-next-line:no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const { AppContainer } = require('react-hot-loader');
 
   const currentWindow = renderCurrentWindow();
@@ -52,6 +52,7 @@ if (!isDevelopment) {
   // Hot Module Replacement API
   if (module.hot) {
     module.hot.accept('./windows/Window', () => {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const nextGetWindow = require('./windows/Window').getWindow;
       const nextWindow = nextGetWindow();
       // Render the updated window
@@ -61,9 +62,8 @@ if (!isDevelopment) {
 
   // Add a tool that will notify us when components update
   if (process.env.WHY_DID_YOU_UPDATE) {
-    // tslint:disable-next-line:no-console
     console.warn('Loading why-did-you-update');
-    // tslint:disable-next-line:no-var-requires
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { whyDidYouUpdate } = require('why-did-you-update');
     whyDidYouUpdate(React);
   }
@@ -71,12 +71,11 @@ if (!isDevelopment) {
 
 // Using process.nextTick - as requiring realm blocks rendering
 process.nextTick(() => {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const Realm = require('realm');
   // If sync is enabled on Realm - make it less verbose
   if (Realm.Sync) {
     Realm.Sync.setLogLevel(process.env.REALM_LOG_LEVEL || 'error');
-    Realm.Sync.setUserAgent(
-      `${app.name} ${app.getVersion() || 'unknown'}`,
-    );
+    Realm.Sync.setUserAgent(`${app.name} ${app.getVersion() || 'unknown'}`);
   }
 });

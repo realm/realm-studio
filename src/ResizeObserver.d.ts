@@ -16,9 +16,6 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-// tslint:disable:max-classes-per-file
-
-// tslint:disable-next-line:interface-name
 interface Window {
   ResizeObserver: ResizeObserver;
 }
@@ -80,7 +77,6 @@ declare class ResizeObserverEntry {
   public constructor(target: Element);
 }
 
-// tslint:disable-next-line:interface-name
 interface DOMRectReadOnly {
   // static fromRect(other: DOMRectInit | undefined): DOMRectReadOnly;
 

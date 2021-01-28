@@ -81,7 +81,8 @@ export const LoadingOverlay = ({
             max={progress.transferable}
           >
             {
-              // tslint:disable-next-line: prettier
+            // eslint-disable-next-line prettier/prettier
+            }
             `${prettyBytes(progress.transferred || 0)} / ${prettyBytes(progress.transferable || 0)}`}
           </Progress>
         )}

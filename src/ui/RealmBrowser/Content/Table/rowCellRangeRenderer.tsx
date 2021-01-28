@@ -291,7 +291,6 @@ function warnAboutMissingStyle(parent: any, renderedCell: any) {
     parent.__warnedAboutMissingStyle !== true
   ) {
     parent.__warnedAboutMissingStyle = true;
-    // tslint:disable-next-line:no-console
     console.warn(
       'Rendered cell should include style property for positioning.',
     );

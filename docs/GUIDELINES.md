@@ -19,7 +19,7 @@ This document describes guidelines, some of which can be checked by static code 
 Specifically this project has configuration files codifying the code-style that we've decided. These can be read and
 understood by editors - if the correct plugins have been installed.
 
-If you cannot find editor support for `tslint` and `sass-lint`, run this to test the two respectively
+If you cannot find editor support for `eslint` and `sass-lint`, run this to test the two respectively
 
     npm run lint:es
     npm run lint:sass
@@ -34,16 +34,12 @@ We use TypeScript (configured from `./tsconfig.json`) as it helps us reason abou
 build-time rather than when the code is running.
 
 To help us make a choice on style when writing typescript and get warnings when we deviate from that choice we've
-introduced the use of tslint (configured from `./tslint.json`).
+introduced the use of eslint (configured from `./.eslintrc.json`).
 
 Please make sure that your editor is emitting warnings when your writing code that is not compliant with the TypeScript
 flavor of TypeScript that we've chosen. If you don't agree with these - let's change them together.
 
-The only deviations from the recommended rules are:
-- `indent`: we are using two spaces (but tslint is currently not warning about this).
-- `object-literal-sort-keys`: Keys do not need to be sorted alphabetically.
-
-The project is currently transpiling TypeScript to ES6.
+The project is currently transpiling TypeScript to ES8.
 
 Besides the syntax-level code styles we should strive to:
 - Use interfaces to describe the shape of objects, and strive to avoid using the

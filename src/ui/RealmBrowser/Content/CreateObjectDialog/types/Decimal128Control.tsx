@@ -77,7 +77,6 @@ export class Decimal128Control extends React.PureComponent<
       try {
         parsedDecimal = parseDecimal128(value, property);
       } catch (err) {
-        // tslint:disable-next-line:no-console
         console.warn(err.message);
       }
     }

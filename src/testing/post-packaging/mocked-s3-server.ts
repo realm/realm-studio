@@ -48,14 +48,12 @@ function sendFile(
 
 function handle(req: http.IncomingMessage, res: http.ServerResponse) {
   const { method, url = '' } = req;
-  // tslint:disable-next-line:no-console
   console.log(`Incoming ${method} request for the mocked S3 server on ${url}`);
   if (method === 'GET' && url.indexOf('.yml') !== -1) {
     sendFile(res, mockedLatestMacYmlPath, 'application/x-yaml');
   } else if (method === 'GET' && url.endsWith('.zip')) {
     sendFile(res, mockedRealmStudioZipPath, 'application/zip');
   } else {
-    // tslint:disable-next-line:no-console
     console.error(`The mocked S3 server got an unexpected request.`);
     res.writeHead(500);
     res.end();
