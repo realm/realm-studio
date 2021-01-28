@@ -10,4 +10,4 @@
 
 ### Internals
 
-- None
+- Upgraded Electron to v11. ([#1386](https://github.com/realm/realm-studio/pull/1386))
