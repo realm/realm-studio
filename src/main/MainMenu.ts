@@ -134,9 +134,11 @@ export const getDefaultMenuTemplate = (
           label: 'Open Cache folder',
           visible: showInternalFeatures,
           click: () => {
-            electronOrRemote.shell.openItem(
-              electronOrRemote.app.getPath('userData'),
-            );
+            electronOrRemote.shell
+              .openPath(electronOrRemote.app.getPath('userData'))
+              .catch(err => {
+                showError('Failed to open cache folder', err);
+              });
           },
         },
       ],

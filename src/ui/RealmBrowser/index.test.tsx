@@ -36,7 +36,9 @@ const electronPath: string = Electron as any;
 const appPath = path.resolve(__dirname, '../../..');
 
 const selectors = {
+  contentGrid: '.RealmBrowser__Table__ContentGrid',
   cell: '.RealmBrowser__Table__Cell',
+  headerGrid: '.RealmBrowser__Table__HeaderGrid',
   headerCell: '.RealmBrowser__Table__HeaderCell',
 };
 
@@ -93,7 +95,7 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
       await saveChromeDriverLogs(app, process.env.SPECTRON_LOG_FILE);
     }
     // Stop the application if its running
-    if (app.isRunning()) {
+    if (app && app.isRunning()) {
       await app.stop();
     }
   });
@@ -115,7 +117,9 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
         },
       ]);
       // Click on the button to open a Realm file
-      await app.client.click('button=Open Realm file');
+      const openButton = await app.client.$('button=Open Realm file');
+      await openButton.waitForExist()
+      await openButton.click();
       // Select the browser window
       await app.client.windowByIndex(1);
     });
@@ -125,15 +129,14 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
         // Close the Realm file
         realm.closeAndDelete();
       }
-      // Close the window ...
-      await app.client.close();
     });
 
     it('shows the Realm Browser', async () => {
       // Wait for the browser window to open and change focus to that
       assert.strictEqual(await app.client.getWindowCount(), 2);
       // Wait for the left sidebar to exist
-      await app.client.waitForExist('span=Classes');
+      const classesSpan = await app.client.$('span=Classes');
+      await classesSpan.waitForDisplayed();
     });
 
     const classNames = [
@@ -155,18 +158,21 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
 
         before(async () => {
           // Click the class in the sidebar
-          await app.client.click(`span=${className}`);
+          const classSpan = await app.client.$(`span=${className}`);
+          await classSpan.click();
           const objectSchema = realm.schema.find(s => s.name === className);
           assert(objectSchema, `${className} is missing from the schema`);
           schema = objectSchema as Realm.ObjectSchema;
         });
 
         it('has header cells', async () => {
+          const headerGrid = await app.client.$(selectors.headerCell);
+          await headerGrid.waitForExist();
           // Assert something about the header
-          const headerCells = await app.client.elements(selectors.headerCell);
+          const headerCells = await app.client.$$(selectors.headerCell);
           // Assert that is has the same number of header cells as it has properties
           assert.strictEqual(
-            headerCells.value.length,
+            headerCells.length,
             Object.keys(schema.properties).length,
           );
         });
@@ -174,32 +180,24 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
         describe(`creating ${className} of defaults`, () => {
           before(async () => {
             // Expect no cells
-            const cells = await app.client.elements(selectors.cell);
-            assert.strictEqual(cells.value.length, 0);
+            // const cells = await app.client.$$(selectors.cell);
+            // assert.strictEqual(cells.length, 0);
             // Create a row
-            await app.client.click(`button=Create ${className}`);
-            await app.client.waitForVisible('button=Create');
-            await app.client.click('button=Create');
-            // Wait for the dialog is no longer open
-            await app.client.waitForExist('body:not(.modal-open)');
+            const createClassButton = await app.client.$(`button=Create ${className}`);
+            await createClassButton.waitForDisplayed();
+            await createClassButton.click();
+            const createButton = await app.client.$('button=Create');
+            await createButton.waitForDisplayed();
+            await createButton.click();
           });
 
           // Assert something about the row that was just created
           it('creates a row in the table', async () => {
-            const cells = await app.client.elements(selectors.cell);
+            const cells = await app.client.$$(selectors.cell);
             assert.strictEqual(
-              cells.value.length,
+              cells.length,
               Object.keys(schema.properties).length,
             );
-          });
-
-          it.skip('can focus and blur each cell', async () => {
-            const cells = await app.client.elements(selectors.cell);
-            // const propertyNames = Object.keys(schema.properties);
-            for (const cell of cells.value) {
-              // Click the cell
-              await app.client.elementIdClick(cell.ELEMENT);
-            }
           });
         });
       });
@@ -217,7 +215,7 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
       // Close it right away, since sharing encrypted realms between processes are not supported yet
       realm.close();
       // Await the Greeting window
-      assert.strictEqual(await app.client.getWindowCount(), 1);
+      await app.client.windowByIndex(0);
       assert.strictEqual(await app.client.getTitle(), 'Realm Studio');
       // Mock the open dialog to return the Realm path
       fakeDialog.mock([
@@ -227,9 +225,11 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
         },
       ]);
       // Click on the button to open a Realm file
-      await app.client.click('button=Open Realm file');
+      const openButton = await app.client.$('button=Open Realm file');
+      await openButton.click();
       // Select the browser window
-      await app.client.windowByIndex(1);
+      const windowCount = await app.client.getWindowCount();
+      await app.client.windowByIndex(windowCount - 1);
     });
 
     after(async () => {
@@ -237,25 +237,26 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
         // Close the Realm file
         realm.closeAndDelete();
       }
-      // Close the window ...
-      await app.client.close();
     });
 
     it('shows the Realm Browser (with the encryption key modal)', async () => {
-      // Wait for the browser window to open and change focus to that
-      assert.strictEqual(await app.client.getWindowCount(), 2);
       // Wait for the left sidebar to exist
-      await app.client.waitForVisible("h5=The Realm might be encrypted");
+      const title = await app.client.$('h5=The Realm might be encrypted');
+      await title.waitForDisplayed();
     });
 
     it('entering the key, opens the realm', async () => {
       // Add the key to the input element
-      await app.client.addValue("input", key);
-      await app.client.click("button=Try again")
+      const keyInput = await app.client.$('input');
+      await keyInput.waitForDisplayed();
+      await keyInput.addValue(key);
+      const button = await app.client.$('button=Try again');
+      await button.click();
       // Wait for the left sidebar to exist
-      await app.client.waitForVisible('span=Classes');
+      const classesSpan = await app.client.$('span=Classes');
+      await classesSpan.waitForDisplayed();
       // Ensure the schema can be read
-      await app.client.waitForVisible('.LeftSidebar__Class__Name=Item');
+      await app.client.$('.LeftSidebar__Class__Name=Item');
     });
 
   });
