@@ -15,6 +15,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Fixed
 
 - Fixed CSV importing into an existing Realm. The schema declared by the Realm file was not used, but instead generated from the in the CSV file data. ([#1382](https://github.com/realm/realm-studio/pull/1382), since 1.12.0)
+- Fixed the ability to run on Apple M1 SoC based computers. ([#1386](https://github.com/realm/realm-studio/pull/1386))
 
 ### Internals
 
