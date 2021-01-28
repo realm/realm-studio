@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release 10.1.1 (2021-01-28)
+
+[Changes since v10.1.0](https://github.com/realm/realm-studio/compare/v10.1.0...v10.1.1)
+
+### Enhancements
+
+- None
+
+### Fixed
+
+- Fixed CSV importing into an existing Realm. The schema declared by the Realm file was not used, but instead generated from the in the CSV file data. ([#1382](https://github.com/realm/realm-studio/pull/1382), since 1.12.0)
+
+### Internals
+
+- Upgraded Electron to v11. ([#1386](https://github.com/realm/realm-studio/pull/1386))
+
+
 ## Release 10.1.0 (2021-01-13)
 
 [Changes since v10.0.1](https://github.com/realm/realm-studio/compare/v10.0.1...v10.1.0)
