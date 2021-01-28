@@ -10,4 +10,4 @@
 
 ### Internals
 
-- None
+- Migrated from tslint to eslint. ([#1388](https://github.com/realm/realm-studio/pull/1388))
