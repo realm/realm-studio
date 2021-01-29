@@ -40,7 +40,7 @@ interface ISignupOverlayContainerState {
 }
 
 class SignupOverlayContainer extends React.Component<
-  {},
+  Record<string, never>,
   ISignupOverlayContainerState
 > {
   public state: ISignupOverlayContainerState = {

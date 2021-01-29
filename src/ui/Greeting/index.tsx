@@ -52,6 +52,7 @@ class GreetingContainer extends React.Component<
     // Require realm and check update state with the sync support
     // Using nextTick to prevent blocking when loading realm
     process.nextTick(() => {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const Realm = require('realm');
       this.setState({
         isSyncEnabled: !!Realm.Sync,

@@ -33,8 +33,6 @@ describe('Actions', () => {
       echo: string;
     }
 
-    // tslint:disable:max-classes-per-file
-
     class TestSender extends ActionSender {
       public test(echo: string): Promise<string> {
         const message: IEchoMessage = { echo };

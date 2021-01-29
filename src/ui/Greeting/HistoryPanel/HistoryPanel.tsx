@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import { remote } from "electron";
+import { remote } from 'electron';
 import React from 'react';
 
 import { HistoryEntry, IHistoryEntry } from './HistoryEntry';

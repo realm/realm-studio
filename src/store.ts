@@ -114,7 +114,6 @@ function createStore(): RealmStudioStore {
   if (process.type) {
     return new RealmStudioStore();
   } else {
-    // tslint:disable-next-line:no-console
     console.warn('Running outside electron, RealmStudioStore was not created');
     return null as any;
   }

@@ -83,7 +83,6 @@ export class ObjectIdControl extends React.PureComponent<
       try {
         parsedId = parseObjectId(value, property);
       } catch (err) {
-        // tslint:disable-next-line:no-console
         console.warn(err.message);
       }
     }

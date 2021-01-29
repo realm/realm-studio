@@ -162,7 +162,7 @@ pipeline {
         stage('Lint TypeScript') {
           steps {
             nvm(env.NODE_VERSION) {
-              sh 'npm run lint:ts'
+              sh 'npm run lint:es'
             }
           }
         }

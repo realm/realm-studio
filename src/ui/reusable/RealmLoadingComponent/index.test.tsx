@@ -20,21 +20,17 @@ import assert from 'assert';
 import { DOMWindow, JSDOM } from 'jsdom';
 import React from 'react';
 // @see https://reactjs.org/docs/test-utils.html
-// tslint:disable-next-line:no-submodule-imports because this is how their guide sais to load it
 import ReactTestUtils from 'react-dom/test-utils';
 // import { TestRealmObjectServer } from '../../../testing/TestRealmObjectServer';
 
 import { IRealmLoadingComponentState, RealmLoadingComponent } from './index';
 
-// tslint:disable-next-line:interface-name
 interface Global {
   document: Document;
   window: DOMWindow;
 }
 // This is needed for renderIntoDocument to work
-declare var global: Global;
-
-// tslint:disable:max-classes-per-file
+declare let global: Global;
 
 describe('<RealmLoadingComponent />', () => {
   before(() => {
@@ -47,7 +43,7 @@ describe('<RealmLoadingComponent />', () => {
     let changes = 0;
     let loads = 0;
     class TestRealmLoadingComponent extends RealmLoadingComponent<
-      {},
+      Record<string, never>,
       IRealmLoadingComponentState
     > {
       public render() {

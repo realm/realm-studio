@@ -58,7 +58,6 @@ const renderNode: { [key: string]: NodeRenderer } = {
       ];
       return `<img ${attributes.join(' ')}>`;
     } else {
-      // tslint:disable-next-line:no-console
       console.warn('Asked to render an unsupported embedded asset');
       return '';
     }
@@ -69,7 +68,6 @@ const renderNode: { [key: string]: NodeRenderer } = {
       const content = next(node.content);
       return `<a href="${node.data.uri}" target="__blank">${content}</a>`;
     } else {
-      // tslint:disable-next-line:no-console
       console.warn('Asked to render an unsupported hyperlink');
       return '';
     }
@@ -90,20 +88,17 @@ const renderNode: { [key: string]: NodeRenderer } = {
         ];
         return `<button ${attributes.join(' ')}>${label}</button>`;
       } else if (entry.sys.contentType) {
-        // tslint:disable-next-line:no-console
         console.warn(
           `Rendering unsupported embedded entry of type ${entry.sys.contentType.sys.id}`,
         );
         return '';
       } else {
-        // tslint:disable-next-line:no-console
         console.warn(
           `Rendering unsupported embedded entry with id ${entry.sys.id}`,
         );
         return '';
       }
     } else {
-      // tslint:disable-next-line:no-console
       console.warn('Asked to render an unsupported embedded entry');
       return '';
     }

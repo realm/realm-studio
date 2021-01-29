@@ -68,7 +68,6 @@ export abstract class ActionReceiver {
         const result = await this.handlers[action](...args);
         this.transport.sendResponse(requestId, result, true);
       } catch (err) {
-        // tslint:disable-next-line:no-console
         console.error(`Action "${action}" (${requestId}) failed:`, err.stack);
         this.transport.sendResponse(requestId, err.message, false);
       }

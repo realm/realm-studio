@@ -25,7 +25,7 @@ import fakeDialog from 'spectron-fake-dialog';
 
 import { ITestRealm } from '../../testing';
 import { create as createAllTypeRealm } from '../../testing/all-type-realm';
-import { create as createEncryptedRealm } from "../../testing/encrypted-realm";
+import { create as createEncryptedRealm } from '../../testing/encrypted-realm';
 import { saveChromeDriverLogs, startAppWithTimeout } from '../../testing/utils';
 
 const APP_START_TIMEOUT = 15000; // 15 sec
@@ -46,8 +46,7 @@ const isAppBuilt = fs.existsSync(path.resolve(appPath, 'build'));
 const describeIfBuilt = isAppBuilt ? describe : describe.skip;
 
 // We need to use a non-arrow functions to adjust the suite timeout
-// tslint:disable-next-line:only-arrow-functions
-describeIfBuilt('<RealmBrowser /> via Spectron', function() {
+describeIfBuilt('<RealmBrowser /> via Spectron', function test() {
   this.timeout(TOTAL_TIMEOUT); // 15 sec
 
   let app: Application;
@@ -66,7 +65,7 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
     await startAppWithTimeout(app, APP_START_TIMEOUT);
   });
 
-  afterEach(async function() {
+  afterEach(async function () {
     if (
       this.currentTest &&
       this.currentTest.state === 'failed' &&
@@ -74,7 +73,6 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
     ) {
       const lines = await app.client.getMainProcessLogs();
       for (const line of lines) {
-        // tslint:disable-next-line:no-console
         console.error(line);
       }
       // When a test fails and the app is running, take a screenshot
@@ -118,7 +116,7 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
       ]);
       // Click on the button to open a Realm file
       const openButton = await app.client.$('button=Open Realm file');
-      await openButton.waitForExist()
+      await openButton.waitForExist();
       await openButton.click();
       // Select the browser window
       await app.client.windowByIndex(1);
@@ -183,7 +181,9 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
             // const cells = await app.client.$$(selectors.cell);
             // assert.strictEqual(cells.length, 0);
             // Create a row
-            const createClassButton = await app.client.$(`button=Create ${className}`);
+            const createClassButton = await app.client.$(
+              `button=Create ${className}`,
+            );
             await createClassButton.waitForDisplayed();
             await createClassButton.click();
             const createButton = await app.client.$('button=Create');
@@ -206,7 +206,8 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
 
   describe('opening an encrypted Realm file', () => {
     // A 64 byte sequence of hex encoded randomness
-    const key = "5C8B54D92223310B4D531EA1F1BBEDEC199F2052DF44EEBD7F0935418671B61F197C6A8CFA7ECDE821C5592E52D74EFC22495B8D1E2866155C9CC469A1D9E876";
+    const key =
+      '5C8B54D92223310B4D531EA1F1BBEDEC199F2052DF44EEBD7F0935418671B61F197C6A8CFA7ECDE821C5592E52D74EFC22495B8D1E2866155C9CC469A1D9E876';
     let realm: ITestRealm;
 
     before(async () => {
@@ -258,6 +259,5 @@ describeIfBuilt('<RealmBrowser /> via Spectron', function() {
       // Ensure the schema can be read
       await app.client.$('.LeftSidebar__Class__Name=Item');
     });
-
   });
 });

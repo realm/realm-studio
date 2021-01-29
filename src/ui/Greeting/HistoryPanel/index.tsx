@@ -26,7 +26,7 @@ interface IHistoryPanelContainerState {
 }
 
 class HistoryPanelContainer extends React.Component<
-  {},
+  Record<string, never>,
   IHistoryPanelContainerState
 > {
   public state: IHistoryPanelContainerState = {

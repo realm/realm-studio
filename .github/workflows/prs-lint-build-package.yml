@@ -20,7 +20,7 @@ jobs:
     - name: Check package-lock.json
       run: npm run check:package-lock
     - name: Lint TypeScript
-      run: npm run lint:ts
+      run: npm run lint:es
     - name: Lint SASS
       run: npm run lint:sass
     - name: Build the bundle

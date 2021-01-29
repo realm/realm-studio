@@ -41,7 +41,7 @@ export interface IHeaderGridProps extends Partial<GridProps> {
   width: number;
 }
 
-export class HeaderGrid extends React.PureComponent<IHeaderGridProps, {}> {
+export class HeaderGrid extends React.PureComponent<IHeaderGridProps> {
   private cellRenderers: GridCellRenderer[] = [];
 
   public componentWillMount() {

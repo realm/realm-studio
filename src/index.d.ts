@@ -16,8 +16,6 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-// tslint:disable:max-classes-per-file
-
 declare module '*.svg' {
   const svg: {
     id: string;
@@ -108,7 +106,7 @@ declare module 'react-inspector' {
 
   export class ObjectInspector<
     P extends IObjectInpectorProps = IObjectInpectorProps
-  > extends React.Component<P, {}> {
+  > extends React.Component<P> {
     protected setExpanded(path: string, expanded: boolean): void;
   }
 
@@ -156,7 +154,7 @@ declare module 'spectron-fake-dialog' {
   export function apply(application: Application): void;
   interface IDialog {
     method: 'showOpenDialog' | 'showSaveDialog';
-    value: object;
+    value: Record<string, unknown>;
   }
   export function mock(dialogs: IDialog[]): void;
 }
@@ -168,7 +166,7 @@ declare module 'segfault-handler' {
 declare module 'graphiql' {
   import React from 'react';
 
-  export type Fetcher = (graphQLParams: object) => void;
+  export type Fetcher = (graphQLParams: Record<string, unknown>) => void;
 
   interface IGraphiQLProps {
     /**

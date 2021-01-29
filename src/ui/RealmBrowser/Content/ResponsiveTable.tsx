@@ -21,10 +21,7 @@ import { AutoSizer, ScrollSync } from 'react-virtualized';
 
 import { IBaseTableContainerProps, Table } from './Table';
 
-export class ResponsiveTable extends React.PureComponent<
-  IBaseTableContainerProps,
-  {}
-> {
+export class ResponsiveTable extends React.PureComponent<IBaseTableContainerProps> {
   public render() {
     return (
       <div className="RealmBrowser__Table">

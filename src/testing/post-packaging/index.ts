@@ -204,7 +204,6 @@ describe('Realm Studio packaged', () => {
       }
 
       // Start watchin gthe ready signal file
-      // tslint:disable-next-line:no-console
       console.log(`Awaiting changes to ${readySignalPath}`);
       fs.watchFile(
         readySignalPath,
