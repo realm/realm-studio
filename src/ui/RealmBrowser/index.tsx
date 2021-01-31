@@ -82,8 +82,8 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
 
 class RealmBrowserContainer
   extends RealmLoadingComponent<
-    IRealmBrowserWindowProps & IMenuGeneratorProps,
-    IRealmBrowserState
+  IRealmBrowserWindowProps & IMenuGeneratorProps,
+  IRealmBrowserState
   >
   implements IMenuGenerator {
   public state: IRealmBrowserState = {
@@ -215,30 +215,30 @@ class RealmBrowserContainer
     const transactionMenuItems: MenuItemConstructorOptions[] =
       this.realm && this.realm.isInTransaction
         ? [
-            {
-              label: 'Commit transaction',
-              accelerator: 'CommandOrControl+T',
-              click: () => {
-                this.onCommitTransaction();
-              },
+          {
+            label: 'Commit transaction',
+            accelerator: 'CommandOrControl+T',
+            click: () => {
+              this.onCommitTransaction();
             },
-            {
-              label: 'Cancel transaction',
-              accelerator: 'CommandOrControl+Shift+T',
-              click: () => {
-                this.onCancelTransaction();
-              },
+          },
+          {
+            label: 'Cancel transaction',
+            accelerator: 'CommandOrControl+Shift+T',
+            click: () => {
+              this.onCancelTransaction();
             },
-          ]
+          },
+        ]
         : [
-            {
-              label: 'Begin transaction',
-              accelerator: 'CommandOrControl+T',
-              click: () => {
-                this.onBeginTransaction();
-              },
+          {
+            label: 'Begin transaction',
+            accelerator: 'CommandOrControl+T',
+            click: () => {
+              this.onBeginTransaction();
             },
-          ];
+          },
+        ];
 
     const editModeMenu: MenuItemConstructorOptions = {
       label: 'Edit mode',
@@ -776,30 +776,46 @@ class RealmBrowserContainer
     const paths = dataImporter.showOpenDialog(format);
     if (this.realm && paths && paths.length > 0) {
       try {
-        try {
-          const importer = dataImporter.getDataImporter(
-            format,
-            paths,
-            this.realm.schema,
-          );
-          importer.import(this.realm);
-        } catch (err) {
-          showError('Faild to import data', err);
-        }
+        // Ask the user to choose the class for each of the files selected
+        const currentWindow = remote.getCurrentWindow();
+        const schema = this.realm.schema;
+        const classFocus = this.state.focus?.kind === "class" ? this.state.focus : undefined;
+        const files = paths.map(filePath => {
+          const fileName = path.basename(filePath);
+          const classNames = schema.map(s => s.name);
+          const choice = remote.dialog.showMessageBoxSync(currentWindow, {
+            message: `Choose class for rows in '${fileName}'`,
+            buttons: ['Cancel', ...classNames],
+            // If the focus is on a class, make this the default button, cancel otherwise
+            // TODO: Consider using the basename of the file to determine this instead
+            defaultId: classFocus ? schema.findIndex(({ name }) => name === classFocus.className) + 1 : 0
+          });
+          if (choice === 0) {
+            throw new Error("Import cancelled");
+          }
+          const className = schema[choice - 1].name;
+          return { path: filePath, className };
+        });
+        const importer = dataImporter.getDataImporter(format);
+        importer.import(this.realm, files);
       } catch (err) {
-        showError('Faild to generate schema', err);
+        showError('Faild to import data', err);
       }
     }
   };
 
   private performImport() {
     if (this.props.import && this.realm) {
-      const { format, paths, schema } = this.props.import;
+      const { format, paths } = this.props.import;
       this.setState({ progress: { status: 'in-progress' } });
       // Get the importer
       try {
-        const importer = dataImporter.getDataImporter(format, paths, schema);
-        importer.import(this.realm);
+        const importer = dataImporter.getDataImporter(format);
+        const files = paths.map(p => ({
+          path: p,
+          className: path.basename(p),
+        }));
+        importer.import(this.realm, files);
       } catch (err) {
         showError('Faild to import data', err);
       } finally {

@@ -16,8 +16,6 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import Realm from 'realm';
-
 import * as csv from './csv';
 export { csv };
 
@@ -39,11 +37,9 @@ export const generateSchema = (format: ImportFormat, paths: string[]) => {
 
 export const getDataImporter = (
   format: ImportFormat,
-  paths: string[],
-  schema: Realm.ObjectSchema[],
 ) => {
   if (format === ImportFormat.CSV) {
-    return new csv.CSVDataImporter(paths, schema);
+    return new csv.CSVDataImporter();
   } else {
     throw new Error('Not supported yet');
   }
