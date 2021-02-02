@@ -21,7 +21,7 @@ import Realm from 'realm';
 export type ImportableFile = {
   path: string;
   className: string;
-}
+};
 
 export abstract class DataImporter {
   /**

@@ -82,8 +82,8 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
 
 class RealmBrowserContainer
   extends RealmLoadingComponent<
-  IRealmBrowserWindowProps & IMenuGeneratorProps,
-  IRealmBrowserState
+    IRealmBrowserWindowProps & IMenuGeneratorProps,
+    IRealmBrowserState
   >
   implements IMenuGenerator {
   public state: IRealmBrowserState = {
@@ -215,30 +215,30 @@ class RealmBrowserContainer
     const transactionMenuItems: MenuItemConstructorOptions[] =
       this.realm && this.realm.isInTransaction
         ? [
-          {
-            label: 'Commit transaction',
-            accelerator: 'CommandOrControl+T',
-            click: () => {
-              this.onCommitTransaction();
+            {
+              label: 'Commit transaction',
+              accelerator: 'CommandOrControl+T',
+              click: () => {
+                this.onCommitTransaction();
+              },
             },
-          },
-          {
-            label: 'Cancel transaction',
-            accelerator: 'CommandOrControl+Shift+T',
-            click: () => {
-              this.onCancelTransaction();
+            {
+              label: 'Cancel transaction',
+              accelerator: 'CommandOrControl+Shift+T',
+              click: () => {
+                this.onCancelTransaction();
+              },
             },
-          },
-        ]
+          ]
         : [
-          {
-            label: 'Begin transaction',
-            accelerator: 'CommandOrControl+T',
-            click: () => {
-              this.onBeginTransaction();
+            {
+              label: 'Begin transaction',
+              accelerator: 'CommandOrControl+T',
+              click: () => {
+                this.onBeginTransaction();
+              },
             },
-          },
-        ];
+          ];
 
     const editModeMenu: MenuItemConstructorOptions = {
       label: 'Edit mode',
@@ -779,7 +779,8 @@ class RealmBrowserContainer
         // Ask the user to choose the class for each of the files selected
         const currentWindow = remote.getCurrentWindow();
         const schema = this.realm.schema;
-        const classFocus = this.state.focus?.kind === "class" ? this.state.focus : undefined;
+        const classFocus =
+          this.state.focus?.kind === 'class' ? this.state.focus : undefined;
         const files = paths.map(filePath => {
           const fileName = path.basename(filePath);
           const classNames = schema.map(s => s.name);
@@ -788,10 +789,13 @@ class RealmBrowserContainer
             buttons: ['Cancel', ...classNames],
             // If the focus is on a class, make this the default button, cancel otherwise
             // TODO: Consider using the basename of the file to determine this instead
-            defaultId: classFocus ? schema.findIndex(({ name }) => name === classFocus.className) + 1 : 0
+            defaultId: classFocus
+              ? schema.findIndex(({ name }) => name === classFocus.className) +
+                1
+              : 0,
           });
           if (choice === 0) {
-            throw new Error("Import cancelled");
+            throw new Error('Import cancelled');
           }
           const className = schema[choice - 1].name;
           return { path: filePath, className };

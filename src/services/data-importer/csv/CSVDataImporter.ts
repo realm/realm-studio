@@ -30,7 +30,9 @@ export class CSVDataImporter extends DataImporter {
       const className = file.className;
       const schema = realm.schema.find(s => s.name === className);
       if (!schema) {
-        throw new Error(`Unable to import ${file.path}: Class name (${className}) missing from schema`);
+        throw new Error(
+          `Unable to import ${file.path}: Class name (${className}) missing from schema`,
+        );
       }
 
       const rawCSV = fs.readFileSync(file.path, 'utf8');
@@ -44,15 +46,20 @@ export class CSVDataImporter extends DataImporter {
       for (const [rowIndex, dataRow] of data.entries()) {
         const object: any = {};
         for (const propName in schema.properties) {
-          // We know that this is a ObjectSchemaProperty since we're reading it from the realm.schema
-          const propertySchema = schema.properties[propName] as ObjectSchemaProperty;
           if (propName in dataRow) {
+            // We know that this is a ObjectSchemaProperty since we're reading it from the realm.schema
+            const propertySchema = schema.properties[
+              propName
+            ] as ObjectSchemaProperty;
             const dataValue = dataRow[propName];
             try {
-              if (propertySchema.optional && dataValue === "") {
+              if (propertySchema.optional && dataValue === '') {
                 object[propName] = null;
               } else {
-                object[propName] = this.convertToType(dataValue, propertySchema.type);
+                object[propName] = this.convertToType(
+                  dataValue,
+                  propertySchema.type,
+                );
               }
             } catch (e) {
               // abort transaction and delete the Realm
@@ -106,9 +113,7 @@ export class CSVDataImporter extends DataImporter {
       case 'double': {
         const parsed = parseFloat(value);
         if (isNaN(parsed)) {
-          throw new Error(
-            `Can not parse ${value} as float / double`,
-          );
+          throw new Error(`Can not parse ${value} as float / double`);
         }
         return parsed;
       }

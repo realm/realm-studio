@@ -35,9 +35,7 @@ export const generateSchema = (format: ImportFormat, paths: string[]) => {
   }
 };
 
-export const getDataImporter = (
-  format: ImportFormat,
-) => {
+export const getDataImporter = (format: ImportFormat) => {
   if (format === ImportFormat.CSV) {
     return new csv.CSVDataImporter();
   } else {
