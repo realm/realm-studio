@@ -7,6 +7,10 @@ upgraded to the latest current versions:
 
 We're using `mochapack` (a fork of `mocha-webpack`) to run our tests (enabling importing stylesheets, images, etc) and [this doesn't yet support WebPack v5](https://github.com/sysgears/mochapack/issues/82).
 
-## `@types/webdriverio`
+## [sass-loader](https://www.npmjs.com/package/sass-loader)
 
-Pinned at version 4.13.3, because we only need the types and the latest version (5.0.0) removes them.
+Pinned at v10 since v11 introduce [this breaking change](https://github.com/webpack-contrib/sass-loader/blob/master/CHANGELOG.md#-breaking-changes):
+
+> minimum supported webpack version is 5
+
+We can unpin this when `mochapack` supports WebPack v5.
