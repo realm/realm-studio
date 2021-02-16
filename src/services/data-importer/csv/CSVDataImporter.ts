@@ -19,6 +19,7 @@
 import fs from 'fs-extra';
 import papaparse from 'papaparse';
 import { ObjectSchemaProperty, PropertyType } from 'realm';
+import moment from 'moment';
 
 import { DataImporter, ImportableFile } from '../DataImporter';
 
@@ -26,7 +27,8 @@ export class CSVDataImporter extends DataImporter {
   private static readonly NUMBER_OF_INSERTS_BEFORE_COMMIT = 10000;
 
   public import(realm: Realm, files: ImportableFile[]) {
-    files.map((file, index) => {
+    console.log("import called", realm, files);
+    for(const file of files) {
       const className = file.className;
       const schema = realm.schema.find(s => s.name === className);
       if (!schema) {
@@ -93,7 +95,7 @@ export class CSVDataImporter extends DataImporter {
       }
 
       realm.commitTransaction();
-    });
+    };
   }
 
   private convertToType(value: string, type: PropertyType) {
@@ -117,6 +119,8 @@ export class CSVDataImporter extends DataImporter {
         }
         return parsed;
       }
+      case 'date':
+        return moment(value).toDate();
       default:
         throw new Error(`Importing data of type "${type}" is not supported`);
     }

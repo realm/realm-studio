@@ -24,6 +24,7 @@ import Realm from 'realm';
 
 import { DataExporter, DataExportFormat } from '../../services/data-exporter';
 import * as dataImporter from '../../services/data-importer';
+import { ImportableFile, ImportFormat } from '../../services/data-importer';
 import { Language, SchemaExporter } from '../../services/schema-export';
 import { menu, realms } from '../../utils';
 import {
@@ -62,6 +63,11 @@ export type ClassFocussedHandler = (
   highlightedObject?: Realm.Object,
 ) => void;
 
+type ImportDialogOptions = {
+  filePaths: string[];
+  classNames: string[];
+};
+
 const EDIT_MODE_STORAGE_KEY = 'realm-browser-edit-mode';
 const FILE_UPGRADE_NEEDED_MESSAGE =
   'The Realm file format must be allowed to be upgraded in order to proceed.';
@@ -76,6 +82,7 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   isAddPropertyOpen: boolean;
   isEncryptionDialogVisible: boolean;
   isLeftSidebarOpen: boolean;
+  importDialog: ImportDialogOptions | null;
   // The classes are only supposed to be used to produce a list of classes in the sidebar
   classes: Realm.ObjectSchema[];
 }
@@ -96,6 +103,7 @@ class RealmBrowserContainer
     isAddPropertyOpen: false,
     isEncryptionDialogVisible: false,
     isLeftSidebarOpen: true,
+    importDialog: null,
     progress: { status: 'idle' },
     classes: [],
   };
@@ -133,6 +141,7 @@ class RealmBrowserContainer
         focus={this.state.focus}
         getClassFocus={this.getClassFocus}
         getSchemaLength={this.getSchemaLength}
+        importDialog={this.state.importDialog}
         isAddClassOpen={this.state.isAddClassOpen}
         isAddPropertyOpen={this.state.isAddPropertyOpen}
         isClassNameAvailable={this.isClassNameAvailable}
@@ -145,6 +154,8 @@ class RealmBrowserContainer
         onClassFocussed={this.onClassFocussed}
         onCommitTransaction={this.onCommitTransaction}
         onHideEncryptionDialog={this.onHideEncryptionDialog}
+        onHideImportDialog={this.onHideImportDialog}
+        onImport={this.handleImport}
         onLeftSidebarToggle={this.onLeftSidebarToggle}
         onListFocussed={this.onListFocussed}
         onOpenWithEncryption={this.onOpenWithEncryption}
@@ -396,7 +407,15 @@ class RealmBrowserContainer
       this.onClassFocussed(firstSchemaName);
     }
     // Start importing data if needed
-    this.performImport();
+    if (this.props.import && this.realm) {
+      const { format, paths } = this.props.import;
+      // Assume the schema class names were generated from the files basenames
+      const files = paths.map(p => ({
+        path: p,
+        className: path.basename(p),
+      }));
+      this.handleImport(format, files);
+    }
   };
 
   private onBeginTransaction = () => {
@@ -605,6 +624,10 @@ class RealmBrowserContainer
     this.setState({ isEncryptionDialogVisible: false });
   };
 
+  private onHideImportDialog = () => {
+    this.setState({ importDialog: null });
+  };
+
   private onLeftSidebarToggle = () => {
     this.setState({ isLeftSidebarOpen: !this.state.isLeftSidebarOpen });
   };
@@ -775,50 +798,18 @@ class RealmBrowserContainer
   ) => {
     const paths = dataImporter.showOpenDialog(format);
     if (this.realm && paths && paths.length > 0) {
-      try {
-        // Ask the user to choose the class for each of the files selected
-        const currentWindow = remote.getCurrentWindow();
-        const schema = this.realm.schema;
-        const classFocus =
-          this.state.focus?.kind === 'class' ? this.state.focus : undefined;
-        const files = paths.map(filePath => {
-          const fileName = path.basename(filePath);
-          const classNames = schema.map(s => s.name);
-          const choice = remote.dialog.showMessageBoxSync(currentWindow, {
-            message: `Choose class for rows in '${fileName}'`,
-            buttons: ['Cancel', ...classNames],
-            // If the focus is on a class, make this the default button, cancel otherwise
-            // TODO: Consider using the basename of the file to determine this instead
-            defaultId: classFocus
-              ? schema.findIndex(({ name }) => name === classFocus.className) +
-                1
-              : 0,
-          });
-          if (choice === 0) {
-            throw new Error('Import cancelled');
-          }
-          const className = schema[choice - 1].name;
-          return { path: filePath, className };
-        });
-        const importer = dataImporter.getDataImporter(format);
-        importer.import(this.realm, files);
-      } catch (err) {
-        showError('Faild to import data', err);
-      }
+      const classNames = this.realm.schema.map(s => s.name);
+      this.setState({ importDialog: { filePaths: paths, classNames } });
     }
   };
 
-  private performImport() {
-    if (this.props.import && this.realm) {
-      const { format, paths } = this.props.import;
+  private handleImport = (format: ImportFormat, files: ImportableFile[]) => {
+    console.log("handleImport called", this, format, files);
+    if (this.realm) {
       this.setState({ progress: { status: 'in-progress' } });
       // Get the importer
       try {
         const importer = dataImporter.getDataImporter(format);
-        const files = paths.map(p => ({
-          path: p,
-          className: path.basename(p),
-        }));
         importer.import(this.realm, files);
       } catch (err) {
         showError('Faild to import data', err);

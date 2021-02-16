@@ -20,6 +20,7 @@ import * as csv from './csv';
 export { csv };
 
 export * from './ui';
+export * from './DataImporter';
 
 export enum ImportFormat {
   CSV = 'csv',
