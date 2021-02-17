@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release 5.0.3 (2021-02-17)
+
+[Changes since v5.0.2](https://github.com/realm/realm-studio/compare/v5.0.2...v5.0.3)
+
+### Enhancements
+
+- None
+
+### Fixed
+
+- When exporting to JSON, `'data'` properties are serialized to base64-strings, and not `{}`. ([#1390](https://github.com/realm/realm-studio/pull/1390), since v5.0.0)
+- Fixed CSV importing into an existing Realm a bit more. The user now gets to choose what class data gets imported into. ([#1391](https://github.com/realm/realm-studio/pull/1391), since 1.12.0 & 5.0.2)
+
+### Internals
+
+- None
+
+
 ## Release 5.0.2 (2021-01-27)
 
 [Changes since v5.0.1](https://github.com/realm/realm-studio/compare/v5.0.1...v5.0.2)
