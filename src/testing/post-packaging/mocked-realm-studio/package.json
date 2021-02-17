@@ -11,6 +11,7 @@
   "license": "Apache-2.0",
   "build": {
     "appId": "io.realm.realm-studio",
+    "productName": "Realm Studio",
     "mac": {
       "target": [
         "zip"

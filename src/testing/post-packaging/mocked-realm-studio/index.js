@@ -6,6 +6,7 @@ electron.app.once('ready', () => {
   // Signal that the app got ready by touching a file
   const appDataPath = electron.app.getAppPath();
   const p = path.resolve(appDataPath, '../../../../ready.signal');
+  console.log("Writing signal to", p);
   /*
   electron.dialog.showMessageBox({
     message: `Writing to the ready signal: ${p}`,

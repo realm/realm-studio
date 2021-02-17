@@ -16,6 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+/* tslint:disable:no-console */
+
 import assert from 'assert';
 import cp from 'child_process';
 import fs from 'fs-extra';
@@ -26,6 +28,7 @@ import path from 'path';
 import * as mockedS3Server from './mocked-s3-server';
 
 const distPath = path.resolve(__dirname, '../../../dist');
+const RESPAWN_DELAY = 10000;
 
 /**
  * @see https://github.com/electron-userland/electron-builder/blob/master/packages/electron-updater/src/AppAdapter.ts#L31-L45
@@ -83,7 +86,7 @@ function buildMockedRealmStudio() {
   const mockedRealmStudioPath = path.resolve(__dirname, 'mocked-realm-studio');
   // Install the root projects electron into the node_modules
   if (!fs.existsSync(path.resolve(mockedRealmStudioPath, 'node_modules'))) {
-    cp.spawnSync('npm', ['install'], {
+    cp.spawnSync('npm', ['ci'], {
       cwd: mockedRealmStudioPath,
       stdio: 'inherit',
     });
@@ -124,6 +127,12 @@ describe('Realm Studio packaged', () => {
     // from overriding the current dist/mac folder.
     const originalMacPath = path.resolve(distPath, 'mac');
     temporaryMacPath = fs.mkdtempSync(originalMacPath + '-auto-update-test-');
+    console.log(
+      'Making a copy of the mac app from',
+      originalMacPath,
+      'to',
+      temporaryMacPath,
+    );
     fs.copySync(originalMacPath, temporaryMacPath);
     // Package the app with the mocked server URL
     changeS3Endpoint(temporaryMacPath, mockedS3Url);
@@ -145,11 +154,10 @@ describe('Realm Studio packaged', () => {
   });
 
   it('auto-updates', async function () {
-    this.timeout(30 * 1000); // It takes a while (~30 seconds) to start the app
+    this.timeout(30 * 1000 + RESPAWN_DELAY); // It takes a while (~30 seconds) to start the app
 
     // Assemble the app path
     const appPath = path.resolve(
-      distPath,
       temporaryMacPath,
       'Realm Studio.app/Contents/MacOS/Realm Studio',
     );
@@ -161,18 +169,34 @@ describe('Realm Studio packaged', () => {
       },
     });
 
+    let respawnTimer;
+
     // Watch for changes to the ready.signal file, indicating that the app got updated successfully
     await new Promise((resolve, reject) => {
       const readySignalPath = path.resolve(temporaryMacPath, 'ready.signal');
       let updateCount = 0;
 
       appProcess.on('close', code => {
+        console.log(`App closed (status code ${code})`);
         if (code !== 0) {
           reject(
             new Error(
               `Realm Studio closed with unexpected exit code (${code})`,
             ),
           );
+        } else {
+          // If for some reason the mocked app doesn't start automatically, try restarting it manually
+          respawnTimer = setTimeout(() => {
+            console.log(
+              'Got tired of waiting for the mocked app, trying a respawn of',
+              appPath,
+            );
+            const result = cp.spawnSync(appPath, { stdio: 'inherit' });
+            console.log(`Respawned mock app closed (status ${result.status})`);
+            if (result.error) {
+              console.error(result.error);
+            }
+          }, RESPAWN_DELAY);
         }
       });
 
@@ -205,5 +229,8 @@ describe('Realm Studio packaged', () => {
         readySignalChanged,
       );
     });
+
+    // No need for a respawn now ...
+    clearTimeout(respawnTimer);
   });
 });
