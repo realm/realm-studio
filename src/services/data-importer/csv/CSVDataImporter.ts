@@ -18,17 +18,25 @@
 
 import fs from 'fs-extra';
 import papaparse from 'papaparse';
+import { ObjectSchemaProperty, PropertyType } from 'realm';
+import moment from 'moment';
 
-import { DataImporter } from '../DataImporter';
+import { DataImporter, ImportableFile } from '../DataImporter';
 
 export class CSVDataImporter extends DataImporter {
   private static readonly NUMBER_OF_INSERTS_BEFORE_COMMIT = 10000;
 
-  public import(realm: Realm) {
-    this.files.map((file, index) => {
-      const schema = this.importSchema[index];
+  public import(realm: Realm, files: ImportableFile[]) {
+    for (const file of files) {
+      const className = file.className;
+      const schema = realm.schema.find(s => s.name === className);
+      if (!schema) {
+        throw new Error(
+          `Unable to import ${file.path}: Class name (${className}) missing from schema`,
+        );
+      }
 
-      const rawCSV = fs.readFileSync(file, 'utf8');
+      const rawCSV = fs.readFileSync(file.path, 'utf8');
       const data = papaparse.parse<any>(rawCSV, {
         header: true, // to avoid parsing first line as data
         skipEmptyLines: true,
@@ -36,42 +44,29 @@ export class CSVDataImporter extends DataImporter {
 
       realm.beginTransaction();
       let numberOfInsert = 0;
-      data.forEach((row, lineIndex: number) => {
+      for (const [rowIndex, dataRow] of data.entries()) {
         const object: any = {};
-        for (const prop in schema.properties) {
-          if (schema.properties.hasOwnProperty(prop) && row[prop]) {
+        for (const propName in schema.properties) {
+          if (propName in dataRow) {
+            // We know that this is a ObjectSchemaProperty since we're reading it from the realm.schema
+            const propertySchema = schema.properties[
+              propName
+            ] as ObjectSchemaProperty;
+            const dataValue = dataRow[propName];
             try {
-              switch (schema.properties[prop]) {
-                case 'bool?':
-                  object[prop] = JSON.parse(row[prop].toLocaleLowerCase());
-                  break;
-                case 'int?':
-                  const intNumber = parseInt(row[prop], 10);
-                  if (isNaN(intNumber)) {
-                    throw new Error(
-                      `Can not parse ${row[prop]} as int at line ${lineIndex}`,
-                    );
-                  }
-                  object[prop] = intNumber;
-                  break;
-                case 'double?':
-                  const floatNumber = parseFloat(row[prop]);
-                  if (isNaN(floatNumber)) {
-                    throw new Error(
-                      `Can not parse ${row[prop]} as int at line ${lineIndex}`,
-                    );
-                  }
-                  object[prop] = floatNumber;
-                  break;
-                default:
-                  // string?
-                  object[prop] = row[prop];
+              if (propertySchema.optional && dataValue === '') {
+                object[propName] = null;
+              } else {
+                object[propName] = this.convertToType(
+                  dataValue,
+                  propertySchema.type,
+                );
               }
             } catch (e) {
               // abort transaction and delete the Realm
               realm.cancelTransaction();
               throw new Error(
-                `Parsing error at line ${lineIndex}, expected type "${schema.properties[prop]}" but got "${row[prop]}" for column "${prop}"\nError details: ${e}`,
+                `Parsing error at line ${rowIndex}, expected type "${propertySchema.type}" but got "${dataValue}" for column "${propName}"\nError details: ${e}`,
               );
             }
           }
@@ -96,9 +91,37 @@ export class CSVDataImporter extends DataImporter {
           numberOfInsert = 0;
           realm.beginTransaction();
         }
-      });
+      }
 
       realm.commitTransaction();
-    });
+    }
+  }
+
+  private convertToType(value: string, type: PropertyType) {
+    switch (type) {
+      case 'string':
+        return value;
+      case 'bool':
+        return JSON.parse(value.toLocaleLowerCase());
+      case 'int': {
+        const parsed = parseInt(value, 10);
+        if (isNaN(parsed)) {
+          throw new Error(`Can not parse "${value}" as integer`);
+        }
+        return parsed;
+      }
+      case 'float':
+      case 'double': {
+        const parsed = parseFloat(value);
+        if (isNaN(parsed)) {
+          throw new Error(`Can not parse ${value} as float / double`);
+        }
+        return parsed;
+      }
+      case 'date':
+        return moment(value).toDate();
+      default:
+        throw new Error(`Importing data of type "${type}" is not supported`);
+    }
   }
 }

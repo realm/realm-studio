@@ -62,6 +62,11 @@ export type ClassFocussedHandler = (
   highlightedObject?: Realm.Object,
 ) => void;
 
+type ImportDialogOptions = {
+  filePaths: string[];
+  classNames: string[];
+};
+
 const EDIT_MODE_STORAGE_KEY = 'realm-browser-edit-mode';
 const FILE_UPGRADE_NEEDED_MESSAGE =
   'The Realm file format must be allowed to be upgraded in order to proceed.';
@@ -76,6 +81,7 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   isAddPropertyOpen: boolean;
   isEncryptionDialogVisible: boolean;
   isLeftSidebarOpen: boolean;
+  importDialog: ImportDialogOptions | null;
   // The classes are only supposed to be used to produce a list of classes in the sidebar
   classes: Realm.ObjectSchema[];
 }
@@ -96,6 +102,7 @@ class RealmBrowserContainer
     isAddPropertyOpen: false,
     isEncryptionDialogVisible: false,
     isLeftSidebarOpen: true,
+    importDialog: null,
     progress: { status: 'idle' },
     classes: [],
   };
@@ -133,6 +140,7 @@ class RealmBrowserContainer
         focus={this.state.focus}
         getClassFocus={this.getClassFocus}
         getSchemaLength={this.getSchemaLength}
+        importDialog={this.state.importDialog}
         isAddClassOpen={this.state.isAddClassOpen}
         isAddPropertyOpen={this.state.isAddPropertyOpen}
         isClassNameAvailable={this.isClassNameAvailable}
@@ -145,6 +153,8 @@ class RealmBrowserContainer
         onClassFocussed={this.onClassFocussed}
         onCommitTransaction={this.onCommitTransaction}
         onHideEncryptionDialog={this.onHideEncryptionDialog}
+        onHideImportDialog={this.onHideImportDialog}
+        onImport={this.handleImport}
         onLeftSidebarToggle={this.onLeftSidebarToggle}
         onListFocussed={this.onListFocussed}
         onOpenWithEncryption={this.onOpenWithEncryption}
@@ -396,7 +406,15 @@ class RealmBrowserContainer
       this.onClassFocussed(firstSchemaName);
     }
     // Start importing data if needed
-    this.performImport();
+    if (this.props.import && this.realm) {
+      const { format, paths } = this.props.import;
+      // Assume the schema class names were generated from the files basenames
+      const files = paths.map(p => ({
+        path: p,
+        className: path.basename(p),
+      }));
+      this.handleImport(format, files);
+    }
   };
 
   private onBeginTransaction = () => {
@@ -605,6 +623,10 @@ class RealmBrowserContainer
     this.setState({ isEncryptionDialogVisible: false });
   };
 
+  private onHideImportDialog = () => {
+    this.setState({ importDialog: null });
+  };
+
   private onLeftSidebarToggle = () => {
     this.setState({ isLeftSidebarOpen: !this.state.isLeftSidebarOpen });
   };
@@ -775,38 +797,28 @@ class RealmBrowserContainer
   ) => {
     const paths = dataImporter.showOpenDialog(format);
     if (this.realm && paths && paths.length > 0) {
-      try {
-        try {
-          const importer = dataImporter.getDataImporter(
-            format,
-            paths,
-            this.realm.schema,
-          );
-          importer.import(this.realm);
-        } catch (err) {
-          showError('Faild to import data', err);
-        }
-      } catch (err) {
-        showError('Faild to generate schema', err);
-      }
+      const classNames = this.realm.schema.map(s => s.name);
+      this.setState({ importDialog: { filePaths: paths, classNames } });
     }
   };
 
-  private performImport() {
-    if (this.props.import && this.realm) {
-      const { format, paths, schema } = this.props.import;
+  private handleImport = (
+    format: dataImporter.ImportFormat,
+    files: dataImporter.ImportableFile[],
+  ) => {
+    if (this.realm) {
       this.setState({ progress: { status: 'in-progress' } });
       // Get the importer
       try {
-        const importer = dataImporter.getDataImporter(format, paths, schema);
-        importer.import(this.realm);
+        const importer = dataImporter.getDataImporter(format);
+        importer.import(this.realm, files);
       } catch (err) {
         showError('Faild to import data', err);
       } finally {
         this.setState({ progress: { status: 'done' } });
       }
     }
-  }
+  };
 
   private async copyRealmPathToClipboard(): Promise<void> {
     if (this.realm) {

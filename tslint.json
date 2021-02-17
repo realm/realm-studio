@@ -12,6 +12,7 @@
     "object-literal-sort-keys": false,
     "jsx-boolean-value": false,
     "jsx-no-lambda": false,
+    "forin": false,
     "no-submodule-imports": [
       true,
       "realm-studio-styles"
