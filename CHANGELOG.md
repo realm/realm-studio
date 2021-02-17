@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release 10.1.2 (2021-02-17)
+
+[Changes since v10.1.1](https://github.com/realm/realm-studio/compare/v10.1.1...v10.1.2)
+
+### Enhancements
+
+- None
+
+### Fixed
+
+- When exporting to JSON, `'data'` properties are serialized to base64-strings, and not `{}`. ([#1367](https://github.com/realm/realm-studio/pull/1367), since v10.1.0)
+- Fixed CSV importing into an existing Realm a bit more. The user now gets to choose what class data gets imported into. ([#1391](https://github.com/realm/realm-studio/pull/1391), since 1.12.0 & 5.0.2)
+
+### Internals
+
+- Migrated from tslint to eslint. ([#1388](https://github.com/realm/realm-studio/pull/1388))
+
+
 ## Release 10.1.1 (2021-01-28)
 
 [Changes since v10.1.0](https://github.com/realm/realm-studio/compare/v10.1.0...v10.1.1)
