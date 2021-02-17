@@ -89,7 +89,7 @@ function buildMockedRealmStudio() {
   const mockedRealmStudioPath = path.resolve(__dirname, 'mocked-realm-studio');
   // Install the root projects electron into the node_modules
   if (!fs.existsSync(path.resolve(mockedRealmStudioPath, 'node_modules'))) {
-    cp.spawnSync('npm', ['ci'], {
+    cp.spawnSync('npm', ['install'], {
       cwd: mockedRealmStudioPath,
       stdio: 'inherit',
     });
