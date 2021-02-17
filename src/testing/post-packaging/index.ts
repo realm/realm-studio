@@ -86,7 +86,7 @@ function buildMockedRealmStudio() {
   const mockedRealmStudioPath = path.resolve(__dirname, 'mocked-realm-studio');
   // Install the root projects electron into the node_modules
   if (!fs.existsSync(path.resolve(mockedRealmStudioPath, 'node_modules'))) {
-    cp.spawnSync('npm', ['ci'], {
+    cp.spawnSync('npm', ['install'], {
       cwd: mockedRealmStudioPath,
       stdio: 'inherit',
     });
@@ -100,7 +100,7 @@ function buildMockedRealmStudio() {
   }
 }
 
-assert.equal(
+assert.strictEqual(
   os.platform(),
   'darwin',
   'Currently, the post-package tests can only run on MacOS',
@@ -172,7 +172,7 @@ describe('Realm Studio packaged', () => {
     let respawnTimer;
 
     // Watch for changes to the ready.signal file, indicating that the app got updated successfully
-    await new Promise((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       const readySignalPath = path.resolve(temporaryMacPath, 'ready.signal');
       let updateCount = 0;
 
@@ -203,13 +203,13 @@ describe('Realm Studio packaged', () => {
       function readySignalChanged(currentStat: fs.Stats) {
         if (updateCount === 0) {
           updateCount++;
-          assert.equal(currentStat.size, 0);
+          assert.strictEqual(currentStat.size, 0);
         } else if (updateCount === 1) {
           updateCount++;
           const content = fs.readFileSync(readySignalPath, {
             encoding: 'utf8',
           });
-          assert.equal(content, 'Hello from a future Realm Studio!');
+          assert.strictEqual(content, 'Hello from a future Realm Studio!');
           // Stop watching the file
           fs.unwatchFile(readySignalPath, readySignalChanged);
           resolve();
