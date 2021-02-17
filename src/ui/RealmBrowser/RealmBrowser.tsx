@@ -20,6 +20,7 @@ import React from 'react';
 import Realm from 'realm';
 
 import { ILoadingProgress, LoadingOverlay } from '../reusable/LoadingOverlay';
+import { ImportableFile, ImportFormat } from '../../services/data-importer';
 
 import {
   ClassFocussedHandler,
@@ -34,6 +35,7 @@ import { EncryptionDialog } from './EncryptionDialog';
 import { Focus, IClassFocus } from './focus';
 import { LeftSidebar } from './LeftSidebar';
 import { NoFocusPlaceholder } from './NoFocusPlaceholder';
+import { ImportDialog } from './ImportDialog';
 
 import './RealmBrowser.scss';
 
@@ -49,6 +51,7 @@ export interface IRealmBrowserProps {
   focus: Focus | null;
   getClassFocus: (className: string) => IClassFocus;
   getSchemaLength: (name: string) => number;
+  importDialog: null | { filePaths: string[]; classNames: string[] };
   isAddClassOpen: boolean;
   isAddPropertyOpen: boolean;
   isClassNameAvailable: (name: string) => boolean;
@@ -61,6 +64,8 @@ export interface IRealmBrowserProps {
   onClassFocussed: ClassFocussedHandler;
   onCommitTransaction: () => void;
   onHideEncryptionDialog: () => void;
+  onHideImportDialog: () => void;
+  onImport: (format: ImportFormat, files: ImportableFile[]) => void;
   onLeftSidebarToggle: () => void;
   onListFocussed: ListFocussedHandler;
   onSingleListFocussed: SingleListFocussedHandler;
@@ -84,6 +89,7 @@ export const RealmBrowser = ({
   focus,
   getClassFocus,
   getSchemaLength,
+  importDialog,
   isAddClassOpen,
   isAddPropertyOpen,
   isClassNameAvailable,
@@ -96,6 +102,8 @@ export const RealmBrowser = ({
   onClassFocussed,
   onCommitTransaction,
   onHideEncryptionDialog,
+  onHideImportDialog,
+  onImport,
   onLeftSidebarToggle,
   onListFocussed,
   onSingleListFocussed,
@@ -175,6 +183,14 @@ export const RealmBrowser = ({
         onHide={onHideEncryptionDialog}
         onOpenWithEncryption={onOpenWithEncryption}
         visible={isEncryptionDialogVisible}
+      />
+
+      <ImportDialog
+        filePaths={importDialog ? importDialog.filePaths : []}
+        classNames={importDialog ? importDialog.classNames : []}
+        visible={importDialog !== null}
+        onHide={onHideImportDialog}
+        onImport={onImport}
       />
 
       <LoadingOverlay progress={progress} fade={true} />

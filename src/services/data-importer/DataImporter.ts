@@ -18,27 +18,17 @@
 
 import Realm from 'realm';
 
+export type ImportableFile = {
+  path: string;
+  className: string;
+};
+
 export abstract class DataImporter {
-  protected files: string[];
-  protected importSchema: Realm.ObjectSchema[];
-  /**
-   * Creates a new instance of `DataImporter`, taking one or more files that will be
-   * converted into a Realm file.
-   *
-   * @param files absolute paths to the file(s) to import.
-   * @param importSchema The import schema with which this file will be created.
-   */
-
-  constructor(files: string[], importSchema: Realm.ObjectSchema[]) {
-    this.files = files;
-    this.importSchema = importSchema;
-  }
-
   /**
    * An abstract method, overidden in subclasses that performs the data import.
    *
    * @param path Absolute path to the directory where the Realm file will be generated.
    * @param importSchema The import schema with which this file will be created.
    */
-  public abstract import(realm: Realm): void;
+  public abstract import(realm: Realm, files: ImportableFile[]): void;
 }
