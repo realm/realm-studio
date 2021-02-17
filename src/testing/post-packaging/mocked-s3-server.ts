@@ -20,14 +20,16 @@ import fs from 'fs-extra';
 import http from 'http';
 import path from 'path';
 
-const mockedLatestMacYmlPath = path.resolve(
-  __dirname,
-  'mocked-realm-studio/dist/latest-mac.yml',
-);
+const mockPath = path.resolve(__dirname, 'mocked-realm-studio');
 
-const mockedRealmStudioZipPath = path.resolve(
-  __dirname,
-  'mocked-realm-studio/dist/mocked-realm-studio-999.0.0-mac.zip',
+const mockLatestYmlPath = path.resolve(mockPath, 'dist/latest-mac.yml');
+
+const mockPackagePath = path.resolve(mockPath, 'package.json');
+const mockPackageJson = fs.readJsonSync(mockPackagePath);
+
+const mockZipPath = path.resolve(
+  mockPath,
+  `dist/${mockPackageJson.build.productName}-${mockPackageJson.version}-mac.zip`,
 );
 
 function sendFile(
@@ -50,9 +52,9 @@ function handle(req: http.IncomingMessage, res: http.ServerResponse) {
   const { method, url = '' } = req;
   console.log(`Incoming ${method} request for the mocked S3 server on ${url}`);
   if (method === 'GET' && url.indexOf('.yml') !== -1) {
-    sendFile(res, mockedLatestMacYmlPath, 'application/x-yaml');
+    sendFile(res, mockLatestYmlPath, 'application/x-yaml');
   } else if (method === 'GET' && url.endsWith('.zip')) {
-    sendFile(res, mockedRealmStudioZipPath, 'application/zip');
+    sendFile(res, mockZipPath, 'application/zip');
   } else {
     console.error(`The mocked S3 server got an unexpected request.`);
     res.writeHead(500);

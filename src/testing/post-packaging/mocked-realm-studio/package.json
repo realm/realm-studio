@@ -11,6 +11,7 @@
   "license": "Apache-2.0",
   "build": {
     "appId": "com.mongodb.realm-studio",
+    "productName": "MongoDB Realm Studio",
     "mac": {
       "target": [
         "zip"
