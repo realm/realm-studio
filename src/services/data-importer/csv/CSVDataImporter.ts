@@ -27,8 +27,7 @@ export class CSVDataImporter extends DataImporter {
   private static readonly NUMBER_OF_INSERTS_BEFORE_COMMIT = 10000;
 
   public import(realm: Realm, files: ImportableFile[]) {
-    console.log("import called", realm, files);
-    for(const file of files) {
+    for (const file of files) {
       const className = file.className;
       const schema = realm.schema.find(s => s.name === className);
       if (!schema) {
@@ -95,7 +94,7 @@ export class CSVDataImporter extends DataImporter {
       }
 
       realm.commitTransaction();
-    };
+    }
   }
 
   private convertToType(value: string, type: PropertyType) {

@@ -18,7 +18,7 @@
 
 import React from 'react';
 
-import { ImportableFile, ImportFormat } from "../../../services/data-importer";
+import { ImportableFile, ImportFormat } from '../../../services/data-importer';
 
 import { ImportDialog } from './ImportDialog';
 
@@ -68,7 +68,9 @@ class ImportDialogContainer extends React.Component<
   protected onSubmit = (e: React.FormEvent<any>) => {
     e.preventDefault();
     this.props.onHide();
-    const importableFiles: ImportableFile[] = Object.entries(this.state.pathClassMapping).map(([filePath, className]) => ({ path: filePath, className}));
+    const importableFiles: ImportableFile[] = Object.entries(
+      this.state.pathClassMapping,
+    ).map(([filePath, className]) => ({ path: filePath, className }));
     this.props.onImport(ImportFormat.CSV, importableFiles);
   };
 }

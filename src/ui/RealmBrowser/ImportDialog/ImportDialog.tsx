@@ -55,20 +55,31 @@ export const ImportDialog = ({
         <p>Choose the destination class for each file below:</p>
         <Table>
           <thead>
-          <tr>
-            <th>File name</th>
-            <th>Class</th>
-          </tr>
+            <tr>
+              <th>File name</th>
+              <th>Class</th>
+            </tr>
           </thead>
           <tbody>
             {filePaths.map(filePath => (
               <tr key={filePath}>
                 <td>{path.basename(filePath)}</td>
                 <td>
-                  <Input type="select" onChange={e => onClassChange(filePath, e.target.value)} value={pathClassMapping[filePath]}>
-                    <option selected={pathClassMapping[filePath] === undefined} disabled>Select a class</option>
+                  <Input
+                    type="select"
+                    onChange={e => onClassChange(filePath, e.target.value)}
+                    value={pathClassMapping[filePath]}
+                  >
+                    <option
+                      selected={pathClassMapping[filePath] === undefined}
+                      disabled
+                    >
+                      Select a class
+                    </option>
                     {classNames.map(className => (
-                      <option key={className} value={className}>{className}</option>
+                      <option key={className} value={className}>
+                        {className}
+                      </option>
                     ))}
                   </Input>
                 </td>
@@ -81,7 +92,12 @@ export const ImportDialog = ({
         <Button color="secondary" onClick={onCancel}>
           Cancel
         </Button>
-        <Button color="primary">Import data</Button>
+        <Button
+          color="primary"
+          disabled={Object.keys(pathClassMapping).length < filePaths.length}
+        >
+          Import data
+        </Button>
       </ModalFooter>
     </Form>
   </Modal>

@@ -45,7 +45,7 @@ export interface IRealmBrowserProps {
   focus: Focus | null;
   getClassFocus: (className: string) => IClassFocus;
   getSchemaLength: (name: string) => number;
-  importDialog: null | { filePaths: string[]; classNames: string[]; };
+  importDialog: null | { filePaths: string[]; classNames: string[] };
   isAddClassOpen: boolean;
   isAddPropertyOpen: boolean;
   isClassNameAvailable: (name: string) => boolean;

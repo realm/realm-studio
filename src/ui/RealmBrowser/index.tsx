@@ -24,7 +24,6 @@ import Realm from 'realm';
 
 import { DataExporter, DataExportFormat } from '../../services/data-exporter';
 import * as dataImporter from '../../services/data-importer';
-import { ImportableFile, ImportFormat } from '../../services/data-importer';
 import { Language, SchemaExporter } from '../../services/schema-export';
 import { menu, realms } from '../../utils';
 import {
@@ -82,7 +81,7 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   isAddPropertyOpen: boolean;
   isEncryptionDialogVisible: boolean;
   isLeftSidebarOpen: boolean;
-  importDialog: ImportDialogOptions | null;
+  importDialog: ImportDialogOptions | null;
   // The classes are only supposed to be used to produce a list of classes in the sidebar
   classes: Realm.ObjectSchema[];
 }
@@ -803,8 +802,10 @@ class RealmBrowserContainer
     }
   };
 
-  private handleImport = (format: ImportFormat, files: ImportableFile[]) => {
-    console.log("handleImport called", this, format, files);
+  private handleImport = (
+    format: dataImporter.ImportFormat,
+    files: dataImporter.ImportableFile[],
+  ) => {
     if (this.realm) {
       this.setState({ progress: { status: 'in-progress' } });
       // Get the importer
@@ -817,7 +818,7 @@ class RealmBrowserContainer
         this.setState({ progress: { status: 'done' } });
       }
     }
-  }
+  };
 
   private async copyRealmPathToClipboard(): Promise<void> {
     if (this.realm) {
