@@ -11,6 +11,7 @@ export function isPrimitive(type: string | undefined) {
     case 'objectId':
     case 'decimal': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
     case 'decimal128':
+    case 'uuid':
       return true;
     default:
       return false;
@@ -30,7 +31,7 @@ export const reMapType = (type: string): string => {
   }
 };
 
-const BSON_TYPES = ['objectId', 'decimal128'];
+const BSON_TYPES = ['objectId', 'uuid', 'decimal128'];
 export const isBsonType = (prop: Realm.ObjectSchemaProperty): boolean =>
   BSON_TYPES.includes(prop.type) ||
   (!!prop.objectType && BSON_TYPES.includes(reMapType(prop.objectType)));

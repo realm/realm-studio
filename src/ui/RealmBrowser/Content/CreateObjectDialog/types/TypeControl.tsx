@@ -30,6 +30,7 @@ import { ListControl } from './ListControl';
 import { NumericControl } from './NumericControl';
 import { ObjectControl } from './ObjectControl';
 import { ObjectIdControl } from './ObjectIdControl';
+import { UUIDControl } from './UUIDControl';
 import { StringControl } from './StringControl';
 import { IsEmbeddedTypeChecker } from '../../..';
 
@@ -62,6 +63,15 @@ export const TypeControl = ({
         onChange={onChange}
         property={property}
         value={value as Realm.BSON.ObjectId | null}
+      />
+    );
+  } else if (property.type === 'uuid') {
+    return (
+      <UUIDControl
+        children={children}
+        onChange={onChange}
+        property={property}
+        value={value as Realm.BSON.UUID | null}
       />
     );
   } else if (property.type === 'bool') {

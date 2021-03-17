@@ -19,7 +19,7 @@
 import moment from 'moment';
 import { BSON } from 'realm';
 
-const { ObjectId, Decimal128 } = BSON;
+const { ObjectId, UUID, Decimal128 } = BSON;
 
 export const parseObjectId = (
   value: string,
@@ -33,6 +33,23 @@ export const parseObjectId = (
     } catch (_) {
       throw new Error(
         `"${value}" is not a proper ${property.type}:\nUse a 24 character hexadecimal string`,
+      );
+    }
+  }
+};
+
+export const parseUUID = (
+  value: string,
+  property: Realm.ObjectSchemaProperty,
+) => {
+  if (value === '' && property.optional) {
+    return null;
+  } else {
+    try {
+      return UUID.createFromHexString(value);
+    } catch (_) {
+      throw new Error(
+        `"${value}" is not a proper ${property.type}:\nUse a 32 or 36 character hexadecimal string (dashes excluded or included)`,
       );
     }
   }
@@ -120,6 +137,8 @@ export const parse = (value: string, property: Realm.ObjectSchemaProperty) => {
   switch (property.type) {
     case 'objectId':
       return parseObjectId(value, property);
+    case 'uuid':
+      return parseUUID(value, property);
     case 'int':
     case 'float':
     case 'double':
