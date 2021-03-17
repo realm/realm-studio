@@ -18,7 +18,6 @@
 
 import React from 'react';
 import Realm from 'realm';
-import { ObjectId, Decimal128 } from 'bson';
 import { v4 as uuid } from 'uuid';
 
 import { CreateObjectHandler, EmbeddedInfo } from '..';
@@ -32,6 +31,8 @@ import {
 
 import './CreateObjectDialog.scss';
 import { IsEmbeddedTypeChecker } from '../..';
+
+const { ObjectId, Decimal128 } = Realm.BSON;
 
 interface IRealmObject {
   [propertyName: string]: any;

@@ -31,7 +31,6 @@ import { NumericControl } from './NumericControl';
 import { ObjectControl } from './ObjectControl';
 import { ObjectIdControl } from './ObjectIdControl';
 import { StringControl } from './StringControl';
-import { ObjectId, Decimal128 } from 'bson';
 import { IsEmbeddedTypeChecker } from '../../..';
 
 export interface IBaseControlProps<ValueType = any> {
@@ -62,7 +61,7 @@ export const TypeControl = ({
         children={children}
         onChange={onChange}
         property={property}
-        value={value as ObjectId | null}
+        value={value as Realm.BSON.ObjectId | null}
       />
     );
   } else if (property.type === 'bool') {
@@ -101,7 +100,7 @@ export const TypeControl = ({
       <Decimal128Control
         children={children}
         property={property}
-        value={value as Decimal128 | null}
+        value={value as Realm.BSON.Decimal128 | null}
         onChange={onChange}
       />
     );

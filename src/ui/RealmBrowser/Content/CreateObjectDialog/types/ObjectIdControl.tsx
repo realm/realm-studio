@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import React from 'react';
-import { ObjectId } from 'bson';
+import Realm from 'realm';
 import { Button, Input, InputGroup, InputGroupAddon } from 'reactstrap';
 
 import { IBaseControlProps } from './TypeControl';
@@ -28,7 +28,7 @@ interface IObjectIdControlState {
 }
 
 export class ObjectIdControl extends React.PureComponent<
-  IBaseControlProps<ObjectId | null>,
+  IBaseControlProps<Realm.BSON.ObjectId | null>,
   IObjectIdControlState
 > {
   state: IObjectIdControlState = {
@@ -77,7 +77,7 @@ export class ObjectIdControl extends React.PureComponent<
 
     this.setState({ internalValue: value });
 
-    let parsedId: ObjectId | null = null;
+    let parsedId: Realm.BSON.ObjectId | null = null;
 
     if (value) {
       try {
@@ -93,7 +93,7 @@ export class ObjectIdControl extends React.PureComponent<
   private generateObjectId = () => {
     const { onChange } = this.props;
 
-    const generatedId = new ObjectId();
+    const generatedId = new Realm.BSON.ObjectId();
 
     this.setState({ internalValue: generatedId.toHexString() });
     onChange(generatedId);

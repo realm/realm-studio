@@ -17,7 +17,9 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import moment from 'moment';
-import { ObjectId, Decimal128 } from 'bson';
+import { BSON } from 'realm';
+
+const { ObjectId, Decimal128 } = BSON;
 
 export const parseObjectId = (
   value: string,

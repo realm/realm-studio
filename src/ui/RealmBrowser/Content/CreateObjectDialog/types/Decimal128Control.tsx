@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import React from 'react';
-import { Decimal128 } from 'bson';
+import Realm from 'realm';
 import { Button, Input, InputGroup, InputGroupAddon } from 'reactstrap';
 
 import { IBaseControlProps } from './TypeControl';
@@ -28,7 +28,7 @@ interface IDecimal128ControlState {
 }
 
 export class Decimal128Control extends React.PureComponent<
-  IBaseControlProps<Decimal128 | null>,
+  IBaseControlProps<Realm.BSON.Decimal128 | null>,
   IDecimal128ControlState
 > {
   state: IDecimal128ControlState = {
@@ -71,7 +71,7 @@ export class Decimal128Control extends React.PureComponent<
 
     this.setState({ internalValue: value });
 
-    let parsedDecimal: Decimal128 | null = null;
+    let parsedDecimal: Realm.BSON.Decimal128 | null = null;
 
     if (value) {
       try {
