@@ -18,6 +18,7 @@
 
 export const TYPES: string[] = [
   'objectId',
+  'uuid',
   'bool',
   'int',
   'float',
