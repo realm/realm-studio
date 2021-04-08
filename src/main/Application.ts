@@ -138,7 +138,10 @@ export class Application {
   public async showOpenLocalRealm() {
     const response = await dialog.showOpenDialog({
       properties: ['openFile', 'multiSelections'],
-      filters: [{ name: 'Realm Files', extensions: ['realm'] }],
+      filters: [
+        { name: 'Realm Files', extensions: ['realm'] },
+        { name: 'All Files', extensions: ['*'] },
+      ],
     });
     const realmsLoaded = response.filePaths.map(filePath =>
       this.openLocalRealmAtPath(filePath),
