@@ -24,3 +24,6 @@ spectron.log
 
 # Sentry cache folder
 .electron-symbols/
+
+# Products
+*.tgz
