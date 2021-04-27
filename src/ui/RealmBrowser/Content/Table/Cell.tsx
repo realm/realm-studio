@@ -25,6 +25,7 @@ import { IPropertyWithName } from '../..';
 import {
   DataCell,
   DefaultCell,
+  DictionaryCell,
   ListCell,
   ListIndexCell,
   ObjectCell,
@@ -54,6 +55,7 @@ const getCellContent = ({
   if (property.name === '#' && property.type === 'int' && property.readOnly) {
     return <ListIndexCell value={value} />;
   }
+
   // Alternatively - based on type
   switch (property.type) {
     case 'objectId':
@@ -88,6 +90,8 @@ const getCellContent = ({
       );
     case 'list':
       return <ListCell property={property} value={value} />;
+    case 'dictionary':
+      return <DictionaryCell property={property} value={value} />;
     case 'object':
       return <ObjectCell property={property} value={value} />;
     default:

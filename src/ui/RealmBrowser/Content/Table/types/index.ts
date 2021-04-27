@@ -18,6 +18,7 @@
 
 export { DataCell } from './DataCell';
 export { DefaultCell } from './DefaultCell';
+export { DictionaryCell } from './DictionaryCell';
 export { ListCell } from './ListCell';
 export { ListIndexCell } from './ListIndexCell';
 export { ObjectCell } from './ObjectCell';
