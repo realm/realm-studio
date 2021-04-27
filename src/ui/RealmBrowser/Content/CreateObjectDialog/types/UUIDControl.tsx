@@ -21,17 +21,17 @@ import Realm from 'realm';
 import { Button, Input, InputGroup, InputGroupAddon } from 'reactstrap';
 
 import { IBaseControlProps } from './TypeControl';
-import { parseObjectId } from '../../../parsers';
+import { parseUUID } from '../../../parsers';
 
-interface IObjectIdControlState {
+interface IUUIDControlState {
   internalValue: string | null;
 }
 
-export class ObjectIdControl extends React.PureComponent<
-  IBaseControlProps<Realm.BSON.ObjectId | null>,
-  IObjectIdControlState
+export class UUIDControl extends React.PureComponent<
+  IBaseControlProps<Realm.BSON.UUID | null>,
+  IUUIDControlState
 > {
-  state: IObjectIdControlState = {
+  state: IUUIDControlState = {
     internalValue: this.props.value?.toHexString() ?? null,
   };
 
@@ -40,9 +40,10 @@ export class ObjectIdControl extends React.PureComponent<
     const { internalValue } = this.state;
 
     return (
-      <InputGroup className="CreateObjectDialog__ObjectIdControl">
+      <InputGroup className="CreateObjectDialog__UUIDControl">
         <Input
-          className="CreateObjectDialog__ObjectIdControl__Input"
+          spellcheck="false"
+          className="CreateObjectDialog__UUIDControl__Input"
           onChange={this.inputChangeEventHandler}
           placeholder={value === null ? 'null' : ''}
           value={internalValue ?? ''}
@@ -57,7 +58,7 @@ export class ObjectIdControl extends React.PureComponent<
           </InputGroupAddon>
         ) : (
           <InputGroupAddon addonType="append">
-            <Button size="sm" onClick={this.generateObjectId}>
+            <Button size="sm" onClick={this.generateUUID}>
               <i className="fa fa-refresh" />
             </Button>
           </InputGroupAddon>
@@ -77,11 +78,11 @@ export class ObjectIdControl extends React.PureComponent<
 
     this.setState({ internalValue: value });
 
-    let parsedId: Realm.BSON.ObjectId | null = null;
+    let parsedId: Realm.BSON.UUID | null = null;
 
     if (value) {
       try {
-        parsedId = parseObjectId(value, property);
+        parsedId = parseUUID(value, property);
       } catch (err) {
         console.warn(err.message);
       }
@@ -90,10 +91,10 @@ export class ObjectIdControl extends React.PureComponent<
     onChange(parsedId);
   };
 
-  private generateObjectId = () => {
+  private generateUUID = () => {
     const { onChange } = this.props;
 
-    const generatedId = new Realm.BSON.ObjectId();
+    const generatedId = new Realm.BSON.UUID();
 
     this.setState({ internalValue: generatedId.toHexString() });
     onChange(generatedId);

@@ -51,6 +51,7 @@ export const StringCell = ({
           'RealmBrowser__Table__StringCell--null': value === null,
         },
       )}
+      spellcheck={property.type === 'string' ? 'true' : 'false'}
       bsSize="sm"
       disabled={isDisabled}
       innerRef={getRef}

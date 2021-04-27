@@ -18,7 +18,6 @@
 
 import React from 'react';
 import Realm from 'realm';
-import { ObjectId, Decimal128 } from 'bson';
 import { v4 as uuid } from 'uuid';
 
 import { CreateObjectHandler, EmbeddedInfo } from '..';
@@ -32,6 +31,8 @@ import {
 
 import './CreateObjectDialog.scss';
 import { IsEmbeddedTypeChecker } from '../..';
+
+const { ObjectId, UUID, Decimal128 } = Realm.BSON;
 
 interface IRealmObject {
   [propertyName: string]: any;
@@ -93,6 +94,8 @@ class CreateObjectDialogContainer extends React.PureComponent<
       // Special handling for primary keys. Opting out of optional handling & return a random value.
       if (property.type === 'objectId') {
         return new ObjectId();
+      } else if (property.type === 'uuid') {
+        return new UUID();
       } else if (propertyName === 'uuid' && property.type === 'string') {
         return uuid();
       }
@@ -105,6 +108,8 @@ class CreateObjectDialogContainer extends React.PureComponent<
       return null;
     } else if (property.type === 'objectId') {
       return new ObjectId();
+    } else if (property.type === 'uuid') {
+      return new UUID();
     } else if (
       property.type === 'int' ||
       property.type === 'float' ||

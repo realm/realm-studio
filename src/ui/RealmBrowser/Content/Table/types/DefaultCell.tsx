@@ -30,10 +30,10 @@ export const DefaultCell = ({
 }) => (
   <div
     className={classNames(
-      'RealmBrowser__Table__Input',
-      'RealmBrowser__Table__Input--disabled',
+      'RealmBrowser__Table__StringCell',
+      'RealmBrowser__Table__StringCell--disabled',
     )}
   >
-    {util.inspect(value)}
+    {value && value._bsontype ? value.toString() : util.inspect(value)}
   </div>
 );
