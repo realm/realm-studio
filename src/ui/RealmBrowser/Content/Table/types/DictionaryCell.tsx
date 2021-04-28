@@ -38,20 +38,15 @@ const displayValue = (
 ) => {
   if (!dictionary) {
     return 'null';
-  } else if (Object.keys(dictionary).length === 0) {
-    return `[dictionary of ${property.objectType}]`;
   } else if (isDictionaryOfPrimitive(property)) {
     return asSafeJsonString(dictionary, {
       maxLength: VALUE_STRING_LENGTH_LIMIT,
     });
   } else {
-    return `[dictionary of ${property.objectType}: ${asSafeJsonString(
-      dictionary,
-      {
-        cleanupRefs: true,
-        maxLength: VALUE_STRING_LENGTH_LIMIT,
-      },
-    )}]`;
+    return asSafeJsonString(dictionary, {
+      cleanupRefs: true,
+      maxLength: VALUE_STRING_LENGTH_LIMIT,
+    });
   }
 };
 
