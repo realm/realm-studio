@@ -80,6 +80,12 @@ type ImportDialogOptions = {
   classNames: string[];
 };
 
+type JsonViewerDialogOptions = {
+  value: unknown;
+};
+
+export type JsonViewerDialogExecutor = (value: unknown) => void;
+
 const EDIT_MODE_STORAGE_KEY = 'realm-browser-edit-mode';
 const FILE_UPGRADE_NEEDED_MESSAGE =
   'The Realm file format must be allowed to be upgraded in order to proceed.';
@@ -96,6 +102,7 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   isEncryptionDialogVisible: boolean;
   isLeftSidebarOpen: boolean;
   importDialog: ImportDialogOptions | null;
+  jsonViewerDialog: JsonViewerDialogOptions | null;
   // The classes are only supposed to be used to produce a list of classes in the sidebar
   classes: Realm.ObjectSchema[];
 }
@@ -118,6 +125,7 @@ class RealmBrowserContainer
     isEncryptionDialogVisible: false,
     isLeftSidebarOpen: true,
     importDialog: null,
+    jsonViewerDialog: null,
     progress: { status: 'idle' },
     classes: [],
   };
@@ -157,6 +165,7 @@ class RealmBrowserContainer
         getClassFocus={this.getClassFocus}
         getSchemaLength={this.getSchemaLength}
         importDialog={this.state.importDialog}
+        jsonViewerDialog={this.state.jsonViewerDialog}
         isAddClassOpen={this.state.isAddClassOpen}
         isAddPropertyOpen={this.state.isAddPropertyOpen}
         isClassNameAvailable={this.isClassNameAvailable}
@@ -170,6 +179,8 @@ class RealmBrowserContainer
         onCommitTransaction={this.onCommitTransaction}
         onHideEncryptionDialog={this.onHideEncryptionDialog}
         onHideImportDialog={this.onHideImportDialog}
+        onShowJsonViewerDialog={this.onShowJsonViewerDialog}
+        onHideJsonViewerDialog={this.onHideJsonViewerDialog}
         onImport={this.handleImport}
         onLeftSidebarToggle={this.onLeftSidebarToggle}
         onListFocussed={this.onListFocussed}
@@ -697,6 +708,14 @@ class RealmBrowserContainer
 
   private onHideImportDialog = () => {
     this.setState({ importDialog: null });
+  };
+
+  private onShowJsonViewerDialog = (value: unknown) => {
+    this.setState({ jsonViewerDialog: { value } });
+  };
+
+  private onHideJsonViewerDialog = () => {
+    this.setState({ jsonViewerDialog: null });
   };
 
   private onLeftSidebarToggle = () => {

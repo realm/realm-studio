@@ -23,7 +23,7 @@ import Realm from 'realm';
 import { IClassFocus } from '../../focus';
 
 import { PropertyRow } from './PropertyRow';
-import { IsEmbeddedTypeChecker } from '../..';
+import { IsEmbeddedTypeChecker, JsonViewerDialogExecutor } from '../..';
 
 interface IBaseCreateObjectDialogProps {
   generateInitialValue: (property: Realm.ObjectSchemaProperty) => any;
@@ -44,6 +44,7 @@ export interface IOpenCreateObjectDialogProps
   isOpen: true;
   schema: Realm.ObjectSchema;
   isEmbeddedType: IsEmbeddedTypeChecker;
+  onShowJsonViewerDialog: JsonViewerDialogExecutor;
 }
 
 export type ICreateObjectDialogProps =
@@ -79,6 +80,7 @@ export const CreateObjectDialog = ({
               propertyName={propertyName}
               value={values[propertyName]}
               isEmbeddedType={props.isEmbeddedType}
+              onShowJsonViewerDialog={props.onShowJsonViewerDialog}
             />
           ))
         : null}

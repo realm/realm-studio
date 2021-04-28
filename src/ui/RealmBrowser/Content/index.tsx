@@ -27,6 +27,7 @@ import {
   ListFocussedHandler,
   IsEmbeddedTypeChecker,
   SingleListFocussedHandler,
+  JsonViewerDialogExecutor,
 } from '..';
 import { store } from '../../../store';
 import { getRange } from '../../../utils';
@@ -126,6 +127,7 @@ export interface IBaseContentContainerProps {
   ) => void;
   onListFocussed?: ListFocussedHandler;
   onSingleListFocussed?: SingleListFocussedHandler;
+  onShowJsonViewerDialog: (value: unknown) => void; // TODO: reuse from... elsewhere
   progress?: ILoadingProgress;
   readOnly: boolean;
   isEmbeddedType: IsEmbeddedTypeChecker;
@@ -476,8 +478,13 @@ class ContentContainer extends React.Component<
       this.props.onCellSingleClick(params, e);
     } else {
       const { property, rowObject, cellValue } = params;
-      if (property && property.type === 'list' && this.props.onListFocussed) {
+      if (property?.type === 'list' && this.props.onListFocussed) {
         this.props.onListFocussed(rowObject, property);
+      } else if (
+        property?.type === 'dictionary' &&
+        this.props.onShowJsonViewerDialog
+      ) {
+        this.props.onShowJsonViewerDialog(cellValue);
       } else if (
         property &&
         property.type === 'object' &&
@@ -523,6 +530,7 @@ class ContentContainer extends React.Component<
           className: property.objectType,
           isOptional: property.optional,
           isEmbeddedType: this.props.isEmbeddedType,
+          onShowJsonViewerDialog: this.props.onShowJsonViewerDialog,
         });
       }
     }
@@ -588,6 +596,7 @@ class ContentContainer extends React.Component<
                   className: property.objectType,
                   isOptional: property.optional,
                   isEmbeddedType: this.props.isEmbeddedType,
+                  onShowJsonViewerDialog: this.props.onShowJsonViewerDialog,
                 });
               }
             },
@@ -648,6 +657,7 @@ class ContentContainer extends React.Component<
                 },
                 className: focus.property.objectType,
                 isEmbeddedType: this.props.isEmbeddedType,
+                onShowJsonViewerDialog: this.props.onShowJsonViewerDialog,
               });
             }
           },
@@ -704,6 +714,7 @@ class ContentContainer extends React.Component<
             schema,
             isEmbeddedType,
             embeddedInfo,
+            onShowJsonViewerDialog: this.props.onShowJsonViewerDialog,
           },
         });
       }
@@ -935,6 +946,7 @@ class ContentContainer extends React.Component<
     isOptional?: boolean;
     action: SelectObjectAction;
     isEmbeddedType: IsEmbeddedTypeChecker;
+    onShowJsonViewerDialog: JsonViewerDialogExecutor;
   }) {
     if (!this.props.readOnly) {
       const focus: IClassFocus = this.props.getClassFocus(className);
@@ -950,6 +962,7 @@ class ContentContainer extends React.Component<
           onSelect: this.onObjectSelect,
           propertyName: action.propertyName,
           isEmbeddedType,
+          onShowJsonViewerDialog: this.props.onShowJsonViewerDialog,
         };
         this.setState({ selectObjectDialog });
       } else {
@@ -963,6 +976,7 @@ class ContentContainer extends React.Component<
           onCancel: this.onCancelSelectObjectDialog,
           onSelect: this.onObjectSelect,
           isEmbeddedType,
+          onShowJsonViewerDialog: this.props.onShowJsonViewerDialog,
         };
         this.setState({ selectObjectDialog });
       }

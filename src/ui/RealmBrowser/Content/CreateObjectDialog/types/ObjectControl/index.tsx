@@ -23,7 +23,7 @@ import { IClassFocus } from '../../../../focus';
 import { IBaseControlProps } from '../TypeControl';
 
 import { ObjectControl } from './ObjectControl';
-import { IsEmbeddedTypeChecker } from '../../../..';
+import { IsEmbeddedTypeChecker, JsonViewerDialogExecutor } from '../../../..';
 
 export interface IOpenSelectObjectDialog {
   isOpen: true;
@@ -33,6 +33,7 @@ export interface IOpenSelectObjectDialog {
   onCancel: () => void;
   onSelect: (object: any) => void;
   isEmbeddedType: IsEmbeddedTypeChecker;
+  onShowJsonViewerDialog: JsonViewerDialogExecutor;
 }
 
 export type ISelectObjectDialog = IOpenSelectObjectDialog | { isOpen: false };
@@ -40,6 +41,7 @@ export type ISelectObjectDialog = IOpenSelectObjectDialog | { isOpen: false };
 export interface IObjectControlContainerProps extends IBaseControlProps {
   getClassFocus: (className: string) => IClassFocus;
   isEmbeddedType: IsEmbeddedTypeChecker;
+  onShowJsonViewerDialog: JsonViewerDialogExecutor;
 }
 
 export interface IObjectControlContainerState {
@@ -88,6 +90,7 @@ class ObjectControlContainer extends React.Component<
           onCancel: this.onCancelSelectObjectDialog,
           onSelect: this.updateObjectReference,
           isEmbeddedType: this.props.isEmbeddedType,
+          onShowJsonViewerDialog: this.props.onShowJsonViewerDialog,
         },
       });
     }

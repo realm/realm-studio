@@ -22,7 +22,7 @@ import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { Content, EditMode, HighlightMode } from '..';
 import { IClassFocus } from '../../focus';
 import { IHighlight } from '../Table';
-import { IsEmbeddedTypeChecker } from '../..';
+import { IsEmbeddedTypeChecker, JsonViewerDialogExecutor } from '../..';
 
 interface IBaseSelectObjectDialogProps {
   isOpen: boolean;
@@ -47,6 +47,7 @@ interface IOpenSelectObjectDialogProps extends IBaseSelectObjectDialogProps {
   ) => void;
   multiple: boolean;
   isEmbeddedType: IsEmbeddedTypeChecker;
+  onShowJsonViewerDialog: JsonViewerDialogExecutor;
 }
 
 export type ISelectObjectDialogProps =
@@ -80,6 +81,7 @@ export const SelectObjectDialog = ({
           readOnly={true}
           ref={props.contentRef}
           isEmbeddedType={props.isEmbeddedType}
+          onShowJsonViewerDialog={props.onShowJsonViewerDialog}
         />
       ) : null}
     </ModalBody>

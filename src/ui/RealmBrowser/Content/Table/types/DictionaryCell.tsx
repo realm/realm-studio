@@ -19,6 +19,7 @@
 import React from 'react';
 import { Badge } from 'reactstrap';
 import Realm from 'realm';
+import { asSafeJsonString } from '../../../../../utils/json';
 
 import * as primitives from '../../../primitives';
 
@@ -31,24 +32,6 @@ const isDictionaryOfPrimitive = (property: Realm.ObjectSchemaProperty) => {
   return primitives.isPrimitive(property.objectType || '');
 };
 
-const $refMatcher = /\s*\"\$ref[Id]*\" *: *\".*\"(,|(?=\s+\}))/;
-const asJsonString = (value: unknown) => {
-  let json: string;
-  try {
-    json = JSON.stringify(value);
-  } catch {
-    // Clean up added $refId & $ref properties, added by Realm.JsonSerializationReplacer - investigate better solution.
-    const jsonWithRefs = JSON.stringify(value, Realm.JsonSerializationReplacer);
-    json = jsonWithRefs.replace($refMatcher, '');
-  }
-
-  if (json.length > VALUE_STRING_LENGTH_LIMIT) {
-    return json.slice(0, VALUE_STRING_LENGTH_LIMIT) + ' (...)';
-  }
-
-  return json;
-};
-
 const displayValue = (
   property: Realm.ObjectSchemaProperty,
   dictionary: Dictionary,
@@ -58,10 +41,16 @@ const displayValue = (
   } else if (Object.keys(dictionary).length === 0) {
     return `[dictionary of ${property.objectType}]`;
   } else if (isDictionaryOfPrimitive(property)) {
-    return asJsonString(dictionary);
+    return asSafeJsonString(dictionary, {
+      maxLength: VALUE_STRING_LENGTH_LIMIT,
+    });
   } else {
-    return `[dictionary of ${property.objectType}: ${asJsonString(
+    return `[dictionary of ${property.objectType}: ${asSafeJsonString(
       dictionary,
+      {
+        cleanupRefs: true,
+        maxLength: VALUE_STRING_LENGTH_LIMIT,
+      },
     )}]`;
   }
 };

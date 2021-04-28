@@ -30,7 +30,7 @@ import {
 } from './CreateObjectDialog';
 
 import './CreateObjectDialog.scss';
-import { IsEmbeddedTypeChecker } from '../..';
+import { IsEmbeddedTypeChecker, JsonViewerDialogExecutor } from '../..';
 
 const { ObjectId, UUID, Decimal128 } = Realm.BSON;
 
@@ -50,6 +50,7 @@ interface IOpenCreateObjectDialogContainerProps {
   schema: Realm.ObjectSchema;
   isEmbeddedType: IsEmbeddedTypeChecker;
   embeddedInfo?: EmbeddedInfo;
+  onShowJsonViewerDialog: JsonViewerDialogExecutor;
 }
 
 export interface ICreateObjectDialogContainerState {
@@ -177,6 +178,7 @@ class CreateObjectDialogContainer extends React.PureComponent<
         isOpen: true,
         getClassFocus: this.props.getClassFocus,
         schema: this.props.schema,
+        onShowJsonViewerDialog: this.props.onShowJsonViewerDialog,
       };
     } else {
       return {

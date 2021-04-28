@@ -26,7 +26,7 @@ import {
   ISelectObjectDialogProps,
   SelectObjectDialog,
 } from './SelectObjectDialog';
-import { IsEmbeddedTypeChecker } from '../..';
+import { IsEmbeddedTypeChecker, JsonViewerDialogExecutor } from '../..';
 
 export interface IClosedSelectObjectDialogContainerProps {
   isOpen: false;
@@ -39,6 +39,7 @@ export interface IOpenSelectObjectDialogContainerProps {
   multiple: boolean;
   onCancel: () => void;
   isEmbeddedType: IsEmbeddedTypeChecker;
+  onShowJsonViewerDialog: JsonViewerDialogExecutor;
 }
 
 export interface IOpenSelectSingleObjectDialogContainerProps
@@ -94,6 +95,7 @@ export class SelectObjectDialogContainer extends React.Component<
         selection: this.state.selection,
         multiple: this.props.multiple,
         isEmbeddedType: this.props.isEmbeddedType,
+        onShowJsonViewerDialog: this.props.onShowJsonViewerDialog,
       };
     } else {
       return {

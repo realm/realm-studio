@@ -35,6 +35,7 @@ interface IItemProps
     | 'value'
     | 'property'
     | 'isEmbeddedType'
+    | 'onShowJsonViewerDialog'
   > {
   onDelete: () => void;
 }
@@ -47,6 +48,7 @@ const Item = ({
   onDelete,
   value,
   isEmbeddedType,
+  onShowJsonViewerDialog,
 }: IItemProps) => (
   <section className="CreateObjectDialog__ListControl__Item">
     <TypeControl
@@ -56,6 +58,7 @@ const Item = ({
       property={property}
       value={value}
       isEmbeddedType={isEmbeddedType}
+      onShowJsonViewerDialog={onShowJsonViewerDialog}
     >
       <InputGroupAddon addonType="append">
         <Button onClick={onDelete} size="sm">
@@ -76,6 +79,7 @@ interface IListProps
     | 'onChange'
     | 'value'
     | 'isEmbeddedType'
+    | 'onShowJsonViewerDialog'
   > {
   itemProperty: Realm.ObjectSchemaProperty;
 }
@@ -87,6 +91,7 @@ const List = ({
   onChange,
   value,
   isEmbeddedType,
+  onShowJsonViewerDialog,
 }: IListProps) => (
   <section className="CreateObjectDialog__ListControl__Items">
     {Array.isArray(value) ? (
@@ -108,6 +113,7 @@ const List = ({
           property={itemProperty}
           value={value[index]}
           isEmbeddedType={isEmbeddedType}
+          onShowJsonViewerDialog={onShowJsonViewerDialog}
         />
       ))
     ) : (
@@ -144,6 +150,7 @@ export const ListControl = ({
   property,
   value,
   isEmbeddedType,
+  onShowJsonViewerDialog,
 }: ITypeControlProps): React.ReactElement<ITypeControlProps> => {
   if (!property.objectType) {
     return <Alert color="danger">Expected an objectType</Alert>;
@@ -167,6 +174,7 @@ export const ListControl = ({
           onChange={onChange}
           value={value}
           isEmbeddedType={isEmbeddedType}
+          onShowJsonViewerDialog={onShowJsonViewerDialog}
         />
         <section className="CreateObjectDialog__ListControl__Buttons">
           <Button
