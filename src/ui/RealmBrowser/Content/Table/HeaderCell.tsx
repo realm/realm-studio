@@ -32,6 +32,8 @@ const HANDLE_WIDTH = 5;
 const getPropertyType = (property: Realm.ObjectSchemaProperty) => {
   switch (property.type) {
     case 'list':
+    case 'dictionary':
+    case 'set':
       return property.objectType;
     case 'object':
     case 'linkingObjects':
@@ -41,17 +43,42 @@ const getPropertyType = (property: Realm.ObjectSchemaProperty) => {
   }
 };
 
+const optionalMarkOptOut = ['list', 'dictionary', 'set'];
+const getOptionalMark = (property: IPropertyWithName) => {
+  if (optionalMarkOptOut.includes(property.type)) {
+    return '';
+  }
+
+  return property.optional ? '?' : '';
+};
+
+const getCollectionShorthand = (property: IPropertyWithName) => {
+  switch (property.type) {
+    case 'list':
+      return '[]';
+
+    case 'dictionary':
+      return '{}';
+
+    case 'set':
+      return '<>';
+
+    default:
+      return '';
+  }
+};
+
 export const getPropertyDisplayed = (property: IPropertyWithName) => {
   return [
     getPropertyType(property),
-    property.optional ? '?' : '',
-    property.type === 'list' ? '[]' : '',
+    getOptionalMark(property),
+    getCollectionShorthand(property),
     property.isEmbedded ? ' (Embedded)' : '',
     property.isPrimaryKey ? ' (Primary Key)' : '',
   ].join('');
 };
 
-const NON_SORTABLE_TYPES = ['data', 'list', 'object'];
+const NON_SORTABLE_TYPES = ['data', 'list', 'dictionary', 'set', 'object'];
 const isPropertySortable = (property: IPropertyWithName) => {
   if (property.name === '#' || property.name === null) {
     return false;
