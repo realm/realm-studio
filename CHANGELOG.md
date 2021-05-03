@@ -8,6 +8,10 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 [Changes since v10.1.2](https://github.com/realm/realm-studio/compare/v10.1.2...v11.0.0-alpha.0)
 
+### Breaking Changes
+
+- Added support for reading / writing Realm files using Realm file format v21 (used by realm-js v?.?.?, realm-java v?.?.?, realm-cocoa v?.?.? and realm-dotnet v?.?.?). When opening a file which is using an older format, you will get prompted to upgrade (and optionally backup) the Realm file. NOTE: Once the file has been upgraded, there is no way to downgrade it again and it can only be used by the SDKs that support Realm file format v21.
+
 ### Enhancements
 
 - Added the ability to choose "All Files" when opening a Realm file, enabling opening files regardless of their file extension. ([#1410](https://github.com/realm/realm-studio/pull/1410))
@@ -19,6 +23,10 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Internals
 
 - None
+
+### Compatibility
+
+- File format: Generates Realms with file format v21. Earlier file formats can be read and automatically upgraded to v21. But you will not be able to edit older file formats.
 
 
 ## Release 10.1.2 (2021-02-17)
