@@ -309,7 +309,7 @@ describe('Import CSV tests', () => {
       assert.strictEqual(realm.objects('inspections').length, 18480);
 
       realm.close();
-    });
+    }).timeout(10000); // ensure safe timeout for the test to finish in CI.
 
     it('Imports into existing Realm file', () => {
       const files: ImportableFile[] = [
