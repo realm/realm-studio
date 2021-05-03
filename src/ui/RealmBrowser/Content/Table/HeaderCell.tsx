@@ -45,7 +45,7 @@ const getPropertyType = (property: Realm.ObjectSchemaProperty) => {
 
 const NON_OPTIONAL_TYPES = ['list', 'dictionary', 'set'];
 const getOptionalMark = (property: IPropertyWithName) => {
-  if (optionalMarkOptOut.includes(property.type)) {
+  if (NON_OPTIONAL_TYPES.includes(property.type)) {
     return '';
   }
 
