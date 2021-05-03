@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release 11.0.0-alpha.0 (2021-05-03)
+
+[Changes since v10.1.2](https://github.com/realm/realm-studio/compare/v10.1.2...v11.0.0-alpha.0)
+
+### Enhancements
+
+- Added the ability to choose "All Files" when opening a Realm file, enabling opening files regardless of their file extension. ([#1410](https://github.com/realm/realm-studio/pull/1410))
+
+### Fixed
+
+- None
+
+### Internals
+
+- None
+
+
 ## Release 10.1.2 (2021-02-17)
 
 [Changes since v10.1.1](https://github.com/realm/realm-studio/compare/v10.1.1...v10.1.2)
