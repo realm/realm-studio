@@ -34,6 +34,6 @@ export const DefaultControl = ({
   color = 'warning',
 }: IDefaultControlProps) => (
   <Alert color={color}>
-    {message ?? `Cannot select "${property.type}" yet`}
+    {message ?? `Creation of "${property.type}" is not yet implemented`}
   </Alert>
 );

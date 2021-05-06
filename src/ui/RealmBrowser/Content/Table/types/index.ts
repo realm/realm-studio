@@ -22,4 +22,5 @@ export { DictionaryCell } from './DictionaryCell';
 export { ListCell } from './ListCell';
 export { ListIndexCell } from './ListIndexCell';
 export { ObjectCell } from './ObjectCell';
+export { SetCell } from './SetCell';
 export { StringCell } from './StringCell';

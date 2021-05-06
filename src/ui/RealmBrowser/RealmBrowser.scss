@@ -272,6 +272,7 @@
 
     &__ListCell,
     &__DictionaryCell,
+    &__SetCell,
     &__ObjectCell,
     &__StringCell,
     &__DataCell,
@@ -291,6 +292,7 @@
 
     &__ListCell,
     &__DictionaryCell,
+    &__SetCell,
     &__ObjectCell {
       // Make these look like clickable elements
       color: $primary;
@@ -339,6 +341,7 @@
     }
 
     &__DictionaryCell,
+    &__SetCell,
     &__ListCell {
       display: flex;
 

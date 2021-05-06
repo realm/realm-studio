@@ -29,6 +29,7 @@ import {
   ListCell,
   ListIndexCell,
   ObjectCell,
+  SetCell,
   StringCell,
 } from './types';
 
@@ -92,6 +93,8 @@ const getCellContent = ({
       return <ListCell property={property} value={value} />;
     case 'dictionary':
       return <DictionaryCell property={property} value={value} />;
+    case 'set':
+      return <SetCell property={property} value={value} />;
     case 'object':
       return <ObjectCell property={property} value={value} />;
     default:

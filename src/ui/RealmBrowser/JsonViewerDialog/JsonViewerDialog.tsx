@@ -19,6 +19,8 @@
 import React from 'react';
 import {
   Button,
+  CardBody,
+  CardText,
   Form,
   Modal,
   ModalBody,
@@ -37,9 +39,20 @@ export const JsonViewerDialog = ({
   visible,
   json,
 }: IJSonViewerDialogProps) => (
-  <Modal isOpen={visible} onExit={onCancel}>
+  <Modal isOpen={visible} toggle={onCancel}>
     <Form>
       <ModalHeader>JSON Viewer</ModalHeader>
+      {json.includes('"$refId":') && (
+        <CardBody style={{ borderBottom: '1px solid #dee2e6' }}>
+          <CardText>
+            <small>
+              {
+                '"$refId" & "$ref" has been added to the serialized output, to resolve circular structures.'
+              }
+            </small>
+          </CardText>
+        </CardBody>
+      )}
       <ModalBody>
         <pre>{json}</pre>
       </ModalBody>

@@ -29,12 +29,16 @@ import { SortClickHandler } from '.';
 // This constant should match the $realm-browser-header-handle-width in scss
 const HANDLE_WIDTH = 5;
 
+const capitalize = (s: string) => {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+};
+
 const getPropertyType = (property: Realm.ObjectSchemaProperty) => {
   switch (property.type) {
     case 'list':
     case 'dictionary':
     case 'set':
-      return property.objectType;
+      return `${capitalize(property.type)}<${property.objectType ?? ''}>`;
     case 'object':
     case 'linkingObjects':
       return property.objectType;
@@ -52,27 +56,10 @@ const getOptionalMark = (property: IPropertyWithName) => {
   return property.optional ? '?' : '';
 };
 
-const getCollectionShorthand = (property: IPropertyWithName) => {
-  switch (property.type) {
-    case 'list':
-      return '[]';
-
-    case 'dictionary':
-      return '{}';
-
-    case 'set':
-      return '<>';
-
-    default:
-      return '';
-  }
-};
-
 export const getPropertyDisplayed = (property: IPropertyWithName) => {
   return [
     getPropertyType(property),
     getOptionalMark(property),
-    getCollectionShorthand(property),
     property.isEmbedded ? ' (Embedded)' : '',
     property.isPrimaryKey ? ' (Primary Key)' : '',
   ].join('');

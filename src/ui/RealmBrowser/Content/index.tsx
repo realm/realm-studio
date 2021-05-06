@@ -478,15 +478,16 @@ class ContentContainer extends React.Component<
       this.props.onCellSingleClick(params, e);
     } else {
       const { property, rowObject, cellValue } = params;
-      if (property?.type === 'list' && this.props.onListFocussed) {
+      if (!property) return;
+
+      if (property.type === 'list' && this.props.onListFocussed) {
         this.props.onListFocussed(rowObject, property);
       } else if (
-        property?.type === 'dictionary' &&
+        (property.type === 'dictionary' || property.type === 'set') &&
         this.props.onShowJsonViewerDialog
       ) {
         this.props.onShowJsonViewerDialog(cellValue);
       } else if (
-        property &&
         property.type === 'object' &&
         property.objectType &&
         (cellValue || property.isEmbedded) &&
