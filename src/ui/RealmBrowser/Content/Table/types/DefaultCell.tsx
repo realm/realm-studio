@@ -20,9 +20,31 @@ import classNames from 'classnames';
 import React from 'react';
 import Realm from 'realm';
 import util from 'util';
+import { asSafeJsonString } from '../../../../../utils/json';
+
+const VALUE_STRING_LENGTH_LIMIT = 50;
+
+const valueForRender = (value: any) => {
+  if (value === null || typeof value === 'undefined') {
+    return 'null';
+  }
+
+  if (value._bsontype) {
+    return value.toString();
+  }
+
+  // eslint-disable-next-line
+  // @ts-ignore the way we expose Realm.Collection
+  if (value instanceof Realm.Object || value instanceof Realm.Collection) {
+    return asSafeJsonString(value, {
+      cleanupRefs: true,
+      maxLength: VALUE_STRING_LENGTH_LIMIT,
+    });
+  }
+  return util.inspect(value);
+};
 
 export const DefaultCell = ({
-  property,
   value,
 }: {
   property: Realm.ObjectSchemaProperty;
@@ -34,6 +56,6 @@ export const DefaultCell = ({
       'RealmBrowser__Table__StringCell--disabled',
     )}
   >
-    {value && value._bsontype ? value.toString() : util.inspect(value)}
+    {valueForRender(value)}
   </div>
 );
