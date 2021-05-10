@@ -38,7 +38,9 @@ const getPropertyType = (property: Realm.ObjectSchemaProperty) => {
     case 'list':
     case 'dictionary':
     case 'set':
-      return `${capitalize(property.type)}<${property.objectType ?? ''}>`;
+      return `${capitalize(property.type)}<${
+        property.objectType ?? 'unknown'
+      }>`;
     case 'object':
     case 'linkingObjects':
       return property.objectType;
