@@ -19,16 +19,12 @@
 import React from 'react';
 import { Badge } from 'reactstrap';
 import Realm from 'realm';
-import { asSafeJsonString } from '../../../../../utils/json';
-
-// import * as primitives from '../../../primitives';
-
-import * as DataCell from './DataCell';
+import { getCellStringRepresentation } from '../../../../../utils/json';
 
 const VALUE_LENGTH_LIMIT = 10;
 const VALUE_STRING_LENGTH_LIMIT = 50;
 
-const take = <T extends unknown = any>(
+const setTake = <T extends unknown = any>(
   set: Realm.Set<T>,
   amount: number,
 ): Array<T> => {
@@ -41,24 +37,6 @@ const take = <T extends unknown = any>(
   return arr;
 };
 
-const getStringRepresentation = (
-  property: Realm.ObjectSchemaProperty,
-  val: any,
-) => {
-  if (val._objectId) {
-    return asSafeJsonString(val, {
-      cleanupRefs: true,
-      maxLength: VALUE_STRING_LENGTH_LIMIT,
-    });
-  }
-
-  if (property.objectType === 'data') {
-    return DataCell.display(val);
-  }
-
-  return typeof val === 'string' ? `"${val}"` : String(val);
-};
-
 const displayValue = (
   property: Realm.ObjectSchemaProperty,
   set: Realm.Set<any>,
@@ -67,11 +45,11 @@ const displayValue = (
     return 'null';
   } else {
     // Let's not show all values here - 10 must be enough
-    const limitedValues = take(set, VALUE_LENGTH_LIMIT);
+    const limitedValues = setTake(set, VALUE_LENGTH_LIMIT);
     // Concatenate ", " separated string representations of the elements in the set
     let limitedString = limitedValues
       .map((val: any) =>
-        getStringRepresentation(property, val).substring(
+        getCellStringRepresentation(property, val).substring(
           0,
           VALUE_STRING_LENGTH_LIMIT,
         ),

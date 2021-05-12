@@ -1,4 +1,7 @@
 // Regex to clean up added $refId & $ref properties, added by Realm.JsonSerializationReplacer
+
+import { display as displayDataCell } from '../ui/RealmBrowser/Content/Table/types/DataCell';
+
 // TODO: Investigate better solution.
 const $REF_MATCHER = /\s*\"\$ref[Id]*\" *: *(\"(.*?)\"(,|\s|)|\s*\{(.*?)\}(,|\s|))/g;
 
@@ -62,6 +65,10 @@ export const useJsonViewer = (
     return true;
   }
 
+  if (property.type === 'list' && property.objectType === 'mixed') {
+    return true;
+  }
+
   if (
     property.type === 'mixed' &&
     (value instanceof Realm.Object ||
@@ -74,4 +81,40 @@ export const useJsonViewer = (
   }
 
   return false;
+};
+
+const VALUE_STRING_LENGTH_LIMIT = 50;
+
+export const getCellStringRepresentation = (
+  property: Realm.ObjectSchemaProperty,
+  value: any,
+): string => {
+  if (value === null || typeof value === 'undefined') {
+    return 'null';
+  }
+
+  if (value.objectSchema) {
+    const { primaryKey, name } = value.objectSchema();
+    // prefix with the the Class type, if in mixed context
+    const prefix = property.objectType === 'mixed' ? `${name}#` : '';
+    return primaryKey
+      ? prefix + value[primaryKey]
+      : asSafeJsonString(value, {
+          cleanupRefs: true,
+          maxLength: VALUE_STRING_LENGTH_LIMIT,
+        });
+  }
+
+  if (useJsonViewer(property, value)) {
+    return asSafeJsonString(value, {
+      cleanupRefs: true,
+      maxLength: VALUE_STRING_LENGTH_LIMIT,
+    });
+  }
+
+  if (property.objectType === 'data') {
+    return displayDataCell(value);
+  }
+
+  return typeof value === 'string' ? `"${value}"` : String(value);
 };
