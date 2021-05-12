@@ -270,6 +270,7 @@
       }
     }
 
+    &__MixedCell,
     &__ListCell,
     &__DictionaryCell,
     &__SetCell,
@@ -290,6 +291,7 @@
       }
     }
 
+    &__MixedCell--link,
     &__ListCell,
     &__DictionaryCell,
     &__SetCell,
@@ -310,6 +312,11 @@
       }
     }
 
+    &__MixedCell {
+      &--disabled {
+        color: $elephant;
+      }
+    }
     &__StringCell {
       background: transparent;
       border-radius: 0;

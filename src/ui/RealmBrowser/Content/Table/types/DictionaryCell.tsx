@@ -21,16 +21,10 @@ import { Badge } from 'reactstrap';
 import Realm from 'realm';
 import { asSafeJsonString } from '../../../../../utils/json';
 
-import * as primitives from '../../../primitives';
-
 // TODO: Get declaration from Realm
 type Dictionary<T = unknown> = { [key: string]: T };
 
 const VALUE_STRING_LENGTH_LIMIT = 50;
-
-const isDictionaryOfPrimitive = (property: Realm.ObjectSchemaProperty) => {
-  return primitives.isPrimitive(property.objectType || '');
-};
 
 const displayValue = (
   property: Realm.ObjectSchemaProperty,
@@ -38,10 +32,6 @@ const displayValue = (
 ) => {
   if (!dictionary) {
     return 'null';
-  } else if (isDictionaryOfPrimitive(property)) {
-    return asSafeJsonString(dictionary, {
-      maxLength: VALUE_STRING_LENGTH_LIMIT,
-    });
   } else {
     return asSafeJsonString(dictionary, {
       cleanupRefs: true,

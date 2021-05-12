@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2018 Realm Inc.
+// Copyright 2021 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import { asSafeJsonString, useJsonViewer } from '../../../../../utils/json';
 
 const VALUE_STRING_LENGTH_LIMIT = 50;
 
-const displayValue = (property: Realm.ObjectSchemaProperty, value: any) => {
+const displayValue = (value: any) => {
   if (value === null || typeof value === 'undefined') {
     return 'null';
   }
@@ -33,28 +33,34 @@ const displayValue = (property: Realm.ObjectSchemaProperty, value: any) => {
     return value.toString();
   }
 
-  if (useJsonViewer(property, value)) {
-    return asSafeJsonString(value, {
-      cleanupRefs: true,
-      maxLength: VALUE_STRING_LENGTH_LIMIT,
-    });
-  }
   return util.inspect(value);
 };
 
-export const DefaultCell = ({
+export const MixedCell = ({
   property,
   value,
 }: {
   property: Realm.ObjectSchemaProperty;
   value: any;
-}) => (
-  <div
-    className={classNames(
-      'RealmBrowser__Table__StringCell',
-      'RealmBrowser__Table__StringCell--disabled',
-    )}
-  >
-    {displayValue(property, value)}
-  </div>
-);
+}) => {
+  const showInJsonViewerDialog = useJsonViewer(property, value);
+
+  const valueForRender = showInJsonViewerDialog
+    ? asSafeJsonString(value, {
+        cleanupRefs: true,
+        maxLength: VALUE_STRING_LENGTH_LIMIT,
+      })
+    : displayValue(value);
+  return (
+    <div
+      className={classNames('RealmBrowser__Table__MixedCell', {
+        'RealmBrowser__Table__MixedCell--disabled': !showInJsonViewerDialog,
+        'RealmBrowser__Table__MixedCell--link': showInJsonViewerDialog,
+      })}
+    >
+      <span className="RealmBrowser__Table__MixedCell__Value">
+        {valueForRender}
+      </span>
+    </div>
+  );
+};

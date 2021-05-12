@@ -21,6 +21,7 @@ export { DefaultCell } from './DefaultCell';
 export { DictionaryCell } from './DictionaryCell';
 export { ListCell } from './ListCell';
 export { ListIndexCell } from './ListIndexCell';
+export { MixedCell } from './MixedCell';
 export { ObjectCell } from './ObjectCell';
 export { SetCell } from './SetCell';
 export { StringCell } from './StringCell';

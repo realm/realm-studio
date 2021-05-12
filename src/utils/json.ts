@@ -33,8 +33,6 @@ export const asSafeJsonString = (
     }
   }
 
-  console.log('json 1 >>', json);
-
   if (!json) {
     return 'null';
   }
@@ -42,15 +40,38 @@ export const asSafeJsonString = (
   if (options) {
     if (options.cleanupRefs) {
       json = json.replace($REF_MATCHER, '');
-      console.log('json 2 >>', json);
     }
 
     if (options.maxLength && json.length > options.maxLength) {
       json =
         json.slice(0, options.maxLength) + (options.postFix ?? DEFAULT_POSTFIX);
-      console.log('json 3 >>', json);
     }
   }
 
   return json;
+};
+
+/**
+ * Utility function to indicate if the JsonViewerDialog should be utilized for a cell
+ */
+export const useJsonViewer = (
+  property: Realm.ObjectSchemaProperty,
+  value: any,
+): boolean => {
+  if (property.type === 'dictionary' || property.type === 'set') {
+    return true;
+  }
+
+  if (
+    property.type === 'mixed' &&
+    (value instanceof Realm.Object ||
+      // eslint-disable-next-line
+      // @ts-ignore The way we expose Realm.Collection does not work for instanceof...
+      value instanceof Realm.Collection ||
+      (value !== null && typeof value === 'object' && !(value instanceof Date)))
+  ) {
+    return true;
+  }
+
+  return false;
 };

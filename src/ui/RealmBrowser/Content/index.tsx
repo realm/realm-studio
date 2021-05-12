@@ -31,6 +31,7 @@ import {
 } from '..';
 import { store } from '../../../store';
 import { getRange } from '../../../utils';
+import { useJsonViewer } from '../../../utils/json';
 import { showError } from '../../reusable/errors';
 import { ILoadingProgress } from '../../reusable/LoadingOverlay';
 import { Focus, getClassName, IClassFocus } from '../focus';
@@ -480,13 +481,13 @@ class ContentContainer extends React.Component<
       const { property, rowObject, cellValue } = params;
       if (!property) return;
 
-      if (property.type === 'list' && this.props.onListFocussed) {
-        this.props.onListFocussed(rowObject, property);
-      } else if (
-        (property.type === 'dictionary' || property.type === 'set') &&
+      if (
+        useJsonViewer(property, cellValue) &&
         this.props.onShowJsonViewerDialog
       ) {
         this.props.onShowJsonViewerDialog(cellValue);
+      } else if (property.type === 'list' && this.props.onListFocussed) {
+        this.props.onListFocussed(rowObject, property);
       } else if (
         property.type === 'object' &&
         property.objectType &&

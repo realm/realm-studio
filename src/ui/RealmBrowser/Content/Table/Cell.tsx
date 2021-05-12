@@ -28,6 +28,7 @@ import {
   DictionaryCell,
   ListCell,
   ListIndexCell,
+  MixedCell,
   ObjectCell,
   SetCell,
   StringCell,
@@ -36,7 +37,6 @@ import {
 const getCellContent = ({
   editMode,
   isHighlighted,
-  isScrolling,
   onHighlighted,
   onUpdateValue,
   onValidated,
@@ -95,6 +95,8 @@ const getCellContent = ({
       return <DictionaryCell property={property} value={value} />;
     case 'set':
       return <SetCell property={property} value={value} />;
+    case 'mixed':
+      return <MixedCell property={property} value={value} />;
     case 'object':
       return <ObjectCell property={property} value={value} />;
     default:
