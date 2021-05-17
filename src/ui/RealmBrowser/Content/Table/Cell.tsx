@@ -25,16 +25,18 @@ import { IPropertyWithName } from '../..';
 import {
   DataCell,
   DefaultCell,
+  DictionaryCell,
   ListCell,
   ListIndexCell,
+  MixedCell,
   ObjectCell,
+  SetCell,
   StringCell,
 } from './types';
 
 const getCellContent = ({
   editMode,
   isHighlighted,
-  isScrolling,
   onHighlighted,
   onUpdateValue,
   onValidated,
@@ -54,6 +56,7 @@ const getCellContent = ({
   if (property.name === '#' && property.type === 'int' && property.readOnly) {
     return <ListIndexCell value={value} />;
   }
+
   // Alternatively - based on type
   switch (property.type) {
     case 'objectId':
@@ -88,6 +91,12 @@ const getCellContent = ({
       );
     case 'list':
       return <ListCell property={property} value={value} />;
+    case 'dictionary':
+      return <DictionaryCell property={property} value={value} />;
+    case 'set':
+      return <SetCell property={property} value={value} />;
+    case 'mixed':
+      return <MixedCell property={property} value={value} />;
     case 'object':
       return <ObjectCell property={property} value={value} />;
     default:

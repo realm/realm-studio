@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2018 Realm Inc.
+// Copyright 2021 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,12 +16,29 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-export { DataCell } from './DataCell';
-export { DefaultCell } from './DefaultCell';
-export { DictionaryCell } from './DictionaryCell';
-export { ListCell } from './ListCell';
-export { ListIndexCell } from './ListIndexCell';
-export { MixedCell } from './MixedCell';
-export { ObjectCell } from './ObjectCell';
-export { SetCell } from './SetCell';
-export { StringCell } from './StringCell';
+import React from 'react';
+
+import { JsonViewerDialog } from './JsonViewerDialog';
+import { asSafeJsonString } from '../../../utils/json';
+
+export interface IJsonViewerDialogContainerProps {
+  onHide: () => void;
+  visible: boolean;
+  value: unknown;
+}
+
+class JsonViewerDialogContainer extends React.Component<IJsonViewerDialogContainerProps> {
+  public render() {
+    const json = asSafeJsonString(this.props.value, { pretty: true });
+
+    return (
+      <JsonViewerDialog
+        onCancel={this.props.onHide}
+        json={json}
+        visible={this.props.visible}
+      />
+    );
+  }
+}
+
+export { JsonViewerDialogContainer as JsonViewerDialog };

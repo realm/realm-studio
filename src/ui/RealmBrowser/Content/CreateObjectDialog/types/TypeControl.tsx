@@ -32,7 +32,7 @@ import { ObjectControl } from './ObjectControl';
 import { ObjectIdControl } from './ObjectIdControl';
 import { UUIDControl } from './UUIDControl';
 import { StringControl } from './StringControl';
-import { IsEmbeddedTypeChecker } from '../../..';
+import { IsEmbeddedTypeChecker, JsonViewerDialogExecutor } from '../../..';
 
 export interface IBaseControlProps<ValueType = any> {
   children?: React.ReactNode;
@@ -45,6 +45,7 @@ export interface ITypeControlProps extends IBaseControlProps {
   generateInitialValue: (property: Realm.ObjectSchemaProperty) => any;
   getClassFocus: (className: string) => IClassFocus;
   isEmbeddedType: IsEmbeddedTypeChecker;
+  onShowJsonViewerDialog: JsonViewerDialogExecutor;
 }
 
 export const TypeControl = ({
@@ -55,6 +56,7 @@ export const TypeControl = ({
   property,
   value,
   isEmbeddedType,
+  onShowJsonViewerDialog,
 }: ITypeControlProps) => {
   if (property.type === 'objectId') {
     return (
@@ -151,6 +153,7 @@ export const TypeControl = ({
         property={property}
         value={value}
         isEmbeddedType={isEmbeddedType}
+        onShowJsonViewerDialog={onShowJsonViewerDialog}
       />
     );
   } else if (property.type === 'list') {
@@ -163,6 +166,7 @@ export const TypeControl = ({
         property={property}
         value={value as any[]}
         isEmbeddedType={isEmbeddedType}
+        onShowJsonViewerDialog={onShowJsonViewerDialog}
       />
     );
   } else {

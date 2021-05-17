@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2018 Realm Inc.
+// Copyright 2021 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,16 +24,29 @@ import { getCellStringRepresentation } from '../../../../../utils/json';
 const VALUE_LENGTH_LIMIT = 10;
 const VALUE_STRING_LENGTH_LIMIT = 50;
 
+const setTake = <T extends unknown = any>(
+  set: Realm.Set<T>,
+  amount: number,
+): Array<T> => {
+  const it = 0;
+  const arr = [];
+  for (const val of set) {
+    if (it > amount) break;
+    arr.push(val);
+  }
+  return arr;
+};
+
 const displayValue = (
   property: Realm.ObjectSchemaProperty,
-  list: Realm.List<any>,
+  set: Realm.Set<any>,
 ) => {
-  if (!list) {
+  if (!set) {
     return 'null';
   } else {
     // Let's not show all values here - 10 must be enough
-    const limitedValues = list.slice(0, VALUE_LENGTH_LIMIT);
-    // Concatenate ", " separated string representations of the elements in the list
+    const limitedValues = setTake(set, VALUE_LENGTH_LIMIT);
+    // Concatenate ", " separated string representations of the elements in the set
     let limitedString = limitedValues
       .map((val: any) =>
         getCellStringRepresentation(property, val).substring(
@@ -44,26 +57,26 @@ const displayValue = (
       .join(', ');
 
     // Prepend a string if not all values are shown
-    if (list.length > VALUE_LENGTH_LIMIT) {
+    if (set.size > VALUE_LENGTH_LIMIT) {
       limitedString += ' (and more)';
     }
     return limitedString;
   }
 };
 
-export const ListCell = ({
+export const SetCell = ({
   property,
   value,
 }: {
   property: Realm.ObjectSchemaProperty;
   value: any;
 }) => (
-  <div tabIndex={0} className="RealmBrowser__Table__ListCell">
-    <span className="RealmBrowser__Table__ListCell__Value">
+  <div tabIndex={0} className="RealmBrowser__Table__SetCell">
+    <span className="RealmBrowser__Table__SetCell__Value">
       {displayValue(property, value)}
     </span>
-    <span className="RealmBrowser__Table__ListCell__Count">
-      <Badge color="primary">{value.length}</Badge>
+    <span className="RealmBrowser__Table__SetCell__Count">
+      <Badge color="primary">{value.size}</Badge>
     </span>
   </div>
 );

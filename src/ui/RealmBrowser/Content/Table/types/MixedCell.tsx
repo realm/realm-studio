@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2018 Realm Inc.
+// Copyright 2021 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,33 +19,31 @@
 import classNames from 'classnames';
 import React from 'react';
 import Realm from 'realm';
-import { getCellStringRepresentation } from '../../../../../utils/json';
+import {
+  canUseJsonViewer,
+  getCellStringRepresentation,
+} from '../../../../../utils/json';
 
-const displayValue = (property: Realm.ObjectSchemaProperty, value: any) => {
-  if (value === null || typeof value === 'undefined') {
-    return 'null';
-  }
-
-  if (value._bsontype) {
-    return value.toString();
-  }
-
-  return getCellStringRepresentation(property, value);
-};
-
-export const DefaultCell = ({
+export const MixedCell = ({
   property,
   value,
 }: {
   property: Realm.ObjectSchemaProperty;
   value: any;
-}) => (
-  <div
-    className={classNames(
-      'RealmBrowser__Table__StringCell',
-      'RealmBrowser__Table__StringCell--disabled',
-    )}
-  >
-    {displayValue(property, value)}
-  </div>
-);
+}) => {
+  const willShowInJsonViewerDialog = canUseJsonViewer(property, value);
+
+  const valueForRender = getCellStringRepresentation(property, value);
+  return (
+    <div
+      className={classNames('RealmBrowser__Table__MixedCell', {
+        'RealmBrowser__Table__MixedCell--disabled': !willShowInJsonViewerDialog,
+        'RealmBrowser__Table__MixedCell--link': willShowInJsonViewerDialog,
+      })}
+    >
+      <span className="RealmBrowser__Table__MixedCell__Value">
+        {valueForRender}
+      </span>
+    </div>
+  );
+};

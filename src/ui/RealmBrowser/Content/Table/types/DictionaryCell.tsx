@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2018 Realm Inc.
+// Copyright 2021 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,51 +19,40 @@
 import React from 'react';
 import { Badge } from 'reactstrap';
 import Realm from 'realm';
-import { getCellStringRepresentation } from '../../../../../utils/json';
+import { asSafeJsonString } from '../../../../../utils/json';
 
-const VALUE_LENGTH_LIMIT = 10;
+// TODO: Get declaration from Realm
+type Dictionary<T = unknown> = { [key: string]: T };
+
 const VALUE_STRING_LENGTH_LIMIT = 50;
 
 const displayValue = (
   property: Realm.ObjectSchemaProperty,
-  list: Realm.List<any>,
+  dictionary: Dictionary,
 ) => {
-  if (!list) {
+  if (!dictionary) {
     return 'null';
   } else {
-    // Let's not show all values here - 10 must be enough
-    const limitedValues = list.slice(0, VALUE_LENGTH_LIMIT);
-    // Concatenate ", " separated string representations of the elements in the list
-    let limitedString = limitedValues
-      .map((val: any) =>
-        getCellStringRepresentation(property, val).substring(
-          0,
-          VALUE_STRING_LENGTH_LIMIT,
-        ),
-      )
-      .join(', ');
-
-    // Prepend a string if not all values are shown
-    if (list.length > VALUE_LENGTH_LIMIT) {
-      limitedString += ' (and more)';
-    }
-    return limitedString;
+    return asSafeJsonString(dictionary, {
+      cleanupRefs: true,
+      maxLength: VALUE_STRING_LENGTH_LIMIT,
+    });
   }
 };
 
-export const ListCell = ({
+export const DictionaryCell = ({
   property,
   value,
 }: {
   property: Realm.ObjectSchemaProperty;
   value: any;
 }) => (
-  <div tabIndex={0} className="RealmBrowser__Table__ListCell">
-    <span className="RealmBrowser__Table__ListCell__Value">
+  <div tabIndex={0} className="RealmBrowser__Table__DictionaryCell">
+    <span className="RealmBrowser__Table__DictionaryCell__Value">
       {displayValue(property, value)}
     </span>
-    <span className="RealmBrowser__Table__ListCell__Count">
-      <Badge color="primary">{value.length}</Badge>
+    <span className="RealmBrowser__Table__DictionaryCell__Count">
+      <Badge color="primary">{Object.keys(value).length}</Badge>
     </span>
   </div>
 );

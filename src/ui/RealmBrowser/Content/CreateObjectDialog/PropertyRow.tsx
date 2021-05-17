@@ -23,7 +23,7 @@ import Realm from 'realm';
 import { IClassFocus } from '../../focus';
 
 import { TypeControl } from './types/TypeControl';
-import { IsEmbeddedTypeChecker } from '../..';
+import { IsEmbeddedTypeChecker, JsonViewerDialogExecutor } from '../..';
 
 interface IPropertyRowProps {
   generateInitialValue: (property: Realm.ObjectSchemaProperty) => any;
@@ -34,6 +34,7 @@ interface IPropertyRowProps {
   propertyName: string;
   value: any;
   isEmbeddedType: IsEmbeddedTypeChecker;
+  onShowJsonViewerDialog: JsonViewerDialogExecutor;
 }
 
 export const PropertyRow = ({
@@ -45,6 +46,7 @@ export const PropertyRow = ({
   propertyName,
   value,
   isEmbeddedType,
+  onShowJsonViewerDialog,
 }: IPropertyRowProps) => (
   <FormGroup className="CreateObjectDialog__PropertyRow">
     <Label
@@ -65,6 +67,7 @@ export const PropertyRow = ({
       property={property}
       value={value}
       isEmbeddedType={isEmbeddedType}
+      onShowJsonViewerDialog={onShowJsonViewerDialog}
     />
   </FormGroup>
 );

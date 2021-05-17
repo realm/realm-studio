@@ -27,6 +27,7 @@ import {
   ListFocussedHandler,
   IsEmbeddedTypeChecker,
   SingleListFocussedHandler,
+  JsonViewerDialogExecutor,
 } from '.';
 import { AddClassModal } from './AddClassModal';
 import { AddPropertyModal } from './AddPropertyModal';
@@ -36,6 +37,7 @@ import { Focus, IClassFocus } from './focus';
 import { LeftSidebar } from './LeftSidebar';
 import { NoFocusPlaceholder } from './NoFocusPlaceholder';
 import { ImportDialog } from './ImportDialog';
+import { JsonViewerDialog } from './JsonViewerDialog';
 
 import './RealmBrowser.scss';
 
@@ -58,6 +60,7 @@ export interface IRealmBrowserProps {
   isEncryptionDialogVisible: boolean;
   isLeftSidebarOpen: boolean;
   isPropertyNameAvailable: (name: string) => boolean;
+  jsonViewerDialog: null | { value: unknown };
   onAddClass: (schema: Realm.ObjectSchema) => void;
   onAddProperty: (name: string, type: Realm.PropertyType) => void;
   onCancelTransaction: () => void;
@@ -66,6 +69,8 @@ export interface IRealmBrowserProps {
   onHideEncryptionDialog: () => void;
   onHideImportDialog: () => void;
   onImport: (format: ImportFormat, files: ImportableFile[]) => void;
+  onShowJsonViewerDialog: JsonViewerDialogExecutor;
+  onHideJsonViewerDialog: () => void;
   onLeftSidebarToggle: () => void;
   onListFocussed: ListFocussedHandler;
   onSingleListFocussed: SingleListFocussedHandler;
@@ -96,6 +101,7 @@ export const RealmBrowser = ({
   isEncryptionDialogVisible,
   isLeftSidebarOpen,
   isPropertyNameAvailable,
+  jsonViewerDialog,
   onAddClass,
   onAddProperty,
   onCancelTransaction,
@@ -104,6 +110,8 @@ export const RealmBrowser = ({
   onHideEncryptionDialog,
   onHideImportDialog,
   onImport,
+  onShowJsonViewerDialog,
+  onHideJsonViewerDialog,
   onLeftSidebarToggle,
   onListFocussed,
   onSingleListFocussed,
@@ -148,6 +156,7 @@ export const RealmBrowser = ({
             onListFocussed={onListFocussed}
             onSingleListFocussed={onSingleListFocussed}
             onRealmChanged={onRealmChanged}
+            onShowJsonViewerDialog={onShowJsonViewerDialog}
             permissionSidebar={true}
             progress={progress}
             readOnly={editMode === EditMode.Disabled}
@@ -191,6 +200,12 @@ export const RealmBrowser = ({
         visible={importDialog !== null}
         onHide={onHideImportDialog}
         onImport={onImport}
+      />
+
+      <JsonViewerDialog
+        value={jsonViewerDialog?.value}
+        visible={jsonViewerDialog !== null}
+        onHide={onHideJsonViewerDialog}
       />
 
       <LoadingOverlay progress={progress} fade={true} />

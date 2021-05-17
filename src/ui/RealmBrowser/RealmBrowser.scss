@@ -270,7 +270,10 @@
       }
     }
 
+    &__MixedCell,
     &__ListCell,
+    &__DictionaryCell,
+    &__SetCell,
     &__ObjectCell,
     &__StringCell,
     &__DataCell,
@@ -288,7 +291,10 @@
       }
     }
 
+    &__MixedCell--link,
     &__ListCell,
+    &__DictionaryCell,
+    &__SetCell,
     &__ObjectCell {
       // Make these look like clickable elements
       color: $primary;
@@ -303,6 +309,12 @@
         cursor: inherit;
         display: block;
         font-style: italic;
+      }
+    }
+
+    &__MixedCell {
+      &--disabled {
+        color: $elephant;
       }
     }
 
@@ -336,6 +348,8 @@
       }
     }
 
+    &__DictionaryCell,
+    &__SetCell,
     &__ListCell {
       display: flex;
 

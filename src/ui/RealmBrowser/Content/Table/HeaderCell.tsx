@@ -29,10 +29,18 @@ import { SortClickHandler } from '.';
 // This constant should match the $realm-browser-header-handle-width in scss
 const HANDLE_WIDTH = 5;
 
+const capitalize = (s: string) => {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+};
+
 const getPropertyType = (property: Realm.ObjectSchemaProperty) => {
   switch (property.type) {
     case 'list':
-      return property.objectType;
+    case 'dictionary':
+    case 'set':
+      return `${capitalize(property.type)}<${
+        property.objectType ?? 'unknown'
+      }>`;
     case 'object':
     case 'linkingObjects':
       return property.objectType;
@@ -41,17 +49,25 @@ const getPropertyType = (property: Realm.ObjectSchemaProperty) => {
   }
 };
 
+const NON_OPTIONAL_TYPES = ['list', 'dictionary', 'set'];
+const getOptionalMark = (property: IPropertyWithName) => {
+  if (NON_OPTIONAL_TYPES.includes(property.type)) {
+    return '';
+  }
+
+  return property.optional ? '?' : '';
+};
+
 export const getPropertyDisplayed = (property: IPropertyWithName) => {
   return [
     getPropertyType(property),
-    property.optional ? '?' : '',
-    property.type === 'list' ? '[]' : '',
+    getOptionalMark(property),
     property.isEmbedded ? ' (Embedded)' : '',
     property.isPrimaryKey ? ' (Primary Key)' : '',
   ].join('');
 };
 
-const NON_SORTABLE_TYPES = ['data', 'list', 'object'];
+const NON_SORTABLE_TYPES = ['data', 'list', 'dictionary', 'set', 'object'];
 const isPropertySortable = (property: IPropertyWithName) => {
   if (property.name === '#' || property.name === null) {
     return false;
