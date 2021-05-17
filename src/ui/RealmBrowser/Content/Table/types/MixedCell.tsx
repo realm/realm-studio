@@ -19,22 +19,10 @@
 import classNames from 'classnames';
 import React from 'react';
 import Realm from 'realm';
-import util from 'util';
-import { asSafeJsonString, useJsonViewer } from '../../../../../utils/json';
-
-const VALUE_STRING_LENGTH_LIMIT = 50;
-
-const displayValue = (value: any) => {
-  if (value === null || typeof value === 'undefined') {
-    return 'null';
-  }
-
-  if (value._bsontype) {
-    return value.toString();
-  }
-
-  return util.inspect(value);
-};
+import {
+  canUseJsonViewer,
+  getCellStringRepresentation,
+} from '../../../../../utils/json';
 
 export const MixedCell = ({
   property,
@@ -43,19 +31,14 @@ export const MixedCell = ({
   property: Realm.ObjectSchemaProperty;
   value: any;
 }) => {
-  const showInJsonViewerDialog = useJsonViewer(property, value);
+  const willShowInJsonViewerDialog = canUseJsonViewer(property, value);
 
-  const valueForRender = showInJsonViewerDialog
-    ? asSafeJsonString(value, {
-        cleanupRefs: true,
-        maxLength: VALUE_STRING_LENGTH_LIMIT,
-      })
-    : displayValue(value);
+  const valueForRender = getCellStringRepresentation(property, value);
   return (
     <div
       className={classNames('RealmBrowser__Table__MixedCell', {
-        'RealmBrowser__Table__MixedCell--disabled': !showInJsonViewerDialog,
-        'RealmBrowser__Table__MixedCell--link': showInJsonViewerDialog,
+        'RealmBrowser__Table__MixedCell--disabled': !willShowInJsonViewerDialog,
+        'RealmBrowser__Table__MixedCell--link': willShowInJsonViewerDialog,
       })}
     >
       <span className="RealmBrowser__Table__MixedCell__Value">

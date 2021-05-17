@@ -19,10 +19,7 @@
 import classNames from 'classnames';
 import React from 'react';
 import Realm from 'realm';
-import util from 'util';
-import { asSafeJsonString, useJsonViewer } from '../../../../../utils/json';
-
-const VALUE_STRING_LENGTH_LIMIT = 50;
+import { getCellStringRepresentation } from '../../../../../utils/json';
 
 const displayValue = (property: Realm.ObjectSchemaProperty, value: any) => {
   if (value === null || typeof value === 'undefined') {
@@ -33,13 +30,7 @@ const displayValue = (property: Realm.ObjectSchemaProperty, value: any) => {
     return value.toString();
   }
 
-  if (useJsonViewer(property, value)) {
-    return asSafeJsonString(value, {
-      cleanupRefs: true,
-      maxLength: VALUE_STRING_LENGTH_LIMIT,
-    });
-  }
-  return util.inspect(value);
+  return getCellStringRepresentation(property, value);
 };
 
 export const DefaultCell = ({

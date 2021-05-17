@@ -31,7 +31,7 @@ import {
 } from '..';
 import { store } from '../../../store';
 import { getRange } from '../../../utils';
-import { useJsonViewer } from '../../../utils/json';
+import { canUseJsonViewer } from '../../../utils/json';
 import { showError } from '../../reusable/errors';
 import { ILoadingProgress } from '../../reusable/LoadingOverlay';
 import { Focus, getClassName, IClassFocus } from '../focus';
@@ -482,7 +482,7 @@ class ContentContainer extends React.Component<
       if (!property) return;
 
       if (
-        useJsonViewer(property, cellValue) &&
+        canUseJsonViewer(property, cellValue) &&
         this.props.onShowJsonViewerDialog
       ) {
         this.props.onShowJsonViewerDialog(cellValue);

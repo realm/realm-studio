@@ -57,7 +57,7 @@ export const asSafeJsonString = (
 /**
  * Utility function to indicate if the JsonViewerDialog should be utilized for a cell
  */
-export const useJsonViewer = (
+export const canUseJsonViewer = (
   property: Realm.ObjectSchemaProperty,
   value: any,
 ): boolean => {
@@ -93,6 +93,17 @@ export const getCellStringRepresentation = (
     return 'null';
   }
 
+  // If value is a BSON type
+  if (value._bsontype) {
+    return value.toString();
+  }
+
+  // Write a UTC iso string if value is a date
+  if (value instanceof Date) {
+    return value.toISOString();
+  }
+
+  // If value is a Realm entity type
   if (value.objectSchema) {
     const { primaryKey, name } = value.objectSchema();
     // prefix with the the Class type, if in mixed context
@@ -105,7 +116,7 @@ export const getCellStringRepresentation = (
         });
   }
 
-  if (useJsonViewer(property, value)) {
+  if (canUseJsonViewer(property, value)) {
     return asSafeJsonString(value, {
       cleanupRefs: true,
       maxLength: VALUE_STRING_LENGTH_LIMIT,
