@@ -10,7 +10,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Enhancements
 
-- None
+- Added reading properties of type "Set", "Dictionary" and "Mixed". ([#1419](https://github.com/realm/realm-studio/pull/1419))
 
 ### Fixed
 
