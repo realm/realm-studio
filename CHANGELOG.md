@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release 11.0.0-beta.0 (2021-05-18)
+
+[Changes since v11.0.0-alpha.0](https://github.com/realm/realm-studio/compare/v11.0.0-alpha.0...v11.0.0-beta.0)
+
+### Breaking Changes
+
+- Added support for reading / writing Realm files using Realm file format v21 (This supports a number of new datatypes available with beta versions of realm-js v10.5.0, realm-java v10.6.0, realm-cocoa v10.8.0 and realm-dotnet v10.2.0). When opening a file which is using an older format, you will get prompted to upgrade (and optionally backup) the Realm file. NOTE: Once the file has been upgraded, there is no way to downgrade it again and it can only be used by the SDKs that support Realm file format v21.
+
+### Enhancements
+
+- Added reading properties of type "Set", "Dictionary" and "Mixed". ([#1419](https://github.com/realm/realm-studio/pull/1419))
+
+### Fixed
+
+- None
+
+### Internals
+
+- None
+
+
 ## Release 11.0.0-alpha.0 (2021-05-03)
 
 [Changes since v10.1.2](https://github.com/realm/realm-studio/compare/v10.1.2...v11.0.0-alpha.0)
