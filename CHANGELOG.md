@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release 11.0.0-beta.1 (2021-05-21)
+
+[Changes since v11.0.0-beta.0](https://github.com/realm/realm-studio/compare/v11.0.0-beta.0...v11.0.0-beta.1)
+
+### Enhancements
+
+- None
+
+### Fixed
+
+- None
+
+### Internals
+
+- None
+
+
 ## Release 11.0.0-beta.0 (2021-05-18)
 
 [Changes since v11.0.0-alpha.0](https://github.com/realm/realm-studio/compare/v11.0.0-alpha.0...v11.0.0-beta.0)
