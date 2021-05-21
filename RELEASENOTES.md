@@ -6,7 +6,7 @@
 
 ### Fixed
 
-- None
+- "Download a demo Realm file" links to a demo-files of the correct file-format. ([#1429](https://github.com/realm/realm-studio/pull/1429))
 
 ### Internals
 
