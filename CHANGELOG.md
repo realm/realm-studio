@@ -15,7 +15,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Fixed
 
 - Fixed the "browser" window crashing (rendered a white screen). The Realm JS native module was missing from the asar archive after the change to cmake moved the build artifacts. ([#1426](https://github.com/realm/realm-studio/pull/1426))
-- Contained errors from rendering a cell to the cell component that threw. ([#1435](https://github.com/realm/realm-studio/pull/1435))
 
 ### Internals
 
