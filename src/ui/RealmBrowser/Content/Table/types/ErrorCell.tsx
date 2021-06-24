@@ -16,13 +16,16 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-export { DataCell } from './DataCell';
-export { DefaultCell } from './DefaultCell';
-export { DictionaryCell } from './DictionaryCell';
-export { ListCell } from './ListCell';
-export { ListIndexCell } from './ListIndexCell';
-export { MixedCell } from './MixedCell';
-export { ObjectCell } from './ObjectCell';
-export { SetCell } from './SetCell';
-export { StringCell } from './StringCell';
-export { ErrorCell } from './ErrorCell';
+import classNames from 'classnames';
+import React from 'react';
+
+export const ErrorCell = ({ message }: { message: string }) => (
+  <div
+    className={classNames(
+      'RealmBrowser__Table__StringCell',
+      'RealmBrowser__Table__StringCell--disabled',
+    )}
+  >
+    {message}
+  </div>
+);
