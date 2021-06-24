@@ -32,6 +32,7 @@ import {
   ObjectCell,
   SetCell,
   StringCell,
+  ErrorCell,
 } from './types';
 
 const getCellContent = ({
@@ -104,19 +105,9 @@ const getCellContent = ({
   }
 };
 
-export const Cell = ({
-  editMode,
-  isHighlighted,
-  isScrolling,
-  onCellClick,
-  onContextMenu,
-  onHighlighted,
-  onUpdateValue,
-  onValidated,
-  property,
-  style,
-  value,
-}: {
+type PropertyCellProps = {
+  kind: 'property';
+  style: React.CSSProperties;
   editMode: EditMode;
   isHighlighted?: boolean;
   isScrolling?: boolean;
@@ -126,36 +117,49 @@ export const Cell = ({
   onUpdateValue: (value: string) => void;
   onValidated: (valid: boolean) => void;
   property: IPropertyWithName;
-  style: React.CSSProperties;
   value: any;
-}) => {
-  const content = getCellContent({
-    editMode,
-    isHighlighted,
-    isScrolling,
-    onValidated,
-    onHighlighted,
-    onUpdateValue,
-    property,
-    value,
-  });
-  return (
-    <div
-      className={classNames('RealmBrowser__Table__Cell', {
-        'RealmBrowser__Table__Cell--highlighted': isHighlighted,
-      })}
-      onClick={onCellClick}
-      onContextMenu={onContextMenu}
-      onFocus={() => {
-        // When the cell gets focussed (could happen by clicking or tabbing)
-        // - ensure it also gets highlighted
-        if (!isHighlighted) {
-          onHighlighted();
-        }
-      }}
-      style={style}
-    >
-      {content}
-    </div>
-  );
+};
+
+type ErrorCellProps = {
+  kind: 'error';
+  style: React.CSSProperties;
+  error: string;
+};
+
+export const Cell = (props: PropertyCellProps | ErrorCellProps) => {
+  if (props.kind === 'error') {
+    return (
+      <div className={'RealmBrowser__Table__Cell'} style={props.style}>
+        <ErrorCell message={props.error} />
+      </div>
+    );
+  } else {
+    const content = getCellContent(props);
+    const {
+      style,
+      isHighlighted,
+      onCellClick,
+      onContextMenu,
+      onHighlighted,
+    } = props;
+    return (
+      <div
+        className={classNames('RealmBrowser__Table__Cell', {
+          'RealmBrowser__Table__Cell--highlighted': isHighlighted,
+        })}
+        onClick={onCellClick}
+        onContextMenu={onContextMenu}
+        onFocus={() => {
+          // When the cell gets focussed (could happen by clicking or tabbing)
+          // - ensure it also gets highlighted
+          if (!isHighlighted) {
+            onHighlighted();
+          }
+        }}
+        style={style}
+      >
+        {content}
+      </div>
+    );
+  }
 };

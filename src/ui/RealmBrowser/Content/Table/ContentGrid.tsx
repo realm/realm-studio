@@ -177,84 +177,91 @@ export class ContentGrid extends React.PureComponent<IContentGridProps> {
 
     this.cellRenderers = properties.map(property => {
       return (cellProps: GridCellProps) => {
-        const {
-          editMode,
-          filteredSortedResults,
-          getCellValue,
-          highlight,
-          onCellChange,
-          onCellClick,
-          onCellHighlighted,
-          onCellValidated,
-          onContextMenu,
-        } = this.props;
-        const { rowIndex, columnIndex } = cellProps;
-        const rowObject = filteredSortedResults[cellProps.rowIndex];
-        const cellValue = getCellValue(rowObject, cellProps);
-        const isCellHighlighted = highlight
-          ? isRowHighlighted(highlight, rowIndex)
-          : false;
+        try {
+          const {
+            editMode,
+            filteredSortedResults,
+            getCellValue,
+            highlight,
+            onCellChange,
+            onCellClick,
+            onCellHighlighted,
+            onCellValidated,
+            onContextMenu,
+          } = this.props;
+          const { rowIndex, columnIndex } = cellProps;
+          const rowObject = filteredSortedResults[cellProps.rowIndex];
+          const cellValue = getCellValue(rowObject, cellProps);
+          const isCellHighlighted = highlight
+            ? isRowHighlighted(highlight, rowIndex)
+            : false;
 
-        return (
-          <Cell
-            editMode={property.isPrimaryKey ? EditMode.Disabled : editMode}
-            isHighlighted={isCellHighlighted}
-            key={cellProps.key}
-            onCellClick={e => {
-              if (onCellClick) {
-                onCellClick(
-                  {
+          return (
+            <Cell
+              kind="property"
+              editMode={property.isPrimaryKey ? EditMode.Disabled : editMode}
+              isHighlighted={isCellHighlighted}
+              key={cellProps.key}
+              onCellClick={e => {
+                if (onCellClick) {
+                  onCellClick(
+                    {
+                      cellValue,
+                      columnIndex,
+                      property,
+                      rowIndex,
+                      rowObject,
+                    },
+                    e,
+                  );
+                }
+              }}
+              onValidated={valid => {
+                if (onCellValidated) {
+                  onCellValidated(rowIndex, columnIndex, valid);
+                }
+              }}
+              onContextMenu={e => {
+                e.stopPropagation();
+                // Open the context menu
+                if (onContextMenu) {
+                  onContextMenu(e, {
                     cellValue,
                     columnIndex,
                     property,
                     rowIndex,
                     rowObject,
-                  },
-                  e,
-                );
-              }
-            }}
-            onValidated={valid => {
-              if (onCellValidated) {
-                onCellValidated(rowIndex, columnIndex, valid);
-              }
-            }}
-            onContextMenu={e => {
-              e.stopPropagation();
-              // Open the context menu
-              if (onContextMenu) {
-                onContextMenu(e, {
-                  cellValue,
-                  columnIndex,
-                  property,
-                  rowIndex,
-                  rowObject,
-                });
-              }
-            }}
-            onHighlighted={() => {
-              if (onCellHighlighted) {
-                onCellHighlighted({
-                  rowIndex,
-                  columnIndex,
-                });
-              }
-            }}
-            onUpdateValue={value => {
-              if (onCellChange) {
-                onCellChange({
-                  cellValue: value,
-                  parent: filteredSortedResults,
-                  property,
-                  rowIndex,
-                });
-              }
-            }}
-            property={property}
-            style={cellProps.style}
-            value={cellValue}
-          />
-        );
+                  });
+                }
+              }}
+              onHighlighted={() => {
+                if (onCellHighlighted) {
+                  onCellHighlighted({
+                    rowIndex,
+                    columnIndex,
+                  });
+                }
+              }}
+              onUpdateValue={value => {
+                if (onCellChange) {
+                  onCellChange({
+                    cellValue: value,
+                    parent: filteredSortedResults,
+                    property,
+                    rowIndex,
+                  });
+                }
+              }}
+              property={property}
+              style={cellProps.style}
+              value={cellValue}
+            />
+          );
+        } catch (err) {
+          return (
+            <Cell kind="error" style={cellProps.style} error={err.message} />
+          );
+        }
       };
     });
   }
