@@ -224,6 +224,8 @@ pipeline {
       stages {
         stage("Electron build") {
           steps {
+            // FIXME: Trick electron-builder into considering the realm package a native module
+            sh 'touch node_modules/realm/binding.gyp'
             // Run the electron builder
             nvm(env.NODE_VERSION) {
               withCredentials([
