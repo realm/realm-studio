@@ -14,7 +14,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
-- None
+- Fixed browsing Realms on non-darwin platforms. ([184667](https://github.com/realm/realm-studio/commit/1846675e7cece3a404a07689fcffdd2e11b2a6bf))
 
 ### Internals
 
