@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release 5.0.1 (2021-06-29)
+
+[Changes since v5.0.0](https://github.com/realm/realm-studio/compare/v5.0.0...v5.0.1)
+
+### Enhancements
+
+- None
+
+### Fixed
+
+- None
+
+### Internals
+
+- None
+
+
 ## Release 5.0.0 (2020-09-22)
 
 [Changes since v4.0.0](https://github.com/realm/realm-studio/compare/v4.0.0...v5.0.0)
