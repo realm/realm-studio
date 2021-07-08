@@ -68,9 +68,8 @@ export const cellRangeRenderer = (
     columnIndex <= columnStopIndex;
     columnIndex++
   ) {
-    const columnDatum = columnSizeAndPositionManager.getSizeAndPositionOfCell(
-      columnIndex,
-    );
+    const columnDatum =
+      columnSizeAndPositionManager.getSizeAndPositionOfCell(columnIndex);
     const isCellVisible =
       columnIndex >= visibleColumnIndices.start &&
       columnIndex <= visibleColumnIndices.stop &&
@@ -160,118 +159,117 @@ export const cellRangeRenderer = (
   return renderedCells;
 };
 
-export const rowCellRangeRenderer = (rowRenderer: GridRowRenderer) => (
-  props: GridCellRangeProps,
-) => {
-  // Extract the props as local variables
-  const {
-    cellCache,
-    columnSizeAndPositionManager,
-    horizontalOffsetAdjustment,
-    isScrolling,
-    parent, // Grid (or List or Table)
-    rowSizeAndPositionManager,
-    rowStartIndex,
-    rowStopIndex,
-    styleCache,
-    verticalOffsetAdjustment,
-    visibleRowIndices,
-  } = props;
+export const rowCellRangeRenderer =
+  (rowRenderer: GridRowRenderer) => (props: GridCellRangeProps) => {
+    // Extract the props as local variables
+    const {
+      cellCache,
+      columnSizeAndPositionManager,
+      horizontalOffsetAdjustment,
+      isScrolling,
+      parent, // Grid (or List or Table)
+      rowSizeAndPositionManager,
+      rowStartIndex,
+      rowStopIndex,
+      styleCache,
+      verticalOffsetAdjustment,
+      visibleRowIndices,
+    } = props;
 
-  const renderedRows: React.ReactNode[] = [];
+    const renderedRows: React.ReactNode[] = [];
 
-  // Browsers have native size limits for elements (eg Chrome 33M pixels, IE 1.5M pixes).
-  // User cannot scroll beyond these size limitations.
-  // In order to work around this, ScalingCellSizeAndPositionManager compresses offsets.
-  // We should never cache styles for compressed offsets though as this can lead to bugs.
-  // See issue #576 for more.
-  const areOffsetsAdjusted =
-    columnSizeAndPositionManager.areOffsetsAdjusted() ||
-    rowSizeAndPositionManager.areOffsetsAdjusted();
+    // Browsers have native size limits for elements (eg Chrome 33M pixels, IE 1.5M pixes).
+    // User cannot scroll beyond these size limitations.
+    // In order to work around this, ScalingCellSizeAndPositionManager compresses offsets.
+    // We should never cache styles for compressed offsets though as this can lead to bugs.
+    // See issue #576 for more.
+    const areOffsetsAdjusted =
+      columnSizeAndPositionManager.areOffsetsAdjusted() ||
+      rowSizeAndPositionManager.areOffsetsAdjusted();
 
-  const canCacheStyle = !isScrolling && !areOffsetsAdjusted;
+    const canCacheStyle = !isScrolling && !areOffsetsAdjusted;
 
-  for (let rowIndex = rowStartIndex; rowIndex <= rowStopIndex; rowIndex++) {
-    const rowDatum = rowSizeAndPositionManager.getSizeAndPositionOfCell(
-      rowIndex,
-    );
+    for (let rowIndex = rowStartIndex; rowIndex <= rowStopIndex; rowIndex++) {
+      const rowDatum =
+        rowSizeAndPositionManager.getSizeAndPositionOfCell(rowIndex);
 
-    const rowKey = `row-${rowIndex}`;
+      const rowKey = `row-${rowIndex}`;
 
-    const isRowVisible =
-      rowIndex >= visibleRowIndices.start && rowIndex <= visibleRowIndices.stop;
-    let rowStyle: React.CSSProperties;
+      const isRowVisible =
+        rowIndex >= visibleRowIndices.start &&
+        rowIndex <= visibleRowIndices.stop;
+      let rowStyle: React.CSSProperties;
 
-    // Cache style objects so shallow-compare doesn't re-render unnecessarily.
-    if (canCacheStyle && styleCache[rowKey]) {
-      rowStyle = styleCache[rowKey];
-    } else {
-      rowStyle = {
-        height: rowDatum.size,
-        left: 0,
-        position: 'absolute',
-        right: 0,
-        top: rowDatum.offset + verticalOffsetAdjustment,
-      };
+      // Cache style objects so shallow-compare doesn't re-render unnecessarily.
+      if (canCacheStyle && styleCache[rowKey]) {
+        rowStyle = styleCache[rowKey];
+      } else {
+        rowStyle = {
+          height: rowDatum.size,
+          left: 0,
+          position: 'absolute',
+          right: 0,
+          top: rowDatum.offset + verticalOffsetAdjustment,
+        };
 
-      styleCache[rowKey] = rowStyle;
-    }
-
-    const renderRow = () => {
-      const rowRendererParams: IGridRowProps = {
-        children: cellRangeRenderer(rowIndex, rowDatum, canCacheStyle, {
-          ...props,
-          columnStartIndex: 0,
-          columnStopIndex: columnSizeAndPositionManager.getCellCount() - 1,
-        }),
-        isScrolling,
-        isVisible: isRowVisible,
-        key: rowKey,
-        parent,
-        rowIndex,
-        style: rowStyle,
-      };
-      return rowRenderer(rowRendererParams);
-    };
-
-    // Avoid re-creating rows of cells while scrolling.
-    // This can lead to the same cell being created many times and can cause performance issues for "heavy" cells.
-    // If a scroll is in progress- cache and reuse cells.
-    // This cache will be thrown away once scrolling completes.
-    // However if we are scaling scroll positions and sizes, we should also avoid caching.
-    // This is because the offset changes slightly as scroll position changes and caching leads to stale values.
-    // For more info refer to issue #395
-
-    let renderedRow;
-
-    if (
-      isScrolling &&
-      !horizontalOffsetAdjustment &&
-      !verticalOffsetAdjustment
-    ) {
-      if (!cellCache[rowKey]) {
-        cellCache[rowKey] = renderRow();
+        styleCache[rowKey] = rowStyle;
       }
 
-      renderedRow = cellCache[rowKey];
+      const renderRow = () => {
+        const rowRendererParams: IGridRowProps = {
+          children: cellRangeRenderer(rowIndex, rowDatum, canCacheStyle, {
+            ...props,
+            columnStartIndex: 0,
+            columnStopIndex: columnSizeAndPositionManager.getCellCount() - 1,
+          }),
+          isScrolling,
+          isVisible: isRowVisible,
+          key: rowKey,
+          parent,
+          rowIndex,
+          style: rowStyle,
+        };
+        return rowRenderer(rowRendererParams);
+      };
 
-      // If the user is no longer scrolling, don't cache cells.
-      // This makes dynamic cell content difficult for users and would also lead to a heavier memory footprint.
-    } else {
-      renderedRow = renderRow();
+      // Avoid re-creating rows of cells while scrolling.
+      // This can lead to the same cell being created many times and can cause performance issues for "heavy" cells.
+      // If a scroll is in progress- cache and reuse cells.
+      // This cache will be thrown away once scrolling completes.
+      // However if we are scaling scroll positions and sizes, we should also avoid caching.
+      // This is because the offset changes slightly as scroll position changes and caching leads to stale values.
+      // For more info refer to issue #395
+
+      let renderedRow;
+
+      if (
+        isScrolling &&
+        !horizontalOffsetAdjustment &&
+        !verticalOffsetAdjustment
+      ) {
+        if (!cellCache[rowKey]) {
+          cellCache[rowKey] = renderRow();
+        }
+
+        renderedRow = cellCache[rowKey];
+
+        // If the user is no longer scrolling, don't cache cells.
+        // This makes dynamic cell content difficult for users and would also lead to a heavier memory footprint.
+      } else {
+        renderedRow = renderRow();
+      }
+
+      if (renderedRow == null) {
+        continue;
+      }
+
+      warnAboutMissingStyle(parent, renderedRow);
+
+      renderedRows.push(renderedRow);
     }
 
-    if (renderedRow == null) {
-      continue;
-    }
-
-    warnAboutMissingStyle(parent, renderedRow);
-
-    renderedRows.push(renderedRow);
-  }
-
-  return renderedRows;
-};
+    return renderedRows;
+  };
 
 function warnAboutMissingStyle(parent: any, renderedCell: any) {
   if (process.env.NODE_ENV === 'production' || !renderedCell) {

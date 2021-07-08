@@ -105,7 +105,7 @@ declare module 'react-inspector' {
   */
 
   export class ObjectInspector<
-    P extends IObjectInpectorProps = IObjectInpectorProps
+    P extends IObjectInpectorProps = IObjectInpectorProps,
   > extends React.Component<P> {
     protected setExpanded(path: string, expanded: boolean): void;
   }

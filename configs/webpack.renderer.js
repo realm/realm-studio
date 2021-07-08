@@ -8,47 +8,60 @@ module.exports = (env, argv) => {
   const baseConfig = require('./webpack.base.js')(env, argv);
 
   return merge(baseConfig, {
-    devServer: isDevelopment ? {
-      hot: true,
-      inline: true
-    } : {},
+    devServer: isDevelopment
+      ? {
+          hot: true,
+          inline: true,
+        }
+      : {},
     entry: {
-      renderer: "./src/renderer.tsx",
-      sentry: "./src/sentry.ts"
+      renderer: './src/renderer.tsx',
+      sentry: './src/sentry.ts',
     },
     module: {
       rules: [
         {
           test: /\.tsx?$/,
           use: 'ts-loader',
-        }, {
+        },
+        {
           test: /\.html$/,
-          use: 'file-loader'
-        }, {
+          use: 'file-loader',
+        },
+        {
           test: /\.scss$/,
-          use: [ 'style-loader', 'css-loader', 'resolve-url-loader', 'sass-loader?sourceMap' ]
-        }, {
+          use: [
+            'style-loader',
+            'css-loader',
+            'resolve-url-loader',
+            'sass-loader',
+          ],
+        },
+        {
           test: /\.(jpe?g|png|gif)$/i,
-          use: [ 'file-loader' ],
-        }, {
+          use: ['file-loader'],
+        },
+        {
           test: /\.svg$/,
           use: 'svg-sprite-loader',
-          include: path.resolve(__dirname, '../static/svgs')
-        }, {
+          include: path.resolve(__dirname, '../static/svgs'),
+        },
+        {
           test: /\.(eot|svg|ttf|woff|woff2)$/,
           use: 'file-loader',
-          exclude: path.resolve(__dirname, '../static/svgs')
-        }, {
+          exclude: path.resolve(__dirname, '../static/svgs'),
+        },
+        {
           test: /\.md$/,
-          use: 'file-loader'
-        }
-      ]
+          use: 'file-loader',
+        },
+      ],
     },
     output: {
       filename: '[name].bundle.js',
       chunkFilename: '[name].renderer.bundle.js',
       publicPath: isDevelopment ? 'http://localhost:8080/' : '',
     },
-    target: 'electron-renderer'
+    target: 'electron-renderer',
   });
 };
