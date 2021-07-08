@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release 11.1.0 (2021-07-08)
+
+[Changes since v11.0.1](https://github.com/realm/realm-studio/compare/v11.0.1...v11.1.0)
+
+### Enhancements
+
+- Added reading properties of type "Dictionary". ([#1443](https://github.com/realm/realm-studio/pull/1443))
+
+### Fixed
+
+- Fixed opening synchronized Realm files. ([#1443](https://github.com/realm/realm-studio/pull/1443))
+
+### Internals
+
+- Upgraded Realm JS to v10.6.0. ([#1443](https://github.com/realm/realm-studio/pull/1443))
+
+
 ## Release 11.0.1 (2021-06-29)
 
 [Changes since v11.0.0](https://github.com/realm/realm-studio/compare/v11.0.0...v11.0.1)
