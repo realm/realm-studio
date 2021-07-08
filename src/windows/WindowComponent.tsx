@@ -45,7 +45,8 @@ interface ITrackedProperties {
 
 export abstract class WindowComponent
   extends React.Component
-  implements IMenuGeneratorProps {
+  implements IMenuGeneratorProps
+{
   protected menuGenerator?: IMenuGenerator;
   protected options = getWindowOptions();
   protected CurrentWindow = getWindowClass(this.options.type);

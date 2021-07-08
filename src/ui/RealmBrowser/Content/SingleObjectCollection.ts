@@ -22,7 +22,8 @@
  */
 export class SingleObjectCollection<T extends Realm.Object>
   extends Array<T>
-  implements Realm.Results<T> {
+  implements Realm.Results<T>
+{
   public readonly type: Realm.PropertyType;
   public readonly optional = false;
 

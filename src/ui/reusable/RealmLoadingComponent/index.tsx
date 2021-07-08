@@ -28,7 +28,7 @@ export interface IRealmLoadingComponentState {
 
 export abstract class RealmLoadingComponent<
   P,
-  S extends IRealmLoadingComponentState
+  S extends IRealmLoadingComponentState,
 > extends React.Component<P, S> {
   protected abstract onRealmChanged: () => void;
   protected abstract onRealmSchemaChanged: () => void;

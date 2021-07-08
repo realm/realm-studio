@@ -3,7 +3,8 @@
 import { display as displayDataCell } from '../ui/RealmBrowser/Content/Table/types/DataCell';
 
 // TODO: Investigate better solution.
-const $REF_MATCHER = /\s*\"\$ref[Id]*\" *: *(\"(.*?)\"(,|\s|)|\s*\{(.*?)\}(,|\s|))/g;
+const $REF_MATCHER =
+  /\s*\"\$ref[Id]*\" *: *(\"(.*?)\"(,|\s|)|\s*\{(.*?)\}(,|\s|))/g;
 
 const DEFAULT_POSTFIX = ' (...)';
 const INDENTATION = 2;

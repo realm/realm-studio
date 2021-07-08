@@ -97,7 +97,7 @@ class RealmStudioStore {
   ) {
     const removalCallback = this.store.onDidChange(key, callback);
     // The store actually returns a function that can be called to remove the listener
-    return (removalCallback as any) as RemovalCallback;
+    return removalCallback as any as RemovalCallback;
   }
 
   public delete(key: string) {

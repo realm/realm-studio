@@ -112,7 +112,8 @@ class RealmBrowserContainer
     IRealmBrowserWindowProps & IMenuGeneratorProps,
     IRealmBrowserState
   >
-  implements IMenuGenerator {
+  implements IMenuGenerator
+{
   public state: IRealmBrowserState = {
     dataVersion: 0,
     allowCreate: false,

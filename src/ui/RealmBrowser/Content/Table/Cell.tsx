@@ -135,13 +135,8 @@ export const Cell = (props: PropertyCellProps | ErrorCellProps) => {
     );
   } else {
     const content = getCellContent(props);
-    const {
-      style,
-      isHighlighted,
-      onCellClick,
-      onContextMenu,
-      onHighlighted,
-    } = props;
+    const { style, isHighlighted, onCellClick, onContextMenu, onHighlighted } =
+      props;
     return (
       <div
         className={classNames('RealmBrowser__Table__Cell', {

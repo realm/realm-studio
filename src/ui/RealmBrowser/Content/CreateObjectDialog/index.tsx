@@ -151,9 +151,8 @@ class CreateObjectDialogContainer extends React.PureComponent<
       nextProps.isOpen &&
       (!this.props.isOpen || this.props.schema !== nextProps.schema)
     ) {
-      const values = CreateObjectDialogContainer.generateInitialValues(
-        nextProps,
-      );
+      const values =
+        CreateObjectDialogContainer.generateInitialValues(nextProps);
       this.setState({ values });
     }
   }
