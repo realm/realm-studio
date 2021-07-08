@@ -23,11 +23,11 @@ module.exports = (env, argv) => {
       }),
     ],
     module: {
-      rules: []
+      rules: [],
     },
     node: {
       // This will make __dirname equal the bundles path
-      __dirname: false
+      __dirname: false,
     },
     output: {
       path: resolve(__dirname, '../build'),
@@ -35,23 +35,27 @@ module.exports = (env, argv) => {
     plugins: [
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify(
-          isDevelopment ? 'development' : 'production'
+          isDevelopment ? 'development' : 'production',
         ),
       }),
-    ].concat(isDevelopment ? [
-      // Plugins for development
-      new webpack.HotModuleReplacementPlugin(),
-    ] : [
-      new SentryPlugin({
-        release: `${package.name}@${package.version}`,
-        include: './build',
-        ignore: ['node_modules', 'webpack.config.js'],
-        configFile: resolve(__dirname, 'sentry.properties'),
-        ext: ['map', 'js'],
-        urlPrefix: '~/build/',
-        dryRun: !process.env.SENTRY_AUTH_TOKEN,
-      }),
-    ]),
+    ].concat(
+      isDevelopment
+        ? [
+            // Plugins for development
+            new webpack.HotModuleReplacementPlugin(),
+          ]
+        : [
+            new SentryPlugin({
+              release: `${package.name}@${package.version}`,
+              include: './build',
+              ignore: ['node_modules', 'webpack.config.js'],
+              configFile: resolve(__dirname, 'sentry.properties'),
+              ext: ['map', 'js'],
+              urlPrefix: '~/build/',
+              dryRun: !process.env.SENTRY_AUTH_TOKEN,
+            }),
+          ],
+    ),
     resolve: {
       alias: {
         'realm-studio-styles': resolve(__dirname, '../styles'),

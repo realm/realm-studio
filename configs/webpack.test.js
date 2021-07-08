@@ -1,6 +1,6 @@
 const { merge } = require('webpack-merge');
 
-module.exports = (env) => {
+module.exports = env => {
   const baseConfig = require('./webpack.base.js')(env, {
     // We need to manually pass-in the mode due to
     // https://github.com/zinserjan/mocha-webpack/pull/225
@@ -12,13 +12,15 @@ module.exports = (env) => {
       rules: [
         {
           test: /\.tsx?$/,
-          use: 'ts-loader'
-        }, {
+          use: 'ts-loader',
+        },
+        {
           test: /\.html$/,
-          use: 'file-loader'
-        }, {
+          use: 'file-loader',
+        },
+        {
           test: /\.(scss|svg)$/,
-          use: 'null-loader'
+          use: 'null-loader',
         },
       ],
     },
