@@ -86,7 +86,7 @@ export abstract class ActionSender {
       requestHandle.reject = reject;
     });
     // Hold on to and return the request handle
-    if (requestHandle.promise && requestHandle.resolve) {
+    if (typeof requestHandle.promise === 'object' && requestHandle.resolve) {
       this.requests[requestId] = requestHandle as IRequestHandle;
       return this.requests[requestId].promise;
     } else {
