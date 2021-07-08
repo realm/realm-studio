@@ -1,26 +1,17 @@
 # Dependencies
 
-This document will describe known limitations on the dependencies, specifically why some of the packages are not
-upgraded to the latest current versions:
+This document will describe known limitations on the dependencies, specifically why some of the packages are not upgraded to the latest current versions:
 
-## Webpack
+## Electron (and spectron)
 
-We're using `mochapack` (a fork of `mocha-webpack`) to run our tests (enabling importing stylesheets, images, etc) and [this doesn't yet support WebPack v5](https://github.com/sysgears/mochapack/issues/82).
+We're on Electron v11 and consequently spectron v13.
 
-## [sass-loader](https://www.npmjs.com/package/sass-loader)
+Upgrading introduce a couple of breaking changes that require attention:
+- [v12 breaking changes](https://www.electronjs.org/releases/stable?version=12&page=3#breaking-changes-1200)
+- [v13 breaking changes](https://www.electronjs.org/releases/stable?version=13&page=2#breaking-changes-1300)
 
-Pinned at v10 since v11 introduce [this breaking change](https://github.com/webpack-contrib/sass-loader/blob/master/CHANGELOG.md#-breaking-changes):
+## Bootstrap
 
-> minimum supported webpack version is 5
+The components of the project was built around Bootstrap v4.
 
-We can unpin this when `mochapack` supports WebPack v5.
-
-## [ts-loader](https://www.npmjs.com/package/ts-loader)
-
-Pinned at v8 since v9 introduce [this breaking change](https://github.com/TypeStrong/ts-loader/blob/main/CHANGELOG.md#v900):
-
-> Breaking changes:
-> - minimum webpack version: 5
-> - minimum node version: 12
-
-We can unpin this when `mochapack` supports WebPack v5.
+Instead of upgrading to v5 we'll probably adopt [the MongoDB design system](https://www.mongodb.design/).
