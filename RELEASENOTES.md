@@ -6,7 +6,7 @@
 
 ### Fixed
 
-- None
+- Implemented a simpler and shallow way of serializing objects (and lists of objects) in the browser. ([#1452](https://github.com/realm/realm-studio/pull/1452), since v11.0.0)
 
 ### Internals
 
