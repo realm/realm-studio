@@ -14,26 +14,43 @@ type SafeJsonOptions = {
   cleanupRefs?: boolean;
   maxLength?: number;
   postFix?: string;
+  shallow?: boolean;
 };
 
 export const asSafeJsonString = (
   value: unknown,
-  options?: SafeJsonOptions,
+  options: SafeJsonOptions = {},
 ): string => {
   let json: string;
-  const indentation = options?.pretty ? INDENTATION : undefined;
+  const indentation = options.pretty ? INDENTATION : undefined;
 
-  try {
-    json = JSON.stringify(value, null, indentation);
-  } catch {
+  if (options.shallow && value instanceof Realm.Object) {
+    // Turn the object into a plain object containing values only for non-object and non-list properties.
+    const properties = value.objectSchema().properties as Record<
+      string,
+      Realm.ObjectSchemaProperty
+    >;
+    const shallowObjectEntries = Object.entries(properties)
+      .filter(([, prop]) => prop.type !== 'object' && prop.type !== 'list')
+      .map(([name]) => [name, (value as any)[name]]);
+    json = JSON.stringify(
+      Object.fromEntries(shallowObjectEntries),
+      null,
+      indentation,
+    );
+  } else {
     try {
-      json = JSON.stringify(
-        value,
-        Realm.JsonSerializationReplacer,
-        indentation,
-      );
-    } catch (err) {
-      json = err.message ? err.message : err;
+      json = JSON.stringify(value, null, indentation);
+    } catch {
+      try {
+        json = JSON.stringify(
+          value,
+          Realm.JsonSerializationReplacer,
+          indentation,
+        );
+      } catch (err) {
+        json = err.message ? err.message : err;
+      }
     }
   }
 
@@ -114,6 +131,7 @@ export const getCellStringRepresentation = (
       : asSafeJsonString(value, {
           cleanupRefs: true,
           maxLength: VALUE_STRING_LENGTH_LIMIT,
+          shallow: true,
         });
   }
 
