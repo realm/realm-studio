@@ -31,4 +31,4 @@ Realm Studio is published under [the Apache 2.0 license](LICENSE).
 
 If you use Realm and are happy with it, all we ask is that you please consider sending out a tweet mentioning [@realm](https://twitter.com/realm) to share your thoughts.
 
-![analytics](https://ga-beacon.appspot.com/UA-50247013-2/realm-studio/README?pixel)
+<img style="width: 0px; height: 0px;" src="https://3eaz4mshcd.execute-api.us-east-1.amazonaws.com/prod?s=https://github.com/realm/realm-studio#README.md">
