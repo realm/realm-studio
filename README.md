@@ -3,7 +3,7 @@
 Realm Studio is the tool, any developer or system administrator would use when building and maintaining their app built
 on the Realm Mobile Platform.
 
-Visit https://realm.io/products/realm-studio/ for more information on Realm Studio.
+Visit https://docs.mongodb.com/realm/studio/ for more information on Realm Studio.
 
 ## Installing
 
@@ -16,8 +16,9 @@ To download a specific version of Realm Studio, see https://studio-releases.real
 
 ## Code of Conduct
 
-This project adheres to the Contributor Covenant [code of conduct](https://realm.io/conduct/).
-By participating, you are expected to uphold this code. Please report unacceptable behavior to [info@realm.io](mailto:info+conduct@realm.io).
+This project adheres to the [MongoDB Code of Conduct](https://www.mongodb.com/community-code-of-conduct).
+By participating, you are expected to uphold this code. Please report
+unacceptable behavior to [community-conduct@mongodb.com](mailto:community-conduct@mongodb.com).
 
 ## Developing and contributing
 
