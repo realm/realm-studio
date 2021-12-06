@@ -135,7 +135,9 @@ export class Updater {
       if (isDevelopment) {
         this.performFakeUpdate();
       } else {
-        autoUpdater.checkForUpdates();
+        autoUpdater.checkForUpdates().catch((err: Error) => {
+          console.error(`Failed checking for update: ${err.stack}`);
+        });
       }
     }
   }

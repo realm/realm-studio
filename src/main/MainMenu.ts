@@ -137,7 +137,7 @@ export const getDefaultMenuTemplate = (
           click: () => {
             electronOrRemote.shell
               .openPath(electronOrRemote.app.getPath('userData'))
-              .catch(err => {
+              .catch((err: unknown) => {
                 showError('Failed to open cache folder', err);
               });
           },

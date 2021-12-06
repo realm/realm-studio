@@ -210,6 +210,15 @@ export class Application {
     this.updater.checkForUpdates();
   }
 
+  private async showGreetingWindow() {
+    this.setDefaultMenu();
+    if (this.windowManager.windows.length === 0) {
+      // Wait for the greeting window to show - if no other windows are open
+      await this.showGreeting();
+    }
+    this.performDelayedTasks();
+  }
+
   private addAppListeners() {
     app.addListener('ready', this.onReady);
     app.addListener('activate', this.onActivate);
@@ -226,13 +235,8 @@ export class Application {
     app.removeListener('web-contents-created', this.onWebContentsCreated);
   }
 
-  private onReady = async () => {
-    this.setDefaultMenu();
-    if (this.windowManager.windows.length === 0) {
-      // Wait for the greeting window to show - if no other windows are open
-      await this.showGreeting();
-    }
-    this.performDelayedTasks();
+  private onReady = () => {
+    this.showGreetingWindow().catch(console.error);
   };
 
   private onActivate = () => {
