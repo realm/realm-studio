@@ -10,4 +10,4 @@
 
 ### Internals
 
-- None
+- Upgrading all dependencies, including Electron to v16 and Bootstrap to v5 ([#1449](https://github.com/realm/realm-studio/pull/1449))
