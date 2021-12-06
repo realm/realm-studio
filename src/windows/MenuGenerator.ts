@@ -16,7 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import { MenuItemConstructorOptions, remote } from 'electron';
+import { MenuItemConstructorOptions } from 'electron';
+import * as remote from '@electron/remote';
 
 import { getDefaultMenuTemplate } from '../main/MainMenu';
 

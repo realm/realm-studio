@@ -26,8 +26,8 @@ import './utils/process-directories';
 
 import { app } from 'electron';
 
-// TODO: Consider if we could change this to `true`
-app.allowRendererProcessReuse = false;
+import * as ElectronRemote from '@electron/remote/main';
+ElectronRemote.initialize();
 
 // Loading the fetch API polyfill - so we can use this from the node main process too.
 import 'isomorphic-fetch';

@@ -17,13 +17,13 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import assert from 'assert';
-import electron from 'electron';
 import fs from 'fs-extra';
 import { resolve } from 'path';
 
 import { getWindowOptions } from '../windows/WindowOptions';
+import { getElectronOrRemote } from '../utils';
 
-const app = electron.app || electron.remote.app;
+const app = getElectronOrRemote().app;
 const userDataPath = app.getPath('userData');
 const rendererPattern = /^renderer-.+$/;
 

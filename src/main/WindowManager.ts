@@ -20,6 +20,7 @@ import * as sentry from '@sentry/electron';
 import { app, BrowserWindow, screen, shell } from 'electron';
 import path from 'path';
 import url from 'url';
+import * as ElectronRemote from '@electron/remote/main';
 
 import { store } from '../store';
 import {
@@ -116,8 +117,8 @@ export class WindowManager {
       ...savedWindowOptions,
       webPreferences: {
         nodeIntegration: true,
-        // TODO: Since the remote interface is being deprecated, we should stop relying on it
-        enableRemoteModule: true,
+        // Allow requires from a renderer process
+        contextIsolation: false,
         // Load Sentry as a preload in production - this doesn't work in development because the
         // sentry.js is not emitted to the build folder.
         preload: isDevelopment
@@ -151,6 +152,9 @@ export class WindowManager {
       type: options.type,
       singletonKey,
     });
+
+    // Allow the remote API
+    ElectronRemote.enable(window.webContents);
 
     // If the window should maximize - let's maximize it when it gets shown
     if (maximize) {

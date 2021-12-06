@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import { remote } from 'electron';
+import * as remote from '@electron/remote';
 import moment from 'moment';
 import React from 'react';
 

@@ -17,6 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import electron from 'electron';
+import * as remote from '@electron/remote';
 import React from 'react';
 
 import { main } from '../../actions/main';
@@ -44,7 +45,7 @@ class GreetingContainer extends React.Component<
     updateStatus: {
       state: 'up-to-date',
     },
-    version: electron.remote.app.getVersion() || 'unknown',
+    version: remote.app.getVersion() || 'unknown',
   };
 
   public componentDidMount() {

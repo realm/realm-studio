@@ -17,11 +17,13 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import electron from 'electron';
-
 import { main } from '../actions/main';
 import { ImportFormat } from '../services/data-importer';
 import { store } from '../store';
 import { showError } from '../ui/reusable/errors';
+import { getElectronOrRemote } from '../utils';
+
+const electronOrRemote = getElectronOrRemote();
 
 const enableTogglingInternalFeatures =
   process.env.NODE_ENV === 'development' ||
@@ -31,7 +33,6 @@ export const getDefaultMenuTemplate = (
   updateMenu: () => void,
 ): electron.MenuItemConstructorOptions[] => {
   const showInternalFeatures = store.shouldShowInternalFeatures();
-  const electronOrRemote = electron.remote || electron;
   const template: electron.MenuItemConstructorOptions[] = [
     {
       label: 'File',

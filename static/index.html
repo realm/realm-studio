@@ -9,13 +9,13 @@
     <div id="app"></div>
     <script>
       // Locate the renderer bundle and require it to start up the app
-      const electron = require('electron');
+      const remote = require('@electron/remote');
       const path = require('path');
       // This will be emitted to (and run from) the build directory by the WebPack file-loader
       // which is why this require will resolve to the renderer bundle correctly.
       // Simply loading a relative path fails when releasing a portable app for windows, instead
       // we'll resolve the relative path of the renderer bundle to the running app's path.
-      const appPath = electron.remote.app.getAppPath();
+      const appPath = remote.app.getAppPath();
       const rendererBundlePath = path.resolve(appPath, './build/renderer.bundle.js');
       require(rendererBundlePath);
     </script>

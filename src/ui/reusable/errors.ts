@@ -16,9 +16,10 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import electron from 'electron';
 import * as sentry from '@sentry/electron';
 
-import electron from 'electron';
+import { getRemote } from '../../utils';
 
 export const showError = (
   failedIntent: string,
@@ -53,10 +54,8 @@ export const showError = (
   });
   // Show a message box ...
   if (process.type === 'renderer') {
-    electron.remote.dialog.showMessageBox(
-      electron.remote.getCurrentWindow(),
-      messageOptions,
-    );
+    const remote = getRemote();
+    remote.dialog.showMessageBox(remote.getCurrentWindow(), messageOptions);
   } else {
     electron.dialog.showMessageBox(messageOptions);
   }

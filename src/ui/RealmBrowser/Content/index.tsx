@@ -17,6 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import electron from 'electron';
+import * as remote from '@electron/remote';
 import memoize from 'memoize-one';
 import React from 'react';
 import Realm from 'realm';
@@ -572,7 +573,7 @@ class ContentContainer extends React.Component<
   ) => {
     e.preventDefault();
     const { allowCreate, focus, readOnly } = this.props;
-    const { Menu, MenuItem } = electron.remote;
+    const { Menu, MenuItem } = remote;
 
     const contextMenu = new Menu();
 
