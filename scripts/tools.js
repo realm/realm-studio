@@ -2,7 +2,8 @@ const program = require('commander');
 const fs = require('fs');
 const moment = require('moment');
 const path = require('path');
-const remark = require('remark');
+
+const remark = import('remark');
 
 const changeLogPath = path.resolve(__dirname, '../CHANGELOG.md');
 const releaseNotesPath = path.resolve(__dirname, '../RELEASENOTES.md');
