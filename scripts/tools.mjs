@@ -1,12 +1,14 @@
-const program = require('commander');
-const fs = require('fs');
-const moment = require('moment');
-const path = require('path');
+import program from 'commander';
+import fs from 'fs';
+import moment from 'moment';
+import path from 'path';
+import { remark } from 'remark';
+import { fileURLToPath } from 'url';
 
-const remark = import('remark');
-
-const changeLogPath = path.resolve(__dirname, '../CHANGELOG.md');
-const releaseNotesPath = path.resolve(__dirname, '../RELEASENOTES.md');
+const filePath = fileURLToPath(import.meta.url);
+const packagePath = path.resolve(filePath, '../..');
+const changeLogPath = path.resolve(packagePath, 'CHANGELOG.md');
+const releaseNotesPath = path.resolve(packagePath, 'RELEASENOTES.md');
 
 program
   .command('copy-release-notes <v1> <v2>')

@@ -291,7 +291,7 @@ pipeline {
             sh 'git push origin --tags'
           }
           // Extract release notes from the changelog
-          sh "node scripts/tools extract-release-notes ./RELEASENOTES.extracted.md"
+          sh "node scripts/tools.mjs extract-release-notes ./RELEASENOTES.extracted.md"
           // Handle GitHub release
           withCredentials([
             string(credentialsId: 'github-release-token', variable: 'GITHUB_TOKEN')
@@ -352,7 +352,7 @@ pipeline {
       steps {
         nvm(env.NODE_VERSION) {
           // Append the RELEASENOTES to the CHANGELOG
-          sh "node scripts/tools copy-release-notes ${VERSION} ${NEXT_VERSION}"
+          sh "node scripts/tools.mjs copy-release-notes ${VERSION} ${NEXT_VERSION}"
           // Restore RELEASENOTES.md from the template
           sh 'cp docs/RELEASENOTES.template.md RELEASENOTES.md'
 
