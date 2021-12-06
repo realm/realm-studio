@@ -16,12 +16,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import electron from 'electron';
+import { getElectronOrRemote } from '../../utils';
 
 import { ImportFormat } from '.';
 
 export const showOpenDialog = (format: ImportFormat = ImportFormat.CSV) => {
-  const dialog = electron.dialog || electron.remote.dialog;
+  const dialog = getElectronOrRemote().dialog;
 
   if (format !== ImportFormat.CSV) {
     throw new Error(

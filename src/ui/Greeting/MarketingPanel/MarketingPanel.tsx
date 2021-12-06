@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import { remote } from 'electron';
+import * as remote from '@electron/remote';
 import classNames from 'classnames';
 import React from 'react';
 import { Carousel, CarouselIndicators, CarouselItem } from 'reactstrap';

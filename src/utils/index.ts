@@ -17,6 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 export * from './countdown';
+export * from './electron-or-remote';
 export * from './pretty-bytes';
 export * from './process-directories';
 export * from './promise-handle';

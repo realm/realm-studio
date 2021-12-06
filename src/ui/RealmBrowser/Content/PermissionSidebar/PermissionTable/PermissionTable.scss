@@ -34,10 +34,10 @@
   &__RoleName {
     color: $primary;
     cursor: pointer;
-    left: $table-cell-padding-sm;
+    left: $table-cell-padding-x-sm;
     overflow: hidden;
     position: absolute;
-    right: $table-cell-padding-sm;
+    right: $table-cell-padding-x-sm;
     text-overflow: ellipsis;
 
     &:hover {

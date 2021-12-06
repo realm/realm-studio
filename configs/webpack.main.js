@@ -8,12 +8,6 @@ module.exports = (env, argv) => {
   const baseConfig = require('./webpack.base.js')(env, argv);
 
   return merge(baseConfig, {
-    devServer: isDevelopment
-      ? {
-          hot: true,
-          inline: true,
-        }
-      : {},
     entry: isDevelopment
       ? ['webpack/hot/poll?1000', './src/main.ts']
       : ['./src/main.ts'],
@@ -31,10 +25,6 @@ module.exports = (env, argv) => {
           test: /\.(scss|svg|png)$/,
           use: 'null-loader',
         },
-        {
-          test: /\.md$/,
-          use: 'file-loader',
-        },
       ],
     },
     output: {
@@ -44,7 +34,10 @@ module.exports = (env, argv) => {
     },
     plugins: [
       // Prevent the windows from loading the UI components
-      new webpack.IgnorePlugin(/\/ui/, /\/src\/windows$/),
+      new webpack.IgnorePlugin({
+        resourceRegExp: /\/ui/,
+        contextRegExp: /\/src\/windows$/,
+      }),
     ],
     target: 'electron-main',
     watch: isDevelopment,

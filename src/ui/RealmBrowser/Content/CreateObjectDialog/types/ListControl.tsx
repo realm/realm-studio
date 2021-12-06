@@ -18,7 +18,7 @@
 
 import React from 'react';
 // import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import { Alert, Button, InputGroupAddon } from 'reactstrap';
+import { Alert, Button } from 'reactstrap';
 import Realm from 'realm';
 
 import { isPrimitive } from '../../../primitives';
@@ -60,11 +60,9 @@ const Item = ({
       isEmbeddedType={isEmbeddedType}
       onShowJsonViewerDialog={onShowJsonViewerDialog}
     >
-      <InputGroupAddon addonType="append">
-        <Button onClick={onDelete} size="sm">
-          <i className="fa fa-trash" />
-        </Button>
-      </InputGroupAddon>
+      <Button onClick={onDelete} size="sm">
+        <i className="fa fa-trash" />
+      </Button>
     </TypeControl>
   </section>
 );

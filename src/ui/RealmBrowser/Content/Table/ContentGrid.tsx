@@ -258,9 +258,9 @@ export class ContentGrid extends React.PureComponent<IContentGridProps> {
             />
           );
         } catch (err) {
-          return (
-            <Cell kind="error" style={cellProps.style} error={err.message} />
-          );
+          const message =
+            err instanceof Error ? err.message : 'Expected an Error';
+          return <Cell kind="error" style={cellProps.style} error={message} />;
         }
       };
     });

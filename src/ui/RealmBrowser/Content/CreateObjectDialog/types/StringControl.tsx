@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import React from 'react';
-import { Button, Input, InputGroup, InputGroupAddon } from 'reactstrap';
+import { Button, Input, InputGroup } from 'reactstrap';
 
 import { IBaseControlProps } from './TypeControl';
 
@@ -35,11 +35,9 @@ export const StringControl = ({
       value={value ? value : ''}
     />
     {value !== null && property.optional ? (
-      <InputGroupAddon addonType="append">
-        <Button size="sm" onClick={() => onChange(null)}>
-          <i className="fa fa-close" />
-        </Button>
-      </InputGroupAddon>
+      <Button size="sm" onClick={() => onChange(null)}>
+        <i className="fa fa-close" />
+      </Button>
     ) : null}
     {children}
   </InputGroup>

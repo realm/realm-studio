@@ -18,7 +18,7 @@
 
 import React from 'react';
 import Realm from 'realm';
-import { Button, Input, InputGroup, InputGroupAddon } from 'reactstrap';
+import { Button, Input, InputGroup } from 'reactstrap';
 
 import { IBaseControlProps } from './TypeControl';
 import { parseObjectId } from '../../../parsers';
@@ -50,17 +50,13 @@ export class ObjectIdControl extends React.PureComponent<
           invalid={(!!internalValue || !property.optional) && value === null}
         />
         {internalValue && property.optional ? (
-          <InputGroupAddon addonType="append">
-            <Button size="sm" onClick={this.handleClearValue}>
-              <i className="fa fa-close" />
-            </Button>
-          </InputGroupAddon>
+          <Button size="sm" onClick={this.handleClearValue}>
+            <i className="fa fa-close" />
+          </Button>
         ) : (
-          <InputGroupAddon addonType="append">
-            <Button size="sm" onClick={this.generateObjectId}>
-              <i className="fa fa-refresh" />
-            </Button>
-          </InputGroupAddon>
+          <Button size="sm" onClick={this.generateObjectId}>
+            <i className="fa fa-refresh" />
+          </Button>
         )}
         {children}
       </InputGroup>
@@ -83,7 +79,11 @@ export class ObjectIdControl extends React.PureComponent<
       try {
         parsedId = parseObjectId(value, property);
       } catch (err) {
-        console.warn(err.message);
+        if (err instanceof Error) {
+          console.warn(err.message);
+        } else {
+          throw new Error('Expected an Error');
+        }
       }
     }
 

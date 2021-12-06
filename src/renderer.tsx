@@ -16,9 +16,13 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+if (process.type === 'browser') {
+  throw new Error("Renderer bundle shouldn't be loaded from the main process");
+}
+
 import './services/mixpanel';
 
-import { remote } from 'electron';
+import * as remote from '@electron/remote';
 import React from 'react';
 import ReactDOM from 'react-dom';
 

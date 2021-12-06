@@ -16,7 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import { ipcRenderer, MenuItemConstructorOptions, remote } from 'electron';
+import { ipcRenderer, MenuItemConstructorOptions } from 'electron';
+import * as remote from '@electron/remote';
 import fs from 'fs-extra';
 import path from 'path';
 import React from 'react';

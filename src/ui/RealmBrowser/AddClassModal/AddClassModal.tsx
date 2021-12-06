@@ -24,7 +24,6 @@ import {
   FormGroup,
   Input,
   InputGroup,
-  InputGroupAddon,
   InputGroupText,
   Label,
   Modal,
@@ -88,18 +87,16 @@ export const AddClassModal = ({
           <FormGroup className={nameIsValid ? '' : 'has-danger'}>
             <Label for="primaryKey">Primary key</Label>
             <InputGroup>
-              <InputGroupAddon addonType="prepend">
-                <InputGroupText>
-                  <Input
-                    addon
-                    type="checkbox"
-                    id="primaryKey"
-                    name="primaryKey"
-                    checked={primaryKey}
-                    onChange={onPKChange}
-                  />
-                </InputGroupText>
-              </InputGroupAddon>
+              <InputGroupText>
+                <Input
+                  addon
+                  type="checkbox"
+                  id="primaryKey"
+                  name="primaryKey"
+                  checked={primaryKey}
+                  onChange={onPKChange}
+                />
+              </InputGroupText>
               <Input
                 placeholder="_id"
                 name="primaryKeyName"
@@ -108,50 +105,48 @@ export const AddClassModal = ({
                 onChange={onPKNameChange}
                 disabled={!primaryKey}
               />
-              <InputGroupAddon addonType="append">
-                <InputGroupText>
-                  <Label check>
-                    <Input
-                      addon
-                      type="radio"
-                      name="primaryKeyType"
-                      value="objectId"
-                      checked={primaryKeyType === 'objectId'}
-                      onChange={onPKTypeChange}
-                      disabled={!primaryKey}
-                    />{' '}
-                    objectId
-                  </Label>
-                </InputGroupText>
-                <InputGroupText>
-                  <Label check>
-                    <Input
-                      addon
-                      type="radio"
-                      name="primaryKeyType"
-                      value="int"
-                      checked={primaryKeyType === 'int'}
-                      onChange={onPKTypeChange}
-                      disabled={!primaryKey}
-                    />{' '}
-                    int
-                  </Label>
-                </InputGroupText>
-                <InputGroupText>
-                  <Label check>
-                    <Input
-                      addon
-                      type="radio"
-                      name="primaryKeyType"
-                      value="string"
-                      checked={primaryKeyType === 'string'}
-                      onChange={onPKTypeChange}
-                      disabled={!primaryKey}
-                    />{' '}
-                    string
-                  </Label>
-                </InputGroupText>
-              </InputGroupAddon>
+              <InputGroupText>
+                <Label check>
+                  <Input
+                    addon
+                    type="radio"
+                    name="primaryKeyType"
+                    value="objectId"
+                    checked={primaryKeyType === 'objectId'}
+                    onChange={onPKTypeChange}
+                    disabled={!primaryKey}
+                  />{' '}
+                  objectId
+                </Label>
+              </InputGroupText>
+              <InputGroupText>
+                <Label check>
+                  <Input
+                    addon
+                    type="radio"
+                    name="primaryKeyType"
+                    value="int"
+                    checked={primaryKeyType === 'int'}
+                    onChange={onPKTypeChange}
+                    disabled={!primaryKey}
+                  />{' '}
+                  int
+                </Label>
+              </InputGroupText>
+              <InputGroupText>
+                <Label check>
+                  <Input
+                    addon
+                    type="radio"
+                    name="primaryKeyType"
+                    value="string"
+                    checked={primaryKeyType === 'string'}
+                    onChange={onPKTypeChange}
+                    disabled={!primaryKey}
+                  />{' '}
+                  string
+                </Label>
+              </InputGroupText>
             </InputGroup>
           </FormGroup>
           {primaryKey && (

@@ -21,7 +21,6 @@ import {
   Button,
   Input,
   InputGroup,
-  InputGroupAddon,
   Popover,
   PopoverBody,
   UncontrolledTooltip,
@@ -71,11 +70,9 @@ export const QuerySearch = ({
           innerRef={inputRef}
         />
         {onQueryHelp && (
-          <InputGroupAddon addonType="append">
-            <Button onClick={onQueryHelp} id="QueryHelpButton">
-              <i className="fa fa-question" aria-hidden="true" />
-            </Button>
-          </InputGroupAddon>
+          <Button onClick={onQueryHelp} id="QueryHelpButton">
+            <i className="fa fa-question" aria-hidden="true" />
+          </Button>
         )}
         {onQueryHelp && queryHelpTooltip && (
           <UncontrolledTooltip target="QueryHelpButton" placement="left">

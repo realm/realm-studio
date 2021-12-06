@@ -17,14 +17,21 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import assert from 'assert';
-import electron from 'electron';
 import fs from 'fs-extra';
 import { resolve } from 'path';
 
 import { getWindowOptions } from '../windows/WindowOptions';
+import { getElectronOrRemote } from '../utils';
 
-const app = electron.app || electron.remote.app;
-const userDataPath = app.getPath('userData');
+function getUserDataPath() {
+  if (process.type === 'browser' || process.type === 'renderer') {
+    return getElectronOrRemote().app.getPath('userData');
+  } else {
+    return process.cwd();
+  }
+}
+
+const userDataPath = getUserDataPath();
 const rendererPattern = /^renderer-.+$/;
 
 function changeProcessDirectory(relativePath: string) {
@@ -69,6 +76,6 @@ export function removeRendererDirectories() {
 // The first time this is imported, it should change directory
 if (process.type === 'renderer') {
   changeRendererProcessDirectory();
-} else {
+} else if (process.type === 'browser') {
   changeMainProcessDirectory();
 }
