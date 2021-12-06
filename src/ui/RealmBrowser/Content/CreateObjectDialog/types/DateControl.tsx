@@ -18,7 +18,7 @@
 
 import moment from 'moment';
 import React from 'react';
-import { Button, Input, InputGroup, InputGroupAddon } from 'reactstrap';
+import { Button, Input, InputGroup } from 'reactstrap';
 
 import { parseDate } from '../../../parsers';
 
@@ -42,16 +42,14 @@ export const DateControl = ({
       placeholder={value === null ? 'null' : ''}
       value={value ? moment(value).format(DATETIME_LOCAL_FORMAT) : ''}
     />
-    <InputGroupAddon addonType="append">
-      <Button size="sm" onClick={() => onChange(new Date())} title="Set to now">
-        <i className="fa fa-clock-o" />
+    <Button size="sm" onClick={() => onChange(new Date())} title="Set to now">
+      <i className="fa fa-clock-o" />
+    </Button>
+    {value !== null && property.optional ? (
+      <Button size="sm" onClick={() => onChange(null)}>
+        <i className="fa fa-close" />
       </Button>
-      {value !== null && property.optional ? (
-        <Button size="sm" onClick={() => onChange(null)}>
-          <i className="fa fa-close" />
-        </Button>
-      ) : null}
-    </InputGroupAddon>
+    ) : null}
     {children}
   </InputGroup>
 );

@@ -68,8 +68,12 @@ export abstract class ActionReceiver {
         const result = await this.handlers[action](...args);
         this.transport.sendResponse(requestId, result, true);
       } catch (err) {
-        console.error(`Action "${action}" (${requestId}) failed:`, err.stack);
-        this.transport.sendResponse(requestId, err.message, false);
+        if (err instanceof Error) {
+          console.error(`Action "${action}" (${requestId}) failed:`, err.stack);
+          this.transport.sendResponse(requestId, err.message, false);
+        } else {
+          throw new Error('Expected an Error');
+        }
       }
     } else {
       throw new Error(`ActionReceiver cannot handle "${action}" actions`);

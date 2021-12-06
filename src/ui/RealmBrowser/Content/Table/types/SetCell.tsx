@@ -24,10 +24,7 @@ import { getCellStringRepresentation } from '../../../../../utils/json';
 const VALUE_LENGTH_LIMIT = 10;
 const VALUE_STRING_LENGTH_LIMIT = 50;
 
-const setTake = <T extends unknown = any>(
-  set: Realm.Set<T>,
-  amount: number,
-): Array<T> => {
+function setTake<T>(set: Realm.Set<T>, amount: number): Array<T> {
   const it = 0;
   const arr = [];
   for (const val of set) {
@@ -35,11 +32,11 @@ const setTake = <T extends unknown = any>(
     arr.push(val);
   }
   return arr;
-};
+}
 
 const displayValue = (
   property: Realm.ObjectSchemaProperty,
-  set: Realm.Set<any>,
+  set: Realm.Set<unknown>,
 ) => {
   if (!set) {
     return 'null';
@@ -48,7 +45,7 @@ const displayValue = (
     const limitedValues = setTake(set, VALUE_LENGTH_LIMIT);
     // Concatenate ", " separated string representations of the elements in the set
     let limitedString = limitedValues
-      .map((val: any) =>
+      .map((val: unknown) =>
         getCellStringRepresentation(property, val).substring(
           0,
           VALUE_STRING_LENGTH_LIMIT,
@@ -69,7 +66,7 @@ export const SetCell = ({
   value,
 }: {
   property: Realm.ObjectSchemaProperty;
-  value: any;
+  value: Realm.Set<unknown>;
 }) => (
   <div tabIndex={0} className="RealmBrowser__Table__SetCell">
     <span className="RealmBrowser__Table__SetCell__Value">

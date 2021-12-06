@@ -103,7 +103,9 @@ export class StringCellContainer extends React.Component<
     } catch (err) {
       const inputElement = this.inputElement;
       // The validation failed and the user is leaving the field - ask if they want to reset and leave
-      const leave = this.showInvalidValueError(err.message);
+      const leave = this.showInvalidValueError(
+        err instanceof Error ? err.message : 'Expected an Error',
+      );
       if (leave) {
         // Reset the temporalValue and signal a valid value
         this.setState({ temporalValue: undefined });
@@ -137,7 +139,11 @@ export class StringCellContainer extends React.Component<
           this.propagateChange();
         }
       } catch (err) {
-        console.warn(`StringCell validation failed: ${err.message}`);
+        if (err instanceof Error) {
+          console.warn(`StringCell validation failed: ${err.message}`);
+        } else {
+          throw new Error('Expected an Error');
+        }
       }
     });
   };
@@ -205,7 +211,7 @@ export class StringCellContainer extends React.Component<
       } catch (err) {
         this.props.onValidated(false);
         // Update the `inputElement` validation state
-        if (this.inputElement) {
+        if (this.inputElement && err instanceof Error) {
           this.inputElement.setCustomValidity(err.message);
         }
         // Rethrow to allow the caller to use the message

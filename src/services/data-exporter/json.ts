@@ -62,7 +62,8 @@ const serialize = (map: ResultMap) => {
     // adding unnecessary `$refId` to the output.
     return JSON.stringify(map, standardReplacer, INDENTATION_SPACES);
   } catch (err) {
-    if (CIRCULAR_ERROR_REGEX_CHECK.test(err.message ?? err.toString())) {
+    const message = err instanceof Error ? err.message : '';
+    if (CIRCULAR_ERROR_REGEX_CHECK.test(message)) {
       // If a circular structure is detected, serialize using Realm.JsonSerializationReplacer
       return JSON.stringify(map, circularReplacer, INDENTATION_SPACES);
     }

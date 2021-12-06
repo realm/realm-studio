@@ -24,7 +24,7 @@ export interface IPromiseHandle<T> {
   reject: (reason: any) => void;
 }
 
-export const createPromiseHandle = <T extends any>() => {
+export const createPromiseHandle = <T>() => {
   const handle: Partial<IPromiseHandle<T>> = {};
   handle.promise = new Promise<T>((resolve, reject) => {
     handle.resolve = resolve;

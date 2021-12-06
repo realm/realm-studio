@@ -44,7 +44,10 @@ module.exports = (env, argv) => {
     },
     plugins: [
       // Prevent the windows from loading the UI components
-      new webpack.IgnorePlugin(/\/ui/, /\/src\/windows$/),
+      new webpack.IgnorePlugin({
+        resourceRegExp: /\/ui/,
+        contextRegExp: /\/src\/windows$/,
+      }),
     ],
     target: 'electron-main',
     watch: isDevelopment,

@@ -72,9 +72,11 @@ export abstract class RealmLoadingComponent<
         this.setState({ progress: { status: 'done' } });
       } catch (err) {
         // Ignore an error that originates from the load being cancelled
-        if (!err.wasCancelled) {
+        if (err instanceof Error) {
           this.loadingRealmFailed(err);
-        } // ignore errors from cancelled loading
+        } else {
+          throw new Error('Expected an Error');
+        }
       }
     }
   }

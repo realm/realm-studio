@@ -49,7 +49,7 @@ export const asSafeJsonString = (
           indentation,
         );
       } catch (err) {
-        json = err.message ? err.message : err;
+        json = err instanceof Error ? err.message : String(err);
       }
     }
   }

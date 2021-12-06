@@ -18,7 +18,7 @@
 
 import classNames from 'classnames';
 import React from 'react';
-import { Button, InputGroup, InputGroupAddon } from 'reactstrap';
+import { Button, InputGroup } from 'reactstrap';
 
 import { displayObject } from '../../../../display';
 import { SelectObjectDialog } from '../../../SelectObjectDialog';
@@ -57,11 +57,9 @@ export const ObjectControl = ({
         </span>
       </div>
       {value !== null && property.optional ? (
-        <InputGroupAddon addonType="append">
-          <Button size="sm" onClick={() => updateObjectReference(null)}>
-            <i className="fa fa-close" />
-          </Button>
-        </InputGroupAddon>
+        <Button size="sm" onClick={() => updateObjectReference(null)}>
+          <i className="fa fa-close" />
+        </Button>
       ) : null}
       {children}
     </InputGroup>

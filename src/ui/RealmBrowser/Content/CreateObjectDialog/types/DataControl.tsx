@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import React from 'react';
-import { Button, Input, InputGroup, InputGroupAddon } from 'reactstrap';
+import { Button, Input, InputGroup } from 'reactstrap';
 
 import { IBaseControlProps } from './TypeControl';
 
@@ -52,20 +52,18 @@ export const DataControl = ({
         placeholder={value === null ? 'null' : ''}
       />
       {value !== null && property.optional ? (
-        <InputGroupAddon addonType="append">
-          <Button
-            size="sm"
-            onClick={() => {
-              if (fileInput) {
-                // Reset the input field
-                fileInput.value = '';
-              }
-              onChange(null);
-            }}
-          >
-            <i className="fa fa-close" />
-          </Button>
-        </InputGroupAddon>
+        <Button
+          size="sm"
+          onClick={() => {
+            if (fileInput) {
+              // Reset the input field
+              fileInput.value = '';
+            }
+            onChange(null);
+          }}
+        >
+          <i className="fa fa-close" />
+        </Button>
       ) : null}
       {children}
     </InputGroup>

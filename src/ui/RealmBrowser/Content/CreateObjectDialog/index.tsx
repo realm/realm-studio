@@ -203,7 +203,8 @@ class CreateObjectDialogContainer extends React.PureComponent<
         );
       } catch (err) {
         const className = this.props.schema.name;
-        showError(`Couldn't create the ${className}:\n\n${err.message}`, err);
+        const message = err instanceof Error ? err.message : String(err);
+        showError(`Couldn't create the ${className}:\n\n${message}`, err);
       }
     } else {
       throw new Error('Expected a schema');

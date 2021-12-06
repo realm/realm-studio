@@ -201,7 +201,8 @@ class ContentContainer extends React.Component<
         try {
           results = results.filtered(query);
         } catch (err) {
-          filterError = err;
+          filterError =
+            err instanceof Error ? err : new Error('Expected an Error');
         }
       }
       if (sorting) {
