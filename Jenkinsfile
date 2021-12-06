@@ -358,7 +358,7 @@ pipeline {
 
           // Set the email and name used when committing
           sh 'git config --global user.email "ci@realm.io"'
-          sh 'git config --global user.name "Jenkins CI"'
+          sh 'git config --global user.name "Realm CI"'
 
           // Checkout a branch
           sh "git checkout -b ${PREPARED_BRANCH}"
