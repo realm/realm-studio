@@ -8,12 +8,6 @@ module.exports = (env, argv) => {
   const baseConfig = require('./webpack.base.js')(env, argv);
 
   return merge(baseConfig, {
-    devServer: isDevelopment
-      ? {
-          hot: true,
-          inline: true,
-        }
-      : {},
     entry: isDevelopment
       ? ['webpack/hot/poll?1000', './src/main.ts']
       : ['./src/main.ts'],

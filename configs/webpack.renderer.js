@@ -8,12 +8,6 @@ module.exports = (env, argv) => {
   const baseConfig = require('./webpack.base.js')(env, argv);
 
   return merge(baseConfig, {
-    devServer: isDevelopment
-      ? {
-          hot: true,
-          inline: true,
-        }
-      : {},
     entry: {
       renderer: './src/renderer.tsx',
       sentry: './src/sentry.ts',
