@@ -239,6 +239,6 @@
     "xvfb-maybe": "^0.2.1"
   },
   "engines": {
-    "node": "^12"
+    "node": "^16"
   }
 }
