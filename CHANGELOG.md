@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release 11.1.1 (2021-12-06)
+
+[Changes since v11.1.0](https://github.com/realm/realm-studio/compare/v11.1.0...v11.1.1)
+
+### Enhancements
+
+- None
+
+### Fixed
+
+- Implemented a simpler and shallow way of serializing objects (and lists of objects) in the browser. ([#1452](https://github.com/realm/realm-studio/pull/1452), since v11.0.0)
+
+### Internals
+
+- Upgrading all dependencies, including Electron to v16 and Bootstrap to v5 ([#1449](https://github.com/realm/realm-studio/pull/1449))
+
+
 ## Release 11.1.0 (2021-07-08)
 
 [Changes since v11.0.1](https://github.com/realm/realm-studio/compare/v11.0.1...v11.1.0)
