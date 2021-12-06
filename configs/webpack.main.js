@@ -25,10 +25,6 @@ module.exports = (env, argv) => {
           test: /\.(scss|svg|png)$/,
           use: 'null-loader',
         },
-        {
-          test: /\.md$/,
-          use: 'file-loader',
-        },
       ],
     },
     output: {

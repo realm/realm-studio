@@ -33,7 +33,7 @@ module.exports = (env, argv) => {
         },
         {
           test: /\.(jpe?g|png|gif)$/i,
-          use: ['file-loader'],
+          type: 'asset/resource',
         },
         {
           test: /\.svg$/,
@@ -42,12 +42,8 @@ module.exports = (env, argv) => {
         },
         {
           test: /\.(eot|svg|ttf|woff|woff2)$/,
-          use: 'file-loader',
+          type: 'asset/resource',
           exclude: path.resolve(__dirname, '../static/svgs'),
-        },
-        {
-          test: /\.md$/,
-          use: 'file-loader',
         },
       ],
     },
