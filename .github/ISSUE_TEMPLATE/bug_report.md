@@ -22,7 +22,6 @@ If applicable, add screenshots to help explain your problem.
 **Versions:**
  - OS: [e.g. Mac/Windows/]
  - Studio Version [e.g. 2.0.0]
- - Realm Object Server version [e.g. 3.0.1]
 
 **Additional context**
 Add any other context about the problem here.
