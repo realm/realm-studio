@@ -143,7 +143,7 @@
     "memoize-one": "^6.0.0",
     "mixpanel-browser": "^2.42.0",
     "mochapack": "^2.1.2",
-    "moment": "^2.29.1",
+    "moment": "^2.29.2",
     "papaparse": "^5.3.1",
     "raven": "^2.6.2",
     "react": "^17.0.2",
