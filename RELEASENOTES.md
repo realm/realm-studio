@@ -10,4 +10,4 @@
 
 ### Internals
 
-- None
+- Upgraded Realm JS to v10.15.0. ([#1488](https://github.com/realm/realm-studio/pull/1488))
