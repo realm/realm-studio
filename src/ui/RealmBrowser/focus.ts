@@ -49,14 +49,14 @@ export interface IClassFocus extends IFocus {
 
 export interface ISingleObjectFocus extends IFocus {
   kind: 'single-object';
-  parent: Realm.Object & { [key: string]: unknown };
+  parent: Realm.Object & { [key: string]: any };
   property: IPropertyWithName;
   results: SingleObjectCollection<any>;
 }
 
 interface IBaseListFocus extends IFocus {
   kind: 'list';
-  parent: Realm.Object & { [key: string]: unknown };
+  parent: Realm.Object & { [key: string]: any };
   property: IPropertyWithName;
   results: Realm.List<any>;
 }
