@@ -8,7 +8,7 @@ Start by preparing a release from the branch you want to release from (default: 
 
 The version is automatically derived from the RELEASENOTES.md to comply with [semantic versioning](http://semver.org/),
 
-Go to https://ci.realm.io/job/realm/job/realm-studio/job/master/build, check PREPARE and hit build to prepare a release.
+Go to https://ci.realm.io/job/realm/job/realm-studio/job/channel%252Fmajor-11/build, check PREPARE and hit build to prepare a release.
 
 When preparing Jenkins does the following:
 
