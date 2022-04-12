@@ -1,7 +1,7 @@
 {
   "name": "realm-studio",
   "productName": "MongoDB Realm Studio",
-  "version": "11.1.1",
+  "version": "11.1.2",
   "description": "A tool for everything MongoDB Realm!",
   "author": {
     "name": "Realm",
