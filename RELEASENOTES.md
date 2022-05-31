@@ -10,4 +10,4 @@
 
 ### Internals
 
-- None
+- Renamed app from "MongoDB Realm Studio" to "Realm Studio"
