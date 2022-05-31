@@ -153,11 +153,11 @@ export const AddClassModal = ({
             <Card>
               {/* Todo: Wording */}
               <CardBody>
-                <CardSubtitle>MongoDB Sync:</CardSubtitle>
+                <CardSubtitle>Atlas Device Sync:</CardSubtitle>
                 <CardText>
                   <small>
                     {
-                      'If this Realm is intended to be synced with MongoDB, ensure to keep the primary key name "_id", with the type "objectId".'
+                      'If this Realm is intended to be synced with Atlas Device Sync, ensure to keep the primary key name "_id", with the type "objectId".'
                     }
                   </small>
                 </CardText>

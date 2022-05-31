@@ -126,7 +126,7 @@ describe('Realm Studio packaged', () => {
     mockedS3 = await mockedS3Server.createServer();
     // Determine the URL of the mocked S3 server
     const mockedS3Url = mockedS3Server.getServerUrl(mockedS3);
-    // Build a mocked version of MongoDB Realm Studio, which we'll attempt an auto-update to
+    // Build a mocked version of the app, which we'll attempt an auto-update to
     buildMockedRealmStudio();
     // Copy the current dist/mac folder to a different location to prevent the auto updater
     // from overriding the current dist/mac folder.
@@ -141,7 +141,7 @@ describe('Realm Studio packaged', () => {
     fs.copySync(originalMacPath, temporaryMacPath);
     // Package the app with the mocked server URL
     changeS3Endpoint(temporaryMacPath, mockedS3Url);
-    // Remove any cached version of the mocked MongoDB Realm Studio
+    // Remove any cached version of the mocked app.
     pruneAutoUpdaterCache();
   });
 
