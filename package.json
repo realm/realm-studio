@@ -90,7 +90,7 @@
         "bucket": "static.realm.io",
         "region": "us-east-1",
         "path": "downloads/realm-studio",
-        "channel": "major-11"
+        "channel": "major-12"
       }
     ],
     "npmArgs": [
