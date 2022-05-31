@@ -106,7 +106,7 @@ declare module 'react-inspector' {
 
   export class ObjectInspector<
     P extends IObjectInpectorProps = IObjectInpectorProps,
-  > extends React.Component<P> {
+    > extends React.Component<P> {
     protected setExpanded(path: string, expanded: boolean): void;
   }
 
@@ -123,12 +123,12 @@ declare module 'react-inspector' {
    * Renders the object with a label.
    * if isNonenumerable is specified, render the name dimmed
    */
-  export class ObjectLabel extends React.Component<IObjectLabelProps> {}
+  export class ObjectLabel extends React.Component<IObjectLabelProps> { }
 
   export interface IObjectValueProps {
     object: any;
   }
-  export class ObjectValue extends React.Component<IObjectValueProps> {}
+  export class ObjectValue extends React.Component<IObjectValueProps> { }
 }
 
 declare module 'memoize-one' {
@@ -147,16 +147,6 @@ declare module 'memoize-one' {
   namespace memoizeOne {
     type EqualityFn = (a: any, b: any) => boolean;
   }
-}
-
-declare module 'spectron-fake-dialog' {
-  import { Application } from 'spectron';
-  export function apply(application: Application): void;
-  interface IDialog {
-    method: 'showOpenDialog' | 'showSaveDialog';
-    value: Record<string, unknown>;
-  }
-  export function mock(dialogs: IDialog[]): void;
 }
 
 declare module 'segfault-handler' {
