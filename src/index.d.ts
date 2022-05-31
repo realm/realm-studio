@@ -149,16 +149,6 @@ declare module 'memoize-one' {
   }
 }
 
-declare module 'spectron-fake-dialog' {
-  import { Application } from 'spectron';
-  export function apply(application: Application): void;
-  interface IDialog {
-    method: 'showOpenDialog' | 'showSaveDialog';
-    value: Record<string, unknown>;
-  }
-  export function mock(dialogs: IDialog[]): void;
-}
-
 declare module 'segfault-handler' {
   export function registerHandler(path: string): void;
 }
