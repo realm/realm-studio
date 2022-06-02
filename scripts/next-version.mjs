@@ -9,8 +9,8 @@ const packageJson = fs.readJSONSync(packageJsonPath);
 if (semver.prerelease(packageJson.version) !== null) {
   console.log('prerelease');
 } else {
-  const hasBreakingChanges = /## Breaking Changes/.test(releaseNotes);
-  const hasNoEnhancements = /## Enhancements\n\n- None/.test(releaseNotes);
+  const hasBreakingChanges = /### Breaking Changes/.test(releaseNotes);
+  const hasNoEnhancements = /### Enhancements\n\n- None/.test(releaseNotes);
   if (hasBreakingChanges) {
     console.log('major');
   } else if (hasNoEnhancements) {
