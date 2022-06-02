@@ -2,7 +2,7 @@
 
 ### Enhancements
 
-- None
+- Improved error message when opening a Realm file which is already opened by another process opening the lock file with an mismatching format version.
 
 ### Fixed
 
