@@ -1,11 +1,9 @@
-const fs = require('fs-extra');
-const path = require('path');
-const cp = require('child_process');
-const semver = require('semver');
+import fs from 'fs-extra';
+import semver from 'semver';
 
-const releaseNotesPath = path.resolve(__dirname, '../RELEASENOTES.md');
+const releaseNotesPath = new URL('../RELEASENOTES.md', import.meta.url);
 const releaseNotes = fs.readFileSync(releaseNotesPath, 'utf8');
-const packageJsonPath = path.resolve(__dirname, '../package.json')
+const packageJsonPath = new URL('../package.json', import.meta.url);
 const packageJson = fs.readJSONSync(packageJsonPath);
 
 if (semver.prerelease(packageJson.version) !== null) {

@@ -116,7 +116,7 @@ pipeline {
             } else {
               // Determine the upcoming release type
               nextVersionType = env.PREPARE_VERSION ?: sh(
-                script: "node ./scripts/next-version.js",
+                script: "node scripts/next-version.mjs",
                 returnStdout: true,
               ).trim()
               // Bump the version accordingly
