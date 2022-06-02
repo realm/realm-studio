@@ -90,6 +90,8 @@ export type JsonViewerDialogExecutor = (value: unknown) => void;
 const EDIT_MODE_STORAGE_KEY = 'realm-browser-edit-mode';
 const FILE_UPGRADE_NEEDED_MESSAGE =
   'The Realm file format must be allowed to be upgraded in order to proceed.';
+const ARCHITECTURE_MISMATCH_MESSAGE =
+  'Realm file is currently open in another process which cannot share access with this process. All processes sharing a single file must be the same architecture.';
 
 export interface IRealmBrowserState extends IRealmLoadingComponentState {
   // A number that we can use to make components update on changes to data
@@ -396,6 +398,12 @@ class RealmBrowserContainer
       } else {
         window.close();
       }
+    } else if (err.message === ARCHITECTURE_MISMATCH_MESSAGE) {
+      const improvedError = new Error(
+        'The file is already opened by another process, with an incompatible lock file format. Try up- or downgrading Realm Studio or SDK to match their versions of Realm Core.\n\nSee Realm Studio changelog on GitHub for details on compatibility between versions.',
+      );
+      showError('Failed to open Realm', improvedError);
+      window.close();
     } else {
       delete this.props.realm.encryptionKey;
       super.loadingRealmFailed(err);

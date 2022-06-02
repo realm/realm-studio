@@ -55,8 +55,8 @@ export const showError = (
   // Show a message box ...
   if (process.type === 'renderer') {
     const remote = getRemote();
-    remote.dialog.showMessageBox(remote.getCurrentWindow(), messageOptions);
+    remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), messageOptions);
   } else {
-    electron.dialog.showMessageBox(messageOptions);
+    electron.dialog.showMessageBoxSync(messageOptions);
   }
 };
