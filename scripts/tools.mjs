@@ -1,4 +1,4 @@
-import program from 'commander';
+import { program } from 'commander';
 import fs from 'fs';
 import moment from 'moment';
 import path from 'path';
