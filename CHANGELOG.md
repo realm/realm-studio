@@ -23,7 +23,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Internals
 
 - Renamed app from "MongoDB Realm Studio" to "Realm Studio"
-- Upgraded Realm JS to v10.18.0.
+- Upgraded Realm JS to v10.18.0 (Realm Core v12)
 
 ### Compatibility
 
@@ -33,6 +33,7 @@ Use this version of Realm Studio to read and write Realm database files, using t
 | ---------------- | ------------ |
 | Realm JavaScript | v10.18.0 - ? |
 | Realm Swift      | v10.27.0 - ? |
+| Realm .NET       | v10.14.0 - ? |
 
 
 ## Release 11.2.0 (2022-06-02)
