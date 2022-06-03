@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release 11.2.1 (2022-06-03)
+
+[Changes since v11.2.0](https://github.com/realm/realm-studio/compare/v11.2.0...v11.2.1)
+
+### Enhancements
+
+- None
+
+### Fixed
+
+- Reverted an accidental upgrade of Realm JS.
+
+### Internals
+
+- None
+
+
 ## Release 11.2.0 (2022-06-02)
 
 [Changes since v11.1.2](https://github.com/realm/realm-studio/compare/v11.1.2...v11.2.0)
