@@ -310,14 +310,16 @@ pipeline {
               }
             }
             // Upload the build artifacts to S3
-            script {
-              def s3Config = packageJson.build.publish[0]
-              dir('dist') {
-                rlmS3Put(bucket: s3Config.bucket, path: s3Config.path)
-              }
-              // Upload the json and yml files
-              dir('dist-finally') {
-                rlmS3Put(bucket: s3Config.bucket, path: s3Config.path)
+            withAWS(credentials: 'tightdb-s3-ci', region: 'us-east-1') {
+              script {
+                def s3Config = packageJson.build.publish[0]
+                dir('dist') {
+                  s3Upload(bucket: s3Config.bucket, path: s3Config.path, includePathPattern: '*')
+                }
+                // Upload the json and yml files
+                dir('dist-finally') {
+                  s3Upload(bucket: s3Config.bucket, path: s3Config.path, includePathPattern: '*')
+                }
               }
             }
             // Publish the release
