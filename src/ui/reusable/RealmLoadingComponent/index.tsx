@@ -128,6 +128,7 @@ export abstract class RealmLoadingComponent<
           realm.sync !== true
         ) {
           // Try to open the Realm locally with a sync history mode.
+          console.log('Trying to open sync Realm as local Realm');
           return this.openRealm(
             { ...realm, sync: true },
             schema,
