@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release 11.2.0 (2022-06-02)
+
+[Changes since v11.1.2](https://github.com/realm/realm-studio/compare/v11.1.2...v11.2.0)
+
+### Enhancements
+
+- Improved error message when opening a Realm file which is already opened by another process opening the lock file with an mismatching format version.
+
+### Fixed
+
+- None
+
+### Internals
+
+- Upgraded a lot of dependencies, including Electron to v19 ([#1507](https://github.com/realm/realm-studio/pull/1507), [#1506](https://github.com/realm/realm-studio/pull/1506), [#1505](https://github.com/realm/realm-studio/pull/1505))
+
+
 ## Release 11.1.2 (2022-04-12)
 
 [Changes since v11.1.1](https://github.com/realm/realm-studio/compare/v11.1.1...v11.1.2)
