@@ -6,7 +6,7 @@
 
 ### Fixed
 
-- Reverted an accidental upgrade of Realm JS.
+- None
 
 ### Internals
 
