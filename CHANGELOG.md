@@ -4,6 +4,37 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release 12.0.0 (2022-06-07)
+
+[Changes since v11.2.1](https://github.com/realm/realm-studio/compare/v11.2.1...v12.0.0)
+
+### Breaking Changes
+
+- When opening a Realm file which is already opened by another process (such as the Realm Swift SDK in a simulator), the major version of core (more specifically the database and lock file formats) must match.
+
+### Enhancements
+
+- None
+
+### Fixed
+
+- None
+
+### Internals
+
+- Renamed app from "MongoDB Realm Studio" to "Realm Studio"
+- Upgraded Realm JS to v10.19.1. ([#1514](https://github.com/realm/realm-studio/pull/1514))
+
+### Compatibility
+
+Use this version of Realm Studio to read and write Realm database files, using the same lock file format as:
+
+| SDK              | Version      |
+| ---------------- | ------------ |
+| Realm JavaScript | v10.18.0 - ? |
+| Realm Swift      | v10.27.0 - ? |
+
+
 ## Release 11.2.1 (2022-06-03)
 
 [Changes since v11.2.0](https://github.com/realm/realm-studio/compare/v11.2.0...v11.2.1)
