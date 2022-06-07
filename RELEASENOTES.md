@@ -15,7 +15,7 @@
 ### Internals
 
 - Renamed app from "MongoDB Realm Studio" to "Realm Studio"
-- Upgraded Realm JS to v10.18.0.
+- Upgraded Realm JS to v10.19.1. ([#1514](https://github.com/realm/realm-studio/pull/1514))
 
 ### Compatibility
 
