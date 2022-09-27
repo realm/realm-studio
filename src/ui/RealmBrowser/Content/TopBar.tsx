@@ -54,7 +54,7 @@ export const TopBar = ({
         onQueryHelp={onQueryHelp}
         query={query}
         queryError={queryError}
-        placeholder="Enter a query to filter the list"
+        placeholder="Enter a query in Realm Query Language (RQL) to filter the list"
       />
       {allowCreate && !readOnly ? (
         <Button
