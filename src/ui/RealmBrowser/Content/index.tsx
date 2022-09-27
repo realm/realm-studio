@@ -378,7 +378,7 @@ class ContentContainer extends React.Component<
 
   private onQueryHelp = () => {
     const url =
-      'https://realm.io/docs/javascript/latest/api/tutorial-query-language.html';
+      'https://www.mongodb.com/docs/realm/realm-query-language/';
     electron.shell.openExternal(url);
   };
 
