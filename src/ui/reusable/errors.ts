@@ -45,7 +45,7 @@ export const showError = (
   };
   // Tell Sentry about this error
   sentry.captureEvent({
-    level: sentry.Severity.Debug,
+    level: 'debug',
     // Using the failedIntent as message to get more similar messages
     message: failedIntent,
     tags: { type: 'user-error' },
