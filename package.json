@@ -194,7 +194,7 @@
     "commander": "^9.4.1",
     "concurrently": "^7.5.0",
     "css-loader": "^6.7.1",
-    "electron": "^19.0.0",
+    "electron": "^19.0.17",
     "electron-builder": "^23.6.0",
     "electron-download": "^4.1.1",
     "electron-notarize": "^1.2.2",
