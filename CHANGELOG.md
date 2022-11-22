@@ -1,7 +1,35 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
-This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## vNext
+
+### Breaking Changes
+* File format version bumped. If Realm file contains any objects with set of `mixed` or dictionary properties, the file will go through an upgrade process.
+* The layout of the lock-file has changed, the lock file format version is bumped and all participants in a multiprocess scenario needs to be up to date so they expect the same format. ([realm/realm-core#5440](https://github.com/realm/realm-core/pull/5440))
+* Export data to JSON is using [`flatted`](https://www.npmjs.com/package/flatted), and if you are importing data in another application, you have to use `Flatted#parse`.
+
+### Enhancements
+
+- None
+
+### Fixed
+
+- None
+
+### Internals
+
+- Upgraded Realm JS to v11.3.0-rc.0.
+
+### Compatibility
+
+Use this version of Realm Studio to read and write Realm database files, using the same lock file format as:
+
+| SDK              | Version          |
+| ---------------- | ---------------- |
+| Realm JavaScript | v11.3.0-rc.0 - ? |
+| Realm Swift      |  |
+| Realm Kotlin     |  |
+| Realm DotNet     |  |
+| Realm Dart       |  |
 
 
 ## Release 12.0.0 (2022-06-07)
@@ -331,7 +359,7 @@ release that supports that.
 
 ### Compatibility
 
-- File format: Generates Realms with file format v20 (used by SDK v10.x.y versions). Earlier file formats can be read and automatically upgraded to v20. But you will not be able to edit older file formats. 
+- File format: Generates Realms with file format v20 (used by SDK v10.x.y versions). Earlier file formats can be read and automatically upgraded to v20. But you will not be able to edit older file formats.
 
 ### Internals
 
