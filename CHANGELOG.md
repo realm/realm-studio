@@ -17,7 +17,7 @@
 
 ### Internals
 
-- Upgraded Realm JS to v11.3.0-rc.0.
+- Upgraded Realm JS to v11.3.0-rc.1.
 
 ### Compatibility
 
