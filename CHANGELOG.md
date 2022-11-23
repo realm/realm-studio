@@ -1,6 +1,8 @@
 # Changelog
 
-## vNext
+## Release 13.0.0 (2022-11-23)
+
+[Changes since v12.0.0](https://github.com/realm/realm-studio/compare/v12.0.0...v13.0.0)
 
 ### Breaking Changes
 * File format version bumped. If Realm file contains any objects with set of `mixed` or dictionary properties, the file will go through an upgrade process.
@@ -29,7 +31,7 @@ Use this version of Realm Studio to read and write Realm database files, using t
 | Realm Swift      |  |
 | Realm Kotlin     | v1.6.0- ? |
 | Realm DotNet     | v10.19.0 - ? |
-| Realm Dart       |  |
+| Realm Dart       | v0.9.0+rc - ? |
 | Realm Java       |  | 
 
 
