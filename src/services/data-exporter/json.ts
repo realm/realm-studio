@@ -18,57 +18,16 @@
 
 import fs from 'fs-extra';
 import Realm from 'realm';
+import { stringify } from 'flatted';
 
 import { IExportEngine } from '.';
-
-const INDENTATION_SPACES = 2;
-const CIRCULAR_ERROR_REGEX_CHECK = /circular|cyclic/i;
-
-// Note: Do not call Realm.JsonSerializationReplacer directly, as it's a getter
-// it will return a new function at each run, bypassing the circular detection.
-const RealmJsonSerializationReplacer = Realm.JsonSerializationReplacer;
-
-type StudioSerializationReplacer = (
-  this: StudioSerializationReplacer,
-  key: string,
-  value: any,
-) => any;
-
-function standardReplacer(_: string, value: any) {
-  return value instanceof ArrayBuffer
-    ? Buffer.from(value).toString('base64')
-    : value;
-}
-
-function circularReplacer(
-  this: StudioSerializationReplacer,
-  key: string,
-  value: any,
-) {
-  return RealmJsonSerializationReplacer.call(
-    this,
-    key,
-    standardReplacer(key, value),
-  );
-}
 
 type ResultMap = {
   [key: string]: Realm.Results<Realm.Object>;
 };
 
 const serialize = (map: ResultMap) => {
-  try {
-    // First try default stringify to avoid Realm.JsonSerializationReplacer
-    // adding unnecessary `$refId` to the output.
-    return JSON.stringify(map, standardReplacer, INDENTATION_SPACES);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : '';
-    if (CIRCULAR_ERROR_REGEX_CHECK.test(message)) {
-      // If a circular structure is detected, serialize using Realm.JsonSerializationReplacer
-      return JSON.stringify(map, circularReplacer, INDENTATION_SPACES);
-    }
-    throw err;
-  }
+  return stringify(map);
 };
 
 export class JSONExportEngine implements IExportEngine {

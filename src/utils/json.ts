@@ -1,6 +1,5 @@
-// Regex to clean up added $refId & $ref properties, added by Realm.JsonSerializationReplacer
-
 import { display as displayDataCell } from '../ui/RealmBrowser/Content/Table/types/DataCell';
+import { stringify } from 'flatted';
 
 // TODO: Investigate better solution.
 const $REF_MATCHER =
@@ -40,17 +39,9 @@ export const asSafeJsonString = (
     );
   } else {
     try {
-      json = JSON.stringify(value, null, indentation);
-    } catch {
-      try {
-        json = JSON.stringify(
-          value,
-          Realm.JsonSerializationReplacer,
-          indentation,
-        );
-      } catch (err) {
-        json = err instanceof Error ? err.message : String(err);
-      }
+      json = stringify(value);
+    } catch (err) {
+      json = err instanceof Error ? err.message : String(err);
     }
   }
 
