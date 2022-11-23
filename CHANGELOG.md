@@ -25,11 +25,12 @@ Use this version of Realm Studio to read and write Realm database files, using t
 
 | SDK              | Version          |
 | ---------------- | ---------------- |
-| Realm JavaScript | v11.3.0-rc.0 - ? |
+| Realm JavaScript | v11.3.0 - ? |
 | Realm Swift      |  |
-| Realm Kotlin     |  |
-| Realm DotNet     |  |
+| Realm Kotlin     | v1.6.0- ? |
+| Realm DotNet     | v10.19.0 - ? |
 | Realm Dart       |  |
+| Realm Java       |  | 
 
 
 ## Release 12.0.0 (2022-06-07)
