@@ -35,6 +35,23 @@ Use this version of Realm Studio to read and write Realm database files, using t
 | Realm Java       |  |
 
 
+## Release 13.0.0 (2022-11-24)
+
+[Changes since v13.0.1](https://github.com/realm/realm-studio/compare/v13.0.1...v13.0.0)
+
+### Enhancements
+
+- None
+
+### Fixed
+
+- None
+
+### Internals
+
+- None
+
+
 ## Release 12.0.0 (2022-06-07)
 
 [Changes since v11.2.1](https://github.com/realm/realm-studio/compare/v11.2.1...v12.0.0)
