@@ -1,5 +1,22 @@
 # Changelog
 
+## Release 13.0.1 (2022-11-24)
+
+[Changes since v13.0.0](https://github.com/realm/realm-studio/compare/v13.0.0...v13.0.1)
+
+### Enhancements
+
+- None
+
+### Fixed
+
+- None
+
+### Internals
+
+- None
+
+
 ## Release 13.0.0 (2022-11-23)
 
 [Changes since v12.0.0](https://github.com/realm/realm-studio/compare/v12.0.0...v13.0.0)
