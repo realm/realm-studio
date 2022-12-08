@@ -16,6 +16,23 @@
 - Skipping version 13.0.1.
 
 
+## Release 13.0.2 (2022-12-08)
+
+[Changes since v13.0.0](https://github.com/realm/realm-studio/compare/v13.0.0...v13.0.2)
+
+### Enhancements
+
+- None
+
+### Fixed
+
+- None
+
+### Internals
+
+- None
+
+
 ## Release 13.0.0 (2022-11-24)
 
 [Changes since v12.0.0](https://github.com/realm/realm-studio/compare/v12.0.0...v13.0.0)
