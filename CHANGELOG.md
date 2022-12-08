@@ -2,6 +2,22 @@
 
 ## vNext
 
+### Enhancements
+
+- None
+
+### Fixed
+
+- The produced checksum in version 13.0.0 was incorrect. ([#1554](https://github.com/realm/realm-studio/issues/1554), since v13.0.0)
+
+### Internals
+
+- Upgraded Realm JS to v11.3.1.
+- Skipping version 13.0.1.
+
+
+## Release 13.0.0 (2022-11-24)
+
 [Changes since v12.0.0](https://github.com/realm/realm-studio/compare/v12.0.0...v13.0.0)
 
 ### Breaking Changes
@@ -33,23 +49,6 @@ Use this version of Realm Studio to read and write Realm database files, using t
 | Realm DotNet     | v10.19.0 - ? |
 | Realm Dart       | v0.9.0+rc - ? |
 | Realm Java       |  |
-
-
-## Release 13.0.0 (2022-11-24)
-
-[Changes since v13.0.1](https://github.com/realm/realm-studio/compare/v13.0.1...v13.0.0)
-
-### Enhancements
-
-- None
-
-### Fixed
-
-- None
-
-### Internals
-
-- None
 
 
 ## Release 12.0.0 (2022-06-07)
