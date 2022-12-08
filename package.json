@@ -1,7 +1,7 @@
 {
   "name": "realm-studio",
   "productName": "Realm Studio",
-  "version": "13.0.1",
+  "version": "13.0.0",
   "description": "A tool for everything Realm!",
   "author": {
     "name": "Realm",
@@ -132,6 +132,7 @@
     "contentful": "^9.2.9",
     "electron-store": "^8.1.0",
     "electron-updater": "5.3.0",
+    "flatted": "^3.2.7",
     "font-awesome": "^4.7.0",
     "fs-extra": "^10.1.0",
     "graphiql": "^2.0.12",
