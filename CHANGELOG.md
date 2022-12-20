@@ -28,6 +28,20 @@
 
 - None
 
+### Compatibility
+
+Use this version of Realm Studio to read and write Realm database files, using the same lock file format as:
+
+| SDK              | Version          |
+| ---------------- | ---------------- |
+| Realm JavaScript | v11.3.0 - ? |
+| Realm Swift      | |
+| Realm Kotlin     | |
+| Realm DotNet     | |
+| Realm Dart       | |
+| Realm Java       | |
+| Realm C++        | |
+
 ### Internals
 
 - None
@@ -61,11 +75,12 @@ Use this version of Realm Studio to read and write Realm database files, using t
 | SDK              | Version          |
 | ---------------- | ---------------- |
 | Realm JavaScript | v11.3.0 - ? |
-| Realm Swift      |  |
-| Realm Kotlin     | v1.6.0- ? |
-| Realm DotNet     | v10.19.0 - ? |
-| Realm Dart       | v0.9.0+rc - ? |
-| Realm Java       |  |
+| Realm Swift      | |
+| Realm Kotlin     | |
+| Realm DotNet     | |
+| Realm Dart       | |
+| Realm Java       | |
+| Realm C++        | |
 
 
 ## Release 12.0.0 (2022-06-07)
