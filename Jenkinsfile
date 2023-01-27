@@ -107,7 +107,7 @@ pipeline {
       steps {
         nvm(env.NODE_VERSION) {
           // Install dependencies
-          sh 'npm ci'
+          sh 'npm ci --legacy-peer-deps'
           // Update the version
           script {
             if (PUBLISH == 'true') {

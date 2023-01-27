@@ -20,6 +20,6 @@ import { IExportEngine } from '.';
 
 export class LocalRealmExportEngine implements IExportEngine {
   public export(realm: Realm, destinationPath: string) {
-    realm.writeCopyTo(destinationPath);
+    realm.writeCopyTo({ path: destinationPath });
   }
 }
