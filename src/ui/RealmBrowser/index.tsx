@@ -97,6 +97,7 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   // A number that we can use to make components update on changes to data
   dataVersion: number;
   dataVersionAtBeginning?: number;
+  darkModeEnabled: boolean;
   allowCreate: boolean;
   editMode: EditMode;
   focus: Focus | null;
@@ -119,6 +120,7 @@ class RealmBrowserContainer
 {
   public state: IRealmBrowserState = {
     dataVersion: 0,
+    darkModeEnabled: false,
     allowCreate: false,
     editMode:
       (localStorage.getItem(EDIT_MODE_STORAGE_KEY) as EditMode) ||
@@ -163,6 +165,7 @@ class RealmBrowserContainer
         contentRef={this.contentRef}
         dataVersion={this.state.dataVersion}
         dataVersionAtBeginning={this.state.dataVersionAtBeginning}
+        darkModeEnabled={this.state.darkModeEnabled}
         allowCreate={this.state.allowCreate}
         editMode={this.props.readOnly ? EditMode.Disabled : this.state.editMode}
         focus={this.state.focus}
@@ -198,6 +201,10 @@ class RealmBrowserContainer
         isEmbeddedType={this.isEmbeddedType}
       />
     );
+  }
+
+  public changeTheme() {
+    this.setState({ darkModeEnabled: !this.state.darkModeEnabled });
   }
 
   public generateMenu(template: MenuItemConstructorOptions[]) {
@@ -314,6 +321,15 @@ class RealmBrowserContainer
       },
     };
 
+    const darkModeMenu: MenuItemConstructorOptions = {
+      label: 'Enable Dark Mode',
+      type: 'checkbox',
+      checked: this.state.darkModeEnabled,
+      click: () => {
+        this.changeTheme();
+      },
+    };
+
     return menu.performModifications(template, [
       {
         action: 'append',
@@ -334,6 +350,11 @@ class RealmBrowserContainer
         action: 'append',
         id: 'select-all',
         items: [{ type: 'separator' }, ...transactionMenuItems, editModeMenu],
+      },
+      {
+        action: 'replace',
+        id: 'toggle-appearance',
+        items: [darkModeMenu, { type: 'separator' }],
       },
     ]);
   }

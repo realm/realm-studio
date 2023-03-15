@@ -37,8 +37,10 @@
   }
 
   &__UserRow {
+    @include themed() {
+      border: 1px solid t("charcoal");
+    }
     align-items: center;
-    border: 1px solid $cell-border-color;
     border-bottom-width: 0;
     display: flex;
     font-size: $font-size-sm;

@@ -19,28 +19,35 @@
 @import "~realm-studio-styles/variables";
 
 .LeftSidebar {
+  @include themed() {
+    color: t("text");
+  }
   display: flex;
   flex-direction: column;
-  padding: $spacer / 2;
   padding-bottom: 0;
 
   &__Header {
+    @include themed() {
+      background: t("indigo");
+      border-bottom: 8px solid t("grape-jelly");
+      color: t("elephant");
+    }
+    padding: $spacer / 2;
     align-items: center;
-    border-bottom: 1px solid $dove;
-    color: $elephant;
     display: flex;
     flex-basis: 2.5rem;
     flex-shrink: 0;
-    font-size: .9rem;
+    font-size: 1.08rem;
     font-weight: bold;
     justify-content: space-between;
     margin-bottom: $spacer / 2;
-    padding-bottom: $spacer / 2;
+    padding-top: $spacer;
+    padding-bottom: $spacer;
     padding-left: $spacer;
-    text-transform: uppercase;
   }
 
   &__Classes {
+    padding: $spacer / 2;
     flex-grow: 1;
     margin: 0 (-$spacer / 2);
     overflow-x: hidden;
@@ -56,7 +63,9 @@
       justify-content: flex-start;
 
       &::before {
-        color: $elephant;
+        @include themed() {
+          color: t("indigo");
+        }
         content: "This Realm has no classes defined";
         padding: $spacer;
         text-align: center;
@@ -87,18 +96,24 @@
 
       &:hover,
       &:focus {
-        background: $secondary;
+        @include themed() {
+          background: t("charcoal");
+        }
       }
 
       &--selected {
-        background: $secondary;
+        @include themed() {
+          background: t("charcoal");
+        }
       }
 
       &--highlighted {
         cursor: inherit;
 
         &::before {
-          background: $primary;
+          @include themed() {
+            background: t("indigo");
+          }
           border-radius: 2px;
           bottom: 5px;
           content: "";
@@ -112,7 +127,9 @@
   }
 
   &__List {
-    background: $secondary;
+    @include themed() {
+      background: t("charcoal");
+    }
     // box-shadow: inset 0 0 .4rem $realm-browser-list-box-shadow-color;
     padding: .75 * $spacer;
     padding-left: 1.5 * $spacer;
@@ -149,7 +166,9 @@
     }
 
     &::before {
-      background: $primary;
+      @include themed() {
+        background: t("indigo");
+      }
       border-radius: 2px;
       bottom: 5px;
       content: "";
@@ -162,7 +181,9 @@
 
   &__HiddenClassesHint,
   &__ReadOnlyHint {
-    color: $elephant;
+    @include themed() {
+      color: t("indigo");
+    }
     font-size: .75rem;
     margin: $spacer / 2;
     overflow: hidden;

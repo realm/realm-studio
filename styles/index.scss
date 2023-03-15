@@ -35,11 +35,22 @@ html {
 html,
 body,
 #app {
+  @include themed() {
+    background: t('base') !important;
+  }
   height: 100%;
 }
 
+.modal-content {
+  @include themed() {
+    background-color: t('base') !important;
+  }
+}
+
 .Link {
-  color: $primary;
+  @include themed() {
+    color: t('indigo');
+  }
   cursor: pointer;
   text-decoration: underline;
 }

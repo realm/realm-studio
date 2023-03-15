@@ -27,17 +27,20 @@ import { WindowType } from './windows/WindowOptions';
 type RemovalCallback = () => void;
 
 const KEY_SHOW_SYSTEM_CLASSES = 'browser.show-system-classes';
+const KEY_SHOW_DARK_MODE = 'browser.show-dark-mode';
 const KEY_SHOW_INTERNAL_FEATURES = 'general.show-internal-features';
 const KEY_WINDOW_OPTIONS = 'window-options';
 
 type StudioStore = {
   [KEY_SHOW_SYSTEM_CLASSES]: boolean;
+  [KEY_SHOW_DARK_MODE]: boolean;
   [KEY_SHOW_INTERNAL_FEATURES]: boolean;
   [key: string]: unknown;
 };
 
 class RealmStudioStore {
   public readonly KEY_SHOW_SYSTEM_CLASSES = KEY_SHOW_SYSTEM_CLASSES;
+  public readonly KEY_SHOW_DARK_MODE = KEY_SHOW_DARK_MODE;
   public readonly KEY_SHOW_INTERNAL_FEATURES = KEY_SHOW_INTERNAL_FEATURES;
   public readonly KEY_WINDOW_OPTIONS = KEY_WINDOW_OPTIONS;
 
@@ -48,6 +51,12 @@ class RealmStudioStore {
     this.store.set(KEY_SHOW_SYSTEM_CLASSES, !currentValue);
   }
 
+  public toggleDarkMode()
+  {
+    const currentValue = this.shouldShowInternalFeatures();
+    this.store.set(KEY_SHOW_DARK_MODE, !currentValue);
+  }
+
   public toggleShowInternalFeatures() {
     const currentValue = this.shouldShowInternalFeatures();
     this.store.set(KEY_SHOW_INTERNAL_FEATURES, !currentValue);
@@ -55,6 +64,10 @@ class RealmStudioStore {
 
   public shouldShowSystemClasses(): boolean {
     return this.store.get(KEY_SHOW_SYSTEM_CLASSES, false);
+  }
+
+  public shouldShowDarkMode(): boolean {
+    return this.store.get(KEY_SHOW_DARK_MODE, false);
   }
 
   public shouldShowInternalFeatures(): boolean {

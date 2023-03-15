@@ -20,17 +20,23 @@
 @import "./variables";
 
 .Sidebar {
-  background: $sidebar-background;
+  @include themed() {
+    background: t("charcoal");
+  }
   position: relative;
   transition: flex-basis $sidebar-transition-duration;
   z-index: 6;
 
   &--left {
-    border-right: 1px solid $sidebar-border-color;
+    @include themed() {
+      border-right: 1px solid t("charcoal");
+    }
   }
 
   &--right {
-    border-left: 1px solid $sidebar-border-color;
+    @include themed() {
+      border-left: 1px solid t("charcoal");
+    }
   }
 
   &--closed {
@@ -91,10 +97,12 @@
   }
 
   &__ToggleButton {
+    @include themed() {
+      color: t("text");
+    }
     align-items: center;
     border-radius: $border-radius-lg;
     bottom: 1rem;
-    color: $elephant;
     cursor: pointer;
     // Default is not to display the toggle button, unless it's --visible
     display: none;
@@ -113,8 +121,10 @@
     }
 
     &::before {
-      background-color: $sidebar-background;
-      border: 1px solid $sidebar-border-color;
+      @include themed() {
+        border: 1px solid t("charcoal");
+        background-color: t("charcoal");
+      }
       border-radius: $border-radius-lg;
       box-sizing: content-box;
       content: "";
@@ -168,7 +178,9 @@
     }
 
     &:hover {
-      color: $charcoal;
+      @include themed() {
+        color: t("text");
+      }
     }
   }
 
@@ -206,7 +218,9 @@
     }
 
     &__EmptyExplanation {
-      color: $elephant;
+      @include themed() {
+        color: t("elephant");
+      }
       font-size: .9rem;
       text-align: center;
     }

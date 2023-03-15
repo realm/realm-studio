@@ -27,11 +27,15 @@
     }
 
     &__headerRow {
-      border-bottom: 2px solid $dove;
+      @include themed() {
+        border-bottom: 2px solid t("dove");
+      }
     }
 
     &__row {
-      border-bottom: 1px solid $dove;
+      @include themed() {
+        border-bottom: 1px solid t("dove");
+      }
 
       &:focus {
         // Disabling the default focus outline
