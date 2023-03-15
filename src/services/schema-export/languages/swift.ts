@@ -40,14 +40,15 @@ export default class SwiftSchemaExporter extends SchemaExporter {
   public makeSchema(schema: Realm.ObjectSchema) {
     this.appendLine(`class ${schema.name}: Object\n{\n`);
 
+    // Primary key
+    if (schema.primaryKey) {
+      this.appendLine('  @Persisted(primaryKey: true)');
+      this.appendLine('  var ' + schema.primaryKey + ': ObjectId\n');
+    }
+
     // Properties
     const indexedProp: INamedObjectSchemaProperty[] = [];
     filteredProperties(schema.properties).forEach(prop => {
-      // Primary key
-      if (prop.indexed && prop.name === schema.primaryKey) {
-        this.appendLine('  @Persisted(primaryKey: true)');
-        this.appendLine('  var ' + schema.primaryKey + ': ObjectId\n');
-      }
       this.appendLine('  ' + this.propertyLine(prop));
       if (prop.indexed && prop.name !== schema.primaryKey) {
         indexedProp.push(prop);
@@ -118,15 +119,11 @@ export default class SwiftSchemaExporter extends SchemaExporter {
         case 'int':
         case 'float':
         case 'double':
-          return `@Persisted\n  var ${prop.name}: ${propType}?\n`;
-
         case 'string':
         case 'data':
         case 'date':
         case 'objectId':
         case 'decimal128':
-          return `@Persisted\n  var ${prop.name}: ${propType}?\n`;
-
         case 'object':
           return `@Persisted\n  var ${prop.name}: ${propType}?\n`;
         default:
