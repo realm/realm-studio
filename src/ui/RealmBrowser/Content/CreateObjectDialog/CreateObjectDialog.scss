@@ -19,8 +19,14 @@
 @import "~realm-studio-styles/variables";
 
 .CreateObjectDialog {
+  @include themed() {
+    background: t("base") !important;
+  }
   &__PropertyRow {
     &__Label {
+      @include themed() {
+        background: t("base") !important;
+      }
       width: 100%;
     }
 
@@ -43,10 +49,15 @@
     }
 
     &__Display {
+      @include themed() {
+        background: t("base") !important;
+      }
       font-size: .8rem;
 
       &--null {
-        color: $elephant;
+        @include themed() {
+          color: t("text");
+        }
         font-style: italic;
       }
     }
@@ -91,13 +102,18 @@
   }
 
   &__ListControl {
+    @include themed() {
+      background: t("base") !important;
+    }
     $list-control-gutter: $spacer / 2;
-    background: $window-background;
     border: $input-border-width solid $input-border-color;
     border-radius: $input-border-radius;
     padding: $input-padding-y $input-padding-x;
 
     &__Item {
+      @include themed() {
+        background: t("base") !important;
+      }
       display: inline-block;
       padding-bottom: $list-control-gutter;
       width: 100%;

@@ -38,37 +38,35 @@ export default class SwiftSchemaExporter extends SchemaExporter {
   }
 
   public makeSchema(schema: Realm.ObjectSchema) {
-    this.appendLine(`class ${schema.name}: Object {`);
+    this.appendLine(`class ${schema.name}: Object\n{\n`);
+
+    // Primary key
+    if (schema.primaryKey) {
+      this.appendLine('  @Persisted(primaryKey: true)');
+      this.appendLine('  var ' + schema.primaryKey + ': ObjectId\n');
+    }
 
     // Properties
     const indexedProp: INamedObjectSchemaProperty[] = [];
     filteredProperties(schema.properties).forEach(prop => {
-      this.appendLine('    ' + this.propertyLine(prop));
+      this.appendLine('  ' + this.propertyLine(prop));
       if (prop.indexed && prop.name !== schema.primaryKey) {
         indexedProp.push(prop);
       }
     });
 
-    // Primary key
-    if (schema.primaryKey) {
-      this.appendLine('');
-      this.appendLine('    override static func primaryKey() -> String? {');
-      this.appendLine('        return "' + schema.primaryKey + '"');
-      this.appendLine('    }');
-    }
-
     // Indexed Properties
     if (indexedProp.length > 0) {
       this.appendLine('');
       this.appendLine(
-        '    override static func indexedProperties() -> [String] {',
+        '  override static func indexedProperties() -> [String] {',
       );
 
       const indexedPropsStr = indexedProp
         .map(prop => `"${prop.name}"`)
         .join(', ');
-      this.appendLine(`        return [${indexedPropsStr}]`);
-      this.appendLine('    }');
+      this.appendLine(`    return [${indexedPropsStr}]`);
+      this.appendLine('  }');
     }
 
     // End class
@@ -109,7 +107,7 @@ export default class SwiftSchemaExporter extends SchemaExporter {
       if (prop.optional) {
         strArray += '?';
       }
-      return `let ${prop.name} = List<${strArray}>()`;
+      return `@Persisted\n  var ${prop.name} = [${strArray}]()\n`;
     }
 
     const propType = propertyType(prop.type);
@@ -121,41 +119,31 @@ export default class SwiftSchemaExporter extends SchemaExporter {
         case 'int':
         case 'float':
         case 'double':
-          return `let ${prop.name} = RealmOptional<${propType}>()`;
-
         case 'string':
         case 'data':
         case 'date':
         case 'objectId':
         case 'decimal128':
-          return `@objc dynamic var ${prop.name}: ${propType}? = nil`;
-
         case 'object':
-          return `@objc dynamic var ${prop.name}: ${prop.objectType}?`;
+          return `@Persisted\n  var ${prop.name}: ${propType}?\n`;
         default:
           return `ERROR - unknown type '${prop.type}'`;
       }
     }
 
     // Non Optional types
-    const str = `@objc dynamic var ${prop.name}: ${propType} = `;
+    const str = `@Persisted\n  var ${prop.name}: ${propType}\n`;
     switch (prop.type) {
       case 'bool':
-        return str + 'false';
       case 'int':
       case 'float':
       case 'double':
-        return str + '0';
       case 'string':
-        return str + '""';
       case 'data':
-        return str + 'Data()';
       case 'date':
-        return str + 'Date()';
       case 'objectId':
-        return str + 'ObjectId()';
       case 'decimal128':
-        return str + 'Decimal128()';
+        return str;
       case 'object':
         return 'Objects must always be optional. Something is not right in this model!';
     }

@@ -1,6 +1,6 @@
 {
   "name": "realm-studio",
-  "productName": "Realm Studio",
+  "productName": "Cosmic Realms",
   "version": "13.0.2",
   "description": "A tool for everything Realm!",
   "author": {
@@ -12,7 +12,7 @@
   "license": "Apache-2.0",
   "main": "./build/main.bundle.js",
   "build": {
-    "appId": "com.mongodb.realm-studio",
+    "appId": "foundation.wabi.realm-studio",
     "directories": {
       "buildResources": "./resources"
     },
@@ -72,7 +72,7 @@
     },
     "protocols": [
       {
-        "name": "Realm Studio",
+        "name": "Cosmic Realms",
         "schemes": [
           "x-realm-cloud",
           "x-realm-studio"

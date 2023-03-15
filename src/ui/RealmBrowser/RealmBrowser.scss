@@ -22,7 +22,6 @@
 .RealmBrowser {
   display: flex;
   height: 100%;
-
   &__Table__HeaderGrid,
   &__Topbar {
     z-index: 1; // Overlay when drag-reordering elements in lists
@@ -55,8 +54,10 @@
   }
 
   &__Topbar {
+    @include themed() {
+      background: t("base");
+    }
     align-items: center;
-    background: $window-background;
     display: flex;
     padding: $spacer / 2;
 
@@ -82,12 +83,16 @@
   }
 
   &__Table {
-    background: $white;
+    @include themed() {
+      background: t("base");
+    }
     flex: 1 0 0;
     position: relative;
 
     &__HeaderGrid {
-      background: $white;
+      @include themed() {
+        background: t("base");
+      }
     }
 
     &__AddColumnControl {
@@ -131,12 +136,16 @@
       transition: background-color 200ms;
 
       &--striped {
-        background: $row-stripe;
+        @include themed() {
+          background: t("elephant");
+        }
       }
 
       &--sorting {
-        background: mix($row-stripe, $white, 40%);
-        border-top: 1px solid $dove;
+        @include themed() {
+          border-top: 1px solid t("indigo");
+          background: t("elephant");
+        }
         margin-top: -1px;
         transition: transform 300ms;
         user-select: none;
@@ -159,8 +168,10 @@
 
     &__HeaderCell,
     &__Cell {
-      border-bottom: 1px solid $cell-border-color;
-      border-right: 1px solid $cell-border-color;
+      @include themed() {
+        border-bottom: 1px solid t("charcoal");
+        border-right: 1px solid t("charcoal");
+      }
       padding: 0;
       position: relative;
 
@@ -206,14 +217,18 @@
 
       &--primitive {
         &::before {
-          color: $elephant;
+          @include themed() {
+            color: t("indigo");
+          }
           content: "primitive";
         }
       }
     }
 
     &__HeaderType {
-      color: $elephant;
+      @include themed() {
+        color: t("text");
+      }
       font-size: $font-size-sm;
       font-weight: normal;
       overflow: hidden;
@@ -226,12 +241,16 @@
     }
 
     &__HeaderSort {
-      color: $elephant;
+      @include themed() {
+        color: t("text");
+      }
       flex-shrink: 0;
       font-size: 12px;
 
       &--active {
-        color: $charcoal;
+        @include themed() {
+          color: t("indigo");
+        }
       }
     }
 
@@ -305,7 +324,9 @@
     &__StringCell,
     &__DataCell {
       &--null {
-        color: $elephant;
+        @include themed() {
+          color: t("text");
+        }
         cursor: inherit;
         display: block;
         font-style: italic;
@@ -314,7 +335,9 @@
 
     &__MixedCell {
       &--disabled {
-        color: $elephant;
+        @include themed() {
+          color: t("text");
+        }
       }
     }
 
@@ -327,11 +350,15 @@
       padding: $cell-padding-y $cell-padding-x;
 
       &--null {
-        color: $elephant;
+        @include themed() {
+          color: t("text");
+        }
       }
 
       &--disabled {
-        color: $elephant;
+        @include themed() {
+          color: t("text");
+        }
       }
 
       &--int {
@@ -446,19 +473,25 @@
     justify-content: center;
 
     &::before {
-      color: $elephant;
+      @include themed() {
+        color: t("text");
+      }
       content: "No schema selected";
     }
   }
 
   &__PermissionSidebar {
-    border-top: 1px solid $dove;
+    @include themed() {
+      border-top: 1px solid t("indigo");
+    }
   }
 
   &__Bottombar {
+    @include themed() {
+      background: t("dove");
+      color: t("dove");
+    }
     align-items: center;
-    background: $ultramarine;
-    color: $dove;
     display: flex;
     height: 0;
     justify-content: space-between;

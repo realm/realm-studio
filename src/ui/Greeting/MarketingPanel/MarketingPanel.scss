@@ -18,16 +18,17 @@
 
 @import "~realm-studio-styles/variables";
 
-$content-background: rgba($charcoal, .6);
-$hr-color: rgba($dove, .33);
-
 .MarketingPanel {
-  background: $charcoal;
-  color: $white;
+  @include themed() {
+    background: t("charcoal");
+    color: t("text");
+  }
   position: relative;
 
   &__PreviewToggle {
-    background: $content-background;
+    @include themed() {
+      background: rgba(t("charcoal"), .6);
+    }
     bottom: - $spacer / 2;
     font-size: .8rem;
     padding: $spacer / 4;
@@ -55,7 +56,9 @@ $hr-color: rgba($dove, .33);
 
   &__MessageContent {
     // Tumbleweed
-    background: $content-background;
+    @include themed() {
+      background: rgba(t("charcoal"), .6);
+    }
     font-size: .8rem;
     overflow: auto;
     padding: $spacer;
@@ -91,16 +94,22 @@ $hr-color: rgba($dove, .33);
     }
 
     a {
-      color: $white;
+      @include themed() {
+        color: t("text");
+      }
       text-decoration: underline;
     }
 
     code {
-      color: $white;
+      @include themed() {
+        color: t("text");
+      }
     }
 
     blockquote {
-      border-left: ($spacer / 8) solid $dove;
+      @include themed() {
+        border-left: ($spacer / 8) solid t("dove");
+      }
       padding-left: $spacer / 2;
     }
 
@@ -121,7 +130,9 @@ $hr-color: rgba($dove, .33);
     }
 
     hr {
-      border-color: $hr-color;
+      @include themed() {
+        background: rgba(t("dove"), .33);
+      }
     }
   }
 

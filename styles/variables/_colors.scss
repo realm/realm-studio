@@ -17,43 +17,112 @@
 ////////////////////////////////////////////////////////////////////////////
 
 // Realm theme colors
-$melon: #fcc397;
-$peach: #fc9f95;
-$sexy-salmon: #f77c88;
-$flamingo: #f25192;
-$mulberry: #d34ca3;
-$grape-jelly: #9a50a5;
-$indigo: #59569e;
-$ultramarine: #39477f;
-$charcoal: #1c233f;
-$elephant: #9a9ba5;
-$dove: #ebebf2;
+$base--light: #ffffff;
+$melon--light: #fcc397;
+$peach--light: #fc9f95;
+$sexy-salmon--light: #f77c88;
+$flamingo--light: #f25192;
+$mulberry--light: #d34ca3;
+$grape-jelly--light: #A85FEA;
+$indigo--light: #2B664C;
+$ultramarine--light: #39477f;
+$charcoal--light: #FAFBFA;
+$elephant--light: #9a9ba5;
+$dove--light: #ebebf2;
+$text--light: #000000;
+
+$base--dark: #071E2A;
+$melon--dark: #fcc397;
+$peach--dark: #fc9f95;
+$sexy-salmon--dark: #f77c88;
+$flamingo--dark: #f25192;
+$mulberry--dark: #d34ca3;
+$grape-jelly--dark: #A85FEA;
+$indigo--dark: #71F6BA;
+$ultramarine--dark: #39477f;
+$charcoal--dark: #162632;
+$elephant--dark: #000007;
+$dove--dark: #59569e;
+$text--dark: #ffffff;
 
 // The default bootstrap colors will be merged into this map
 $colors: (
-  "melon": $melon,
-  "peach": $peach,
-  "sexy-salmon": $sexy-salmon,
-  "flamingo": $flamingo,
-  "mulberry": $mulberry,
-  "grape-jelly": $grape-jelly,
-  "indigo": $indigo,
-  "ultramarine": $ultramarine,
-  "charcoal": $charcoal,
-  "elephant": $elephant,
-  "dove": $dove,
+  "base": $base--light,
+  "melon": $melon--light,
+  "peach": $peach--light,
+  "sexy-salmon": $sexy-salmon--light,
+  "flamingo": $flamingo--light,
+  "mulberry": $mulberry--light,
+  "grape-jelly": $grape-jelly--light,
+  "indigo": $indigo--light,
+  "ultramarine": $ultramarine--light,
+  "charcoal": $charcoal--light,
+  "elephant": $elephant--light,
+  "dove": $dove--light,
+  "text": $text--light
 );
 
+$themes: (
+  default: (
+    "base": $base--light,
+    "melon": $melon--light,
+    "peach": $peach--light,
+    "sexy-salmon": $sexy-salmon--light,
+    "flamingo": $flamingo--light,
+    "mulberry": $mulberry--light,
+    "grape-jelly": $grape-jelly--light,
+    "indigo": $indigo--light,
+    "ultramarine": $ultramarine--light,
+    "charcoal": $charcoal--light,
+    "elephant": $elephant--light,
+    "dove": $dove--light,
+    "text": $text--light
+  ),
+  dark: (
+      "base": $base--dark,
+      "melon": $melon--dark,
+      "peach": $peach--dark,
+      "sexy-salmon": $sexy-salmon--dark,
+      "flamingo": $flamingo--dark,
+      "mulberry": $mulberry--dark,
+      "grape-jelly": $grape-jelly--dark,
+      "indigo": $indigo--dark,
+      "ultramarine": $ultramarine--dark,
+      "charcoal": $charcoal--dark,
+      "elephant": $elephant--dark,
+      "dove": $dove--dark,
+      "text": $text--dark
+  ),
+);
+
+@mixin themed() {
+  @each $theme, $map in $themes {
+    .theme--#{$theme} & {
+      $colors: () !global;
+      @each $key, $submap in $map {
+        $value: map-get(map-get($themes, $theme), '#{$key}');
+        $colors: map-merge($colors, ($key: $value)) !global;
+      }
+      @content;
+      $colors: null !global;
+    }
+  }
+}
+
+@function t($key) {
+  @return map-get($colors, $key);
+}
+
 // Override bootstrap colors
-$primary: $ultramarine;
-$secondary: mix($dove, $elephant, 90%);
-$danger: $sexy-salmon;
-$info: $ultramarine;
+$primary: t("ultramarine");
+$secondary: mix(t("dove"), t("elephant"), 90%);
+$danger: t("sexy-salmon");
+$info: t("ultramarine");
 
-$input-placeholder-color: rgba($elephant, .6);
+$input-placeholder-color: rgba(t("elephant"), .6);
 
-$window-background: mix(#fff, $dove, 50%);
-$overlay-background: rgba($charcoal, .6);
+$window-background: t("base");
+$overlay-background: rgba(t("charcoal"), .6);
 
 $body-bg: $window-background;
 

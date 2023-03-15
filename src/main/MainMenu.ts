@@ -91,7 +91,7 @@ export const getDefaultMenuTemplate = (
             store.toggleShowInternalFeatures();
             updateMenu();
           },
-        },
+        },        
         { role: 'reload', visible: showInternalFeatures },
         { role: 'toggleDevTools', visible: showInternalFeatures },
         { type: 'separator', visible: showInternalFeatures },
@@ -101,6 +101,17 @@ export const getDefaultMenuTemplate = (
           checked: store.shouldShowSystemClasses(),
           click: () => {
             store.toggleShowSystemClasses();
+            updateMenu();
+          },
+        },
+        { type: 'separator' },
+        { 
+          label: "Enable Dark Mode",
+          id: 'toggle-appearance',
+          type: 'checkbox',
+          checked: store.shouldShowDarkMode(),
+          click: () => {
+            store.toggleDarkMode();
             updateMenu();
           },
         },

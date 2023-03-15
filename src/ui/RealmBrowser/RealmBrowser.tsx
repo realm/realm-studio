@@ -48,6 +48,7 @@ export interface IRealmBrowserProps {
   createObjectSchema?: Realm.ObjectSchema;
   dataVersion: number;
   dataVersionAtBeginning?: number;
+  darkModeEnabled: boolean;
   allowCreate: boolean;
   editMode: EditMode;
   focus: Focus | null;
@@ -94,6 +95,7 @@ export const RealmBrowser = ({
   focus,
   getClassFocus,
   getSchemaLength,
+  darkModeEnabled,
   importDialog,
   isAddClassOpen,
   isAddPropertyOpen,
@@ -124,7 +126,7 @@ export const RealmBrowser = ({
   isEmbeddedType,
 }: IRealmBrowserProps) => {
   return (
-    <div className="RealmBrowser">
+    <div className={'RealmBrowser theme ' + (darkModeEnabled ? 'theme--dark' : 'theme--default')}>
       <LeftSidebar
         classes={classes}
         className="RealmBrowser__LeftSidebar"

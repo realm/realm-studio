@@ -29,12 +29,14 @@
 }
 
 .LoadingOverlay {
+  @include themed() {
+    background: rgba(t("charcoal"), .6);
+  }
   align-items: center;
   animation-delay: 0s;
   animation-duration: .33s;
   animation-fill-mode: forwards;
   animation-name: fade;
-  background: $overlay-background;
   bottom: 0;
   left: 0;
   opacity: 0;
@@ -52,8 +54,10 @@
   }
 
   &__Content {
+    @include themed() {
+      color: t("dove");
+    }
     align-items: center;
-    color: $dove;
     display: flex;
     flex-direction: column;
     font-size: .9rem;
@@ -89,7 +93,9 @@
   }
 
   &__Details {
-    color: $dove;
+    @include themed() {
+      color: t("dove");
+    }
     overflow: auto;
     text-align: left;
     width: 100%;

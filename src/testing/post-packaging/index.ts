@@ -116,7 +116,7 @@ assert(
 
 assert.strictEqual(typeof productName, 'string', 'Expected a product name');
 
-describe('Realm Studio packaged', () => {
+describe('Cosmic Realms packaged', () => {
   let mockedS3: http.Server;
   let appProcess: cp.ChildProcess;
   let temporaryMacPath: string;
@@ -130,7 +130,7 @@ describe('Realm Studio packaged', () => {
     buildMockedRealmStudio();
     // Copy the current dist/mac folder to a different location to prevent the auto updater
     // from overriding the current dist/mac folder.
-    const originalMacPath = path.resolve(distPath, 'mac');
+    const originalMacPath = path.resolve(distPath, 'mac-arm64');
     temporaryMacPath = fs.mkdtempSync(originalMacPath + '-auto-update-test-');
     console.log(
       'Making a copy of the mac app from',

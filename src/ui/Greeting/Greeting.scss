@@ -31,8 +31,12 @@ $history-panel-icon-size: 20px;
   }
 
   &__ActionsPanel {
+    @include themed() {
+      border: 1px solid mix(t("elephant"), t("dove"), 25%);
+      background-color: t("base");
+      background: t("base");
+    }
     align-items: center;
-    background: $window-background;
     display: flex;
     flex-basis: 60%;
     flex-direction: column;
@@ -112,13 +116,17 @@ $history-panel-icon-size: 20px;
   }
 
   &__HistoryPanel {
-    background: $charcoal;
-    color: $dove;
+    @include themed() {
+      background: t("charcoal");
+      color: t("dove");
+    }
     flex-grow: 1;
     font-size: .9rem;
 
     a {
-      color: $dove;
+      @include themed() {
+        color: t("dove");
+      }
     }
 
     &__Entry {
@@ -162,9 +170,11 @@ $history-panel-icon-size: 20px;
   }
 
   &__CloudOverlay {
-    background: $overlay-background;
+    @include themed() {
+      color: t("dove");
+      background: rgba(t("charcoal"), .6);
+    }
     bottom: 0;
-    color: $dove;
     display: flex;
     flex-direction: column;
     left: 0;

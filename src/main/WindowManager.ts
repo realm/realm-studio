@@ -105,10 +105,10 @@ export class WindowManager {
       title: app.name,
       width: 800,
       height: 600,
-      vibrancy: 'light',
+      vibrancy: 'appearance-based',
       show: false,
       // This should be the same as the value of the SCSS variable $body-bg
-      backgroundColor: '#f5f5f9',
+      backgroundColor: '#00000000',
       // Accepting the first mouse event, so users dont have to focus windows before clicking them.
       // This improves the UX by minimizing the clicks needed to complete a task.
       acceptFirstMouse: true,

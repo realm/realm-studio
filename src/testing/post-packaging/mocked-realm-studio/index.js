@@ -12,7 +12,7 @@ electron.app.once('ready', () => {
     message: `Writing to the ready signal: ${p}`,
   });
   */
-  fs.writeFileSync(p, 'Hello from a future Realm Studio!', {
+  fs.writeFileSync(p, 'Hello from a future Cosmic Realms!', {
     encoding: 'utf8',
   });
   // Exit ...
