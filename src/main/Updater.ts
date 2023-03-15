@@ -216,7 +216,7 @@ export class Updater {
         dialog.showMessageBoxSync({
           type: 'info',
           message: `A new version of ${appName} is downloaded!`,
-          detail: `${appName} ${lastestVersion} is downloaded.\nClick "Ok" to quit and restart Realm Studio.`,
+          detail: `${appName} ${lastestVersion} is downloaded.\nClick "Ok" to quit and restart Cosmic Realms.`,
           buttons: ['Ok'],
           defaultId: 0,
         }) === 0

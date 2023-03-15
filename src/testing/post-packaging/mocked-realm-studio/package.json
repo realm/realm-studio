@@ -10,8 +10,8 @@
   },
   "license": "Apache-2.0",
   "build": {
-    "appId": "com.mongodb.realm-studio",
-    "productName": "Realm Studio",
+    "appId": "foundation.wabi.realm-studio",
+    "productName": "Cosmic Realms",
     "mac": {
       "target": [
         "zip"

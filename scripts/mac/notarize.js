@@ -2,8 +2,8 @@ const fs = require("fs");
 const path = require("path");
 const { notarize } = require("electron-notarize");
 
-const appBundleId = "com.mongodb.realm-studio";
-const ascProvider = "QX5CR2FTN2"; // Apple: short team name
+const appBundleId = "foundation.wabi.realm-studio";
+const ascProvider = "UQ9J5QT9DL"; // Apple: short team name
 
 exports.notarizeMacApp = async (context) => {
   const { APPLE_ID_APP_USERNAME, APPLE_ID_APP_PASSWORD } = process.env;

@@ -421,7 +421,7 @@ class RealmBrowserContainer
       }
     } else if (err.message === ARCHITECTURE_MISMATCH_MESSAGE) {
       const improvedError = new Error(
-        'The file is already opened by another process, with an incompatible lock file format. Try up- or downgrading Realm Studio or SDK to match their versions of Realm Core.\n\nSee Realm Studio changelog on GitHub for details on compatibility between versions.',
+        'The file is already opened by another process, with an incompatible lock file format. Try up- or downgrading Cosmic Realms or SDK to match their versions of Realm Core.\n\nSee Cosmic Realms changelog on GitHub for details on compatibility between versions.',
       );
       showError('Failed to open Realm', improvedError);
       window.close();

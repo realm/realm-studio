@@ -332,7 +332,7 @@ pipeline {
             def releaseUrl = "https://github.com/$GITHUB_OWNER/$GITHUB_REPO/releases/tag/$VERSION"
             // Post to Slack
             postToSlack('slack-releases-webhook', [[
-              'title': "Realm Studio $VERSION has been released!",
+              'title': "Cosmic Realms $VERSION has been released!",
               'title_link': releaseUrl,
               'text': "Github Release and artifacts are available <${releaseUrl}|here>\n${releaseNotes}",
               'mrkdwn_in': ['text'],
