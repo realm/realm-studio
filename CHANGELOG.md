@@ -1,6 +1,12 @@
 # Changelog
 
-## vNext
+## Release 14.0.0 (2023-04-13)
+
+[Changes since v13.0.2](https://github.com/realm/realm-studio/compare/v13.0.2...v14.0.0)
+
+### Breaking Changes
+
+* The layout of the lock-file has changed, the lock file format version is bumped and all participants in a multiprocess scenario needs to be up to date so they expect the same format. ([realm/realm-core#1845](https://github.com/realm/realm-core/issues/1845))
 
 ### Enhancements
 
@@ -9,7 +15,6 @@
 ### Fixed
 
 - None
-
 
 ### Internals
 
@@ -17,23 +22,6 @@
 - Upgraded a lot of dependencies. ([#1568](https://github.com/realm/realm-studio/pull/1568))
 - Upgraded Electron to v24.
 - Upgraded Realm JS to v11.8.0.
-
-
-## Release 14.0.0 (2023-04-13)
-
-[Changes since v13.0.2](https://github.com/realm/realm-studio/compare/v13.0.2...v14.0.0)
-
-### Enhancements
-
-- None
-
-### Fixed
-
-- None
-
-### Internals
-
-- None
 
 
 ## Release 13.0.2 (2022-12-08)
