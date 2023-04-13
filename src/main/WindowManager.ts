@@ -207,10 +207,12 @@ export class WindowManager {
     });
 
     // Open all links in the external browser
-    window.webContents.on('new-window', (event, openedUrl: string) => {
-      if (openedUrl.indexOf('http') === 0) {
-        event.preventDefault();
-        shell.openExternal(openedUrl);
+    window.webContents.setWindowOpenHandler(details => {
+      if (details.url.indexOf('http') === 0) {
+        shell.openExternal(details.url);
+        return { action: 'deny' };
+      } else {
+        return { action: 'allow' };
       }
     });
 

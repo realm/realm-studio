@@ -15,6 +15,7 @@
 - Upgraded Realm JS to v11.3.1.
 - Skipping version 13.0.1.
 - Upgraded a lot of dependencies. ([#1568](https://github.com/realm/realm-studio/pull/1568))
+- Upgraded Electron to v24.
 
 
 ## Release 13.0.2 (2022-12-08)
