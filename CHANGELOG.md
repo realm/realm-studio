@@ -8,7 +8,8 @@
 
 ### Fixed
 
-- The produced checksum in version 13.0.0 was incorrect. ([#1554](https://github.com/realm/realm-studio/issues/1554), since v13.0.0)
+- None
+
 
 ### Internals
 
@@ -28,7 +29,7 @@
 
 ### Fixed
 
-- None
+- The produced checksum in version 13.0.0 was incorrect. ([#1554](https://github.com/realm/realm-studio/issues/1554), since v13.0.0)
 
 ### Internals
 
