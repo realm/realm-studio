@@ -1,6 +1,12 @@
 # Changelog
 
-## vNext
+## Release 14.0.0 (2023-04-13)
+
+[Changes since v13.0.2](https://github.com/realm/realm-studio/compare/v13.0.2...v14.0.0)
+
+### Breaking Changes
+
+* The layout of the lock-file has changed, the lock file format version is bumped and all participants in a multiprocess scenario needs to be up to date so they expect the same format. ([realm/realm-core#1845](https://github.com/realm/realm-core/issues/1845))
 
 ### Enhancements
 
@@ -9,7 +15,6 @@
 ### Fixed
 
 - None
-
 
 ### Internals
 
