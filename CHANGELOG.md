@@ -14,6 +14,7 @@
 
 - Upgraded Realm JS to v11.3.1.
 - Skipping version 13.0.1.
+- Upgraded a lot of dependencies. ([#1567](https://github.com/realm/realm-studio/pull/1567))
 
 
 ## Release 13.0.2 (2022-12-08)
