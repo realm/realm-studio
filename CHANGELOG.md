@@ -19,6 +19,23 @@
 - Upgraded Realm JS to v11.8.0.
 
 
+## Release 14.0.0 (2023-04-13)
+
+[Changes since v13.0.2](https://github.com/realm/realm-studio/compare/v13.0.2...v14.0.0)
+
+### Enhancements
+
+- None
+
+### Fixed
+
+- None
+
+### Internals
+
+- None
+
+
 ## Release 13.0.2 (2022-12-08)
 
 [Changes since v13.0.0](https://github.com/realm/realm-studio/compare/v13.0.0...v13.0.2)
