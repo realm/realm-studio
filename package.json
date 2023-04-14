@@ -161,6 +161,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@electron/notarize": "^1.2.3",
     "@octokit/rest": "^19.0.7",
     "@sentry/cli": "^2.17.0",
     "@sentry/webpack-plugin": "^1.19.1",

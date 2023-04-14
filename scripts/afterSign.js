@@ -1,11 +1,11 @@
-const { notarizeMacApp } = require("./mac/notarize");
+const { notarizeMacApp } = require('./mac/notarize');
 
-exports.default = async (context) => {
-  console.log("electron-builder.afterSign hook triggered.");
+exports.default = async context => {
+  console.log('electron-builder.afterSign hook triggered.');
 
   switch (context.electronPlatformName) {
-    case "darwin":
+    case 'darwin':
       await notarizeMacApp(context);
-      break
+      break;
   }
 };
