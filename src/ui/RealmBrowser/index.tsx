@@ -342,7 +342,7 @@ class RealmBrowserContainer
     const message = err.message || '';
     const mightBeEncrypted =
       message.includes('Not a Realm file.') ||
-      message.includes('Invalid mnemonic') ||
+      message.includes('invalid mnemonic') ||
       message.includes('Realm file initial open failed');
     const realm = this.props.realm;
     if (mightBeEncrypted) {

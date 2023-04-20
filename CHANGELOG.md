@@ -1,5 +1,22 @@
 # Changelog
 
+## Release vNEXT
+
+[Changes since {PREVIOUS_VERSION}](https://github.com/realm/realm-studio/compare/{PREVIOUS_VERSION}...{CURRENT_VERSION})
+
+### Enhancements
+
+- None
+
+### Fixed
+
+- How to detect encrypted Realm files has slightly changed and made it impossible to open encrypted files. ([#1571](https://github.com/realm/realm-studio/issues/1571), since v14.0.0)
+
+### Internals
+
+- None
+
+
 ## Release 14.0.0 (2023-04-13)
 
 [Changes since v13.0.2](https://github.com/realm/realm-studio/compare/v13.0.2...v14.0.0)
