@@ -1,5 +1,18 @@
 # Changelog
 
+## Release 
+### Enhancements
+
+- None
+
+### Fixed
+
+- Fix a bug preventing opening a synced Realm. ([#1574](https://github.com/realm/realm-studio/issues/1574), since v14.0.0)
+
+### Internals
+
+- None
+
 ## Release 14.0.1 (2023-04-21)
 
 [Changes since v14.0.0](https://github.com/realm/realm-studio/compare/v14.0.0...v14.0.1)

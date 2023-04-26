@@ -124,6 +124,9 @@ export abstract class RealmLoadingComponent<
           (error.message.includes('Incompatible histories.') ||
             error.message.startsWith(
               'History type (as specified by the Replication implementation passed to the DB constructor) was not consistent across the session',
+            ) ||
+            error.message.includes(
+              'Synchronized Realms cannot be opened in non-sync mode',
             )) &&
           realm.sync !== true
         ) {
