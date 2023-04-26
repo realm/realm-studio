@@ -6,7 +6,7 @@
 
 ### Fixed
 
-- Fix a bug preventing opening a synced Realm. ([#1574](https://github.com/realm/realm-studio/issues/1574), since v14.0.0)
+- None
 
 ### Internals
 
