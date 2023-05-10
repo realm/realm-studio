@@ -88,8 +88,7 @@ type JsonViewerDialogOptions = {
 export type JsonViewerDialogExecutor = (value: unknown) => void;
 
 const EDIT_MODE_STORAGE_KEY = 'realm-browser-edit-mode';
-const FILE_UPGRADE_NEEDED_MESSAGE =
-  'The Realm file format must be allowed to be upgraded in order to proceed.';
+const FILE_UPGRADE_NEEDED_MESSAGE = 'Database upgrade required but prohibited.';
 const ARCHITECTURE_MISMATCH_MESSAGE =
   'Realm file is currently open in another process which cannot share access with this process. All processes sharing a single file must be the same architecture.';
 
