@@ -34,7 +34,7 @@ export class JSONExportEngine implements IExportEngine {
   public export(realm: Realm, destinationPath: string) {
     const resultMap: ResultMap = realm.schema.reduce(
       (map: ResultMap, objectSchema) => {
-        if (!objectSchema.embedded) {
+        if (!objectSchema.embedded && !objectSchema.asymmetric) {
           map[objectSchema.name] = realm.objects(objectSchema.name).snapshot();
         }
         return map;

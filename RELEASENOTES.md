@@ -6,7 +6,7 @@
 
 ### Fixed
 
-- None
+- Fixed a bug where opening a Realm that contains asymmetric tables will crash the process with an error saying `You cannot query an asymmetric class`. ([#1591](https://github.com/realm/realm-studio/issues/1591))
 
 ### Internals
 

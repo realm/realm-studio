@@ -50,6 +50,7 @@ import { isPrimitive } from './primitives';
 import { RealmBrowser } from './RealmBrowser';
 import * as schemaUtils from './schema-utils';
 import { SingleObjectCollection } from './Content/SingleObjectCollection';
+import { AsymmetricObjectCollection } from './Content/AsymmetricObjectCollection';
 
 // TODO: Remove this interface once the Realm.ObjectSchemaProperty
 // has a name parameter in its type definition.
@@ -114,8 +115,7 @@ class RealmBrowserContainer
     IRealmBrowserWindowProps & IMenuGeneratorProps,
     IRealmBrowserState
   >
-  implements IMenuGenerator
-{
+  implements IMenuGenerator {
   public state: IRealmBrowserState = {
     dataVersion: 0,
     allowCreate: false,
@@ -257,30 +257,30 @@ class RealmBrowserContainer
     const transactionMenuItems: MenuItemConstructorOptions[] =
       this.realm && this.realm.isInTransaction
         ? [
-            {
-              label: 'Commit transaction',
-              accelerator: 'CommandOrControl+T',
-              click: () => {
-                this.onCommitTransaction();
-              },
+          {
+            label: 'Commit transaction',
+            accelerator: 'CommandOrControl+T',
+            click: () => {
+              this.onCommitTransaction();
             },
-            {
-              label: 'Cancel transaction',
-              accelerator: 'CommandOrControl+Shift+T',
-              click: () => {
-                this.onCancelTransaction();
-              },
+          },
+          {
+            label: 'Cancel transaction',
+            accelerator: 'CommandOrControl+Shift+T',
+            click: () => {
+              this.onCancelTransaction();
             },
-          ]
+          },
+        ]
         : [
-            {
-              label: 'Begin transaction',
-              accelerator: 'CommandOrControl+T',
-              click: () => {
-                this.onBeginTransaction();
-              },
+          {
+            label: 'Begin transaction',
+            accelerator: 'CommandOrControl+T',
+            click: () => {
+              this.onBeginTransaction();
             },
-          ];
+          },
+        ];
 
     const editModeMenu: MenuItemConstructorOptions = {
       label: 'Edit mode',
@@ -637,10 +637,12 @@ class RealmBrowserContainer
 
   private getClassFocus = (className: string): IClassFocus => {
     if (this.realm) {
+      const schema = this.realm.schema.find(s => s.name === className);
+
       return {
         kind: 'class',
         className,
-        results: this.realm.objects(className),
+        results: schema?.asymmetric ? new AsymmetricObjectCollection(schema) : this.realm.objects(className),
         properties: this.derivePropertiesFromClassName(className),
         isEmbedded: this.isEmbeddedType(className),
       };
@@ -700,7 +702,8 @@ class RealmBrowserContainer
 
   private getSchemaLength = (name: string) => {
     if (this.realm) {
-      return this.realm.objects(name).length;
+      const schema = this.realm.schema.find(s => s.name == name);
+      return schema?.asymmetric ? 0 : this.realm.objects(name).length;
     } else {
       return 0;
     }
