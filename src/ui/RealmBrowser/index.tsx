@@ -115,7 +115,8 @@ class RealmBrowserContainer
     IRealmBrowserWindowProps & IMenuGeneratorProps,
     IRealmBrowserState
   >
-  implements IMenuGenerator {
+  implements IMenuGenerator
+{
   public state: IRealmBrowserState = {
     dataVersion: 0,
     allowCreate: false,
@@ -257,30 +258,30 @@ class RealmBrowserContainer
     const transactionMenuItems: MenuItemConstructorOptions[] =
       this.realm && this.realm.isInTransaction
         ? [
-          {
-            label: 'Commit transaction',
-            accelerator: 'CommandOrControl+T',
-            click: () => {
-              this.onCommitTransaction();
+            {
+              label: 'Commit transaction',
+              accelerator: 'CommandOrControl+T',
+              click: () => {
+                this.onCommitTransaction();
+              },
             },
-          },
-          {
-            label: 'Cancel transaction',
-            accelerator: 'CommandOrControl+Shift+T',
-            click: () => {
-              this.onCancelTransaction();
+            {
+              label: 'Cancel transaction',
+              accelerator: 'CommandOrControl+Shift+T',
+              click: () => {
+                this.onCancelTransaction();
+              },
             },
-          },
-        ]
+          ]
         : [
-          {
-            label: 'Begin transaction',
-            accelerator: 'CommandOrControl+T',
-            click: () => {
-              this.onBeginTransaction();
+            {
+              label: 'Begin transaction',
+              accelerator: 'CommandOrControl+T',
+              click: () => {
+                this.onBeginTransaction();
+              },
             },
-          },
-        ];
+          ];
 
     const editModeMenu: MenuItemConstructorOptions = {
       label: 'Edit mode',
@@ -642,7 +643,9 @@ class RealmBrowserContainer
       return {
         kind: 'class',
         className,
-        results: schema?.asymmetric ? new AsymmetricObjectCollection(schema) : this.realm.objects(className),
+        results: schema?.asymmetric
+          ? new AsymmetricObjectCollection(schema)
+          : this.realm.objects(className),
         properties: this.derivePropertiesFromClassName(className),
         isEmbedded: this.isEmbeddedType(className),
       };
