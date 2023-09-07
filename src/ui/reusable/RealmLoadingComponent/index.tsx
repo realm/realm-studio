@@ -122,6 +122,7 @@ export abstract class RealmLoadingComponent<
         if (
           error instanceof Error &&
           (error.message.includes('Incompatible histories.') ||
+            error.message.includes('History type not consistent') ||
             error.message.startsWith(
               'History type (as specified by the Replication implementation passed to the DB constructor) was not consistent across the session',
             ) ||
