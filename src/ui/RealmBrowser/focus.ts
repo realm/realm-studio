@@ -26,7 +26,6 @@ import { GridCellRenderer } from 'react-virtualized';
 
 import { IPropertyWithName } from '.';
 import { SingleObjectCollection } from './Content/SingleObjectCollection';
-import { AsymmetricObjectCollection } from './Content/AsymmetricObjectCollection';
 
 export interface IRenderers {
   columnCount: number;
@@ -44,7 +43,7 @@ interface IFocus {
 
 export interface IClassFocus extends IFocus {
   kind: 'class';
-  results: Realm.Results<any> | AsymmetricObjectCollection<any>;
+  results: Realm.Results<any>;
   className: string;
 }
 

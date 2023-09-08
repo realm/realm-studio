@@ -36,7 +36,7 @@ export class AsymmetricObjectCollection<T extends Realm.Object>
     return this.toJSON();
   }
 
-  public update() {
+  public update(): void {
     throw new Error('Not implemented');
   }
 
@@ -49,7 +49,7 @@ export class AsymmetricObjectCollection<T extends Realm.Object>
   }
 
   public isEmpty(): boolean {
-    return this.length === 0;
+    return true;
   }
 
   public min(property: string): any {
@@ -80,15 +80,15 @@ export class AsymmetricObjectCollection<T extends Realm.Object>
     return this;
   }
 
-  public addListener() {
+  public addListener(): void {
     throw new Error('Not implemented');
   }
 
-  public removeListener() {
+  public removeListener(): void {
     throw new Error('Not implemented');
   }
 
-  public removeAllListeners() {
+  public removeAllListeners(): void {
     throw new Error('Not implemented');
   }
 }

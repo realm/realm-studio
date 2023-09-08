@@ -705,7 +705,7 @@ class RealmBrowserContainer
 
   private getSchemaLength = (name: string) => {
     if (this.realm) {
-      const schema = this.realm.schema.find(s => s.name == name);
+      const schema = this.realm.schema.find(s => s.name === name);
       return schema?.asymmetric ? 0 : this.realm.objects(name).length;
     } else {
       return 0;

@@ -36,7 +36,7 @@ export class SingleObjectCollection<T extends Realm.Object>
     return this.toJSON();
   }
 
-  public update() {
+  public update(): void {
     throw new Error('Not implemented');
   }
 
@@ -80,15 +80,15 @@ export class SingleObjectCollection<T extends Realm.Object>
     return this;
   }
 
-  public addListener() {
+  public addListener(): void {
     throw new Error('Not implemented');
   }
 
-  public removeListener() {
+  public removeListener(): void {
     throw new Error('Not implemented');
   }
 
-  public removeAllListeners() {
+  public removeAllListeners(): void {
     throw new Error('Not implemented');
   }
 }
