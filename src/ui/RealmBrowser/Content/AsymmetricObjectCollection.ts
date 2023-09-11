@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2020 Realm Inc.
+// Copyright 2023 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,19 +17,19 @@
 ////////////////////////////////////////////////////////////////////////////
 
 /**
- * Mock implementation of Realm.Result<T> to wrap a single Realm.Object, to allow
- * using a single Realm.Object in the Table.
+ * Mock implementation of Realm.Result<T> that returns empty results. This is because an asymmetric table
+ * cannot be queried and thus we cannot obtain the results wrapping it.
  */
-export class SingleObjectCollection<T extends Realm.Object>
+export class AsymmetricObjectCollection<T extends Realm.Object>
   extends Array<T>
   implements Realm.Results<T>
 {
   public readonly type: Realm.PropertyType;
   public readonly optional = false;
 
-  constructor(object: T) {
-    super(object);
-    this.type = object.objectSchema().name;
+  constructor(schema: Realm.ObjectSchema) {
+    super();
+    this.type = schema.name;
   }
 
   public toJSON(): any[] {
@@ -49,7 +49,7 @@ export class SingleObjectCollection<T extends Realm.Object>
   }
 
   public isEmpty(): boolean {
-    return this.length === 0;
+    return true;
   }
 
   public min(property: string): any {
