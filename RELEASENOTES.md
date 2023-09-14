@@ -10,4 +10,4 @@
 
 ### Internals
 
-- None
+- Updated dependencies
