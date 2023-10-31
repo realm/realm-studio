@@ -1,0 +1,23 @@
+name: MacOS signer
+description: Sign MacOS binaries
+inputs:
+  binary:
+    description: binary to sign
+    required: True
+  secret:
+    description: secret
+    required: True
+  notaryKeyId:
+    description: key id
+    required: True
+  output:
+    description: output file
+    required: True
+    default: output.zip
+runs:
+  using: 'docker'
+  image: Dockerfile
+  args:
+    - bash
+    - -c
+    - macnotary -f "${{ inputs.binary }}" -m notarizeAndSign -u https://dev.macos-notary.build.10gen.cc/api -s "${{ inputs.secret }}" -k "${{ inputs.notaryKeyId }}" -b com.mongodb.realm-studio -o "${{ inputs.output }}" -t app
