@@ -172,14 +172,14 @@
   }
 
   &__Subscriptions {
+    font-size: .8rem;
     padding: $spacer / 2;
-    font-size: 0.8rem;
   }
 
   &__SubscriptionItem {
     display: flex;
-    list-style: none;
     font-family: $font-family-monospace;
+    list-style: none;
     padding: $spacer / 4;
   }
 
