@@ -35,6 +35,8 @@ import {
 
 import { ConnectToServer } from './ConnectToServer';
 
+const DEFAULT_BASE_URL = 'https://realm.mongodb.com/';
+
 /*
 const MISSING_PARAMS_MESSAGE =
   'Your request did not validate because of missing parameters.';
@@ -78,9 +80,11 @@ class ConnectToServerContainer extends React.Component<
   }
 
   public componentDidMount() {
-    const url = this.props.url || this.getLatestUrl() || '';
+    const preparedUrl =
+      this.prepareUrl(this.props.url || this.getLatestUrl()) || '';
     this.setState({
-      url,
+      // Use an empty input instead of filling in the default URL
+      url: preparedUrl === DEFAULT_BASE_URL ? '' : preparedUrl,
       appId: this.getLatestAppId(),
     });
     // this.restoreCredentials(url);
@@ -110,7 +114,7 @@ class ConnectToServerContainer extends React.Component<
     try {
       const { appId, url } = this.state;
       // Use SDK default (passing undefined) on an empty string.
-      const baseUrl = url.length === 0 ? 'https://realm.mongodb.com' : url;
+      const baseUrl = url.length === 0 ? DEFAULT_BASE_URL : url;
       const app = new App({ id: appId, baseUrl });
       const serializedCredentials = this.serializeCredentials();
       const credentials = hydrateCredentials(serializedCredentials);
@@ -195,7 +199,6 @@ class ConnectToServerContainer extends React.Component<
     });
   };
 
-  /*
   private prepareUrl(urlString: string) {
     if (urlString === '') {
       return 'https://realm.mongodb.com/';
@@ -220,7 +223,6 @@ class ConnectToServerContainer extends React.Component<
       }
     }
   }
-  */
 
   private serializeCredentials(): SerializedCredentials {
     const { method } = this.state;
