@@ -20,7 +20,8 @@ import React from 'react';
 import { Button, Form, FormGroup, Input, Label } from 'reactstrap';
 
 import { LoadingOverlay } from '../reusable/LoadingOverlay';
-import { AuthenticationForm, AuthenticationMethod } from './AuthenticationForm';
+import { AuthenticationMethod } from '../../utils/realms';
+import { AuthenticationForm } from './AuthenticationForm';
 
 import './ConnectToServer.scss';
 

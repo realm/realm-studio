@@ -31,6 +31,7 @@ import {
 } from '.';
 import { AddClassModal } from './AddClassModal';
 import { AddPropertyModal } from './AddPropertyModal';
+import { AddSubscriptionModal } from './AddSubscriptionModal';
 import { Content, EditMode, HighlightMode } from './Content';
 import { EncryptionDialog } from './EncryptionDialog';
 import { Focus, IClassFocus } from './focus';
@@ -56,6 +57,7 @@ export interface IRealmBrowserProps {
   importDialog: null | { filePaths: string[]; classNames: string[] };
   isAddClassOpen: boolean;
   isAddPropertyOpen: boolean;
+  isAddSubscriptionOpen: boolean;
   isClassNameAvailable: (name: string) => boolean;
   isEncryptionDialogVisible: boolean;
   isLeftSidebarOpen: boolean;
@@ -63,6 +65,7 @@ export interface IRealmBrowserProps {
   jsonViewerDialog: null | { value: unknown };
   onAddClass: (schema: Realm.ObjectSchema) => void;
   onAddProperty: (name: string, type: Realm.PropertyType) => void;
+  onAddSubscription: (schemaName: string, query: string) => void;
   onCancelTransaction: () => void;
   onClassFocussed: ClassFocussedHandler;
   onCommitTransaction: () => void;
@@ -80,6 +83,7 @@ export interface IRealmBrowserProps {
   realm?: Realm;
   toggleAddClass: () => void;
   toggleAddClassProperty: () => void;
+  toggleAddSubscription: () => void;
   isEmbeddedType: IsEmbeddedTypeChecker;
 }
 
@@ -97,6 +101,7 @@ export const RealmBrowser = ({
   importDialog,
   isAddClassOpen,
   isAddPropertyOpen,
+  isAddSubscriptionOpen,
   isClassNameAvailable,
   isEncryptionDialogVisible,
   isLeftSidebarOpen,
@@ -104,6 +109,7 @@ export const RealmBrowser = ({
   jsonViewerDialog,
   onAddClass,
   onAddProperty,
+  onAddSubscription,
   onCancelTransaction,
   onClassFocussed,
   onCommitTransaction,
@@ -121,6 +127,7 @@ export const RealmBrowser = ({
   realm,
   toggleAddClass,
   toggleAddClassProperty,
+  toggleAddSubscription,
   isEmbeddedType,
 }: IRealmBrowserProps) => {
   return (
@@ -134,8 +141,10 @@ export const RealmBrowser = ({
         onClassFocussed={onClassFocussed}
         onToggle={onLeftSidebarToggle}
         progress={progress}
-        toggleAddClass={toggleAddClass}
         readOnly={editMode === EditMode.Disabled}
+        subscriptions={realm ? realm.subscriptions : undefined}
+        toggleAddClass={toggleAddClass}
+        toggleAddSubscription={toggleAddSubscription}
       />
 
       <div className="RealmBrowser__Wrapper">
@@ -185,6 +194,15 @@ export const RealmBrowser = ({
           onAddProperty={onAddProperty}
           classes={classes}
           toggle={toggleAddClassProperty}
+        />
+      ) : null}
+
+      {focus && focus.kind === 'class' ? (
+        <AddSubscriptionModal
+          schemaName={focus.className}
+          isOpen={isAddSubscriptionOpen}
+          onAddSubscription={onAddSubscription}
+          toggle={toggleAddSubscription}
         />
       ) : null}
 

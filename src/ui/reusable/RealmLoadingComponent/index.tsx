@@ -19,7 +19,11 @@
 import Realm from 'realm';
 import React from 'react';
 
-import { RealmLoadingMode, RealmToLoad } from '../../../utils/realms';
+import {
+  RealmLoadingMode,
+  RealmToLoad,
+  hydrateCredentials,
+} from '../../../utils/realms';
 import { ILoadingProgress } from '../LoadingOverlay';
 
 export interface IRealmLoadingComponentState {
@@ -108,46 +112,59 @@ export abstract class RealmLoadingComponent<
     schema?: Realm.ObjectSchema[],
     schemaVersion?: number,
   ): Promise<Realm> {
-    if (realm && realm.mode === RealmLoadingMode.Local) {
-      try {
+    if (realm) {
+      if (realm.mode === RealmLoadingMode.Local) {
+        try {
+          return new Realm({
+            path: realm.path,
+            encryptionKey: realm.encryptionKey,
+            disableFormatUpgrade: realm.enableFormatUpgrade ? false : true,
+            sync: realm.sync as any,
+            schema,
+            schemaVersion,
+          });
+        } catch (error) {
+          if (
+            error instanceof Error &&
+            (error.message.includes('Incompatible histories.') ||
+              error.message.includes('History type not consistent') ||
+              error.message.startsWith(
+                'History type (as specified by the Replication implementation passed to the DB constructor) was not consistent across the session',
+              ) ||
+              error.message.includes(
+                'Synchronized Realms cannot be opened in non-sync mode',
+              )) &&
+            realm.sync !== true
+          ) {
+            // Try to open the Realm locally with a sync history mode.
+            console.log('Trying to open sync Realm as local Realm');
+            return this.openRealm(
+              { ...realm, sync: true },
+              schema,
+              schemaVersion,
+            );
+          }
+          // Other errors, propagate it.
+          throw error;
+        }
+      } else if (realm.mode === RealmLoadingMode.Synced) {
+        const app = new Realm.App({
+          id: realm.appId,
+          baseUrl: realm.serverUrl,
+        });
+        const credentials = hydrateCredentials(realm.credentials);
+        const user = await app.logIn(credentials);
         return new Realm({
-          path: realm.path,
           encryptionKey: realm.encryptionKey,
-          disableFormatUpgrade: realm.enableFormatUpgrade ? false : true,
-          sync: realm.sync as any,
+          sync: { user, flexible: true },
           schema,
           schemaVersion,
         });
-      } catch (error) {
-        if (
-          error instanceof Error &&
-          (error.message.includes('Incompatible histories.') ||
-            error.message.includes('History type not consistent') ||
-            error.message.startsWith(
-              'History type (as specified by the Replication implementation passed to the DB constructor) was not consistent across the session',
-            ) ||
-            error.message.includes(
-              'Synchronized Realms cannot be opened in non-sync mode',
-            )) &&
-          realm.sync !== true
-        ) {
-          // Try to open the Realm locally with a sync history mode.
-          console.log('Trying to open sync Realm as local Realm');
-          return this.openRealm(
-            { ...realm, sync: true },
-            schema,
-            schemaVersion,
-          );
-        }
-        // Other errors, propagate it.
-        throw error;
+      } else {
+        throw new Error('Unexpected mode');
       }
-    }
-
-    if (!realm) {
+    } else {
       throw new Error(`Called without a realm to load`);
     }
-
-    throw new Error('Unexpected mode');
   }
 }

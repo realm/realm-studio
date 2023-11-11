@@ -21,14 +21,18 @@ import electron from 'electron';
 import json5 from 'json5';
 */
 import React from 'react';
-import { App, Credentials } from 'realm';
-import electron from '@electron/remote';
+import { App } from 'realm';
+import * as electron from '@electron/remote';
 
 import { main } from '../../actions/main';
 import { showError } from '../reusable/errors';
-import { RealmLoadingMode } from '../../utils/realms';
+import {
+  RealmLoadingMode,
+  AuthenticationMethod,
+  hydrateCredentials,
+  SerializedCredentials,
+} from '../../utils/realms';
 
-import { AuthenticationMethod } from './AuthenticationForm';
 import { ConnectToServer } from './ConnectToServer';
 
 /*
@@ -74,14 +78,12 @@ class ConnectToServerContainer extends React.Component<
   }
 
   public componentDidMount() {
-    // TODO: XXX
-    /*
     const url = this.props.url || this.getLatestUrl() || '';
     this.setState({
       url,
+      appId: this.getLatestAppId(),
     });
-    this.restoreCredentials(url);
-    */
+    // this.restoreCredentials(url);
   }
 
   public componentDidUpdate(
@@ -108,26 +110,29 @@ class ConnectToServerContainer extends React.Component<
     try {
       const { appId, url } = this.state;
       // Use SDK default (passing undefined) on an empty string.
-      const baseUrl = url.length === 0 ? undefined : url;
+      const baseUrl = url.length === 0 ? 'https://realm.mongodb.com' : url;
       const app = new App({ id: appId, baseUrl });
-      const credentials = this.prepareCredentials();
+      const serializedCredentials = this.serializeCredentials();
+      const credentials = hydrateCredentials(serializedCredentials);
       await app.logIn(credentials);
 
-      // TODO: XXX
       /*
       if (this.state.saveCredentials) {
-        await setCredentials(credentials);
+        await setCredentials(baseUrl, credentials);
       } else {
-        await unsetCredentials(credentials.url);
+        await unsetCredentials(baseUrl);
       }
-      this.setLatestUrl(credentials.url);
       */
+
+      this.setLatestUrl(baseUrl);
+      this.setLatestAppId(appId);
       await main.showRealmBrowser({
         realm: {
           mode: RealmLoadingMode.Synced,
-          serverUrl: this.state.url,
-          appId: this.state.appId,
-          credentials,
+          serverUrl: baseUrl,
+          appId,
+          // TODO: Fix this ugly hack by making the credentials serializable
+          credentials: serializedCredentials,
         },
       });
       electron.getCurrentWindow().close();
@@ -217,17 +222,36 @@ class ConnectToServerContainer extends React.Component<
   }
   */
 
-  private prepareCredentials(): Credentials {
+  private serializeCredentials(): SerializedCredentials {
     const { method } = this.state;
     switch (method) {
       case AuthenticationMethod.anonymous:
-        return Credentials.anonymous();
+        return {
+          method: AuthenticationMethod.anonymous,
+          payload: {},
+        };
       case AuthenticationMethod.emailPassword:
-        return Credentials.emailPassword(this.state.email, this.state.password);
+        return {
+          method: AuthenticationMethod.emailPassword,
+          payload: {
+            email: this.state.email,
+            password: this.state.password,
+          },
+        };
       case AuthenticationMethod.apiKey:
-        return Credentials.apiKey(this.state.apiKey);
+        return {
+          method: AuthenticationMethod.apiKey,
+          payload: {
+            apiKey: this.state.apiKey,
+          },
+        };
       case AuthenticationMethod.jwt:
-        return Credentials.jwt(this.state.token);
+        return {
+          method: AuthenticationMethod.jwt,
+          payload: {
+            token: this.state.token,
+          },
+        };
       default:
         throw new Error(`The method is not supported: ${method}`);
     }
@@ -286,15 +310,21 @@ class ConnectToServerContainer extends React.Component<
   }
   */
 
-  /*
   private setLatestUrl(url: string) {
-    localStorage.setItem('latest-ros-url', url);
+    localStorage.setItem('latest-base-url', url);
   }
 
   private getLatestUrl() {
-    return localStorage.getItem('latest-ros-url') || '';
+    return localStorage.getItem('latest-base-url') || '';
   }
-  */
+
+  private setLatestAppId(appId: string) {
+    localStorage.setItem('latest-app-id', appId);
+  }
+
+  private getLatestAppId() {
+    return localStorage.getItem('latest-app-id') || '';
+  }
 }
 
 export { ConnectToServerContainer as ConnectToServer };

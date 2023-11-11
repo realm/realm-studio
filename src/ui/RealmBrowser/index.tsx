@@ -102,6 +102,7 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   focus: Focus | null;
   isAddClassOpen: boolean;
   isAddPropertyOpen: boolean;
+  isAddSubscriptionOpen: boolean;
   isEncryptionDialogVisible: boolean;
   isLeftSidebarOpen: boolean;
   importDialog: ImportDialogOptions | null;
@@ -126,6 +127,7 @@ class RealmBrowserContainer
     focus: null,
     isAddClassOpen: false,
     isAddPropertyOpen: false,
+    isAddSubscriptionOpen: false,
     isEncryptionDialogVisible: false,
     isLeftSidebarOpen: true,
     importDialog: null,
@@ -172,12 +174,14 @@ class RealmBrowserContainer
         jsonViewerDialog={this.state.jsonViewerDialog}
         isAddClassOpen={this.state.isAddClassOpen}
         isAddPropertyOpen={this.state.isAddPropertyOpen}
+        isAddSubscriptionOpen={this.state.isAddSubscriptionOpen}
         isClassNameAvailable={this.isClassNameAvailable}
         isEncryptionDialogVisible={this.state.isEncryptionDialogVisible}
         isLeftSidebarOpen={this.state.isLeftSidebarOpen}
         isPropertyNameAvailable={this.isPropertyNameAvailable}
         onAddClass={this.onAddClass}
         onAddProperty={this.onAddProperty}
+        onAddSubscription={this.onAddSubscription}
         onCancelTransaction={this.onCancelTransaction}
         onClassFocussed={this.onClassFocussed}
         onCommitTransaction={this.onCommitTransaction}
@@ -195,6 +199,7 @@ class RealmBrowserContainer
         realm={this.realm}
         toggleAddClass={this.toggleAddClass}
         toggleAddClassProperty={this.toggleAddClassProperty}
+        toggleAddSubscription={this.toggleAddSubscription}
         isEmbeddedType={this.isEmbeddedType}
       />
     );
@@ -440,6 +445,23 @@ class RealmBrowserContainer
       };
     }
 
+    // Set initial subscriptions
+    const { realm } = this;
+    if (realm.syncSession?.config.flexible) {
+      realm.subscriptions.update(subs => {
+        for (const schema of realm.schema) {
+          const existingSubscriptions = [...subs].filter(
+            sub => sub.objectType === schema.name,
+          );
+          // Add a subscription if no other subscription exists
+          if (existingSubscriptions.length === 0) {
+            const query = realm.objects(schema.name);
+            subs.add(query, { name: `default-${schema.name}` });
+          }
+        }
+      });
+    }
+
     this.setState({
       classes: this.realm.schema,
     });
@@ -539,6 +561,12 @@ class RealmBrowserContainer
     });
   };
 
+  private toggleAddSubscription = () => {
+    this.setState({
+      isAddSubscriptionOpen: !this.state.isAddSubscriptionOpen,
+    });
+  };
+
   private onAddClass = async (schema: Realm.ObjectSchema) => {
     if (this.realm) {
       try {
@@ -595,6 +623,21 @@ class RealmBrowserContainer
           `Failed adding the property named "${name}" to the selected schema`,
           err,
         );
+      }
+    }
+  };
+
+  private onAddSubscription = (schemaName: string, queryString: string) => {
+    const { realm } = this;
+    if (realm) {
+      try {
+        realm.subscriptions.update(subs => {
+          console.log('before add');
+          subs.add(realm.objects(schemaName).filtered(queryString));
+          console.log('after add');
+        });
+      } catch (err) {
+        showError(`Failed creating subscription on "${schemaName}"`, err);
       }
     }
   };

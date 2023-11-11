@@ -39,7 +39,9 @@ interface ILeftSidebarContainerProps {
   onToggle: () => void;
   progress: ILoadingProgress;
   readOnly?: boolean;
+  subscriptions: Realm.App.Sync.SubscriptionSet | undefined;
   toggleAddClass: () => void;
+  toggleAddSubscription: () => void;
 }
 
 interface ILeftSidebarContainerState {
@@ -84,10 +86,13 @@ class LeftSidebarContainer extends React.Component<
         hiddenClassCount={hiddenClassCount}
         isOpen={this.props.isOpen}
         onClassFocussed={this.props.onClassFocussed}
+        onSubscriptionRemoved={this.onSubscriptionRemoved}
         onToggle={this.props.onToggle}
         progress={this.props.progress}
         readOnly={this.props.readOnly || false}
+        subscriptions={this.props.subscriptions}
         toggleAddClass={this.props.toggleAddClass}
+        toggleAddSubscription={this.props.toggleAddSubscription}
       />
     );
   }
@@ -130,6 +135,21 @@ class LeftSidebarContainer extends React.Component<
       return false;
     }
   }
+
+  private onSubscriptionRemoved = (
+    subscription: Realm.App.Sync.Subscription,
+  ) => {
+    const { subscriptions } = this.props;
+    if (subscriptions) {
+      subscriptions.update(subs => {
+        subs.removeSubscription(subscription);
+      });
+    } else {
+      throw new Error(
+        'Failed to delete subscription from a missing list of subscriptions',
+      );
+    }
+  };
 }
 
 export { LeftSidebarContainer as LeftSidebar };

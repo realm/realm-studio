@@ -24,13 +24,7 @@ import { AuthenticationMethodSelector } from './AuthenticationMethodSelector';
 import { JwtForm } from './JwtForm';
 import { EmailPasswordForm } from './EmailPasswordForm';
 
-export enum AuthenticationMethod {
-  anonymous = 'anonymous',
-  emailPassword = 'email-password',
-  apiKey = 'api-key',
-  jwt = 'jwt',
-  // TODO: Add function, apple, google, facebook
-}
+import { AuthenticationMethod } from '../../utils/realms';
 
 export const AuthenticationForm = ({
   method,

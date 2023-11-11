@@ -19,7 +19,7 @@
 import React from 'react';
 import { Button } from 'reactstrap';
 
-import { AuthenticationMethod } from './AuthenticationForm';
+import { AuthenticationMethod } from '../../utils/realms';
 
 export type MethodChangedHandler = (method: AuthenticationMethod) => void;
 
