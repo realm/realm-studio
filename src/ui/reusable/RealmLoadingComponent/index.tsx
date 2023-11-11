@@ -156,7 +156,18 @@ export abstract class RealmLoadingComponent<
         const user = await app.logIn(credentials);
         return new Realm({
           encryptionKey: realm.encryptionKey,
-          sync: { user, flexible: true },
+          sync: {
+            user,
+            flexible: true,
+            initialSubscriptions: {
+              update(subs, realm) {
+                for (const schema of realm.schema) {
+                  const query = realm.objects(schema.name);
+                  subs.add(query);
+                }
+              },
+            },
+          },
           schema,
           schemaVersion,
         });

@@ -23,6 +23,7 @@ import { AddSubscriptionModal } from './AddSubscriptionModal';
 export interface IAddSubscriptionModalProps {
   isOpen: boolean;
   onAddSubscription: (schemaName: string, queryString: string) => void;
+  validateQuery: (schemaName: string, queryString: string) => string | null;
   schemaName: string;
   toggle: () => void;
 }
@@ -59,8 +60,14 @@ class AddSubscriptionModalContainer extends React.Component<
   };
 
   public onQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
     this.setState({
-      query: e.target.value,
+      query,
+      queryError: this.props.validateQuery(
+        this.props.schemaName,
+        // Fallback to selecting all objects
+        query || 'TRUEPREDICATE',
+      ),
     });
   };
 }

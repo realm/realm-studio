@@ -200,6 +200,7 @@ class RealmBrowserContainer
         toggleAddClass={this.toggleAddClass}
         toggleAddClassProperty={this.toggleAddClassProperty}
         toggleAddSubscription={this.toggleAddSubscription}
+        validateQuery={this.validateQuery}
         isEmbeddedType={this.isEmbeddedType}
       />
     );
@@ -445,23 +446,6 @@ class RealmBrowserContainer
       };
     }
 
-    // Set initial subscriptions
-    const { realm } = this;
-    if (realm.syncSession?.config.flexible) {
-      realm.subscriptions.update(subs => {
-        for (const schema of realm.schema) {
-          const existingSubscriptions = [...subs].filter(
-            sub => sub.objectType === schema.name,
-          );
-          // Add a subscription if no other subscription exists
-          if (existingSubscriptions.length === 0) {
-            const query = realm.objects(schema.name);
-            subs.add(query, { name: `default-${schema.name}` });
-          }
-        }
-      });
-    }
-
     this.setState({
       classes: this.realm.schema,
     });
@@ -632,9 +616,7 @@ class RealmBrowserContainer
     if (realm) {
       try {
         realm.subscriptions.update(subs => {
-          console.log('before add');
           subs.add(realm.objects(schemaName).filtered(queryString));
-          console.log('after add');
         });
       } catch (err) {
         showError(`Failed creating subscription on "${schemaName}"`, err);
@@ -993,6 +975,18 @@ class RealmBrowserContainer
       throw new Error('Realm was not loaded');
     }
   }
+
+  private validateQuery = (schemaName: string, queryString: string) => {
+    try {
+      const { realm } = this;
+      if (realm) {
+        realm.objects(schemaName).filtered(queryString);
+      }
+      return null;
+    } catch (err) {
+      return err instanceof Error ? err.message : `${err}`;
+    }
+  };
 }
 
 export { RealmBrowserContainer as RealmBrowser };

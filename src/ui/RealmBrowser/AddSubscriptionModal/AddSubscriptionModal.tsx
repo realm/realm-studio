@@ -62,6 +62,7 @@ export const AddSubscriptionModal = ({
               type="text"
               placeholder="TRUEPREDICATE"
               value={query}
+              invalid={!!queryError}
               onChange={onQueryChange}
             />
             {queryError && <FormFeedback>{queryError}</FormFeedback>}

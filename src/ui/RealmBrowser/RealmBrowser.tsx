@@ -84,6 +84,7 @@ export interface IRealmBrowserProps {
   toggleAddClass: () => void;
   toggleAddClassProperty: () => void;
   toggleAddSubscription: () => void;
+  validateQuery: (schemaName: string, queryString: string) => string | null;
   isEmbeddedType: IsEmbeddedTypeChecker;
 }
 
@@ -128,6 +129,7 @@ export const RealmBrowser = ({
   toggleAddClass,
   toggleAddClassProperty,
   toggleAddSubscription,
+  validateQuery,
   isEmbeddedType,
 }: IRealmBrowserProps) => {
   return (
@@ -202,6 +204,7 @@ export const RealmBrowser = ({
           schemaName={focus.className}
           isOpen={isAddSubscriptionOpen}
           onAddSubscription={onAddSubscription}
+          validateQuery={validateQuery}
           toggle={toggleAddSubscription}
         />
       ) : null}
