@@ -16,21 +16,31 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-/**
- * A WindowProps object is passed to the UI component when mounted and describes the internal properties for that.
- */
+import React from 'react';
+import { Input } from 'reactstrap';
 
-import { IGreetingWindowProps } from './GreetingWindow';
-import { IRealmBrowserWindowProps } from './RealmBrowserWindow';
-import { IConnectToServerWindowProps } from './ConnectToServerWindow';
+import { CredentialsFormGroup } from './CredentialsFormGroup';
 
-export {
-  IGreetingWindowProps,
-  IRealmBrowserWindowProps,
-  IConnectToServerWindowProps,
-};
-
-export type WindowProps =
-  | IGreetingWindowProps
-  | IRealmBrowserWindowProps
-  | IConnectToServerWindowProps;
+export const ApiKeyForm = ({
+  isRequired,
+  apiKey,
+  onApiKeyChanged,
+}: {
+  isRequired: boolean;
+  apiKey: string;
+  onApiKeyChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) => (
+  <div>
+    <CredentialsFormGroup label="API Key" labelFor="apiKey">
+      <Input
+        id="apiKey"
+        name="apiKey"
+        onChange={onApiKeyChanged}
+        required={isRequired}
+        bsSize="sm"
+        type="text"
+        value={apiKey}
+      />
+    </CredentialsFormGroup>
+  </div>
+);

@@ -881,7 +881,10 @@ class RealmBrowserContainer
   };
 
   private onExportSchema = (language: Language): void => {
-    const basename = path.basename(this.props.realm.path, '.realm');
+    if (!this.realm) {
+      throw new Error('Expected a loaded Realm');
+    }
+    const basename = path.basename(this.realm.path, '.realm');
     const selectedPath = remote.dialog.showSaveDialogSync({
       defaultPath: `${basename}-classes`,
       message: `Select a directory to store the ${language} schema files`,

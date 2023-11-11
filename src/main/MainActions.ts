@@ -21,6 +21,7 @@ export enum MainActions {
   ShowGreeting = 'show-greeting',
   ShowImportData = 'show-import-data',
   ShowOpenLocalRealm = 'show-open-local-realm',
+  ShowConnectToServer = 'show-connect-to-server',
   ShowRealmBrowser = 'show-realm-browser',
   ClearRendererCache = 'clear-renderer-cache',
 }

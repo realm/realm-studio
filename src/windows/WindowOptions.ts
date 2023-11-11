@@ -21,6 +21,7 @@ import qs from 'querystring';
 import {
   IGreetingWindowProps,
   IRealmBrowserWindowProps,
+  IConnectToServerWindowProps,
   WindowProps,
 } from './WindowProps';
 
@@ -50,7 +51,15 @@ export interface IRealmBrowserWindowOptions extends IWindowOptions {
   props: IRealmBrowserWindowProps;
 }
 
-export type WindowOptions = IGreetingWindowOptions | IRealmBrowserWindowOptions;
+export interface IConnectToServerWindowOptions extends IWindowOptions {
+  type: 'connect-to-server';
+  props: IConnectToServerWindowProps;
+}
+
+export type WindowOptions =
+  | IGreetingWindowOptions
+  | IRealmBrowserWindowOptions
+  | IConnectToServerWindowOptions;
 
 export function getWindowOptions(): WindowOptions {
   // Strip away the "?" of the location.search

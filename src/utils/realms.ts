@@ -16,20 +16,30 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import { Credentials } from 'realm';
+
 export enum RealmLoadingMode {
   Local = 'local',
+  Synced = 'synced',
 }
 
 export interface IRealmToLoad {
   mode: RealmLoadingMode;
-  path: string;
   encryptionKey?: Uint8Array;
 }
 
 export interface ILocalRealmToLoad extends IRealmToLoad {
   mode: RealmLoadingMode.Local;
+  path: string;
   enableFormatUpgrade?: boolean;
   sync?: boolean;
 }
 
-export type RealmToLoad = ILocalRealmToLoad;
+export interface ISyncedRealmToLoad extends IRealmToLoad {
+  mode: RealmLoadingMode.Synced;
+  serverUrl: string;
+  appId: string;
+  credentials: Credentials;
+}
+
+export type RealmToLoad = ILocalRealmToLoad | ISyncedRealmToLoad;

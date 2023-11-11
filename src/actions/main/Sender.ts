@@ -52,6 +52,10 @@ export class Sender extends ActionSender {
     return this.send(MainActions.ShowRealmBrowser, props);
   }
 
+  public showConnectToServer(url?: string) {
+    return this.send(MainActions.ShowConnectToServer, url);
+  }
+
   public clearRendererCache() {
     return this.send(MainActions.ClearRendererCache);
   }

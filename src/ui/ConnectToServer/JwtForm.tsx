@@ -16,21 +16,31 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-/**
- * A WindowProps object is passed to the UI component when mounted and describes the internal properties for that.
- */
+import React from 'react';
+import { Input } from 'reactstrap';
 
-import { IGreetingWindowProps } from './GreetingWindow';
-import { IRealmBrowserWindowProps } from './RealmBrowserWindow';
-import { IConnectToServerWindowProps } from './ConnectToServerWindow';
+import { CredentialsFormGroup } from './CredentialsFormGroup';
 
-export {
-  IGreetingWindowProps,
-  IRealmBrowserWindowProps,
-  IConnectToServerWindowProps,
-};
-
-export type WindowProps =
-  | IGreetingWindowProps
-  | IRealmBrowserWindowProps
-  | IConnectToServerWindowProps;
+export const JwtForm = ({
+  isRequired,
+  token,
+  onTokenChanged,
+}: {
+  isRequired: boolean;
+  token: string;
+  onTokenChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) => (
+  <div>
+    <CredentialsFormGroup label="Token" labelFor="token">
+      <Input
+        id="token"
+        name="token"
+        onChange={onTokenChanged}
+        required={isRequired}
+        bsSize="sm"
+        type="text"
+        value={token}
+      />
+    </CredentialsFormGroup>
+  </div>
+);

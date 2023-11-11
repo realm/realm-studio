@@ -35,6 +35,7 @@ export interface IWindow {
 
 import { GreetingWindow } from './GreetingWindow';
 import { RealmBrowserWindow } from './RealmBrowserWindow';
+import { ConnectToServerWindow } from './ConnectToServerWindow';
 
 export interface IWindowConstructorOptions
   extends Partial<Electron.BrowserWindowConstructorOptions> {
@@ -48,6 +49,8 @@ export function getWindowClass(type: WindowType): IWindow {
     return GreetingWindow;
   } else if (type === 'realm-browser') {
     return RealmBrowserWindow;
+  } else if (type === 'connect-to-server') {
+    return ConnectToServerWindow;
   } else {
     throw new Error(`Unexpected window type: ${type}`);
   }
