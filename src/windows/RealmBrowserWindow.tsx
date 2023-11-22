@@ -51,9 +51,15 @@ export const RealmBrowserWindow: IWindow = {
     ),
   getSingletonKey: (props: IRealmBrowserWindowProps) => {
     const { realm } = props;
-    return realm.mode === RealmLoadingMode.Local
-      ? realm.path
-      : realm.appId + '@' + realm.serverUrl;
+    if (realm.mode === RealmLoadingMode.Local) {
+      return realm.path;
+    } else {
+      return [
+        realm.appId,
+        realm.serverUrl,
+        JSON.stringify(realm.credentials),
+      ].join('+');
+    }
   },
   getTrackedProperties: (props: IRealmBrowserWindowProps) => ({
     mode: props.realm.mode,
