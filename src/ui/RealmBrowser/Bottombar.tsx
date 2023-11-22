@@ -44,8 +44,8 @@ export const Bottombar = ({
         {changeCount === 0
           ? ' no changes'
           : changeCount === 1
-          ? ` ${changeCount} change`
-          : ` ${changeCount} changes`}
+            ? ` ${changeCount} change`
+            : ` ${changeCount} changes`}
       </section>
     ) : null}
 

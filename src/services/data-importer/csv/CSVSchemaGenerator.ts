@@ -52,10 +52,10 @@ export class CSVSchemaGenerator extends SchemaGenerator {
         schema.properties[header] = Util.isBoolean(value)
           ? 'bool?'
           : Util.isInt(value)
-          ? 'int?'
-          : Util.isDouble(value)
-          ? 'double?'
-          : 'string?';
+            ? 'int?'
+            : Util.isDouble(value)
+              ? 'double?'
+              : 'string?';
       });
       schemas.push(schema);
     });

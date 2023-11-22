@@ -1048,8 +1048,8 @@ class ContentContainer extends React.Component<
       const target = focus.isEmbedded
         ? 'embedded object'
         : multiple
-        ? 'rows'
-        : 'row';
+          ? 'rows'
+          : 'row';
       const determinedTarget = `${multiple ? 'these' : 'this'} ${target}`;
 
       return {
