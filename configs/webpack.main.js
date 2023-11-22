@@ -38,6 +38,7 @@ module.exports = (env, argv) => {
         resourceRegExp: /\/ui/,
         contextRegExp: /\/src\/windows$/,
       }),
+      ...(isDevelopment ? [new webpack.HotModuleReplacementPlugin()] : []),
     ],
     target: 'electron-main',
     watch: isDevelopment,
