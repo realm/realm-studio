@@ -35,7 +35,7 @@ import {
 
 import { ConnectToServer } from './ConnectToServer';
 
-const DEFAULT_BASE_URL = 'https://realm.mongodb.com/';
+const DEFAULT_BASE_URL = 'https://realm.mongodb.com';
 
 /*
 const MISSING_PARAMS_MESSAGE =
@@ -80,11 +80,10 @@ class ConnectToServerContainer extends React.Component<
   }
 
   public componentDidMount() {
-    const preparedUrl =
-      this.prepareUrl(this.props.url || this.getLatestUrl()) || '';
+    const url = this.props.url || this.getLatestUrl();
     this.setState({
       // Use an empty input instead of filling in the default URL
-      url: preparedUrl === DEFAULT_BASE_URL ? '' : preparedUrl,
+      url: url === DEFAULT_BASE_URL ? '' : url,
       appId: this.getLatestAppId(),
     });
     // this.restoreCredentials(url);
@@ -114,7 +113,10 @@ class ConnectToServerContainer extends React.Component<
     try {
       const { appId, url } = this.state;
       // Use SDK default (passing undefined) on an empty string.
-      const baseUrl = url.length === 0 ? DEFAULT_BASE_URL : url;
+      const baseUrl = url || DEFAULT_BASE_URL;
+      // Clear test state to invalidate the shared App cache as a work around for
+      // https://github.com/realm/realm-js/issues/6276
+      (Realm.App as any)._clearAppCache();
       const app = new App({ id: appId, baseUrl });
       const serializedCredentials = this.serializeCredentials();
       const credentials = hydrateCredentials(serializedCredentials);
@@ -198,31 +200,6 @@ class ConnectToServerContainer extends React.Component<
       saveCredentials,
     });
   };
-
-  private prepareUrl(urlString: string) {
-    if (urlString === '') {
-      return 'https://realm.mongodb.com/';
-    } else {
-      try {
-        if (urlString.indexOf('://') === -1) {
-          // If there is no "://", we assume the user forgot the protocol
-          urlString = `https://${urlString}`;
-        }
-        const url = new URL(urlString);
-        return url.toString();
-      } catch (err) {
-        if (
-          err instanceof Error &&
-          err.message.indexOf(`Failed to construct 'URL'`) >= 0
-        ) {
-          // Return null, if the URL does not parse
-          return null;
-        } else {
-          throw err;
-        }
-      }
-    }
-  }
 
   private serializeCredentials(): SerializedCredentials {
     const { method } = this.state;

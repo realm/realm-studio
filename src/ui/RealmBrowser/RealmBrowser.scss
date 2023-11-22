@@ -439,16 +439,23 @@
     @import "../reusable/ReactVirtualized";
   }
 
-  &__NoFocusPlaceholder {
+  &__NoFocusPlaceholder,
+  &__NoSubscriptionsPlaceholder {
     align-items: center;
     display: flex;
     height: 100%;
+    width: 100%;
     justify-content: center;
-
-    &::before {
-      color: $elephant;
-      content: "No schema selected";
-    }
+  }
+  
+  &__NoFocusPlaceholder::before {
+    color: $elephant;
+    content: "No schema selected";
+  }
+  
+  &__NoSubscriptionsPlaceholder::before {
+    color: $elephant;
+    content: "Add a subscription to see objects";
   }
 
   &__PermissionSidebar {

@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2018 Realm Inc.
+// Copyright 2023 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,28 +16,14 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import { IWindow } from './Window';
+@import "~realm-studio-styles/variables";
 
-export interface IConnectToServerWindowProps {
-  url?: string;
+.AddSubscriptionsModal {
+  &__Query {
+    font-family: $font-family-monospace;
+  }
+  &__Hint {
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+  }
 }
-
-export const ConnectToServerWindow: IWindow = {
-  getWindowOptions: () => ({
-    title: 'Connect via Atlas Device Sync',
-    width: 500,
-    height: 450,
-    resizable: false,
-    fullscreenable: false,
-    autoHideMenuBar: true,
-    frame: false,
-  }),
-  getComponent: () =>
-    import(
-      /* webpackChunkName: "connect-to-server" */ '../ui/ConnectToServer'
-    ).then(
-      // TODO: Fix the props for this to include a type
-      m => m.ConnectToServer as any,
-    ),
-  getTrackedProperties: () => ({}),
-};

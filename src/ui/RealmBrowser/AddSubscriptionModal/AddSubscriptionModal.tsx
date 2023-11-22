@@ -30,6 +30,8 @@ import {
   ModalHeader,
 } from 'reactstrap';
 
+import './AddSubscriptionModal.scss';
+
 export const AddSubscriptionModal = ({
   isOpen,
   toggle,
@@ -48,7 +50,7 @@ export const AddSubscriptionModal = ({
   onQueryChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
   return (
-    <Modal isOpen={isOpen} toggle={toggle}>
+    <Modal className="AddSubscriptionsModal" isOpen={isOpen} toggle={toggle}>
       <Form onSubmit={onSubmit}>
         <ModalHeader toggle={toggle}>
           Add subscription on {schemaName}
@@ -57,6 +59,7 @@ export const AddSubscriptionModal = ({
           <FormGroup className={queryError ? 'has-danger' : ''}>
             <Label for="query">Query</Label>
             <Input
+              className="AddSubscriptionsModal__Query"
               name="query"
               id="query"
               type="text"
@@ -65,7 +68,19 @@ export const AddSubscriptionModal = ({
               invalid={!!queryError}
               onChange={onQueryChange}
             />
-            {queryError && <FormFeedback>{queryError}</FormFeedback>}
+            {queryError ? (
+              <FormFeedback>{queryError}</FormFeedback>
+            ) : (
+              <div className="AddSubscriptionsModal__Hint">
+                {!query || query === 'TRUEPREDICATE' ? (
+                  <>
+                    The <code>TRUEPREDICATE</code> query will match all objects
+                  </>
+                ) : (
+                  <>&nbsp;</>
+                )}
+              </div>
+            )}
           </FormGroup>
         </ModalBody>
         <ModalFooter>

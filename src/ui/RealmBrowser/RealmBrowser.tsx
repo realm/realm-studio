@@ -37,6 +37,7 @@ import { EncryptionDialog } from './EncryptionDialog';
 import { Focus, IClassFocus } from './focus';
 import { LeftSidebar } from './LeftSidebar';
 import { NoFocusPlaceholder } from './NoFocusPlaceholder';
+import { NoSubscriptionsPlaceholder } from './NoSubscriptionsPlaceholder';
 import { ImportDialog } from './ImportDialog';
 import { JsonViewerDialog } from './JsonViewerDialog';
 
@@ -132,6 +133,10 @@ export const RealmBrowser = ({
   validateQuery,
   isEmbeddedType,
 }: IRealmBrowserProps) => {
+  const focussedClassMissingSubscriptions =
+    focus?.kind === 'class' &&
+    realm?.syncSession?.config.flexible &&
+    ![...realm.subscriptions].some(sub => sub.objectType === focus.className);
   return (
     <div className="RealmBrowser">
       <LeftSidebar
@@ -144,13 +149,17 @@ export const RealmBrowser = ({
         onToggle={onLeftSidebarToggle}
         progress={progress}
         readOnly={editMode === EditMode.Disabled}
-        subscriptions={realm ? realm.subscriptions : undefined}
+        subscriptions={
+          realm?.syncSession?.config.flexible ? realm.subscriptions : undefined
+        }
         toggleAddClass={toggleAddClass}
         toggleAddSubscription={toggleAddSubscription}
       />
 
       <div className="RealmBrowser__Wrapper">
-        {focus && realm ? (
+        {focussedClassMissingSubscriptions ? (
+          <NoSubscriptionsPlaceholder />
+        ) : focus && realm ? (
           <Content
             dataVersion={dataVersion}
             dataVersionAtBeginning={dataVersionAtBeginning}

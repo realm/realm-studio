@@ -16,28 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import { IWindow } from './Window';
+import React from 'react';
 
-export interface IConnectToServerWindowProps {
-  url?: string;
-}
-
-export const ConnectToServerWindow: IWindow = {
-  getWindowOptions: () => ({
-    title: 'Connect via Atlas Device Sync',
-    width: 500,
-    height: 450,
-    resizable: false,
-    fullscreenable: false,
-    autoHideMenuBar: true,
-    frame: false,
-  }),
-  getComponent: () =>
-    import(
-      /* webpackChunkName: "connect-to-server" */ '../ui/ConnectToServer'
-    ).then(
-      // TODO: Fix the props for this to include a type
-      m => m.ConnectToServer as any,
-    ),
-  getTrackedProperties: () => ({}),
-};
+export const NoSubscriptionsPlaceholder = () => (
+  <div className="RealmBrowser__NoSubscriptionsPlaceholder" />
+);

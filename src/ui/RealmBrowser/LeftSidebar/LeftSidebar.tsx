@@ -144,7 +144,7 @@ export const LeftSidebar = ({
     {(focus?.kind === 'class' || focus?.kind === 'list') && subscriptions && (
       <>
         <div className="LeftSidebar__Header">
-          <span>{getFocusedSchemaName(focus)} subscriptions</span>
+          <span>subscriptions</span>
           <Button size="sm" onClick={toggleAddSubscription}>
             <i className="fa fa-plus" />
           </Button>
