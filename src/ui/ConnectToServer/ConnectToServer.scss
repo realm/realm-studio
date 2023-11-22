@@ -19,13 +19,14 @@
 @import "~realm-studio-styles/variables";
 
 .ConnectToServer {
+  -webkit-app-region: drag;
   background: $window-background;
   display: flex;
   flex-direction: column;
   height: 100%;
-  -webkit-app-region: drag;
 
-  input, button {
+  input,
+  button {
     -webkit-app-region: no-drag;
   }
 
