@@ -112,6 +112,7 @@ export const ConnectToServer = ({
         onTokenChanged={onTokenChanged}
       />
       <div className="ConnectToServer__Controls">
+        {/*
         <FormGroup check className="ConnectToServer__SaveCredentials">
           <Label check className="ConnectToServer__SaveCredentialsLabel">
             <Input
@@ -124,6 +125,7 @@ export const ConnectToServer = ({
             Save credentials for this app
           </Label>
         </FormGroup>
+        */}
         <FormGroup className="ConnectToServer__Actions">
           <Button
             color="secondary"
