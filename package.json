@@ -129,7 +129,7 @@
     "@electron/remote": "^2.1.0",
     "@sentry/electron": "^4.14.0",
     "classnames": "^2.3.2",
-    "contentful": "^10.6.11",
+    "contentful": "^9.3.5",
     "electron-store": "^8.1.0",
     "electron-updater": "6.1.4",
     "flatted": "^3.2.9",
@@ -163,7 +163,7 @@
   "devDependencies": {
     "@octokit/rest": "^20.0.2",
     "@sentry/cli": "^2.21.5",
-    "@sentry/webpack-plugin": "^2.10.1",
+    "@sentry/webpack-plugin": "^1.21.0",
     "@types/fs-extra": "^11.0.4",
     "@types/isomorphic-fetch": "0.0.39",
     "@types/jsdom": "^21.1.6",
