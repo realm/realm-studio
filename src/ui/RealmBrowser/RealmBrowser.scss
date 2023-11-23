@@ -463,7 +463,7 @@
     }
   }
 
-  &__EmbeddedFocusPlaceholder{
+  &__EmbeddedFocusPlaceholder {
     &::before {
       color: $elephant;
       content: "Embedded classes aren't directly queryable";
