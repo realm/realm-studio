@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import electron from 'electron';
+import electron, { MessageBoxSyncOptions } from 'electron';
 import { URL } from 'url';
 
 export class CertificateManager {
@@ -83,7 +83,7 @@ export class CertificateManager {
       buttons.push('Show certificate details');
     }
     // Show the message box
-    const messageOptions = {
+    const messageOptions: MessageBoxSyncOptions = {
       type: 'warning',
       message: `${coreMessage}\n\n${description}\n\nDo you trust this certificate?`,
       buttons,
