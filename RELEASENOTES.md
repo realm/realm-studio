@@ -3,6 +3,7 @@
 ### Enhancements
 
 - Added ability to open a Realm via the Atlas Device Sync. ([#1600](https://github.com/realm/realm-studio/pull/1600))
+- Added ability to add embedded classes and click back to the parent object. ([#1602](https://github.com/realm/realm-studio/pull/1602))
 
 ### Fixed
 
