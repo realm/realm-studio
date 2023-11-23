@@ -324,14 +324,11 @@ export class Application {
   /**
    * This is called when another instance of the app is started on Windows or Linux
    */
-  private onInstanceStarted = async (
-    event: Event,
-    argv: string[],
-    workingDirectory: string,
-  ) => {
+  private onInstanceStarted = (_: Electron.Event, argv: string[]) => {
     this.processArguments(argv);
-    await this.showGreeting();
-    this.performDelayedTasks();
+    this.showGreeting().then(() => {
+      this.performDelayedTasks();
+    });
   };
 
   private setDefaultMenu = () => {
