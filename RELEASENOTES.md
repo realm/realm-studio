@@ -10,4 +10,4 @@
 
 ### Internals
 
-- Updated dependencies
+- Upgraded Realm JS to v11.10.2

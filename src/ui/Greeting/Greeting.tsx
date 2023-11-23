@@ -34,11 +34,13 @@ const { app } = remote;
 export const Greeting = ({
   onCheckForUpdates,
   onOpenLocalRealm,
+  onConnectToServer,
   updateStatus,
   version,
 }: {
   onCheckForUpdates: () => void;
   onOpenLocalRealm: () => void;
+  onConnectToServer: () => void;
   updateStatus: IUpdateStatus;
   version: string;
 }) => (
@@ -58,6 +60,11 @@ export const Greeting = ({
       <div className="Greeting__Actions">
         <div className="Greeting__Action">
           <Button onClick={onOpenLocalRealm}>Open Realm file</Button>
+        </div>
+        <div className="Greeting__Action">
+          <Button onClick={onConnectToServer}>
+            Connect via Atlas Device Sync
+          </Button>
         </div>
       </div>
       <div className="Greeting__DownloadDemo">

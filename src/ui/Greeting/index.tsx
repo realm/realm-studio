@@ -76,6 +76,10 @@ class GreetingContainer extends React.Component<
     main.showOpenLocalRealm();
   };
 
+  public onConnectToServer = () => {
+    main.showConnectToServer();
+  };
+
   public onCheckForUpdates = () => {
     main.checkForUpdates();
   };

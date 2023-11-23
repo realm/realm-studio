@@ -42,6 +42,7 @@
 
   &__Classes {
     flex-grow: 1;
+    flex-shrink: 0;
     margin: 0 (-$spacer / 2);
     overflow-x: hidden;
     overflow-y: auto;
@@ -169,5 +170,27 @@
     text-align: center;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  &__Subscriptions {
+    font-size: .8rem;
+    overflow-y: auto;
+    padding: $spacer / 4;
+  }
+
+  &__SubscriptionItem {
+    display: flex;
+    font-family: $font-family-monospace;
+    list-style: none;
+    padding: $spacer / 4;
+  }
+
+  &__SubscriptionItemQuery {
+    flex-grow: 1;
+  }
+
+  &__SubscriptionItemControls > i {
+    cursor: pointer;
+    margin-left: $spacer / 2;
   }
 }

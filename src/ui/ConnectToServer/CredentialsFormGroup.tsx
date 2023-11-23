@@ -16,21 +16,26 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-/**
- * A WindowProps object is passed to the UI component when mounted and describes the internal properties for that.
- */
+import React from 'react';
+import { Col, FormGroup, Label, Row } from 'reactstrap';
 
-import { IGreetingWindowProps } from './GreetingWindow';
-import { IRealmBrowserWindowProps } from './RealmBrowserWindow';
-import { IConnectToServerWindowProps } from './ConnectToServerWindow';
-
-export {
-  IGreetingWindowProps,
-  IRealmBrowserWindowProps,
-  IConnectToServerWindowProps,
-};
-
-export type WindowProps =
-  | IGreetingWindowProps
-  | IRealmBrowserWindowProps
-  | IConnectToServerWindowProps;
+export const CredentialsFormGroup = ({
+  label,
+  labelFor,
+  children,
+}: {
+  label: string;
+  labelFor: string;
+  children: React.ReactElement<any>;
+}) => (
+  <FormGroup className="ConnectToServer__CredentialsFormGroup">
+    <Row noGutters={true}>
+      <Col xs={3} className="ConnectToServer__CredentialsLabelCol">
+        <Label for={labelFor} className="ConnectToServer__CredentialsLabel">
+          {label}
+        </Label>
+      </Col>
+      <Col xs={9}>{children}</Col>
+    </Row>
+  </FormGroup>
+);

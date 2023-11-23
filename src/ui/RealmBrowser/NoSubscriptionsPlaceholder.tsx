@@ -16,21 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-/**
- * A WindowProps object is passed to the UI component when mounted and describes the internal properties for that.
- */
+import React from 'react';
 
-import { IGreetingWindowProps } from './GreetingWindow';
-import { IRealmBrowserWindowProps } from './RealmBrowserWindow';
-import { IConnectToServerWindowProps } from './ConnectToServerWindow';
-
-export {
-  IGreetingWindowProps,
-  IRealmBrowserWindowProps,
-  IConnectToServerWindowProps,
-};
-
-export type WindowProps =
-  | IGreetingWindowProps
-  | IRealmBrowserWindowProps
-  | IConnectToServerWindowProps;
+export const NoSubscriptionsPlaceholder = () => (
+  <div className="RealmBrowser__NoSubscriptionsPlaceholder" />
+);

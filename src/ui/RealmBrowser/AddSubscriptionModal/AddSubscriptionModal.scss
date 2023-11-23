@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2018 Realm Inc.
+// Copyright 2023 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,21 +16,15 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-/**
- * A WindowProps object is passed to the UI component when mounted and describes the internal properties for that.
- */
+@import "~realm-studio-styles/variables";
 
-import { IGreetingWindowProps } from './GreetingWindow';
-import { IRealmBrowserWindowProps } from './RealmBrowserWindow';
-import { IConnectToServerWindowProps } from './ConnectToServerWindow';
+.AddSubscriptionsModal {
+  &__Query {
+    font-family: $font-family-monospace;
+  }
 
-export {
-  IGreetingWindowProps,
-  IRealmBrowserWindowProps,
-  IConnectToServerWindowProps,
-};
-
-export type WindowProps =
-  | IGreetingWindowProps
-  | IRealmBrowserWindowProps
-  | IConnectToServerWindowProps;
+  &__Hint {
+    font-size: .875em;
+    margin-top: .25rem;
+  }
+}

@@ -12,3 +12,4 @@ rules:
   quotes:
     - 1
     - style: "double"
+  no-vendor-prefixes: 0

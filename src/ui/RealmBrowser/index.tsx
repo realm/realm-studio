@@ -102,6 +102,7 @@ export interface IRealmBrowserState extends IRealmLoadingComponentState {
   focus: Focus | null;
   isAddClassOpen: boolean;
   isAddPropertyOpen: boolean;
+  isAddSubscriptionOpen: boolean;
   isEncryptionDialogVisible: boolean;
   isLeftSidebarOpen: boolean;
   importDialog: ImportDialogOptions | null;
@@ -126,6 +127,7 @@ class RealmBrowserContainer
     focus: null,
     isAddClassOpen: false,
     isAddPropertyOpen: false,
+    isAddSubscriptionOpen: false,
     isEncryptionDialogVisible: false,
     isLeftSidebarOpen: true,
     importDialog: null,
@@ -172,12 +174,14 @@ class RealmBrowserContainer
         jsonViewerDialog={this.state.jsonViewerDialog}
         isAddClassOpen={this.state.isAddClassOpen}
         isAddPropertyOpen={this.state.isAddPropertyOpen}
+        isAddSubscriptionOpen={this.state.isAddSubscriptionOpen}
         isClassNameAvailable={this.isClassNameAvailable}
         isEncryptionDialogVisible={this.state.isEncryptionDialogVisible}
         isLeftSidebarOpen={this.state.isLeftSidebarOpen}
         isPropertyNameAvailable={this.isPropertyNameAvailable}
         onAddClass={this.onAddClass}
         onAddProperty={this.onAddProperty}
+        onAddSubscription={this.onAddSubscription}
         onCancelTransaction={this.onCancelTransaction}
         onClassFocussed={this.onClassFocussed}
         onCommitTransaction={this.onCommitTransaction}
@@ -195,6 +199,8 @@ class RealmBrowserContainer
         realm={this.realm}
         toggleAddClass={this.toggleAddClass}
         toggleAddClassProperty={this.toggleAddClassProperty}
+        toggleAddSubscription={this.toggleAddSubscription}
+        validateQuery={this.validateQuery}
         isEmbeddedType={this.isEmbeddedType}
       />
     );
@@ -539,6 +545,12 @@ class RealmBrowserContainer
     });
   };
 
+  private toggleAddSubscription = () => {
+    this.setState({
+      isAddSubscriptionOpen: !this.state.isAddSubscriptionOpen,
+    });
+  };
+
   private onAddClass = async (schema: Realm.ObjectSchema) => {
     if (this.realm) {
       try {
@@ -595,6 +607,19 @@ class RealmBrowserContainer
           `Failed adding the property named "${name}" to the selected schema`,
           err,
         );
+      }
+    }
+  };
+
+  private onAddSubscription = (schemaName: string, queryString: string) => {
+    const { realm } = this;
+    if (realm) {
+      try {
+        realm.subscriptions.update(subs => {
+          subs.add(realm.objects(schemaName).filtered(queryString));
+        });
+      } catch (err) {
+        showError(`Failed creating subscription on "${schemaName}"`, err);
       }
     }
   };
@@ -881,7 +906,10 @@ class RealmBrowserContainer
   };
 
   private onExportSchema = (language: Language): void => {
-    const basename = path.basename(this.props.realm.path, '.realm');
+    if (!this.realm) {
+      throw new Error('Expected a loaded Realm');
+    }
+    const basename = path.basename(this.realm.path, '.realm');
     const selectedPath = remote.dialog.showSaveDialogSync({
       defaultPath: `${basename}-classes`,
       message: `Select a directory to store the ${language} schema files`,
@@ -947,6 +975,18 @@ class RealmBrowserContainer
       throw new Error('Realm was not loaded');
     }
   }
+
+  private validateQuery = (schemaName: string, queryString: string) => {
+    try {
+      const { realm } = this;
+      if (realm) {
+        realm.objects(schemaName).filtered(queryString);
+      }
+      return null;
+    } catch (err) {
+      return err instanceof Error ? err.message : `${err}`;
+    }
+  };
 }
 
 export { RealmBrowserContainer as RealmBrowser };

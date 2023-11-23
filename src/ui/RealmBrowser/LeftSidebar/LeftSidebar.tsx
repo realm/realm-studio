@@ -25,18 +25,23 @@ import { ILoadingProgress, Sidebar } from '../../reusable';
 import { Focus, IListFocus } from '../focus';
 
 import { ListFocus } from './ListFocus';
+import { SubscriptionList } from './SubscriptionList';
 
 import './LeftSidebar.scss';
 
-export const isSelected = (focus: Focus | null, schemaName: string) => {
+export function getFocusedSchemaName(focus: Focus | null): string | undefined {
   if (focus && focus.kind === 'class') {
-    return focus.className === schemaName;
+    return focus.className;
   } else if (focus && focus.kind === 'list') {
-    return focus.parent.objectSchema().name === schemaName;
+    return focus.parent.objectSchema().name;
   } else {
-    return false;
+    return undefined;
   }
-};
+}
+
+export function isSelected(focus: Focus | null, schemaName: string) {
+  return getFocusedSchemaName(focus) === schemaName;
+}
 
 export interface ILeftSidebarProps {
   classes: Realm.ObjectSchema[];
@@ -46,10 +51,13 @@ export interface ILeftSidebarProps {
   hiddenClassCount: number;
   isOpen: boolean;
   onClassFocussed: ClassFocussedHandler;
+  onSubscriptionRemoved: (subscription: Realm.App.Sync.Subscription) => void;
   onToggle: () => void;
   progress: ILoadingProgress;
   readOnly: boolean;
+  subscriptions: Realm.App.Sync.SubscriptionSet | undefined;
   toggleAddClass: () => void;
+  toggleAddSubscription: () => void;
 }
 
 export const LeftSidebar = ({
@@ -60,10 +68,13 @@ export const LeftSidebar = ({
   hiddenClassCount,
   isOpen,
   onClassFocussed,
+  onSubscriptionRemoved,
   onToggle,
   progress,
   readOnly,
+  subscriptions,
   toggleAddClass,
+  toggleAddSubscription,
 }: ILeftSidebarProps) => (
   <Sidebar
     className={className}
@@ -130,5 +141,21 @@ export const LeftSidebar = ({
         <p className="LeftSidebar__ReadOnlyHint">Opened as "Read Only"</p>
       ) : null}
     </div>
+    {(focus?.kind === 'class' || focus?.kind === 'list') && subscriptions && (
+      <>
+        <div className="LeftSidebar__Header">
+          <span>subscriptions</span>
+          <Button size="sm" onClick={toggleAddSubscription}>
+            <i className="fa fa-plus" />
+          </Button>
+        </div>
+        <SubscriptionList
+          subscriptions={[...subscriptions].filter(
+            sub => sub.objectType === getFocusedSchemaName(focus),
+          )}
+          onSubscriptionRemoved={onSubscriptionRemoved}
+        />
+      </>
+    )}
   </Sidebar>
 );

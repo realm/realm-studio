@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import { ImportFormat } from '../services/data-importer';
-import { RealmToLoad } from '../utils/realms';
+import { RealmLoadingMode, RealmToLoad } from '../utils/realms';
 
 import { IWindow } from './Window';
 
@@ -36,7 +36,10 @@ export interface IRealmBrowserWindowProps {
 export const RealmBrowserWindow: IWindow = {
   getWindowOptions: (props: IRealmBrowserWindowProps) => {
     return {
-      title: props.realm.path,
+      title:
+        props.realm.mode === RealmLoadingMode.Local
+          ? props.realm.path
+          : props.realm.appId,
       width: 900,
       height: 600,
     };
@@ -48,7 +51,15 @@ export const RealmBrowserWindow: IWindow = {
     ),
   getSingletonKey: (props: IRealmBrowserWindowProps) => {
     const { realm } = props;
-    return realm.path;
+    if (realm.mode === RealmLoadingMode.Local) {
+      return realm.path;
+    } else {
+      return [
+        realm.appId,
+        realm.serverUrl,
+        JSON.stringify(realm.credentials),
+      ].join('+');
+    }
   },
   getTrackedProperties: (props: IRealmBrowserWindowProps) => ({
     mode: props.realm.mode,

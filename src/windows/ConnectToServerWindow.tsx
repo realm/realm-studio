@@ -16,21 +16,28 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-/**
- * A WindowProps object is passed to the UI component when mounted and describes the internal properties for that.
- */
+import { IWindow } from './Window';
 
-import { IGreetingWindowProps } from './GreetingWindow';
-import { IRealmBrowserWindowProps } from './RealmBrowserWindow';
-import { IConnectToServerWindowProps } from './ConnectToServerWindow';
+export interface IConnectToServerWindowProps {
+  url?: string;
+}
 
-export {
-  IGreetingWindowProps,
-  IRealmBrowserWindowProps,
-  IConnectToServerWindowProps,
+export const ConnectToServerWindow: IWindow = {
+  getWindowOptions: () => ({
+    title: 'Connect via Atlas Device Sync',
+    width: 500,
+    height: 450,
+    resizable: false,
+    fullscreenable: false,
+    autoHideMenuBar: true,
+    frame: false,
+  }),
+  getComponent: () =>
+    import(
+      /* webpackChunkName: "connect-to-server" */ '../ui/ConnectToServer'
+    ).then(
+      // TODO: Fix the props for this to include a type
+      m => m.ConnectToServer as any,
+    ),
+  getTrackedProperties: () => ({}),
 };
-
-export type WindowProps =
-  | IGreetingWindowProps
-  | IRealmBrowserWindowProps
-  | IConnectToServerWindowProps;
