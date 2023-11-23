@@ -50,7 +50,7 @@ import { isPrimitive } from './primitives';
 import { RealmBrowser } from './RealmBrowser';
 import * as schemaUtils from './schema-utils';
 import { SingleObjectCollection } from './Content/SingleObjectCollection';
-import { AsymmetricObjectCollection } from './Content/AsymmetricObjectCollection';
+import { MockedObjectCollection } from './Content/MockedObjectCollection';
 
 // TODO: Remove this interface once the Realm.ObjectSchemaProperty
 // has a name parameter in its type definition.
@@ -668,9 +668,10 @@ class RealmBrowserContainer
       return {
         kind: 'class',
         className,
-        results: schema?.asymmetric
-          ? new AsymmetricObjectCollection(schema)
-          : this.realm.objects(className),
+        results:
+          schema?.asymmetric || schema?.embedded
+            ? new MockedObjectCollection(schema)
+            : this.realm.objects(className),
         properties: this.derivePropertiesFromClassName(className),
         isEmbedded: this.isEmbeddedType(className),
       };

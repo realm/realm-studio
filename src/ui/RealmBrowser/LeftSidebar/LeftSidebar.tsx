@@ -115,9 +115,18 @@ export const LeftSidebar = ({
                   <span className="LeftSidebar__Class__Name">
                     {schema.name}
                   </span>
-                  <Badge color={highlighted ? 'primary' : 'secondary'}>
-                    {getSchemaLength(schema.name)}
-                  </Badge>
+                  {schema.embedded ? (
+                    <Badge
+                      color={highlighted ? 'primary' : 'secondary'}
+                      title="Embedded class"
+                    >
+                      E
+                    </Badge>
+                  ) : (
+                    <Badge color={highlighted ? 'primary' : 'secondary'}>
+                      {getSchemaLength(schema.name)}
+                    </Badge>
+                  )}
                 </div>
                 {selected && focus && focus.kind === 'list' ? (
                   <ListFocus
