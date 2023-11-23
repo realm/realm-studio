@@ -105,7 +105,7 @@ export class WindowManager {
       title: app.name,
       width: 800,
       height: 600,
-      vibrancy: 'light',
+      // vibrancy: 'light',
       show: false,
       // This should be the same as the value of the SCSS variable $body-bg
       backgroundColor: '#f5f5f9',
