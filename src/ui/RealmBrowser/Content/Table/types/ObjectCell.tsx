@@ -45,7 +45,7 @@ export const ObjectCell = ({
       })}
       onKeyPress={doubleClickIfEnter}
     >
-      {displayObject(value)}
+      {displayObject(value, true)}
     </div>
   );
 };

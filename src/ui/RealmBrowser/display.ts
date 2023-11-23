@@ -28,7 +28,9 @@ export const displayObject = (
       const pk = (object as { [property: string]: any })[schema.primaryKey];
       return `${schema.name} {${schema.primaryKey} = ${pk}}`;
     } else if (inspectOnMissingPk) {
-      return util.inspect(object, false, 0).replace('RealmObject', schema.name);
+      return util
+        .inspect(object.toJSON(), false, 0)
+        .replace('RealmObject', schema.name);
     } else {
       return schema.name;
     }
