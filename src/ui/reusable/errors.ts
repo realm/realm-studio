@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import electron from 'electron';
+import electron, { MessageBoxSyncOptions } from 'electron';
 import * as sentry from '@sentry/electron';
 
 import { getRemote } from '../../utils';
@@ -36,7 +36,7 @@ export const showError = (
   if (message in messageOverrides) {
     message = messageOverrides[message];
   }
-  const messageOptions = {
+  const messageOptions: MessageBoxSyncOptions = {
     type: 'error',
     // Prepend the intent
     message: failedIntent,
