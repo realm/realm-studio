@@ -14,6 +14,7 @@ assert(GITHUB_REPO, 'Expected a GITHUB_REPO environment variable');
 
 const octokit = new Octokit({
   auth: GITHUB_TOKEN,
+  request: { fetch },
 });
 
 function determinContentType(assetPath) {
