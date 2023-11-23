@@ -1,5 +1,24 @@
 # Changelog
 
+## Release 14.1.0 (2023-11-23)
+
+[Changes since v14.0.4](https://github.com/realm/realm-studio/compare/v14.0.4...v14.1.0)
+
+### Enhancements
+
+- Added ability to open a Realm via the Atlas Device Sync. ([#1600](https://github.com/realm/realm-studio/pull/1600))
+- Added ability to add embedded classes and click back to the parent object. ([#1602](https://github.com/realm/realm-studio/pull/1602))
+
+### Fixed
+
+- None
+
+### Internals
+
+- Upgraded dependencies, including Electron to v24.8.6. ([#1570](https://github.com/realm/realm-studio/pull/1570) & [#1598](https://github.com/realm/realm-studio/pull/1598))
+- Upgraded Realm JS to v11.10.2. ([#1600](https://github.com/realm/realm-studio/pull/1600))
+
+
 ## Release 14.0.4 (2023-09-11)
 
 [Changes since v14.0.3](https://github.com/realm/realm-studio/compare/v14.0.3...v14.0.4)

@@ -2,8 +2,7 @@
 
 ### Enhancements
 
-- Added ability to open a Realm via the Atlas Device Sync. ([#1600](https://github.com/realm/realm-studio/pull/1600))
-- Added ability to add embedded classes and click back to the parent object. ([#1602](https://github.com/realm/realm-studio/pull/1602))
+- None
 
 ### Fixed
 
@@ -11,5 +10,4 @@
 
 ### Internals
 
-- Upgraded dependencies, including Electron to v24.8.6. ([#1570](https://github.com/realm/realm-studio/pull/1570) & [#1598](https://github.com/realm/realm-studio/pull/1598))
-- Upgraded Realm JS to v11.10.2. ([#1600](https://github.com/realm/realm-studio/pull/1600))
+- None
