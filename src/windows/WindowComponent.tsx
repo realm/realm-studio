@@ -116,7 +116,7 @@ export abstract class WindowComponent
   };
 }
 
-export const renderCurrentWindow = () => (
+export const CurrentWindow = () => (
   <SentryErrorBoundary>
     <WindowComponent />
   </SentryErrorBoundary>

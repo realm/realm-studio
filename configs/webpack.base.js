@@ -10,6 +10,9 @@ module.exports = (env, argv) => {
   const isDevelopment = argv.mode === 'development';
 
   return {
+    devServer: {
+      hot: true,
+    },
     devtool: isDevelopment ? 'inline-source-map' : 'source-map',
     externals: [
       nodeExternals({
@@ -39,12 +42,8 @@ module.exports = (env, argv) => {
         ),
       }),
     ].concat(
-      isDevelopment
+      !isDevelopment
         ? [
-            // Plugins for development
-            new webpack.HotModuleReplacementPlugin(),
-          ]
-        : [
             new SentryPlugin({
               release: `${package.name}@${package.version}`,
               include: './build',
@@ -54,7 +53,8 @@ module.exports = (env, argv) => {
               urlPrefix: '~/build/',
               dryRun: !process.env.SENTRY_AUTH_TOKEN,
             }),
-          ],
+          ]
+        : [],
     ),
     resolve: {
       alias: {

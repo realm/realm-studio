@@ -38,29 +38,34 @@ process.env.REALM_DISABLE_ANALYTICS = 'true';
 
 import '../styles/index.scss';
 
-import { renderCurrentWindow } from './windows/WindowComponent';
+import { CurrentWindow } from './windows/WindowComponent';
 
 const appElement = document.getElementById('app');
 
 if (!isDevelopment) {
-  const window = renderCurrentWindow();
-  ReactDOM.render(window, appElement);
+  ReactDOM.render(<CurrentWindow />, appElement);
 } else {
   // The react-hot-loader is a dev-dependency, why we cannot use a regular import in the top of this file
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const { AppContainer } = require('react-hot-loader');
 
-  const currentWindow = renderCurrentWindow();
-  ReactDOM.render(<AppContainer>{currentWindow}</AppContainer>, appElement);
+  function render(Component: React.FC) {
+    ReactDOM.render(
+      <AppContainer>
+        <Component />
+      </AppContainer>,
+      appElement,
+    );
+  }
+
+  render(CurrentWindow);
 
   // Hot Module Replacement API
   if (module.hot) {
-    module.hot.accept('./windows/Window', () => {
+    module.hot.accept('./windows/WindowComponent', () => {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const nextGetWindow = require('./windows/Window').getWindow;
-      const nextWindow = nextGetWindow();
-      // Render the updated window
-      ReactDOM.render(<AppContainer>{nextWindow}</AppContainer>, appElement);
+      const NextWindow = require('./windows/WindowComponent').CurrentWindow;
+      render(NextWindow);
     });
   }
 
