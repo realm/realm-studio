@@ -24,16 +24,20 @@ import { ClassFocussedHandler } from '..';
 import { ILoadingProgress, Sidebar } from '../../reusable';
 import { Focus, IListFocus } from '../focus';
 
-import { ListFocus } from './ListFocus';
+import { ParentObjectFocus } from './ParentObjectFocus';
 import { SubscriptionList } from './SubscriptionList';
 
 import './LeftSidebar.scss';
 
 export function getFocusedSchemaName(focus: Focus | null): string | undefined {
-  if (focus && focus.kind === 'class') {
-    return focus.className;
-  } else if (focus && focus.kind === 'list') {
-    return focus.parent.objectSchema().name;
+  if (focus) {
+    if (focus.kind === 'class') {
+      return focus.className;
+    } else if (focus.kind === 'list' || focus.kind === 'single-object') {
+      return focus.parent.objectSchema().name;
+    } else {
+      throw new Error(`Unexpected kind of focus: ${focus}`);
+    }
   } else {
     return undefined;
   }
@@ -115,12 +119,23 @@ export const LeftSidebar = ({
                   <span className="LeftSidebar__Class__Name">
                     {schema.name}
                   </span>
-                  <Badge color={highlighted ? 'primary' : 'secondary'}>
-                    {getSchemaLength(schema.name)}
-                  </Badge>
+                  {schema.embedded ? (
+                    <Badge
+                      color={highlighted ? 'primary' : 'secondary'}
+                      title="Embedded class"
+                    >
+                      E
+                    </Badge>
+                  ) : (
+                    <Badge color={highlighted ? 'primary' : 'secondary'}>
+                      {getSchemaLength(schema.name)}
+                    </Badge>
+                  )}
                 </div>
-                {selected && focus && focus.kind === 'list' ? (
-                  <ListFocus
+                {selected &&
+                focus &&
+                (focus.kind === 'list' || focus.kind === 'single-object') ? (
+                  <ParentObjectFocus
                     focus={focus as IListFocus}
                     onClassFocussed={onClassFocussed}
                   />

@@ -30,6 +30,7 @@ export interface IAddClassModalProps {
 export interface IAddClassModalState {
   name: string;
   nameIsValid: boolean;
+  embedded: boolean;
   primaryKey: boolean;
   primaryKeyName: string;
   primaryKeyType: string;
@@ -38,6 +39,7 @@ export interface IAddClassModalState {
 const initialState: IAddClassModalState = {
   name: '',
   nameIsValid: true,
+  embedded: false,
   primaryKey: false,
   primaryKeyName: '',
   primaryKeyType: 'objectId',
@@ -68,6 +70,12 @@ class AddClassModalContainer extends React.Component<
     });
   };
 
+  public onEmbeddedChange = () => {
+    this.setState({
+      embedded: !this.state.embedded,
+    });
+  };
+
   public onPKChange = () => {
     this.setState({
       primaryKey: !this.state.primaryKey,
@@ -90,13 +98,14 @@ class AddClassModalContainer extends React.Component<
     primaryKeyName === '' ? '_id' : primaryKeyName;
 
   private getSchema = (): Realm.ObjectSchema => {
-    const { name, primaryKey, primaryKeyType } = this.state;
+    const { name, primaryKey, primaryKeyType, embedded } = this.state;
     const primaryKeyName = this.preparePrimaryKeyName(
       this.state.primaryKeyName,
     );
 
     return {
       name,
+      embedded,
       ...(primaryKey ? { primaryKey: primaryKeyName } : {}),
       properties: {
         ...(primaryKey ? { [primaryKeyName]: primaryKeyType } : {}),

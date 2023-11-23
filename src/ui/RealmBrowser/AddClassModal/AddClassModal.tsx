@@ -40,12 +40,14 @@ export const AddClassModal = ({
   isOpen,
   toggle,
   onNameChange,
+  onEmbeddedChange,
   onPKChange,
   onPKNameChange,
   onPKTypeChange,
   onSubmit,
   name,
   nameIsValid,
+  embedded,
   primaryKey,
   primaryKeyName,
   primaryKeyType,
@@ -53,12 +55,14 @@ export const AddClassModal = ({
   isOpen: boolean;
   toggle: () => void;
   onNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onEmbeddedChange: () => void;
   onPKChange: () => void;
   onPKNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onPKTypeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   name: string;
   nameIsValid: boolean;
+  embedded: boolean;
   primaryKey: boolean;
   primaryKeyName: string;
   primaryKeyType: string;
@@ -84,7 +88,19 @@ export const AddClassModal = ({
               </FormFeedback>
             )}
           </FormGroup>
-          <FormGroup className={nameIsValid ? '' : 'has-danger'}>
+          <FormGroup check>
+            <Label check>
+              <Input
+                type="checkbox"
+                name="embedded"
+                checked={embedded}
+                onChange={onEmbeddedChange}
+              />{' '}
+              Embed objects of this type in parent objects
+            </Label>
+          </FormGroup>
+          <hr />
+          <FormGroup>
             <Label for="primaryKey">Primary key</Label>
             <InputGroup>
               <InputGroupText>

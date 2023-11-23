@@ -21,22 +21,33 @@ import { Badge } from 'reactstrap';
 
 import { ClassFocussedHandler } from '..';
 import { displayObject } from '../display';
-import { IListFocus } from '../focus';
+import { IListFocus, ISingleObjectFocus } from '../focus';
 
-interface IListFocusProps {
-  focus: IListFocus;
+interface IParentObjectFocusProps {
+  focus: IListFocus | ISingleObjectFocus;
   onClassFocussed: ClassFocussedHandler;
 }
 
-export const ListFocus = ({ focus, onClassFocussed }: IListFocusProps) => (
+export const ParentObjectFocus = ({
+  focus,
+  onClassFocussed,
+}: IParentObjectFocusProps) => (
   <div className="LeftSidebar__List">
     <div className="LeftSidebar__List__Name">
-      <span className="LeftSidebar__List__Name__Text">
-        List of {focus.property.objectType}
-      </span>
-      <Badge color="primary">
-        {focus.parent.isValid() ? focus.results.length : '?'}
-      </Badge>
+      {focus.kind === 'list' ? (
+        <>
+          <span className="LeftSidebar__List__Name__Text">
+            List of {focus.property.objectType}
+          </span>
+          <Badge color="primary">
+            {focus.parent.isValid() ? focus.results.length : '?'}
+          </Badge>
+        </>
+      ) : focus.isEmbedded ? (
+        <span className="LeftSidebar__List__Name__Text">
+          Embedded {focus.property.objectType}
+        </span>
+      ) : null}
     </div>
     <div className="LeftSidebar__List__Parent">
       <div>

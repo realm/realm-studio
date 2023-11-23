@@ -440,7 +440,8 @@
   }
 
   &__NoFocusPlaceholder,
-  &__NoSubscriptionsPlaceholder {
+  &__NoSubscriptionsPlaceholder,
+  &__EmbeddedFocusPlaceholder {
     align-items: center;
     display: flex;
     height: 100%;
@@ -459,6 +460,13 @@
     &::before {
       color: $elephant;
       content: "Add a subscription to see objects";
+    }
+  }
+
+  &__EmbeddedFocusPlaceholder {
+    &::before {
+      color: $elephant;
+      content: "Embedded classes aren't directly queryable";
     }
   }
 

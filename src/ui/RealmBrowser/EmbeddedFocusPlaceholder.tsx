@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2018 Realm Inc.
+// Copyright 2023 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,25 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import util from 'util';
+import React from 'react';
 
-export const displayObject = (
-  object: Realm.Object | null,
-  inspectOnMissingPk = false,
-) => {
-  if (object) {
-    const schema = object.objectSchema();
-    if (schema.primaryKey) {
-      const pk = (object as { [property: string]: any })[schema.primaryKey];
-      return `${schema.name} {${schema.primaryKey} = ${pk}}`;
-    } else if (inspectOnMissingPk) {
-      return util
-        .inspect(object.toJSON(), false, 0)
-        .replace('RealmObject', schema.name);
-    } else {
-      return schema.name;
-    }
-  } else {
-    return 'null';
-  }
-};
+export const EmbeddedFocusPlaceholder = () => (
+  <div className="RealmBrowser__EmbeddedFocusPlaceholder" />
+);

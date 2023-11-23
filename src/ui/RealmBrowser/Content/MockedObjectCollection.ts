@@ -20,7 +20,7 @@
  * Mock implementation of Realm.Result<T> that returns empty results. This is because an asymmetric table
  * cannot be queried and thus we cannot obtain the results wrapping it.
  */
-export class AsymmetricObjectCollection<T extends Realm.Object>
+export class MockedObjectCollection<T extends Realm.Object>
   extends Array<T>
   implements Realm.Results<T>
 {
