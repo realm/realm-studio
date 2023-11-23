@@ -38,6 +38,7 @@ import { Focus, IClassFocus } from './focus';
 import { LeftSidebar } from './LeftSidebar';
 import { NoFocusPlaceholder } from './NoFocusPlaceholder';
 import { NoSubscriptionsPlaceholder } from './NoSubscriptionsPlaceholder';
+import { EmbeddedFocusPlaceholder } from './EmbeddedFocusPlaceholder';
 import { ImportDialog } from './ImportDialog';
 import { JsonViewerDialog } from './JsonViewerDialog';
 
@@ -187,6 +188,9 @@ export const RealmBrowser = ({
         ) : (
           // TODO: Use the loading overlay until Realm has fully loaded
           <NoFocusPlaceholder />
+        )}
+        {focus && focus.kind === 'class' && focus.isEmbedded && (
+          <EmbeddedFocusPlaceholder />
         )}
       </div>
 
