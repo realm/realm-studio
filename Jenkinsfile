@@ -16,7 +16,7 @@ pipeline {
     // Parameters used by the github releases script
     GITHUB_OWNER='realm'
     GITHUB_REPO='realm-studio'
-    NODE_VERSION='16'
+    NODE_VERSION='18'
   }
 
   parameters {
