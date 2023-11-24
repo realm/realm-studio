@@ -1,5 +1,22 @@
 # Changelog
 
+## Release 14.1.1 (2023-11-23)
+
+[Changes since v14.1.0](https://github.com/realm/realm-studio/compare/v14.1.0...v14.1.1)
+
+### Enhancements
+
+- None
+
+### Fixed
+
+- Fixed loading the greeting window. ([#1605](https://github.com/realm/realm-studio/pull/1605))
+
+### Internals
+
+- None
+
+
 ## Release 14.1.0 (2023-11-23)
 
 [Changes since v14.0.4](https://github.com/realm/realm-studio/compare/v14.0.4...v14.1.0)
