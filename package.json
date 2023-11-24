@@ -28,10 +28,16 @@
       "!node_modules/realm/vendor${/*}"
     ],
     "afterSign": "./scripts/afterSign",
+    "asarUnpack": [
+      "./node_modules/realm/build/Release/realm.node"
+    ],
     "mac": {
       "hardenedRuntime": true,
       "gatekeeperAssess": false,
       "category": "public.app-category.developer-tools",
+      "binaries": [
+        "dist/mac/Realm Studio.app/Contents/Resources/app.asar.unpacked/node_modules/realm/build/Release/realm.node"
+      ],
       "target": [
         "dmg",
         "zip"
