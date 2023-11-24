@@ -6,7 +6,7 @@
 
 ### Fixed
 
-- Fixed loading the greeting window. ([#1605](https://github.com/realm/realm-studio/pull/1605))
+- None
 
 ### Internals
 
