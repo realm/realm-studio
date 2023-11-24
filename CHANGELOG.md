@@ -1,5 +1,22 @@
 # Changelog
 
+## Release 14.1.2 (2023-11-24)
+
+[Changes since v14.1.1](https://github.com/realm/realm-studio/compare/v14.1.1...v14.1.2)
+
+### Enhancements
+
+- None
+
+### Fixed
+
+- Fixed main process crash, by unpacking the realm.node binary and signing it. ([#1605](https://github.com/realm/realm-studio/pull/1605))
+
+### Internals
+
+- None
+
+
 ## Release 14.1.1 (2023-11-23)
 
 [Changes since v14.1.0](https://github.com/realm/realm-studio/compare/v14.1.0...v14.1.1)
