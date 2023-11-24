@@ -9,7 +9,9 @@ module.exports = (env, argv) => {
 
   return merge(baseConfig, {
     entry: {
-      renderer: ['react-hot-loader/patch', './src/renderer.tsx'],
+      renderer: isDevelopment
+        ? ['react-hot-loader/patch', './src/renderer.tsx']
+        : './src/renderer.tsx',
       sentry: './src/sentry.ts',
     },
     module: {
