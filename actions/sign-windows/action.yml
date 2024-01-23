@@ -1,0 +1,13 @@
+name: Windows signer
+description: Sign windows binaries
+inputs:
+  binary:
+    description: binary to sign
+    required: True
+runs:
+  using: 'docker'
+  image: artifactory.corp.mongodb.com/release-tools-container-registry-local/garasign-jsign:latest
+  args:
+    - bash
+    - -c
+    - jsign --replace --tsaurl http://timestamp.digicert.com -d SHA-256 -a mongo-authenticode-2021 "${{ inputs.binary }}"

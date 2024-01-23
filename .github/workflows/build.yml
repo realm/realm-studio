@@ -1,0 +1,330 @@
+name: Build, sign and publish release
+# this workflow needs the following secrets set up:
+#
+# ARTIFACTORY_PASSWORD  mongoDB artifactory password
+# ARTIFACTORY_USER      matching username
+# GRS_PASSWORD          Password for the Windows/Linux signer
+# GRS_USERNAME          Username for the Windows/Linux signer
+# NOTARY_KEY_ID         Key id for the macOS notary
+# NOTARY_SECRET         Secret for the macOS notary
+# S3_ACCESS_KEY         Access key with write access to the release bucket
+# S3_SECRET_KEY         The matching secret key
+# WG_CONFIG             A complete wireguard configuration file for notary access
+
+on:
+  workflow_dispatch:
+
+env:
+  GRS_CONFIG_USER1_USERNAME: ${{ secrets.grs_username }}
+  GRS_CONFIG_USER1_PASSWORD: ${{ secrets.grs_password }}
+
+jobs:
+  build_sign_lw:
+    name: Build/sign Windows/Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install wine
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt-get update
+          sudo apt install -y wine wine32
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+      - name: Build the bundle
+        run: npm run build
+      - name: Store package version in environment
+        run: |
+          PACKAGE_VERSION=`jq -r '.version' package.json`
+          echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
+      # Both the Windows executable as well as the installer need to be signed.
+      # Electron builder will not rebuild existing files, even if they are
+      # different from the build results - that behaviour could be used to have
+      # it stop before packing everything into installers to sign the relevant
+      # binaries in place. Additionally there's also the option to pack up a
+      # prepared directory - as that's documented we're going with that one.
+      #
+      # Building for additional architectures works without conflicts - so to
+      # enable arm64 builds for Windows and Linux just add --arm64 here
+      - name: Prepare installer contents
+        run: |
+          # This is currently required to trick electron-builder into considering
+          # the realm package a native module
+          touch node_modules/realm/binding.gyp
+          npx electron-builder -lw --publish never --dir --x64
+      # Docker actions don't seem to support supplying credentials, so log in
+      # manually
+      - name: Log in to mongodb registry
+        uses: docker/login-action@v3
+        with:
+          registry: artifactory.corp.mongodb.com
+          username: ${{ secrets.artifactory_user }}
+          password: ${{ secrets.artifactory_password }}
+      # Without having the image available locally the docker action referencing
+      # an image behind a registry requiring authentication may throw an error
+      # trying to pull the image - so we manually pull the image.
+      #
+      # A docker action has two ways of specifying the container to run:
+      # - container image, in which case this pull is required
+      # - Dockerfile, where it builds the image before launching in. In that
+      #   case the pull is not required
+      # Dockerfile is most sensible when specifying ENTRYPOINT, and a separate
+      # entrypoint script - which in our simple case would just add two files
+      # for no added benefit.
+      - name: pull docker image
+        run: docker pull artifactory.corp.mongodb.com/release-tools-container-registry-local/garasign-jsign:latest
+      - name: Sign Windows executable
+        uses: ./actions/sign-windows
+        with:
+          binary: dist/win-unpacked/Realm Studio.exe
+      # Binary signing for Windows/arm64 just works, if arm64 is enabled above
+      #- name: Sign Windows executable (arm64)
+      #  uses: ./actions/sign-windows
+      #  with:
+      #    binary: dist/win-arm64-unpacked/Realm Studio.exe
+      #
+      # This now just finishes the build step, packing up the installers using
+      # the binaries with the signatures attached
+      # Packing up would also work by just repeating above command without the
+      # --dir in a single command - but to avoid relying on undocumented
+      # behaviour splitting this up into multiple calls using the --pd switch
+      # is more sensible
+      #
+      # The Linux arm64 installer can easily be enabled, the windows one would
+      # overwrite the x86_64 one - that'd need changes in electron builder
+      # config to write that with a different name
+      - name: Build installers
+        run: |
+          npx electron-builder -l --publish never --pd dist/linux-unpacked
+          npx electron-builder -w --publish never --pd dist/win-unpacked
+          #npx electron-builder -l --arm64 --publish never --pd dist/linux-arm64-unpacked
+          #npx electron-builder -w --arm64 --publish never --pd dist/win-arm64-unpacked
+      #- name: Locate Windows installer
+      #  run: |
+      #    echo "WIN_SETUP=`find dist -name 'Realm Studio Setup *.exe'`" >> $GITHUB_ENV
+      - name: Rename yaml files
+        run: |
+          mv dist/major-*-linux.yml dist/latest-linux.yml
+          mv dist/major-*-linux-arm64.yml dist/latest-linux-arm64.yml || true
+          mv dist/major-*.yml dist/latest.yml
+      - name: Sign Windows installer
+        uses: ./actions/sign-windows
+        with:
+          binary: dist/Realm Studio Setup ${{ env.PACKAGE_VERSION}}.exe
+      #- name: Sign Windows installer (arm64)
+      #  uses: ./actions/sign-windows
+      #  with:
+      #    binary: dist/Realm Studio Setup ${{ env.PACKAGE_VERSION}}.exe
+      - name: Archive Linux installers
+        uses: actions/upload-artifact@v3
+        with:
+          name: Linux
+          path: |
+            dist/realm-studio-*.tar.gz
+            dist/Realm Studio-*.AppImage
+            dist/latest-linux*.yml
+      - name: Archive Windows installers
+        uses: actions/upload-artifact@v3
+        with:
+          name: Windows
+          path: |
+            dist/Realm Studio *.exe
+            dist/Realm Studio-*-win.zip
+            dist/*.blockmap
+            dist/latest.yml
+  # most of that could be done on a Linux worker to speed things up, but
+  # - universal binary building is currently only supported on macOS
+  # - dmg building via electron builder only works on macOS; theoretically
+  #   a dmg can be manually built on Linux, but it's a hacky mess
+  build_sign_m:
+    name: Build MacOS
+    runs-on: macOS-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      - name: Store package version in environment
+        run: |
+          PACKAGE_VERSION=`jq -r '.version' package.json`
+          echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
+      # the signing endpoint requires whitelisting IPs - we use wireguard to
+      # make sure we exit with a known IP. To make things easier the secret
+      # should contain the full client config, including the client secret
+      # key
+      - name: Configure wireguard
+        run: |
+          brew install wireguard-go wireguard-tools
+          echo "${{ secrets.WG_CONFIG }}" | base64 -d | sudo tee /usr/local/etc/wireguard/wg0.conf >/dev/null
+          sudo wg-quick up wg0
+          sudo wg
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+      - name: Build the bundle
+        run: npm run build
+      # Producing universal binaries currently fails due to the native realm.node
+      # binary, and embedding multi-arch binaries there currently seems to be
+      # mostly unsupported. Once that has been solved the next few build steps
+      # can be switched to universal. Doing universal builds changes the name
+      # of the installers - but still creates an autoupdate file with the same
+      # name, but new installers referenced - so it should be possible to use
+      # that to pull existing installations to the universal binary via the
+      # update mechanism
+      - name: Prepare installer contents
+        run: |
+          touch node_modules/realm/binding.gyp
+          npx electron-builder -m --publish never --dir
+          #npx electron-builder -m --publish never --dir --universal
+      - name: Prepare signer upload
+        run: |
+          cd dist/mac && zip --symlinks -r "../../Realm Studio.app.zip" "Realm Studio.app"
+          #cd dist/mac-universal && zip --symlinks -r "../../Realm Studio.app.zip" "Realm Studio.app"
+      - name: Download signer
+        run: |
+          wget https://macos-notary-1628249594.s3.amazonaws.com/releases/client/v3.8.1/darwin_amd64.zip
+          unzip darwin_amd64.zip
+      - name: Run signer
+        run: |
+          ./darwin_amd64/macnotary -f "Realm Studio.app.zip" -m notarizeAndSign -u https://dev.macos-notary.build.10gen.cc/api -s "${{ secrets.NOTARY_SECRET }}" -k "${{ secrets.NOTARY_KEY_ID }}" -b com.mongodb.realm-studio -o "output.zip" -t app -e resources/entitlements.mac.plist
+      - name: Extract notarized app in electron builder tree
+        run: |
+          unzip -d dist/mac -o output.zip
+          #unzip -d dist/mac-universal -o output.zip
+      - name: Build installers
+        run: |
+          npx electron-builder -m --publish never --pd "dist/mac/Realm Studio.app"
+          #npx electron-builder -m --publish never --universal --pd "dist/mac-universal/Realm Studio.app"
+      - name: Rename yaml files
+        run: |
+          ls dist/*.yml
+          mv dist/major-*-mac.yml dist/latest-mac.yml
+      - name: Archive macOS artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Mac
+          path: |
+            dist/latest-mac.yml
+            dist/*.dmg
+            dist/Realm Studio-${{ env.PACKAGE_VERSION }}-mac.zip
+            #dist/Realm Studio-${{ env.PACKAGE_VERSION }}-universal-mac.zip
+  upload_release:
+    name: Upload release artifacts to S3
+    needs: [ build_sign_m, build_sign_lw ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      - name: Store package version in environment
+        run: |
+          PACKAGE_VERSION=`jq -r '.version' package.json`
+          echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
+      - run: |
+          env | sort
+      - name: Pull macOS artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: Mac
+          path: dist
+      - name: Pull Windows artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: Windows
+          path: dist
+      - name: Pull Linux artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: Linux
+          path: dist
+      - run: |
+          cargo install better-blockmap
+      # As the Windows installer gets signed after electron builder is done with
+      # with it the auto updater files will contain the wrong checksums - this
+      # just fixes the checksums in an existing yaml file
+      - name: Update Windows auto-update yaml file
+        run: |
+          WIN_INSTALLER="dist/Realm Studio Setup ${{env.PACKAGE_VERSION}}.exe"
+          OLD_WIN_SHA=`awk '/^sha512/ {print $2}' dist/latest.yml`
+          NEW_WIN_SHA=`openssl dgst -binary -sha512 "$WIN_INSTALLER" | openssl base64 -A`
+          if [ "$OLD_WIN_SHA" = "$NEW_WIN_SHA" ]; then
+            echo "Windows installer sha512 matches file"
+            echo "This should not happen - probably signing failed"
+          else
+            echo "Old windows sha512: $OLD_WIN_SHA"
+            echo "New windows sha512: $NEW_WIN_SHA"
+            sed -i "s,sha512:.*,sha512: $NEW_WIN_SHA,g" dist/latest.yml
+            WIN_SIZE=`stat -c %s "$WIN_INSTALLER"`
+            sed -i "s,size:.*,size: $WIN_SIZE,g" dist/latest.yml
+          fi
+      # The blockmap also is obviously wrong, and needs to be regenerated. For
+      # some reason Windows doesn't have the zip in the autoupdate file, and
+      # therefore no blockmap for that.
+      - name: build Windows blockmaps
+        run: |
+          better-blockmap --input "dist/Realm Studio Setup ${{env.PACKAGE_VERSION}}.exe" --output "dist/Realm Studio Setup ${{env.PACKAGE_VERSION}}.exe.blockmap"
+      # Creating the auto-update files from scratch is required when building
+      # disk images or installer files outside of electron builder. This
+      # would generate correct yaml files for macOS. The sed operates on
+      # a template like the following, default in resources/latest-mac.yml:
+      #
+      # version: VERSION
+      # files:
+      #   - url: Realm Studio-VERSION-mac.zip
+      #     sha512: ZIP_SHA
+      #     size: ZIP_SIZE
+      #     blockMapSize: ZIP_BLOCKMAP_SIZE
+      #   - url: Realm Studio-VERSION.dmg
+      #     sha512: DMG_SHA
+      #     size: DMG_SIZE
+      # path: Realm Studio-VERSION.zip
+      # sha512: ZIP_SHA
+      # RELEASE_DATE
+      #
+      #- name: create mac auto-update yaml file
+      #  run: |
+      #    RELEASE_DATE=`grep ^releaseDate: dist/latest.yml`
+      #    ZIP_SHA=`openssl dgst -binary -sha512 "dist/Realm Studio-${{env.PACKAGE_VERSION}}-mac.zip" | openssl base64 -A`
+      #    DMG_SHA=`openssl dgst -binary -sha512 "dist/Realm Studio-${{env.PACKAGE_VERSION}}.dmg" | openssl base64 -A`
+      #    ZIP_SIZE=`stat -c %s "dist/Realm Studio-${{env.PACKAGE_VERSION}}-mac.zip"`
+      #    ZIP_BLOCKMAP_SIZE=`stat -c %s "dist/Realm Studio-${{env.PACKAGE_VERSION}}-mac.zip.blockmap"`
+      #    DMG_SIZE=`stat -c %s "dist/Realm Studio-${{env.PACKAGE_VERSION}}.dmg"`
+      #
+      #    sed -e "s/RELEASE_DATE/$RELEASE_DATE/" \
+      #        -e "s/VERSION/${{env.PACKAGE_VERSION}}/g" \
+      #        -e "s,ZIP_SHA,$ZIP_SHA,g" \
+      #        -e "s/ZIP_SIZE/$ZIP_SIZE/g" \
+      #        -e "s/ZIP_BLOCKMAP_SIZE/$ZIP_BLOCKMAP_SIZE/g" \
+      #        -e "s,DMG_SHA,$DMG_SHA,g" \
+      #        -e "s/DMG_SIZE/$DMG_SIZE/g" \
+      #        resources/latest-mac.yml > dist/latest-mac.yml
+      #- name: build macOS blockmaps
+      #  run: |
+      #    better-blockmap --input "dist/Realm Studio-${{env.PACKAGE_VERSION}}.dmg" --output "dist/Realm Studio-${{env.PACKAGE_VERSION}}.dmg.blockmap"
+      #    better-blockmap --input "dist/Realm Studio-${{env.PACKAGE_VERSION}}-mac.zip" --output "dist/Realm Studio-${{env.PACKAGE_VERSION}}-mac.zip.blockmap"
+      - name: Dump auto-update yaml files for control
+        run: |
+          echo "** windows"
+          cat dist/latest.yml
+          echo "** linux"
+          cat dist/latest-linux.yml
+          echo "** mac"
+          cat dist/latest-mac.yml
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.S3_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.S3_SECRET_KEY }}
+          aws-region: us-east-1
+      # This needs to be adjusted to the actual s3 bucket (which probably also
+      # could just come via repository secret). Initially this should go to the
+      # old location, and moved to a new one when we're sure we can move
+      # existing installations over via the auto update system
+      - name: Upload release
+        run: |
+          aws s3 sync --acl public-read dist s3://static.realm.io/ci/test/${{ env.PACKAGE_VERSION }}/
