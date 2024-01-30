@@ -7,8 +7,8 @@ name: Build, sign and publish release
 # GRS_USERNAME          Username for the Windows/Linux signer
 # NOTARY_KEY_ID         Key id for the macOS notary
 # NOTARY_SECRET         Secret for the macOS notary
-# S3_ACCESS_KEY         Access key with write access to the release bucket
-# S3_SECRET_KEY         The matching secret key
+# AWS_S3_ACCESS_KEY_ID         Access key with write access to the release bucket
+# AWS_S3_SECRET_ACCESS_KEY         The matching secret key
 # WG_CONFIG             A complete wireguard configuration file for notary access
 
 on:
@@ -318,8 +318,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.S3_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.S3_SECRET_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_S3_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_S3_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       # This needs to be adjusted to the actual s3 bucket (which probably also
       # could just come via repository secret). Initially this should go to the
