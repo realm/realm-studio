@@ -373,7 +373,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           number: ${{ steps.vnext-pr.outputs.pull-request-number }}
           method: squash
-      - name: 'Post to #realm-releases'
+      - name: 'Post to Slack'
         uses: realm/ci-actions/release-to-slack@fa20eb972b9f018654fdb4e2c7afb52b0532f907
         with:
           changelog: dist/RELEASENOTES.md
