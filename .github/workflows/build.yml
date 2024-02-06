@@ -112,6 +112,9 @@ jobs:
           mv dist/major-*-linux.yml dist/latest-linux.yml
           mv dist/major-*-linux-arm64.yml dist/latest-linux-arm64.yml || true
           mv dist/major-*.yml dist/latest.yml
+      - name: Extract latest release notes
+        run: |
+          node scripts/tools.mjs extract-release-notes ./dist/RELEASENOTES.md
       - name: Sign Windows installer
         uses: ./actions/sign-windows
         with:
@@ -137,6 +140,7 @@ jobs:
             dist/Realm Studio-*-win.zip
             dist/*.blockmap
             dist/latest.yml
+            dist/RELEASENOTES.md
   # most of that could be done on a Linux worker to speed things up, but
   # - universal binary building is currently only supported on macOS
   # - dmg building via electron builder only works on macOS; theoretically
@@ -328,3 +332,51 @@ jobs:
       - name: Upload release
         run: |
           aws s3 sync --acl public-read dist s3://static.realm.io/ci/test/${{ env.PACKAGE_VERSION }}/
+      - name: Publish Github Release
+        uses: ncipollo/release-action@3ac4132803a6419fa2a7f4e9dbd1d93fceb690b9
+        with:
+          artifacts: "dist/*.exe,dist/*.dmg,dist/*.zip,dist/*.AppImage"
+          bodyFile: dist/RELEASENOTES.md
+          name: ${{ steps.get-version.outputs.version }}
+          commit: main
+          tag: ${{ steps.get-version.outputs.version }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          draft: false
+      - name: Update Changelog
+        run: |
+          echo "## vNext (TBD)
+
+          ### Enhancements
+          * None
+
+          ### Fixed
+          * None
+
+          ### Internals
+          * Updated dependencies
+          " | cat - CHANGELOG.md >> temp
+          mv temp CHANGELOG.md
+        shell: bash
+      - name: Create vNext PR
+        id: vnext-pr
+        uses: peter-evans/create-pull-request@6c704eb7a8ba1daa13da0dcea9bb93a4fe530275
+        with:
+          branch: prepare-vnext
+          title: Prepare for vNext
+          body: Update Changelog for vNext
+          delete-branch: true
+          base: main
+          commit-message: Prepare for vNext
+      - name: Merge Pull Request
+        uses: juliangruber/merge-pull-request-action@333730196b34b74936aad75a4e31c23a57582d14
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          number: ${{ steps.vnext-pr.outputs.pull-request-number }}
+          method: squash
+      - name: 'Post to #realm-releases'
+        uses: realm/ci-actions/release-to-slack@fa20eb972b9f018654fdb4e2c7afb52b0532f907
+        with:
+          changelog: dist/RELEASENOTES.md
+          sdk: realm-studio
+          webhook-url: ${{ secrets.SLACK_RELEASE_WEBHOOK }}
+          version: ${{ steps.get-version.outputs.version }}
