@@ -22,7 +22,7 @@ export const addProperty = (
   objectSchemas: Realm.ObjectSchema[],
   className: string,
   propertyName: string,
-  propertyType: Realm.PropertyType,
+  propertyType: string,
 ) => {
   return objectSchemas.map(schema => {
     if (schema.name === className) {

@@ -55,15 +55,21 @@ function generatePropertyName(property: Realm.ObjectSchemaProperty) {
 
 function generateSchema() {
   const schema: Realm.ObjectSchema[] = [];
-  const types = [...primitiveTypes, 'CustomClass'];
+  const types: Realm.PropertyTypeName[] = [...primitiveTypes, 'object'];
   // Generate permutations of type and optional variations
   for (const type of types) {
     const properties: { [name: string]: Realm.ObjectSchemaProperty } = {};
     // Elements or list of elements
-    const typeVariations = [{ type }, { type: 'list', objectType: type }];
+    const typeVariations: Realm.PropertySchema[] = [
+      { type, objectType: type === 'object' ? 'CustomClass' : undefined },
+      { type: 'list', objectType: type },
+    ];
     for (const typeVariation of typeVariations) {
       for (const optionalVariation of optionalVariations) {
-        const property = { ...typeVariation, ...optionalVariation };
+        const property: Realm.PropertySchema = {
+          ...typeVariation,
+          ...optionalVariation,
+        };
         // Skip the optional list of CustomClass
         if (
           property.type === 'list' &&

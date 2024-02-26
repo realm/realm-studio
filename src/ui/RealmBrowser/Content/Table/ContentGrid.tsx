@@ -58,7 +58,7 @@ export interface IContentGridProps extends Partial<GridProps> {
   columnWidths: number[];
   dataVersion?: number;
   editMode: EditMode;
-  filteredSortedResults: Realm.Collection<any>;
+  filteredSortedResults: Realm.OrderedCollection<any>;
   getCellValue: (object: any, props: GridCellProps) => string;
   gridRef: (grid: Grid | null) => void;
   height: number;

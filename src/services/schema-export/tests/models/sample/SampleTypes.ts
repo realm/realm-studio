@@ -1,4 +1,4 @@
-export const SampleTypes = {
+export const SampleTypes: Realm.ObjectSchema = {
   name: 'SampleTypes',
   primaryKey: 'primary',
   properties: {

@@ -111,7 +111,7 @@ export class SelectObjectDialogContainer extends React.Component<
 
   private onHighlightChange = (
     highlight: IHighlight | undefined,
-    collection: Realm.Collection<any>,
+    collection: Realm.OrderedCollection<any>,
   ) => {
     // Gather the selected objects
     const selection = highlight

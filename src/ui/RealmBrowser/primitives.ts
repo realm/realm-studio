@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-export const TYPES: string[] = [
+export const TYPES: Realm.PropertyTypeName[] = [
   'objectId',
   'uuid',
   'bool',
@@ -29,6 +29,6 @@ export const TYPES: string[] = [
   'date',
 ];
 
-export const isPrimitive = (type: string) => {
-  return TYPES.indexOf(type) >= 0;
-};
+export function isPrimitive(type: string): type is Realm.PropertyTypeName {
+  return TYPES.includes(type as Realm.PropertyTypeName);
+}

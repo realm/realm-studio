@@ -24,7 +24,7 @@ export class SingleObjectCollection<T extends Realm.Object>
   extends Array<T>
   implements Realm.Results<T>
 {
-  public readonly type: Realm.PropertyType;
+  public readonly type: string;
   public readonly optional = false;
 
   constructor(object: T) {
@@ -80,6 +80,18 @@ export class SingleObjectCollection<T extends Realm.Object>
     return this;
   }
 
+  public *keys() {
+    throw new Error('Not implemented');
+  }
+
+  public *values() {
+    throw new Error('Not implemented');
+  }
+
+  public *entries() {
+    throw new Error('Not implemented');
+  }
+
   public addListener(): void {
     throw new Error('Not implemented');
   }
@@ -90,5 +102,13 @@ export class SingleObjectCollection<T extends Realm.Object>
 
   public removeAllListeners(): void {
     throw new Error('Not implemented');
+  }
+
+  public subscribe(): Promise<this> {
+    throw new Error('Method not implemented.');
+  }
+
+  public unsubscribe(): void {
+    throw new Error('Method not implemented.');
   }
 }

@@ -122,7 +122,9 @@ const List = ({
 
 // const SortableList = SortableContainer(List);
 
-const getItemProperty = (property: Realm.ObjectSchemaProperty) => {
+const getItemProperty = (
+  property: Realm.ObjectSchemaProperty,
+): Realm.PropertySchema => {
   if (property.objectType) {
     if (isPrimitive(property.objectType)) {
       return {

@@ -100,7 +100,7 @@ const MINIMUM_COLUMN_WIDTH = 20;
 export interface IBaseTableContainerProps {
   dataVersion?: number;
   editMode: EditMode;
-  filteredSortedResults: Realm.Collection<any>;
+  filteredSortedResults: Realm.OrderedCollection<any>;
   focus: Focus;
   highlight?: IHighlight;
   onAddColumnClick?: () => void;

@@ -125,7 +125,7 @@ export interface IBaseContentContainerProps {
   onClassFocussed?: ClassFocussedHandler;
   onHighlightChange?: (
     highlight: IHighlight | undefined,
-    collection: Realm.Collection<any>,
+    collection: Realm.OrderedCollection<any>,
   ) => void;
   onListFocussed?: ListFocussedHandler;
   onSingleListFocussed?: SingleListFocussedHandler;
@@ -192,7 +192,11 @@ class ContentContainer extends React.Component<
 
   private clickTimeout?: any;
   private filteredSortedResults = memoize(
-    (results: Realm.Collection<any>, query: string, sorting?: ISorting) => {
+    (
+      results: Realm.OrderedCollection<any>,
+      query: string,
+      sorting?: ISorting,
+    ) => {
       let filterError: Error | undefined;
       if (query) {
         try {

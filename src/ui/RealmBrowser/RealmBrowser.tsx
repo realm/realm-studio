@@ -178,7 +178,6 @@ export const RealmBrowser = ({
             onSingleListFocussed={onSingleListFocussed}
             onRealmChanged={onRealmChanged}
             onShowJsonViewerDialog={onShowJsonViewerDialog}
-            permissionSidebar={true}
             progress={progress}
             readOnly={editMode === EditMode.Disabled}
             realm={realm}
