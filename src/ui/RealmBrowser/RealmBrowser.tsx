@@ -66,7 +66,7 @@ export interface IRealmBrowserProps {
   isPropertyNameAvailable: (name: string) => boolean;
   jsonViewerDialog: null | { value: unknown };
   onAddClass: (schema: Realm.ObjectSchema) => void;
-  onAddProperty: (name: string, type: Realm.PropertyType) => void;
+  onAddProperty: (name: string, type: Realm.PropertyType | string) => void;
   onAddSubscription: (schemaName: string, query: string) => void;
   onCancelTransaction: () => void;
   onClassFocussed: ClassFocussedHandler;

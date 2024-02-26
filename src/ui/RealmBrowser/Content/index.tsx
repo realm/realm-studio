@@ -149,7 +149,6 @@ export interface IReadWriteContentContainerProps
   onCancelTransaction: () => void;
   onCommitTransaction: () => void;
   onRealmChanged: () => void;
-  permissionSidebar: boolean;
   readOnly: boolean;
   realm: Realm;
 }
@@ -164,7 +163,6 @@ export interface IContentContainerState {
   error?: Error;
   hideSystemClasses: boolean;
   highlight?: IHighlight;
-  isPermissionSidebarOpen: boolean;
   query: string;
   selectObjectDialog: ISelectObjectDialog;
   sorting?: ISorting;
@@ -180,8 +178,6 @@ class ContentContainer extends React.Component<
     createObjectDialog: { isOpen: false },
     deleteObjectsDialog: { isOpen: false },
     hideSystemClasses: !store.shouldShowSystemClasses(),
-    isPermissionSidebarOpen:
-      !this.props.readOnly && this.props.permissionSidebar,
     query: '',
     selectObjectDialog: { isOpen: false },
   };
@@ -311,7 +307,6 @@ class ContentContainer extends React.Component<
       filteredSortedResults: results,
       focus,
       highlight: this.state.highlight,
-      isPermissionSidebarOpen: this.state.isPermissionSidebarOpen,
       onCellChange: this.onCellChange,
       onCellClick: this.onCellClick,
       onCellHighlighted: this.onCellHighlighted,
@@ -348,9 +343,6 @@ class ContentContainer extends React.Component<
         onAddColumnClick: this.props.onAddColumnClick,
         onCancelTransaction: this.props.onCancelTransaction,
         onCommitTransaction: this.props.onCommitTransaction,
-        onPermissionSidebarToggle: this.props.permissionSidebar
-          ? this.onPermissionSidebarToggle
-          : undefined,
         onReorderingEnd: this.onReorderingEnd,
         onReorderingStart: this.onReorderingStart,
         realm: this.props.realm,
@@ -899,12 +891,6 @@ class ContentContainer extends React.Component<
         : undefined;
 
     this.onShowCreateObjectDialog(className, embeddedInfo);
-  };
-
-  private onPermissionSidebarToggle = () => {
-    this.setState({
-      isPermissionSidebarOpen: !this.state.isPermissionSidebarOpen,
-    });
   };
 
   private onReorderingStart: ReorderingStartHandler = () => {
