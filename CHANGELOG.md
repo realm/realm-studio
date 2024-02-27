@@ -11,7 +11,7 @@
 ### Internals
 * None
 
-## Release 14.1.2 (2023-11-24)
+## 14.1.2 (2023-11-24)
 
 [Changes since v14.1.1](https://github.com/realm/realm-studio/compare/v14.1.1...v14.1.2)
 
@@ -28,7 +28,7 @@
 - Upgrading Realm to `v12.6.1`. ([#1626](https://github.com/realm/realm-studio/pull/1626))
 
 
-## Release 14.1.1 (2023-11-23)
+## 14.1.1 (2023-11-23)
 
 [Changes since v14.1.0](https://github.com/realm/realm-studio/compare/v14.1.0...v14.1.1)
 
@@ -45,7 +45,7 @@
 - None
 
 
-## Release 14.1.0 (2023-11-23)
+## 14.1.0 (2023-11-23)
 
 [Changes since v14.0.4](https://github.com/realm/realm-studio/compare/v14.0.4...v14.1.0)
 
@@ -64,7 +64,7 @@
 - Upgraded Realm JS to v11.10.2. ([#1600](https://github.com/realm/realm-studio/pull/1600))
 
 
-## Release 14.0.4 (2023-09-11)
+## 14.0.4 (2023-09-11)
 
 [Changes since v14.0.3](https://github.com/realm/realm-studio/compare/v14.0.3...v14.0.4)
 
@@ -82,7 +82,7 @@
 - None
 
 
-## Release 14.0.3 (2023-05-10)
+## 14.0.3 (2023-05-10)
 
 [Changes since v14.0.2](https://github.com/realm/realm-studio/compare/v14.0.2...v14.0.3)
 
@@ -99,7 +99,7 @@
 - None
 
 
-## Release 14.0.2 (2023-04-26)
+## 14.0.2 (2023-04-26)
 
 [Changes since v14.0.1](https://github.com/realm/realm-studio/compare/v14.0.1...v14.0.2)
 
@@ -129,7 +129,7 @@
 
 - None
 
-## Release 14.0.1 (2023-04-21)
+## 14.0.1 (2023-04-21)
 
 [Changes since v14.0.0](https://github.com/realm/realm-studio/compare/v14.0.0...v14.0.1)
 
@@ -146,7 +146,7 @@
 - None
 
 
-## Release 14.0.0 (2023-04-13)
+## 14.0.0 (2023-04-13)
 
 [Changes since v13.0.2](https://github.com/realm/realm-studio/compare/v13.0.2...v14.0.0)
 
@@ -170,7 +170,7 @@
 - Upgraded Realm JS to v11.8.0.
 
 
-## Release 13.0.2 (2022-12-08)
+## 13.0.2 (2022-12-08)
 
 [Changes since v13.0.0](https://github.com/realm/realm-studio/compare/v13.0.0...v13.0.2)
 
@@ -187,7 +187,7 @@
 - None
 
 
-## Release 13.0.0 (2022-11-24)
+## 13.0.0 (2022-11-24)
 
 [Changes since v12.0.0](https://github.com/realm/realm-studio/compare/v12.0.0...v13.0.0)
 
@@ -222,7 +222,7 @@ Use this version of Realm Studio to read and write Realm database files, using t
 | Realm Java       |  |
 
 
-## Release 12.0.0 (2022-06-07)
+## 12.0.0 (2022-06-07)
 
 [Changes since v11.2.1](https://github.com/realm/realm-studio/compare/v11.2.1...v12.0.0)
 
@@ -253,7 +253,7 @@ Use this version of Realm Studio to read and write Realm database files, using t
 | Realm Swift      | v10.27.0 - ? |
 
 
-## Release 11.2.1 (2022-06-03)
+## 11.2.1 (2022-06-03)
 
 [Changes since v11.2.0](https://github.com/realm/realm-studio/compare/v11.2.0...v11.2.1)
 
@@ -270,7 +270,7 @@ Use this version of Realm Studio to read and write Realm database files, using t
 - None
 
 
-## Release 11.2.0 (2022-06-02)
+## 11.2.0 (2022-06-02)
 
 [Changes since v11.1.2](https://github.com/realm/realm-studio/compare/v11.1.2...v11.2.0)
 
@@ -287,7 +287,7 @@ Use this version of Realm Studio to read and write Realm database files, using t
 - Upgraded a lot of dependencies, including Electron to v19 ([#1507](https://github.com/realm/realm-studio/pull/1507), [#1506](https://github.com/realm/realm-studio/pull/1506), [#1505](https://github.com/realm/realm-studio/pull/1505))
 
 
-## Release 11.1.2 (2022-04-12)
+## 11.1.2 (2022-04-12)
 
 [Changes since v11.1.1](https://github.com/realm/realm-studio/compare/v11.1.1...v11.1.2)
 
@@ -303,7 +303,7 @@ Use this version of Realm Studio to read and write Realm database files, using t
 
 - Upgraded Realm JS to v10.16.0. ([#1488](https://github.com/realm/realm-studio/pull/1488) and [#1496](https://github.com/realm/realm-studio/pull/1496))
 
-## Release 11.1.1 (2021-12-06)
+## 11.1.1 (2021-12-06)
 
 [Changes since v11.1.0](https://github.com/realm/realm-studio/compare/v11.1.0...v11.1.1)
 
@@ -320,7 +320,7 @@ Use this version of Realm Studio to read and write Realm database files, using t
 - Upgrading all dependencies, including Electron to v16 and Bootstrap to v5 ([#1449](https://github.com/realm/realm-studio/pull/1449))
 
 
-## Release 11.1.0 (2021-07-08)
+## 11.1.0 (2021-07-08)
 
 [Changes since v11.0.1](https://github.com/realm/realm-studio/compare/v11.0.1...v11.1.0)
 
@@ -337,7 +337,7 @@ Use this version of Realm Studio to read and write Realm database files, using t
 - Upgraded Realm JS to v10.6.0. ([#1443](https://github.com/realm/realm-studio/pull/1443))
 
 
-## Release 11.0.1 (2021-06-29)
+## 11.0.1 (2021-06-29)
 
 [Changes since v11.0.0](https://github.com/realm/realm-studio/compare/v11.0.0...v11.0.1)
 
@@ -354,7 +354,7 @@ Use this version of Realm Studio to read and write Realm database files, using t
 - None
 
 
-## Release 11.0.0 (2021-06-24)
+## 11.0.0 (2021-06-24)
 
 [Changes since v11.0.0-beta.1](https://github.com/realm/realm-studio/compare/v10.1.2...v11.0.0)
 
@@ -378,7 +378,7 @@ Use this version of Realm Studio to read and write Realm database files, using t
 - None
 
 
-## Release 11.0.0-beta.1 (2021-05-21)
+## 11.0.0-beta.1 (2021-05-21)
 
 [Changes since v11.0.0-beta.0](https://github.com/realm/realm-studio/compare/v11.0.0-beta.0...v11.0.0-beta.1)
 
@@ -395,7 +395,7 @@ Use this version of Realm Studio to read and write Realm database files, using t
 - None
 
 
-## Release 11.0.0-beta.0 (2021-05-18)
+## 11.0.0-beta.0 (2021-05-18)
 
 [Changes since v11.0.0-alpha.0](https://github.com/realm/realm-studio/compare/v11.0.0-alpha.0...v11.0.0-beta.0)
 
@@ -416,7 +416,7 @@ Use this version of Realm Studio to read and write Realm database files, using t
 - None
 
 
-## Release 11.0.0-alpha.0 (2021-05-03)
+## 11.0.0-alpha.0 (2021-05-03)
 
 [Changes since v10.1.2](https://github.com/realm/realm-studio/compare/v10.1.2...v11.0.0-alpha.0)
 
@@ -442,7 +442,7 @@ Use this version of Realm Studio to read and write Realm database files, using t
 - File format: Generates Realms with file format v21. Earlier file formats can be read and automatically upgraded to v21. But you will not be able to edit older file formats.
 
 
-## Release 10.1.2 (2021-02-17)
+## 10.1.2 (2021-02-17)
 
 [Changes since v10.1.1](https://github.com/realm/realm-studio/compare/v10.1.1...v10.1.2)
 
@@ -460,7 +460,7 @@ Use this version of Realm Studio to read and write Realm database files, using t
 - Migrated from tslint to eslint. ([#1388](https://github.com/realm/realm-studio/pull/1388))
 
 
-## Release 10.1.1 (2021-01-28)
+## 10.1.1 (2021-01-28)
 
 [Changes since v10.1.0](https://github.com/realm/realm-studio/compare/v10.1.0...v10.1.1)
 
@@ -478,7 +478,7 @@ Use this version of Realm Studio to read and write Realm database files, using t
 - Upgraded Electron to v11. ([#1386](https://github.com/realm/realm-studio/pull/1386))
 
 
-## Release 10.1.0 (2021-01-13)
+## 10.1.0 (2021-01-13)
 
 [Changes since v10.0.1](https://github.com/realm/realm-studio/compare/v10.0.1...v10.1.0)
 
@@ -495,7 +495,7 @@ Use this version of Realm Studio to read and write Realm database files, using t
 - None
 
 
-## Release 10.0.1 (2020-11-12)
+## 10.0.1 (2020-11-12)
 
 [Changes since v10.0.0](https://github.com/realm/realm-studio/compare/v10.0.0...v10.0.1)
 
@@ -512,7 +512,7 @@ Use this version of Realm Studio to read and write Realm database files, using t
 - None
 
 
-## Release 10.0.0 (2020-10-16)
+## 10.0.0 (2020-10-16)
 
 [Changes since v5.0.0](https://github.com/realm/realm-studio/compare/v5.0.0...v10.0.0)
 
@@ -557,7 +557,7 @@ release that supports that.
 - Realm v10.0.0
 
 
-## Release 5.0.0 (2020-09-22)
+## 5.0.0 (2020-09-22)
 
 [Changes since v4.0.0](https://github.com/realm/realm-studio/compare/v4.0.0...v5.0.0)
 
@@ -590,7 +590,7 @@ Use this version of Realm Studio to read and write Realm database files, using t
 - Upgraded Electron to v9.3.1 and Spectron to v11.1.0 ([#1332](https://github.com/realm/realm-studio/pull/1332))
 
 
-## Release 4.0.0 (2020-09-22)
+## 4.0.0 (2020-09-22)
 
 [Changes since v3.10.0](https://github.com/realm/realm-studio/compare/v3.11.0...v4.0.0)
 
@@ -624,7 +624,7 @@ Use this version of Realm Studio to read and write Realm database files, using t
 - Auto updating will now look for updates on the "major-4" channel.
 
 
-## Release 3.10.1 (2020-09-18)
+## 3.10.1 (2020-09-18)
 
 [Changes since v3.10.0](https://github.com/realm/realm-studio/compare/v3.10.0...v3.10.1)
 
@@ -641,7 +641,7 @@ Use this version of Realm Studio to read and write Realm database files, using t
 - Auto updating will now look for updates on the "major-3" channel.
 
 
-## Release 3.11.0 (2020-05-06)
+## 3.11.0 (2020-05-06)
 
 [Changes since v3.10.0](https://github.com/realm/realm-studio/compare/v3.10.0...v3.11.0)
 
@@ -658,7 +658,7 @@ Use this version of Realm Studio to read and write Realm database files, using t
 - Upgraded dependencies, including Electron to v8 and Realm to v6.0.0. ([#1278](https://github.com/realm/realm-studio/pull/1278) & [#1284](https://github.com/realm/realm-studio/pull/1284))
 
 
-## Release 3.10.0 (2020-03-06)
+## 3.10.0 (2020-03-06)
 
 [Changes since v3.9.0](https://github.com/realm/realm-studio/compare/v3.9.0...v3.10.0)
 
@@ -675,7 +675,7 @@ Use this version of Realm Studio to read and write Realm database files, using t
 - None
 
 
-## Release 3.9.0 (2020-01-16)
+## 3.9.0 (2020-01-16)
 
 [Changes since v3.8.3](https://github.com/realm/realm-studio/compare/v3.8.3...v3.9.0)
 
@@ -692,7 +692,7 @@ Use this version of Realm Studio to read and write Realm database files, using t
 - None
 
 
-## Release 3.8.3 (2019-11-26)
+## 3.8.3 (2019-11-26)
 
 [Changes since v3.8.2](https://github.com/realm/realm-studio/compare/v3.8.2...v3.8.3)
 
@@ -710,7 +710,7 @@ Use this version of Realm Studio to read and write Realm database files, using t
 - Upgraded dependencies, including Electron to v4. ([#1174](https://github.com/realm/realm-studio/pull/1174), [#1221](https://github.com/realm/realm-studio/pull/1221) & [#1228](https://github.com/realm/realm-studio/pull/1228))
 
 
-## Release 3.8.2 (2019-11-12)
+## 3.8.2 (2019-11-12)
 
 [Changes since v3.8.1](https://github.com/realm/realm-studio/compare/v3.8.1...v3.8.2)
 
@@ -730,7 +730,7 @@ This is fixed so you are always asked to confirm download when starting Studio (
 - Switched to using "esModuleInterop", allowing `import Lib from 'lib'` instead of `import * as Lib from 'lib'`. ([#1210](https://github.com/realm/realm-studio/pull/1210))
 
 
-## Release 3.8.1 (2019-10-18)
+## 3.8.1 (2019-10-18)
 
 [Changes since v3.8.0](https://github.com/realm/realm-studio/compare/v3.8.0...v3.8.1)
 
@@ -747,7 +747,7 @@ This is fixed so you are always asked to confirm download when starting Studio (
 - Upgraded Realm JS to v3.3.0. ([#1196](https://github.com/realm/realm-studio/pull/1196), since v3.8.0)
 
 
-## Release 3.8.0 (2019-10-17)
+## 3.8.0 (2019-10-17)
 
 [Changes since v3.7.0](https://github.com/realm/realm-studio/compare/v3.7.0...v3.8.0)
 
@@ -768,7 +768,7 @@ This is fixed so you are always asked to confirm download when starting Studio (
 - Upgraded Realm JS to v3.2.0. ([#1177](https://github.com/realm/realm-studio/pull/1177))
 
 
-## Release 3.7.0 (2019-09-27)
+## 3.7.0 (2019-09-27)
 
 [Changes since v3.6.1](https://github.com/realm/realm-studio/compare/v3.6.1...v3.7.0)
 
@@ -786,7 +786,7 @@ This is fixed so you are always asked to confirm download when starting Studio (
 - Upgraded a lot of dependencies to their latest versions. ([#1167](https://github.com/realm/realm-studio/pull/1167), [#1169](https://github.com/realm/realm-studio/pull/1169), [#1173](https://github.com/realm/realm-studio/pull/1173), [#1175](https://github.com/realm/realm-studio/pull/1175), [#1176](https://github.com/realm/realm-studio/pull/1176))
 
 
-## Release 3.6.1 (2019-06-06)
+## 3.6.1 (2019-06-06)
 
 [Changes since v3.5.0](https://github.com/realm/realm-studio/compare/v3.5.0...v3.6.1)
 
@@ -808,7 +808,7 @@ This is fixed so you are always asked to confirm download when starting Studio (
 - Add an option to open the cache folder to make it easier to inspect client Realms. ([#1149](https://github.com/realm/realm-studio/pull/1149))
 - Expose a way to connect to ROS from a custom url. ([#1149](https://github.com/realm/realm-studio/pull/1149))
 
-## Release 3.5.0 (2019-03-06)
+## 3.5.0 (2019-03-06)
 
 [Changes since v3.4.0](https://github.com/realm/realm-studio/compare/v3.4.0...v3.5.0)
 
@@ -824,7 +824,7 @@ This is fixed so you are always asked to confirm download when starting Studio (
 
 - Pinning the WebPack version to 4.28.4 until [https://github.com/webpack/webpack/issues/8656](https://github.com/webpack/webpack/issues/8656) gets resolved + rebuilding the package-lock.json ([#1122](https://github.com/realm/realm-studio/issues/1122))
 
-## Release 3.4.0 (2019-02-21)
+## 3.4.0 (2019-02-21)
 
 [Changes since v3.3.0](https://github.com/realm/realm-studio/compare/v3.3.0...v3.4.0)
 
@@ -844,7 +844,7 @@ This is fixed so you are always asked to confirm download when starting Studio (
 - Updated all dependencies, including Electron to v4 and Realm JS to v2.23.0. ([#1095](https://github.com/realm/realm-studio/pull/1095))
 - Added a segfault handler which produces a stack trace when a segmentation fault occurs. ([#1082](https://github.com/realm/realm-studio/pull/1082))
 
-## Release 3.3.0 (2019-01-07)
+## 3.3.0 (2019-01-07)
 
 [Changes since v3.2.0](https://github.com/realm/realm-studio/compare/v3.2.0...v3.3.0)
 
@@ -867,7 +867,7 @@ This is fixed so you are always asked to confirm download when starting Studio (
 - Refactored singleton windows. ([#1066](https://github.com/realm/realm-studio/pull/1066))
 - Refactored the Jenkins CI pipeline. ([#1069](https://github.com/realm/realm-studio/pull/1069) & [#1073](https://github.com/realm/realm-studio/pull/1073))
 
-## Release 3.2.0 (2018-12-21)
+## 3.2.0 (2018-12-21)
 
 [Changes since v3.1.3](https://github.com/realm/realm-studio/compare/v3.1.3...v3.2.0)
 
@@ -887,7 +887,7 @@ This version of Studio changes how Realm state and file size metrics (displayed 
 
 - None
 
-## Release 3.1.3 (2018-12-17)
+## 3.1.3 (2018-12-17)
 
 [Changes since v3.1.2](https://github.com/realm/realm-studio/compare/v3.1.2...v3.1.3)
 
@@ -904,7 +904,7 @@ This version of Studio changes how Realm state and file size metrics (displayed 
 - Removed all use of Realm JS from the main process. ([#1049](https://github.com/realm/realm-studio/pull/1049))
 - Upgraded Realm JS to v2.21.1. ([#1050](https://github.com/realm/realm-studio/pull/1050))
 
-## Release 3.1.2 (2018-12-11)
+## 3.1.2 (2018-12-11)
 
 This version had a regression running on Windows and was therefore never released.
 
@@ -922,7 +922,7 @@ This version had a regression running on Windows and was therefore never release
 
 - None
 
-## Release 3.1.1 (2018-12-07)
+## 3.1.1 (2018-12-07)
 
 [Changes since v3.1.0](https://github.com/realm/realm-studio/compare/v3.1.0...v3.1.1)
 
@@ -938,7 +938,7 @@ This version had a regression running on Windows and was therefore never release
 
 - None
 
-## Release 3.1.0 (2018-12-07)
+## 3.1.0 (2018-12-07)
 
 [Changes since v3.0.7](https://github.com/realm/realm-studio/compare/v3.0.7...v3.1.0)
 
@@ -955,7 +955,7 @@ This version had a regression running on Windows and was therefore never release
 - Excluding the unpackaged directories when uploading to S3 (again). ([#1013](https://github.com/realm/realm-studio/pull/1013))
 - Updated the message in the greeting window to include a button for signing up for the Realm Cloud. ([#1032](https://github.com/realm/realm-studio/pull/1032) and [#1035](https://github.com/realm/realm-studio/pull/1035))
 
-## Release 3.0.7 (2018-11-16)
+## 3.0.7 (2018-11-16)
 
 [Changes since v3.0.6](https://github.com/realm/realm-studio/compare/v3.0.6...v3.0.7)
 
@@ -977,7 +977,7 @@ This version had a regression running on Windows and was therefore never release
 - Excluding the unpackaged directories when uploading to S3. ([#1012](https://github.com/realm/realm-studio/pull/1012))
 - realm-js analytics have been disabled on the main process (similar to what we do for the renderer). ([#994](https://github.com/realm/realm-studio/issues/994))
 
-## Release 3.0.6 (2018-11-14)
+## 3.0.6 (2018-11-14)
 
 [Changes since v3.0.5](https://github.com/realm/realm-studio/compare/v3.0.5...v3.0.6)
 
@@ -994,7 +994,7 @@ This version had a regression running on Windows and was therefore never release
 - Updated Webpack and dependant modules. ([#999](https://github.com/realm/realm-studio/pull/999))
 - Updated TS-lint, Prettier and fixed linting errors. ([#1000](https://github.com/realm/realm-studio/pull/1000))
 
-## Release 3.0.5 (2018-11-13)
+## 3.0.5 (2018-11-13)
 
 [Changes since v3.0.4](https://github.com/realm/realm-studio/compare/v3.0.4...v3.0.5)
 
@@ -1013,7 +1013,7 @@ This version had a regression running on Windows and was therefore never release
 - Updated the changelog and releasenotes. ([#988](https://github.com/realm/realm-studio/pull/988))
 - Upgraded to Electron 3.0 + dependencies ([#935](https://github.com/realm/realm-studio/pull/935))
 
-## Release 3.0.4 (2018-11-12)
+## 3.0.4 (2018-11-12)
 
 [Changes since v3.0.3](https://github.com/realm/realm-studio/compare/v3.0.3...v3.0.4)
 
