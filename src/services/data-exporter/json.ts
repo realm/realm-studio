@@ -23,7 +23,7 @@ import { stringify } from 'flatted';
 import { IExportEngine } from '.';
 
 type ResultMap = {
-  [key: string]: Realm.Results<Realm.Object>;
+  [key: string]: Realm.Results<any>;
 };
 
 const serialize = (map: ResultMap) => {

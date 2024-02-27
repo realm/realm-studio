@@ -78,7 +78,7 @@ export default class TSSchemaExporter extends SchemaExporter {
    * @see https://realm.io/docs/javascript/latest/#supported-types
    * @param prop The property to produce a TypeScript type for.
    */
-  public getTypeFromPropertyType(type: Realm.PropertyType | undefined) {
+  public getTypeFromPropertyType(type: string | undefined) {
     switch (type) {
       case 'bool':
         return 'boolean';
@@ -90,10 +90,8 @@ export default class TSSchemaExporter extends SchemaExporter {
         return 'ArrayBuffer';
       case 'date':
         return 'Date';
-      case 'object id': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
       case 'objectId':
         return 'Realm.ObjectId';
-      case 'decimal': // TODO: remove once https://github.com/realm/realm-js/pull/3235 is merged & consumed.
       case 'decimal128':
         return 'Realm.Decimal128';
       default:

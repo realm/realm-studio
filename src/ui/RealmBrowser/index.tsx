@@ -577,7 +577,7 @@ class RealmBrowserContainer
     }
   };
 
-  private onAddProperty = async (name: string, type: Realm.PropertyType) => {
+  private onAddProperty = async (name: string, type: string) => {
     if (this.realm && this.state.focus && this.state.focus.kind === 'class') {
       try {
         const focusedClassName = this.state.focus.className;

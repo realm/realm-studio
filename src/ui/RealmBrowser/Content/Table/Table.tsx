@@ -50,7 +50,7 @@ export interface ITableProps {
   dataVersion?: number;
   dimensions: Dimensions;
   editMode: EditMode;
-  filteredSortedResults: Realm.Collection<any>;
+  filteredSortedResults: Realm.OrderedCollection<any>;
   focus: Focus;
   getCellValue: (object: any, props: GridCellProps) => string;
   gridContentRef: (grid: Grid | null) => void;

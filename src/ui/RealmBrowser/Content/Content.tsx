@@ -36,7 +36,6 @@ import {
   DeleteObjectsDialog,
   IDeleteObjectsDialogProps,
 } from './DeleteObjectsDialog';
-import { PermissionSidebar } from './PermissionSidebar';
 import { ResponsiveTable } from './ResponsiveTable';
 import {
   ISelectObjectDialogContainerProps,
@@ -61,10 +60,9 @@ interface IBaseContentProps {
   allowCreate: boolean;
   editMode: EditMode;
   error?: Error;
-  filteredSortedResults: Realm.Collection<any>;
+  filteredSortedResults: Realm.OrderedCollection<any>;
   focus: Focus;
   highlight?: IHighlight;
-  isPermissionSidebarOpen: boolean;
   onAddColumnClick?: () => void;
   onCellChange: CellChangeHandler;
   onCellClick: CellClickHandler;
@@ -73,7 +71,6 @@ interface IBaseContentProps {
   onContextMenu: CellContextMenuHandler;
   onRowMouseDown: RowMouseDownHandler;
   onNewObjectClick?: () => void;
-  onPermissionSidebarToggle?: () => void;
   onQueryChange: QueryChangeHandler;
   onQueryHelp: () => void;
   onResetHighlight: () => void;
@@ -114,7 +111,6 @@ export const Content = ({
   filteredSortedResults,
   focus,
   highlight,
-  isPermissionSidebarOpen,
   onAddColumnClick,
   onCellChange,
   onCellClick,
@@ -122,7 +118,6 @@ export const Content = ({
   onCellValidated,
   onContextMenu,
   onNewObjectClick,
-  onPermissionSidebarToggle,
   onQueryChange,
   onQueryHelp,
   onResetHighlight,
@@ -176,18 +171,6 @@ export const Content = ({
           readOnly={props.readOnly}
           sorting={sorting}
         />
-
-        {!props.readOnly ? (
-          <PermissionSidebar
-            className="RealmBrowser__PermissionSidebar"
-            isOpen={isPermissionSidebarOpen}
-            onToggle={onPermissionSidebarToggle}
-            focus={focus}
-            filteredSortedResults={filteredSortedResults}
-            highlight={highlight}
-            realm={props.realm}
-          />
-        ) : null}
       </div>
 
       {!props.readOnly ? (

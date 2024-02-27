@@ -1,4 +1,4 @@
-export const IndexedTypes = {
+export const IndexedTypes: Realm.ObjectSchema = {
   name: 'IndexedTypes',
   primaryKey: 'intIndexed',
   properties: {
@@ -59,11 +59,11 @@ export const RequiredTypes = {
   },
 };
 
-export const LinkTypes = {
+export const LinkTypes: Realm.ObjectSchema = {
   name: 'LinkTypes',
   properties: {
-    objectType: { type: 'ReverseType', optional: true },
-    objectType2: { type: 'ReverseType', optional: true },
+    objectType: { type: 'object', objectType: 'ReverseType', optional: true },
+    objectType2: { type: 'object', objectType: 'ReverseType', optional: true },
     listType: 'ReverseType[]',
     linkingObjects: {
       type: 'linkingObjects',

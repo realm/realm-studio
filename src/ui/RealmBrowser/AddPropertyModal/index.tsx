@@ -26,7 +26,7 @@ export interface IAddPropertyModalProps {
   focus: IClassFocus;
   isOpen: boolean;
   isPropertyNameAvailable: (name: string) => boolean;
-  onAddProperty: (name: string, type: Realm.PropertyType) => void;
+  onAddProperty: (name: string, type: Realm.PropertyType | string) => void;
   classes: Realm.ObjectSchema[];
   toggle: () => void;
 }

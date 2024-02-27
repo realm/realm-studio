@@ -14,7 +14,7 @@
 
 ### Internals
 
-- None
+- Upgrading Realm to `v12.6.1`. ([#1626](https://github.com/realm/realm-studio/pull/1626))
 
 
 ## Release 14.1.1 (2023-11-23)

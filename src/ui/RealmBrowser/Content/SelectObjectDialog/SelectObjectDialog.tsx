@@ -43,7 +43,7 @@ interface IOpenSelectObjectDialogProps extends IBaseSelectObjectDialogProps {
   onDeselect: () => void;
   onHighlightChange: (
     highlight: IHighlight | undefined,
-    collection: Realm.Collection<any>,
+    collection: Realm.OrderedCollection<any>,
   ) => void;
   multiple: boolean;
   isEmbeddedType: IsEmbeddedTypeChecker;
