@@ -44,12 +44,10 @@ jobs:
         run: npm ci --legacy-peer-deps
       - name: Build the bundle
         run: npm run build
-      - name: Store package version and release channel in environment
+      - name: Store package version in environment
         run: |
           PACKAGE_VERSION=`jq -r '.version' package.json`
           echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
-          RELEASE_CHANNEL=`jq -r '.build.publish[0].channel' package.json`
-          echo "RELEASE_CHANNEL=$RELEASE_CHANNEL" >> $GITHUB_ENV
       # Both the Windows executable as well as the installer need to be signed.
       # Electron builder will not rebuild existing files, even if they are
       # different from the build results - that behaviour could be used to have
@@ -228,10 +226,12 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-      - name: Store package version in environment
+      - name: Store package version and release channel in environment
         run: |
           PACKAGE_VERSION=`jq -r '.version' package.json`
           echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
+          RELEASE_CHANNEL=`jq -r '.build.publish[0].channel' package.json`
+          echo "RELEASE_CHANNEL=$RELEASE_CHANNEL" >> $GITHUB_ENV
       - run: |
           env | sort
       - name: Pull macOS artifacts
