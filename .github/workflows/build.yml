@@ -13,10 +13,16 @@ name: Build, sign and publish release
 
 on:
   workflow_dispatch:
+    inputs:
+      dry_run:
+        type: boolean
+        default: false
+        description: "Skip creating and merging PRs, posting messages and uploading artifacts to a test bucket"
 
 env:
   GRS_CONFIG_USER1_USERNAME: ${{ secrets.grs_username }}
   GRS_CONFIG_USER1_PASSWORD: ${{ secrets.grs_password }}
+  S3_BUCKET: s3://static.realm.io/ci/test/
 
 jobs:
   build_sign_lw:
@@ -329,11 +335,16 @@ jobs:
       # could just come via repository secret). Initially this should go to the
       # old location, and moved to a new one when we're sure we can move
       # existing installations over via the auto update system
+      - name: Override the S3 bucket when dry running
+        if: ${{ inputs.dry_run }}
+        run: |
+          echo "S3_BUCKET=s3://static.realm.io/ci/test/$PACKAGE_VERSION" >> $GITHUB_ENV
       - name: Upload release
         run: |
-          aws s3 sync --acl public-read dist s3://static.realm.io/ci/test/${{ env.PACKAGE_VERSION }}/
+          aws s3 sync --acl public-read dist ${{ env.S3_BUCKET }}
       - name: Publish Github Release
         uses: ncipollo/release-action@3ac4132803a6419fa2a7f4e9dbd1d93fceb690b9
+        if: ${{ inputs.dry_run == false }}
         with:
           artifacts: "dist/*.exe,dist/*.dmg,dist/*.zip,dist/*.AppImage"
           bodyFile: dist/RELEASENOTES.md
@@ -358,6 +369,7 @@ jobs:
           mv temp CHANGELOG.md
         shell: bash
       - name: Create vNext PR
+        if: ${{ inputs.dry_run == false }}
         id: vnext-pr
         uses: peter-evans/create-pull-request@6c704eb7a8ba1daa13da0dcea9bb93a4fe530275
         with:
@@ -369,12 +381,14 @@ jobs:
           commit-message: Prepare for vNext
       - name: Merge Pull Request
         uses: juliangruber/merge-pull-request-action@333730196b34b74936aad75a4e31c23a57582d14
+        if: ${{ inputs.dry_run == false }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           number: ${{ steps.vnext-pr.outputs.pull-request-number }}
           method: squash
       - name: 'Post to Slack'
         uses: realm/ci-actions/release-to-slack@fa20eb972b9f018654fdb4e2c7afb52b0532f907
+        if: ${{ inputs.dry_run == false }}
         with:
           changelog: dist/RELEASENOTES.md
           sdk: realm-studio
