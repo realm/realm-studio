@@ -1,0 +1,38 @@
+name: Prepare Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Use this to provide a version, instead of deriving it from the changelog.
+        required: false
+        type: string
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Update Changelog
+        id: update-changelog
+        uses: realm/ci-actions/update-changelog@fa20eb972b9f018654fdb4e2c7afb52b0532f907
+        with:
+          changelog: ${{ github.workspace }}/CHANGELOG.md
+          version: ${{ inputs.version }}
+      - name: Update package.json and package-lock.json
+        run: |
+          sed -i 's/"version": .*/"version": "${{ steps.update-changelog.outputs.new-version }}",/' package.json
+          npm ci --legacy-peer-deps
+          npm i --package-lock-only
+      - name: Create Release PR
+        uses: peter-evans/create-pull-request@7380612b49221684fefa025244f2ef4008ae50ad #! 3.10.1
+        with:
+          branch: release/${{ steps.update-changelog.outputs.new-version }}
+          title: Prepare for ${{ steps.update-changelog.outputs.new-version }}
+          draft: false
+          body: An automated PR for next release.
+          commit-message: Prepare for ${{ steps.update-changelog.outputs.new-version }}
+          token: ${{ secrets.REALM_CI_PAT }}

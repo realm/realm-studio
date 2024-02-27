@@ -6,32 +6,31 @@ The instructions below is only possible to be performed by Realm employees.
 
 Start by preparing a release from the branch you want to release from (default: `master`).
 
-The version is automatically derived from the RELEASENOTES.md to comply with [semantic versioning](http://semver.org/),
+The version is automatically derived from the CHANGELOG.md to comply with [semantic versioning](http://semver.org/),
 
-Go to https://ci.realm.io/job/realm/job/realm-studio/job/channel%252Fmajor-11/build, check PREPARE and hit build to prepare a release.
+Go to https://github.com/realm/realm-studio/actions and select "Prepare Release". Run the workflow, optionally adding
+a version number.
 
-When preparing Jenkins does the following:
+When preparing the action does the following:
 
 1. Changes version based on release notes.
-2. Copies release notes to changelog.
-3. Restores the release notes from a template.
-4. Commits the changes to a branch and pushes it to GitHub.
-5. Creates a pull-request from the branch into master.
+2. Updates package.json and package-lock.json
+3. Commits the changes to a branch and pushes it to GitHub.
+4. Creates a pull-request from the branch into master.
 
 ## Release a prepared release
 
-The prepare job creates a PR which bumps the version and copies over release notes to the changelog, when reviewed and
-the PR gets merged, Jenkins will notice that the version within the package.json has changed, which triggers the
-following process:
+Currently the release building is triggered manually after merging the release PR, using the "Build, sign and publish
+release" workflow. Once everything is confirmed stable merging of the release PR can be added to that workflow to
+eliminate one step.
 
-1. Await user input to allow manual testing of the packaged artifacts.
+This workflow:
+
+1. Builds and signs artifacts for macOS, Linux and Windows
 2. Extract the latest release notes from the changelog.
-3. Create a draft GitHub release.
-4. Upload the packaged artifacts to the draft release.
-5. Upload the packaged artifacts to S3.
-6. Upload the auto-updating .yml files to S3.
-7. Publish the GitHub release.
-8. Announce the release on Slack.
+3. Uploads the packaged artifacts and auto-update yaml files to S3
+4. Creates a GitHub release, with the artifacts attached.
+5. Announces the release on Slack.
 
 # How do I roll-back a release?
 

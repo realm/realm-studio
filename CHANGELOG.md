@@ -1,5 +1,16 @@
 # Changelog
 
+## vNext (TBD)
+
+### Enhancements
+* None
+
+### Fixed
+* None
+
+### Internals
+* None
+
 ## Release 14.1.2 (2023-11-24)
 
 [Changes since v14.1.1](https://github.com/realm/realm-studio/compare/v14.1.1...v14.1.2)
@@ -105,7 +116,7 @@
 - None
 
 
-## Release 
+## Release
 ### Enhancements
 
 - None
