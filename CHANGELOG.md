@@ -9,7 +9,7 @@
 * None
 
 ### Internals
-* None
+* Upgrading Realm to `v12.6.1`. ([#1626](https://github.com/realm/realm-studio/pull/1626))
 
 ## 14.1.2 (2023-11-24)
 
@@ -25,7 +25,7 @@
 
 ### Internals
 
-- Upgrading Realm to `v12.6.1`. ([#1626](https://github.com/realm/realm-studio/pull/1626))
+- None
 
 
 ## 14.1.1 (2023-11-23)
