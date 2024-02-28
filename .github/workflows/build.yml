@@ -118,17 +118,14 @@ jobs:
           mv dist/major-*-linux.yml dist/latest-linux.yml
           mv dist/major-*-linux-arm64.yml dist/latest-linux-arm64.yml || true
           mv dist/major-*.yml dist/latest.yml
-      - name: Extract latest release notes
-        run: |
-          node scripts/tools.mjs extract-release-notes ./dist/RELEASENOTES.md
       - name: Sign Windows installer
         uses: ./actions/sign-windows
         with:
-          binary: dist/Realm Studio Setup ${{ env.PACKAGE_VERSION}}.exe
+          binary: dist/Realm Studio Setup ${{ env.PACKAGE_VERSION }}.exe
       #- name: Sign Windows installer (arm64)
       #  uses: ./actions/sign-windows
       #  with:
-      #    binary: dist/Realm Studio Setup ${{ env.PACKAGE_VERSION}}.exe
+      #    binary: dist/Realm Studio Setup ${{ env.PACKAGE_VERSION }}.exe
       - name: Archive Linux installers
         uses: actions/upload-artifact@v3
         with:
@@ -146,7 +143,6 @@ jobs:
             dist/Realm Studio-*-win.zip
             dist/*.blockmap
             dist/latest.yml
-            dist/RELEASENOTES.md
   # most of that could be done on a Linux worker to speed things up, but
   # - universal binary building is currently only supported on macOS
   # - dmg building via electron builder only works on macOS; theoretically
@@ -231,6 +227,10 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
       - name: Store package version and release channel in environment
         run: |
           PACKAGE_VERSION=`jq -r '.version' package.json`
@@ -330,6 +330,11 @@ jobs:
           echo "** mac"
           cat dist/latest-mac.yml
           mv dist/latest-mac.yml dist/${{ env.RELEASE_CHANNEL }}-mac.yml
+      - name: Extract latest release notes
+        run: |
+          node ./scripts/extract-changelog.mjs > ./dist/RELEASENOTES.md
+          echo "# Release notes for ${{ env.PACKAGE_VERSION }}"
+          cat ./dist/RELEASENOTES.md
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
