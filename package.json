@@ -28,14 +28,14 @@
       "!node_modules/realm/vendor${/*}"
     ],
     "asarUnpack": [
-      "./node_modules/realm/build/Release/realm.node"
+      "./node_modules/realm/binding/build/realm.node"
     ],
     "mac": {
       "hardenedRuntime": true,
       "gatekeeperAssess": false,
       "category": "public.app-category.developer-tools",
       "binaries": [
-        "dist/mac/Realm Studio.app/Contents/Resources/app.asar.unpacked/node_modules/realm/build/Release/realm.node"
+        "dist/mac/Realm Studio.app/Contents/Resources/app.asar.unpacked/node_modules/realm/binding/build/realm.node"
       ],
       "target": [
         "dmg",
