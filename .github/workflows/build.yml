@@ -181,19 +181,17 @@ jobs:
       # update mechanism
       - name: Prepare installer contents
         run: |
-          npx electron-builder -m --publish never --dir
-          #npx electron-builder -m --publish never --dir --universal
-      - name: Prepare signer upload
-        run: |
-          cd dist/mac && zip --symlinks -r "../../Realm Studio.app.zip" "Realm Studio.app"
-          #cd dist/mac-universal && zip --symlinks -r "../../Realm Studio.app.zip" "Realm Studio.app"
+          npx electron-builder -m --publish never --c.mac.target=zip --c.mac.identity=null
+          #npx electron-builder -m --publish never --c.mac.target=zip --c.mac.identity=null --universal
+          # Renaming the .zip to make it easier to distinguish
+          mv dist/*.zip dist/unsigned-app.zip
       - name: Download signer
         run: |
           wget https://macos-notary-1628249594.s3.amazonaws.com/releases/client/v3.8.1/darwin_amd64.zip
           unzip darwin_amd64.zip
       - name: Run signer
         run: |
-          ./darwin_amd64/macnotary -f "Realm Studio.app.zip" -m notarizeAndSign -u https://dev.macos-notary.build.10gen.cc/api -s "${{ secrets.NOTARY_SECRET }}" -k "${{ secrets.NOTARY_KEY_ID }}" -b com.mongodb.realm-studio -o "output.zip" -t app -e resources/entitlements.mac.plist
+          ./darwin_amd64/macnotary -f dist/unsigned-app.zip -m notarizeAndSign -u https://dev.macos-notary.build.10gen.cc/api -s "${{ secrets.NOTARY_SECRET }}" -k "${{ secrets.NOTARY_KEY_ID }}" -b com.mongodb.realm-studio -o "output.zip" -t app -e resources/entitlements.mac.plist
       - name: Extract notarized app in electron builder tree
         run: |
           unzip -d dist/mac -o output.zip
