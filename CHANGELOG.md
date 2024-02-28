@@ -1,12 +1,6 @@
 # Changelog
 
-## vNext (TBD)
-
-### Enhancements
-* None
-
-### Fixed
-* None
+## 14.3.0 (2024-02-28)
 
 ### Internals
 * Upgrading Realm to `v12.6.1`. ([#1626](https://github.com/realm/realm-studio/pull/1626))
