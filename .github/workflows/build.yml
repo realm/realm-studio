@@ -383,6 +383,7 @@ jobs:
           delete-branch: true
           base: main
           commit-message: Prepare for vNext
+          assignees: ${{ github.event.sender.login }}
       - name: Merge Pull Request
         uses: juliangruber/merge-pull-request-action@333730196b34b74936aad75a4e31c23a57582d14
         if: ${{ inputs.dry_run == false }}
