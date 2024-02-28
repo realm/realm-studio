@@ -1,7 +1,7 @@
 {
   "name": "realm-studio",
   "productName": "Realm Studio",
-  "version": "14.1.2",
+  "version": "15.0.0",
   "description": "A tool for everything Realm!",
   "author": {
     "name": "Realm",
@@ -95,7 +95,7 @@
         "bucket": "static.realm.io",
         "region": "us-east-1",
         "path": "downloads/realm-studio",
-        "channel": "major-14"
+        "channel": "major-15"
       }
     ],
     "npmArgs": [
