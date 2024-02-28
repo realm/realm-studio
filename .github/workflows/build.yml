@@ -58,7 +58,12 @@ jobs:
       # Building for additional architectures works without conflicts - so to
       # enable arm64 builds for Windows and Linux just add --arm64 here
       - name: Prepare installer contents
-        run: npx electron-builder -lw --publish never --dir --x64
+        run: |
+          npx electron-builder -lw --publish never --dir --x64
+          # Copying over the app-update.yml from Linux as it is skipped when using --dir
+          # https://github.com/electron-userland/electron-builder/blob/79df54238621fbe48ba20444129950ba2dc49983/packages/app-builder-lib/src/publish/PublishManager.ts#L113-L115
+          cat dist/linux-unpacked/resources/app-update.yml
+          cp dist/linux-unpacked/resources/app-update.yml dist/win-unpacked/resources/app-update.yml
       # Docker actions don't seem to support supplying credentials, so log in
       # manually
       - name: Log in to mongodb registry
