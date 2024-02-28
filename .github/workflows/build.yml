@@ -41,7 +41,7 @@ jobs:
           sudo apt-get update
           sudo apt install -y wine wine32
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: npm ci
       - name: Build the bundle
         run: npm run build
       - name: Store package version in environment
@@ -168,7 +168,7 @@ jobs:
         with:
           node-version: 18
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: npm ci
       - name: Build the bundle
         run: npm run build
       # Producing universal binaries currently fails due to the native realm.node

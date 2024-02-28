@@ -16,7 +16,7 @@ jobs:
       with:
        node-version: 18
     - name: Install dependencies
-      run: npm ci --legacy-peer-deps
+      run: npm ci
     - name: Check package-lock.json
       run: npm run check:package-lock
     - name: Lint TypeScript
