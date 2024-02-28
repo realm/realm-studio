@@ -327,9 +327,8 @@ jobs:
           mv dist/latest-mac.yml dist/${{ env.RELEASE_CHANNEL }}-mac.yml
       - name: Extract latest release notes
         run: |
-          node ./scripts/extract-changelog.mjs > ./dist/RELEASENOTES.md
-          echo "# Release notes for ${{ env.PACKAGE_VERSION }}"
-          cat ./dist/RELEASENOTES.md
+          node ./scripts/extract-changelog.mjs > ./RELEASENOTES.md
+          cat ./RELEASENOTES.md
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -352,7 +351,7 @@ jobs:
         if: ${{ inputs.dry_run == false }}
         with:
           artifacts: "dist/*.exe,dist/*.dmg,dist/*.zip,dist/*.AppImage"
-          bodyFile: dist/RELEASENOTES.md
+          bodyFile: ./RELEASENOTES.md
           name: ${{ steps.get-version.outputs.version }}
           commit: main
           tag: ${{ steps.get-version.outputs.version }}
@@ -395,7 +394,7 @@ jobs:
         uses: realm/ci-actions/release-to-slack@fa20eb972b9f018654fdb4e2c7afb52b0532f907
         if: ${{ inputs.dry_run == false }}
         with:
-          changelog: dist/RELEASENOTES.md
+          changelog: ./RELEASENOTES.md
           sdk: realm-studio
           webhook-url: ${{ secrets.SLACK_RELEASE_WEBHOOK }}
           version: ${{ steps.get-version.outputs.version }}
