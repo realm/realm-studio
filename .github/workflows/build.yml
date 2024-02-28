@@ -13,10 +13,16 @@ name: Build, sign and publish release
 
 on:
   workflow_dispatch:
+    inputs:
+      dry_run:
+        type: boolean
+        default: false
+        description: "Skip creating and merging PRs, posting messages and uploading artifacts to a test bucket"
 
 env:
   GRS_CONFIG_USER1_USERNAME: ${{ secrets.grs_username }}
   GRS_CONFIG_USER1_PASSWORD: ${{ secrets.grs_password }}
+  S3_BUCKET: ${{ vars.AWS_S3_BUCKET }}
 
 jobs:
   build_sign_lw:
@@ -28,14 +34,14 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 18
       - name: Install wine
         run: |
           sudo dpkg --add-architecture i386
           sudo apt-get update
           sudo apt install -y wine wine32
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: npm ci
       - name: Build the bundle
         run: npm run build
       - name: Store package version in environment
@@ -52,7 +58,12 @@ jobs:
       # Building for additional architectures works without conflicts - so to
       # enable arm64 builds for Windows and Linux just add --arm64 here
       - name: Prepare installer contents
-        run: npx electron-builder -lw --publish never --dir --x64
+        run: |
+          npx electron-builder -lw --publish never --dir --x64
+          # Copying over the app-update.yml from Linux as it is skipped when using --dir
+          # https://github.com/electron-userland/electron-builder/blob/79df54238621fbe48ba20444129950ba2dc49983/packages/app-builder-lib/src/publish/PublishManager.ts#L113-L115
+          cat dist/linux-unpacked/resources/app-update.yml
+          cp dist/linux-unpacked/resources/app-update.yml dist/win-unpacked/resources/app-update.yml
       # Docker actions don't seem to support supplying credentials, so log in
       # manually
       - name: Log in to mongodb registry
@@ -108,17 +119,14 @@ jobs:
           mv dist/major-*-linux.yml dist/latest-linux.yml
           mv dist/major-*-linux-arm64.yml dist/latest-linux-arm64.yml || true
           mv dist/major-*.yml dist/latest.yml
-      - name: Extract latest release notes
-        run: |
-          node scripts/tools.mjs extract-release-notes ./dist/RELEASENOTES.md
       - name: Sign Windows installer
         uses: ./actions/sign-windows
         with:
-          binary: dist/Realm Studio Setup ${{ env.PACKAGE_VERSION}}.exe
+          binary: dist/Realm Studio Setup ${{ env.PACKAGE_VERSION }}.exe
       #- name: Sign Windows installer (arm64)
       #  uses: ./actions/sign-windows
       #  with:
-      #    binary: dist/Realm Studio Setup ${{ env.PACKAGE_VERSION}}.exe
+      #    binary: dist/Realm Studio Setup ${{ env.PACKAGE_VERSION }}.exe
       - name: Archive Linux installers
         uses: actions/upload-artifact@v3
         with:
@@ -136,7 +144,6 @@ jobs:
             dist/Realm Studio-*-win.zip
             dist/*.blockmap
             dist/latest.yml
-            dist/RELEASENOTES.md
   # most of that could be done on a Linux worker to speed things up, but
   # - universal binary building is currently only supported on macOS
   # - dmg building via electron builder only works on macOS; theoretically
@@ -164,9 +171,9 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 18
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: npm ci
       - name: Build the bundle
         run: npm run build
       # Producing universal binaries currently fails due to the native realm.node
@@ -179,19 +186,17 @@ jobs:
       # update mechanism
       - name: Prepare installer contents
         run: |
-          npx electron-builder -m --publish never --dir
-          #npx electron-builder -m --publish never --dir --universal
-      - name: Prepare signer upload
-        run: |
-          cd dist/mac && zip --symlinks -r "../../Realm Studio.app.zip" "Realm Studio.app"
-          #cd dist/mac-universal && zip --symlinks -r "../../Realm Studio.app.zip" "Realm Studio.app"
+          npx electron-builder -m --publish never --c.mac.target=zip --c.mac.identity=null
+          #npx electron-builder -m --publish never --c.mac.target=zip --c.mac.identity=null --universal
+          # Renaming the .zip to make it easier to distinguish
+          mv dist/*.zip dist/unsigned-app.zip
       - name: Download signer
         run: |
           wget https://macos-notary-1628249594.s3.amazonaws.com/releases/client/v3.8.1/darwin_amd64.zip
           unzip darwin_amd64.zip
       - name: Run signer
         run: |
-          ./darwin_amd64/macnotary -f "Realm Studio.app.zip" -m notarizeAndSign -u https://dev.macos-notary.build.10gen.cc/api -s "${{ secrets.NOTARY_SECRET }}" -k "${{ secrets.NOTARY_KEY_ID }}" -b com.mongodb.realm-studio -o "output.zip" -t app -e resources/entitlements.mac.plist
+          ./darwin_amd64/macnotary -f dist/unsigned-app.zip -m notarizeAndSign -u https://dev.macos-notary.build.10gen.cc/api -s "${{ secrets.NOTARY_SECRET }}" -k "${{ secrets.NOTARY_KEY_ID }}" -b com.mongodb.realm-studio -o "output.zip" -t app -e resources/entitlements.mac.plist
       - name: Extract notarized app in electron builder tree
         run: |
           unzip -d dist/mac -o output.zip
@@ -220,10 +225,16 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-      - name: Store package version in environment
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Store package version and release channel in environment
         run: |
           PACKAGE_VERSION=`jq -r '.version' package.json`
           echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
+          RELEASE_CHANNEL=`jq -r '.build.publish[0].channel' package.json`
+          echo "RELEASE_CHANNEL=$RELEASE_CHANNEL" >> $GITHUB_ENV
       - run: |
           env | sort
       - name: Pull macOS artifacts
@@ -306,14 +317,21 @@ jobs:
       #  run: |
       #    better-blockmap --input "dist/Realm Studio-${{env.PACKAGE_VERSION}}.dmg" --output "dist/Realm Studio-${{env.PACKAGE_VERSION}}.dmg.blockmap"
       #    better-blockmap --input "dist/Realm Studio-${{env.PACKAGE_VERSION}}-mac.zip" --output "dist/Realm Studio-${{env.PACKAGE_VERSION}}-mac.zip.blockmap"
-      - name: Dump auto-update yaml files for control
+      - name: Rename and dump auto-update yaml files for control
         run: |
           echo "** windows"
           cat dist/latest.yml
+          mv dist/latest.yml dist/${{ env.RELEASE_CHANNEL }}.yml
           echo "** linux"
           cat dist/latest-linux.yml
+          mv dist/latest-linux.yml dist/${{ env.RELEASE_CHANNEL }}-linux.yml
           echo "** mac"
           cat dist/latest-mac.yml
+          mv dist/latest-mac.yml dist/${{ env.RELEASE_CHANNEL }}-mac.yml
+      - name: Extract latest release notes
+        run: |
+          node ./scripts/extract-changelog.mjs > ./RELEASENOTES.md
+          cat ./RELEASENOTES.md
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -324,14 +342,19 @@ jobs:
       # could just come via repository secret). Initially this should go to the
       # old location, and moved to a new one when we're sure we can move
       # existing installations over via the auto update system
+      - name: Override the S3 bucket when dry running
+        if: ${{ inputs.dry_run }}
+        run: |
+          echo "S3_BUCKET=s3://static.realm.io/ci/test/$PACKAGE_VERSION" >> $GITHUB_ENV
       - name: Upload release
         run: |
-          aws s3 sync --acl public-read dist s3://static.realm.io/ci/test/${{ env.PACKAGE_VERSION }}/
+          aws s3 sync --acl public-read dist ${{ env.S3_BUCKET }}
       - name: Publish Github Release
         uses: ncipollo/release-action@3ac4132803a6419fa2a7f4e9dbd1d93fceb690b9
+        if: ${{ inputs.dry_run == false }}
         with:
           artifacts: "dist/*.exe,dist/*.dmg,dist/*.zip,dist/*.AppImage"
-          bodyFile: dist/RELEASENOTES.md
+          bodyFile: ./RELEASENOTES.md
           name: ${{ steps.get-version.outputs.version }}
           commit: main
           tag: ${{ steps.get-version.outputs.version }}
@@ -353,6 +376,7 @@ jobs:
           mv temp CHANGELOG.md
         shell: bash
       - name: Create vNext PR
+        if: ${{ inputs.dry_run == false }}
         id: vnext-pr
         uses: peter-evans/create-pull-request@6c704eb7a8ba1daa13da0dcea9bb93a4fe530275
         with:
@@ -362,16 +386,19 @@ jobs:
           delete-branch: true
           base: main
           commit-message: Prepare for vNext
+          assignees: ${{ github.event.sender.login }}
       - name: Merge Pull Request
         uses: juliangruber/merge-pull-request-action@333730196b34b74936aad75a4e31c23a57582d14
+        if: ${{ inputs.dry_run == false }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           number: ${{ steps.vnext-pr.outputs.pull-request-number }}
           method: squash
       - name: 'Post to Slack'
         uses: realm/ci-actions/release-to-slack@fa20eb972b9f018654fdb4e2c7afb52b0532f907
+        if: ${{ inputs.dry_run == false }}
         with:
-          changelog: dist/RELEASENOTES.md
+          changelog: ./RELEASENOTES.md
           sdk: realm-studio
           webhook-url: ${{ secrets.SLACK_RELEASE_WEBHOOK }}
           version: ${{ steps.get-version.outputs.version }}
