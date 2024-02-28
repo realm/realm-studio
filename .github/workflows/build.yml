@@ -22,7 +22,7 @@ on:
 env:
   GRS_CONFIG_USER1_USERNAME: ${{ secrets.grs_username }}
   GRS_CONFIG_USER1_PASSWORD: ${{ secrets.grs_password }}
-  S3_BUCKET: s3://static.realm.io/ci/test/
+  S3_BUCKET: ${{ vars.AWS_S3_BUCKET }}
 
 jobs:
   build_sign_lw:
