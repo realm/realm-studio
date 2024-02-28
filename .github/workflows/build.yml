@@ -52,11 +52,7 @@ jobs:
       # Building for additional architectures works without conflicts - so to
       # enable arm64 builds for Windows and Linux just add --arm64 here
       - name: Prepare installer contents
-        run: |
-          # This is currently required to trick electron-builder into considering
-          # the realm package a native module
-          touch node_modules/realm/binding.gyp
-          npx electron-builder -lw --publish never --dir --x64
+        run: npx electron-builder -lw --publish never --dir --x64
       # Docker actions don't seem to support supplying credentials, so log in
       # manually
       - name: Log in to mongodb registry
@@ -183,7 +179,6 @@ jobs:
       # update mechanism
       - name: Prepare installer contents
         run: |
-          touch node_modules/realm/binding.gyp
           npx electron-builder -m --publish never --dir
           #npx electron-builder -m --publish never --dir --universal
       - name: Prepare signer upload
