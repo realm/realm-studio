@@ -133,7 +133,7 @@
     "@sentry/electron": "^4.20.0",
     "classnames": "^2.5.1",
     "contentful": "^9.3.5",
-    "electron-store": "^8.1.0",
+    "electron-store": "^8.2.0",
     "electron-updater": "6.1.8",
     "flatted": "^3.3.1",
     "font-awesome": "^4.7.0",
@@ -158,7 +158,7 @@
   },
   "devDependencies": {
     "@octokit/rest": "^20.0.2",
-    "@sentry/cli": "^2.29.1",
+    "@sentry/cli": "^2.30.0",
     "@sentry/webpack-plugin": "^1.21.0",
     "@types/fs-extra": "^11.0.4",
     "@types/isomorphic-fetch": "0.0.39",
