@@ -355,9 +355,9 @@ jobs:
         with:
           artifacts: "dist/*.exe,dist/*.dmg,dist/*.zip,dist/*.AppImage"
           bodyFile: ./RELEASENOTES.md
-          name: ${{ steps.get-version.outputs.version }}
+          name: ${{ env.PACKAGE_VERSION }}
           commit: main
-          tag: ${{ steps.get-version.outputs.version }}
+          tag: ${{ env.PACKAGE_VERSION }}
           token: ${{ secrets.GITHUB_TOKEN }}
           draft: false
       - name: Update Changelog
@@ -402,4 +402,4 @@ jobs:
           changelog: ./RELEASENOTES.md
           sdk: realm-studio
           webhook-url: ${{ secrets.SLACK_RELEASE_WEBHOOK }}
-          version: ${{ steps.get-version.outputs.version }}
+          version: ${{ env.PACKAGE_VERSION }}
