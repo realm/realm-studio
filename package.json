@@ -148,11 +148,10 @@
     "react": "16.14.0",
     "react-dom": "16.14.0",
     "react-draggable": "^4.4.6",
-    "react-realm-context": "^0.3.0",
     "react-sortable-hoc": "^2.0.0",
     "react-virtualized": "^9.22.5",
     "reactstrap": "^9.2.2",
-    "realm": "12.6.1",
+    "realm": "^12.7.0-rc.0",
     "semver": "^7.6.0",
     "uuid": "^9.0.1"
   },

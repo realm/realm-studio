@@ -2,14 +2,18 @@
 
 ## vNext (TBD)
 
+### Breaking Changes
+
+* Added support for reading / writing Realm files using Realm file format v24, supporting realm-js v12.7.0, realm-dart v2.0.0 and realm-swift v10.49.0. When opening a file which is using an older format, you will get prompted to upgrade (and optionally backup) the Realm file. NOTE: Once the file has been upgraded, there is no way to downgrade it again and it can only be used by the SDKs that support Realm file format v24.
+
 ### Enhancements
-* None
+* Added support for reading / writing Realm files using Realm file format v24.
 
 ### Fixed
 * None
 
 ### Internals
-* Upgrading Realm to `v12.6.1`. ([#1626](https://github.com/realm/realm-studio/pull/1626))
+* Upgrading Realm to `v12.7.0-rc.0`. ([#1626](https://github.com/realm/realm-studio/pull/1626) & [#1638](https://github.com/realm/realm-studio/pull/1638))
 
 ## 14.1.2 (2023-11-24)
 
