@@ -357,7 +357,7 @@ jobs:
           bodyFile: ./RELEASENOTES.md
           name: ${{ env.PACKAGE_VERSION }}
           commit: main
-          tag: ${{ env.PACKAGE_VERSION }}
+          tag: v${{ env.PACKAGE_VERSION }}
           token: ${{ secrets.GITHUB_TOKEN }}
           draft: false
       - name: Update Changelog
