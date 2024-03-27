@@ -363,13 +363,6 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           number: ${{ steps.find-pull-request.outputs.number }}
           method: squash
-
-      - name: Checkout base branch (after merge)
-        uses: actions/checkout@v3
-        if: ${{ inputs.dry_run == false }}
-        with:
-          submodules: recursive
-          ref: ${{ steps.find-pull-request.outputs.base-ref }}
           
       - name: Publish Github Release
         uses: ncipollo/release-action@2c591bcc8ecdcd2db72b97d6147f871fcd833ba5
@@ -377,6 +370,7 @@ jobs:
         with:
           artifacts: "dist/*.exe,dist/*.dmg,dist/*.zip,dist/*.AppImage"
           bodyFile: ./RELEASENOTES.md
+          commit:  ${{ steps.find-pull-request.outputs.base-ref }}
           tag: v${{ env.PACKAGE_VERSION }}
           token: ${{ secrets.GITHUB_TOKEN }}
           draft: false
@@ -391,6 +385,13 @@ jobs:
           version: ${{ env.PACKAGE_VERSION }}
         # This job might fail due to failed markdown-to-slack conversion.
         continue-on-error: true
+
+      - name: Checkout base branch (after merge)
+        uses: actions/checkout@v3
+        if: ${{ inputs.dry_run == false }}
+        with:
+          submodules: recursive
+          ref: ${{ steps.find-pull-request.outputs.base-ref }}
 
       - name: Update Changelog
         run: |
