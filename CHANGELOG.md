@@ -1,6 +1,6 @@
 # Changelog
 
-## vNext (TBD)
+## 15.0.0 (2024-03-26)
 
 ### Breaking Changes
 
@@ -8,9 +8,6 @@
 
 ### Enhancements
 * Added support for reading / writing Realm files using Realm file format v24.
-
-### Fixed
-* None
 
 ### Internals
 * Upgrading Realm to `v12.7.0-rc.0`. ([#1626](https://github.com/realm/realm-studio/pull/1626) & [#1638](https://github.com/realm/realm-studio/pull/1638))
