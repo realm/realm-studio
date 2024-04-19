@@ -119,10 +119,10 @@ export abstract class RealmLoadingComponent<
             path: realm.path,
             encryptionKey: realm.encryptionKey,
             disableFormatUpgrade: realm.enableFormatUpgrade ? false : true,
-            sync: realm.sync as any,
+            openSyncedRealmLocally: realm.sync,
             schema,
             schemaVersion,
-          });
+          } as any);
         } catch (error) {
           if (
             error instanceof Error &&
