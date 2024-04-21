@@ -122,7 +122,9 @@ export abstract class RealmLoadingComponent<
             openSyncedRealmLocally: realm.sync,
             schema,
             schemaVersion,
-          } satisfies Realm.Configuration & { openSyncedRealmLocally?: boolean } as any);
+          } satisfies Realm.Configuration & {
+            openSyncedRealmLocally?: boolean;
+          } as any);
         } catch (error) {
           if (
             error instanceof Error &&
