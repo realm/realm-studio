@@ -1,18 +1,8 @@
 # Changelog
 
-## vNext (TBD)
+## 15.0.0 (2024-04-23)
 
-### Enhancements
-
-- None
-
-### Fixed
-
-- Restored ability to open a synchronized Realm with Studio. [#1644](https://github.com/realm/realm-studio/issues/1644)
-
-### Internals
-
-- None
+#1644](https://github.com/realm/realm-studio/issues/1644)
 
 
 ## 15.0.0 (2024-03-26)
