@@ -3,7 +3,7 @@
 ## vNext (TBD)
 
 ### Enhancements
-* Added support for collections in mixed.
+* Added support for displaying collections in mixed.
 
 ### Fixed
 * None
