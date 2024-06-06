@@ -7,7 +7,7 @@ on:
 jobs:
   build:
     name: Build, lint & test
-    runs-on: macOS-latest
+    runs-on: macOS-13
     steps:
     - name: Checkout
       uses: actions/checkout@v2
