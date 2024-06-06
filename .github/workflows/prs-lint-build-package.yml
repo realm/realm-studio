@@ -7,7 +7,7 @@ on:
 jobs:
   build:
     name: Build, lint & test
-    runs-on: macOS-13
+    runs-on: macOS-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -15,7 +15,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
        node-version: 18
-    - name: Setup Python 3.11
+    - name: Setup Python 3.x
       uses: actions/setup-python@v4
       with:
           python-version: '3.11.x'
@@ -34,7 +34,7 @@ jobs:
         MOCHA_FILE: pre-test-results.xml
       run: npm test -- --reporter mocha-github-actions-reporter
     - name: Build the package
-      run: npx electron-builder -mlw --publish never
+      run: npx electron-builder -m --publish never
     - name: Archive the .dmg for macOS
       uses: actions/upload-artifact@v2
       with:
