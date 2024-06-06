@@ -33,7 +33,7 @@
   &__IdExplanation {
     color: $charcoal;
     margin: 0;
-    padding: $spacer / 2;
+    padding: calc($spacer / 2);
     text-align: center;
   }
 

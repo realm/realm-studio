@@ -30,7 +30,12 @@ module.exports = (env, argv) => {
             'style-loader',
             'css-loader',
             'resolve-url-loader',
-            'sass-loader',
+            {
+              loader: 'sass-loader',
+              options: {
+                sassOptions: { quietDeps: true },
+              },
+            },
           ],
         },
         {
