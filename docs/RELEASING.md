@@ -20,7 +20,7 @@ When preparing the action does the following:
 
 ## Release a prepared release
 
-Currently the release building is meant to be triggered by selecting the release PR, using the "Build, sign and publish release" workflow.
+Currently the release building is meant to be triggered by using the "Build, sign and publish release" workflow and selecting the release PR.
 
 This workflow:
 
