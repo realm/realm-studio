@@ -1,12 +1,9 @@
 # Changelog
 
-## vNext (TBD)
+## 15.1.0 (2024-06-07)
 
 ### Enhancements
 * Added support for displaying collections in mixed.
-
-### Fixed
-* None
 
 ### Internals
 * Upgraded Realm to `v12.9.0`. ([#1651](https://github.com/realm/realm-studio/pull/1651))
