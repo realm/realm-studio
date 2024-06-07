@@ -165,7 +165,7 @@ jobs:
       - name: Configure wireguard
         run: |
           brew install wireguard-go wireguard-tools
-          echo "${{ secrets.WG_CONFIG }}" | base64 -d | sudo tee /usr/local/etc/wireguard/wg0.conf >/dev/null
+          echo "${{ secrets.WG_CONFIG }}" | base64 -d | sudo tee $(brew --prefix)/etc/wireguard/wg0.conf >/dev/null
           sudo wg-quick up wg0
           sudo wg
       - name: Setup Node
