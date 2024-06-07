@@ -5,17 +5,11 @@
 ### Enhancements
 * None
 
-### Internals
-* None
-
-### Internals
-* None
-
-## 15.0.1 (2024-04-23)
-
 ### Fixed
-* Restored ability to open a synchronized Realm with Studio. [#1644](https://github.com/realm/realm-studio/issues/1644)
+* None
 
+### Internals
+* None
 
 ## 15.1.0 (2024-06-07)
 
