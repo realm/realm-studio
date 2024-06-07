@@ -186,7 +186,7 @@ jobs:
       # update mechanism
       - name: Prepare installer contents
         run: |
-          npx electron-builder -m --publish never --c.mac.target=zip --c.mac.identity=null
+          npx electron-builder -m --publish never --c.mac.target=zip --c.mac.identity=null --x64
           #npx electron-builder -m --publish never --c.mac.target=zip --c.mac.identity=null --universal
           # Renaming the .zip to make it easier to distinguish
           mv dist/*.zip dist/unsigned-app.zip
@@ -203,7 +203,7 @@ jobs:
           #unzip -d dist/mac-universal -o output.zip
       - name: Build installers
         run: |
-          npx electron-builder -m --publish never --pd "dist/mac/Realm Studio.app"
+          npx electron-builder -m --publish never --pd "dist/mac/Realm Studio.app" --x64
           #npx electron-builder -m --publish never --universal --pd "dist/mac-universal/Realm Studio.app"
       - name: Rename yaml files
         run: |
