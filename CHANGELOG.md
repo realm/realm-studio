@@ -4,7 +4,7 @@
 
 ### Enhancements
 
-* None
+* Improved data visualization for dictionaries and mixed types. ([#1663](https://github.com/realm/realm-studio/pull/1663/files))
 
 ### Fixed
 
