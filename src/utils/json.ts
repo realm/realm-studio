@@ -1,6 +1,5 @@
 import { display as displayDataCell } from '../ui/RealmBrowser/Content/Table/types/DataCell';
-import { stringify } from 'flatted';
-
+import { inspect } from 'util';
 // TODO: Investigate better solution.
 const $REF_MATCHER =
   /\s*\"\$ref[Id]*\" *: *(\"(.*?)\"(,|\s|)|\s*\{(.*?)\}(,|\s|))/g;
@@ -39,7 +38,7 @@ export const asSafeJsonString = (
     );
   } else {
     try {
-      json = stringify(value);
+      json = inspect(value);
     } catch (err) {
       json = err instanceof Error ? err.message : String(err);
     }
