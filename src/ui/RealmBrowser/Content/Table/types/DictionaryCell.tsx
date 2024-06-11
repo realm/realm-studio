@@ -19,7 +19,7 @@
 import React from 'react';
 import { Badge } from 'reactstrap';
 import Realm from 'realm';
-import { asSafeJsonString } from '../../../../../utils/json';
+import { inspect } from 'util';
 
 // TODO: Get declaration from Realm
 type Dictionary<T = unknown> = { [key: string]: T };
@@ -33,9 +33,8 @@ const displayValue = (
   if (!dictionary) {
     return 'null';
   } else {
-    return asSafeJsonString(dictionary, {
-      cleanupRefs: true,
-      maxLength: VALUE_STRING_LENGTH_LIMIT,
+    return inspect(dictionary, {
+      maxStringLength: VALUE_STRING_LENGTH_LIMIT,
     });
   }
 };

@@ -41,7 +41,7 @@ export const JsonViewerDialog = ({
 }: IJSonViewerDialogProps) => (
   <Modal isOpen={visible} toggle={onCancel}>
     <Form>
-      <ModalHeader>JSON Viewer</ModalHeader>
+      <ModalHeader>Viewer</ModalHeader>
       {json.includes('"$refId":') && (
         <CardBody style={{ borderBottom: '1px solid #dee2e6' }}>
           <CardText>

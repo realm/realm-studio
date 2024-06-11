@@ -15,6 +15,13 @@ type SafeJsonOptions = {
   shallow?: boolean;
 };
 
+export const prettifiedInspect = (object: unknown) =>
+  inspect(object, {
+    compact: false,
+    depth: 1,
+    breakLength: 80,
+  });
+
 export const asSafeJsonString = (
   value: unknown,
   options: SafeJsonOptions = {},
@@ -38,7 +45,7 @@ export const asSafeJsonString = (
     );
   } else {
     try {
-      json = inspect(value);
+      json = prettifiedInspect((value as any).toJSON());
     } catch (err) {
       json = err instanceof Error ? err.message : String(err);
     }
@@ -126,9 +133,8 @@ export const getCellStringRepresentation = (
   }
 
   if (canUseJsonViewer(property, value)) {
-    return asSafeJsonString(value, {
-      cleanupRefs: true,
-      maxLength: VALUE_STRING_LENGTH_LIMIT,
+    return inspect(value, {
+      maxStringLength: VALUE_STRING_LENGTH_LIMIT,
     });
   }
 
