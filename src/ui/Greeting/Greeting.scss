@@ -27,7 +27,7 @@ $history-panel-icon-size: 20px;
 
   &__ActionsPanel,
   &__HistoryPanel {
-    padding: $spacer / 2;
+    padding: $spacer * .5;
   }
 
   &__ActionsPanel {
@@ -61,12 +61,12 @@ $history-panel-icon-size: 20px;
 
     &__Status {
       margin: 0;
-      padding: $spacer / 4;
+      padding: $spacer * .25;
       text-align: center;
     }
 
     &__Icon {
-      margin-right: $spacer / 2;
+      margin-right: $spacer * .5;
     }
 
     &__Progress {
@@ -93,7 +93,7 @@ $history-panel-icon-size: 20px;
     display: flex;
 
     & > * {
-      margin: 0 ($spacer / 4);
+      margin: 0 ($spacer * .25);
     }
   }
 
@@ -104,7 +104,7 @@ $history-panel-icon-size: 20px;
 
   &__DownloadDemo {
     font-size: .7rem;
-    margin-top: $spacer / 2;
+    margin-top: $spacer * .5;
   }
 
   &__MarketingPanel {
@@ -128,7 +128,7 @@ $history-panel-icon-size: 20px;
 
     &__Icon {
       height: $history-panel-icon-size;
-      margin: $spacer / 2;
+      margin: $spacer * .5;
       width: $history-panel-icon-size;
     }
 
@@ -147,7 +147,7 @@ $history-panel-icon-size: 20px;
       flex-direction: column;
       height: 100%;
       justify-content: center;
-      padding: $spacer / 2;
+      padding: $spacer * .5;
       text-align: center;
       user-select: none;
 
@@ -183,13 +183,13 @@ $history-panel-icon-size: 20px;
       justify-content: center;
 
       & > * {
-        margin: $spacer / 4;
+        margin: $spacer * .25;
       }
     }
 
     &__Feedback {
       flex-grow: 1;
-      margin: ($spacer / 2) 0;
+      margin: ($spacer * .5) 0;
       resize: none;
     }
 
@@ -197,7 +197,7 @@ $history-panel-icon-size: 20px;
       text-align: center;
 
       & > * {
-        margin: 0 $spacer / 4;
+        margin: 0 $spacer * .25;
       }
     }
   }

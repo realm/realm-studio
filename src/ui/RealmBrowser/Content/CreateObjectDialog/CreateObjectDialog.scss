@@ -29,7 +29,7 @@
       font-size: 1rem;
 
       & > * {
-        margin-left: $spacer / 4;
+        margin-left: $spacer * .25;
       }
     }
   }
@@ -60,7 +60,7 @@
       justify-content: center;
 
       & > * {
-        margin: $spacer / 4;
+        margin: $spacer * .25;
       }
     }
   }
@@ -91,7 +91,7 @@
   }
 
   &__ListControl {
-    $list-control-gutter: $spacer / 2;
+    $list-control-gutter: $spacer * .5;
     background: $window-background;
     border: $input-border-width solid $input-border-color;
     border-radius: $input-border-radius;

@@ -78,11 +78,11 @@
     width: $resize-handle-width;
 
     &--left {
-      left: - $resize-handle-width / 2;
+      left: - $resize-handle-width * .5;
     }
 
     &--right {
-      right: - $resize-handle-width / 2;
+      right: - $resize-handle-width * .5;
     }
 
     &--closed {
@@ -185,10 +185,10 @@
     flex-wrap: wrap;
     justify-content: center;
     margin-top: auto;
-    padding: 3 * $spacer / 4;
+    padding: 3 * $spacer * .25;
 
     & > * {
-      margin: $spacer / 4;
+      margin: $spacer * .25;
     }
   }
 

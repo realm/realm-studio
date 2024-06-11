@@ -22,11 +22,11 @@ $resize-handle-background: transparent;
 
 $toggle-button-width: 1.75rem;
 $toggle-button-height: 2.5rem;
-$toggle-button-overhang: $toggle-button-width / 2;
+$toggle-button-overhang: $toggle-button-width * .5;
 
 $sidebar-shadow: $raised-shadow-color;
 $sidebar-shadow-hover: rgba($sidebar-shadow, .2);
 $sidebar-transition-duration: .3s;
 $sidebar-background: $window-background;
 $sidebar-border-color: mix($elephant, $dove, 25%);
-$sidebar-closed-width: $toggle-button-width / 2;
+$sidebar-closed-width: $toggle-button-width * .5;

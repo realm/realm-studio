@@ -28,9 +28,9 @@ $hr-color: rgba($dove, .33);
 
   &__PreviewToggle {
     background: $content-background;
-    bottom: - $spacer / 2;
+    bottom: - $spacer * .5;
     font-size: .8rem;
-    padding: $spacer / 4;
+    padding: $spacer * .25;
     position: absolute;
     text-align: center;
     width: 100%;
@@ -100,8 +100,8 @@ $hr-color: rgba($dove, .33);
     }
 
     blockquote {
-      border-left: ($spacer / 8) solid $dove;
-      padding-left: $spacer / 2;
+      border-left: ($spacer * .125) solid $dove;
+      padding-left: $spacer * .5;
     }
 
     ul,

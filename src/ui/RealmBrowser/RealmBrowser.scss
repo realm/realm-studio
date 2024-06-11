@@ -58,12 +58,12 @@
     align-items: center;
     background: $window-background;
     display: flex;
-    padding: $spacer / 2;
+    padding: $spacer * .5;
 
     &__Changes {
       align-items: center;
       display: flex;
-      margin-right: $spacer / 2;
+      margin-right: $spacer * .5;
     }
 
     &__Filter {
@@ -72,7 +72,7 @@
     }
 
     &__Button {
-      margin-left: $spacer / 2;
+      margin-left: $spacer * .5;
     }
   }
 
@@ -95,7 +95,7 @@
       display: flex;
       height: $realm-browser-header-height;
       position: absolute;
-      right: $spacer / 2;
+      right: $spacer * .5;
       top: 0;
       z-index: 1;
 
@@ -239,7 +239,7 @@
       cursor: ew-resize;
       height: 100%;
       position: absolute;
-      right: -$realm-browser-header-handle-width / 2;
+      right: -$realm-browser-header-handle-width * .5;
       top: 0;
       width: $realm-browser-header-handle-width;
       z-index: 1;
@@ -366,7 +366,7 @@
 
       &__Count {
         flex: 0 0 0;
-        margin-left: $spacer / 4;
+        margin-left: $spacer * .25;
         white-space: nowrap;
       }
     }
@@ -485,7 +485,7 @@
 
     &__UnsavedChanges,
     &__Controls {
-      padding: $spacer / 2;
+      padding: $spacer * .5;
     }
 
     &__UnsavedChanges {
@@ -499,7 +499,7 @@
       justify-content: center;
 
       * {
-        margin-left: $spacer / 2;
+        margin-left: $spacer * .5;
       }
     }
   }

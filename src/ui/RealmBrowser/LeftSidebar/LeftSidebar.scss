@@ -21,7 +21,7 @@
 .LeftSidebar {
   display: flex;
   flex-direction: column;
-  padding: $spacer / 2;
+  padding: $spacer * .5;
   padding-bottom: 0;
 
   &__Header {
@@ -34,8 +34,8 @@
     font-size: .9rem;
     font-weight: bold;
     justify-content: space-between;
-    margin-bottom: $spacer / 2;
-    padding-bottom: $spacer / 2;
+    margin-bottom: $spacer * .5;
+    padding-bottom: $spacer * .5;
     padding-left: $spacer;
     text-transform: uppercase;
   }
@@ -43,7 +43,7 @@
   &__Classes {
     flex-grow: 1;
     flex-shrink: 0;
-    margin: 0 (-$spacer / 2);
+    margin: 0 (-$spacer * .5);
     overflow-x: hidden;
     overflow-y: auto;
   }
@@ -72,7 +72,7 @@
     &__Name {
       flex-shrink: 1;
       overflow: hidden;
-      padding-right: $spacer / 4;
+      padding-right: $spacer * .25;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
@@ -103,7 +103,7 @@
           border-radius: 2px;
           bottom: 5px;
           content: "";
-          left: $spacer / 2;
+          left: $spacer * .5;
           position: absolute;
           top: 5px;
           width: 4px;
@@ -130,7 +130,7 @@
 
       &__Text {
         font-size: .8rem;
-        margin-right: $spacer / 2;
+        margin-right: $spacer * .5;
         overflow: hidden;
         text-overflow: ellipsis;
       }
@@ -154,7 +154,7 @@
       border-radius: 2px;
       bottom: 5px;
       content: "";
-      left: $spacer / 2;
+      left: $spacer * .5;
       position: absolute;
       top: 0;
       width: 4px;
@@ -165,7 +165,7 @@
   &__ReadOnlyHint {
     color: $elephant;
     font-size: .75rem;
-    margin: $spacer / 2;
+    margin: $spacer * .5;
     overflow: hidden;
     text-align: center;
     text-overflow: ellipsis;
@@ -175,14 +175,14 @@
   &__Subscriptions {
     font-size: .8rem;
     overflow-y: auto;
-    padding: $spacer / 4;
+    padding: $spacer * .25;
   }
 
   &__SubscriptionItem {
     display: flex;
     font-family: $font-family-monospace;
     list-style: none;
-    padding: $spacer / 4;
+    padding: $spacer * .25;
   }
 
   &__SubscriptionItemQuery {
@@ -191,6 +191,6 @@
 
   &__SubscriptionItemControls > i {
     cursor: pointer;
-    margin-left: $spacer / 2;
+    margin-left: $spacer * .5;
   }
 }

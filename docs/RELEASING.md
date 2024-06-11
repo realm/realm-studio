@@ -20,9 +20,7 @@ When preparing the action does the following:
 
 ## Release a prepared release
 
-Currently the release building is triggered manually after merging the release PR, using the "Build, sign and publish
-release" workflow. Once everything is confirmed stable merging of the release PR can be added to that workflow to
-eliminate one step.
+Currently the release building is meant to be triggered by using the "Build, sign and publish release" workflow and selecting the release PR.
 
 This workflow:
 
@@ -30,7 +28,8 @@ This workflow:
 2. Extract the latest release notes from the changelog.
 3. Uploads the packaged artifacts and auto-update yaml files to S3
 4. Creates a GitHub release, with the artifacts attached.
-5. Announces the release on Slack.
+5. Merges the release PR.
+6. Announces the release on Slack.
 
 # How do I roll-back a release?
 

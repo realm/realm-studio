@@ -70,7 +70,7 @@
     top: -$spacer;
 
     &__Btn {
-      margin: 0 ($spacer / 4);
+      margin: 0 ($spacer * .25);
     }
   }
 
@@ -116,6 +116,6 @@
   }
 
   &__ControlBtn {
-    margin: $spacer / 4;
+    margin: $spacer * .25;
   }
 }
