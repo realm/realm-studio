@@ -1,5 +1,5 @@
 import { display as displayDataCell } from '../ui/RealmBrowser/Content/Table/types/DataCell';
-import { inspect } from 'util';
+import { InspectOptions, inspect } from 'util';
 // TODO: Investigate better solution.
 const $REF_MATCHER =
   /\s*\"\$ref[Id]*\" *: *(\"(.*?)\"(,|\s|)|\s*\{(.*?)\}(,|\s|))/g;
@@ -15,12 +15,23 @@ type SafeJsonOptions = {
   shallow?: boolean;
 };
 
-export const prettifiedInspect = (object: unknown) =>
-  inspect(object, {
+export const prettifiedInspect = (
+  object: unknown,
+  options?: InspectOptions,
+) => {
+  // If it is possible to serialize the object to a simpler structure with toJSON, do it.
+  const simplifiedObject =
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (object as any).toJSON != null ? (object as any).toJSON() : object;
+  return inspect(simplifiedObject, {
     compact: false,
-    depth: 1,
+    // TODO: Can potentially support higher depth if one can hide symbols properly.
+    depth: 0,
     breakLength: 80,
+    showHidden: false,
+    ...options,
   });
+};
 
 export const asSafeJsonString = (
   value: unknown,
@@ -45,7 +56,7 @@ export const asSafeJsonString = (
     );
   } else {
     try {
-      json = prettifiedInspect((value as any).toJSON());
+      json = prettifiedInspect(value);
     } catch (err) {
       json = err instanceof Error ? err.message : String(err);
     }
@@ -133,7 +144,7 @@ export const getCellStringRepresentation = (
   }
 
   if (canUseJsonViewer(property, value)) {
-    return inspect(value, {
+    return prettifiedInspect(value, {
       maxStringLength: VALUE_STRING_LENGTH_LIMIT,
     });
   }

@@ -19,7 +19,7 @@
 import React from 'react';
 import { Badge } from 'reactstrap';
 import Realm from 'realm';
-import { inspect } from 'util';
+import { prettifiedInspect } from '../../../../../utils/json';
 
 // TODO: Get declaration from Realm
 type Dictionary<T = unknown> = { [key: string]: T };
@@ -33,7 +33,7 @@ const displayValue = (
   if (!dictionary) {
     return 'null';
   } else {
-    return inspect(dictionary, {
+    return prettifiedInspect(dictionary, {
       maxStringLength: VALUE_STRING_LENGTH_LIMIT,
     });
   }
