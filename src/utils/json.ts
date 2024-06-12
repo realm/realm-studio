@@ -1,5 +1,5 @@
 import { display as displayDataCell } from '../ui/RealmBrowser/Content/Table/types/DataCell';
-import { InspectOptions, inspect } from 'util';
+import { InspectOptions, inspect } from 'node:util';
 // TODO: Investigate better solution.
 const $REF_MATCHER =
   /\s*\"\$ref[Id]*\" *: *(\"(.*?)\"(,|\s|)|\s*\{(.*?)\}(,|\s|))/g;
@@ -22,11 +22,11 @@ export const prettifiedInspect = (
   // If it is possible to serialize the object to a simpler structure with toJSON, do it.
   const simplifiedObject =
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (object as any).toJSON != null ? (object as any).toJSON() : object;
+    (object as any).toJSON != null ? (object as any) : object;
   return inspect(simplifiedObject, {
     compact: false,
     // TODO: Can potentially support higher depth if one can hide symbols properly.
-    depth: 0,
+    depth: 3,
     breakLength: 80,
     showHidden: false,
     ...options,

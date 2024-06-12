@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import util from 'util';
+import util from 'node:util';
 
 export const displayObject = (
   object: Realm.Object | null,
