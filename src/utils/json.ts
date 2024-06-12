@@ -26,7 +26,7 @@ export const prettifiedInspect = (
   return inspect(simplifiedObject, {
     compact: false,
     // TODO: Can potentially support higher depth if one can hide symbols properly.
-    depth: 3,
+    depth: 0,
     breakLength: 80,
     showHidden: false,
     ...options,
