@@ -161,6 +161,7 @@ export abstract class RealmLoadingComponent<
           sync: {
             user,
             flexible: true,
+            /*
             initialSubscriptions: {
               update(subs, realm) {
                 for (const schema of realm.schema) {
@@ -169,6 +170,7 @@ export abstract class RealmLoadingComponent<
                 }
               },
             },
+            */
           },
           schema,
           schemaVersion,
