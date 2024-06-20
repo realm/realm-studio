@@ -35,7 +35,8 @@ import {
 
 import { ConnectToServer } from './ConnectToServer';
 
-const DEFAULT_BASE_URL = 'https://realm.mongodb.com';
+const DEFAULT_BASE_URL = 'https://services.cloud.mongodb.com';
+const LEGACY_BASE_URL = 'https://realm.mongodb.com';
 
 /*
 const MISSING_PARAMS_MESSAGE =
@@ -83,7 +84,7 @@ class ConnectToServerContainer extends React.Component<
     const url = this.props.url || this.getLatestUrl();
     this.setState({
       // Use an empty input instead of filling in the default URL
-      url: url === DEFAULT_BASE_URL ? '' : url,
+      url: url === DEFAULT_BASE_URL || url === LEGACY_BASE_URL ? '' : url,
       appId: this.getLatestAppId(),
     });
     // this.restoreCredentials(url);
@@ -114,9 +115,8 @@ class ConnectToServerContainer extends React.Component<
       const { appId, url } = this.state;
       // Use SDK default (passing undefined) on an empty string.
       const baseUrl = url || DEFAULT_BASE_URL;
-      // Clear test state to invalidate the shared App cache as a work around for
+      // TODO: Clear test state to invalidate the shared App cache as a work around for
       // https://github.com/realm/realm-js/issues/6276
-      (Realm.App as any)._clearAppCache();
       const app = new App({ id: appId, baseUrl });
       const serializedCredentials = this.serializeCredentials();
       const credentials = hydrateCredentials(serializedCredentials);

@@ -93,7 +93,7 @@ export const ConnectToServer = ({
             type="url"
             name="serverUrl"
             id="serverUrl"
-            placeholder="https://realm.mongodb.com"
+            placeholder="https://services.cloud.mongodb.com"
             value={url}
             onChange={onUrlChanged}
           />
