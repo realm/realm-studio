@@ -4,7 +4,7 @@
 * None
 
 ### Fixed
-* None
+* Fixed connecting to the server and opening synced Realms ([#1665](https://github.com/realm/realm-studio/issues/1665), since v15.0.0)
 
 ### Internals
 * None
