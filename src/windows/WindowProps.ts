@@ -22,15 +22,7 @@
 
 import { IGreetingWindowProps } from './GreetingWindow';
 import { IRealmBrowserWindowProps } from './RealmBrowserWindow';
-import { IConnectToServerWindowProps } from './ConnectToServerWindow';
 
-export {
-  IGreetingWindowProps,
-  IRealmBrowserWindowProps,
-  IConnectToServerWindowProps,
-};
+export { IGreetingWindowProps, IRealmBrowserWindowProps };
 
-export type WindowProps =
-  | IGreetingWindowProps
-  | IRealmBrowserWindowProps
-  | IConnectToServerWindowProps;
+export type WindowProps = IGreetingWindowProps | IRealmBrowserWindowProps;
