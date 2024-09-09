@@ -16,11 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import { Credentials } from 'realm';
-
 export enum RealmLoadingMode {
   Local = 'local',
-  Synced = 'synced',
 }
 
 export interface IRealmToLoad {
@@ -68,29 +65,4 @@ export type SerializedCredentials =
       };
     };
 
-export interface ISyncedRealmToLoad extends IRealmToLoad {
-  mode: RealmLoadingMode.Synced;
-  serverUrl: string;
-  appId: string;
-  credentials: SerializedCredentials;
-}
-
-export type RealmToLoad = ILocalRealmToLoad | ISyncedRealmToLoad;
-
-export function hydrateCredentials({
-  method,
-  payload,
-}: SerializedCredentials): Credentials {
-  switch (method) {
-    case AuthenticationMethod.anonymous:
-      return Credentials.anonymous();
-    case AuthenticationMethod.emailPassword:
-      return Credentials.emailPassword(payload.email, payload.password);
-    case AuthenticationMethod.apiKey:
-      return Credentials.apiKey(payload.apiKey);
-    case AuthenticationMethod.jwt:
-      return Credentials.jwt(payload.token);
-    default:
-      throw new Error(`The method is not supported: ${method}`);
-  }
-}
+export type RealmToLoad = ILocalRealmToLoad;

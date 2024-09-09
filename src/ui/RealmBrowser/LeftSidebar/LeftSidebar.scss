@@ -172,12 +172,6 @@
     white-space: nowrap;
   }
 
-  &__Subscriptions {
-    font-size: .8rem;
-    overflow-y: auto;
-    padding: $spacer * .25;
-  }
-
   &__SubscriptionItem {
     display: flex;
     font-family: $font-family-monospace;

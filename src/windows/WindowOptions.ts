@@ -21,13 +21,11 @@ import qs from 'querystring';
 import {
   IGreetingWindowProps,
   IRealmBrowserWindowProps,
-  IConnectToServerWindowProps,
   WindowProps,
 } from './WindowProps';
 
 export type WindowType =
   | 'cloud-authentication'
-  | 'connect-to-server'
   | 'graphiql-editor'
   | 'greeting'
   | 'realm-browser'
@@ -51,15 +49,7 @@ export interface IRealmBrowserWindowOptions extends IWindowOptions {
   props: IRealmBrowserWindowProps;
 }
 
-export interface IConnectToServerWindowOptions extends IWindowOptions {
-  type: 'connect-to-server';
-  props: IConnectToServerWindowProps;
-}
-
-export type WindowOptions =
-  | IGreetingWindowOptions
-  | IRealmBrowserWindowOptions
-  | IConnectToServerWindowOptions;
+export type WindowOptions = IGreetingWindowOptions | IRealmBrowserWindowOptions;
 
 export function getWindowOptions(): WindowOptions {
   // Strip away the "?" of the location.search

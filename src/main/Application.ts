@@ -24,10 +24,7 @@ import { CLOUD_PROTOCOL, STUDIO_PROTOCOL } from '../constants';
 import * as dataImporter from '../services/data-importer';
 import { showError } from '../ui/reusable/errors';
 import { RealmLoadingMode } from '../utils/realms';
-import {
-  IRealmBrowserWindowProps,
-  IConnectToServerWindowProps,
-} from '../windows/WindowProps';
+import { IRealmBrowserWindowProps } from '../windows/WindowProps';
 
 import { removeRendererDirectories } from '../utils';
 import { CertificateManager } from './CertificateManager';
@@ -52,9 +49,6 @@ export class Application {
     },
     [MainActions.ShowOpenLocalRealm]: () => {
       return this.showOpenLocalRealm();
-    },
-    [MainActions.ShowConnectToServer]: (url?: string) => {
-      return this.showConnectToServer({ url });
     },
     [MainActions.ShowRealmBrowser]: (props: IRealmBrowserWindowProps) => {
       return this.showRealmBrowser(props);
@@ -154,27 +148,6 @@ export class Application {
     );
     // Resolves when all realms are opened or rejects when a single realm fails
     return Promise.all(realmsLoaded);
-  }
-
-  public showConnectToServer(
-    props: IConnectToServerWindowProps,
-  ): Promise<void> {
-    const { window, existing } = this.windowManager.createWindow({
-      type: 'connect-to-server',
-      props,
-    });
-
-    if (existing) {
-      window.focus();
-      return Promise.resolve();
-    } else {
-      return new Promise(resolve => {
-        window.show();
-        window.webContents.once('did-finish-load', () => {
-          resolve();
-        });
-      });
-    }
   }
 
   public showImportData(format: dataImporter.ImportFormat) {

@@ -19,11 +19,7 @@
 import Realm from 'realm';
 import React from 'react';
 
-import {
-  RealmLoadingMode,
-  RealmToLoad,
-  hydrateCredentials,
-} from '../../../utils/realms';
+import { RealmToLoad } from '../../../utils/realms';
 import { ILoadingProgress } from '../LoadingOverlay';
 
 export interface IRealmLoadingComponentState {
@@ -113,70 +109,40 @@ export abstract class RealmLoadingComponent<
     schemaVersion?: number,
   ): Promise<Realm> {
     if (realm) {
-      if (realm.mode === RealmLoadingMode.Local) {
-        try {
-          return new Realm({
-            path: realm.path,
-            encryptionKey: realm.encryptionKey,
-            disableFormatUpgrade: realm.enableFormatUpgrade ? false : true,
-            openSyncedRealmLocally: realm.sync,
-            schema,
-            schemaVersion,
-          } satisfies Realm.Configuration & {
-            openSyncedRealmLocally?: boolean;
-          } as any);
-        } catch (error) {
-          if (
-            error instanceof Error &&
-            (error.message.includes('Incompatible histories.') ||
-              error.message.includes('History type not consistent') ||
-              error.message.startsWith(
-                'History type (as specified by the Replication implementation passed to the DB constructor) was not consistent across the session',
-              ) ||
-              error.message.includes(
-                'Synchronized Realms cannot be opened in non-sync mode',
-              )) &&
-            realm.sync !== true
-          ) {
-            // Try to open the Realm locally with a sync history mode.
-            console.log('Trying to open sync Realm as local Realm');
-            return this.openRealm(
-              { ...realm, sync: true },
-              schema,
-              schemaVersion,
-            );
-          }
-          // Other errors, propagate it.
-          throw error;
-        }
-      } else if (realm.mode === RealmLoadingMode.Synced) {
-        const app = new Realm.App({
-          id: realm.appId,
-          baseUrl: realm.serverUrl,
-        });
-        const credentials = hydrateCredentials(realm.credentials);
-        const user = await app.logIn(credentials);
-        return Realm.open({
+      try {
+        return new Realm({
+          path: realm.path,
           encryptionKey: realm.encryptionKey,
-          sync: {
-            user,
-            flexible: true,
-            /*
-            initialSubscriptions: {
-              update(subs, realm) {
-                for (const schema of realm.schema) {
-                  const query = realm.objects(schema.name);
-                  subs.add(query);
-                }
-              },
-            },
-            */
-          },
+          disableFormatUpgrade: realm.enableFormatUpgrade ? false : true,
+          openSyncedRealmLocally: realm.sync,
           schema,
           schemaVersion,
-        });
-      } else {
-        throw new Error('Unexpected mode');
+        } satisfies Realm.Configuration & {
+          openSyncedRealmLocally?: boolean;
+        } as any);
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          (error.message.includes('Incompatible histories.') ||
+            error.message.includes('History type not consistent') ||
+            error.message.startsWith(
+              'History type (as specified by the Replication implementation passed to the DB constructor) was not consistent across the session',
+            ) ||
+            error.message.includes(
+              'Synchronized Realms cannot be opened in non-sync mode',
+            )) &&
+          realm.sync !== true
+        ) {
+          // Try to open the Realm locally with a sync history mode.
+          console.log('Trying to open sync Realm as local Realm');
+          return this.openRealm(
+            { ...realm, sync: true },
+            schema,
+            schemaVersion,
+          );
+        }
+        // Other errors, propagate it.
+        throw error;
       }
     } else {
       throw new Error(`Called without a realm to load`);
