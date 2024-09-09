@@ -1,3 +1,23 @@
+## vNext (TBD)
+
+### Breaking Changes
+* Removed all functionality related to Atlas Device Services / Device Sync.
+
+### Deprecations
+* None
+
+### Enhancements
+* None
+
+### Fixed
+* None
+
+### Internal
+<!-- * Either mention core version or upgrade -->
+<!-- * Using Realm Core vX.Y.Z -->
+<!-- * Upgraded Realm Core from vX.Y.Z to vA.B.C -->
+
+
 ## 15.2.1 (2024-06-20)
 
 ### Fixed
