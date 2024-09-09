@@ -181,7 +181,6 @@ class RealmBrowserContainer
         isPropertyNameAvailable={this.isPropertyNameAvailable}
         onAddClass={this.onAddClass}
         onAddProperty={this.onAddProperty}
-        onAddSubscription={this.onAddSubscription}
         onCancelTransaction={this.onCancelTransaction}
         onClassFocussed={this.onClassFocussed}
         onCommitTransaction={this.onCommitTransaction}
@@ -199,7 +198,6 @@ class RealmBrowserContainer
         realm={this.realm}
         toggleAddClass={this.toggleAddClass}
         toggleAddClassProperty={this.toggleAddClassProperty}
-        toggleAddSubscription={this.toggleAddSubscription}
         validateQuery={this.validateQuery}
         isEmbeddedType={this.isEmbeddedType}
       />
@@ -545,12 +543,6 @@ class RealmBrowserContainer
     });
   };
 
-  private toggleAddSubscription = () => {
-    this.setState({
-      isAddSubscriptionOpen: !this.state.isAddSubscriptionOpen,
-    });
-  };
-
   private onAddClass = async (schema: Realm.ObjectSchema) => {
     if (this.realm) {
       try {
@@ -607,19 +599,6 @@ class RealmBrowserContainer
           `Failed adding the property named "${name}" to the selected schema`,
           err,
         );
-      }
-    }
-  };
-
-  private onAddSubscription = (schemaName: string, queryString: string) => {
-    const { realm } = this;
-    if (realm) {
-      try {
-        realm.subscriptions.update(subs => {
-          subs.add(realm.objects(schemaName).filtered(queryString));
-        });
-      } catch (err) {
-        showError(`Failed creating subscription on "${schemaName}"`, err);
       }
     }
   };

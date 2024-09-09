@@ -440,7 +440,6 @@
   }
 
   &__NoFocusPlaceholder,
-  &__NoSubscriptionsPlaceholder,
   &__EmbeddedFocusPlaceholder {
     align-items: center;
     display: flex;
@@ -453,13 +452,6 @@
     &::before {
       color: $elephant;
       content: "No schema selected";
-    }
-  }
-
-  &__NoSubscriptionsPlaceholder {
-    &::before {
-      color: $elephant;
-      content: "Add a subscription to see objects";
     }
   }
 
