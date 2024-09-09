@@ -1,16 +1,7 @@
-## vNext (TBD)
+## 20.0.0 (2024-09-09)
 
 ### Breaking Changes
 * Removed all functionality related to Atlas Device Services / Device Sync.
-
-### Deprecations
-* None
-
-### Enhancements
-* None
-
-### Fixed
-* None
 
 ### Internal
 <!-- * Either mention core version or upgrade -->
