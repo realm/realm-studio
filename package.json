@@ -135,7 +135,7 @@
     "contentful": "^9.3.5",
     "electron-store": "^8.2.0",
     "electron-updater": "6.1.8",
-    "flatted": "^3.3.1",
+    "flatted": "^3.4.1",
     "font-awesome": "^4.7.0",
     "fs-extra": "^11.2.0",
     "isomorphic-fetch": "^3.0.0",
