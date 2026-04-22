@@ -153,7 +153,7 @@
     "reactstrap": "^9.2.2",
     "realm": "^12.9.0",
     "semver": "^7.6.0",
-    "uuid": "^9.0.1"
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "@octokit/rest": "^20.0.2",
