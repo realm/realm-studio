@@ -209,7 +209,7 @@
     "source-map-support": "^0.5.21",
     "style-loader": "^3.3.4",
     "svg-sprite-loader": "^6.0.11",
-    "tmp": "^0.2.3",
+    "tmp": "^0.2.6",
     "ts-loader": "^9.5.1",
     "typescript": "^5.4.3",
     "url-loader": "^4.1.1",
