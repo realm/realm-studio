@@ -181,7 +181,7 @@
     "commander": "^12.0.0",
     "concurrently": "^8.2.2",
     "css-loader": "^6.10.0",
-    "electron": "^27.1.2",
+    "electron": "^43.3.0",
     "electron-builder": "^24.13.3",
     "electron-download": "^4.1.1",
     "electron-notarize": "^1.2.2",
